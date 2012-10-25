@@ -2,7 +2,10 @@
 
 """
 Orthography Profile class for parsing strings into Quantitative Language Comparison format
+
 """
+
+# imports
 
 import sys
 import unicodedata
