@@ -5,5 +5,8 @@ LingPy Tutorial
 .. toctree::
    :maxdepth: 1
 
-   ../formats
+   formats
+   text
+
+
 

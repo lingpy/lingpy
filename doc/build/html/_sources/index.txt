@@ -24,7 +24,7 @@ Python Library for Historical Linguistics
        <a href="docu/index.html">Documentation</a>
      </li>
      <li>
-       <a href="totorial/index.html">Tutorial</a>
+       <a href="tutorial/index.html">Tutorial</a>
      </li>
      <li>
        <a href="download.html">Download</a>
