@@ -6,7 +6,7 @@ LingPy Tutorial
    :maxdepth: 1
 
    formats
-   text
+   lingpy.algorithm.classes.wordlist.rst
 
 
 

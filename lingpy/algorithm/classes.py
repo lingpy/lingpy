@@ -231,87 +231,107 @@ class WordList(object):
         """
         Methods help to get quick access to the data in the word list.
 
-        A string accesses the glosses.
-
         """
-        # carry out a type check of idx
-        t = type(idx)
-
-        if t == builtins.int:
-            # return the data row if it's an integer key
-            if idx in self._data:
-                return self._data[idx]
-
-        elif t == builtins.str:
-        
-            # return the dictionary if its a key to it
-            if idx in self.rows:
-                return self._dict[idx]
-
-            ## return the data column if its a key to it
-            #if idx in self.cols:
-            #    data = [w for w in self._array[:,self.cols.index(idx)]:
-            #        
-            #    return zip(    
-            #            self.rows,
-            #            [w for w in self._array[:,self.cols.index(idx)] if w != 0]
-            #            )
-
-            # return a dictionary of the data if its a string-key
+        try:
+            # return full data entry as list
+            return self._data[idx]
+        except:
             try:
-                if int(idx) in self._data:
-                    return dict(
-                            zip(
-                                [self.conf[x.lower()][2] for x in self._data[0]],
-                                self._data[int(idx)]
-                                    )
-                                )
+                # return data entry with specified key word
+                return self._data[idx[0]][self._header[idx[1]]]
             except:
                 pass
-        
-        # if idx is a tuple, more specific return values can be defined. this
-        # is done by taking the first part of idx as the primary one and the
-        # second part as it's specifier
-        elif t == builtins.tuple:
-            
-            t2 = type(idx[0])
 
-            if t2 == builtins.int:
-                return self[idx[0]][self._header[idx[1]]]
+        # carry out a type check of idx
+        #t = type(idx)
 
-            elif t2 == builtins.str:
-                if idx[0] in self.rows:
-                    data = {}
-                    for key,value in self._dict[idx[0]].items():
-                        data[key] = [v for v in value]
-                        for i,v in enumerate(value):
-                            data[key][i] = self._data[v][self._header[idx[1]]]
+        #if t == builtins.int:
+        #    # return the data row if it's an integer key
+        #    if idx in self._data:
+        #        return self._data[idx]
 
-                    return data
+        #elif t == builtins.str:
+        #
+        #    # return the dictionary if its a key to it
+        #    if idx in self.rows:
+        #        return self._dict[idx]
+
+        #    ## return the data column if its a key to it
+        #    #if idx in self.cols:
+        #    #    data = [w for w in self._array[:,self.cols.index(idx)]:
+        #    #        
+        #    #    return zip(    
+        #    #            self.rows,
+        #    #            [w for w in self._array[:,self.cols.index(idx)] if w != 0]
+        #    #            )
+
+        #    # return a dictionary of the data if its a string-key
+        #    try:
+        #        if int(idx) in self._data:
+        #            return dict(
+        #                    zip(
+        #                        [self.conf[x.lower()][2] for x in self._data[0]],
+        #                        self._data[int(idx)]
+        #                            )
+        #                        )
+        #    except:
+        #        pass
+        #
+        ## if idx is a tuple, more specific return values can be defined. this
+        ## is done by taking the first part of idx as the primary one and the
+        ## second part as it's specifier
+        #elif t == builtins.tuple:
+        #    
+        #    t2 = type(idx[0])
+
+        #    if t2 == builtins.int:
+        #        return self[idx[0]][self._header[idx[1]]]
+
+        #    elif t2 == builtins.str:
+        #        if idx[0] in self.rows:
+        #            data = {}
+        #            for key,value in self._dict[idx[0]].items():
+        #                data[key] = [v for v in value]
+        #                for i,v in enumerate(value):
+        #                    data[key][i] = self._data[v][self._header[idx[1]]]
+
+        #            return data
 
     def getDict(
             self,
-            *idx
+            idxA,
+            idxB = None
             ):
         """
-        Function returns key-value pairs for the indices specified.
+        Function returns dictionaries of the cells matched by the indices.
+
+        idxA should either occur in the rows of the word lists (e.g. be in the
+        list of glosses), or in the columns (e.g. be in the list of taxa). idxB
+        can be used to specify the values that shall returned, e.g. the entrys,
+        the tokens, etc.
         """
 
-        if len(idx) == 1:
+        if not idxB:
             
             # if the index points to the rows
-            if idx[0] in self.rows:
-                return self._dict[idx[0]]
+            if idxA in self.rows:
+                return self._dict[idxA]
 
             # if it points to the columns
-            if idx[0] in self.cols:
-                return [(self._data[i][self._rowIdx],i) for 
-                        i in self._array[:,self.cols.index(idx[0])] if i != 0]
+            if idxA in self.cols:
+                data = {}
 
-        
-        if len(idx) == 2:
+                for i,j in  [(self._data[i][self._rowIdx],i) for 
+                        i in self._array[:,self.cols.index(idxA)] if i != 0]:
+                    try:
+                        data[i] += [j]
+                    except:
+                        data[i] = [j]
+                return data
 
-            if idx[0] in self.rows:
+        else:
+
+            if idxA in self.rows:
                 data = {}
                 for key,value in self._dict[idx[0]].items():
                     data[key] = []
@@ -320,7 +340,7 @@ class WordList(object):
                 
                 return data
 
-            if idx[0] in self.cols:
+            if idxA in self.cols:
                 data = {}
                 for i in self._array[:,self.cols.index(idx[0])]:
                     
@@ -338,10 +358,78 @@ class WordList(object):
 
     def getList(
             self,
-            *idx
+            idxA,
+            idxB=None,
+            flat=False
             ):
         """
         Return a list of the cells specified by maximally two parameters.
         """
 
-        pass
+        if not idxB:
+            
+            # if the index points to the rows
+            if idxA in self.rows:
+                out = self._array[self._idx[idxA]]
+                if flat:
+                    return [i for i in out.flatten() if i != 0]
+                else:
+                    return out.tolist()
+
+            # if it points to the columns
+            if idxA in self.cols:
+                out = self._array[:,self.cols.index(idxA)]
+
+                if flat:
+                    return [i for i in out if i != 0]
+                else:
+                    return out.tolist()
+
+            # if the index points to specific entry classes itself
+            if idxA in self._header:
+                tmp_func = eval(self.conf[idxA][0])
+                out = []
+                for row in self._array:
+                    tmp = [0 for i in row]
+                    for i,cell in enumerate(row):
+                        if cell != 0:
+
+                            tmp[i] = tmp_func(self._data[cell][self._header[idxA]])
+                        else:
+                            if self.conf[idxA][0] == 'int':
+                                tmp[i] = 0
+                            else:
+                                tmp[i] = ''
+
+                    out.append(tmp)
+                return out
+
+        else:
+
+            if idxA in self.rows:
+                tmp = self._array[self._idx[idxA]]
+                if flat:
+                    tmp = [i for i in tmp.flatten() if i != 0]
+                    out = [self._data[i][self._header[idxB]] for i in tmp]
+                else:
+                    out = tmp.tolist() 
+                    for i,line in enumerate(tmp):
+                        for j,cell in enumerate(line):
+                            out[i][j] = self._data[cell][self._header[idxB]]
+                return out
+
+            elif idxA in self.cols:
+                tmp = self._array[:,self.cols.index(idxA)]
+                if flat:
+                    tmp = [i for i in tmp.flatten() if i != 0]
+                    out = [self._data[i][self._header[idxB]] for i in tmp]
+                else:
+                    out = []
+                    for i in tmp:
+                        if i != 0:
+                            out.append(self._data[i][self._header[idxB]])
+                        else:
+                            out.append('-')
+
+                return out
+

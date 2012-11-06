@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LingPy Tutorial &mdash; LingPy</title>
+    <title>The WordList Class &mdash; LingPy</title>
     
     <link rel="stylesheet" href="../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -59,13 +59,40 @@ LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="lingpy-tutorial">
-<h1>LingPy Tutorial<a class="headerlink" href="#lingpy-tutorial" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="formats.html">Formats</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lingpy.algorithm.classes.wordlist.html">The WordList Class</a></li>
-</ul>
+  <div class="section" id="the-wordlist-class">
+<h1>The WordList Class<a class="headerlink" href="#the-wordlist-class" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-a-word-list">
+<h2>What is a Word List?<a class="headerlink" href="#what-is-a-word-list" title="Permalink to this headline">¶</a></h2>
+<p>Generally, a word list is a simple tabular data structure in which multiple
+languages are structured in such a way that words are ordered in rows and
+columns according to the language to which they belong and the concept they
+denote.</p>
+</div>
+<div class="section" id="how-are-word-lists-defined">
+<h2>How are Word Lists defined?<a class="headerlink" href="#how-are-word-lists-defined" title="Permalink to this headline">¶</a></h2>
+<p>In LingPy the WordList class handles wordlists.</p>
+</div>
+<div class="section" id="the-wordlist-conf-file">
+<h2>The wordlist.conf file<a class="headerlink" href="#the-wordlist-conf-file" title="Permalink to this headline">¶</a></h2>
+<p>The structure of word lists is defined by the configuration file <cite>wordlists.conf</cite>. This file is
+automatically loaded when initializing a WordList instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It can, however, also be passed by the user:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">conf</span><span class="o">=</span><span class="s">&quot;path_to_file&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The file is a simple tab-delimited csv-file and has the following structure:</p>
+<div class="highlight-python"><pre>cogid       int     -       cognateid,cogid,cognateset
+entry       str     -       counterpart,word,entry,ipa,words
+taxon       str     COL     language,doculect,dialect,taxon,languages
+gloss       str     ROW     gloss,concept
+iso         str     -       iso,isocode
+tokens      list    -       tokens,tokenized_counterpart,ipatokens</pre>
+</div>
+<p>According to this structure, the first column indicates the name which is internally used to address
+the given datatype. The second column indicates the program-internal datatype. The third row</p>
 </div>
 </div>
 
@@ -75,6 +102,16 @@ LingPy
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The WordList Class</a><ul>
+<li><a class="reference internal" href="#what-is-a-word-list">What is a Word List?</a></li>
+<li><a class="reference internal" href="#how-are-word-lists-defined">How are Word Lists defined?</a></li>
+<li><a class="reference internal" href="#the-wordlist-conf-file">The wordlist.conf file</a></li>
+</ul>
+</li>
+</ul>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
