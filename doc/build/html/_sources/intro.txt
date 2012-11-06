@@ -63,7 +63,7 @@ linguistic sign, the :py:class:`~lingpy.sequence.Sequence` class in LingPy
 makes it possible to deal with various automatic aspects of sound sequences,
 such as, e.g., their prosodic properties, or their sound classes. For the
 comparison of sign forms, one can chose between the
-:py:class:`~lingpy.compare.Pairwise` and the
+:py:class:`~lingpy.algorithm.classes` and the
 :py:class:`~lingpy.compare.Multiple` class, which can be used to conduct
 automatic alignment analyses or to calculate the similarity or distance between
 sound sequences. Even language comparison is possible with help of the
