@@ -31,7 +31,7 @@ def _load_dict(infile):
 
     # check for first line, if a local ID is given in the header (or simply
     # "ID"), take this line as the ID, otherwise create it
-    if data[0][0].lower() in ['id','local_id','localid']:
+    if data[0][0].lower() in ['local_id','localid']:
         local_id = True
     else:
         local_id = False
@@ -48,9 +48,9 @@ def _load_dict(infile):
 
     # assign the header to d[0]
     if local_id:
-        d[0] = data[0][1:]
+        d[0] = [x.lower() for x in data[0][1:]]
     else:
-        d[0] = data[0]
+        d[0] = [x.lower() for x in data[0]]
 
     # return the stuff
     return d
@@ -61,41 +61,48 @@ class WordList(object):
     """
     Basic class for the handling of multilingual word lists.
 
-    A word list differs from a dictionary in so far as the keys of word lists
-    are concepts...
+    Parameters
+    ----------
+    data : dict
+        A dictionary with consecutive integers as keys and lists as values.
+    
+    meta : dict
+        A simple dictionary of key-value pairs storing some metadata of the
+        original dataset.
 
-    Todo
-    ----
+    conf : string (default=None)
+        A string defining the path to the configuration file. 
 
-    Add more documentation...
+    Notes
+    -----
+    A word list is created from a data-dictionary and a meta-dictionary.
+    The first contains the main data (keys and lists of values,
+    corresponding to a column specified by key with id 0), and the latter
+    contains additional data which was read in when parsing a qlc-formatted
+    input file. If meta or conf are left undefined, the default values will
+    be used.
+
+    conf is the path to the configuration file. this file consists of 3
+    columns, the first column is the internal name which is reserved for
+    a column in the input data, the second column defines the datatype, and
+    the third column defines aliases, separated by a comma
+
+    When creating a wl instance, a specific data-structure is created
+    consisting of 
+    * self._data : the original data
+    * self._dict : a dictionary representation of columns and cells
+    * self._array : a flat representation of the data as an array
+    * self._idx : an index which is needed to get the data of the array
+    
+    .. todo:: Add more documentation...
     """
 
     def __init__(
             self,
             data,
             meta = None,
-            conf = None
+            conf = ''
             ):
-        """
-        A word list is created from a data-dictionary and a meta-dictionary.
-        The first contains the main data (keys and lists of values,
-        corresponding to a column specified by key with id 0), and the latter
-        contains additional data which was read in when parsing a qlc-formatted
-        input file. If meta or conf are left undefined, the default values will
-        be used.
-
-        conf is the path to the configuration file. this file consists of 3
-        columns, the first column is the internal name which is reserved for
-        a column in the input data, the second column defines the datatype, and
-        the third column defines aliases, separated by a comma
-
-        When creating a wl instance, a specific data-structure is created
-        consisting of 
-        - self._data : the original data
-        - self._dict : a dictionary representation of columns and cells
-        - self._array : a flat representation of the data as an array
-        - self._idx : an index which is needed to get the data of the array
-        """
 
         # load the configuration file
         if not conf:
@@ -229,8 +236,7 @@ class WordList(object):
                         
     def __getitem__(self,idx):
         """
-        Methods help to get quick access to the data in the word list.
-
+        Method allows quick access to the data by passing the integer key.
         """
         try:
             # return full data entry as list
@@ -242,73 +248,33 @@ class WordList(object):
             except:
                 pass
 
-        # carry out a type check of idx
-        #t = type(idx)
-
-        #if t == builtins.int:
-        #    # return the data row if it's an integer key
-        #    if idx in self._data:
-        #        return self._data[idx]
-
-        #elif t == builtins.str:
-        #
-        #    # return the dictionary if its a key to it
-        #    if idx in self.rows:
-        #        return self._dict[idx]
-
-        #    ## return the data column if its a key to it
-        #    #if idx in self.cols:
-        #    #    data = [w for w in self._array[:,self.cols.index(idx)]:
-        #    #        
-        #    #    return zip(    
-        #    #            self.rows,
-        #    #            [w for w in self._array[:,self.cols.index(idx)] if w != 0]
-        #    #            )
-
-        #    # return a dictionary of the data if its a string-key
-        #    try:
-        #        if int(idx) in self._data:
-        #            return dict(
-        #                    zip(
-        #                        [self.conf[x.lower()][2] for x in self._data[0]],
-        #                        self._data[int(idx)]
-        #                            )
-        #                        )
-        #    except:
-        #        pass
-        #
-        ## if idx is a tuple, more specific return values can be defined. this
-        ## is done by taking the first part of idx as the primary one and the
-        ## second part as it's specifier
-        #elif t == builtins.tuple:
-        #    
-        #    t2 = type(idx[0])
-
-        #    if t2 == builtins.int:
-        #        return self[idx[0]][self._header[idx[1]]]
-
-        #    elif t2 == builtins.str:
-        #        if idx[0] in self.rows:
-        #            data = {}
-        #            for key,value in self._dict[idx[0]].items():
-        #                data[key] = [v for v in value]
-        #                for i,v in enumerate(value):
-        #                    data[key][i] = self._data[v][self._header[idx[1]]]
-
-        #            return data
-
     def getDict(
             self,
             idxA,
-            idxB = None
+            idxB = ''
             ):
         """
         Function returns dictionaries of the cells matched by the indices.
 
-        idxA should either occur in the rows of the word lists (e.g. be in the
-        list of glosses), or in the columns (e.g. be in the list of taxa). idxB
-        can be used to specify the values that shall returned, e.g. the entrys,
-        the tokens, etc.
+        Parameters
+        ----------
+        idxA : string
+            The first index evaluated by the method. It should reflect the name
+            of either one of the rows or one of the columns.
+        
+        idxB : string (default = '')
+            The second index evaluated by the method. It can be used to specify
+            the datatype of the rows or columns selected.
+
+        Notes
+        -----
+        Tobeadded
+
+        Return
+        ------
+        data : dict
+            A dictionary of keys and values specifying the selected part of the
+            data.
         """
 
         if not idxB:
@@ -333,23 +299,23 @@ class WordList(object):
 
             if idxA in self.rows:
                 data = {}
-                for key,value in self._dict[idx[0]].items():
+                for key,value in self._dict[idxA].items():
                     data[key] = []
                     for v in value:
-                        data[key].append(self[v][self._header[idx[1]]])
+                        data[key].append(self[v][self._header[idxB]])
                 
                 return data
 
             if idxA in self.cols:
                 data = {}
-                for i in self._array[:,self.cols.index(idx[0])]:
+                for i in self._array[:,self.cols.index(idxA)]:
                     
                     if i != 0:
                         # get the row name
                         m = self._data[i][self._rowIdx]
 
                         # get the relevant entry
-                        c = self._data[i][self._header[idx[1]]]
+                        c = self._data[i][self._header[idxB]]
                         try:
                             data[m] += [c]
                         except:
@@ -359,36 +325,59 @@ class WordList(object):
     def getList(
             self,
             idxA,
-            idxB=None,
+            idxB='',
             flat=False
             ):
         """
-        Return a list of the cells specified by maximally two parameters.
+        Function returns lists of the cells matched by the indices.
+
+        Parameters
+        ----------
+        idxA : string
+            The first index evaluated by the method. It should reflect the name
+            of either one of the rows or one of the columns.
+        
+        idxB : string (default = '')
+            The second index evaluated by the method. It can be used to specify
+            the datatype of the rows or columns selected.
+        flat : bool (default = False)
+            Specify whether the returned list should be one- or
+            two-dimensional, or whether it should contain gaps or not.
+
+        Notes
+        -----
+        Tobeadded
+
+        Return
+        ------
+        data : list
+            A list specifying the selected part of the
+            data.
         """
 
         if not idxB:
             
             # if the index points to the rows
             if idxA in self.rows:
-                out = self._array[self._idx[idxA]]
+                data = self._array[self._idx[idxA]]
                 if flat:
-                    return [i for i in out.flatten() if i != 0]
+                    return [i for i in data.flatten() if i != 0]
                 else:
-                    return out.tolist()
+                    return data.tolist()
 
             # if it points to the columns
             if idxA in self.cols:
-                out = self._array[:,self.cols.index(idxA)]
+                data = self._array[:,self.cols.index(idxA)]
 
                 if flat:
-                    return [i for i in out if i != 0]
+                    return [i for i in data if i != 0]
                 else:
-                    return out.tolist()
+                    return data.tolist()
 
             # if the index points to specific entry classes itself
             if idxA in self._header:
                 tmp_func = eval(self.conf[idxA][0])
-                out = []
+                data = []
                 for row in self._array:
                     tmp = [0 for i in row]
                     for i,cell in enumerate(row):
@@ -401,35 +390,69 @@ class WordList(object):
                             else:
                                 tmp[i] = ''
 
-                    out.append(tmp)
-                return out
+                    data.append(tmp)
+                return data
 
         else:
-
             if idxA in self.rows:
                 tmp = self._array[self._idx[idxA]]
                 if flat:
                     tmp = [i for i in tmp.flatten() if i != 0]
-                    out = [self._data[i][self._header[idxB]] for i in tmp]
+                    data = [self._data[i][self._header[idxB]] for i in tmp]
                 else:
-                    out = tmp.tolist() 
+                    data = tmp.tolist() 
                     for i,line in enumerate(tmp):
                         for j,cell in enumerate(line):
-                            out[i][j] = self._data[cell][self._header[idxB]]
-                return out
+                            data[i][j] = self._data[cell][self._header[idxB]]
+                return data
 
             elif idxA in self.cols:
                 tmp = self._array[:,self.cols.index(idxA)]
                 if flat:
                     tmp = [i for i in tmp.flatten() if i != 0]
-                    out = [self._data[i][self._header[idxB]] for i in tmp]
+                    data = [self._data[i][self._header[idxB]] for i in tmp]
                 else:
-                    out = []
+                    data = []
                     for i in tmp:
                         if i != 0:
-                            out.append(self._data[i][self._header[idxB]])
+                            data.append(self._data[i][self._header[idxB]])
                         else:
-                            out.append('-')
+                            data.append('-')
 
-                return out
+                return data
+
+    def add(
+            self,
+            source,
+            target,
+            function,
+            **keywords
+            ):
+        """
+        Add new tables to the word list.
+
+        Parameters
+        ----------
+        source : string
+            A string specifying the basic values which shall be modified. 
+
+        target : string
+            A string specifiying the name of the new values to be added to the
+            word list.
+
+        function : function
+            A function which is used to convert the source into the target
+            value.
+
+        keywords : dict
+            A dictionary of keywords that are passed as parameters to the
+            function.
+
+        Notes
+        -----
+        tba
+        """
+
+        pass 
+
 
