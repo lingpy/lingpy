@@ -66,7 +66,7 @@ all different possible **entry-types** a word can have::
 This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given
 concept in a given language. Moreover, this format is the basic of the
-py:class::`~lingpy.basic.wordlist.WordList` class in LingPy, which makes it easy
+:py:class:`~lingpy.basic.wordlist.WordList` class in LingPy, which makes it easy
 to handle word lists with multiple entry-types of words.
 
 The above-given csv-file `harry_potter.csv` is available in the test folder of LingPy.
@@ -99,8 +99,39 @@ Or for the languages and the concepts in the dataset::
     >>> wl.concept
     ['Harry', 'Woldemort', 'hand', 'leg']
     
+Furthermore, using specific functions, even more concise samples of the data can
+be extracted::
 
+    >>> wl.getDict(col="German")
+    {'Harry': ['haralt'],
+     'Woldemort': ['valdemar'],
+     'hand': ['hant'],
+     'leg': ['bain']}
+    >>> wl.getList(row="hand",entry="cogid",flat=True)
+    [1, 1, 2, 2]
+    
+Other entry-types can be added::
 
+    >>> from lingpy.algorithm.misc import ipa2tokens
+    >>> wl.addEntries("tokens","ipa",ipa2tokens)
+    >>> wl.tokens
+    [[['w', 'ɔ', 'l', 'd', 'e', 'm', 'ɔ', 'r', 't'],
+      ['v', 'a', 'l', 'd', 'e', 'm', 'a', 'r'],
+      ['v', 'l', 'a', 'd', 'i', 'm', 'i', 'r'],
+      ['v', 'o', 'l', 'o', 'd', 'i', 'm', 'i', 'r']],
+     [['l', 'ɛ', 'g'],
+      ['b', 'ai', 'n'],
+      ['n', 'o', 'g', 'a'],
+      ['n', 'o', 'g', 'a']],
+     [['h', 'æ', 'n', 'd'],
+      ['h', 'a', 'n', 't'],
+      ['r', 'u', 'k', 'a'],
+      ['r', 'u', 'k', 'a']],
+     [['h', 'æ', 'r', 'i'],
+      ['h', 'a', 'r', 'a', 'l', 't'],
+      ['g', 'a', 'r', 'i'],
+      ['g', 'a', 'r', 'i']]]
+    
     
 
 
@@ -109,26 +140,27 @@ How are Word Lists defined?
 
 In LingPy the WordList class handles wordlists. 
 
-The wordlist.conf file
+The wordlist.rc file
 ----------------------
 
 The structure of word lists is defined by the configuration file `wordlists.rc`. This file is
-automatically loaded when initializing a WordList instance:
+automatically loaded when initializing a WordList instance::
 
     >>> wl = WordList(data)
 
-It can, however, also be passed by the user:
+It can, however, also be passed by the user::
 
     >>> wl = WordList(data,conf="path_to_file")
 
 The file is a simple tab-delimited csv-file and has the following structure::
 
-    cogid	int	-	cognateid,cogid,cognateset
-    entry	str	-	counterpart,word,entry,ipa,words
-    taxon	str	COL	language,doculect,dialect,taxon,languages
-    gloss	str	ROW	gloss,concept
-    iso	        str	-	iso,isocode
-    tokens	list	-	tokens,tokenized_counterpart,ipatokens
+    cogid	int	                cognateid,cogid,cognateset
+    entry	str	                counterpart,word,entry,words
+    taxon	str	                language,doculect,dialect,taxon,languages
+    gloss	str	                gloss,concept
+    iso	        str	                iso,isocode
+    tokens	lambda x:x.split(' ')	tokens,tokenized_counterpart,ipatokens
+    ipa         str                     ipa
 
 According to this structure, the first column indicates the name which is internally used to address
 the given datatype. The second column indicates the program-internal datatype. The third row 

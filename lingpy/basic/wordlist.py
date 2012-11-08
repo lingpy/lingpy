@@ -299,18 +299,27 @@ class WordList(object):
         """
         Define how attributes are overloaded.
         """
-        # get the right name
-        attr = self._alias[attr]
+        try:
+            # get the right name
+            attr = self._alias[attr]
 
-        if attr == self._row_name:
-            return self.rows
-        elif attr == self._col_name:
-            return self.cols
-        elif attr in self._header:
-            return self.getEntries(attr)
-        
-        raise AttributeError("%r object has no attribute %r" %
-                (type(self).__class__,attr))
+            if attr == self._row_name:
+                return self.rows
+            elif attr == self._col_name:
+                return self.cols
+            elif attr in self._header:
+                return self.getEntries(attr)
+            else:
+                raise AttributeError("%r object has no attribute %r" %
+                        (type(self).__class__,attr))
+        except:
+             raise AttributeError("%r object has no attribute %r" %
+                    (type(self).__class__,attr))
+
+    def __iter__(self):
+
+        return iter([key for key in self._data.keys()])
+
 
     def getDict(
             self,
