@@ -1,6 +1,9 @@
 #! /usr/bin/env python3
 """
 This module provides a basic class for the handling of word lists.
+
+@date: 2012-11-08
+@author: Johann-Mattis List
 """
 
 import os
@@ -92,6 +95,8 @@ class WordList(object):
     can be easily accessed as two separate two-dimensional lists.
     
     .. todo:: Add more documentation...
+
+    .. date:: 2012-11-08
     """
 
     def __init__(
@@ -317,8 +322,19 @@ class WordList(object):
                     (type(self).__class__,attr))
 
     def __iter__(self):
+        """
+        Iteration is overloaded by iterating over all keys in the basic data.
+        """
 
         return iter([key for key in self._data.keys()])
+
+    def _clean_cache(self):
+
+        """
+        Function cleans the cache.
+        """
+        del self._cache
+        self._cache = {}
 
 
     def getDict(
@@ -637,12 +653,129 @@ class WordList(object):
     
     def getEtymDict(
             self,
-            entrytype
+            ref = "cogid",
+            entry = ''
             ):
         """
-        
+        Return an etymological dictionary representation of the word list.
+
+        Parameters
+        ----------
+        ref : string (default = "cogid")
+            The reference entry which is used to store the cognate ids.
+
+        entry : string (default = '')
+            The entry-type which shall be selected.
+
+        Returns
+        -------
+        etym_dict : dict
+            An etymological dictionary representation of the data.
+
+        Notes
+        -----
+        In contrast to the word-list representation of the data, an
+        etymological dictionary representation sorts the counterparts according to
+        the cognate sets of which they are reflexes. 
+
         """
-        pass
+        
+        # make an alias for the reference
+        ref = self._alias[ref]
+
+        # check in the cache
+        try:
+            return self._cache[ref,entry]
+        except:
+            pass
+
+        # create an etymdict object
+        try:
+            self._etym_dict[ref]
+        except:
+            try:
+                self._etym_dict
+                self._etym_dict[ref] = {}
+            except:
+                self._etym_dict = {ref:{}}
             
+            # get the index for the cognate id 
+            cogIdx = self._header[ref]
+            
+            # iterate over all data
+            for key in self:
+                cogid = self[key][cogIdx]
+                colIdx = self.cols.index(self[key][self._colIdx])
+                try:
+                    self._etym_dict[ref][cogid]
+                except:
+                    self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                
+                # assign the values for the current session
+                try:
+                    self._etym_dict[ref][cogid][colIdx] += [key]
+                except:
+                    self._etym_dict[ref][cogid][colIdx] = [key]
+        
+        if entry:
+            # create the output
+            etym_dict = {}
 
+            # get the index of the header
+            idx = self._header[entry]
 
+            # retrieve the values 
+            for key,values in self._etym_dict[ref].items():
+                etym_dict[key] = []
+                for value in values:
+                    if value != 0:
+                        etym_dict[key].append(
+                                [self[v][idx] for v in value]
+                                )
+                    else:
+                        etym_dict[key].append(0)
+        else:
+            etym_dict = self._etym_dict[ref]
+        
+        # add the stuff to the cache
+        self._cache[ref,entry] = etym_dict
+
+        return etym_dict
+
+    def getPaps(
+            self,
+            ref = 'cogid'
+            ):
+        """
+        Function returns a list of present-absent-patterns of a given word list.
+
+        Parameters
+        ----------
+        ref : string (default = "cogid")
+            The reference entry which is used to store the cognate ids.
+        """
+        
+        try:
+            return self._cache['#paps#',ref]
+        except:
+            pass
+
+        try:
+            self._etym_dict[ref]
+        except KeyError:
+            print("[!] Could not find the specified reference.")
+            return
+
+        paps = {}
+        # retrieve the values 
+        for key,values in self._etym_dict[ref].items():
+            paps[key] = []
+            for value in values:
+                if not value:
+                    paps[key].append(1)
+                else:
+                    paps[key].append(0)
+        
+        self._cache['#paps#',ref] = paps
+        
+        return paps

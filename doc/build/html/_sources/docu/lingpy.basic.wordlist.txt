@@ -14,5 +14,6 @@ Word Lists (:py:class:`~lingpy.basic.wordlist.WordList`)
       WordList.getList
       WordList.getEntries
       WordList.addEntries
-
+      WordList.getEtymDict
+      WordList.getPaps
 

@@ -100,13 +100,20 @@ Or for the languages and the concepts in the dataset::
     ['Harry', 'Woldemort', 'hand', 'leg']
     
 Furthermore, using specific functions, even more concise samples of the data can
-be extracted::
+be extracted, thus, using the
+:py:class:`~lingpy.basic.wordlist.WordList.getDict` function, we can specify a
+given language and extract all phonetic transcriptions corresponding to a given
+concept as a dictionary::
 
-    >>> wl.getDict(col="German")
+    >>> wl.getDict(col="German",entry="ipa")
     {'Harry': ['haralt'],
      'Woldemort': ['valdemar'],
      'hand': ['hant'],
      'leg': ['bain']}
+
+We can likewise extract all cognate IDs corresponding to a given concept by
+using the function :py:class:`~lingpy.basic.wordlist.WordList.getList`::
+
     >>> wl.getList(row="hand",entry="cogid",flat=True)
     [1, 1, 2, 2]
     
@@ -140,26 +147,27 @@ How are Word Lists defined?
 
 In LingPy the WordList class handles wordlists. 
 
-The wordlist.conf file
+The wordlist.rc file
 ----------------------
 
 The structure of word lists is defined by the configuration file `wordlists.rc`. This file is
-automatically loaded when initializing a WordList instance:
+automatically loaded when initializing a WordList instance::
 
     >>> wl = WordList(data)
 
-It can, however, also be passed by the user:
+It can, however, also be passed by the user::
 
     >>> wl = WordList(data,conf="path_to_file")
 
 The file is a simple tab-delimited csv-file and has the following structure::
 
-    cogid	int	-	cognateid,cogid,cognateset
-    entry	str	-	counterpart,word,entry,ipa,words
-    taxon	str	COL	language,doculect,dialect,taxon,languages
-    gloss	str	ROW	gloss,concept
-    iso	        str	-	iso,isocode
-    tokens	list	-	tokens,tokenized_counterpart,ipatokens
+    cogid	int	                cognateid,cogid,cognateset
+    entry	str	                counterpart,word,entry,words
+    taxon	str	                language,doculect,dialect,taxon,languages
+    gloss	str	                gloss,concept
+    iso	        str	                iso,isocode
+    tokens	lambda x:x.split(' ')	tokens,tokenized_counterpart,ipatokens
+    ipa         str                     ipa
 
 According to this structure, the first column indicates the name which is internally used to address
 the given datatype. The second column indicates the program-internal datatype. The third row 

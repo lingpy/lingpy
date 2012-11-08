@@ -153,13 +153,20 @@ is:</p>
 </pre></div>
 </div>
 <p>Furthermore, using specific functions, even more concise samples of the data can
-be extracted:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getDict</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;German&quot;</span><span class="p">)</span>
+be extracted, thus, using the
+<a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.WordList.getDict.html#lingpy.basic.wordlist.WordList.getDict" title="lingpy.basic.wordlist.WordList.getDict"><tt class="xref py py-class docutils literal"><span class="pre">getDict</span></tt></a> function, we can specify a
+given language and extract all phonetic transcriptions corresponding to a given
+concept as a dictionary:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getDict</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;German&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;ipa&quot;</span><span class="p">)</span>
 <span class="go">{&#39;Harry&#39;: [&#39;haralt&#39;],</span>
 <span class="go"> &#39;Woldemort&#39;: [&#39;valdemar&#39;],</span>
 <span class="go"> &#39;hand&#39;: [&#39;hant&#39;],</span>
 <span class="go"> &#39;leg&#39;: [&#39;bain&#39;]}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getList</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s">&quot;hand&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;cogid&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can likewise extract all cognate IDs corresponding to a given concept by
+using the function <a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.WordList.getList.html#lingpy.basic.wordlist.WordList.getList" title="lingpy.basic.wordlist.WordList.getList"><tt class="xref py py-class docutils literal"><span class="pre">getList</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getList</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s">&quot;hand&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;cogid&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">[1, 1, 2, 2]</span>
 </pre></div>
 </div>
@@ -190,8 +197,8 @@ be extracted:</p>
 <h2>How are Word Lists defined?<a class="headerlink" href="#how-are-word-lists-defined" title="Permalink to this headline">¶</a></h2>
 <p>In LingPy the WordList class handles wordlists.</p>
 </div>
-<div class="section" id="the-wordlist-conf-file">
-<h2>The wordlist.conf file<a class="headerlink" href="#the-wordlist-conf-file" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-wordlist-rc-file">
+<h2>The wordlist.rc file<a class="headerlink" href="#the-wordlist-rc-file" title="Permalink to this headline">¶</a></h2>
 <p>The structure of word lists is defined by the configuration file <cite>wordlists.rc</cite>. This file is
 automatically loaded when initializing a WordList instance:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -202,12 +209,13 @@ automatically loaded when initializing a WordList instance:</p>
 </pre></div>
 </div>
 <p>The file is a simple tab-delimited csv-file and has the following structure:</p>
-<div class="highlight-python"><pre>cogid       int     -       cognateid,cogid,cognateset
-entry       str     -       counterpart,word,entry,ipa,words
-taxon       str     COL     language,doculect,dialect,taxon,languages
-gloss       str     ROW     gloss,concept
-iso         str     -       iso,isocode
-tokens      list    -       tokens,tokenized_counterpart,ipatokens</pre>
+<div class="highlight-python"><pre>cogid       int                     cognateid,cogid,cognateset
+entry       str                     counterpart,word,entry,words
+taxon       str                     language,doculect,dialect,taxon,languages
+gloss       str                     gloss,concept
+iso         str                     iso,isocode
+tokens      lambda x:x.split(&#x27; &#x27;)   tokens,tokenized_counterpart,ipatokens
+ipa         str                     ipa</pre>
 </div>
 <p>According to this structure, the first column indicates the name which is internally used to address
 the given datatype. The second column indicates the program-internal datatype. The third row</p>
@@ -225,7 +233,7 @@ the given datatype. The second column indicates the program-internal datatype. T
 <li><a class="reference internal" href="#">Handling Multilingual Word Lists</a><ul>
 <li><a class="reference internal" href="#what-is-a-word-list">What is a Word List?</a></li>
 <li><a class="reference internal" href="#how-are-word-lists-defined">How are Word Lists defined?</a></li>
-<li><a class="reference internal" href="#the-wordlist-conf-file">The wordlist.conf file</a></li>
+<li><a class="reference internal" href="#the-wordlist-rc-file">The wordlist.rc file</a></li>
 </ul>
 </li>
 </ul>

@@ -100,13 +100,20 @@ Or for the languages and the concepts in the dataset::
     ['Harry', 'Woldemort', 'hand', 'leg']
     
 Furthermore, using specific functions, even more concise samples of the data can
-be extracted::
+be extracted, thus, using the
+:py:class:`~lingpy.basic.wordlist.WordList.getDict` function, we can specify a
+given language and extract all phonetic transcriptions corresponding to a given
+concept as a dictionary::
 
-    >>> wl.getDict(col="German")
+    >>> wl.getDict(col="German",entry="ipa")
     {'Harry': ['haralt'],
      'Woldemort': ['valdemar'],
      'hand': ['hant'],
      'leg': ['bain']}
+
+We can likewise extract all cognate IDs corresponding to a given concept by
+using the function :py:class:`~lingpy.basic.wordlist.WordList.getList`::
+
     >>> wl.getList(row="hand",entry="cogid",flat=True)
     [1, 1, 2, 2]
     
