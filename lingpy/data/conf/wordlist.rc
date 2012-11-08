@@ -1,0 +1,7 @@
+cogid	int	cognateid,cogid,cognateset
+counterpart	str	entry,counterpart,orthography
+doculect	str	language,doculect,dialect,taxon,languages,counterpart_doculect
+concept	str	gloss,concept
+iso	str	iso,isocode
+tokens	lambda x:x.split(" ")	tokens,tokenized_counterpart,ipatokens
+ipa	str	word,ipa,words

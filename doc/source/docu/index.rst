@@ -20,6 +20,6 @@ What's Next?
    :maxdepth: 1
 
    ../download
-   lingpy.algorithm.classes
+   lingpy.basic.wordlist
 
 

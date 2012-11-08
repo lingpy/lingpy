@@ -4,7 +4,7 @@ Python Library for Historical Linguistics
  
 ..   :Release: |version|
 ..   :Date: |today|
-..   :Author: Johann-Mattis List
+..   :Author: Johann-Mattis List, Steven Moran
 
 .. LingPy is a suite of open source Python modules for sequence comparison, distance analyses, data operations and visualization methods in quantitative historical linguistics.
 

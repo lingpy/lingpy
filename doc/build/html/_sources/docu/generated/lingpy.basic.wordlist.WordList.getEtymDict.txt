@@ -1,0 +1,6 @@
+lingpy.basic.wordlist.WordList.getEtymDict
+==========================================
+
+.. currentmodule:: lingpy.basic.wordlist.WordList
+
+.. autofunction:: getEtymDict

@@ -19,15 +19,15 @@ def ipa2tokens(
     Parameters
     ----------
 
-    seq : string or unicode
+    seq : string or str
         The input sequence that shall be tokenized.
     
-    diacritics : unicode
+    diacritics : str
         A string containing all diacritics which shall be considered in the
         respective analysis. When set to *None*, the default diacritic string
         will be used.
     
-    vowels : unicode
+    vowels : str
         A string containing all vowel symbols which shall be considered in the
         respective analysis. When set to *None*, the default vowel string will
         be used.
@@ -63,7 +63,7 @@ def ipa2tokens(
     """
     
     try:
-        seq = unicode(seq,'utf-8')
+        seq = str(seq)
     except:
         pass
 
@@ -75,14 +75,14 @@ def ipa2tokens(
     
     # merge vowels and diacritics for later use
     dv = diacritics + vowels
-    tones = unicode('⁰¹²³⁴⁵⁶⁷⁸⁹⁻₀₁₂₃₄₅₆','utf-8')
+    tones = str('⁰¹²³⁴⁵⁶⁷⁸⁹⁻₀₁₂₃₄₅₆')
     
     # replace all multiple dots by just one dot (needed for local alignment
     # analyses) in order to keep trace of dotted sequences
     seq = sub(r'\.+',r'.',seq)
 
     # replace double consonants by the ipa-character for long consonants
-    seq = sub(r'([^'+dv+tones+r'])\1+',r'\1'+unicode('ː','utf-8'),seq)
+    seq = sub(r'([^'+dv+tones+r'])\1+',r'\1'+str('ː'),seq)
 
     # matches for regular expressions using the findall-function
     # m_1 matches all affricates and following diacritics
