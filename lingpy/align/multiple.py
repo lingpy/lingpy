@@ -1,7 +1,6 @@
 """
 Basic module for the handling of multiple sequence alignments.
 """
-from __future__ import division,print_function
 from numpy import array,zeros
 from ..data import *
 from ..algorithm import *
@@ -29,7 +28,7 @@ class _Multiple(object):
         for i,seq in enumerate(self.seqs):
             # check for pre-tokenized strings
             if ' ' in seq:
-                tokens = [unicode(seg,'utf-8') for seg in seq.split(' ')]
+                tokens = [s for s in seq.split(' ')]
             else:
                 tokens = ipa2tokens(seq,merge_vowels=merge_vowels) 
             self.tokens.append(tokens)
@@ -60,15 +59,15 @@ class _Multiple(object):
         
         # if alignments are present, print the alignments
         try:
-            out = '\t'.join(self.alm_matrix[0]).encode('utf-8')
+            out = '\t'.join(self.alm_matrix[0])
             for line in self.alm_matrix[1:]:
-                out += '\n'+'\t'.join(line).encode('utf-8')
+                out += '\n'+'\t'.join(line)
             return out
         # else, return all sequences
         except:
-            out = '\t'.join(self.tokens[0]).encode('utf-8')
+            out = '\t'.join(self.tokens[0])
             for line in self.tokens[1:]:
-                out += '\n'+'\t'.join(line).encode('utf-8')
+                out += '\n'+'\t'.join(line)
             return out
 
     def __eq__(self,other):

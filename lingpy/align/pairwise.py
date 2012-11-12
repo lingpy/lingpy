@@ -62,6 +62,7 @@ class _Pairwise(object):
                 prosodic_string(sonA),
                 prosodic_string(sonB)
                 ])
+    
     def __str__(self):
 
         # check for alignments
