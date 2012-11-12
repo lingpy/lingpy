@@ -1,0 +1,212 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sound Class Models (Model) &mdash; LingPy</title>
+    
+    <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="top" title="LingPy" href="../../index.html" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../index.html">LingPy Home </a> |&nbsp;</li>
+	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../download.html">Download </a> |&nbsp;</li>
+        <li><a href="http://lingulist.de">Back2Main</a></li>
+
+
+ 
+      </ul>
+    </div>
+
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sound-class-models-model">
+<h1>Sound Class Models (<a class="reference internal" href="#lingpy.data.model.Model" title="lingpy.data.model.Model"><tt class="xref py py-class docutils literal"><span class="pre">Model</span></tt></a>)<a class="headerlink" href="#sound-class-models-model" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lingpy.data.model.Model">
+<em class="property">class </em><tt class="descclassname">lingpy.data.model.</tt><tt class="descname">Model</tt><big>(</big><em>model</em>, <em>path=None</em><big>)</big><a class="headerlink" href="#lingpy.data.model.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for the handling of sound-class models.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>model</strong> : { &#8216;sca&#8217;, &#8216;dolgo&#8217;, &#8216;asjp&#8217;, &#8216;art&#8217;, &#8216;color&#8217; }</p>
+<blockquote class="last">
+<div><p>A string indicating the name of the model which shall be loaded.
+Select between:</p>
+<ul class="simple">
+<li>&#8216;sca&#8217; - the SCA sound-class model (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012a"><span class="pre">List2012a</span></a></tt>),</li>
+<li>&#8216;dolgo&#8217; - the DOLGO sound-class model (see:
+:evobib:<a href="#id1"><span class="problematic" id="id2">`</span></a>Dolgopolsky1986&#8217;),</li>
+<li>&#8216;asjp&#8217; - the ASJP sound-class model (see
+<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Brown2008"><span class="pre">Brown2008</span></a></tt> and <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Brown2011"><span class="pre">Brown2011</span></a></tt>),</li>
+<li>&#8216;art - the sound-class model which is used for the calculation of
+sonority profiles and prosodic strings (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012"><span class="pre">List2012</span></a></tt>), and</li>
+<li>&#8216;color&#8221; - the sound-class model which is used for the coloring of
+sound-tokens when creating html-output.</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><tt class="xref py py-obj docutils literal"><span class="pre">lingpy.data.derive.compile_model</span></tt>, <tt class="xref py py-obj docutils literal"><span class="pre">lingpy.data.derive.compile_diacritics_and_vowels</span></tt></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Models are loaded from binary files which can be found in the
+<tt class="file docutils literal"><span class="pre">data/models/</span></tt> folder of the LingPy package. A model has two
+essential attributes:</p>
+<ul class="simple">
+<li><tt class="xref py py-attr docutils literal"><span class="pre">converter</span></tt> &#8211; a dictionary with IPA-tokens as keys and
+sound-class characters as values, and</li>
+<li><tt class="xref py py-attr docutils literal"><span class="pre">scorer</span></tt> &#8211; a scoring dictionary with tuples of sound-class
+characters as keys and scores (integers or floats) as values.</li>
+</ul>
+<p class="rubric">Examples</p>
+<p>When loading LingPy, the models <tt class="docutils literal"><span class="pre">sca</span></tt>, <tt class="docutils literal"><span class="pre">asjp</span></tt>, <tt class="docutils literal"><span class="pre">dolgo</span></tt>, and <tt class="docutils literal"><span class="pre">art</span></tt>
+are automatically loaded:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Check, how the letter <tt class="docutils literal"><span class="pre">a</span></tt> is converted in the various models:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">asjp</span><span class="p">,</span><span class="n">sca</span><span class="p">,</span><span class="n">dolgo</span><span class="p">,</span><span class="n">art</span><span class="p">]:</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">asjp</span><span class="p">,</span><span class="n">sca</span><span class="p">,</span><span class="n">dolgo</span><span class="p">,</span><span class="n">art</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} &gt; {1} ({2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="n">m</span><span class="o">.</span><span class="n">converter</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">],</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+<span class="gp">... </span>
+<span class="go">a &gt; a (asjp)</span>
+<span class="go">a &gt; A (sca)</span>
+<span class="go">a &gt; V (dolgo)</span>
+<span class="go">a &gt; 7 (art)</span>
+</pre></div>
+</div>
+<p>Retrieve basic information of a given model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">sca</span><span class="p">)</span>
+<span class="go">Model:    sca</span>
+<span class="go">Info:     Extended sound class model based on Dolgopolsky (1986)</span>
+<span class="go">Source:   List (2012)</span>
+<span class="go">Compiler: Johann-Mattis List</span>
+<span class="go">Date:     2012-03</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="5%" />
+<col width="84%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>converter</td>
+<td>dict</td>
+<td>A dictionary with IPA tokens as keys and sound-class characters as
+values.</td>
+</tr>
+<tr class="row-even"><td>scorer</td>
+<td>dict</td>
+<td>A scoring dictionary with tuples of sound-class characters as keys and
+similarity scores as values.</td>
+</tr>
+<tr class="row-odd"><td>info</td>
+<td>dict</td>
+<td>A dictionary storing the key-value pairs defined in the <tt class="docutils literal"><span class="pre">INFO</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>name</td>
+<td>str</td>
+<td>The name of the model which is identical with the name of the folder
+from wich the model is loaded.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+	<li><a href="../../index.html">LingPy Home </a> |&nbsp;</li>
+	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../download.html">Download </a> |&nbsp;</li>
+        <li><a href="http://lingulist.de">Back2Main</a></li>
+
+
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Johann-Mattis List, Steven Moran.
+      Last updated on Nov 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

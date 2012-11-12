@@ -1,0 +1,6 @@
+lingpy.align.pairwise.Pairwise.distance
+=======================================
+
+.. currentmodule:: lingpy.align.pairwise.Pairwise
+
+.. autofunction:: distance

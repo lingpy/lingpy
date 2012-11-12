@@ -8,9 +8,20 @@ Documentation
 
 Basic Classes
 ^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   basic/index
+
 
 Specific Modules
 ^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   data/index
+   align/index
 
 
 What's Next?
@@ -20,6 +31,5 @@ What's Next?
    :maxdepth: 1
 
    ../download
-   lingpy.basic.wordlist
 
 

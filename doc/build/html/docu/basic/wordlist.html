@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Word Lists (WordList) &mdash; LingPy</title>
+    
+    <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+    <link rel="top" title="LingPy" href="../../index.html" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../index.html">LingPy Home </a> |&nbsp;</li>
+	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../download.html">Download </a> |&nbsp;</li>
+        <li><a href="http://lingulist.de">Back2Main</a></li>
+
+
+ 
+      </ul>
+    </div>
+
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="word-lists-wordlist">
+<h1>Word Lists (<a class="reference internal" href="#lingpy.basic.wordlist.WordList" title="lingpy.basic.wordlist.WordList"><tt class="xref py py-class docutils literal"><span class="pre">WordList</span></tt></a>)<a class="headerlink" href="#word-lists-wordlist" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lingpy.basic.wordlist.WordList">
+<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">WordList</tt><big>(</big><em>data</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.WordList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic class for the handling of multilingual word lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>data</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary with consecutive integers as keys and lists as values.</p>
+</div></blockquote>
+<p><strong>row</strong> : str (default = &#8220;concept&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the row that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>col</strong> : str (default = &#8220;doculect&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the column that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>conf</strong> : string (default=&#8217;&#8216;)</p>
+<blockquote class="last">
+<div><p>A string defining the path to the configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>A word list is created from a dictionary containing the data. Two keywords
+(row and col) define, which of the dimensions of the original data should
+be used as row and as column of the tabular display. A configuration file
+can be used to change basic names and aliases for the data being used, and
+the classes (data types) of the entries.</p>
+<p>A couple of methods is provided along with the word list class in order to
+access the multi-dimensional input data. The main idea is to provide an
+easy way to access two-dimensional slices of the data by specifying which
+entry type should be returned. Thus, if a word list consists not only of
+simple orthographical entries but also of IPA encoded phonetic
+transcriptions, both the orthographical source and the IPA transcriptions
+can be easily accessed as two separate two-dimensional lists.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.addEntries.html#lingpy.basic.wordlist.WordList.addEntries" title="lingpy.basic.wordlist.WordList.addEntries"><tt class="xref py py-obj docutils literal"><span class="pre">addEntries</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getDict.html#lingpy.basic.wordlist.WordList.getDict" title="lingpy.basic.wordlist.WordList.getDict"><tt class="xref py py-obj docutils literal"><span class="pre">getDict</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getEntries.html#lingpy.basic.wordlist.WordList.getEntries" title="lingpy.basic.wordlist.WordList.getEntries"><tt class="xref py py-obj docutils literal"><span class="pre">getEntries</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getEtymDict.html#lingpy.basic.wordlist.WordList.getEtymDict" title="lingpy.basic.wordlist.WordList.getEtymDict"><tt class="xref py py-obj docutils literal"><span class="pre">getEtymDict</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getList.html#lingpy.basic.wordlist.WordList.getList" title="lingpy.basic.wordlist.WordList.getList"><tt class="xref py py-obj docutils literal"><span class="pre">getList</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getPaps.html#lingpy.basic.wordlist.WordList.getPaps" title="lingpy.basic.wordlist.WordList.getPaps"><tt class="xref py py-obj docutils literal"><span class="pre">getPaps</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+	<li><a href="../../index.html">LingPy Home </a> |&nbsp;</li>
+	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../download.html">Download </a> |&nbsp;</li>
+        <li><a href="http://lingulist.de">Back2Main</a></li>
+
+
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Johann-Mattis List, Steven Moran.
+      Last updated on Nov 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
