@@ -2,15 +2,16 @@
 This module provides functions for basic cluster algorithms.
 
 """
-from __future__ import division,print_function
-from numpy import array
-from misc import squareform
+__author__ = "Johann-Mattis List"
+__date__ = "2012-11-12"
 
+from numpy import array
+from .misc import squareform
 
 def flat_upgma(
-        matrix,
         threshold,
-        taxa = None
+        matrix,
+        taxa = []
         ):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
@@ -18,15 +19,15 @@ def flat_upgma(
     
     Parameters
     ----------
+ 
+    threshold : float
+        The threshold which terminates the algorithm.   
     
     matrix : list or :py:class:`numpy.array`
         A two-dimensional list containing the distances.
 
-    threshold : float
-        The threshold which terminates the algorithm.
-
-    taxa : list
-        A list containing the names of the taxa. If set to ``None``, the
+    taxa : list (default = [])
+        A list containing the names of the taxa. If the list is left empty, the
         indices of the taxa will be returned instead of their names.
     
     Returns
@@ -58,7 +59,7 @@ def flat_upgma(
 
     Carry out the flat cluster analysis.
 
-    >>> flat_upgma(clusters,matrix,0.5)
+    >>> flat_upgma(0.5,matrix,taxa)
     {0: ['German', 'Dutch', 'English'], 1: ['Swedish', 'Icelandic']}
 
     See also

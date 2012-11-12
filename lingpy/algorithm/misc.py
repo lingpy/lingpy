@@ -2,7 +2,6 @@
 """
 This module provides miscellaneous functions which are mostly used internally.
 """
-from __future__ import division,print_function
 from re import sub,findall
 from numpy import array,sqrt,zeros
 from ..data import *

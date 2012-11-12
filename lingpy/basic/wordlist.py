@@ -243,12 +243,15 @@ class WordList(object):
         
         # the header stores the indices of the data in the original data
         # dictionary
-        self._header = dict(
+        self.header = dict(
                 zip(
                     [self._alias[x] for x in data[0]],
                     range(len(data[0]))
                     )
                 )
+
+        # now create a specific header which has all aliases
+        self._header = dict([(k,v) for k,v in self.header.items()])
         
         # assign all aliases to the header
         for alias in self._alias:
@@ -632,11 +635,12 @@ class WordList(object):
                 pass
         else:
             # get the index of the source in self
-            idx = self._header[source]
+            idx = self._header[source]            
 
             # get the new index into the header
             self._header[entry.lower()] = max(self._header.values())+1
             self._alias[entry.lower()] = entry.lower()
+            self.header[entry.lower()] = self._header[entry.lower()]
 
             # iterate over the data and create the new entry
             for key in self:
