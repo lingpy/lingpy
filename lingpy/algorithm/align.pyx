@@ -1,6 +1,10 @@
 """
 Core module for alignment analyses.
+
 """
+__author__ = 'Johann-Mattis List'
+__date__ = '2012-11-12'
+
 import random
 
 def _global(
@@ -268,7 +272,7 @@ def _dialign(
         list almB
         ):
     """
-    Internal function for global alignment analyses. 
+    Internal function for global alignment analyses using the DIALIGN algorithm. 
     """
 
     cdef int i,j,k,l

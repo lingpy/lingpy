@@ -287,7 +287,6 @@ float _local(
             {
                 gapA = matrix[i-1][j] - 1000000;
                 null = -1000000;
-		cout << "hit";
             }
             else if(traceback[i-1][j] == 3)
             {
