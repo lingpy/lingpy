@@ -782,7 +782,6 @@ def edit_dist(
     cdef int gapA,gapB,match
     cdef int i,j
     
-
     cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     
     for i in range(1,lenA+1):
@@ -812,4 +811,126 @@ def edit_dist(
     cdef float dist = sim / float(max([lenA,lenB]))
 
     return dist
+
+def sw_align(
+        list seqA,
+        list seqB,
+        dict scorer,
+        int gap = -1
+        ):
+    """
+    Align two sequences using the Smith-Waterman algorithm.
+    """
+    
+    # get the lengths of the strings
+    cdef int lenA = len(seqA)
+    cdef int lenB = len(seqB)
+
+    # define lists for tokens (in case no scoring function is provided)
+    cdef list seqA_tokens,seqB_tokens
+    cdef str tA,tB
+
+    # define general and specific integers
+    cdef int i,j
+    cdef int sim # stores the similarity score
+
+    # define values for the main loop
+    cdef int gapA,gapB,match,penalty # for the loop
+    cdef int null = 0 # constant during the loop
+    cdef int imax = 1 # for the loop
+    cdef int jmax = 1 # for the loop
+    cdef int max_score = 0 # for the loo
+
+    # define values for the traceback
+    cdef int igap = 0
+    cdef int jgap = 0 
+    cdef list almA = seqA[:]
+    cdef list almB = seqB[:] 
+    cdef str gap_char = '-' # the gap character
+
+    # create matrix and traceback
+    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+
+    # create scorer, if it is empty
+    if not scorer:
+        seqA_tokens = list(set(seqA))
+        seqB_tokens = list(set(seqB))
+        for tA in seqA_tokens:
+            for tB in seqB_tokens:
+                if tA == tB:
+                    scorer[tA,tB] = 1
+                else:
+                    scorer[tA,tB] = -1
+    
+    # start the main loop
+    for i in range(1,lenB+1):
+        for j in range(1,lenA+1):
+            
+            # get the penalty
+            penalty = scorer[seqA[j-1],seqB[i-1]]
+            
+            # get the three scores
+            gapA = matrix[i-1][j] + gap
+            gapB = matrix[i][j-1] + gap
+            match = matrix[i-1][j-1] + penalty
+
+            # evaluate the scores
+            if gapA >= match and gapA >= gapB and gapA >= null:
+                matrix[i][j] = gapA
+                traceback[i][j] = 3
+            elif match >= gapB and match >= null:
+                matrix[i][j] = match
+                traceback[i][j] = 1
+            elif gapB >= null:
+                matrix[i][j] = gapB
+                traceback[i][j] = 2
+            else:
+                matrix[i][j] = null
+                traceback[i][j] = null
+
+            # check for maximal score
+            if matrix[i][j] >= max_score:
+                imax = i
+                jmax = j
+                max_score = matrix[i][j]
+
+    # get the similarity
+    sim = matrix[imax][jmax]
+
+    # start the traceback
+    i,j = imax,jmax
+    igap,jgap = 0,0
+
+    while traceback[i][j] != 0:
+        if traceback[i][j] == 3:
+            almA.insert(j,gap_char)
+            i -= 1
+            jgap += 1
+        elif traceback[i][j] == 1:
+            i -= 1
+            j -= 1
+        elif traceback[i][j] == 2:
+            almB.insert(i,gap_char)
+            j -= 1
+            igap += 1
+        else:
+            break
+
+    # return the alignment as a tuple of prefix, alignment, and suffix
+    return (
+            (
+                almA[0:j],
+                almA[j:jmax+jgap],
+                almA[jmax+jgap:]
+                ),
+            (
+                almB[0:i],
+                almB[i:imax+igap],
+                almB[imax+igap:]
+                ),
+            sim
+            )
+
+
 
