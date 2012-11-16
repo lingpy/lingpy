@@ -8,27 +8,22 @@ __date__ = '2012-11-12'
 import random
 
 def _global(
-        list listA,
-        int lenA,
-        list listB,
-        int lenB,
-        list scorer,
-        float scale,
-        list almA,
-        list almB
+        listA,
+        lenA,
+        listB,
+        lenB,
+        scorer,
+        scale,
+        almA,
+        almB
         ):
     """
     Internal function for global alignment analyses. 
     """
 
-    cdef int i
-    cdef int j
-    cdef float gapA
-    cdef float gapB
-    cdef float match
 
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     traceback[0][0] = 1
 
@@ -67,7 +62,7 @@ def _global(
                 matrix[i][j] = gapB
                 traceback[i][j] = 2
 
-    cdef float sim = matrix[lenB][lenA]
+    sim = matrix[lenB][lenA]
 
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
@@ -84,32 +79,23 @@ def _global(
     return sim
 
 def _local(
-        list listA,
-        int lenA,
-        list listB,
-        int lenB,
-        list scorer,
-        float scale,
-        list almA,
-        list almB
+        listA,
+        lenA,
+        listB,
+        lenB,
+        scorer,
+        scale,
+        almA,
+        almB
         ):
     """
     Internal function for local alignment analyses. 
     """
 
-    cdef int i
-    cdef int j
-    cdef int k
-    cdef float gapA
-    cdef float gapB
-    cdef float match
-    cdef float null
-    cdef int imax
-    cdef int jmax
-    cdef float max_score = 0.0
+    max_score = 0.0
 
-    cdef list matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     for i in range(1,lenB+1):
         for j in range(1,lenA+1):
@@ -153,7 +139,7 @@ def _local(
                 imax = i
                 jmax = j
 
-    cdef float sim = matrix[imax][jmax]
+    sim = matrix[imax][jmax]
 
     i = imax
     j = jmax
@@ -184,27 +170,22 @@ def _local(
     return sim
 
 def _overlap(
-        list listA,
-        int lenA,
-        list listB,
-        int lenB,
-        list scorer,
-        float scale,
-        list almA,
-        list almB
+        listA,
+        lenA,
+        listB,
+        lenB,
+        scorer,
+        scale,
+        almA,
+        almB
         ):
     """
     Internal function for global alignment analyses. 
     """
 
-    cdef int i
-    cdef int j
-    cdef float gapA
-    cdef float gapB
-    cdef float match
 
-    cdef list matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     traceback[0][0] = 1
 
@@ -245,7 +226,7 @@ def _overlap(
                 matrix[i][j] = gapB
                 traceback[i][j] = 2
 
-    cdef float sim = matrix[lenB][lenA]
+    sim = matrix[lenB][lenA]
 
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
@@ -262,28 +243,23 @@ def _overlap(
     return sim
 
 def _dialign(
-        list listA,
-        int lenA,
-        list listB,
-        int lenB,
-        list scorer,
-        float scale,
-        list almA,
-        list almB
+        listA,
+        lenA,
+        listB,
+        lenB,
+        scorer,
+        scale,
+        almA,
+        almB
         ):
     """
     Internal function for global alignment analyses using the DIALIGN algorithm. 
     """
 
-    cdef int i,j,k,l
-    cdef int minimum
-    cdef float old_score,new_score
-    cdef int old_length,new_length
 
-    cdef float scoreA,scoreB,max_score,sim
 
-    cdef list matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     for i in range(1,lenA+1):
         traceback[0][i] = 2
@@ -354,30 +330,28 @@ def _dialign(
     return sim
 
 def align_pairwise(
-        list seqA,
-        list seqB,
-        list wghA,
-        list wghB,
-        list resA,
-        list resB,
-        str prsA,
-        str prsB,
-        dict score_dict,
-        float scale,
-        float sonority_factor,
-        str mode
+        seqA,
+        seqB,
+        wghA,
+        wghB,
+        resA,
+        resB,
+        prsA,
+        prsB,
+        score_dict,
+        scale,
+        sonority_factor,
+        mode
         ):
     """
     Basic function for alignment analyses. 
     """
-    cdef int lA = len(seqA)
-    cdef int lB = len(seqB)
+    lA = len(seqA)
+    lB = len(seqB)
 
-    cdef list outA = seqA[:]
-    cdef list outB = seqB[:]
+    outA = seqA[:]
+    outB = seqB[:]
 
-    cdef int k
-    cdef int l
 
     if mode == "global":
         aligner = _global
@@ -388,7 +362,7 @@ def align_pairwise(
     elif mode == "dialign":
         aligner = _dialign
     
-    cdef list scorer = [[0 for i in range(lA+1)] for j in range(lB+1)]
+    scorer = [[0 for i in range(lA+1)] for j in range(lB+1)]
 
     for k in range(1,lB+1):
         scorer[k][0] = wghB[k-1]
@@ -403,13 +377,13 @@ def align_pairwise(
                 score = score * (1.0 + sonority_factor)
             scorer[k][l] = score
 
-    cdef list listA = [k for k in resA]
-    cdef list listB = [k for k in resB]
+    listA = [k for k in resA]
+    listB = [k for k in resB]
 
-    cdef list almA = [0 for k in range(lA+1)]
-    cdef list almB = [0 for k in range(lB+1)]
+    almA = [0 for k in range(lA+1)]
+    almB = [0 for k in range(lB+1)]
 
-    cdef float sim = aligner(
+    sim = aligner(
             listA,
             lA,
             listB,
@@ -436,34 +410,27 @@ def align_pairwise(
     return outA,outB,sim
 
 def align_sequences_pairwise(
-        list seqs,
-        list weights,
-        list restrictions,
-        list prosodics,
-        dict score_dict,
-        float scale,
-        float sonority_factor,
-        str mode
+        seqs,
+        weights,
+        restrictions,
+        prosodics,
+        score_dict,
+        scale,
+        sonority_factor,
+        mode
         ):
     """
     Function takes a list of sequences as input and returns all possible
     pairwise alignments between all sequences.
     """
 
-    cdef int lS = len(seqs)
+    lS = len(seqs)
 
-    cdef int i,j,k,l
 
-    cdef float score
-    cdef float sim
 
-    cdef list alignments = []
+    alignments = []
 
     # more and more cdefs...
-    cdef list seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
-    #cdef str prsA,prsB
-    cdef int lA,lB
-    cdef list scorer,listA,listB
 
     if mode == "global":
         aligner = _global
@@ -542,34 +509,27 @@ def align_sequences_pairwise(
     return alignments
 
 def align_sequence_pairs(
-        list seqs,
-        list weights,
-        list restrictions,
-        list prosodics,
-        dict score_dict,
-        float scale,
-        float sonority_factor,
-        str mode
+        seqs,
+        weights,
+        restrictions,
+        prosodics,
+        score_dict,
+        scale,
+        sonority_factor,
+        mode
         ):
     """
     Function takes a list of sequence pairs as input and returns the aligned
     sequence pairs.
     """
 
-    cdef int lS = len(seqs)
+    lS = len(seqs)
 
-    cdef int i,j,k,l
 
-    cdef float score
-    cdef float sim
 
-    cdef list alignments = []
+    alignments = []
 
     # more and more cdefs...
-    cdef list seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
-    # cdef str prsA,prsB
-    cdef int lA,lB
-    cdef list scorer,listA,listB
 
     if mode == "global":
         aligner = _global
@@ -645,34 +605,27 @@ def align_sequence_pairs(
     return alignments
 
 def random_align_sequence_pairs(
-        list seqs,
-        list weights,
-        list restrictions,
-        list prosodics,
-        dict score_dict,
-        float scale,
-        float sonority_factor,
-        str mode,
-        int runs
+        seqs,
+        weights,
+        restrictions,
+        prosodics,
+        score_dict,
+        scale,
+        sonority_factor,
+        mode,
+        runs
         ):
     """
     Function takes a list of sequences pairs as input and returns a dictionary
     of correspondence frequencies.
     """
 
-    cdef int lS = len(seqs)
+    lS = len(seqs)
 
-    cdef int i,j,k,l,n,run
 
-    cdef float score
-    cdef float sim
 
     # more and more cdefs...
-    cdef list seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
-    #cdef str prsA,prsB
-    cdef int lA,lB
-    cdef list scorer,listA,listB
-    cdef dict corrs = {}
+    corrs = {}
 
     if mode == "global":
         aligner = _global
@@ -683,8 +636,8 @@ def random_align_sequence_pairs(
     elif mode == "dialign":
         aligner = _dialign
 
-    cdef list randoms = [i for i in range(lS)]
-    cdef dict alm_pairs = {}
+    randoms = [i for i in range(lS)]
+    alm_pairs = {}
 
     for i in range(lS):
         for run in range(runs):
@@ -770,19 +723,17 @@ def random_align_sequence_pairs(
     return corrs
 
 def edit_dist(
-        list seqA,
-        list seqB
+        seqA,
+        seqB
         ):
     """
     Return the normalized edit-distance between two strings.
     """
     
-    cdef int lenA = len(seqA)
-    cdef int lenB = len(seqB)
-    cdef int gapA,gapB,match
-    cdef int i,j
+    lenA = len(seqA)
+    lenB = len(seqB)
     
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     
     for i in range(1,lenA+1):
         matrix[0][i] = i
@@ -807,50 +758,45 @@ def edit_dist(
             else:
                 matrix[i][j] = gapB
 
-    cdef float sim = matrix[lenB][lenA]
-    cdef float dist = sim / float(max([lenA,lenB]))
+    sim = matrix[lenB][lenA]
+    dist = sim / float(max([lenA,lenB]))
 
     return dist
 
 def sw_align(
-        list seqA,
-        list seqB,
-        dict scorer,
-        int gap = -1
+        seqA,
+        seqB,
+        scorer,
+        gap = -1
         ):
     """
     Align two sequences using the Smith-Waterman algorithm.
     """
     
     # get the lengths of the strings
-    cdef int lenA = len(seqA)
-    cdef int lenB = len(seqB)
+    lenA = len(seqA)
+    lenB = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
-    cdef list seqA_tokens,seqB_tokens
-    cdef str tA,tB
 
     # define general and specific integers
-    cdef int i,j
-    cdef int sim # stores the similarity score
 
     # define values for the main loop
-    cdef int gapA,gapB,match,penalty # for the loop
-    cdef int null = 0 # constant during the loop
-    cdef int imax = 1 # for the loop
-    cdef int jmax = 1 # for the loop
-    cdef int max_score = 0 # for the loo
+    null = 0 # constant during the loop
+    imax = 1 # for the loop
+    jmax = 1 # for the loop
+    max_score = 0 # for the loo
 
     # define values for the traceback
-    cdef int igap = 0
-    cdef int jgap = 0 
-    cdef list almA = seqA[:]
-    cdef list almB = seqB[:] 
-    cdef str gap_char = '-' # the gap character
+    igap = 0
+    jgap = 0 
+    almA = seqA[:]
+    almB = seqB[:] 
+    gap_char = '-' # the gap character
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     # create scorer, if it is empty
     if not scorer:
@@ -934,47 +880,37 @@ def sw_align(
 
 
 def we_align(
-        list seqA,
-        list seqB,
-        dict scorer,
-        int gap = -1
+        seqA,
+        seqB,
+        scorer,
+        gap = -1
         ):
     """
     Align two sequences using the Waterman-Eggert algorithm.
     """
     
     # get the lengths of the strings
-    cdef int lenA = len(seqA)
-    cdef int lenB = len(seqB)
+    lenA = len(seqA)
+    lenB = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
-    cdef list seqA_tokens,seqB_tokens
-    cdef str tA,tB
 
     # define general and specific integers
-    cdef int i,j
-    cdef int sim # stores the similarity score
 
     # define values for the main loop
-    cdef int gapA,gapB,match,penalty # for the loop
-    cdef int null = 0 # constant during the loop
-    cdef int imax,jmax # for the loop
-    cdef int imin,jmin
-    cdef int max_score # for the loo
+    null = 0 # constant during the loop
 
     # define values for the traceback
-    cdef int igap = 0
-    cdef int jgap = 0 
-    cdef list almA,almB 
-    cdef str gap_char = '-' # the gap character
+    igap = 0
+    jgap = 0 
+    gap_char = '-' # the gap character
 
     # create a tracer for positions in the matrix
-    cdef list tracer = [0 for i in range(lenA+1)]
-    cdef int idx
+    tracer = [0 for i in range(lenA+1)]
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     # create scorer, if it is empty
     if not scorer:
@@ -1022,7 +958,7 @@ def we_align(
 
     
     # make list of alignments
-    cdef list out = []
+    out = []
 
     # start the while loop
     while True:
@@ -1084,5 +1020,6 @@ def we_align(
         out.append((almA[jmin:jmax+jgap],almB[imin:imax+igap],sim))
 
     # return the alignment as a tuple of prefix, alignment, and suffix
-    return out 
+    return out
+
 
