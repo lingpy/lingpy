@@ -3,7 +3,7 @@ Core module for alignment analyses.
 
 """
 __author__ = 'Johann-Mattis List'
-__date__ = '2012-11-12'
+__date__ = '2012-16-12'
 
 import random
 
@@ -763,6 +763,101 @@ def edit_dist(
 
     return dist
 
+def nw_align(
+        seqA,
+        seqB,
+        scorer,
+        gap = -1
+        ):
+    """
+    Align two sequences using the Needleman-Wunsch algorithm.
+    """
+    
+    # get the lengths of the strings
+    lenA = len(seqA)
+    lenB = len(seqB)
+
+    # define lists for tokens (in case no scoring function is provided)
+    seqA_tokens,seqB_tokens
+    tA,tB
+
+    # define general and specific integers
+    i,j
+    sim # stores the similarity score
+
+    # define values for the main loop
+    gapA,gapB,match,penalty # for the loop
+ 
+    # define values for the traceback
+    almA = seqA[:]
+    almB = seqB[:] 
+    gap_char = '-' # the gap character
+
+    # create matrix and traceback
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+
+    # initialize matrix and traceback
+    for i in range(1,lenA+1):
+        matrix[0][i] = matrix[0][i-1] + gap
+        traceback[0][i] = 2
+    for i in range(1,lenB+1):
+        matrix[i][0] = matrix[i-1][0] + gap
+        traceback[i][0] = 3
+
+    # create scorer, if it is empty
+    if not scorer:
+        seqA_tokens = list(set(seqA))
+        seqB_tokens = list(set(seqB))
+        for tA in seqA_tokens:
+            for tB in seqB_tokens:
+                if tA == tB:
+                    scorer[tA,tB] = 1
+                else:
+                    scorer[tA,tB] = -1
+    
+    # start the main loop
+    for i in range(1,lenB+1):
+        for j in range(1,lenA+1):
+            
+            # get the penalty
+            penalty = scorer[seqA[j-1],seqB[i-1]]
+            
+            # get the three scores
+            gapA = matrix[i-1][j] + gap
+            gapB = matrix[i][j-1] + gap
+            match = matrix[i-1][j-1] + penalty
+
+            # evaluate the scores
+            if gapA >= match and gapA >= gapB:
+                matrix[i][j] = gapA
+                traceback[i][j] = 3
+            elif match >= gapB:
+                matrix[i][j] = match
+                traceback[i][j] = 1
+            else:
+                matrix[i][j] = gapB
+                traceback[i][j] = 2
+
+    # get the similarity
+    sim = matrix[i][j]
+
+    while i > 0 or j > 0:
+        if traceback[i][j] == 3:
+            almA.insert(j,gap_char)
+            i -= 1
+        elif traceback[i][j] == 1:
+            i -= 1
+            j -= 1
+        elif traceback[i][j] == 2:
+            almB.insert(i,gap_char)
+            j -= 1
+        else:
+            break
+
+    # return the alignment as a tuple of prefix, alignment, and suffix
+    return (almA,almB,sim)
+
 def sw_align(
         seqA,
         seqB,
@@ -877,7 +972,6 @@ def sw_align(
                 ),
             sim
             )
-
 
 def we_align(
         seqA,
@@ -1021,5 +1115,4 @@ def we_align(
 
     # return the alignment as a tuple of prefix, alignment, and suffix
     return out
-
 
