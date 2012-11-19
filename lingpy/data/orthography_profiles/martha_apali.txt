@@ -1,0 +1,32 @@
+# interpretation provided by QLC & Don Daniels
+a, a,
+b, mb, (this symbol is in complementary distribution with the digraph <mb>)
+c, c, 
+d, nd,(this symbol is in complementary distribution with the digraph <nd>)
+e, e, 
+f, ɸ, (this grapheme represents /ɸ/)
+g, ŋg, (this symbol is in complementary distribution with the digraph <ŋg>)
+h, ɣ, (this grapheme represents /ɣ/)
+i, i, 
+i̵, i̵, 
+j, nj, (this symbol is in complementary distribution with the digraph <nj>)
+k, k, 
+l, r, (this is an allophone of /r/)
+m, m,
+
+mb, mb, 
+n, n, 
+
+nd, nd,
+nj, nj,
+ŋ, ŋ,
+ŋg, ŋg,
+o, o,  
+p, p,
+r, r, 
+s, s,
+t, t,
+u, u, 
+v, β, (this grapheme represents /β/)
+z, s, (I'm not sure about this one, but I think it's an allophone of /s/. It could also be its own phoneme, in which case it would be represented by the digraph <nz>.)
+nz, z,

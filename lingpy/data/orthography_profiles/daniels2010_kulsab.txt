@@ -1,0 +1,25 @@
+#interpretation provided by QLC & Don Daniels
+a, a, 
+b, b,
+d, d,
+e, e, 
+ɸ, ɸ,
+g, g, (this is also used in the digraph <gw>, which is of questionable phonemic status)
+gw, gʷ,
+i, i, 
+i̵, i, (this is an allophone of /i/)
+k, k, (this is also used in the digraph <kw>)
+kw, kʷ,
+l, r, (this is an allophone of /r/)
+m, m,
+n, n,
+ŋ, ŋ,  
+o, o,
+p, p,
+r, r,
+s, s,
+β, b, (I don't know about this. I eventually settled on this being either an allophone of /b/ or present only in borrowings, and therefore irrelevant for my study. You may want to keep it, or you may want to subsume it under /b/.)
+t, t, 
+u, u,
+y, y,
+w, w,

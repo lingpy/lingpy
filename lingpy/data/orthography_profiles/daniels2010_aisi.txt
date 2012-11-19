@@ -1,0 +1,26 @@
+#interpretation provided by QLC & Don Daniels
+a, a,
+b, b, (I have good reason to believe the voiced stops in Aisi are borrowings, but I don't know if they're phonemic or not; they're probably frequent enough that they're phonemes, but they may also be allophones of /β r ɣ/)
+d, d, (I have good reason to believe the voiced stops in Aisi are borrowings, but I don't know if they're phonemic or not; they're probably frequent enough that they're phonemes, but they may also be allophones of /β r ɣ/)
+e, e, 
+f, p, (this is an allophone of /p/)
+g, g, (I have good reason to believe the voiced stops in Aisi are borrowings, but I don't know if they're phonemic or not; they're probably frequent enough that they're phonemes, but they may also be allophones of /β r ɣ/)
+ɣ, ɣ,
+ɣw, ɣʷ,
+i, i,  
+i̵, i̵,
+k, k,
+kw, kʷ,
+m, m, 
+n, n,
+ŋ̃, ŋ, (this is an allophone of /ŋ/)
+ŋ, ŋ,
+o, o,
+p, p,
+r, r,
+s, s,
+t, t,
+u, u,
+w, w,
+y, y,
+β, β, 

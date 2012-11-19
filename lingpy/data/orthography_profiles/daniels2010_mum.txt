@@ -1,0 +1,28 @@
+#interpretation provided by QLC & Don Daniels
+a, a, 
+b, mb, (this occurs in complementary distribution with the digraph <mb>)
+d, nd, (this occurs in complementary distribution with the digraph <nd>)
+e, i, (this is an allophone of /i/)
+g, ŋg, (this occurs in complementary distribution with the digraph <ŋg>)
+ɣ, ɣ,
+i, i,
+i̵, i̵,
+j, z,(this occurs in complementary distribution with the digraph <nj>; these graphemes represent the phoneme /z/)
+k, k, 
+m, m,
+mb, mb,
+n, n,
+nd, nd,
+nj, z,
+ŋ, ŋ,
+ŋg, ŋg 
+ñ, ñ 
+o, u, (this is an allophone of /u/)
+p, p,  
+r, r, 
+s, s,
+β, β,
+t, t,
+u, u, 
+y, y,
+w, w,

@@ -1,0 +1,39 @@
+#interpretation provided by QLC & Don Daniels
+a, a,  
+b, mb, (this symbol is in complementary distribution with the digraph <mb>)
+c, c,
+d, nd, (this symbol is in complementary distribution with the digraph <nd>)
+e, e,
+ɸ, p, (this is an allophone of /p/)
+g, ŋg, (this symbol is in complementary distribution with the complex grapheme <ŋg>. It is also used in the complex grapheme <ŋgw>, sometimes realized as <gw>)
+gw, gʷ
+ɣ, ɣ, (this also occurs in the complex grapheme <ɣw>)
+ɣw, ɣʷ
+i, i,
+i̵, i̵
+j, j,
+k, k, (this also occurs in the complex grapheme <kw>)
+kw, kʷ
+l, r, (this is an allophone of /r/)
+m, m, 
+mb, mb,
+n, n,
+nd, nd,
+nz, nz,
+ŋ, ŋ,
+ŋg, ŋg
+ŋgw, ŋgʷ
+ɲ, ñ, (this is the same as the following <ñ>)
+ñ, ñ, 
+o, o,
+Ô, i̵r, (this should be replaced by a sequence of <i̵> plus <r>)
+p, p,
+r, r,
+s, s,
+β, β
+S, s,(this is the same as <s>, two graphemes up)
+t, t,
+u, u,
+y, y,
+w, w,
+z, nz, (this symbol is in complementary distribution with the digraph <nz>)

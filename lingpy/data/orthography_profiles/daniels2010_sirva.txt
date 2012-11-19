@@ -1,0 +1,29 @@
+#interpretation provided by QLC & Don Daniels
+a, a, 
+b, mb, (this symbol is in complementary distribution with the digraph <mb>)
+c, c,
+d, nd, (this symbol is in complementary distribution with the digraph <nd>)
+e, e,
+g, ŋg, (this symbol is in complementary distribution with the digraph <ŋg>)
+i, i,
+i̵, i̵, 
+j, nj, (this symbol is in complementary distribution with the digraph <nj>)
+k, k,
+m, m,
+mb, mb,
+n, n,
+nd, nd,
+nj, nj,
+ŋ, ŋ, 
+ŋg, ŋg 
+ñ, ñ,
+o, o,
+p, p,
+r, r,
+s, s,
+β, β,
+t, t,
+u, u,
+y, y,
+w, w,
+z, z,
