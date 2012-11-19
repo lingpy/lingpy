@@ -776,17 +776,6 @@ def nw_align(
     # get the lengths of the strings
     lenA = len(seqA)
     lenB = len(seqB)
-
-    # define lists for tokens (in case no scoring function is provided)
-    seqA_tokens,seqB_tokens
-    tA,tB
-
-    # define general and specific integers
-    i,j
-    sim # stores the similarity score
-
-    # define values for the main loop
-    gapA,gapB,match,penalty # for the loop
  
     # define values for the traceback
     almA = seqA[:]
