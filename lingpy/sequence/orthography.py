@@ -4,19 +4,49 @@
 Orthography Profile class for parsing strings into Quantitative Language Comparison format
 """
 
-# imports
-
 import sys
 import unicodedata
 import regex
 import os
 
-class DuplicateExceptation(Exception): pass
+class DuplicateExceptation(Exception): pass	
 
 class GraphemeParser(object):
     def __init__(self):
         self.grapheme_pattern = regex.compile("\X", regex.UNICODE)
 
+    def parse_graphemes(self, string):
+        """
+        Given a string, return a space-delimited string of Unicode graphemes
+        using the "\X" regular expression.
+
+        Input is first normalized according to Normalization Ford D(ecomposition).
+        String returned contains "#" to mark word boundaries.
+        """
+        string = string.replace(" ", "#") # add boundaries between words
+        string = unicodedata.normalize("NFD", string)
+        result = "#"
+        graphemes = self.grapheme_pattern.findall(string)
+        for grapheme in graphemes:
+            result += " "+grapheme
+        result += " #"
+        return (result)
+
+    def parse_characters(self, string):
+        """
+        Given a string as input, return a space-delimited string of Unicode characters.
+
+        Input is first normalized according to Normalization Ford D(ecomposition).
+        String returned contains "#" to mark word boundaries.
+        """
+        string = string.replace(" ", "#") # add boundaries between words
+        string = unicodedata.normalize("NFD", string)
+        result = "#"
+        for character in string:
+            result += " "+character
+        result += " #"
+        return (result)
+        
     def parse_string_to_graphemes_string(self, string):
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
