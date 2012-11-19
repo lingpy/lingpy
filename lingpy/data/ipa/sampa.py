@@ -2,7 +2,6 @@ import sys
 import os
 import regex as re
 
-
 # data for sampa2ipa (Peter Kleiwegs implementation)
 path = os.path.split(    
         os.path.abspath(        
