@@ -49,7 +49,7 @@ def ipa2tokens(
     >>> from lingpy import *
     >>> myseq = 't͡sɔyɡə'
     >>> ipa2tokens(myseq)
-    [u't\u0361s', u'\u0254y', u'\u0261', u'\u0259']
+    ['t\u0361s', u'\u0254y', u'\u0261', u'\u0259']
     >>> for t in ipa2tokens(myseq): print t
     t͡s	
     ɔy	
@@ -87,7 +87,7 @@ def ipa2tokens(
 
     # matches for regular expressions using the findall-function
     # m_1 matches all affricates and following diacritics
-    m_1 = r'([^'+dv+r']['+u'\u0361\u035c'+r'][^'+dv+r']['+diacritics+r']*)'
+    m_1 = r'([^'+dv+r']['+'\u0361\u035c'+r'][^'+dv+r']['+diacritics+r']*)'
     
     # m_2 matches all vowels and following diacritics. If merge_vowels is
     # set to False, the vowels will be separated
