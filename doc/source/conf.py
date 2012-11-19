@@ -55,7 +55,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'QLC-LingPy'
-copyright = '2012, Johann-Mattis List, Steven Moran, Michael Cysouw'
+copyright = '2012, QLC Research Group, Philipps-University Marburg'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -253,7 +253,7 @@ texinfo_documents = [
             'index', 
             'QLC-LingPy', 
             'QLC-LingPy Documentation',
-            'Johann-Mattis List, Steven Moran, Michael Cysouw', 
+            'Johann-Mattis List, Steven Moran', 
             'QLC-LingPy', 
             'Python library for historical linguistics.',
             'Miscellaneous'),

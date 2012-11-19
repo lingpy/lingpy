@@ -4,7 +4,7 @@ Python Library for Historical Linguistics
  
 ..   :Release: |version|
 ..   :Date: |today|
-..   :Author: Johann-Mattis List, Steven Moran, Michael Cysouw
+..   :Author: QLC Research Group, Philipps-University, Marburg
 
 .. QLC-LingPy is a suite of open source Python modules for sequence comparison, distance analyses, data operations and visualization methods in quantitative historical linguistics.
 
@@ -37,11 +37,14 @@ Python Library for Historical Linguistics
     <col class="field-name" />
     <col class="field-body" />
     <tbody valign="top">
-    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.0.dev</td>
+    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">1.0.dev</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">November 2, 2012</td>
+    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">November 19, 2012</td>
     </tr>
-    <tr class="field-odd field"><th class="field-name">Authors:</th><td class="field-body">Johann-Mattis List, Steven Moran, Michael Cysouw</td>
+    </tr>
+    <tr class="field-even field"><th class="field-name">Project:</th><td class="field-body">QLC Research Group, Philipps-University Marburg </td>
+    </tr>
+
     </tr>
     </tbody>
     </table></td></tr>
