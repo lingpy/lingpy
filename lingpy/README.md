@@ -13,3 +13,4 @@ The library in it's current state consist of the following modules:
 * meaning - module is dedicated to semantic approaches to automatic language comparison
 * read - basic module defines specific functions to read in various data types
 * sequence - basic module for the handling of sequential data (most often: words)
+
