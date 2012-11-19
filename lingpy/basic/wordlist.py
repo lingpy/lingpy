@@ -159,10 +159,11 @@ class WordList(object):
             colIdx = [i for i in range(len(data[0])) if \
                     self._alias[data[0][i]] == col][0]
         except:
-            print(
-                "[!] Could not find row and col in configuration or input file!"
-                )
-            print([self._alias[i] for i in data[0]],row,col)
+            #print(
+            #    "[!] Could not find row and col in configuration or input file!"
+            #    )
+            raise ValueError("[!] Could not find row and col in configuration or input file!")
+            #print([self._alias[i] for i in data[0]],row,col)
 
         basic_rows = sorted(
                 set(

@@ -6,7 +6,7 @@ from ..data import *
 from ..algorithm import *
 from ..algorithm.cluster import _neighbor,_upgma,_flat_upgma
 
-class _Multiple(object):
+class Multiple(object):
     """
     Basic class for multiple sequence alignment analyses.
     """

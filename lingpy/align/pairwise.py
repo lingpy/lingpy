@@ -7,7 +7,7 @@ from ..data import *
 from ..algorithm import *
 
 
-class _Pairwise(object):
+class Pairwise(object):
     """
     Basic class for the handling of pairwise sequence alignments (PSA).
 

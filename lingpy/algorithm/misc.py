@@ -2,9 +2,11 @@
 """
 This module provides miscellaneous functions which are mostly used internally.
 """
+import sys
 from re import sub,findall
 from numpy import array,sqrt,zeros
 from ..data import *
+from ..data.ipa.sampa import reXS,xs
 
 def ipa2tokens(
         seq, 
@@ -834,3 +836,16 @@ def ngrams(sequence):
         l -= 1
 
     return sorted(out,key=lambda x:len(x),reverse=True)
+
+def sampa2uni(seq):
+    """
+    Convert sequence in ipa.sampa-format to ipa.unicode.
+    """
+
+    result = ''
+    tokens = reXS.findall(seq)
+    for tok, err in tokens:
+        assert not err and tokens
+        result += xs[tok]
+
+    return result
