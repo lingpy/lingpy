@@ -12,7 +12,7 @@ import sys
 import operator
 import unicodedata
 
-from lingpy.sequence import OrthographyParser
+from lingpy.sequence.orthography import OrthographyParser
 
 def unigram_model(list):
     """
