@@ -106,6 +106,12 @@ class WordList(object):
             col = 'doculect',
             conf = ''
             ):
+        
+        # try to load the data
+        try:
+            data = _load_dict(data)
+        except:
+            pass
 
         # load the configuration file
         if not conf:
@@ -151,7 +157,7 @@ class WordList(object):
 
         # add emtpy alias for empty strings
         self._alias[''] = ''
-
+        
         # retrieve basic types for rows and columns from the word list
         try:
             rowIdx = [i for i in range(len(data[0])) if \
