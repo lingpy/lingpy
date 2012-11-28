@@ -4,10 +4,10 @@
 
 import os
 
-os.system('cython align.pyx')
+os.system('cython alignx.pyx')
 raw_input('ok')
-os.system('gcc -c -fPIC -I/usr/include/python3.3m/ align.c')
-os.system('gcc -shared align.o -o align.so')
+os.system('gcc -c -fPIC -I/usr/include/python3.3m/ -I/usr/lib/python3.3/site-packages/numpy/core/include/ alignx.c')
+os.system('gcc -shared alignx.o -o alignx.so')
 
 #raw_input('Successful')
 #

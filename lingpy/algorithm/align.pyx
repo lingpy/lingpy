@@ -308,14 +308,14 @@ def _dialign(
                 for l in range(k,-1,-1):
                     new_score += scorer[i-l][j-l]
                 new_length = k+1
-
+ 
                 if new_score > old_score:
                     old_score = new_score
                     old_length = new_length
-
+ 
             if listB[i-1] < 0 and listA[j-1] > 0 and j != lenA:
-                scoreA = matrix[i-1][j] - 1000000000
-            else:
+                 scoreA = matrix[i-1][j] - 1000000000
+             else:
                 scoreA = matrix[i-1][j]
 
             if listA[j-1] < 0 and listB[i-1] > 0 and i != lenB:
