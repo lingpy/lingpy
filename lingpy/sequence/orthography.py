@@ -2,6 +2,9 @@
 
 """
 Orthography Profile class for parsing strings into Quantitative Language Comparison format
+
+@date: 2010-12-01
+@author: Steven Moran
 """
 
 import sys
@@ -12,8 +15,42 @@ import os
 class DuplicateExceptation(Exception): pass	
 
 class GraphemeParser(object):
+    """
+    Simple class to parse Unicode graphemes in a string.
+
+    todo: introduce parser for dealing with Letter Modifiers
+
+    """
     def __init__(self):
         self.grapheme_pattern = regex.compile("\X", regex.UNICODE)
+
+    def combine_modifiers(self, string):
+        """
+        Given a string that is space-delimited on Unicode graphemes,
+        group Unicode modifier letters with their preceeding base characters.
+
+        # TODO: check if we need to apply NDF after string is parsed
+        """
+        result = []
+        graphemes = string[1:-1].split()
+        temp = ""
+        count = len(graphemes)
+        for grapheme in reversed(graphemes):
+            count -= 1
+            if len(grapheme) == 1 and unicodedata.category(grapheme) == "Lm":
+                temp = grapheme+temp
+
+                # hack for the cases where a space modifier is the first character
+                # in the string
+                if count == 0:
+                    result[-1] = temp+result[-1]
+                continue
+
+            result.append(grapheme+temp)
+            temp = ""
+        return "# "+" ".join(result[::-1])+" #"
+
+
 
     def parse_graphemes(self, string):
         """
@@ -98,6 +135,9 @@ class OrthographyRulesParser(object):
             match = self.rules[i].search(result)
             if not match == None:
                 result = regex.sub(self.rules[i], self.replacements[i], result)
+        # this is incase someone introduces a non-NFD ordered sequence of characters
+        # in the orthography profile
+        result = unicodedata.normalize("NFD", result)
         return result
 
 class OrthographyParser(object):

@@ -4,6 +4,9 @@
 This module provides some basic ngram functions, such as parsing QLC-string formatted 
 strings into ngrams sequences and generating unigram models for intial orthography 
 profiles.
+
+@date: 2011-01-01
+@author: Steven Moran
 """
 
 import collections
@@ -37,6 +40,15 @@ def unigram_model(list):
         frequency = segments_hash[segment]/segment_count
         plog = "coming..."
         print(segment+"\t"+str(count)+"\t"+str(frequency)) # +"\t"+str(plog))
+
+def unicode_categories(list):
+    """
+    Return the type of unicode categories and their characters, e.g.
+
+    Ll (Letter, Lowercase): a, b, c, d, e...
+    Lm (Letter, Modifier): ', :, ...
+    """
+    pass
 
 def unicode_model(list):
     """
