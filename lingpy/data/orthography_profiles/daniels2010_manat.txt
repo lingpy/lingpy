@@ -1,4 +1,6 @@
-#interpreation provided by QLC & Don Daniels
+#daniels2010_manat orthography profile
+#author: Jelena Prokic
+#interpretation: Jelena Prokic & Don Daniels
 a, a, 
 b, mb, (this symbol is in complementary distribution with the digraph <mb>)
 c, c, 

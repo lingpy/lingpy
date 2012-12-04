@@ -1,3 +1,5 @@
+#Huber1992 orthography profile
+#author: Jelena Prokic
 ˈ, 
 ., 
 A, a

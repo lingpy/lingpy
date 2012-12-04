@@ -1,4 +1,6 @@
-#interpretation provided by QLC & Don Daniels
+#daniels2010_kulsab orthography profile
+#author:Jelena Prokic, 
+#interpretation: Jelena Prokic & Don Daniels
 a, a, 
 b, b,
 d, d,

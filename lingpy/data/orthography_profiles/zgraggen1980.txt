@@ -1,4 +1,5 @@
 #zgraggen1980 orthography profile
+#author: Jelena Prokic
 a,
 a:,
 aʰ,

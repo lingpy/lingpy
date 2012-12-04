@@ -1,4 +1,6 @@
-#interpretation provided by QLC & Don Daniels
+#daniels2010_aisi orthography profile
+#author: Jelena Prokic
+#interpretation: Jelena Prokic & Don Daniels
 a, a,
 b, b, (I have good reason to believe the voiced stops in Aisi are borrowings, but I don't know if they're phonemic or not; they're probably frequent enough that they're phonemes, but they may also be allophones of /β r ɣ/)
 d, d, (I have good reason to believe the voiced stops in Aisi are borrowings, but I don't know if they're phonemic or not; they're probably frequent enough that they're phonemes, but they may also be allophones of /β r ɣ/)

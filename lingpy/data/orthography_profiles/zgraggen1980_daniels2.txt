@@ -1,4 +1,7 @@
-﻿#zgraggen1980 orthography profile, extremely reduced vowel separatation (also removing lenght and nasalisation) by Don Daniels, 29 June 2012
+﻿#zgraggen1980 orthography profile
+#date: 29 June 2012
+#author: Jelena Prokic, 
+#extremely reduced vowel separatation (also removing lenght and nasalisation): Don Daniels
 a,a, 
 a:,a, 
 aʰ,a, 

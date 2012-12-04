@@ -1,4 +1,5 @@
-#burtch1983 orthography profile. interpretation by qlc
+#burtch1983 orthography profile
+#author: Jelena Prokic
 a, a,
 á, a, occurs only once in non-parsed entry 'lápiz muìdo jicaì̵ ra'
 aì, ai,

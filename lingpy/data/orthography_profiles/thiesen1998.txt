@@ -1,4 +1,5 @@
-#thiesen1998 orthography profile. interpretation provided by QLC.
+#thiesen1998 orthography profile
+#author: Jelena Prokic
 -, 
 a, a, 
 á, a,

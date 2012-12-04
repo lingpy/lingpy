@@ -1,4 +1,7 @@
-﻿#zgraggen1980 orthography profile, reduced vowel separatation by Don Daniels, 29 June 2012
+﻿#zgraggen1980 orthography profile
+#date: 29 June 2012
+#author: Jelena Prokic 
+#reduced vowel separation: Don Daniels
 a,a, 
 a:,a:, 
 aʰ,a, 

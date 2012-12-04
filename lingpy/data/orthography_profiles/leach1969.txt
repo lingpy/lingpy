@@ -1,4 +1,5 @@
-#leach1969 orthography profile. interpretation provided by QLC.
+#leach1969 orthography profile
+#author: Jelena Prokic
 _, ,
 a, a, 
 á, a,
