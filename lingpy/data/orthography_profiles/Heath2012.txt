@@ -1,4 +1,5 @@
-#Dogon orthography profile
+#heath2012 (Dogon languages) orthography profile
+#author: Jelena Prokic
 a,
 à,
 á,
