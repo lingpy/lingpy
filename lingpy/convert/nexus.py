@@ -4,7 +4,7 @@ Basic module for creating nexus output of linguistic data.
 __author__="Johann-Mattis List"
 __date__="2012-12-05"
 
-def pap2nex(taxa,paps,filename='nexus'):
+def pap2nex(taxa,paps,missing=0,filename='nexus'):
     """
     Function converts a list of paps into nexus file format.
 
@@ -12,8 +12,8 @@ def pap2nex(taxa,paps,filename='nexus'):
     """
 
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
-    out += "FORMAT DATATYPE=STANDARD GAP=- MISSING=? interleave=yes;\n"
-    out += "MATRIX\n\n{2}\n;\n\nEND;"
+    out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
+    out += "MATRIX\n\n{3}\n;\n\nEND;"
     
     # get longest taxon
     maxTax = max([len(taxon) for taxon in taxa])
@@ -42,11 +42,12 @@ def pap2nex(taxa,paps,filename='nexus'):
             out.format(
                 len(taxa),
                 len(paps),
+                missing,
                 matrix
                 )
             )
 
-    print('[i] wrote stuff to file')
+    print('[i] Data has been written to file <{0}.nex>.'.format(filename))
     
     return
 

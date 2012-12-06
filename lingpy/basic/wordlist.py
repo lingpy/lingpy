@@ -10,6 +10,8 @@ import os
 import builtins
 import numpy as np
 
+from ..convert import *
+
 def _load_dict(infile):
     """
     Simple function only used to test the WordList class.
@@ -165,11 +167,7 @@ class WordList(object):
             colIdx = [i for i in range(len(data[0])) if \
                     self._alias[data[0][i]] == col][0]
         except:
-            #print(
-            #    "[!] Could not find row and col in configuration or input file!"
-            #    )
             raise ValueError("[!] Could not find row and col in configuration or input file!")
-            #print([self._alias[i] for i in data[0]],row,col)
 
         basic_rows = sorted(
                 set(
@@ -717,9 +715,11 @@ class WordList(object):
             for key in self:
                 cogid = self[key][cogIdx]
                 colIdx = self.cols.index(self[key][self._colIdx])
-                try:
-                    self._etym_dict[ref][cogid]
-                except:
+                #try:
+                #    self._etym_dict[ref][cogid]
+                #except:
+                # assign new line if cogid is missing
+                if cogid not in self._etym_dict[ref]:
                     self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
                 
                 # assign the values for the current session
@@ -745,6 +745,7 @@ class WordList(object):
                                 )
                     else:
                         etym_dict[key].append(0)
+
         else:
             etym_dict = self._etym_dict[ref]
         
@@ -755,7 +756,9 @@ class WordList(object):
 
     def getPaps(
             self,
-            ref = 'cogid'
+            ref = 'cogid',
+            entry = 'concept',
+            missing = 0
             ):
         """
         Function returns a list of present-absent-patterns of a given word list.
@@ -765,28 +768,90 @@ class WordList(object):
         ref : string (default = "cogid")
             The reference entry which is used to store the cognate ids.
         """
-        
+         
         try:
-            return self._cache['#paps#',ref]
+            return self._cache['#paps#'+str(missing)+'#',ref]
         except:
             pass
+        
+        #try:
+        #    self._etym_dict
+        #    etym_dict = self._cache[ref,entry]
+        #except:
+        etym_dict = self.getEtymDict(ref=ref,entry=entry)
 
-        try:
-            self._etym_dict[ref]
-        except KeyError:
-            print("[!] Could not find the specified reference.")
-            return
+        #if (ref,'concept') not in self._cache:
+        #    self._etym_dict[ref,'concept']
+        #except KeyError:
+        #    raise ValueError("[!] Could not find the specified reference.")
+            
 
+        # create dictionary for paps
         paps = {}
-        # retrieve the values 
-        for key,values in self._etym_dict[ref].items():
+
+        # create dictionary that stores missing data
+        missed = {}
+
+        # retrieve the values
+        for key,values in etym_dict.items(): #self._etym_dict[ref,'concept'].items():
             paps[key] = []
+
+            # check for missing data
+            meanings = set()
             for value in values:
-                if not value:
+                if value:
+                    for v in value:
+                        meanings.add(v)
+            if len(meanings) == 1:
+                meaning = meanings.pop()
+
+                if meaning not in missed:
+                    
+                    # get the list in the wordlist of self
+                    tmp = np.array(self.getList(row=meaning))
+                    
+                    # get the sum of the list
+                    tmp = sum(tmp)
+                    
+                    # get all languages which are zero
+                    gaps = [i for i in range(self.width) if not tmp[i]]
+
+                    # append gaps to missing
+                    missed[meaning] = gaps
+            else:
+                meaning = False
+
+            for i,value in enumerate(values):
+                if value:
                     paps[key].append(1)
                 else:
-                    paps[key].append(0)
+                    if meaning:
+                        if i in missed[meaning]:
+                            paps[key].append(missing)
+                        else:
+                            paps[key].append(0)
+                    else:
+                        paps[key].append(1)
         
-        self._cache['#paps#',ref] = paps
+        self._cache['#paps#'+str(missing)+'#',ref] = paps
         
         return paps
+
+    def writePaps(
+            self,
+            ref = 'cogid',
+            entry = 'concept',
+            missing = 0,
+            filename = 'nexus'
+            ):
+        """
+        Write paps to nexus-file.
+        """
+
+        paps = self.getPaps(
+                ref=ref,
+                entry=entry,
+                missing=missing
+                )
+        pap2nex(self.cols,paps,missing=missing,filename=filename)
+
