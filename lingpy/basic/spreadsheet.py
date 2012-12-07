@@ -22,7 +22,6 @@ brackets ("[", "]") ==
   2. within a word -- transcriber thinks segment is phonetic only
   3. after a word but not with "?" -- optional compounded word
   4. next to a word -- also optional compounded word
- 
 
 """
 
