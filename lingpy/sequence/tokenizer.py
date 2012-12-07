@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 """
-
 Work in progress of a module to handle some of the tokenization of data.
 
 Will be superseded.

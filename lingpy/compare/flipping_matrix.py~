@@ -2,9 +2,6 @@
 """
 Module to create sparse matrices and headers for Quantitative Language Comparison data.
 
-@date: 2012-06-01
-@author: Steven Moran
-
 """
 import sys
 import collections
@@ -43,11 +40,6 @@ class Matrix:
         # data stored: {concept: {counterpart: count} }
         self._concepts_words_counts = collections.defaultdict(lambda : collections.defaultdict(int))
 
-        # data stored: {language: {concept:1} }
-        self._language_concepts = collections.defaultdict(lambda : collections.defaultdict(int))
-
-
-
         # data containers
         non_unique_parsed_words = set()
         non_unique_ngrams = set()
@@ -62,11 +54,6 @@ class Matrix:
                 parsed_counterpart_tuple = orthography_parser.parse_string_to_graphemes(counterpart) # graphemes
             elif gram_type == "phonemes":
                 parsed_counterpart_tuple = orthography_parser.parse_string_to_ipa_phonemes(counterpart) # phonemes
-            elif gram_type == "already_parsed":
-                grams_list = counterpart.split()
-                grams_tuple = tuple(grams_list)
-                parsed_counterpart_tuple = (True, grams_tuple)
-                
             else:
                 sys.exit('\ninvalid gram type: specify "phonemes" or "graphemes"\n')
                 
@@ -114,12 +101,16 @@ class Matrix:
             # print("pg: ", parsed_word)
             # print()
 
-            parsed_word_id = parsed_word+"_"+language
+            # flipped
+            # parsed_word_id = parsed_word+"_"+language
+            parsed_word_id = language+"_"+parsed_word
 
             # if parsed_word not in dict:
 
             if not parsed_word_id in self._words_ngrams_counts:
                 for ngram in ngrams_string.split():
+                    # flipped
+                    # non_unique_ngram = language+"_"+ngram
                     non_unique_ngram = language+"_"+ngram
                     non_unique_ngrams.add(non_unique_ngram)
                     self._words_ngrams_counts[parsed_word_id][non_unique_ngram] += 1
@@ -127,9 +118,13 @@ class Matrix:
 
 
             # update data structures
-            self._languages_words_counts[language][parsed_word+"_"+language] += 1
-            self._concepts_words_counts[concept][parsed_word+"_"+language] += 1
-            self._language_concepts[language][concept] += 1
+            # self._languages_words_counts[language][parsed_word+"_"+language] += 1
+            # self._concepts_words_counts[concept][parsed_word+"_"+language] += 1
+
+            # flipped
+            self._languages_words_counts[language][language+"_"+parsed_word] += 1
+            self._concepts_words_counts[concept][language+"_"+parsed_word] += 1
+
 
             # add to header lists
             languages.add(language) # Append languages to unique set of langauge.
@@ -138,7 +133,9 @@ class Matrix:
 
 
             # add to non-unique header lists
-            non_unique_parsed_words.add(parsed_word+"_"+language)
+            # non_unique_parsed_words.add(parsed_word+"_"+language)
+            # flipped
+            non_unique_parsed_words.add(language+"_"+parsed_word)
 
 
         # listfy to sort
@@ -165,21 +162,24 @@ class Matrix:
         wg = lil_matrix( (len(self.non_unique_parsed_words),len(self.non_unique_ngrams)), dtype=int)
 
         for i in range(0, len(self.non_unique_parsed_words)):
-            word, separator, language = self.non_unique_parsed_words[i].partition("_")
             # word_language_tokens = self.non_unique_parsed_words[i].partition("_")
-            # language
-            word_language = language
+            # word_language = word_language_tokens[2]
+            # flipped
+            language_word_tokens = self.non_unique_parsed_words[i].partition("_")
+            language_word = language_word_tokens[2]
 
             for j in range(0, len(self.non_unique_ngrams)):
                 # ngram_language_tokens = self.non_unique_ngrams[j].partition("_")
-                language, separator, ngram = self.non_unique_ngrams[j].partition("_")
-                # print(ngram_language_tokens)
                 # ngram_language = ngram_language_tokens[2]
-                ngram_language = language
+                # flipped
+                language_ngram_tokens = self.non_unique_ngrams[j].partition("_")
+                language_ngram = language_ngram_tokens[2]
 
                 # if the language IDs don't match, continue...
-                if word_language != ngram_language:
-                    # print(word_language)
+                # if word_language != ngram_language:
+                #    continue
+                # flipped
+                if language_word != language_ngram:
                     continue
 
                 # check to see if the word has the ngram
@@ -201,17 +201,29 @@ class Matrix:
 
         for i in range(0, len(self.non_unique_parsed_words)):
             rows.append(i)
-            word_language_tokens = self.non_unique_parsed_words[i].partition("_")
-            word_language = word_language_tokens[2]
+
+            # word_language_tokens = self.non_unique_parsed_words[i].partition("_")
+            # word_language = word_language_tokens[2]
+            # flipped
+            language_word_tokens = self.non_unique_parsed_words[i].partition("_")
+            language_word = language_word_tokens[2]
 
             for j in range(0, len(self.non_unique_ngrams)):
                 cols.append(j)
-                ngram_language_tokens = self.non_unique_ngrams[j].partition("_")
-                ngram_language = ngram_language_tokens[2]
+                # ngram_language_tokens = self.non_unique_ngrams[j].partition("_")
+                # ngram_language = ngram_language_tokens[2]
+                # flipped
+                language_ngram_tokens = self.non_unique_ngrams[j].partition("_")
+                language_ngram = language_ngram_tokens[2]
 
                 # if the language IDs don't match, continue...
-                if word_language != ngram_language:
+                # if word_language != ngram_language:
+                #    continue
+                # flipped
+                if language_word != language_ngram:
                     continue
+
+
 
                 # check to see if the word has the ngram
                 if self._words_ngrams_counts[self.non_unique_parsed_words[i]][self.non_unique_ngrams[j]]:
@@ -276,15 +288,25 @@ class Matrix:
         wl = lil_matrix( (len(self.non_unique_parsed_words),len(self.languages)), dtype=int )
 
         for i in range(0, len(self.non_unique_parsed_words)):
-            word_language_tokens = self.non_unique_parsed_words[i].partition("_")
-            word_language = word_language_tokens[2]
-            word, separator, language = self.non_unique_parsed_words[i].partition("_")
+            # Yorno-so_word
+            # flipping
+            # word_language_tokens = self.non_unique_parsed_words[i].partition("_")
+            # word_language = word_language_tokens[2]
+
+            language_word_tokens = self.non_unique_parsed_words[i].partition("_")
+            language_word = language_word_tokens[2]
+
+            language, separator, word = self.non_unique_parsed_words[i].partition("_")
 
             for j in range(0, len(self.languages)):
                 # if the language IDs don't match, continue
-                if word_language != self.languages[j]:
+                # flipping
+                # if word_language != self.languages[j]:
+
+                if language != self.languages[j]:
                     continue
-                # here
+                # print("w", language, "l", self.languages[j])
+
                 if self._languages_words_counts[self.languages[j]][self.non_unique_parsed_words[i]]:
                     wl[i,j] = 1
             #gc.collect()
@@ -302,11 +324,11 @@ class Matrix:
         wm = lil_matrix( (len(self.non_unique_parsed_words),len(self.concepts)), dtype=int )
 
         for i in range(0, len(self.non_unique_parsed_words)):
-            word, separator, language = self.non_unique_parsed_words[i].partition("_")
             for j in range(0, len(self.concepts)):
-                if not self.concepts[j] in self._language_concepts[language]:
-                    continue
+                #if language_word != language_ngram:
+                #    continue
                 if self._concepts_words_counts[self.concepts[j]][self.non_unique_parsed_words[i]]:
+
                     # print(self._concepts_words_counts[self.concepts[j]][self.non_unique_parsed_words[i]])
                     # print(self.non_unique_parsed_words[i]+"\t"+self.concepts[j])
 
@@ -319,8 +341,10 @@ class Matrix:
         gp = lil_matrix( (len(self.non_unique_ngrams),len(self.unique_ngrams)), dtype=int )
         for i in range(0, len(self.non_unique_ngrams)):
             for j in range(0, len(self.unique_ngrams)):
+                # flipping
+                # grapheme, separator, language_id = self.non_unique_ngrams[i].partition("_")
                 language_id, separator, grapheme = self.non_unique_ngrams[i].partition("_")
-                # print(grapheme, separator, language_id)
+
                 # get the phoneme-ngram; recompose from tuples
                 phoneme = "" 
                 for ngram in self.unique_ngrams[j]:
@@ -362,7 +386,10 @@ class Matrix:
         header = []
         for item in list:
             count, ngram_id = item.split("\t")
+            # ngram, separator, id = ngram_id.partition("_")
+            # flipped
             id, separator, ngram = ngram_id.partition("_")
+
             separated_ngram = self._ngram_to_split_ngram[ngram]
             # error check
             if ngram != separated_ngram.replace("_", ""):
@@ -370,7 +397,6 @@ class Matrix:
                 sys.exit(1)
             header.append(count+"\t"+separated_ngram+"_"+id+"\t"+ngram_id)
         return header
-
 
 
     # makes phoneme_header ??
@@ -415,14 +441,16 @@ class Matrix:
                 if self.ngram_length > 1:
                     # creates word-ngram strings: anene_7522 #_a_7522 a_n_7522 n_e_7522 ... 
                     tokens = gram.partition("_")
-                    language, separator, ngram = gram.partition("_")
-                    unigram_item = self._ngram_to_split_ngram[ngram]
-
+                    # flipping
+                    # unigram_item = self._ngram_to_split_ngram[tokens[0]]
+                    unigram_item = self._ngram_to_split_ngram[tokens[2]]
                     # checks that the delimited ngrams are valid
-                    if ngram != unigram_item.replace("_", ""):
+                    # flipping
+                    # if tokens[0] != unigram_item.replace("_", ""):
+                    if tokens[2] != unigram_item.replace("_", ""):
                         print("your grams aren't matching")
                         sys.exit(1)
-                    result += "\t"+unigram_item+separator+language
+                    result += "\t"+unigram_item+tokens[1]+tokens[2]
                 else:
                     result += "\t"+gram
 
@@ -442,17 +470,16 @@ if __name__=="__main__":
     from qlc.orthography import OrthographyParser, GraphemeParser
     from scipy.io import mmread, mmwrite # write sparse matrices
 
-    if len(sys.argv) != 3:
-        print("call: python matrix.py bibtex_key output_directory\n")
-        print("python matrix.py huber1992 huber1992-bigrams\n")
+    if len(sys.argv) != 2:
+        print("call: python matrix.py source\n")
+        print("python matrix.py huber1992\n")
 
-    bibtex_key = sys.argv[1] # bibtex key of source in the database, e.g. zgraggen1980
-    source = sys.argv[2] # dictionary/wordlist source key
+    source = sys.argv[1] # dictionary/wordlist source key
     output_dir = "output/"+source+"/"
 
     # get data from corpus reader
-    cr = CorpusReaderWordlist("data/csv")          # real data
-    # cr = CorpusReaderWordlist("data/testcorpus") # test data
+    # cr = CorpusReaderWordlist("data/csv")          # real data
+    cr = CorpusReaderWordlist("data/testcorpus") # test data
 
     # initialize orthography parser for source
     o = OrthographyParser("data/orthography_profiles/"+source+".txt")
@@ -460,14 +487,13 @@ if __name__=="__main__":
 
     # create a generator of corpus reader data
     wordlist_iterator = ( (wordlistdata_id, concept, counterpart)
-        for wordlistdata_id in cr.wordlistdata_ids_for_bibtex_key(bibtex_key)
+        for wordlistdata_id in cr.wordlistdata_ids_for_bibtex_key(source)
         for concept, counterpart in cr.concepts_with_counterparts_for_wordlistdata_id(wordlistdata_id)
     )
 
     # write the data to disk -- note it exhausts the generator, so either the generator
     # must be "regenerated" or run the following lines without the rest of the code below
     # move this into a method in the class
-
     """
     file = open(output_dir+source+"_data.txt", "w")    
     file.write("# wordlistdata_id"+"\t"+"language bookname"+"\t"+"concept"+"\t"+"counterpart"+"\n")
@@ -478,22 +504,20 @@ if __name__=="__main__":
     """
 
     # initialize matrix class
-    m = Matrix(wordlist_iterator, o, "phonemes", 2) # pass ortho parser and ngram length
+    m = Matrix(wordlist_iterator, o, "graphemes", 1) # pass ortho parser and ngram length
 
     t0=time.time()
 
     # write the sparse matrices to disk...
 
     wg = m.get_wg_matrix()
-    mmwrite(output_dir+source+"_WG.mtx", wg)
-
     wl = m.get_wl_matrix()
-    mmwrite(output_dir+source+"_WL.mtx", wl)
-
     wm = m.get_wm_matrix()
-    mmwrite(output_dir+source+"_WM.mtx", wm)
-
     gp = m.get_gp_matrix()    
+
+    mmwrite(output_dir+source+"_WG.mtx", wg)
+    mmwrite(output_dir+source+"_WL.mtx", wl)
+    mmwrite(output_dir+source+"_WM.mtx", wm)
     mmwrite(output_dir+source+"_GP.mtx", gp)
 
 
@@ -502,7 +526,7 @@ if __name__=="__main__":
     # 1. write header: wordlistid \t language name
     file = open(output_dir+source+"_wordlistids_lgnames_header.txt", "w")
     wordlist_ids = []
-    for wordlistdata_id in cr.wordlistdata_ids_for_bibtex_key(bibtex_key):
+    for wordlistdata_id in cr.wordlistdata_ids_for_bibtex_key(source):
         wordlist_ids.append(wordlistdata_id)
         # print(len(wordlist_ids))
         
@@ -510,7 +534,6 @@ if __name__=="__main__":
     for wordlist_id in wordlist_ids:
         file.write(wordlist_id+"\t"+cr.get_language_bookname_for_wordlistdata_id(wordlist_id)+"\n")
     file.close()
-
 
     # 2. write words header: count \t word_id 
     file = open(output_dir+source+"_words_header.txt", "w")    

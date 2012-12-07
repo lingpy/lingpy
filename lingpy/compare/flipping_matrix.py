@@ -2,6 +2,9 @@
 """
 Module to create sparse matrices and headers for Quantitative Language Comparison data.
 
+@date: 2012-06-01
+@author: Steven Moran
+
 """
 import sys
 import collections
