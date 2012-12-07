@@ -8,6 +8,7 @@ This module provides a basic class for the handling of word lists.
 
 import os
 import builtins
+from datetime import date
 import numpy as np
 
 from ..convert import *
@@ -60,7 +61,7 @@ def _load_dict(infile):
     return d
             
 
-class WordList(object):
+class Wordlist(object):
     """
     Basic class for the handling of multilingual word lists.
 
@@ -321,7 +322,7 @@ class WordList(object):
             elif attr == self._col_name:
                 return self.cols
             elif attr in self._header:
-                return self.getEntries(attr)
+                return self.get_entries(attr)
             else:
                 raise AttributeError("%r object has no attribute %r" %
                         (type(self).__class__,attr))
@@ -345,7 +346,7 @@ class WordList(object):
         self._cache = {}
 
 
-    def getDict(
+    def get_dict(
             self,
             col = '',
             row = '',
@@ -433,7 +434,7 @@ class WordList(object):
             print("[!] Neither rows nor columns are selected!")
        
 
-    def getList(
+    def get_list(
             self,
             row='',
             col='',
@@ -559,7 +560,7 @@ class WordList(object):
         else:
             print("[!] Neither rows nor columns are selected!")
     
-    def getEntries(
+    def get_entries(
             self,
             entry
             ):
@@ -598,7 +599,7 @@ class WordList(object):
 
             return entries
 
-    def addEntries(
+    def add_entries(
             self,
             entry,
             source,
@@ -660,7 +661,7 @@ class WordList(object):
                 self[key].append(t)
         
     
-    def getEtymDict(
+    def get_etymdict(
             self,
             ref = "cogid",
             entry = ''
@@ -754,7 +755,7 @@ class WordList(object):
 
         return etym_dict
 
-    def getPaps(
+    def get_paps(
             self,
             ref = 'cogid',
             entry = 'concept',
@@ -767,6 +768,10 @@ class WordList(object):
         ----------
         ref : string (default = "cogid")
             The reference entry which is used to store the cognate ids.
+        entry : string (default = "concept")
+            The field which is used to check for missing data.
+        missing : string,int (default = 0)
+            The marker for missing items.
         """
          
         try:
@@ -774,17 +779,7 @@ class WordList(object):
         except:
             pass
         
-        #try:
-        #    self._etym_dict
-        #    etym_dict = self._cache[ref,entry]
-        #except:
-        etym_dict = self.getEtymDict(ref=ref,entry=entry)
-
-        #if (ref,'concept') not in self._cache:
-        #    self._etym_dict[ref,'concept']
-        #except KeyError:
-        #    raise ValueError("[!] Could not find the specified reference.")
-            
+        etym_dict = self.get_etymdict(ref=ref,entry=entry)            
 
         # create dictionary for paps
         paps = {}
@@ -808,7 +803,7 @@ class WordList(object):
                 if meaning not in missed:
                     
                     # get the list in the wordlist of self
-                    tmp = np.array(self.getList(row=meaning))
+                    tmp = np.array(self.get_list(row=meaning))
                     
                     # get the sum of the list
                     tmp = sum(tmp)
@@ -837,21 +832,46 @@ class WordList(object):
         
         return paps
 
-    def writePaps(
+    def output(
             self,
-            ref = 'cogid',
-            entry = 'concept',
-            missing = 0,
-            filename = 'nexus'
+            fileformat,
+            **keywords
             ):
         """
-        Write paps to nexus-file.
+        Write wordlist to file.
         """
+        
+        # add the default parameters, they will be checked against the keywords
+        defaults = {
+                'ref':'cogid',
+                'entry':'concept',
+                'missing':0,
+                'filename':'lingpy-{0}'.format(str(date.today())),
+                }
+            
+        # compare with keywords and add missing ones
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
 
-        paps = self.getPaps(
-                ref=ref,
-                entry=entry,
-                missing=missing
-                )
-        pap2nex(self.cols,paps,missing=missing,filename=filename)
+        if fileformat == 'paps.nex':
+            paps = self.get_paps(
+                    ref=keywords['ref'],
+                    entry=keywords['entry'],
+                    missing=keywords['missing']
+                    )
+            pap2nex(
+                    self.cols,
+                    paps,
+                    missing=keywords['missing'],
+                    filename=keywords['filename']+'.paps'
+                    )
+
+        if fileformat == 'taxa':
+            out = ''
+            for col in self.cols:
+                out += col + '\n'
+            f = open(keywords['filename'] + '.taxa','w')
+            f.write(out)
+            f.close()
 
