@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Word Lists (WordList) &mdash; QLC-LingPy</title>
+    <title>Word Lists (Wordlist) &mdash; QLC-LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -63,10 +63,10 @@ QLC-LingPy
           <div class="body">
             
   <div class="section" id="word-lists-wordlist">
-<h1>Word Lists (<a class="reference internal" href="#lingpy.basic.wordlist.WordList" title="lingpy.basic.wordlist.WordList"><tt class="xref py py-class docutils literal"><span class="pre">WordList</span></tt></a>)<a class="headerlink" href="#word-lists-wordlist" title="Permalink to this headline">¶</a></h1>
+<h1>Word Lists (<a class="reference internal" href="../lingpy.basic.wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a>)<a class="headerlink" href="#word-lists-wordlist" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="lingpy.basic.wordlist.WordList">
-<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">WordList</tt><big>(</big><em>data</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.WordList" title="Permalink to this definition">¶</a></dt>
+<dt id="lingpy.basic.wordlist.Wordlist">
+<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">Wordlist</tt><big>(</big><em>data</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Basic class for the handling of multilingual word lists.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -114,23 +114,26 @@ can be easily accessed as two separate two-dimensional lists.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.addEntries.html#lingpy.basic.wordlist.WordList.addEntries" title="lingpy.basic.wordlist.WordList.addEntries"><tt class="xref py py-obj docutils literal"><span class="pre">addEntries</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.add_entries.html#lingpy.basic.wordlist.Wordlist.add_entries" title="lingpy.basic.wordlist.Wordlist.add_entries"><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></a>(entry,&nbsp;source,&nbsp;function,&nbsp;**args)</td>
+<td>Add new entry-types to the word list by modifying given ones.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getDict.html#lingpy.basic.wordlist.WordList.getDict" title="lingpy.basic.wordlist.WordList.getDict"><tt class="xref py py-obj docutils literal"><span class="pre">getDict</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></a>([col,&nbsp;row,&nbsp;entry])</td>
+<td>Function returns dictionaries of the cells matched by the indices.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getEntries.html#lingpy.basic.wordlist.WordList.getEntries" title="lingpy.basic.wordlist.WordList.getEntries"><tt class="xref py py-obj docutils literal"><span class="pre">getEntries</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_entries.html#lingpy.basic.wordlist.Wordlist.get_entries" title="lingpy.basic.wordlist.Wordlist.get_entries"><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></a>(entry)</td>
+<td>Return all entries matching the given entry-type as a two-dimensional list.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getEtymDict.html#lingpy.basic.wordlist.WordList.getEtymDict" title="lingpy.basic.wordlist.WordList.getEtymDict"><tt class="xref py py-obj docutils literal"><span class="pre">getEtymDict</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_etymdict.html#lingpy.basic.wordlist.Wordlist.get_etymdict" title="lingpy.basic.wordlist.Wordlist.get_etymdict"><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></a>([ref,&nbsp;entry])</td>
+<td>Return an etymological dictionary representation of the word list.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getList.html#lingpy.basic.wordlist.WordList.getList" title="lingpy.basic.wordlist.WordList.getList"><tt class="xref py py-obj docutils literal"><span class="pre">getList</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></a>([row,&nbsp;col,&nbsp;entry,&nbsp;flat])</td>
+<td>Function returns lists of rows and columns specified by their name.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.WordList.getPaps.html#lingpy.basic.wordlist.WordList.getPaps" title="lingpy.basic.wordlist.WordList.getPaps"><tt class="xref py py-obj docutils literal"><span class="pre">getPaps</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_paps.html#lingpy.basic.wordlist.Wordlist.get_paps" title="lingpy.basic.wordlist.Wordlist.get_paps"><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></a>([ref,&nbsp;entry,&nbsp;missing])</td>
+<td>Function returns a list of present-absent-patterns of a given word list.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt>(fileformat,&nbsp;**keywords)</td>
+<td>Write wordlist to file.</td>
 </tr>
 </tbody>
 </table>
@@ -181,7 +184,7 @@ can be easily accessed as two separate two-dimensional lists.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Nov 19, 2012.
+      Last updated on Dec 10, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

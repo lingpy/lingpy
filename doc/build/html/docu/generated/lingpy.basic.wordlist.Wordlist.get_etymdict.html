@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Data Module &mdash; QLC-LingPy</title>
+    <title>lingpy.basic.wordlist.Wordlist.get_etymdict &mdash; QLC-LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -62,13 +62,40 @@ QLC-LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="data-module">
-<h1>Data Module<a class="headerlink" href="#data-module" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../data/model.html">Sound Class Models (<tt class="docutils literal"><span class="pre">Model</span></tt>)</a></li>
-</ul>
-</div>
+  <div class="section" id="lingpy-basic-wordlist-wordlist-get-etymdict">
+<h1>lingpy.basic.wordlist.Wordlist.get_etymdict<a class="headerlink" href="#lingpy-basic-wordlist-wordlist-get-etymdict" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="lingpy.basic.wordlist.Wordlist.get_etymdict">
+<tt class="descclassname">Wordlist.</tt><tt class="descname">get_etymdict</tt><big>(</big><em>ref='cogid'</em>, <em>entry=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.get_etymdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an etymological dictionary representation of the word list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>ref</strong> : string (default = &#8220;cogid&#8221;)</p>
+<blockquote>
+<div><p>The reference entry which is used to store the cognate ids.</p>
+</div></blockquote>
+<p><strong>entry</strong> : string (default = &#8216;&#8217;)</p>
+<blockquote>
+<div><p>The entry-type which shall be selected.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>etym_dict</strong> : dict</p>
+<blockquote class="last">
+<div><p>An etymological dictionary representation of the data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>In contrast to the word-list representation of the data, an
+etymological dictionary representation sorts the counterparts according to
+the cognate sets of which they are reflexes.</p>
+</dd></dl>
+
 </div>
 
 

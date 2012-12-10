@@ -123,15 +123,13 @@ ID   CONCEPT     COUNTERPART   IPA         DOCULECT     COGID
 <p>This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given
 concept in a given language. Moreover, this format is the basic of the
-<a class="reference internal" href="../docu/basic/wordlist.html#lingpy.basic.wordlist.WordList" title="lingpy.basic.wordlist.WordList"><tt class="xref py py-class docutils literal"><span class="pre">WordList</span></tt></a> class in LingPy, which makes it easy
+<a class="reference internal" href="../docu/lingpy.basic.wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> class in LingPy, which makes it easy
 to handle word lists with multiple entry-types of words.</p>
 <p>The above-given csv-file <cite>harry_potter.csv</cite> is available in the test folder of LingPy.
-In order to get it loaded, we first call load it into a dictionary:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">_load_dict</span><span class="p">(</span><span class="s">&#39;harry_potter.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Then we can use this dictionary to create our WordList instance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+In order to get it loaded, we simply pass it as first argument to the Wordlist
+class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d</span> <span class="o">=</span> <span class="n">Wordlist</span><span class="p">(</span><span class="s">&#39;harry_potter.csv&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If one wants to access only the IPA values in tabular format, all one has to do
@@ -157,10 +155,10 @@ is:</p>
 </div>
 <p>Furthermore, using specific functions, even more concise samples of the data can
 be extracted, thus, using the
-<a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.WordList.getDict.html#lingpy.basic.wordlist.WordList.getDict" title="lingpy.basic.wordlist.WordList.getDict"><tt class="xref py py-class docutils literal"><span class="pre">getDict</span></tt></a> function, we can specify a
+<tt class="xref py py-class docutils literal"><span class="pre">getDict</span></tt> function, we can specify a
 given language and extract all phonetic transcriptions corresponding to a given
 concept as a dictionary:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getDict</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;German&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;ipa&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;German&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;ipa&quot;</span><span class="p">)</span>
 <span class="go">{&#39;Harry&#39;: [&#39;haralt&#39;],</span>
 <span class="go"> &#39;Woldemort&#39;: [&#39;valdemar&#39;],</span>
 <span class="go"> &#39;hand&#39;: [&#39;hant&#39;],</span>
@@ -168,14 +166,14 @@ concept as a dictionary:</p>
 </pre></div>
 </div>
 <p>We can likewise extract all cognate IDs corresponding to a given concept by
-using the function <a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.WordList.getList.html#lingpy.basic.wordlist.WordList.getList" title="lingpy.basic.wordlist.WordList.getList"><tt class="xref py py-class docutils literal"><span class="pre">getList</span></tt></a>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">getList</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s">&quot;hand&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;cogid&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+using the function <tt class="xref py py-class docutils literal"><span class="pre">getList</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s">&quot;hand&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;cogid&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">[1, 1, 2, 2]</span>
 </pre></div>
 </div>
 <p>Other entry-types can be added:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy.algorithm.misc</span> <span class="kn">import</span> <span class="n">ipa2tokens</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">addEntries</span><span class="p">(</span><span class="s">&quot;tokens&quot;</span><span class="p">,</span><span class="s">&quot;ipa&quot;</span><span class="p">,</span><span class="n">ipa2tokens</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">add_entries</span><span class="p">(</span><span class="s">&quot;tokens&quot;</span><span class="p">,</span><span class="s">&quot;ipa&quot;</span><span class="p">,</span><span class="n">ipa2tokens</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">tokens</span>
 <span class="go">[[[&#39;w&#39;, &#39;ɔ&#39;, &#39;l&#39;, &#39;d&#39;, &#39;e&#39;, &#39;m&#39;, &#39;ɔ&#39;, &#39;r&#39;, &#39;t&#39;],</span>
 <span class="go">  [&#39;v&#39;, &#39;a&#39;, &#39;l&#39;, &#39;d&#39;, &#39;e&#39;, &#39;m&#39;, &#39;a&#39;, &#39;r&#39;],</span>
@@ -198,17 +196,17 @@ using the function <a class="reference internal" href="../docu/generated/lingpy.
 </div>
 <div class="section" id="how-are-word-lists-defined">
 <h2>How are Word Lists defined?<a class="headerlink" href="#how-are-word-lists-defined" title="Permalink to this headline">¶</a></h2>
-<p>In LingPy the WordList class handles wordlists.</p>
+<p>In LingPy the Wordlist class handles wordlists.</p>
 </div>
 <div class="section" id="the-wordlist-rc-file">
 <h2>The wordlist.rc file<a class="headerlink" href="#the-wordlist-rc-file" title="Permalink to this headline">¶</a></h2>
 <p>The structure of word lists is defined by the configuration file <cite>wordlists.rc</cite>. This file is
-automatically loaded when initializing a WordList instance:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+automatically loaded when initializing a Wordlist instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">Wordlist</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>It can, however, also be passed by the user:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">WordList</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">conf</span><span class="o">=</span><span class="s">&quot;path_to_file&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">Wordlist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">conf</span><span class="o">=</span><span class="s">&quot;path_to_file&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The file is a simple tab-delimited csv-file and has the following structure:</p>
@@ -278,7 +276,7 @@ the given datatype. The second column indicates the program-internal datatype. T
     </div>
     <div class="footer">
         &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Nov 19, 2012.
+      Last updated on Dec 10, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

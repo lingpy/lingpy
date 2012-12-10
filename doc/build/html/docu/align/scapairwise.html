@@ -166,44 +166,44 @@ LOCAL..     *    *    *    .    *    *    *    *    *    .</pre>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pairwise_alignments</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pairwise_alignments</span></tt>([new_calc,&nbsp;model,&nbsp;...])</td>
+<td>Function creates a dictionary of all pairwise alignments  scores.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_peaks</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_peaks</span></tt>([gap_weight])</td>
+<td>Calculate the profile score for each column of the alignment.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pid</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_pid</span></tt>([mode])</td>
+<td>Return the Percentage Identity (PID) score of the calculated MSA.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">ipa2cls</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">ipa2cls</span></tt>([model])</td>
+<td>Retrieve sound-class strings from aligned IPA sequences.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_all_sequences</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_all_sequences</span></tt>([check,&nbsp;mode,&nbsp;gop,&nbsp;...])</td>
+<td>Iterative refinement based on a complete realignment of all sequences.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_clusters</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_clusters</span></tt>(threshold[,&nbsp;check,&nbsp;mode,&nbsp;...])</td>
+<td>Iterative refinement based on a flat cluster analysis of the data.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_orphans</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_orphans</span></tt>([check,&nbsp;mode,&nbsp;gop,&nbsp;...])</td>
+<td>Iterate over the most divergent sequences in the sample.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_similar_gap_sites</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">iterate_similar_gap_sites</span></tt>([check,&nbsp;mode,&nbsp;...])</td>
+<td>Iterative refinement based on the <em>Similar Gap Sites</em> heuristic.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">lib_align</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">lib_align</span></tt>([model,&nbsp;mode,&nbsp;modes,&nbsp;scale,&nbsp;...])</td>
+<td>Carry out a library-based progressive alignment analysis of the sequences.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt>([fileformat,&nbsp;filename,&nbsp;sorted_seqs,&nbsp;...])</td>
+<td>Write data to file.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">prog_align</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">prog_align</span></tt>([model,&nbsp;mode,&nbsp;gop,&nbsp;gep_scale,&nbsp;...])</td>
+<td>Carry out a progressive alignment analysis of the input sequences.</td>
 </tr>
-<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">sum_of_pairs</span></tt></td>
-<td></td>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">sum_of_pairs</span></tt>([alm_matrix,&nbsp;mat,&nbsp;gap_weight])</td>
+<td>Calculate the sum-of-pairs score for a given alignment analysis.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">swap_check</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">swap_check</span></tt>([swap_penalty,&nbsp;score_mode])</td>
+<td>Check for possibly swapped sites in the alignment.</td>
 </tr>
 </tbody>
 </table>
@@ -254,7 +254,7 @@ LOCAL..     *    *    *    .    *    *    *    *    *    .</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Nov 19, 2012.
+      Last updated on Dec 10, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

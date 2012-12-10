@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Data Module &mdash; QLC-LingPy</title>
+    <title>lingpy.basic.wordlist.Wordlist.add_entries &mdash; QLC-LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -62,13 +62,44 @@ QLC-LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="data-module">
-<h1>Data Module<a class="headerlink" href="#data-module" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../data/model.html">Sound Class Models (<tt class="docutils literal"><span class="pre">Model</span></tt>)</a></li>
-</ul>
-</div>
+  <div class="section" id="lingpy-basic-wordlist-wordlist-add-entries">
+<h1>lingpy.basic.wordlist.Wordlist.add_entries<a class="headerlink" href="#lingpy-basic-wordlist-wordlist-add-entries" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="lingpy.basic.wordlist.Wordlist.add_entries">
+<tt class="descclassname">Wordlist.</tt><tt class="descname">add_entries</tt><big>(</big><em>entry</em>, <em>source</em>, <em>function</em>, <em>**args</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.add_entries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add new entry-types to the word list by modifying given ones.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>entry</strong> : string</p>
+<blockquote>
+<div><p>A string specifying the name of the new entry-type to be added to the
+word list.</p>
+</div></blockquote>
+<p><strong>source</strong> : string</p>
+<blockquote>
+<div><p>A string specifying the basic entry-type that shall be modified.</p>
+</div></blockquote>
+<p><strong>function</strong> : function</p>
+<blockquote>
+<div><p>A function which is used to convert the source into the target
+value.</p>
+</div></blockquote>
+<p><strong>keywords</strong> : {dict list}</p>
+<blockquote class="last">
+<div><p>A dictionary of keywords that are passed as parameters to the
+function.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This method can be used to add new entry-types to the data by
+converting given ones.</p>
+</dd></dl>
+
 </div>
 
 
