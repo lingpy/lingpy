@@ -27,6 +27,10 @@ for arg in argv:
 if not args or '--help' in args or '-h' in args:
     print("Usage: python[3] mpa.py file=FILENAME folder=FOLDER")
     sys.exit()
+elif not 'file' in args:
+    print("[i] Input file missing. Exiting...")
+elif not 'folder' in args or not args['folder']:
+    print("[i] Output folder missing. Exiting...")
 
 try:
     os.mkdir(args['folder'])
@@ -40,12 +44,15 @@ for c in wl.concept:
 
     # get all identifiers in a flat list
     idfs = wl.get_list(c,flat=True)
-
+    
     # get all taxa
     taxa = [wl[i,'doculect'] for i in idfs]
+    
+    # get all strings
+    strings = [wl[i,'ortho_parse'] for i in idfs]
 
     # get all tokens and join them for input in aligner
-    tokens = [' '.join(wl[i,'ortho_parse']).replace("ˈ",'') for i in idfs]
+    tokens = [' '.join(string).replace("ˈ",'') for string in strings]
 
     # check tokens for double entries:
     check = 0
@@ -58,7 +65,7 @@ for c in wl.concept:
     # check for missing entries
     for i,t in enumerate(tokens):
         if not t:
-            print("[!] error in {0}...".format(idfs[i]))
+            print("[!] Error in {0}...".format(idfs[i]))
             errors.append(idfs[i])
             error = True
     
