@@ -306,6 +306,12 @@ class Wordlist(object):
             except:
                 pass
 
+    def __len__(self):
+        """
+        Length of a Wordlist is the number of counterparts.
+        """
+        return len(self._data)
+
     def __getattr__(
             self,
             attr
