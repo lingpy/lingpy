@@ -5,4 +5,4 @@ concept	str	gloss,concept
 iso	str	iso,isocode
 tokens	lambda x:x.split(" ")	tokens,tokenized_counterpart,ipatokens
 ipa	str	word,ipa,words
-ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens
+ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens,tokenized_counterpart
