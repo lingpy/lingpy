@@ -1,0 +1,79 @@
+\documentclass[xetex,12pt]{scrartcl}
+\usepackage{xltxtra,polyglossia,color,colortbl}
+\usepackage{pspicture,pst-node,xcolor}
+\usepackage{geometry}
+\usepackage{array}
+
+\setmainfont[Mapping=tex-text,Scale=1.0]{Charis SIL}
+\setsansfont[Mapping=tex-text,Scale=1.0]{FreeSans}
+\setmonofont{DejaVu Sans Mono}
+
+\setmainlanguage{english}
+
+% set the new font width, declare the new lengths first
+\newlength\MyWidth
+\newlength\MyHeight
+% set the new lengths
+\setlength\MyWidth{<+WIDTH+>cm} % hier die Breite eintragen
+\setlength\MyHeight{<+HEIGHT+>cm} % hier die Höhe eintragen
+
+% set new lengths to put the picture
+\newlength\MyWput
+\newlength\MyHput
+\setlength\MyWput{\MyWidth}
+\setlength\MyHput{\MyHeight}
+% calculate the values by dividing etc.
+\divide\MyWput by 2
+\divide\MyHput by 2
+\addtolength\MyHput{-\MyHeight}
+\addtolength\MyHput{10 pt}
+\makeatletter
+\addtolength\MyHput{\@ptsize pt}
+\makeatother
+
+\geometry{papersize={\MyWidth,\MyHeight},total={\MyWidth,\MyHeight}}
+
+\parindent 0pt
+\begin{document}\thispagestyle{empty}
+
+% define the colors
+%\definecolor{colV}{HTML}{C86464} 
+%\definecolor{colK}{HTML}{C89664} 
+%\definecolor{colP}{HTML}{C8C864} 
+%\definecolor{colH}{HTML}{96C864} 
+%\definecolor{colJ}{HTML}{64C864} 
+%\definecolor{colM}{HTML}{64C896} 
+%\definecolor{colN}{HTML}{64C8C8} 
+%\definecolor{colS}{HTML}{6496C8} 
+%\definecolor{colR}{HTML}{6464C8} 
+%\definecolor{colT}{HTML}{9664C8} 
+%\definecolor{colW}{HTML}{C864C8} 
+%\definecolor{col1}{HTML}{C86496} 
+%\definecolor{col2}{HTML}{BBBBBB}
+%\definecolor{colX}{HTML}{C0C0C0}
+
+\definecolor{colV}{HTML}{808080} 
+\definecolor{colK}{HTML}{F2F2F2} 
+\definecolor{colP}{HTML}{E6E6E6} 
+\definecolor{colH}{HTML}{B2B2B2} 
+\definecolor{colJ}{HTML}{999999} 
+\definecolor{colM}{HTML}{BFBFBF} 
+\definecolor{colN}{HTML}{BFBFBF} 
+\definecolor{colS}{HTML}{CCCCCC} 
+\definecolor{colR}{HTML}{A6A6A6} 
+\definecolor{colT}{HTML}{D9D9D9} 
+\definecolor{colW}{HTML}{8C8C8C} 
+\definecolor{col1}{HTML}{FFFFFF} 
+\definecolor{col2}{HTML}{737373}
+\definecolor{colX}{HTML}{FFFFFF}
+
+\rput(\MyWput,\MyHput){%
+\pspicture[showgrid=false](0,0)(\the\MyWidth,\the\MyHeight)
+% Insert your Code here, as you like! Coordinate system starts with 0,0 on the left bottom of the
+% page. 
+\rput(<+NEWX+>,<+NEWY+>){%
+<+CONTENT+>
+}
+\endpspicture}
+\end{document}
+

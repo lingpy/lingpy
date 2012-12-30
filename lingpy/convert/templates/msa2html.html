@@ -1,0 +1,57 @@
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+    <head>
+	<meta http-equiv="content-type"content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="msa.css" type="text/css">
+	<title>{shorttitle}</title>
+    </head>
+    <body>
+	<table>
+	    <tr>
+		<td>
+		    <table id="header" border=5 bordercolor="#33ce20" bgcolor="#ffa600">
+			<tr>
+            	    	    <td><b>File: </b></td>
+            	    	    <td><b>{file}</b></td>
+            	    	</tr>
+            	    	<tr>
+            	    	    <td><b>Dataset: </b></td>
+            	    	    <td><b>{dataset}</b></td>
+            	    	</tr>
+
+            	    	<tr>
+            	    	    <td><b>Sequence: </b></td>
+            	    	    <td><b>{sequence}</b></td>
+			</tr>
+		    </table>
+		</td>
+		<td width="10"> </td>
+		<td>
+		    <table id="header" border=5 bordercolor="#33ce20" bgcolor="#ffa600"> 
+			<tr>
+            	    	    <td><b>Height (all): </b></td>
+            	    	    <td><b>{taxa}</b></td>
+            	    	</tr>
+            	    	<tr>
+            	    	    <td><b>Height (unique): </b></td>
+            	    	    <td><b>{uniseqs}</b></td>
+            	    	</tr>
+            	    	<tr>
+            	    	    <td><b>PID: </b></td>
+            	    	    <td><b>{pid}</b></td>
+			</tr>
+		    </table>
+		</td>
+	    </tr> 
+	</table>
+	<table align="left" border=0 class="msa" width="{table_width}">
+	    <tr>
+		<td align="left"><b>Taxon</b></td>
+		<td align="left" colspan="{width}"><b>Alignment</b></td>
+	    </tr>
+{table}
+	</table>
+	<div style="clear:left;margin-top:1em;text-align:left;padding:10px;font-size:10">
+	   &copy; 2012, Johann-Mattis List. Created using <a href="http://lingulist.de/lingpy">LingPy</a> 1.0 
+	</div>
+    </body>
+</html>
