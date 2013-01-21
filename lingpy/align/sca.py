@@ -1,5 +1,5 @@
 """
-This is the basic module for pairwise and multiple sequence comparison.
+Basic module for pairwise and multiple sequence comparison.
 
 The module consists of four classes which deal with pairwise and multiple
 sequence comparison from the *sequence* and the *alignment* perspective. The
@@ -371,7 +371,7 @@ class SCAMultiple(Multiple):
         self.alm_matrix = [line[1:] for line in data]
         for i,line in enumerate(self.alm_matrix):
             for j,cell in enumerate(line):
-                self.alm_matrix[i][j] = unicode(cell)
+                self.alm_matrix[i][j] = cell
 
         # join the aligned sequences, keep track of the original tokenization
         # by joining it with dots. That looks ugly and nasty and should

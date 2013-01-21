@@ -498,11 +498,11 @@ def string2html(
     # get the percentage scaling factor
     perc = int(80 / len(string) + 0.5)
 
-    # get the line for residues
-    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">{0}</td>\n'
-
-    # get the line for swaps
-    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50" align="center" bgcolor="{1}">{0}</td>\n'
+    # get vals for residue and swaps
+    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
+            '<font color="{2}">{0}</font></td>\n'
+    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
+            'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
 
     # start with filling the taxon
     out = ''
@@ -512,16 +512,20 @@ def string2html(
     for i,char in enumerate(string):
         try:
             c = _color[char]
+            fg = '#000000'
         except:
             try:
                 c = _color[char[0]]
+                fg = '#000000'
             except:
-                print(char)
-                raw_input()            
+                input("Unknown character '"+char+"', press ANY key to continue. " )
+                c = '#ffffff'
+                fg = '#eb3410'
+
         if i in swaps:
-            out += td_swap.format(char,c)
+            out += td_swap.format(char,c,fg)
         else:
-            out += td_residue.format(char,c)
+            out += td_residue.format(char,c,fg)
 
     return out
 
@@ -626,8 +630,10 @@ def msa2html(
     tr = '<tr class="msa">\n{0}\n</tr>'
     td_taxon = '<td class="taxon" width="'+str(15 * taxl)+'">{0}</td>\n'
     perc = int(80 / len(msa.alm_matrix[0]) + 0.5)
-    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">{0}</td>\n'
-    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50" align="center" bgcolor="{1}">{0}</td>\n'
+    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
+            '{0}</td>\n'
+    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
+            'align="center" bgcolor="{1}">{0}</td>\n'
     
     # check for swaps in the alignment
     if hasattr(msa,'swap_index'):

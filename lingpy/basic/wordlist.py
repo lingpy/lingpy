@@ -1,10 +1,11 @@
-#! /usr/bin/env python3
+# created = Mo 21 Jan 2013 01:43:00  CET
+# modified = Mo 21 Jan 2013 01:43:00  CET
 """
 This module provides a basic class for the handling of word lists.
-
-@date: 2012-11-08
-@author: Johann-Mattis List
 """
+
+__author__ = "Johann-Mattis List"
+__date__="2013-01-21"
 
 import os
 import builtins
@@ -36,7 +37,7 @@ def _load_dict(infile):
 
     # check for first line, if a local ID is given in the header (or simply
     # "ID"), take this line as the ID, otherwise create it
-    if data[0][0].lower() in ['local_id','localid']:
+    if data[0][0].lower() in ['id','local_id','localid']:
         local_id = True
     else:
         local_id = False
@@ -67,7 +68,7 @@ class Wordlist(object):
 
     Parameters
     ----------
-    data : dict
+    input_data : {dict, string}
         A dictionary with consecutive integers as keys and lists as values.
 
     row : str (default = "concept")
@@ -104,7 +105,7 @@ class Wordlist(object):
 
     def __init__(
             self,
-            data,
+            input_data,
             row = 'concept',
             col = 'doculect',
             conf = ''
@@ -112,9 +113,10 @@ class Wordlist(object):
         
         # try to load the data
         try:
-            data = _load_dict(data)
+            input_data = _load_dict(input_data)
         except:
-            pass
+            if not input_data:
+                raise ValueError('[i] Input data is not specified.')
 
         # load the configuration file
         if not conf:
@@ -150,7 +152,7 @@ class Wordlist(object):
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
         # conf file. the datatype defaults here to "str"
-        for name in data[0]:
+        for name in input_data[0]:
             if name.lower() not in self._alias:
                 self._alias[name.lower()] = name.lower()
                 self._class[name.lower()] = str
@@ -163,21 +165,21 @@ class Wordlist(object):
         
         # retrieve basic types for rows and columns from the word list
         try:
-            rowIdx = [i for i in range(len(data[0])) if \
-                    self._alias[data[0][i]] == row][0]
-            colIdx = [i for i in range(len(data[0])) if \
-                    self._alias[data[0][i]] == col][0]
+            rowIdx = [i for i in range(len(input_data[0])) if \
+                    self._alias[input_data[0][i]] == row][0]
+            colIdx = [i for i in range(len(input_data[0])) if \
+                    self._alias[input_data[0][i]] == col][0]
         except:
             raise ValueError("[!] Could not find row and col in configuration or input file!")
 
         basic_rows = sorted(
                 set(
-                    [data[k][rowIdx] for k in data if k > 0]
+                    [input_data[k][rowIdx] for k in input_data if k > 0]
                     )
                 )
         basic_cols = sorted(
                 set(
-                    [data[k][colIdx] for k in data if k > 0]
+                    [input_data[k][colIdx] for k in input_data if k > 0]
                     )
                 )
         
@@ -202,7 +204,7 @@ class Wordlist(object):
         # first, find out, how many items (== synonyms) are there maximally for
         # each row
         tmp_dict = {}
-        for key,value in [(k,v) for k,v in data.items() if k > 0]:
+        for key,value in [(k,v) for k,v in input_data.items() if k > 0]:
             try:
                 tmp_dict[value[rowIdx]][value[colIdx]] += [key]
             except KeyError:
@@ -251,8 +253,8 @@ class Wordlist(object):
         # dictionary
         self.header = dict(
                 zip(
-                    [self._alias[x] for x in data[0]],
-                    range(len(data[0]))
+                    [self._alias[x] for x in input_data[0]],
+                    range(len(input_data[0]))
                     )
                 )
 
@@ -268,7 +270,7 @@ class Wordlist(object):
                 pass
         
         # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in data.items() if k != 0])
+        self._data = dict([(k,v) for k,v in input_data.items() if k != 0])
 
         # iterate over self._data and change the values according to the
         # functions
@@ -765,7 +767,7 @@ class Wordlist(object):
             self,
             ref = 'cogid',
             entry = 'concept',
-            missing = 0
+            missing = 0,
             ):
         """
         Function returns a list of present-absent-patterns of a given word list.
@@ -794,7 +796,7 @@ class Wordlist(object):
         missed = {}
 
         # retrieve the values
-        for key,values in etym_dict.items(): #self._etym_dict[ref,'concept'].items():
+        for key,values in etym_dict.items():
             paps[key] = []
 
             # check for missing data
@@ -860,18 +862,25 @@ class Wordlist(object):
             if key not in keywords:
                 keywords[key] = defaults[key]
 
-        if fileformat == 'paps.nex':
+        if 'paps' in fileformat:
             paps = self.get_paps(
                     ref=keywords['ref'],
                     entry=keywords['entry'],
                     missing=keywords['missing']
                     )
-            pap2nex(
-                    self.cols,
-                    paps,
-                    missing=keywords['missing'],
-                    filename=keywords['filename']+'.paps'
-                    )
+            if fileformat == 'paps.nex':
+                pap2nex(
+                        self.cols,
+                        paps,
+                        missing=keywords['missing'],
+                        filename=keywords['filename']+'.paps'
+                        )
+            elif fileformat == 'paps.csv':
+                pap2csv(
+                        self.cols,
+                        paps,
+                        filename=keywords['filename']+'.paps'
+                        )
 
         if fileformat == 'taxa':
             out = ''

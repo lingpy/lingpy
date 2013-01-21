@@ -66,17 +66,15 @@ all different possible **entry-types** a word can have::
 This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given
 concept in a given language. Moreover, this format is the basic of the
-:py:class:`~lingpy.basic.wordlist.WordList` class in LingPy, which makes it easy
+:py:class:`~lingpy.basic.wordlist.Wordlist` class in LingPy, which makes it easy
 to handle word lists with multiple entry-types of words.
 
 The above-given csv-file `harry_potter.csv` is available in the test folder of LingPy.
-In order to get it loaded, we first call load it into a dictionary::
-
-    >>> d = _load_dict('harry_potter.csv')
-
-Then we can use this dictionary to create our WordList instance::
-
-    >>> wl = WordList(d)
+In order to get it loaded, we simply pass it as first argument to the Wordlist
+class::
+    
+    >>> from lingpy import *
+    >>> d = Wordlist('harry_potter.csv')
 
 If one wants to access only the IPA values in tabular format, all one has to do
 is::
@@ -101,26 +99,26 @@ Or for the languages and the concepts in the dataset::
     
 Furthermore, using specific functions, even more concise samples of the data can
 be extracted, thus, using the
-:py:class:`~lingpy.basic.wordlist.WordList.getDict` function, we can specify a
+:py:class:`~lingpy.basic.wordlist.Wordlist.getDict` function, we can specify a
 given language and extract all phonetic transcriptions corresponding to a given
 concept as a dictionary::
 
-    >>> wl.getDict(col="German",entry="ipa")
+    >>> wl.get_dict(col="German",entry="ipa")
     {'Harry': ['haralt'],
      'Woldemort': ['valdemar'],
      'hand': ['hant'],
      'leg': ['bain']}
 
 We can likewise extract all cognate IDs corresponding to a given concept by
-using the function :py:class:`~lingpy.basic.wordlist.WordList.getList`::
+using the function :py:class:`~lingpy.basic.wordlist.Wordlist.getList`::
 
-    >>> wl.getList(row="hand",entry="cogid",flat=True)
+    >>> wl.get_list(row="hand",entry="cogid",flat=True)
     [1, 1, 2, 2]
     
 Other entry-types can be added::
 
     >>> from lingpy.algorithm.misc import ipa2tokens
-    >>> wl.addEntries("tokens","ipa",ipa2tokens)
+    >>> wl.add_entries("tokens","ipa",ipa2tokens)
     >>> wl.tokens
     [[['w', 'ɔ', 'l', 'd', 'e', 'm', 'ɔ', 'r', 't'],
       ['v', 'a', 'l', 'd', 'e', 'm', 'a', 'r'],
@@ -141,23 +139,22 @@ Other entry-types can be added::
     
     
 
-
 How are Word Lists defined?
 ---------------------------
 
-In LingPy the WordList class handles wordlists. 
+In LingPy the Wordlist class handles wordlists. 
 
 The wordlist.rc file
 ----------------------
 
 The structure of word lists is defined by the configuration file `wordlists.rc`. This file is
-automatically loaded when initializing a WordList instance::
+automatically loaded when initializing a Wordlist instance::
 
-    >>> wl = WordList(data)
+    >>> wl = Wordlist(data)
 
 It can, however, also be passed by the user::
 
-    >>> wl = WordList(data,conf="path_to_file")
+    >>> wl = Wordlist(data,conf="path_to_file")
 
 The file is a simple tab-delimited csv-file and has the following structure::
 

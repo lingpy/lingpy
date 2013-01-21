@@ -1,19 +1,19 @@
 ========================================================
-Word Lists (:py:class:`~lingpy.basic.wordlist.WordList`)
+Word Lists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
 ========================================================
 
 .. currentmodule:: lingpy.basic.wordlist
 
-.. autoclass:: WordList
+.. autoclass:: Wordlist
 
 .. HACK::
    .. autosummary::
       :toctree: generated/
    
-      WordList.getDict
-      WordList.getList
-      WordList.getEntries
-      WordList.addEntries
-      WordList.getEtymDict
-      WordList.getPaps
+      Wordlist.get_dict
+      Wordlist.get_list
+      Wordlist.get_entries
+      Wordlist.add_entries
+      Wordlist.get_etymdict
+      Wordlist.get_paps
 
