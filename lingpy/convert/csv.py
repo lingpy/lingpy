@@ -11,7 +11,11 @@ Module provides functions and methods for the creation of csv-files.
 # imports
 import re
 
-def pap2csv(taxa,paps,filename='csv'):
+def pap2csv(
+        taxa,
+        paps,
+        filename='csv'
+        ):
     """
     Write paps created by the Wordlist class to a csv-file.
     """
@@ -29,4 +33,61 @@ def pap2csv(taxa,paps,filename='csv'):
     
     print("[i] Data has been written to file <{0}.csv>.".format(filename))
     
+    return
+
+def wl2csv(
+        header,
+        data,
+        filename = 'csv',
+        formatter = 'gloss',
+        **keywords
+        ):
+    """
+    Write the basic data of a wordlist to file.
+    """
+    formatter = formatter.upper()
+
+    out = '# Wordlist \n#\n'
+    out += 'ID\t'+'\t'.join(header)+'\n'
+    
+    # check for gloss in header to create nice output format
+    if formatter in header:
+        idx = header.index(formatter)
+        formatter = None
+    else:
+        idx = None
+        formatter = ''
+
+    for key in sorted(data.keys()):
+        
+        # get the line
+        line = data[key]
+        
+        # check for formatter
+        if idx:
+            if line[idx] != formatter:
+                out += '#\n'
+                formatter = line[idx]
+
+        # add the key 
+        out += str(key)
+        
+        # add the rest of the values
+        for value in line:
+            if type(value) == list:
+                out += '\t'+' '.join(value)
+            elif type(value) == int:
+                out + '\t'+str(value)
+            elif type(value) == float:
+                out += '\t{0:.4f}'.format(value)
+            else:
+                out += '\t'+value
+        out += '\n'
+
+    f = open(filename + '.csv','w')
+    f.write(out)
+    f.close()
+
+    print("[i] Data has been written to file <{0}.csv>.".format(filename))
+
     return 

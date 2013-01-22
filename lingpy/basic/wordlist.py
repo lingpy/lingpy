@@ -135,6 +135,7 @@ class Wordlist(object):
         # the datatypes (classes) of the given entries
         self._alias,self._class = {},{}
         for name,cls,alias in tmp:
+            
             # make sure the name itself is there
             self._alias[name.lower()] = name
             self._alias[name.upper()] = name
@@ -158,9 +159,10 @@ class Wordlist(object):
                 self._class[name.lower()] = str
             if name.upper() not in self._alias:
                 self._alias[name.upper()] = name.lower()
-                self._alias[name.upper()] = str
+                self._class[name.upper()] = str
 
-        # add emtpy alias for empty strings
+        # add emtpy alias for empty strings XXX why was that? I can't remember
+        # why this was important XXX
         self._alias[''] = ''
         
         # retrieve basic types for rows and columns from the word list
@@ -284,6 +286,9 @@ class Wordlist(object):
 
         # define a cache dictionary for stored data for quick access
         self._cache = {}
+
+        # create entry attribute of the wordlist
+        self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
                         
     def __getitem__(self,idx):
         """
@@ -612,7 +617,7 @@ class Wordlist(object):
             entry,
             source,
             function,
-            **args
+            **keywords
             ):
         """
         Add new entry-types to the word list by modifying given ones.
@@ -624,13 +629,15 @@ class Wordlist(object):
             word list.
 
         source : string
-            A string specifying the basic entry-type that shall be modified. 
+            A string specifying the basic entry-type that shall be modified. If
+            multiple entry-types shall be used to create a new entry, they
+            should be passed in a simple string separated by a comma.
 
         function : function
             A function which is used to convert the source into the target
             value.
 
-        keywords : {dict list}
+        keywords : {dict}
             A dictionary of keywords that are passed as parameters to the
             function.
 
@@ -639,34 +646,61 @@ class Wordlist(object):
         This method can be used to add new entry-types to the data by
         converting given ones. 
         """
+        # check for emtpy entries etc.
+        if not entry:
+            print("[i] Entry was not properly specified!")
+            return
 
         # check whether the stuff is already there
-        if entry in self._header:
+        if entry in self._header and 'override' not in keywords:
             answer = input("[?] Datatype has already been produced, do you want to override?")
             if answer.lower() in ['y','yes']:
-                pass
+                self.add_entry(entry,source,function,override=True,**keywords)
             else:
-                pass
+                print("[i] ...aborting...")
+                return
         else:
-            # get the index of the source in self
-            idx = self._header[source]            
-
             # get the new index into the header
             self._header[entry.lower()] = max(self._header.values())+1
             self._alias[entry.lower()] = entry.lower()
             self.header[entry.lower()] = self._header[entry.lower()]
 
-            # iterate over the data and create the new entry
-            for key in self:
-                
-                # get the source
-                s = self[key][idx]
+            # modify the entries attribute
+            self.entries = sorted(set(self.entries + [entry]))
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
 
-                # transform s
-                t = function(s,**args)
+                # iterate over the data and create the new entry
+                for key in self:
 
-                # add
-                self[key].append(t)
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key].append(t)
+
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key].append(t)
         
     
     def get_etymdict(
@@ -889,4 +923,20 @@ class Wordlist(object):
             f = open(keywords['filename'] + '.taxa','w')
             f.write(out)
             f.close()
+
+        if fileformat == 'csv':
+            
+            # get the header line
+            header = sorted(
+                    [s for s in set(self._alias.values()) if s in self._header],
+                    key = lambda x: self._header[x]
+                    )
+            header = [h.upper() for h in header]
+
+            # write stuff to file
+            wl2csv(
+                    header,
+                    self._data,
+                    **keywords
+                    )
 
