@@ -44,8 +44,34 @@ ln -s /path/to/lingpy/lingpy /path/to/site-packages/symlink
 $ python
 >>> import lingpy
 
+## Coding Conventions
 
+In order to keep the code transparent even for multiple contributors, we opt for the following conventions.
 
+### Importing Modules
+
+When importing Python modules, try to avoid 
+
+```python
+from module import *
+```
+
+but instead use
+```python
+import module
+```
+
+In order to avoid heavy typing of long module names, we define the following aliases for thirdparty modules:
+```python
+import numpy as np
+import scipy as sp
+import cogent as cg
+import networkx as nx
+import matplotlip.pyplot as plt
+import regex as re # this is useful, since it is then equivalent with the re-module
+```
+
+Builtin-modules should be imported "as is", without using aliases.
 
 
 
