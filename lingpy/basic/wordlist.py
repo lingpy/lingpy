@@ -1,5 +1,5 @@
 # created = Mo 21 Jan 2013 01:43:00  CET
-# modified = Mo 21 Jan 2013 01:43:00  CET
+# modified = Do 24 Jan 2013 04:16:49  CET 
 """
 This module provides a basic class for the handling of word lists.
 """
@@ -358,7 +358,6 @@ class Wordlist(object):
         del self._cache
         self._cache = {}
 
-
     def get_dict(
             self,
             col = '',
@@ -685,10 +684,18 @@ class Wordlist(object):
                     # add the stuff to the dictionary
                     self[key].append(t)
 
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the wordlist
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key].append(t)
+
             else:
                 # get the index of the source in self
                 idx = self._header[source]            
-
 
                 # iterate over the data and create the new entry
                 for key in self:
@@ -889,6 +896,7 @@ class Wordlist(object):
                 'entry':'concept',
                 'missing':0,
                 'filename':'lingpy-{0}'.format(str(date.today())),
+                'formatter':'concept'
                 }
             
         # compare with keywords and add missing ones

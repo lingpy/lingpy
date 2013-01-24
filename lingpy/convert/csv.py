@@ -39,7 +39,7 @@ def wl2csv(
         header,
         data,
         filename = 'csv',
-        formatter = 'gloss',
+        formatter = 'concept',
         **keywords
         ):
     """
@@ -47,7 +47,7 @@ def wl2csv(
     """
     formatter = formatter.upper()
 
-    out = '# Wordlist \n#\n'
+    out = '# Wordlist\n'
     out += 'ID\t'+'\t'.join(header)+'\n'
     
     # check for gloss in header to create nice output format
@@ -55,7 +55,7 @@ def wl2csv(
         idx = header.index(formatter)
         formatter = None
     else:
-        idx = None
+        idx = False
         formatter = ''
 
     for key in sorted(data.keys()):
@@ -64,7 +64,7 @@ def wl2csv(
         line = data[key]
         
         # check for formatter
-        if idx:
+        if idx in range(len(line)):
             if line[idx] != formatter:
                 out += '#\n'
                 formatter = line[idx]
@@ -77,7 +77,7 @@ def wl2csv(
             if type(value) == list:
                 out += '\t'+' '.join(value)
             elif type(value) == int:
-                out + '\t'+str(value)
+                out += '\t'+str(value)
             elif type(value) == float:
                 out += '\t{0:.4f}'.format(value)
             else:
