@@ -4,10 +4,11 @@ Basic module for creating nexus output of linguistic data.
 __author__="Johann-Mattis List"
 __date__="2012-12-05"
 
+from ..check.messages import FileWriteMessage
+
 def pap2nex(taxa,paps,missing=0,filename='nexus'):
     """
     Function converts a list of paps into nexus file format.
-
 
     """
 
@@ -46,8 +47,8 @@ def pap2nex(taxa,paps,missing=0,filename='nexus'):
                 matrix
                 )
             )
-
-    print('[i] Data has been written to file <{0}.nex>.'.format(filename))
+    
+    FileWriteMessage(filename,'.nex').message('written')
     
     return
 

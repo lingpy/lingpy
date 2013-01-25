@@ -8,13 +8,14 @@ __date__ = "2013-01-21"
 Conversion routines for the GML format.
 """
 
+from ..check.exceptions import ThirdPartyModuleError
 try:
     import networkx as nx
 except:
-    print("[!] Cannot load networkx module. Some functions will not be available.")
+    ThirdPartyModuleError('networkx').warning()
 
 from ..thirdparty import cogent as cg
-
+from ..check.messages import FileWriteMessage
 
 def gls2gml(
         gls,
@@ -102,9 +103,13 @@ def gls2gml(
             pass
         #if 'label' not in data:
         g.add_edge(edgeA,edgeB,**data)
+    
+    f = open(filename+'.gml','w')
+    for line in nx.generate_gml(g):
+        f.write(line+'\n')
+    f.close()
 
-    nx.write_gml(g,filename+'.gml')
-    print("[i] Data has been written to file <{0}.gml>.".format(filename))
+    FileWriteMessage(filename,'gml').message('written')
     
     return
 
@@ -137,9 +142,12 @@ def nwk2gml(
         # add the edge if the parent is not None
         if parent:
             graph.add_edge(parent.Name,node)
+    
+    f = open(filename+'.gml','w')
+    for line in nx.generate_gml(graph):
+        f.write(line+'\n')
+    f.close()
 
-    # write graph to file
-    nx.write_gml(graph,filename+'.gml')
-    print("[i] Data has been written to file <{0}.gml>.".format(filename))
+    FileWriteMessage(filename,'gml').message('written')
 
     return 

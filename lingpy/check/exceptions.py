@@ -18,6 +18,6 @@ class ThirdPartyModuleError(Exception):
         return repr(self.value)
 
     def warning(self):
-
-        return "[WARNING] "+self.value
-
+        
+        print("[WARNING] "+self.value)
+        return

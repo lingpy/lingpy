@@ -11,6 +11,8 @@ Module provides functions and methods for the creation of csv-files.
 # imports
 import re
 
+from ..check.messages import FileWriteMessage
+
 def pap2csv(
         taxa,
         paps,
@@ -30,8 +32,8 @@ def pap2csv(
     f = open(filename+'.csv','w')
     f.write(out)
     f.close()
-    
-    print("[i] Data has been written to file <{0}.csv>.".format(filename))
+
+    FileWriteMessage(filename,'csv').message('written')
     
     return
 
@@ -87,7 +89,7 @@ def wl2csv(
     f = open(filename + '.csv','w')
     f.write(out)
     f.close()
-
-    print("[i] Data has been written to file <{0}.csv>.".format(filename))
+    
+    FileWriteMessage(filename,'csv').message('written')
 
     return 

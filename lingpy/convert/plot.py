@@ -29,6 +29,7 @@ import colorsys
 from ..data import *
 from ..data import _color
 from ..align.sca import SCAMultiple
+from ..check.messages import *
 
 def colorRange(
         number,
@@ -221,6 +222,10 @@ def alm2html(
     out = open(outfile,'w')
     out.write(html)
     out.close()
+
+    FileWriteMessage(filename,'html').message('written')
+    return
+
 
 def patchy_alm2html(
         infile,
