@@ -652,13 +652,14 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and 'override' not in keywords:
-            answer = input("[?] Datatype has already been produced, do you want to override?")
+            answer = input("[?] Datatype has already been produced, do you want to override? ")
             if answer.lower() in ['y','yes']:
-                self.add_entry(entry,source,function,override=True,**keywords)
+                self.add_entries(entry,source,function,override=True,**keywords)
             else:
                 print("[i] ...aborting...")
                 return
-        else:
+        elif 'override' not in keywords:
+
             # get the new index into the header
             self._header[entry.lower()] = max(self._header.values())+1
             self._alias[entry.lower()] = entry.lower()
@@ -708,6 +709,56 @@ class Wordlist(object):
 
                     # add
                     self[key].append(t)
+        
+        elif 'override' in keywords:
+
+            # get the index that shall be replaced
+            rIdx = self._header[entry.lower()]
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
+
+                # iterate over the data and create the new entry
+                for key in self:
+
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key][rIdx] = t
+
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the wordlist
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key][rIdx] = t
+
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key][rIdx] = t
+
+        # clear the cache
+        self._clean_cache()
         
     
     def get_etymdict(
