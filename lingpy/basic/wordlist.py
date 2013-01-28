@@ -13,6 +13,9 @@ from datetime import date
 import numpy as np
 
 from ..convert import *
+from ..algorithm.cluster import neighbor,upgma
+from ..check.messages import FileWriteMessage
+from ..algorithm.misc import *
 
 def _load_dict(infile):
     """
@@ -943,11 +946,14 @@ class Wordlist(object):
         
         # add the default parameters, they will be checked against the keywords
         defaults = {
-                'ref':'cogid',
-                'entry':'concept',
-                'missing':0,
-                'filename':'lingpy-{0}'.format(str(date.today())),
-                'formatter':'concept'
+                'ref'       : 'cogid',
+                'entry'     : 'concept',
+                'missing'   : 0,
+                'filename'  : 'lingpy-{0}'.format(str(date.today())),
+                'formatter' : 'concept',
+                'tree_calc' : 'neighbor',
+                'distances' : False,
+                'ref'       : 'cogid'
                 }
             
         # compare with keywords and add missing ones
@@ -998,4 +1004,69 @@ class Wordlist(object):
                     self._data,
                     **keywords
                     )
+
+        if fileformat == 'dst' or fileformat == 'tre':
+            
+            # XXX bad line, just for convenience at the moment
+            filename = keywords['filename']
+
+            # get distance matrix
+            distances = []
+
+            for i,taxA in enumerate(self.cols):
+                for j,taxB in enumerate(self.cols):
+                    if i < j:
+                        
+                        # get the two dictionaries
+                        dictA = self.get_dict(col=taxA,entry=keywords['ref'])
+                        dictB = self.get_dict(col=taxB,entry=keywords['ref'])
+
+                        # count amount of shared concepts
+                        shared = 0
+                        missing = 0
+                        for concept in self.rows:
+                            try:
+                                if [k for k in dictA[concept] if k in dictB[concept]]:
+                                    shared += 1
+                                else:
+                                    pass
+                            except KeyError:
+                                missing += 1
+
+                        # append to distances
+                        distances += [ 1 - shared / (self.height-missing)]
+            distances = squareform(distances)
+
+            if fileformat == 'dst':
+                f = open(filename+'.'+fileformat,'w')
+                f.write(' {0}\n'.format(self.width))
+                for i,taxon in enumerate(self.cols):
+                    f.write('{0:10}'.format(taxon)[0:11])
+                    f.write(' '.join(['{0:2f}'.format(d) for d in
+                        distances[i]]))
+                    f.write('\n')
+                f.close()
+                FileWriteMessage(filename,'dst').message('written')
+
+            elif fileformat == 'tre':
+                
+                if keywords['tree_calc'] == 'neighbor':
+                    tree = neighbor(
+                            distances,
+                            self.cols,
+                            distances=keywords['distances']
+                            )
+                elif keywords['tree_calc'] == 'upgma':
+                    tree = ugpma(
+                            distances,
+                            self.cols,
+                            distances=keywords['distances']
+                            )
+
+                f = open(filename+'.'+fileformat,'w')
+                f.write(tree)
+                f.close()
+
+                FileWriteMessage(filename,'tre').message('written')
+
 

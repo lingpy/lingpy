@@ -48,7 +48,7 @@ def pap2nex(taxa,paps,missing=0,filename='nexus'):
                 )
             )
     
-    FileWriteMessage(filename,'.nex').message('written')
+    FileWriteMessage(filename,'nex').message('written')
     
     return
 

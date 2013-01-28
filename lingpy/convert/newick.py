@@ -23,7 +23,7 @@ def xml2nwk(
     document = {}
 
     # get the document
-    document['document'] = minidom.parse(argv[1])
+    document['document'] = minidom.parse(infile)
     
     # get the hash
     document['hash'] = document['document'].getElementsByTagName('hash')[0]
@@ -37,7 +37,7 @@ def xml2nwk(
 
     # now start iteration
     nwk = {0:[]}
-    queue = [(newick['root'],0)]
+    queue = [(document['root'],0)]
     taxa = []
     while queue:
         
