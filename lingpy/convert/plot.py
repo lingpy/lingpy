@@ -1,9 +1,7 @@
-# created  : 2012-12-30
-# modified : 2012-12-30
-
-__author__ = "Johann-Mattis List"
-__date__ = "2012-12-30"
-
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-01-28 11:47
+# modified : 2013-01-28 11:47
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -20,16 +18,26 @@ third, and the fourth column indicates a swapped site.  The benefit of this way
 to display alignments is that differences and similarities between the
 sequences become visible at once, making it easy to check the correctness of a
 given alignment analysis.
-
 """
+
+__author__="Johann-Mattis List"
+__date__="2013-01-28"
 
 import os
 import colorsys
 
+from lingpy.check.exceptions import ThirdPartyModuleError
+
+try:
+    import networkx as nx
+except ImportError:
+    ThirdPartyModuleError('networkx').warning
+ 
 from ..data import *
 from ..data import _color
 from ..align.sca import SCAMultiple
 from ..check.messages import *
+
 
 def colorRange(
         number,
@@ -695,4 +703,5 @@ def msa2html(
     out = open(outfile,'w')
     out.write(html)
     out.close()
+
 

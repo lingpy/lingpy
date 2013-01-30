@@ -63,6 +63,7 @@ def gls2gml(
         data['graphics']['type'] = 'ellipse'
         data['graphics']['w'] = 20.0
         data['graphics']['h'] = 20.0
+        data['origin'] = 0
         g.add_node(node,**data)
 
     # assign the root as starting point
@@ -93,6 +94,7 @@ def gls2gml(
         g.node[mapper[name]]['graphics']['h'] = 50.0
         g.node[mapper[name]]['graphics']['w'] = 50.0
         g.node[mapper[name]]['graphics']['fill'] = this_fill
+        g.node[mapper[name]]['origin'] = 1
 
     # add the edges to the tree
     for edgeA,edgeB,data in graph.edges(data=True):
@@ -111,7 +113,7 @@ def gls2gml(
 
     FileWriteMessage(filename,'gml').message('written')
     
-    return
+    return g
 
 def nwk2gml(
         treefile,

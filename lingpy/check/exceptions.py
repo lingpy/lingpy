@@ -1,10 +1,13 @@
-# created: 2013-01-25
-# modified: 2013-01-25
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-01-28 11:49
+# modified : 2013-01-28 11:49
 """
 Module provides common warnings for LingPy.
 """
-__author__ = "Johann-Mattis List"
-__date__ = "2013-01-25"
+
+__author__="Johann-Mattis List"
+__date__="2013-01-28"
 
 class ThirdPartyModuleError(Exception):
     """
