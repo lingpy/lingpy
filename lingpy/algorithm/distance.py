@@ -10,11 +10,10 @@ import operator
 
 def hamming(str1, str2):
     """
-    Hamming distance is defined as the number of bits that are different 
-    between two vectors.
+    Compute the Hamming distance between two strings.
 
-    R. W. Hamming. Error Detecting and Error Correcting Codes.  
-    Bell System Tech Journal, 9:147-160, April 1950.
+    The Hamming distance (see :evobib:`Hamming1950`) is defined as the
+    number of bits that are different between two vectors.
 
     Parameters
     ----------
@@ -36,6 +35,8 @@ def hamming(str1, str2):
 
 def jaccard(set1, set2):
     """
+    Computer the Jaccard distance between two sets.
+
     Jaccard distance measures the dissimilarity between sample sets.
     It is complementary to the Jaccard coefficient and is obtained by 
     subtracting the Jaccard coefficient from 1, or, equivalently, by 
