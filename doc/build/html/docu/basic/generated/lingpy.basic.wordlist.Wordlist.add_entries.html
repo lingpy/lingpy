@@ -66,7 +66,7 @@ QLC-LingPy
 <h1>lingpy.basic.wordlist.Wordlist.add_entries<a class="headerlink" href="#lingpy-basic-wordlist-wordlist-add-entries" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="lingpy.basic.wordlist.Wordlist.add_entries">
-<tt class="descclassname">Wordlist.</tt><tt class="descname">add_entries</tt><big>(</big><em>entry</em>, <em>source</em>, <em>function</em>, <em>**args</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.add_entries" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Wordlist.</tt><tt class="descname">add_entries</tt><big>(</big><em>entry</em>, <em>source</em>, <em>function</em>, <em>**keywords</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.add_entries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add new entry-types to the word list by modifying given ones.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -79,14 +79,16 @@ word list.</p>
 </div></blockquote>
 <p><strong>source</strong> : string</p>
 <blockquote>
-<div><p>A string specifying the basic entry-type that shall be modified.</p>
+<div><p>A string specifying the basic entry-type that shall be modified. If
+multiple entry-types shall be used to create a new entry, they
+should be passed in a simple string separated by a comma.</p>
 </div></blockquote>
 <p><strong>function</strong> : function</p>
 <blockquote>
 <div><p>A function which is used to convert the source into the target
 value.</p>
 </div></blockquote>
-<p><strong>keywords</strong> : {dict list}</p>
+<p><strong>keywords</strong> : {dict}</p>
 <blockquote class="last">
 <div><p>A dictionary of keywords that are passed as parameters to the
 function.</p>
@@ -145,7 +147,7 @@ converting given ones.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Dec 10, 2012.
+      Last updated on Feb 04, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
