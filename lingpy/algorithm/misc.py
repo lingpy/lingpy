@@ -217,6 +217,12 @@ def prosodic_string(
     >>> prosodic_string(profile)
     '#vC>'
     """
+    # check for integer string as input
+    if type(seq) == str:
+        if seq.isdigit():
+            seq = [int(s) for s in seq]
+        else:
+            raise ValueError("[!] Input should be a string of digits or a list of integers!")
     
     out = [0 for i in seq]
     
