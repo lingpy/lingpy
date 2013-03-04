@@ -19,5 +19,9 @@ from .data import *
 # import reading routines
 from .read import *
 
+# import
+from .algorithm.misc import *
+
 # import sequence routines
 from .sequence import *
+

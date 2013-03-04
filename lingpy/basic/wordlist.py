@@ -12,7 +12,7 @@ import builtins
 from datetime import date
 import numpy as np
 
-from ..read.csv import qlc2csv
+from ..read.csv import qlc2dict
 from ..convert import *
 from ..algorithm.cluster import neighbor,upgma
 from ..check.messages import FileWriteMessage
@@ -69,7 +69,7 @@ class Wordlist(object):
         
         # try to load the data
         try:
-            input_data = qlc2csv(input_data)
+            input_data = qlc2dict(input_data)
         except:
             if not input_data:
                 raise ValueError('[i] Input data is not specified.')

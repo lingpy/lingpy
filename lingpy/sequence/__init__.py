@@ -10,5 +10,5 @@ __author__="Johann-Mattis List"
 __date__="2013-03-04"
 
 # import for basic import
-from .sca import *
+from .sound_classes import *
 
