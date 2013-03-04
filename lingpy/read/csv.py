@@ -1,12 +1,13 @@
-# created: Fr 25 Jan 2013 01:21:36  CET
-# modified: Fr 25 Jan 2013 01:21:36  CET
-
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-04 17:02
+# modified : 2013-03-04 17:02
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__ = "2013-01-25"
+__date__="2013-03-04"
 
 def csv2list(
         filename,
@@ -98,4 +99,53 @@ def csv2dict(
     for line in l:
         d[line[0]] = line[1:]
 
-    return d                
+    return d               
+
+def qlc2dict(infile):
+    """
+    Simple function that loads qlc-format into a dictionary.
+
+    """
+
+    # read the data into a list
+    data = []
+
+    # open the file
+    f = open(infile)
+
+    for line in f:
+        # ignore hashed lines
+        if not line.startswith('#') and not line.startswith('@'):
+
+            # mind to strip newlines
+            data.append(line.strip('\n\r').split('\t'))
+    
+    # create the dictionary in which the data will be stored
+    d = {}
+
+    # check for first line, if a local ID is given in the header (or simply
+    # "ID"), take this line as the ID, otherwise create it
+    if data[0][0].lower() in ['id','local_id','localid']:
+        local_id = True
+    else:
+        local_id = False
+
+    # iterate over data and fill the dictionary (a bit inefficient, but enough
+    # for the moment)
+    i = 1
+    for line in data[1:]:
+        if local_id:
+            d[int(line[0])] = line[1:]
+        else:
+            d[i] = line
+            i += 1
+
+    # assign the header to d[0]
+    if local_id:
+        d[0] = [x.lower() for x in data[0][1:]]
+    else:
+        d[0] = [x.lower() for x in data[0]]
+
+    # return the stuff
+    return d
+

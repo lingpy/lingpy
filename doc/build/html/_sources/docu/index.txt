@@ -22,6 +22,7 @@ Specific Modules
 
    data/index
    align/index
+   algorithm/index
 
 
 What's Next?

@@ -1,9 +1,8 @@
 ============
-Basic Module
+Algorithm Module
 ============
 
 .. toctree::
    :maxdepth: 1
 
-   wordlist
-   spreadsheet
+   distance

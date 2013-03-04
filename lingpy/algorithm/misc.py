@@ -247,7 +247,7 @@ def prosodic_string(
         # value as we would with a vowel (note that python allows to
         # compare strings with integers, so we use that functionality here, ?
         # scores higher than 10)
-        if seq[i] == '0':
+        if seq[i] == 0:
             out[i] = 'v'
             up = True
             i += 1

@@ -12,58 +12,11 @@ import builtins
 from datetime import date
 import numpy as np
 
+from ..read.csv import qlc2csv
 from ..convert import *
 from ..algorithm.cluster import neighbor,upgma
 from ..check.messages import FileWriteMessage
 from ..algorithm.misc import *
-
-def _load_dict(infile):
-    """
-    Simple function only used to test the WordList class.
-    """
-
-    # read the data into a list
-    data = []
-
-    # open the file
-    f = open(infile)
-
-    for line in f:
-        # ignore hashed lines
-        if not line.startswith('#') and not line.startswith('@'):
-
-            # mind to strip newlines
-            data.append(line.strip('\n\r').split('\t'))
-    
-    # create the dictionary in which the data will be stored
-    d = {}
-
-    # check for first line, if a local ID is given in the header (or simply
-    # "ID"), take this line as the ID, otherwise create it
-    if data[0][0].lower() in ['id','local_id','localid']:
-        local_id = True
-    else:
-        local_id = False
-
-    # iterate over data and fill the dictionary (a bit inefficient, but enough
-    # for the moment)
-    i = 1
-    for line in data[1:]:
-        if local_id:
-            d[int(line[0])] = line[1:]
-        else:
-            d[i] = line
-            i += 1
-
-    # assign the header to d[0]
-    if local_id:
-        d[0] = [x.lower() for x in data[0][1:]]
-    else:
-        d[0] = [x.lower() for x in data[0]]
-
-    # return the stuff
-    return d
-            
 
 class Wordlist(object):
     """
@@ -116,7 +69,7 @@ class Wordlist(object):
         
         # try to load the data
         try:
-            input_data = _load_dict(input_data)
+            input_data = qlc2csv(input_data)
         except:
             if not input_data:
                 raise ValueError('[i] Input data is not specified.')
@@ -1068,5 +1021,53 @@ class Wordlist(object):
                 f.close()
 
                 FileWriteMessage(filename,'tre').message('written')
+
+#def _load_dict(infile):
+#    """
+#    Simple function only used to test the WordList class.
+#    """
+#
+#    # read the data into a list
+#    data = []
+#
+#    # open the file
+#    f = open(infile)
+#
+#    for line in f:
+#        # ignore hashed lines
+#        if not line.startswith('#') and not line.startswith('@'):
+#
+#            # mind to strip newlines
+#            data.append(line.strip('\n\r').split('\t'))
+#    
+#    # create the dictionary in which the data will be stored
+#    d = {}
+#
+#    # check for first line, if a local ID is given in the header (or simply
+#    # "ID"), take this line as the ID, otherwise create it
+#    if data[0][0].lower() in ['id','local_id','localid']:
+#        local_id = True
+#    else:
+#        local_id = False
+#
+#    # iterate over data and fill the dictionary (a bit inefficient, but enough
+#    # for the moment)
+#    i = 1
+#    for line in data[1:]:
+#        if local_id:
+#            d[int(line[0])] = line[1:]
+#        else:
+#            d[i] = line
+#            i += 1
+#
+#    # assign the header to d[0]
+#    if local_id:
+#        d[0] = [x.lower() for x in data[0][1:]]
+#    else:
+#        d[0] = [x.lower() for x in data[0]]
+#
+#    # return the stuff
+#    return d
+            
 
 

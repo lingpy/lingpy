@@ -138,7 +138,7 @@ class Model(object):
 
     def __repr__(self):
 
-        return self.name
+        return '<sca-model "'+self.name+'">'
 
     def __getitem__(self, x):
 
@@ -151,13 +151,13 @@ class Model(object):
         else:
             return False
 
-def load_diacritics_and_vowels():
+def load_dvt():
     """
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
     
-    path = os.path.split(os.path.abspath(__file__))[0]+'/models/dv/dv.bin'
+    path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/dvt.bin'
 
-    dv = load(open(path,'rb'))
+    dvt = load(open(path,'rb'))
 
-    return dv
+    return dvt
