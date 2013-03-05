@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-03-04 17:02
+# modified : 2013-03-05 08:37
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-04"
+__date__="2013-03-05"
 
 def csv2list(
         filename,
@@ -61,7 +61,7 @@ def csv2list(
 
 def csv2dict(
         filename,
-        fileformat = 'csv',
+        fileformat = None,
         dtype = None,
         comment = '#',
         sep = '\t'
@@ -105,6 +105,16 @@ def qlc2dict(infile):
     """
     Simple function that loads qlc-format into a dictionary.
 
+    Parameters
+    ----------
+    infile : str
+        Name of the input file.
+
+    Returns
+    -------
+    d : dict
+        A dictionary with integer keys corresponding to the order of the lines
+        of the input file. The header is given 0 as a specific key.
     """
 
     # read the data into a list
@@ -149,3 +159,64 @@ def qlc2dict(infile):
     # return the stuff
     return d
 
+# define some aliases
+def read_csv(
+        filename,
+        fileformat = None,
+        dtype = None,
+        comment = '#',
+        sep = '\t'
+        ):
+    """
+    Very simple function to get quick access to CSV-files.
+
+    Parameters
+    ----------
+    filename : str
+        Name of the input file.
+    fileformat : {None str}
+        If not specified the file <filename> will be loaded. Otherwise, the
+        fileformat is interpreted as the specific extension of the input file.
+    dtype : {None list}
+        If not specified, all data will be loaded as strings. Otherwise, a
+        list specifying the data for each line should be provided.
+    comment : string (default="#")
+        Comment character in the begin of a line forces this line to be
+        ignored.
+    sep : string (default = "\t")
+        Specify the separator for the CSV-file.
+
+    Returns
+    -------
+    l : list
+        A list-representation of the CSV file.
+
+    Notes
+    -----
+    This is but an alias for the csv2dict function.
+
+    """
+    return csv2dict(filename,fileformat,dtype,comment,sep)
+
+def read_qlc(
+        infile
+        ):
+    """
+    Simple function that loads qlc-format into a dictionary.
+
+    Parameters
+    ----------
+    infile : str
+        Name of the input file.
+
+    Returns
+    -------
+    d : dict
+        A dictionary with integer keys corresponding to the order of the lines
+        of the input file. The header is given 0 as a specific key.
+    
+    Notes
+    -----
+    This is but an alias for the qlc2dict function.
+    """
+    return qlc2dict(infile)
