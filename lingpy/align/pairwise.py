@@ -1,11 +1,17 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-05 17:50
+# modified : 2013-03-05 17:50
 """
 Basic module for pairwise alignment analyses.
 """
-# modules
-from __future__ import division,print_function
-from ..data import *
-from ..algorithm import *
 
+__author__="Johann-Mattis List"
+__date__="2013-03-05"
+
+# modules
+from ..data import *
+from ..algorithm import alignx as _calign
 
 class Pairwise(object):
     """
@@ -28,6 +34,7 @@ class Pairwise(object):
         analysis.
 
     """
+
     def __init__(
             self,
             seqs,
@@ -41,6 +48,8 @@ class Pairwise(object):
             self.seqs = [(seqs,seqB)]
         else:
             self.seqs = seqs
+
+        # check for input type
             
         # create a tokenized representation of all sequences
         self.tokens = []
@@ -358,3 +367,128 @@ class Pairwise(object):
             sA,sB = self._self_score(almA),self._self_score(almB)
             d = 1 - ((2 * sAB) / (sA+sB))
             self.alignments[i][2] = d
+
+# the following functions provide solutions for convenience
+def pw_align(
+        seqA,
+        seqB,
+        gop = -1,
+        scale = 0.5,
+        scorer = {},
+        res = '_',
+        mode = 'global',
+        distance = False
+        ):
+    """
+    Align two sequences in various ways.
+    """
+
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == list:
+        seqA = tuple(seqA)
+        seqB = tuple(seqB)
+    elif type(seqA) != tuple:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+
+    # start alignment
+    return _calign.basic_align(
+            seqA,
+            seqB,
+            gop,
+            scale,
+            scorer,
+            res,
+            mode,
+            distance
+            )
+
+def nw_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Needleman-Wunsch algorithm.
+    """
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == list:
+        seqA = tuple(seqA)
+        seqB = tuple(seqB)
+    elif type(seqA) != tuple:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if not scorer:
+        scorer = {}
+
+    return _calign.nw_align(seqA,seqB,scorer,gap)
+
+def edit_dist(
+        seqA,
+        seqB,
+        normalized = False
+        ):
+    """
+    Return the edit distance between two strings.
+    """
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == list:
+        seqA = tuple(seqA)
+        seqB = tuple(seqB)
+    elif type(seqA) != tuple:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    
+    return _calign.edit_dist(seqA,seqB,normalized)
+
+def sw_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Smith-Waterman algorithm.
+    """
+
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == list:
+        seqA = tuple(seqA)
+        seqB = tuple(seqB)
+    elif type(seqA) != tuple:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if not scorer:
+        scorer = {}
+
+    return _calign.sw_align(seqA,seqB,scorer,gap)
+
+
+def we_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Waterman-Eggert algorithm.
+    """
+
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == list:
+        seqA = tuple(seqA)
+        seqB = tuple(seqB)
+    elif type(seqA) != tuple:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if not scorer:
+        scorer = {}
+
+    return _calign.we_align(seqA,seqB,scorer,gap)
+
