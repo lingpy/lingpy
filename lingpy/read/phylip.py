@@ -1,6 +1,14 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-05 08:22
+# modified : 2013-03-05 08:22
 """
 Module provides functions to read in various formats from the Phylip package.
 """
+
+__author__="Johann-Mattis List"
+__date__="2013-03-05"
+
 import regex as re
 
 def read_dst(
