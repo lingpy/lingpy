@@ -5,20 +5,20 @@ __author__ = "Johann-Mattis List"
 __data__="2012-11-26"
 
 def _get_matrix(
-        tuple gopA,
-        tuple gopB,
-        int M,
-        int N,
-        str mode,
-        int scale
+        gopA,
+        gopB,
+        M,
+        N,
+        mode,
+        scale
         ):
     """
     Initialize traceback and matrix.
     """
-    cdef int i,j
+#     i,j
     
-    cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
+    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
     
     if mode != 'local':
         traceback[0][0] = 1
@@ -38,18 +38,18 @@ def _get_matrix(
     return (matrix,traceback)
 
 def _get_global_alignments(
-        int i,
-        int j,
-        list traceback,
-        tuple seqA,
-        tuple seqB
+        i,
+        j,
+        traceback,
+        seqA,
+        seqB
         ):
     """
     Return the alignments for a given traceback.
     """
     
-    cdef list almA = []
-    cdef list almB = []
+    almA = []
+    almB = []
     
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
@@ -69,19 +69,19 @@ def _get_global_alignments(
     return (almA[::-1],almB[::-1])
 
 def _get_local_alignments(
-        int i,
-        int j,
-        list traceback,
-        tuple seqA,
-        tuple seqB
+        i,
+        j,
+        traceback,
+        seqA,
+        seqB
         ):
     """
     Return the local alignments for a given traceback.
     """
 
-    cdef list almA = []
-    cdef list almB = []
-    cdef str x
+    almA = []
+    almB = []
+#     x
 
     # append stuff to almA and almB
     almA += [[x for x in seqA[j:]]]
@@ -121,9 +121,9 @@ def _get_local_alignments(
     return (almA[::-1],almB[::-1])
 
 def _score(
-        str charA,
-        str charB,
-        dict scorer
+        charA,
+        charB,
+        scorer
         ):
     """
     Basic function that scores the comparison of chars.
@@ -131,69 +131,28 @@ def _score(
     return scorer[charA,charB]
 
 def _score_simple(
-        str charA,
-        str charB,
-        dict scorer
+        charA,
+        charB,
+        scorer
         ):
     if charA == charB:
         return 1.0
     else: 
         return -1.0
 
-def _score_profile(
-        tuple colA,
-        tuple colB,
-        dict scorer,
-        float gap_weight = 0.0,
-        int swap_penalty = -5
-        ):
-    """
-    Basic function for the scoring of profiles.
-    """
-    # basic definitions
-    cdef int i,j
-    cdef str charA,charB
-
-    # define the initial score
-    cdef float score = 0.0
-
-    # set a counter
-    cdef float counter = 0
-
-    # iterate over all chars
-    for i,charA in enumerate(colA):
-        for j,charB in enumerate(colB):
-            if charA != 'X' and charB != 'X':
-                score += scorer[charA,charB]
-                counter += 1.0
-            #elif charA == '+' or charB == '+':
-            #    if charA == '+' and charB == '+':
-            #        score += 0.0
-            #        counter += 1.0
-            #    elif charA == 'X' or charB == 'X':
-            #        score += swap_penalty # this is the swap cost
-            #        counter += 1.0
-            #    else:
-            #        score += -1000000
-            #        counter += 1.0
-            else:
-                counter += gap_weight
-
-    return score / counter
-
 def _self_sc_score(
-        tuple seq,
-        int M,
-        dict scorer,
+        seq,
+        M,
+        scorer,
         factor
         ):
     """
     Return the self-score for an alignment of a string with itself.
     """
     
-    cdef float s
-    cdef int i
-    cdef float score = 0.0
+#     s
+#     i
+    score = 0.0
 
     for i in range(M):
         s = _score(seq[i],seq[i],scorer)
@@ -202,17 +161,17 @@ def _self_sc_score(
     return score
 
 def _self_basic_score(
-        tuple seq,
-        int M,
-        dict scorer,
+        seq,
+        M,
+        scorer,
         ):
     """
     Return the self-score for an basic alignment with itself.
     """
     
-    cdef float s
-    cdef int i
-    cdef float score = 0.0
+#     s
+#     i
+    score = 0.0
 
     # check for correct scorer
     if not scorer:
@@ -226,22 +185,21 @@ def _self_basic_score(
 
     return score
 
-
 def sc_align(
-        tuple seqA, # sequence
-        tuple seqB, # sequence
-        tuple gopA, # gap score modifier
-        tuple gopB, # gap score modifier
-        tuple proA, # prosodic string
-        tuple proB, # prosodic string
-        int gop,
-        float scale,
-        float factor,
-        dict scorer,
-        str res, # restricted chars
-        str mode,
-        bint distance = False,
-        bint both = False # return both similarity and distance
+        seqA, # sequence
+        seqB, # sequence
+        gopA, # gap score modifier
+        gopB, # gap score modifier
+        proA, # prosodic string
+        proB, # prosodic string
+        gop,
+        scale,
+        factor,
+        scorer,
+        res, # restricted chars
+        mode,
+        distance = False,
+        both = False # return both similarity and distance
         ):
     """
     Calculate alignment using basic sound class approach.
@@ -249,7 +207,7 @@ def sc_align(
     Parameters
     ---------
     seqA,seqB : tuple
-        The input sequences that are represented as a tuple of sound-class
+        The input sequences that are represented as a of sound-class
         string, prosodic string, and gap weights.
     gop : int
         Gap penalty.
@@ -261,7 +219,7 @@ def sc_align(
         The scoring dictionary.
     res : str
         The string storing the restricted characters.
-    mode : str {"global","local","overlap","dialign"}
+    mode : {"global","local","overlap","dialign"}
         The string storing the mode.
 
     Returns
@@ -271,17 +229,17 @@ def sc_align(
     """
     
     # declare integer variables
-    cdef int i,j,k,l,o,p
+#     i,j,k,l,o,p
     # declare floats
-    cdef float gapA,gapB,match,sim
+#     gapA,gapB,match,sim
     # declare lists
-    cdef list almA,almB
+#     almA,almB
     
     # declare arrays
-    cdef list matrix,traceback 
+#     matrix,traceback 
 
     # check for correct mode
-    cdef tuple modes = tuple(['global','local','dialign','overlap'])
+    modes = tuple(['global','local','dialign','overlap'])
     if mode not in modes:
         raise ValueError(
                 '[!] Alignment mode "{0}" is not available!'.format(
@@ -290,8 +248,8 @@ def sc_align(
                 )
 
     # get the length of the sequences
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
+    M = len(seqA)
+    N = len(seqB)
     
     # get the gops
     gopA = tuple([gop * gopA[i] for i in range(M)])
@@ -432,178 +390,15 @@ def sc_align(
             return (almA,almB,sim,1-(2*sim/(gapA+gapB)))
         return (almA,almB,1 - (2 * sim / (gapA+gapB)))
 
-def profile_align(
-        tuple seqA, # sequence
-        tuple seqB, # sequence
-        tuple gopA, # gap score modifier
-        tuple gopB, # gap score modifier
-        tuple proA, # prosodic string
-        tuple proB, # prosodic string
-        int gop,
-        float scale,
-        float factor,
-        dict scorer,
-        str res, # restricted chars
-        str mode,
-        float gap_weight
-        ):
-    """
-    Calculate alignment for profiles.
-
-    Parameters
-    ---------
-    seqA,seqB : tuple
-        The input sequences that are represented as a tuple of sound-class
-        string, prosodic string, and gap weights.
-    gop : int
-        Gap penalty.
-    scale : float
-        The scale for consecutive gaps.
-    factor : float
-        The factor for segments sharing the same prosodic characer.
-    scorer : dict
-        The scoring dictionary.
-    res : str
-        The string storing the restricted characters.
-    mode : str {"global","local","overlap","dialign"}
-        The string storing the mode.
-
-    Returns
-    -------
-    almA,almB,sim : list,list,float
-        Two lists containing the alignment, and the alignment score.
-    """
-    
-    # declare integer variables
-    cdef int i,j,k,l,o,p
-    # declare floats
-    cdef float gapA,gapB,match,sim
-    # declare lists
-    cdef list almA,almB
-    
-    # declare arrays
-    cdef list matrix,traceback 
-
-    # check for correct mode
-    cdef tuple modes = tuple(['global','dialign','overlap'])
-    if mode not in modes:
-        raise ValueError(
-                '[!] Alignment mode "{0}" is not available!'.format(
-                    mode
-                    )
-                )
-
-    # get the length of the sequences
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
-    
-    # get the gops
-    gopA = tuple([gop * gopA[i] for i in range(M)])
-    gopB = tuple([gop * gopB[i] for i in range(N)])
-
-    # get matrix and traceback
-    matrix,traceback = _get_matrix(
-        gopA,
-        gopB,
-        M,
-        N,
-        mode,
-        scale
-        )
-
-    # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-            
-            # calculate costs for gapA
-            if j == M and mode == 'overlap':
-                gapA = matrix[i-1][j]
-            elif proB[i-1] in res and proA[j-1] not in res and j != M:
-                gapA = matrix[i-1][j] - 1000000000
-            elif mode == 'dialign':
-                gapA = matrix[i-1][j]
-            elif traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
-            else:
-                gapA = matrix[i-1][j] + gopB[i-1]
-            
-            # calculate costs for gapB
-            if i == N and mode == 'overlap':
-                gapB = matrix[i][j-1]
-            elif proA[j-1] in res and proB[i-1] not in res and i != N:
-                gapB = matrix[i][j-1] - 1000000000
-            elif mode == 'dialign':
-                gapB = matrix[i][j-1]
-            elif traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
-            else:
-                gapB = matrix[i][j-1] + gopA[j-1]
-           
-            # calculate costs for match
-            if mode != 'dialign':
-                match = _score_profile(
-                        seqA[j-1],
-                        seqB[i-1],
-                        scorer,
-                        gap_weight
-                        )
-            else:
-                sim = 0.0
-                o = 1
-                for k in range(min(i,j)):
-                    match = matrix[i-k-1][j-k-1]
-                    for l in range(k,-1,-1):
-                        match += _score_profile(
-                                seqA[j-1],
-                                seqB[i-1],
-                                scorer,
-                                gap_weight
-                                )
-                    p = k+1
-                    if match > sim:
-                        sim = match
-                        o = p
-
-            # check for similar prostring
-            if proA[j-1] == proB[i-1]:
-                match = matrix[i-1][j-1] + match + match * factor
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) >= 2:
-                match = matrix[i-1][j-1] + match + match * factor * 0.5
-            else:
-                match = matrix[i-1][j-1] + match
-
-            # global modes
-            if gapA > match and gapA >= gapB:
-                matrix[i][j] = gapA
-                traceback[i][j] = 3
-            elif match >= gapB:
-                matrix[i][j] = match
-                traceback[i][j] = 1
-            else:
-                matrix[i][j] = gapB
-                traceback[i][j] = 2
-    
-    # carry out the traceback
-    sim = matrix[N][M]
-    almA,almB = _get_global_alignments(
-            i,
-            j,
-            traceback,
-            seqA,
-            seqB,
-            )
-    
-    return (almA,almB,sim)
-
 def basic_align(
-        tuple seqA, # sequence
-        tuple seqB, # sequence
-        int gop,
-        float scale,
-        dict scorer,
-        str res, # restricted chars
-        str mode,
-        bint distance = False
+        seqA, # sequence
+        seqB, # sequence
+        gop,
+        scale,
+        scorer,
+        res, # restricted chars
+        mode,
+        distance = False
         ):
     """
     Calculate alignment using simple character approach.
@@ -611,7 +406,7 @@ def basic_align(
     Parameters
     ---------
     seqA,seqB : tuple
-        The input sequences that are represented as a tuple of sound-class
+        The input sequences that are represented as a of sound-class
         string, prosodic string, and gap weights.
     gop : int
         Gap penalty.
@@ -621,7 +416,7 @@ def basic_align(
         The scoring dictionary.
     res : str
         The string storing the restricted characters.
-    mode : str {"global","local","overlap","dialign"}
+    mode : {"global","local","overlap","dialign"}
         The string storing the mode.
 
     Returns
@@ -631,17 +426,17 @@ def basic_align(
     """
     
     # declare integer variables
-    cdef int i,j,k,l,o,p
+#     i,j,k,l,o,p
     # declare floats
-    cdef float gapA,gapB,match,sim
+#     gapA,gapB,match,sim
     # declare lists
-    cdef list almA,almB
+#     almA,almB
     
     # declare arrays
-    cdef list matrix,traceback 
+#     matrix,traceback 
 
     # check for correct mode
-    cdef tuple modes = tuple(['global','local','dialign','overlap'])
+    modes = tuple(['global','local','dialign','overlap'])
     if mode not in modes:
         raise ValueError(
                 '[!] Alignment mode "{0}" is not available!'.format(
@@ -650,11 +445,11 @@ def basic_align(
                 )
 
     # get the length of the sequences
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
+    M = len(seqA)
+    N = len(seqB)
     
-    cdef tuple gopA = tuple(M * [gop])
-    cdef tuple gopB = tuple(N * [gop])
+    gopA = tuple(M * [gop])
+    gopB = tuple(N * [gop])
 
     # get matrix and traceback
     matrix,traceback = _get_matrix(
@@ -786,41 +581,41 @@ def basic_align(
         return (almA,almB,1 - (2 * sim / (gapA+gapB)))
 
 def nw_align(
-        tuple seqA,
-        tuple seqB,
-        dict scorer,
-        int gap = -1
+        seqA,
+        seqB,
+        scorer,
+        gap = -1
         ):
     """
     Align two sequences using the Needleman-Wunsch algorithm.
     """
     
     # get the lengths of the strings
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
+    M = len(seqA)
+    N = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
-    #cdef list seqA_tokens,seqB_tokens
-    #cdef str tA,tB
+#     #seqA_tokens,seqB_tokens
+#     #tA,tB
 
     # define general and specific integers
-    cdef int i,j
-    cdef int sim # stores the similarity score
+#     i,j
+#     sim # stores the similarity score
 
     # define values for the main loop
-    cdef int gapA,gapB,match,penalty # for the loop
+#     gapA,gapB,match,penalty # for the loop
  
     # define values for the traceback
-    cdef list almA 
-    cdef list almB
-    #cdef str gap_char = '-' # the gap character
+#     almA 
+#     almB
+    #gap_char = '-' # the gap character
     
     # define lists for tokens (in case no scoring function is provided)
-    cdef list seqA_tokens,seqB_tokens
-    cdef str tA,tB
+#     seqA_tokens,seqB_tokens
+#     tA,tB
     
     # create scorer
-    cdef dict this_scorer = {}
+    this_scorer = {}
     seqA_tokens = list(set(seqA))
     seqB_tokens = list(set(seqB))
     if not scorer:
@@ -836,8 +631,8 @@ def nw_align(
                 this_scorer[tA,tB] = scorer[tA,tB]
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
-    cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
 
     # initialize matrix and traceback
     for i in range(1,M+1):
@@ -882,25 +677,25 @@ def nw_align(
             seqB
             )
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (almA,almB,sim)
 
 def edit_dist(
-        tuple seqA,
-        tuple seqB,
-        bint normalized = False
+        seqA,
+        seqB,
+        normalized = False
         ):
     """
     Return the edit-distance between two strings.
     """
     
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
-    cdef int gapA,gapB,match
-    cdef int i,j,sim
-    cdef float dist
+    M = len(seqA)
+    N = len(seqB)
+#     gapA,gapB,match
+#     i,j,sim
+#     dist
     
-    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0 for i in range(M+1)] for j in range(N+1)]
     
     for i in range(1,M+1):
         matrix[0][i] = i
@@ -934,42 +729,42 @@ def edit_dist(
     return sim
 
 def sw_align(
-        tuple seqA,
-        tuple seqB,
-        dict scorer,
-        int gap
+        seqA,
+        seqB,
+        scorer,
+        gap
         ):
     """
     Align two sequences using the Smith-Waterman algorithm.
     """
     # basic stuff
-    cdef int i,j
-    cdef float gapA,gapB
+#     i,j
+#     gapA,gapB
 
     # get the lengths of the strings
-    cdef int lenA = len(seqA)
-    cdef lenB = len(seqB)
+    lenA = len(seqA)
+    lenB = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
 
     # define general and specific integers
 
     # define values for the main loop
-    cdef int null = 0 # constant during the loop
-    cdef int imax = 1 # for the loop
-    cdef int jmax = 1 # for the loop
-    cdef float max_score = 0.0 # for the loo
+    null = 0 # constant during the loop
+    imax = 1 # for the loop
+    jmax = 1 # for the loop
+    max_score = 0.0 # for the loo
 
     # define values for the traceback
-    cdef int igap = 0
-    cdef int jgap = 0 
-    cdef list almA = [s for s in seqA]
-    cdef list almB = [s for s in seqB]
-    cdef str gap_char = '-' # the gap character
+    igap = 0
+    jgap = 0 
+    almA = [s for s in seqA]
+    almB = [s for s in seqB]
+    gap_char = '-' # the gap character
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
 
     # create scorer, if it is empty
     if not scorer:
@@ -1015,7 +810,7 @@ def sw_align(
                 max_score = matrix[i][j]
 
     # get the similarity
-    cdef float sim = matrix[imax][jmax]
+    sim = matrix[imax][jmax]
 
     # start the traceback
     i,j = imax,jmax
@@ -1036,7 +831,7 @@ def sw_align(
         else:
             break
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (
             (
                 almA[0:j],
@@ -1052,19 +847,19 @@ def sw_align(
             )
 
 def we_align(
-        tuple seqA,
-        tuple seqB,
-        dict scorer,
-        int gap
+        seqA,
+        seqB,
+        scorer,
+        gap
         ):
     """
     Align two sequences using the Waterman-Eggert algorithm.
     """
     # basic defs
-    cdef int lenA,lenB,i,j,null,igap,jgap
-    cdef float sim,gapA,gapB,match,max_score
-    cdef str gap_char
-    cdef list matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
+#     lenA,lenB,i,j,null,igap,jgap
+#     sim,gapA,gapB,match,max_score
+#     gap_char
+#     matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
     
     # get the lengths of the strings
     lenA = len(seqA)
@@ -1134,7 +929,7 @@ def we_align(
             tracer.append(matrix[i][j])
 
     
-    # make list of alignments
+    # make of alignments
     out = []
 
     # start the while loop
@@ -1196,5 +991,5 @@ def we_align(
         # retrieve the aligned parts of the sequences
         out.append((almA[jmin:jmax+jgap],almB[imin:imax+igap],sim))
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return out

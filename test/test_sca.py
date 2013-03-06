@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-03-04"
 
 from lingpy import *
-from lingpy.algorithm.alignx import *
+from lingpy.align.pairwise import *
 from sys import argv
 
 # load kesslers wordlist
@@ -41,60 +41,80 @@ wordsB = wl.get_dict(col='Swedish',entry='IPA')
 #    print(proweights)
 
 # align words provisionally
+seqs = []
 for c in wl.concept: 
     if c in wordsA and c in wordsB:
         wA = wordsA[c][0]
         wB = wordsB[c][0]
 
+        seqs += [[wA,wB]]
+
         # get the tokens
-        tA = ipa2tokens(wA)
-        tB = ipa2tokens(wB)
+        #tA = ipa2tokens(wA)
+        #tB = ipa2tokens(wB)
 
-        almA,almB,sim = basic_align(tA,tB,distance=True)
-        print(c)
-        print('\t'.join(almA))
-        print('\t'.join(almB))
-        print(sim)
-        print('---')
+        #almA,almB,sim = basic_align(tA,tB,distance=True)
+        #print(c)
+        #print('\t'.join(almA))
+        #print('\t'.join(almB))
+        #print(sim)
+        #print('---')
 
-        # get the classes
-        cA = tokens2class(tA,sca)
-        cB = tokens2class(tB,sca)
+        ## get the classes
+        #cA = tokens2class(tA,sca)
+        #cB = tokens2class(tB,sca)
 
-        # get the prostrings
-        pA = prosodic_string(tA,'p')
-        pB = prosodic_string(tB,'p')
+        ## get the prostrings
+        #pA = prosodic_string(tA,'p')
+        #pB = prosodic_string(tB,'p')
 
-        # get the weights
-        wgA,wgB = prosodic_weights(pA),prosodic_weights(pB)
+        ## get the weights
+        #wgA,wgB = prosodic_weights(pA),prosodic_weights(pB)
 
-        # align the stuff
-        almA,almB,sim = sc_align(
-                cA,
-                cB,
-                wgA,
-                wgB,
-                pA,
-                pB,
-                -1,
-                0.3,
-                0.5,
-                sca.scorer,
-                'T_',
-                'global',
-                True
-                )
+        ## align the stuff
+        #almA,almB,sim = sc_align(
+        #        cA,
+        #        cB,
+        #        wgA,
+        #        wgB,
+        #        pA,
+        #        pB,
+        #        -1,
+        #        0.3,
+        #        0.5,
+        #        sca.scorer,
+        #        'T_',
+        #        'global',
+        #        True
+        #        )
 
-        # convert alignments back to original form
-        outA = class2tokens(tA,almA,local=False)
-        outB = class2tokens(tB,almB,local=False)
-        
-        print(c)
-        print('\t'.join(outA))
-        print('\t'.join(outB))
-        print(sim)
-        print('-----')
+        ## convert alignments back to original form
+        #outA = class2tokens(tA,almA,local=False)
+        #outB = class2tokens(tB,almB,local=False)
+        #
+        #print(c)
+        #print('\t'.join(outA))
+        #print('\t'.join(outB))
+        #print(sim)
+        #print('-----')
 
+from lingpy.align.pairwise import Pairwise as pw
+from lingpy.align.multiple import Multiple
+#pairs = pw(seqs)
+#pairs.align(distance=True,pprint=True)
 
+msa = Multiple(
+        [
+            'muter',
+            'moθər',
+            'mur'
+            ]
+        )
 
-
+msa._set_model()
+msa._set_scorer('classes')
+msa._get_pairwise_alignments()
+msa._create_library()
+msa._extend_library()
+msa._make_guide_tree()
+msa._merge_alignments()

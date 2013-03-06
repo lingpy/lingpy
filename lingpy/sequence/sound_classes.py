@@ -81,6 +81,13 @@ def ipa2tokens(
     tokens2class
     class2tokens
     """
+    # check for pre-tokenized strings
+    if ' ' in istring:
+        out = istring.split(' ')
+        if istring.startswith('#'):
+            return tuple(out[1:-1])
+        else:
+            return tuple(out)
 
     # check for parameters
     if not vowels:

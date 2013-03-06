@@ -1834,7 +1834,8 @@ class TreBor(object):
                 'threshold':1,
                 'fileformat':'pdf',
                 'usetex':True,
-                'only':[]
+                'only':[],
+                'colormap':mpl.cm.jet
                 }
 
         for key in defaults:

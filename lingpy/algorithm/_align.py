@@ -13,7 +13,7 @@ def _global(
         listB,
         lenB,
         scorer,
-        scale,
+        float scale,
         almA,
         almB
         ):
@@ -21,6 +21,11 @@ def _global(
     Internal function for global alignment analyses. 
     """
 
+    i
+    j
+    float gapA
+    float gapB
+    float match
 
     matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
@@ -62,7 +67,7 @@ def _global(
                 matrix[i][j] = gapB
                 traceback[i][j] = 2
 
-    sim = matrix[lenB][lenA]
+    float sim = matrix[lenB][lenA]
 
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
@@ -84,7 +89,7 @@ def _local(
         listB,
         lenB,
         scorer,
-        scale,
+        float scale,
         almA,
         almB
         ):
@@ -92,7 +97,16 @@ def _local(
     Internal function for local alignment analyses. 
     """
 
-    max_score = 0.0
+    i
+    j
+    k
+    float gapA
+    float gapB
+    float match
+    float null
+    imax
+    jmax
+    float max_score = 0.0
 
     matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
     traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
@@ -139,7 +153,7 @@ def _local(
                 imax = i
                 jmax = j
 
-    sim = matrix[imax][jmax]
+    float sim = matrix[imax][jmax]
 
     i = imax
     j = jmax
@@ -175,7 +189,7 @@ def _overlap(
         listB,
         lenB,
         scorer,
-        scale,
+        float scale,
         almA,
         almB
         ):
@@ -183,6 +197,11 @@ def _overlap(
     Internal function for global alignment analyses. 
     """
 
+    i
+    j
+    float gapA
+    float gapB
+    float match
 
     matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
     traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
@@ -226,7 +245,7 @@ def _overlap(
                 matrix[i][j] = gapB
                 traceback[i][j] = 2
 
-    sim = matrix[lenB][lenA]
+    float sim = matrix[lenB][lenA]
 
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
@@ -248,7 +267,7 @@ def _dialign(
         listB,
         lenB,
         scorer,
-        scale,
+        float scale,
         almA,
         almB
         ):
@@ -256,7 +275,12 @@ def _dialign(
     Internal function for global alignment analyses using the DIALIGN algorithm. 
     """
 
+    i,j,k,l
+    minimum
+    float old_score,new_score
+    old_length,new_length
 
+    float scoreA,scoreB,max_score,sim
 
     matrix = [[0.0 for i in range(lenA+1)] for j in range(lenB+1)]
     traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
@@ -284,14 +308,14 @@ def _dialign(
                 for l in range(k,-1,-1):
                     new_score += scorer[i-l][j-l]
                 new_length = k+1
-
+ 
                 if new_score > old_score:
                     old_score = new_score
                     old_length = new_length
-
+ 
             if listB[i-1] < 0 and listA[j-1] > 0 and j != lenA:
-                scoreA = matrix[i-1][j] - 1000000000
-            else:
+                 scoreA = matrix[i-1][j] - 1000000000
+             else:
                 scoreA = matrix[i-1][j]
 
             if listA[j-1] < 0 and listB[i-1] > 0 and i != lenB:
@@ -339,8 +363,8 @@ def align_pairwise(
         prsA,
         prsB,
         score_dict,
-        scale,
-        sonority_factor,
+        float scale,
+        float sonority_factor,
         mode
         ):
     """
@@ -352,6 +376,8 @@ def align_pairwise(
     outA = seqA[:]
     outB = seqB[:]
 
+    k
+    l
 
     if mode == "global":
         aligner = _global
@@ -383,7 +409,7 @@ def align_pairwise(
     almA = [0 for k in range(lA+1)]
     almB = [0 for k in range(lB+1)]
 
-    sim = aligner(
+    float sim = aligner(
             listA,
             lA,
             listB,
@@ -415,22 +441,29 @@ def align_sequences_pairwise(
         restrictions,
         prosodics,
         score_dict,
-        scale,
-        sonority_factor,
+        float scale,
+        float sonority_factor,
         mode
         ):
     """
-    Function takes a list of sequences as input and returns all possible
+    Function takes a of sequences as input and returns all possible
     pairwise alignments between all sequences.
     """
 
     lS = len(seqs)
 
+    i,j,k,l
 
+    float score
+    float sim
 
     alignments = []
 
     # more and more cdefs...
+    seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
+    #prsA,prsB
+    lA,lB
+    scorer,listA,listB
 
     if mode == "global":
         aligner = _global
@@ -514,22 +547,29 @@ def align_sequence_pairs(
         restrictions,
         prosodics,
         score_dict,
-        scale,
-        sonority_factor,
+        float scale,
+        float sonority_factor,
         mode
         ):
     """
-    Function takes a list of sequence pairs as input and returns the aligned
+    Function takes a of sequence pairs as input and returns the aligned
     sequence pairs.
     """
 
     lS = len(seqs)
 
+    i,j,k,l
 
+    float score
+    float sim
 
     alignments = []
 
     # more and more cdefs...
+    seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
+    # prsA,prsB
+    lA,lB
+    scorer,listA,listB
 
     if mode == "global":
         aligner = _global
@@ -610,21 +650,28 @@ def random_align_sequence_pairs(
         restrictions,
         prosodics,
         score_dict,
-        scale,
-        sonority_factor,
+        float scale,
+        float sonority_factor,
         mode,
         runs
         ):
     """
-    Function takes a list of sequences pairs as input and returns a dictionary
+    Function takes a of sequences pairs as input and returns a dictionary
     of correspondence frequencies.
     """
 
     lS = len(seqs)
 
+    i,j,k,l,n,run
 
+    float score
+    float sim
 
     # more and more cdefs...
+    seqA,seqB,wghA,wghB,resA,resB,outA,outB,almA,almB
+    #prsA,prsB
+    lA,lB
+    scorer,listA,listB
     corrs = {}
 
     if mode == "global":
@@ -732,6 +779,8 @@ def edit_dist(
     
     lenA = len(seqA)
     lenB = len(seqB)
+    gapA,gapB,match
+    i,j
     
     matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     
@@ -758,8 +807,8 @@ def edit_dist(
             else:
                 matrix[i][j] = gapB
 
-    sim = matrix[lenB][lenA]
-    dist = sim / float(max([lenA,lenB]))
+    float sim = matrix[lenB][lenA]
+    float dist = sim / float(max([lenA,lenB]))
 
     return dist
 
@@ -776,6 +825,17 @@ def nw_align(
     # get the lengths of the strings
     lenA = len(seqA)
     lenB = len(seqB)
+
+    # define lists for tokens (in case no scoring function is provided)
+    seqA_tokens,seqB_tokens
+    tA,tB
+
+    # define general and specific integers
+    i,j
+    sim # stores the similarity score
+
+    # define values for the main loop
+    gapA,gapB,match,penalty # for the loop
  
     # define values for the traceback
     almA = seqA[:]
@@ -844,8 +904,9 @@ def nw_align(
         else:
             break
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (almA,almB,sim)
+
 
 def sw_align(
         seqA,
@@ -862,10 +923,15 @@ def sw_align(
     lenB = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
+    seqA_tokens,seqB_tokens
+    tA,tB
 
     # define general and specific integers
+    i,j
+    sim # stores the similarity score
 
     # define values for the main loop
+    gapA,gapB,match,penalty # for the loop
     null = 0 # constant during the loop
     imax = 1 # for the loop
     jmax = 1 # for the loop
@@ -947,7 +1013,7 @@ def sw_align(
         else:
             break
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (
             (
                 almA[0:j],
@@ -961,6 +1027,7 @@ def sw_align(
                 ),
             sim
             )
+
 
 def we_align(
         seqA,
@@ -977,19 +1044,29 @@ def we_align(
     lenB = len(seqB)
 
     # define lists for tokens (in case no scoring function is provided)
+    seqA_tokens,seqB_tokens
+    tA,tB
 
     # define general and specific integers
+    i,j
+    sim # stores the similarity score
 
     # define values for the main loop
+    gapA,gapB,match,penalty # for the loop
     null = 0 # constant during the loop
+    imax,jmax # for the loop
+    imin,jmin
+    max_score # for the loo
 
     # define values for the traceback
     igap = 0
     jgap = 0 
+    almA,almB 
     gap_char = '-' # the gap character
 
     # create a tracer for positions in the matrix
     tracer = [0 for i in range(lenA+1)]
+    idx
 
     # create matrix and traceback
     matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
@@ -1040,7 +1117,7 @@ def we_align(
             tracer.append(matrix[i][j])
 
     
-    # make list of alignments
+    # make of alignments
     out = []
 
     # start the while loop
@@ -1102,6 +1179,6 @@ def we_align(
         # retrieve the aligned parts of the sequences
         out.append((almA[jmin:jmax+jgap],almB[imin:imax+igap],sim))
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
-    return out
+    # return the alignment as a of prefix, alignment, and suffix
+    return out 
 

@@ -1,23 +1,68 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-06 16:41
+# modified : 2013-03-06 16:41
 """
 Basic module for the handling of multiple sequence alignments.
 """
-from numpy import array,zeros
+
+__author__="Johann-Mattis List"
+__date__="2013-03-06"
+
+# thirdparty imports
+import numpy as np
+
+from numpy import array,zeros #XXX deprecate!
+
+# lingpy import
 from ..data import *
-from ..algorithm import *
+try:
+    from ..algorithm import alignx as _calign
+except:
+    from ..algorithm import _alignx as _calign
+from ..algorithm.misc import squareform
 from ..algorithm.cluster import _neighbor,_upgma,_flat_upgma
+from ..sequence.sound_classes import *
 
 class Multiple(object):
     """
     Basic class for multiple sequence alignment analyses.
+
+    Parameters
+    ----------
+    seqs : list
+        List of sequences that shall be aligned.
+
+    Notes
+    -----
+    Depending on the structure of the sequences, further keywords can be
+    specified that manage how the items got tokenized.
+
     """
     def __init__(
             self,
             seqs,
-            merge_vowels = True,
+            **keywords
             ):
         
         # store input sequences 
         self.seqs = seqs
+
+        # define a tokenizer function for convenience
+        defaults = {
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+        for k in keywords:
+            if k in defaults:
+                defaults[k] = keywords[k]
+
+        tokenize = lambda x: ipa2tokens(x,**defaults)
 
         # create a numerical representation of all sequences which reflects the
         # order of both their position and the position of their tokens. Before
@@ -27,13 +72,10 @@ class Multiple(object):
         self.numbers = []
         for i,seq in enumerate(self.seqs):
             # check for pre-tokenized strings
-            if ' ' in seq:
-                tokens = [s for s in seq.split(' ')]
-            else:
-                tokens = ipa2tokens(seq,merge_vowels=merge_vowels) 
+            tokens = tokenize(seq)
             self.tokens.append(tokens)
             self.numbers.append(
-                    [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
+                    tuple([str(i+1)+'.'+str(j+1) for j in range(len(tokens))])
                     )
 
         # create dictionary of all unique sequences, this is important, since
@@ -109,6 +151,7 @@ class Multiple(object):
         Method returns specific values of the class, depending on the index
         which is used.
         """
+        # XXX this should be evaluated, maybe it is not needed in the future.
         
         if number == error[0]:
             return error[1]
@@ -150,20 +193,29 @@ class Multiple(object):
             elif value == '_classes':
                 return self._classes[int(number)-1]
 
-    def _set_model(self,model):
+    def _set_model(
+            self,
+            model = None
+            ):
         """
         Method defines a specific class model for the calculation.
+
+        Parameters
+        ----------
+        model : { None ~lingpy.data.model.Model } (default=None)
+            A sound class model, or otherwise a scoring 
         """
-        
-        # store the class-model which is applied in the respective analysis
-        try:
-            self.model = eval(model)
-        except:
+        # check for the model
+        if not model:
+            self.model = sca
+        else:
             self.model = model
-        
-        self.classes = [token[:] for token in self.tokens]
-        for i,tokens in enumerate(self.tokens):
-            self.classes[i] = tokens2class(tokens,self.model)
+
+        # create the sound-classes
+        self.classes = []
+        for cls in map(lambda x:tokens2class(x,self.model),self.tokens):
+            self.classes += [cls]
+        self.scoredict = self.model.scorer
 
         # once a class model is defined, there may be identical sequences,
         # which in IPA terms are different. In order to avoid computing
@@ -173,25 +225,28 @@ class Multiple(object):
         indices = {}
         for i,seq in enumerate(self.classes):
             try:
-                indices[tuple(seq)] += [i]
+                indices[seq] += [i]
             except:
-                indices[tuple(seq)] = [i]
+                indices[seq] = [i]
 
         # create additional matrices for the internal representation of the
         # class sequences
         keys = [val[0] for val in indices.values()]
         self.height = len(keys)
-        self._classes = [self.classes[key][:] for key in keys]
-        self._numbers = [[str(i+1)+'.'+str(j+1) for j in
-            range(len(self._classes[i]))] for i in range(self.height)]
+
+        # add the classes
+        self._classes = [self.classes[key] for key in keys]
+        self._numbers = [tuple([str(i+1)+'.'+str(j+1) for j in
+            range(len(self._classes[i]))]) for i in range(self.height)]
 
         # create sonars
-        self._sonars = [self.tokens[key][:] for key in keys]
-        for i,sonar in enumerate(self._sonars):
-            self._sonars[i] = [int(x) for x in tokens2class(sonar,art)]
-        
-        self._prosodics = [prosodic_string(sonar) for sonar in
-            self._sonars]
+        self._sonars = list(
+                map(
+                    lambda x: [int(t) for t in tokens2class(x,art)],
+                    [self.tokens[key] for key in keys]
+                    )
+                )
+        self._prostrings = list([prosodic_string(s) for s in self._sonars])
 
         # create an index which allows to quickly interchange between classes
         # and given sequences
@@ -231,8 +286,7 @@ class Multiple(object):
             self,
             mode = 'global',
             gop = -2,
-            gep_scale = 0.5,
-            scale = None, 
+            scale = 0.5, 
             factor = 0.3,
             restricted_chars = 'T_'
             ):
@@ -240,62 +294,65 @@ class Multiple(object):
         Function calculates all pairwise alignments from the data.
         """
         
-        self._alignments = [[0 for i in range(self.height)] for j in
-                range(self.height)]
+        # create array for alignments
+        self._alignments = self.height * [[0 for i in range(self.height)]]
 
-        weights = []
-        for seq in self._prosodics:
-            pros = gop * array(prosodic_weights(
-                    seq,
-                    scale,
-                    factor
-                    ),dtype="float")
-            weights.append(pros.tolist())
-
-        restrictions = []
-        prosodic_strings = []
-        for pros in self._prosodics:
-            tmp = []
-            for i,char in enumerate(pros):
-                if char in restricted_chars:
-                    tmp.append(-(i+1))
-                else:
-                    tmp.append(i+1)
-            restrictions.append(tmp)
-            prosodic_strings.append(pros)
+        # create the distance matrix
+        self.matrix = []
         
-        alignments = align_sequences_pairwise(
-                self._numbers,
-                weights,
-                restrictions,
-                prosodic_strings,
-                self.scorer,
-                gep_scale,
-                0.25 * factor,
-                mode
-                )
+        # get the weights
+        self._weights = []          
+        self._weights = list(map(prosodic_weights,self._prostrings))
         
         k = 0
         for i in range(self.height):
             for j in range(self.height):
                 if i < j:
-                    almA,almB,sim = alignments[k]
+                    
+                    # get the classes
+                    cI,cJ = self._numbers[i],self._numbers[j]
+                        
+                    # get the weights
+                    wI,wJ = self._weights[i],self._weights[j]
+
+                    # get the prostrings
+                    pI,pJ = self._prostrings[i],self._prostrings[j]
+
+                    # carry out alignment analysis
+                    almA,almB,sim,dist = _calign.sc_align(
+                            cI,
+                            cJ,
+                            wI,
+                            wJ,
+                            pI,
+                            pJ,
+                            gop,
+                            scale,
+                            factor,
+                            self.scorer,
+                            restricted_chars,
+                            mode,
+                            distance = True,
+                            both = True
+                            )
+                
                     if mode == 'local':
-                        almA = [char for char in almA if char != '*']
-                        almB = [char for char in almB if char != '*']
-                    self._alignments[i][j] = [almA,almB,sim]
-                    self._alignments[j][i] = [almB,almA,sim]
-                    k += 1
+                        almA = almA[1]
+                        almB = almB[1] 
+                    self._alignments[i][j] = (almA,almB,sim)
+                    self._alignments[j][i] = (almB,almA,sim)
+                    self.matrix += [dist]
                 elif i == j:
-                    self._alignments[i][j] = [
-                            #zip(
-                                self._numbers[i],
-                                self._numbers[j],
-                                #),
-                            sum(
-                                [self.scorer[char,char] for char in self._numbers[i]]
-                                )
-                            ]
+                    alm = self._numbers[i]
+                    sim = _calign._self_sc_score(
+                            alm,
+                            len(alm),
+                            self.scorer,
+                            factor
+                            )
+                    self._alignments[i][j] = (alm,alm,sim)
+
+        self.matrix = squareform(self.matrix)
 
     def _create_library(self):
         """
@@ -375,41 +432,6 @@ class Multiple(object):
                        self.library[valJ,valI] = self.library[valI,valJ]
                 except:
                     pass
-       
-    def _score_pairwise(
-            self,
-            idxA,
-            idxB,
-            ):
-        
-        scoreAB = self._alignments[idxA][idxB][2]
-        scoreA = self._alignments[idxA][idxA][2]
-        scoreB = self._alignments[idxB][idxB][2]
-
-        return 1 - (2 * scoreAB / float(scoreA+scoreB))
-
-    def _make_matrix(self):
-        
-        matrix = []
-
-        for i in range(self.height):
-            for j in range(self.height):
-                if i < j:
-                    matrix.append(
-                            self._score_pairwise(i,j)
-                            )
-        
-        self.matrix = squareform(matrix)
-
-    def __make_guide_tree(
-            self,
-            tree_calc = 'median'
-            ):
-
-        self.tree_matrix = linkage(
-                self.matrix,
-                method = tree_calc
-                )
 
     def _make_guide_tree(
             self,
@@ -433,57 +455,56 @@ class Multiple(object):
         elif tree_calc == 'neighbor':
             _neighbor(clusters,self.matrix,self.tree_matrix)
         else:
-            raise ValueError('Method <'+tree_calc+'> for tree calculation not available.')
+            raise ValueError('[i] Method <'+tree_calc+'> for tree calculation not available.')
 
+    #def _profile_score(
+    #        self,
+    #        colA,
+    #        colB,
+    #        gap_weight = 0.0
+    #        ):
 
-    def _profile_score(
-            self,
-            colA,
-            colB,
-            gap_weight = 0.0
-            ):
+    #    score = 0
+    #    counter = 0.0
+    #    for i,charA in enumerate(colA):
+    #        for j,charB in enumerate(colB):
+    #            if 'X' not in (charA,charB):
+    #                score += self.scorer[charA,charB]
+    #                counter += 1.0
+    #            else:
+    #                counter += gap_weight
 
-        score = 0
-        counter = 0.0
-        for i,charA in enumerate(colA):
-            for j,charB in enumerate(colB):
-                if 'X' not in (charA,charB):
-                    score += self.scorer[charA,charB]
-                    counter += 1.0
-                else:
-                    counter += gap_weight
+    #    return score / counter
 
-        return score / counter
+    #def _swap_profile_score(
+    #        self,
+    #        colA,
+    #        colB,
+    #        gap_weight = 1.0,
+    #        swap_penalty = -5
+    #        ):
 
-    def _swap_profile_score(
-            self,
-            colA,
-            colB,
-            gap_weight = 1.0,
-            swap_penalty = -5
-            ):
+    #    score = 0
+    #    counter = 0.0
+    #    for i,charA in enumerate(colA):
+    #        for j,charB in enumerate(colB):
+    #            if 'X' not in (charA,charB) and '+' not in (charA,charB):
+    #                score += self.scorer[charA,charB]
+    #                counter += 1.0
+    #            elif '+' in (charA,charB):
+    #                if 'X' in (charA,charB):
+    #                    counter += 1.0
+    #                    score += swap_penalty # this is the swap-cost
+    #                elif (charA,charB) == ('+','+'):
+    #                    score += 0.0 # no cost for +/+-scores
+    #                    counter += 1
+    #                else:
+    #                    counter += 1.0 # all prohibited cases
+    #                    score += -10000000
+    #            else:
+    #                counter += gap_weight
 
-        score = 0
-        counter = 0.0
-        for i,charA in enumerate(colA):
-            for j,charB in enumerate(colB):
-                if 'X' not in (charA,charB) and '+' not in (charA,charB):
-                    score += self.scorer[charA,charB]
-                    counter += 1.0
-                elif '+' in (charA,charB):
-                    if 'X' in (charA,charB):
-                        counter += 1.0
-                        score += swap_penalty # this is the swap-cost
-                    elif (charA,charB) == ('+','+'):
-                        score += 0.0 # no cost for +/+-scores
-                        counter += 1
-                    else:
-                        counter += 1.0 # all prohibited cases
-                        score += -10000000
-                else:
-                    counter += gap_weight
-
-        return score / counter
+    #    return score / counter
 
 
     def _align_profile(
@@ -492,8 +513,8 @@ class Multiple(object):
             almsB,
             mode = 'global',
             gop = -3,
-            gep_scale = 0.5,
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
+            #scale = (1,1,1,1,1,1,1,1,1,1),
             factor = 0,
             gap_weight = 0.5,
             return_similarity = False,
@@ -501,16 +522,16 @@ class Multiple(object):
             restricted_chars = "T_"
             ):
 
-        profileA = array(almsA).transpose()
-        profileB = array(almsB).transpose()
+        profileA = np.array(almsA).transpose()
+        profileB = np.array(almsB).transpose()
 
         # calculate profile length and profile depth for both profiles
         m,o = profileA.shape
         n,p = profileB.shape
 
-        # create the lists which will be passed to the psa align function
-        lstA = list(range(1,m+1))
-        lstB = list(range(1,n+1))
+        ## create the lists which will be passed to the psa align function
+        #lstA = list(range(1,m+1))
+        #lstB = list(range(1,n+1))
                            
         # create the weights by which the gap opening penalties will be
         # modified
@@ -524,72 +545,38 @@ class Multiple(object):
                         value = '_sonars',
                         error = ('X',0)
                         ) for char in line] for line in profileB]
-
-        consA = [i[i!=0].mean().round() for i in array(sonarA)]
-        consB = [i[i!=0].mean().round() for i in array(sonarB)]
-
+        
+        # get the consensus string for the sonority profiles
+        consA = [int(i[i!=0].mean().round()) for i in np.array(sonarA)]
+        consB = [int(i[i!=0].mean().round()) for i in np.array(sonarB)]
+        print(consA,consB)
+        
+        # get the prosodic strings
         prosA = prosodic_string(consA)
         prosB = prosodic_string(consB)
-
-        weightsA = gop * array(
-                prosodic_weights(prosA,scale,factor)
-                )
-        weightsB = gop * array(
-            prosodic_weights(prosB,scale,factor)
-            )
         
-        # convert the tonal positions into negative indices
-        resA = []
-        resB = []
-        for i,res in enumerate(prosA):
-            if res in restricted_chars:
-                resA.append(-(i+1))
-            else:
-                resA.append(i+1)
-        for i,res in enumerate(prosB):
-            if res in restricted_chars:
-                resB.append(-(i+1))
-            else:
-                resB.append(i+1)
+        # get the weights
+        weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
+        
+        # modify the profiles
+        profileA = tuple([tuple(p.tolist()) for p in profileA])
+        profileB = tuple([tuple(p.tolist()) for p in profileB])
 
-        # create a temporary scoring dictionary which will be passed to the
-        # psa align function
-        tmp = {}
-        for i in lstA:        
-            for j in lstB:
-                # XXX temporary solution to account for wrong matchings between
-                # prohibited chars like tones and other chars, etc.
-                # should be change in a more economical way XXX
-                pros_tmp = list(set(prosA[i-1]+prosB[j-1]))
-                if 'T' in pros_tmp and len(pros_tmp) > 1:
-                    score = -100
-                elif '_' in pros_tmp and len(pros_tmp) > 1:
-                    score = -100
-                else:
-                    score = self._profile_score(
-                            profileA[i-1],
-                            profileB[j-1],
-                            gap_weight = gap_weight
-                            )
-                tmp[i,j] = score
-                # XXX note that the following line is redundant. It might be
-                # easily reduced, yet for the moment it is safer, since there
-                # were some issues with the cpp-version 
-                # tmp[j,i] = score
-
-        alignedA,alignedB,sim = align_pairwise(
-                lstA,
-                lstB,
-                weightsA.tolist(),
-                weightsB.tolist(),
-                resA,
-                resB,
+        # carry out the alignment
+        almA,almB,sim = _calign.profile_align(
+                profileA,
+                profileB,
+                weightsA,
+                weightsB,
                 prosA,
                 prosB,
-                tmp,
-                gep_scale,
+                gop,
+                scale,
                 factor,
-                mode
+                self.scorer,
+                restricted_chars,
+                mode,
+                gap_weight
                 )
 
         # return the similarity score, if this option is chosen
@@ -598,18 +585,18 @@ class Multiple(object):
 
         # trace the gaps inserted in both aligned profiles and insert them
         # in the original profiles
-        profileA = profileA.tolist()
-        profileB = profileB.tolist()
-        for i in range(len(alignedA)):
-            if alignedA[i] == '-':
+        profileA = [list(p) for p in profileA]
+        profileB = [list(p) for p in profileB]
+        for i in range(len(almA)):
+            if almA[i] == '-':
                 profileA.insert(i,o * ['X'])
-            elif alignedB[i] == '-':
+            elif almB[i] == '-':
                 profileB.insert(i,p * ['X'])
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = array(profileA).transpose().tolist()
-        profileB = array(profileB).transpose().tolist()
+        profileA = np.array(profileA).transpose().tolist()
+        profileB = np.array(profileB).transpose().tolist()
 
         # return the aligned profiles and weight matrices
         if iterate == True:
@@ -621,8 +608,8 @@ class Multiple(object):
             self,
             mode = 'global',
             gop = -3,
-            gep_scale = 0.5,
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
+            #scale = (1,1,1,1,1,1,1,1,1,1),
             factor = 0,
             gap_weight = 0.5,
             restricted_chars = 'T_',
@@ -644,8 +631,8 @@ class Multiple(object):
                     alm_lst[n],
                     mode = mode,
                     gop = gop,
-                    gep_scale = gep_scale,
                     scale = scale,
+                    #scale = scale,
                     factor = factor,
                     gap_weight = gap_weight,
                     restricted_chars = restricted_chars

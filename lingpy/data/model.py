@@ -151,6 +151,16 @@ class Model(object):
         else:
             return False
 
+    def __eq__(self,x):
+        """
+        Compare a sound-class model with another model.
+        """
+
+        if self.__repr__() == x.__repr__():
+            return True
+        else:
+            return False
+
 def load_dvt():
     """
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
