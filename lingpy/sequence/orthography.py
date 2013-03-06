@@ -483,7 +483,7 @@ def printTree(root, path):
 # ---------- Main ------
 
 if __name__=="__main__":
-    o = OrthographyParser("data/orthography_profiles/thiesen1998.txt")
+    o = OrthographyParser("../data/orthography_profiles/thiesen1998.txt")
     g = GraphemeParser()
     test_words = ["aa", "aabuu", "uuabaa auubaa"]
     print()
