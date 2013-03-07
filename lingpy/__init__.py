@@ -13,7 +13,7 @@ __date__="2013-03-04"
 from .basic import *
 
 # we don't import align for the moment for safety reasons...
-# from .align import *
+from .align import *
 
 # load the sound-class models
 from .data import *

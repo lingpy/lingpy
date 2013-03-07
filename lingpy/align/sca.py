@@ -120,11 +120,14 @@ __date__ = "2012-11-12"
 
 from numpy import array
 from re import sub
+import numpy as np
+import re
 
 from ..data import *
 from ..algorithm.misc import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+
 
 class SCAMultiple(Multiple):
     """
@@ -297,7 +300,7 @@ class SCAMultiple(Multiple):
         Multiple.__init__(
                 self,
                 data[:,1],
-                merge_vowels
+                #merge_vowels
                 )
     
     def _init_msa(
@@ -860,3 +863,110 @@ class SCAPairwise(Pairwise):
                 out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
                 out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
             out.close()
+
+class SCA(SCAMultiple):
+    """
+    Basic class for carrying out multiple sequence alignment analyses.
+
+    Parameters
+    ----------
+    infile : file
+        A file in ``msq``-format or ``msa``-format. 
+    merge_vowels : bool (default=True)
+        Indicate, whether neighboring vowels should be merged into
+        diphtongs, or whether they should be kept separated during the
+        analysis.
+    comment : char (default='#')
+        The comment character which, inserted in the beginning of a line,
+        prevents that line from being read.
+
+    Examples
+    --------
+    Get the path to a file from the testset.
+
+    >>> from lingpy import *
+    >>> seq_file = get_file('test.seq')
+
+    Load the file into the Multiple class.
+
+    >>> mult = Multiple(seq_file)
+
+    Carry out a progressive alignment analysis of the sequences.
+
+    >>> mult.prog_align()
+
+    Print the result to the screen:
+
+    >>> print(mult)
+    w    o    l    -    d    e    m    o    r    t
+    w    a    l    -    d    e    m    a    r    -
+    v    -    l    a    d    i    m    i    r    -
+    
+    Notes
+    -----
+    In order to read in data from text files, two different file formats can be
+    used along with this class:
+
+    *msq-format*
+        The ``msq``-format is a specific format for text files containing unaligned
+        sequences. Files in this format should have the extension ``msq``. The
+        first line of an ``msq``-file contains information regarding the dataset.
+        The second line contains information regarding the sequence (meaning,
+        identifier), and the following lines contain the name of the taxa in the
+        first column and the sequences in IPA format in the second column,
+        separated by a tabstop. As an example, consider the file ``test.msq``::
+    
+            Harry Potter Testset
+            Woldemort (in different languages)
+            German  waldemar
+            English woldemort
+            Russian vladimir
+    
+    *msa-format*
+        The ``msa``-format is a specific format for text files containing already
+        aligned sequence pairs. Files in this format should have the extension
+        ``msa``. 
+        
+        The first line of a ``msa``-file contains information regarding the
+        dataset. The second line contains information regarding the sequence (its
+        meaning, the protoform corresponding to the cognate set, etc.). The aligned
+        sequences are given in the following lines, whereas the taxa are given in
+        the first column and the aligned segments in the following columns.
+        Additionally, there may be a specific line indicating the presence of swaps
+        and a specific line indicating highly consistent sites (local peaks) in the
+        MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
+        character (``+``) marks the beginning of a swapped region, the dash
+        character (``-``) its center and another plus character the end. All sites
+        which are not affected by swaps contain a dot. The line for local peaks
+        starts with the headword ``LOCAL``. All sites which are highly consistent
+        are marked with an asterisk (``*``), all other sites are marked with a dot
+        (``.``). As an example, consider the file ``test.msa``::
+    
+            Harry Potter Testset
+            Woldemort (in different languages)
+            English     w    o    l    -    d    e    m    o    r    t
+            German.     w    a    l    -    d    e    m    a    r    -
+            Russian     v    -    l    a    d    i    m    i    r    -
+            SWAPS..     .    +    -    +    .    .    .    .    .    .
+            LOCAL..     *    *    *    .    *    *    *    *    *    .
+
+    """
+    
+    def __init__(
+            self, 
+            infile, 
+            merge_vowels = True,
+            comment = '#'
+            ):
+
+        self.comment=comment
+        
+        # initialization checks first, whether we are dealing with msa-files or
+        # with other, unaligned, sequence files and starts the
+        # loading-procedures accordingly
+        #if infile.endswith('.msa') or infile.endswith('.msq'):
+        SCAMultiple.__init__(self,infile,merge_vowels)
+        ##elif infile.endwith('.psa') or infile.endswith('.psq'):
+        ##    SCAPairwise.__init__(infile,merge_vowels)
+
+

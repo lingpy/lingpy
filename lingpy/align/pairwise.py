@@ -13,9 +13,9 @@ __date__="2013-03-05"
 from ..data import *
 from ..sequence.sound_classes import *
 try:
-    from ..algorithm import alignx as _calign
+    from ..algorithm import calignx as _calign
 except:
-    from ..algorithm import _alignx as _calign
+    from ..algorithm import _calignx as _calign
 
 class Pairwise(object):
     """

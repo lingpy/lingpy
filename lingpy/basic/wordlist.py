@@ -1026,7 +1026,7 @@ class Wordlist(object):
 
                 FileWriteMessage(filename,'tre').message('written')
 
-class QLCWordlist(Wordlist)
+class QLCWordlist(Wordlist):
     """
     Basic class for the handling of QLC-formatted word lists.
 
@@ -1059,8 +1059,9 @@ class QLCWordlist(Wordlist)
             ):
         
         # initialize the wordlist object for the daughter class
-        Wordlist.__init__(self,filename,row,concept,conf)
+        Wordlist.__init__(self,filename,row,col,conf)
 
         # now that the wordlist is loaded, additional checking routines can be
         # carried out to test and to modify it for QLCoperations
+        print("Here I am, the daughter of Wordlist!")
 

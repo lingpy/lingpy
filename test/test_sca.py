@@ -1,136 +1,71 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:58
-# modified : 2013-03-04 13:58
+# modified : 2013-03-07 18:02
 """
 This script tests various SCA routines.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-04"
+__date__="2013-03-07"
 
 from lingpy import *
-from lingpy.align.pairwise import *
-from sys import argv
 
-# load kesslers wordlist
-wl = Wordlist('data/IEL.csv')
+# define a set of qlc-strings
+qlc_strings = [
+    "# v o l d e m o r t #",
+    "# w a l d e m a r #",
+    "# v l a d i m i r #",
+    ]
 
-# extract German words
-wordsA = wl.get_dict(col='German',entry='IPA')
-wordsB = wl.get_dict(col='Swedish',entry='IPA')
+# create an msa-object
+msa = Multiple(qlc_strings)
 
-# tokenize all words
-#for istring in words:
-#    tstring = ipa2tokens(istring)
-#    cstring = tokens2class(tstring,sca)
-#    pstring = prosodic_string(tstring,'t')
-#    #syls = [str(p) for p in prosodic_string(tstring)[1]]
-#    prostring = prosodic_string(tstring,'p')
-#    proweights = prosodic_weights(prostring)
-#
-#    print(
-#            '{0:10}\t{1:10}\t{2:20}\t{3:10}\t{4:10}'.format(
-#                ''.join(istring),
-#                ''.join(cstring),
-#                ' '.join(tstring),
-#                ''.join(pstring),
-#                ''.join(prostring)
-#                )
-#            )
-#    print(proweights)
+# carry out an SCA alignment, progressive style
+msa.prog_align()
 
-# align words provisionally
-seqs = []
-for c in wl.concept: 
-    if c in wordsA and c in wordsB:
-        wA = wordsA[c][0]
-        wB = wordsB[c][0]
-
-        seqs += [[wA,wB]]
-
-        # get the tokens
-        #tA = ipa2tokens(wA)
-        #tB = ipa2tokens(wB)
-
-        #almA,almB,sim = basic_align(tA,tB,distance=True)
-        #print(c)
-        #print('\t'.join(almA))
-        #print('\t'.join(almB))
-        #print(sim)
-        #print('---')
-
-        ## get the classes
-        #cA = tokens2class(tA,sca)
-        #cB = tokens2class(tB,sca)
-
-        ## get the prostrings
-        #pA = prosodic_string(tA,'p')
-        #pB = prosodic_string(tB,'p')
-
-        ## get the weights
-        #wgA,wgB = prosodic_weights(pA),prosodic_weights(pB)
-
-        ## align the stuff
-        #almA,almB,sim = sc_align(
-        #        cA,
-        #        cB,
-        #        wgA,
-        #        wgB,
-        #        pA,
-        #        pB,
-        #        -1,
-        #        0.3,
-        #        0.5,
-        #        sca.scorer,
-        #        'T_',
-        #        'global',
-        #        True
-        #        )
-
-        ## convert alignments back to original form
-        #outA = class2tokens(tA,almA,local=False)
-        #outB = class2tokens(tB,almB,local=False)
-        #
-        #print(c)
-        #print('\t'.join(outA))
-        #print('\t'.join(outB))
-        #print(sim)
-        #print('-----')
-
-from lingpy.align.pairwise import Pairwise as pw
-from lingpy.align.multiple import Multiple
-#pairs = pw(seqs)
-#pairs.align(distance=True,pprint=True)
-
-msa = Multiple(
-        [
-            'muter',
-            'moθər',
-            'mur'
-            ]
-        )
-
-msa._set_model()
-msa._set_scorer('classes')
-msa._get_pairwise_alignments()
-msa._create_library()
-msa._extend_library()
-msa._set_scorer('library')
-msa._get_pairwise_alignments()
-msa._make_guide_tree()
-msa._merge_alignments()
-msa._update_alignments()
+# print results to terminal
+print("")
+print("Progressive Alignment, SCA-Algorithm")
 print(msa)
 
-msa = Multiple(
-        [
-            '# m u t e r #',
-            '# m o θ ə r #',
-            '# m u r #'
-            ]
-        )
+# print results to terminal
+print("")
+print("Progressive Alignment, Basic-Algorithm")
+msa.prog_align(classes=False,sonar=False,gop=-1)
+print(msa)
 
-msa._set_model(classes=False,sonar=False)
-msa._set_scorer('classes')
-msa._get_pairwise_alignments()
+# check for swapped sites
+swap = msa.swap_check(swap_penalty=-1)
+if swap:
+    print("")
+    print("Detected swap of columns {0[0][0]} and {0[0][2]}".format(msa.swap_index))
+
+# check the iterations
+try:
+    msa.iterate_orphans()
+    msa.iterate_clusters(0.5)
+    msa.iterate_similar_gap_sites()
+    msa.iterate_all_sequences()
+    print("")
+    print("Iteration-test was successful.")
+except:
+    print("Error in iteration test.")
+
+# carry out pairwise tests
+msa.get_pairwise_alignments()
+pairs = [(''.join(a[0]).replace('-',''),''.join(a[1]).replace('-','')) for a in msa.alignments.values()]
+# carrying out pairwise alignments
+print("")
+print("Pairwise Alignments")
+pw = Pairwise(pairs)
+pw.align(pprint=True,distance=True)
+
+
+# load sca-file
+msa = SCAMultiple('data/test.msq')
+msa.lib_align()
+print("")
+print("Multiple alignment with MSA from text-file.")
+print("Writing result to file.")
+msa.output('msa',filename='data/test_out')
