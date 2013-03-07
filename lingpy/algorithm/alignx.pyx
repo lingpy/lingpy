@@ -429,7 +429,7 @@ def sc_align(
                 factor
                 )
         if both:
-            return (almA,almB,sim,1-(2*sim/(gapA+gapB)))
+            return (almA,almB,sim, 1 - (2 * sim / (gapA+gapB)))
         return (almA,almB,1 - (2 * sim / (gapA+gapB)))
 
 def profile_align(
@@ -601,9 +601,9 @@ def basic_align(
         int gop,
         float scale,
         dict scorer,
-        str res, # restricted chars
         str mode,
-        bint distance = False
+        bint distance = False,
+        bint both = False
         ):
     """
     Calculate alignment using simple character approach.
@@ -682,8 +682,6 @@ def basic_align(
             # calculate costs for gapA
             if j == M and mode == 'overlap':
                 gapA = matrix[i-1][j]
-            elif seqB[i-1] in res and seqA[j-1] not in res and j != M:
-                gapA = matrix[i-1][j] - 10000000
             elif mode == 'dialign':
                 gapA = matrix[i-1][j]
             elif traceback[i-1][j] == 3:
@@ -694,8 +692,6 @@ def basic_align(
             # calculate costs for gapB
             if i == N and mode == 'overlap':
                 gapB = matrix[i][j-1]
-            elif seqA[j-1] in res and seqB[i-1] not in res and i != N:
-                gapB = matrix[i][j-1] - 10000000
             elif mode == 'dialign':
                 gapB = matrix[i][j-1]
             elif traceback[i][j-1] == 2:
@@ -783,7 +779,10 @@ def basic_align(
                 scorer
                 )
 
-        return (almA,almB,1 - (2 * sim / (gapA+gapB)))
+        if both:
+            return (almA,almB,sim,1 - (2 * sim / (gapA+gapB)))
+        else:
+            return (almA,almB,1 - (2 * sim / (gapA+gapB)))
 
 def nw_align(
         tuple seqA,

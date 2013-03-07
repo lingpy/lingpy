@@ -116,5 +116,21 @@ msa._set_scorer('classes')
 msa._get_pairwise_alignments()
 msa._create_library()
 msa._extend_library()
+msa._set_scorer('library')
+msa._get_pairwise_alignments()
 msa._make_guide_tree()
 msa._merge_alignments()
+msa._update_alignments()
+print(msa)
+
+msa = Multiple(
+        [
+            '# m u t e r #',
+            '# m o θ ə r #',
+            '# m u r #'
+            ]
+        )
+
+msa._set_model(classes=False,sonar=False)
+msa._set_scorer('classes')
+msa._get_pairwise_alignments()

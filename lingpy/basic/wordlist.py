@@ -24,8 +24,10 @@ class Wordlist(object):
 
     Parameters
     ----------
-    input_data : {dict, string}
-        A dictionary with consecutive integers as keys and lists as values.
+    filename : { string dict }
+        The input file that contains the data. Otherwise a dictionary with
+        consecutive integers as keys and lists as values with the key 0
+        specifying the header.
 
     row : str (default = "concept")
         A string indicating the name of the row that shall be taken as the
@@ -61,7 +63,7 @@ class Wordlist(object):
 
     def __init__(
             self,
-            input_data,
+            filename,
             row = 'concept',
             col = 'doculect',
             conf = ''
@@ -69,10 +71,12 @@ class Wordlist(object):
         
         # try to load the data
         try:
-            input_data = qlc2dict(input_data)
+            input_data = qlc2dict(filename)
         except:
             if not input_data:
                 raise ValueError('[i] Input data is not specified.')
+            else:
+                input_data = filename
 
         # load the configuration file
         if not conf:
@@ -1022,52 +1026,41 @@ class Wordlist(object):
 
                 FileWriteMessage(filename,'tre').message('written')
 
-#def _load_dict(infile):
-#    """
-#    Simple function only used to test the WordList class.
-#    """
-#
-#    # read the data into a list
-#    data = []
-#
-#    # open the file
-#    f = open(infile)
-#
-#    for line in f:
-#        # ignore hashed lines
-#        if not line.startswith('#') and not line.startswith('@'):
-#
-#            # mind to strip newlines
-#            data.append(line.strip('\n\r').split('\t'))
-#    
-#    # create the dictionary in which the data will be stored
-#    d = {}
-#
-#    # check for first line, if a local ID is given in the header (or simply
-#    # "ID"), take this line as the ID, otherwise create it
-#    if data[0][0].lower() in ['id','local_id','localid']:
-#        local_id = True
-#    else:
-#        local_id = False
-#
-#    # iterate over data and fill the dictionary (a bit inefficient, but enough
-#    # for the moment)
-#    i = 1
-#    for line in data[1:]:
-#        if local_id:
-#            d[int(line[0])] = line[1:]
-#        else:
-#            d[i] = line
-#            i += 1
-#
-#    # assign the header to d[0]
-#    if local_id:
-#        d[0] = [x.lower() for x in data[0][1:]]
-#    else:
-#        d[0] = [x.lower() for x in data[0]]
-#
-#    # return the stuff
-#    return d
-            
+class QLCWordlist(Wordlist)
+    """
+    Basic class for the handling of QLC-formatted word lists.
 
+    Parameters
+    ----------
+    filename : { string dict }
+        The input file that contains the data. Otherwise a dictionary with
+        consecutive integers as keys and lists as values with the key 0
+        specifying the header.
+
+    row : str (default = "concept")
+        A string indicating the name of the row that shall be taken as the
+        basis for the tabular representation of the word list.
+    
+    col : str (default = "doculect")
+        A string indicating the name of the column that shall be taken as the
+        basis for the tabular representation of the word list.
+    
+    conf : string (default='')
+        A string defining the path to the configuration file. 
+    
+    """
+    
+    def __init__(
+            self,
+            filename,
+            row = 'concept',
+            col = 'doculect',
+            conf = ''
+            ):
+        
+        # initialize the wordlist object for the daughter class
+        Wordlist.__init__(self,filename,row,concept,conf)
+
+        # now that the wordlist is loaded, additional checking routines can be
+        # carried out to test and to modify it for QLCoperations
 

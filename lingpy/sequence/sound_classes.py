@@ -212,17 +212,17 @@ def tokens2class(
     out = []
     for token in tstring:
         try:
-            out.append(model.converter[token])
+            out.append(model[token])
         except:
             try:
-                out.append(model.converter[token[0]])
+                out.append(model[token[0]])
             except:
                 # check for stressed syllables
                 if token[0] in stress:
                     try:
-                        out.append(model.converter[token[1:]])
+                        out.append(model[token[1:]])
                     except:
-                        out.append(model.converter[token[1]])
+                        out.append(model[token[1]])
                 else:
                     # new character for missing data and spurious items
                     out.append('0')

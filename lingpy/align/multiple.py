@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-03-06 16:41
+# modified : 2013-03-06 23:57
 """
 Basic module for the handling of multiple sequence alignments.
 """
@@ -36,7 +36,7 @@ class Multiple(object):
     Notes
     -----
     Depending on the structure of the sequences, further keywords can be
-    specified that manage how the items got tokenized.
+    specified that manage how the items get tokenized.
 
     """
     def __init__(
@@ -44,7 +44,6 @@ class Multiple(object):
             seqs,
             **keywords
             ):
-        
         # store input sequences 
         self.seqs = seqs
 
@@ -195,7 +194,10 @@ class Multiple(object):
 
     def _set_model(
             self,
-            model = None
+            model = None,
+            classes = True,
+            sonar = True,
+            scorer = {}
             ):
         """
         Method defines a specific class model for the calculation.
@@ -203,19 +205,25 @@ class Multiple(object):
         Parameters
         ----------
         model : { None ~lingpy.data.model.Model } (default=None)
-            A sound class model, or otherwise a scoring 
+            A sound class model.
         """
-        # check for the model
-        if not model:
-            self.model = sca
-        else:
-            self.model = model
+        # check for keyword classes
+        if not classes:
+            classify = lambda x:x
+        else: 
+            # check for the model
+            if not model:
+                self.model = sca
+            else:
+                self.model = model
 
-        # create the sound-classes
+            # define classification function
+            classify = lambda x:tokens2class(x,self.model)
+
+        # create the sound-classes or the fake classes
         self.classes = []
-        for cls in map(lambda x:tokens2class(x,self.model),self.tokens):
+        for cls in map(classify,self.tokens):
             self.classes += [cls]
-        self.scoredict = self.model.scorer
 
         # once a class model is defined, there may be identical sequences,
         # which in IPA terms are different. In order to avoid computing
@@ -239,37 +247,60 @@ class Multiple(object):
         self._numbers = [tuple([str(i+1)+'.'+str(j+1) for j in
             range(len(self._classes[i]))]) for i in range(self.height)]
 
-        # create sonars
-        self._sonars = list(
-                map(
-                    lambda x: [int(t) for t in tokens2class(x,art)],
-                    [self.tokens[key] for key in keys]
+        # store sonars if they are passed as a list
+        if type(sonar) == list:
+            self._sonars = sonar
+            self._prostrings = list([prosodic_string(s) for s in self._sonars])
+        # create sonars if the argument is true
+        elif sonar:
+            self._sonars = list(
+                    map(
+                        lambda x: [int(t) for t in tokens2class(x,art)],
+                        [self.tokens[key] for key in keys]
+                        )
                     )
-                )
-        self._prostrings = list([prosodic_string(s) for s in self._sonars])
+            self._prostrings = list([prosodic_string(s) for s in self._sonars])
+        # do nothing if no arguments are passed
+        else:
+            self._sonars = False
+            self._prostrings = False
 
         # create an index which allows to quickly interchange between classes
         # and given sequences
         self.int2ext = dict(
                 [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]    
                 )
-
+        
         # create a scoredict for the calculation of alignment analyses
+        # append the scorer if it is given with the model
+        if classes:
+            scorer = lambda x,y:self.model.scorer[x,y]
+        # leave the scorer that was passed if it is not empty
+        elif scorer:
+            scorer = lambda x,y:scorer[x,y]
+        # create a short function if the scorer is empty
+        else:
+            def scorer(x,y):
+                if x == y:
+                    return 1
+                else:
+                    return -1
+
         self.scoredict = {}
         for i,seqA in enumerate(self._numbers):
             for j,seqB in enumerate(self._numbers):
                 if i < j:
                     for numA in seqA:
                         for numB in seqB:
-                            self.scoredict[numA,numB] = self.model.scorer[
+                            self.scoredict[numA,numB] = scorer(
                                     self._get(numA,'_classes'),
                                     self._get(numB,'_classes')
-                                    ]
+                                    )
                             self.scoredict[numB,numA] = self.scoredict[numA,numB]
                 elif i == j:
                     for num in seqA:
                         char = self._get(num,'_classes')
-                        self.scoredict[num,num] = self.model.scorer[char,char]
+                        self.scoredict[num,num] = scorer(char,char)
     
     def _set_scorer(self,score_mode='classes'):
         """
@@ -295,62 +326,88 @@ class Multiple(object):
         """
         
         # create array for alignments
-        self._alignments = self.height * [[0 for i in range(self.height)]]
+        self._alignments = [[0 for i in range(self.height)] for i in range(self.height)]
 
         # create the distance matrix
         self.matrix = []
         
-        # get the weights
-        self._weights = []          
-        self._weights = list(map(prosodic_weights,self._prostrings))
-        
-        k = 0
-        for i in range(self.height):
-            for j in range(self.height):
-                if i < j:
-                    
-                    # get the classes
-                    cI,cJ = self._numbers[i],self._numbers[j]
+        # check for the mode, if sonority profiles are not chose, take the
+        # simple alignment function
+        if self._sonars:
+            # get the weights
+            if not hasattr(self,'weights'):
+                self._weights = list(map(prosodic_weights,self._prostrings))
+            
+            for i in range(self.height):
+                for j in range(self.height):
+                    if i < j:
                         
-                    # get the weights
-                    wI,wJ = self._weights[i],self._weights[j]
+                        # get the classes
+                        cI,cJ = self._numbers[i],self._numbers[j]
+                            
+                        # get the weights
+                        wI,wJ = self._weights[i],self._weights[j]
 
-                    # get the prostrings
-                    pI,pJ = self._prostrings[i],self._prostrings[j]
+                        # get the prostrings
+                        pI,pJ = self._prostrings[i],self._prostrings[j]
 
-                    # carry out alignment analysis
-                    almA,almB,sim,dist = _calign.sc_align(
-                            cI,
-                            cJ,
-                            wI,
-                            wJ,
-                            pI,
-                            pJ,
-                            gop,
-                            scale,
-                            factor,
-                            self.scorer,
-                            restricted_chars,
-                            mode,
-                            distance = True,
-                            both = True
-                            )
-                
-                    if mode == 'local':
-                        almA = almA[1]
-                        almB = almB[1] 
-                    self._alignments[i][j] = (almA,almB,sim)
-                    self._alignments[j][i] = (almB,almA,sim)
-                    self.matrix += [dist]
-                elif i == j:
-                    alm = self._numbers[i]
-                    sim = _calign._self_sc_score(
-                            alm,
-                            len(alm),
-                            self.scorer,
-                            factor
-                            )
-                    self._alignments[i][j] = (alm,alm,sim)
+                        # carry out alignment analysis
+                        almA,almB,sim,dist = _calign.sc_align(
+                                cI,
+                                cJ,
+                                wI,
+                                wJ,
+                                pI,
+                                pJ,
+                                gop,
+                                scale,
+                                factor,
+                                self.scorer,
+                                restricted_chars,
+                                mode,
+                                distance = True,
+                                both = True
+                                )
+                    
+                        if mode == 'local':
+                            almA = almA[1]
+                            almB = almB[1] 
+                        self._alignments[i][j] = (almA,almB,sim)
+                        self._alignments[j][i] = (almB,almA,sim)
+                        self.matrix += [dist]
+                    elif i == j:
+                        alm = self._numbers[i]
+                        sim = _calign._self_sc_score(
+                                alm,
+                                len(alm),
+                                self.scorer,
+                                factor
+                                )
+                        self._alignments[i][j] = (alm,alm,sim)
+        else:
+            for i in range(self.height):
+                for j in range(self.height):
+                    if i < j:
+                        almA,almB,sim,dist = _calign.basic_align(
+                                self._numbers[i],
+                                self._numbers[j],
+                                gop,
+                                scale,
+                                self.scorer,
+                                mode,
+                                distance = True,
+                                both = True
+                                )
+                        self._alignments[i][j] = (almA,almB,sim)
+                        self.matrix += [dist]
+                    elif i == j:
+                        alm = self._numbers[i]
+                        sim = _calign._self_basic_score(
+                                alm,
+                                len(alm),
+                                self.scorer
+                                )
+                        self._alignments[i][j] = (alm,alm,sim)
 
         self.matrix = squareform(self.matrix)
 
@@ -457,56 +514,6 @@ class Multiple(object):
         else:
             raise ValueError('[i] Method <'+tree_calc+'> for tree calculation not available.')
 
-    #def _profile_score(
-    #        self,
-    #        colA,
-    #        colB,
-    #        gap_weight = 0.0
-    #        ):
-
-    #    score = 0
-    #    counter = 0.0
-    #    for i,charA in enumerate(colA):
-    #        for j,charB in enumerate(colB):
-    #            if 'X' not in (charA,charB):
-    #                score += self.scorer[charA,charB]
-    #                counter += 1.0
-    #            else:
-    #                counter += gap_weight
-
-    #    return score / counter
-
-    #def _swap_profile_score(
-    #        self,
-    #        colA,
-    #        colB,
-    #        gap_weight = 1.0,
-    #        swap_penalty = -5
-    #        ):
-
-    #    score = 0
-    #    counter = 0.0
-    #    for i,charA in enumerate(colA):
-    #        for j,charB in enumerate(colB):
-    #            if 'X' not in (charA,charB) and '+' not in (charA,charB):
-    #                score += self.scorer[charA,charB]
-    #                counter += 1.0
-    #            elif '+' in (charA,charB):
-    #                if 'X' in (charA,charB):
-    #                    counter += 1.0
-    #                    score += swap_penalty # this is the swap-cost
-    #                elif (charA,charB) == ('+','+'):
-    #                    score += 0.0 # no cost for +/+-scores
-    #                    counter += 1
-    #                else:
-    #                    counter += 1.0 # all prohibited cases
-    #                    score += -10000000
-    #            else:
-    #                counter += gap_weight
-
-    #    return score / counter
-
-
     def _align_profile(
             self,
             almsA,
@@ -528,10 +535,6 @@ class Multiple(object):
         # calculate profile length and profile depth for both profiles
         m,o = profileA.shape
         n,p = profileB.shape
-
-        ## create the lists which will be passed to the psa align function
-        #lstA = list(range(1,m+1))
-        #lstB = list(range(1,n+1))
                            
         # create the weights by which the gap opening penalties will be
         # modified
@@ -549,7 +552,6 @@ class Multiple(object):
         # get the consensus string for the sonority profiles
         consA = [int(i[i!=0].mean().round()) for i in np.array(sonarA)]
         consB = [int(i[i!=0].mean().round()) for i in np.array(sonarB)]
-        print(consA,consB)
         
         # get the prosodic strings
         prosA = prosodic_string(consA)
@@ -609,7 +611,6 @@ class Multiple(object):
             mode = 'global',
             gop = -3,
             scale = 0.5,
-            #scale = (1,1,1,1,1,1,1,1,1,1),
             factor = 0,
             gap_weight = 0.5,
             restricted_chars = 'T_',
@@ -632,16 +633,12 @@ class Multiple(object):
                     mode = mode,
                     gop = gop,
                     scale = scale,
-                    #scale = scale,
                     factor = factor,
                     gap_weight = gap_weight,
                     restricted_chars = restricted_chars
                     )
             
             alm_lst.append(alms)
-            #for x in alm_lst[-1]: #_db
-            #    print('\t'.join([self._get(y,'_classes') for y in x])) #_db
-            #print("") #_db
 
         # get the last stage of each alignment process
         alm_lst = alm_lst[-1]
@@ -671,14 +668,13 @@ class Multiple(object):
 
     def prog_align(
             self,
-            model = 'sca',
+            model = None,
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = None, #(1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0.3,
-            tree_calc = 'neighbor',
-            gap_weight = float(0.5),
+            tree_calc = 'upgma',
+            gap_weight = 0.5,
             restricted_chars = 'T_'
             ):
         """
@@ -715,23 +711,17 @@ class Multiple(object):
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
 
-        gep_scale : float (default=0.6)
+        scale : float (default=0.6)
             The factor by which the penalty for the extension of gaps (gap
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
 
-        tree_calc : { 'neighbor', 'upgma' }
+        tree_calc : { 'neighbor', 'upgma' } (default='upgma')
             The cluster algorithm which shall be used for the calculation of
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
@@ -750,46 +740,57 @@ class Multiple(object):
             that represents tones in the prosodic strings of sequences.
 
         """
+        # check for model
+        if not model:
+            model = sca
+
         # create a string with the current parameters
         self.params = '_'.join(
                 [
                     'prog',
-                    repr(model),
-                    mode,
+                    model.name,
                     str(gop),
-                    '{0:.1f}'.format(gep_scale),
-                    #'{0[0]:.1f}x{0[1]:.1f}x{0[2]:.1f}'.format(scale),
+                    '{0:.1f}'.format(scale),
                     '{0:.1f}'.format(factor),
                     tree_calc,
                     '{0:.1f}'.format(gap_weight),
                     restricted_chars
-                    ])
-
+                    ]
+                )
+        
+        # set the model
         self._set_model(model)
+
+        # set the scorer
         self._set_scorer('classes')
+
+        # get the pairwise alignments
         self._get_pairwise_alignments(
                 gop = gop,
-                gep_scale = gep_scale,
                 scale = scale,
                 factor = factor,
                 restricted_chars=restricted_chars
                 )
-        self._make_matrix()
+
+        # get the guide-tree 
         self._make_guide_tree(tree_calc=tree_calc)
+
+        # merge the alignments
         self._merge_alignments(
                 mode = mode,
                 gop = gop,
-                gep_scale = gep_scale,
                 scale = scale,
                 factor = factor,
                 restricted_chars = restricted_chars,
                 gap_weight = gap_weight,
                 )
+
+        # update the alignments
         self._update_alignments()
 
     def lib_align(
             self,
-            model = 'sca',
+            model = None,
             mode = 'global',
             modes = [
                 ('global',-2,0.5),
@@ -885,22 +886,27 @@ class Multiple(object):
             strings of sequences.
 
         """
+        # set the model to sca if it is not defined
+        if not model: model = sca
+
         # create a string with the current parameters
         params = [
                     'lib',
-                    repr(model),
+                    model.name,
                     mode,
-                    '',
-                    #'{0[0]:.1f}x{0[1]:.1f}x{0[2]:.1f}'.format(scale),
                     '{0:.1f}'.format(factor),
                     tree_calc,
                     '{0:.1f}'.format(gap_weight),
                     restricted_chars
-                    ]
+                ]
+        
+        # append parameters to the params-string
         mode_params = []
         for m in modes:
             mode_params.append('{0[0]}x{0[1]}x{0[2]:.2f}'.format(m))
+
         mode_params = 'y'.join(mode_params)
+
         params[3] = mode_params
         
         self.params = '_'.join(params)
@@ -922,7 +928,7 @@ class Multiple(object):
                     run[0],
                     run[1],
                     run[2],
-                    scale,
+                    #scale,
                     factor,
                     restricted_chars
                     )
@@ -936,13 +942,9 @@ class Multiple(object):
                 mode,
                 0,
                 0.0,
-                (1,1,1,1,1,1,1,1,1,1),
                 0.3,
                 restricted_chars
                 )
-        
-        # create the matrix
-        self._make_matrix()
 
         # reconstruct the tree
         self._make_guide_tree(tree_calc)
@@ -955,11 +957,12 @@ class Multiple(object):
                 mode,
                 0,
                 0.0,
-                (1,1,1,1,1,1,1,1,1,1),
                 0.0,
                 gap_weight,
                 restricted_chars
                 )
+
+        # update the alignments
         self._update_alignments()
 
     def _reduce_gap_sites(
@@ -2072,4 +2075,52 @@ class Multiple(object):
         out += repr(self.model)
 
 
-                                
+    #def _profile_score(
+    #        self,
+    #        colA,
+    #        colB,
+    #        gap_weight = 0.0
+    #        ):
+
+    #    score = 0
+    #    counter = 0.0
+    #    for i,charA in enumerate(colA):
+    #        for j,charB in enumerate(colB):
+    #            if 'X' not in (charA,charB):
+    #                score += self.scorer[charA,charB]
+    #                counter += 1.0
+    #            else:
+    #                counter += gap_weight
+
+    #    return score / counter
+
+    #def _swap_profile_score(
+    #        self,
+    #        colA,
+    #        colB,
+    #        gap_weight = 1.0,
+    #        swap_penalty = -5
+    #        ):
+
+    #    score = 0
+    #    counter = 0.0
+    #    for i,charA in enumerate(colA):
+    #        for j,charB in enumerate(colB):
+    #            if 'X' not in (charA,charB) and '+' not in (charA,charB):
+    #                score += self.scorer[charA,charB]
+    #                counter += 1.0
+    #            elif '+' in (charA,charB):
+    #                if 'X' in (charA,charB):
+    #                    counter += 1.0
+    #                    score += swap_penalty # this is the swap-cost
+    #                elif (charA,charB) == ('+','+'):
+    #                    score += 0.0 # no cost for +/+-scores
+    #                    counter += 1
+    #                else:
+    #                    counter += 1.0 # all prohibited cases
+    #                    score += -10000000
+    #            else:
+    #                counter += gap_weight
+
+    #    return score / counter
+                               

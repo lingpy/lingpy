@@ -1,6 +1,15 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-06 23:14
+# modified : 2013-03-06 23:14
 """
 Module for handling sequence models.
 """
+
+__author__="Johann-Mattis List"
+__date__="2013-03-06"
+
+
 from re import findall
 from pickle import load
 import os
@@ -160,6 +169,12 @@ class Model(object):
             return True
         else:
             return False
+
+    def __call__(self,x,y):
+        """
+        Use the call-shortcut to retrieve the scoring function.
+        """
+        return self.scorer[x,y]
 
 def load_dvt():
     """
