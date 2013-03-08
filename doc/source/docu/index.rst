@@ -6,23 +6,29 @@
 Documentation
 =============
 
-Basic Classes
-^^^^^^^^^^^^^
+Data Manipulation and Representation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
 
    basic/index
+   sequence/index
+
+Sequence Comparison
+^^^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   align/index
 
 
-Specific Modules
-^^^^^^^^^^^^^^^^
+Language Comparison
+^^^^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
 
-   data/index
-   align/index
-   algorithm/index
+   compare/borrowing/index
 
 
 What's Next?
@@ -30,7 +36,8 @@ What's Next?
 
 .. toctree::
    :maxdepth: 1
-
+   
+   ../tutorial/index
    ../download
 
 

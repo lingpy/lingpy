@@ -1,5 +1,5 @@
 ========================================================
-Word Lists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
+Wordlists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
 ========================================================
 
 .. currentmodule:: lingpy.basic.wordlist
@@ -16,4 +16,5 @@ Word Lists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
       Wordlist.add_entries
       Wordlist.get_etymdict
       Wordlist.get_paps
+      Wordlist.output
 

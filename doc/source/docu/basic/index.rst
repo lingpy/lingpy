@@ -2,7 +2,10 @@
 Basic Module
 ============
 
+.. automodule:: lingpy.basic
+
 .. toctree::
    :maxdepth: 1
 
-   wordlist.rst
+   wordlist
+   spreadsheet

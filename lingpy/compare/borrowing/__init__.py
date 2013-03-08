@@ -3,7 +3,7 @@
 # created  : 2013-03-05 19:09
 # modified : 2013-03-05 19:09
 """
-Basic module for the Tree-Based Borrowing detection method.
+Basic module for borrowing detection.
 """
 
 __author__="Johann-Mattis List"

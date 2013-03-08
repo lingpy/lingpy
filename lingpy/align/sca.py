@@ -1,3 +1,8 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-07 20:07
+# modified : 2013-03-07 21:23
+
 """
 Basic module for pairwise and multiple sequence comparison.
 
@@ -113,13 +118,11 @@ are required. See the documentation for the respective classes for details.
         SWAPS..     .    +    -    +    .    .    .    .    .    .
         LOCAL..     *    *    *    .    *    *    *    *    *    .
 
-
 """
-__author__ = "Johann-Mattis List"
-__date__ = "2012-11-12"
 
-from numpy import array
-from re import sub
+__author__="Johann-Mattis List"
+__date__="2013-03-07"
+
 import numpy as np
 import re
 
@@ -129,7 +132,7 @@ from .multiple import Multiple
 from .pairwise import Pairwise
 
 
-class SCAMultiple(Multiple):
+class _Multiple(Multiple):
     """
     Basic class for carrying out multiple sequence alignment analyses.
 
@@ -220,24 +223,39 @@ class SCAMultiple(Multiple):
     def __init__(
             self, 
             infile, 
-            merge_vowels = True,
-            comment = '#'
+            **keywords
             ):
 
-        self.comment=comment
+        # set the defaults
+        defaults = {
+                'comment':'#',
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
         
+        # store comment-string
+        self.comment = keywords['comment']
+
         # initialization checks first, whether we are dealing with msa-files or
         # with other, unaligned, sequence files and starts the
         # loading-procedures accordingly
         if infile.endswith('.msa'):
-            self._init_msa(infile,merge_vowels)
+            self._init_msa(infile,**keywords)
         else:
-            self._init_seq(infile,merge_vowels)
+            self._init_seq(infile,**keywords)
 
     def _init_seq(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load an ``msq``-file.
@@ -284,7 +302,7 @@ class SCAMultiple(Multiple):
 
         # check the data for inconsistencies
         try:
-            data = array(data)
+            data = np.array(data)
         except:
             print("[!] Error in file {0}.".format(infile))
             length = len(data[0])
@@ -300,7 +318,7 @@ class SCAMultiple(Multiple):
         Multiple.__init__(
                 self,
                 data[:,1],
-                #merge_vowels
+                **keywords
                 )
     
     def _init_msa(
@@ -380,13 +398,13 @@ class SCAMultiple(Multiple):
         # by joining it with dots. That looks ugly and nasty and should
         # probably be checked!
         self.seqs = [
-                sub(
+                re.sub(
                     '\.+$',
                     '',
-                    sub(
+                    re.sub(
                         '^\.+',
                         '',
-                        sub(
+                        re.sub(
                             '\.\.+',
                             '.',
                             '.'.join(alm).replace('-','')
@@ -398,7 +416,7 @@ class SCAMultiple(Multiple):
         Multiple.__init__(
                 self,
                 self.seqs,
-                merge_vowels
+                **keywords
                 )
 
     def ipa2cls(
@@ -574,7 +592,7 @@ class SCAMultiple(Multiple):
             pass
         out.close()
 
-class SCAPairwise(Pairwise):
+class _Pairwise(Pairwise):
     """
     Basic class for dealing with the pairwise alignment of sequences.
 
@@ -660,21 +678,39 @@ class SCAPairwise(Pairwise):
     def __init__(
             self,
             infile,
-            merge_vowels = True,
-            comment = '#'
+            **keywords
             ):
-        self.comment = comment
+        
+        # set the defaults
+        defaults = {
+                'comment':'#',
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+
+        # check for keywords
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        # add comment-char
+        self.comment = keywords['comment']
 
         # check the ending of the infile
         if infile.endswith('.psa'):
-            self._init_psa(infile,merge_vowels)
+            self._init_psa(infile,**keywords)
         else:
-            self._init_seq(infile,merge_vowels)
+            self._init_seq(infile,**keywords)
 
     def _init_psa(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load a ``psa``-file.
@@ -741,13 +777,13 @@ class SCAPairwise(Pairwise):
         Pairwise.__init__(
                 self,
                 self.pairs,
-                merge_vowels = merge_vowels
+                **keywords
                 )
 
     def _init_seq(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load a ``psq``-file.
@@ -793,7 +829,7 @@ class SCAPairwise(Pairwise):
         Pairwise.__init__(
                 self,
                 self.pairs,
-                merge_vowels = merge_vowels
+                **keywords
                 )
 
     def output(
@@ -864,109 +900,49 @@ class SCAPairwise(Pairwise):
                 out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
             out.close()
 
-class SCA(SCAMultiple):
+class SCA(object):
     """
-    Basic class for carrying out multiple sequence alignment analyses.
-
-    Parameters
-    ----------
-    infile : file
-        A file in ``msq``-format or ``msa``-format. 
-    merge_vowels : bool (default=True)
-        Indicate, whether neighboring vowels should be merged into
-        diphtongs, or whether they should be kept separated during the
-        analysis.
-    comment : char (default='#')
-        The comment character which, inserted in the beginning of a line,
-        prevents that line from being read.
-
-    Examples
-    --------
-    Get the path to a file from the testset.
-
-    >>> from lingpy import *
-    >>> seq_file = get_file('test.seq')
-
-    Load the file into the Multiple class.
-
-    >>> mult = Multiple(seq_file)
-
-    Carry out a progressive alignment analysis of the sequences.
-
-    >>> mult.prog_align()
-
-    Print the result to the screen:
-
-    >>> print(mult)
-    w    o    l    -    d    e    m    o    r    t
-    w    a    l    -    d    e    m    a    r    -
-    v    -    l    a    d    i    m    i    r    -
-    
-    Notes
-    -----
-    In order to read in data from text files, two different file formats can be
-    used along with this class:
-
-    *msq-format*
-        The ``msq``-format is a specific format for text files containing unaligned
-        sequences. Files in this format should have the extension ``msq``. The
-        first line of an ``msq``-file contains information regarding the dataset.
-        The second line contains information regarding the sequence (meaning,
-        identifier), and the following lines contain the name of the taxa in the
-        first column and the sequences in IPA format in the second column,
-        separated by a tabstop. As an example, consider the file ``test.msq``::
-    
-            Harry Potter Testset
-            Woldemort (in different languages)
-            German  waldemar
-            English woldemort
-            Russian vladimir
-    
-    *msa-format*
-        The ``msa``-format is a specific format for text files containing already
-        aligned sequence pairs. Files in this format should have the extension
-        ``msa``. 
-        
-        The first line of a ``msa``-file contains information regarding the
-        dataset. The second line contains information regarding the sequence (its
-        meaning, the protoform corresponding to the cognate set, etc.). The aligned
-        sequences are given in the following lines, whereas the taxa are given in
-        the first column and the aligned segments in the following columns.
-        Additionally, there may be a specific line indicating the presence of swaps
-        and a specific line indicating highly consistent sites (local peaks) in the
-        MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
-        character (``+``) marks the beginning of a swapped region, the dash
-        character (``-``) its center and another plus character the end. All sites
-        which are not affected by swaps contain a dot. The line for local peaks
-        starts with the headword ``LOCAL``. All sites which are highly consistent
-        are marked with an asterisk (``*``), all other sites are marked with a dot
-        (``.``). As an example, consider the file ``test.msa``::
-    
-            Harry Potter Testset
-            Woldemort (in different languages)
-            English     w    o    l    -    d    e    m    o    r    t
-            German.     w    a    l    -    d    e    m    a    r    -
-            Russian     v    -    l    a    d    i    m    i    r    -
-            SWAPS..     .    +    -    +    .    .    .    .    .    .
-            LOCAL..     *    *    *    .    *    *    *    *    *    .
-
+    Basic class for handling various kinds of alignment analyses.
     """
     
     def __init__(
             self, 
             infile, 
-            merge_vowels = True,
-            comment = '#'
+            **keywords
             ):
 
-        self.comment=comment
+        # set the defaults
+        defaults = {
+                'comment'      : '#',
+                "diacritics"   : None,
+                "vowels"       : None,
+                "tones"        : None,
+                "combiners"    : '\u0361\u035c',
+                "breaks"       : '.-',
+                "stress"       : "ˈˌ'",
+                "merge_vowels" : True
+                }
+
+        # check for keywords
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        if infile[-4:] in ['.msa','.msq']:
+            parent = _Multiple(infile,**keywords)
+        elif infile[-4:] in ['.psq','psa']:
+            parent = _Pairwise(infile,**keywords)
+
+
+        for key in dir(parent):
+            if key not in [
+                    '__class__',
+                    ]:
+                try:
+                    setattr(self,key,parent.__getattribute__(key))
+                except:
+                    pass
+
         
-        # initialization checks first, whether we are dealing with msa-files or
-        # with other, unaligned, sequence files and starts the
-        # loading-procedures accordingly
-        #if infile.endswith('.msa') or infile.endswith('.msq'):
-        SCAMultiple.__init__(self,infile,merge_vowels)
-        ##elif infile.endwith('.psa') or infile.endswith('.psq'):
-        ##    SCAPairwise.__init__(infile,merge_vowels)
 
 

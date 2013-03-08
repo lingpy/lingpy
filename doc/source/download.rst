@@ -12,8 +12,8 @@ Documentation
 
 *PDF*
 
-http://lingulist.de/lingpy/lingpy_doc.pdf
+http://lingpy.org/lingpy_doc.pdf
 
 *HTML (zip)*
 
-http://lingulist.de/lingpy/lingpy_doc.zip
+http://lingpy.org/lingpy_doc.zip

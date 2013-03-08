@@ -2115,6 +2115,29 @@ def mult_align(
         tree_calc = 'upgma',
         pprint = False
         ):
+    """
+    A short-cut method for multiple alignment analyses.
+
+    Parameters
+    ----------
+    seqs : list
+        The input sequences.
+    gop = int (default=-1)
+        The gap opening penalty.
+    scale : float (default=0.5)
+        The scaling factor by which penalties for gap extensions are decreased.
+    tree_calc : { "upgma" "neighbor" } (default="upgma")
+        The algorithm which is used for the calculation of the guide tree.
+    pprint : bool (default=False)
+        Indicate whether results shall be printed onto screen.
+
+    Returns
+    -------
+    alignments : list
+        A two-dimensional list in which alignments are represented as a list of
+        tokens.
+
+    """
 
     m = Multiple(seqs)
     m.prog_align(
@@ -2128,53 +2151,3 @@ def mult_align(
         print(m)
 
     return m.alm_matrix
-
-    #def _profile_score(
-    #        self,
-    #        colA,
-    #        colB,
-    #        gap_weight = 0.0
-    #        ):
-
-    #    score = 0
-    #    counter = 0.0
-    #    for i,charA in enumerate(colA):
-    #        for j,charB in enumerate(colB):
-    #            if 'X' not in (charA,charB):
-    #                score += self.scorer[charA,charB]
-    #                counter += 1.0
-    #            else:
-    #                counter += gap_weight
-
-    #    return score / counter
-
-    #def _swap_profile_score(
-    #        self,
-    #        colA,
-    #        colB,
-    #        gap_weight = 1.0,
-    #        swap_penalty = -5
-    #        ):
-
-    #    score = 0
-    #    counter = 0.0
-    #    for i,charA in enumerate(colA):
-    #        for j,charB in enumerate(colB):
-    #            if 'X' not in (charA,charB) and '+' not in (charA,charB):
-    #                score += self.scorer[charA,charB]
-    #                counter += 1.0
-    #            elif '+' in (charA,charB):
-    #                if 'X' in (charA,charB):
-    #                    counter += 1.0
-    #                    score += swap_penalty # this is the swap-cost
-    #                elif (charA,charB) == ('+','+'):
-    #                    score += 0.0 # no cost for +/+-scores
-    #                    counter += 1
-    #                else:
-    #                    counter += 1.0 # all prohibited cases
-    #                    score += -10000000
-    #            else:
-    #                counter += gap_weight
-
-    #    return score / counter
-                               

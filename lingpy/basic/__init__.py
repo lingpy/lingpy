@@ -1,7 +1,17 @@
-# created :  2012-12-30
-# modified : 2012-12-30
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-08 09:33
+# modified : 2013-03-08 09:33
+"""
+This module provides basic classes for the handling of linguistic data.
 
-"This module provides basic functions and classes."
+The basic idea is to provide classes that allow the user to handle basic
+linguistic datatypes (spreadsheets, wordlists) in a consistent way.
+
+"""
+
+__author__="Johann-Mattis List"
+__date__="2013-03-08"
 
 # set the general path to lingpy 
 import os

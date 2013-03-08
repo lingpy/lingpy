@@ -3,23 +3,24 @@
 Introduction
 ============
 
-What is QLC-LingPy?
+
+What is LingPy?
 ---------------
 
-QLC-LingPy is a suite of open-source Python modules for sequence comparison,
+LingPy is a suite of open-source Python modules for sequence comparison,
 distance analyses, data operations and visualization methods in quantitative
 historical linguistics.
 
-The main idea of QLC-LingPy is to provide a software package which, on
+The main idea of LingPy is to provide a software package which, on
 the one hand, integrates different methods for data analysis in quantitative
 historical linguistics within a single framework, and, on the other hand,
 serves as an interface for the preparation and analysis of linguistic data
 using biological software packages.
 
-What can be Done with QLC-LingPy?
+What can be Done with LingPy?
 -----------------------------
 
-With the help of QLC-LingPy, one can:
+With the help of LingPy, one can:
 
 * tokenize and analyze IPA-encoded sequences, 
 * carry out pairwise and multiple alignment analyses,
@@ -29,16 +30,16 @@ With the help of QLC-LingPy, one can:
 * export the results of these analyses to various formats which can either be
   used as input for external programs, or to visualize the results. 
 
-How can QLC-LingPy be used?
+How can LingPy be used?
 -----------------------
 
-QLC-LingPy is a library for the Python programming language. It can thus be used
+LingPy is a library for the Python programming language. It can thus be used
 directly from the Python shell or inside Python scripts.  The Python programming
 language has many benefits. Due to its clear programming style it allows the
 user to write programs very quickly while at the same time being very powerful
 and easy to maintain. See http://www.python.org for details.
 
-What is the Basic Idea Behind QLC-LingPy?
+What is the Basic Idea Behind LingPy?
 -------------------------------------
 
 In historical linguistics, one usually deals with the following two entities
@@ -56,10 +57,10 @@ comparing semantic change, the main objective is the *functional* component of
 signs. And when reconstructing language phylogenies, this is done by comparing
 the *signs* of different languages.
 
-In QLC-LingPy, the different entities are represented within an object-oriented
+In LingPy, the different entities are represented within an object-oriented
 frame work. The different aspects of linguistic signs and languages are modeled
 by specific classes. Thus, if one has to deal with the formal part of the
-linguistic sign, the :py:class:`~lingpy.sequence.Sequence` class in QLC-LingPy
+linguistic sign, the :py:class:`~lingpy.sequence.Sequence` class in LingPy
 makes it possible to deal with various automatic aspects of sound sequences,
 such as, e.g., their prosodic properties, or their sound classes. For the
 comparison of sign forms, one can chose between the
@@ -79,5 +80,6 @@ What's Next?
 
    examples
    docu/index
+   tutorial/index
    download
 

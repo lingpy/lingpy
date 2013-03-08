@@ -63,9 +63,15 @@ pw.align(pprint=True,distance=True)
 
 
 # load sca-file
-msa = SCAMultiple('data/test.msq')
+msa = SCA('data/test.msq')
 msa.lib_align()
 print("")
 print("Multiple alignment with MSA from text-file.")
 print("Writing result to file.")
 msa.output('msa',filename='data/test_out')
+
+print("")
+print("Testing pairwise alignment using SCA.")
+psa = SCA('data/test.psq')
+psa.align(pprint=True,distance=True)
+
