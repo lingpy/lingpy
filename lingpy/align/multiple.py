@@ -573,8 +573,12 @@ class Multiple(object):
                             ) for char in line] for line in profileB]
             
             # get the consensus string for the sonority profiles
-            consA = [int(i[i!=0].mean().round()) for i in np.array(sonarA)]
-            consB = [int(i[i!=0].mean().round()) for i in np.array(sonarB)]
+            try:
+                consA = [int(i[i>=0].mean().round()) for i in np.array(sonarA)]
+                consB = [int(i[i>=0].mean().round()) for i in np.array(sonarB)]
+            except:
+                print(np.array(sonarA))
+                print(np.array(sonarB))
             
             # get the prosodic strings
             prosA = prosodic_string(consA)
@@ -836,7 +840,7 @@ class Multiple(object):
                 ],
             scale = 0.5,
             factor = 0.3,
-            tree_calc = 'neighbor',
+            tree_calc = 'upgma',
             gap_weight = 0.5,
             restricted_chars = 'T_',
             classes = True,

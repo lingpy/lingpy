@@ -269,6 +269,10 @@ def prosodic_string(
     '#vC>'
 
     """
+    # check for empty string passed
+    if not string:
+        return ''
+
     # check for the right string
     if type(string[0]) != int:
         
@@ -288,9 +292,13 @@ def prosodic_string(
                 nstrings[-1] += [i]
             else:
                 nstrings += [[]]
-
-        # return the prostrings of the pieces recursively
-        return '_'.join([prosodic_string(x,output) for x in nstrings])
+        
+        # return the prostrings of the pieces recursively, note that the
+        # additional check whether x is True is necessitated by the fact that
+        # often errors occur in the coding, i.e. strings are given 
+        return tuple(
+                '_'.join([''.join(prosodic_string(x,output)) for x in nstrings])
+                )
     
     # create the output values
     pstring = ''
@@ -343,9 +351,22 @@ def prosodic_string(
                     pstring = pstring[:-1]+pstring[-1].replace('L','M')+'B'
             else:
                 pstring += 'C'
+        
+        # consonant peak
+        elif a < b > c:
+            if first:
+                pstring += 'X'
+                first = False
+            else:
+                pstring += 'Y'
 
         # dummy for other stuff
         else:
+            print("[i] Warning, condition not met in conversion.")
+            print(sstring)
+            print(pstring)
+            print(a,b,c)
+            input("[i] Press any key to carry on.")
             pstring += '?'
 
     if output in ["tuples","tuple",'t']:
@@ -449,7 +470,22 @@ def prosodic_weights(
                 '$' : 0.5, 
                 '>' : 0.7, 
                 'T' : 1.0,
-                '_' : 0.0
+                '_' : 0.0,
+
+                # new values for alternative prostrings
+                'A' : 2.0,  # initial
+                'B' : 1.75, # syllable-initial
+                'C' : 1.5,  # ascending
+
+                'L' : 1.1,  # descending
+                'M' : 1.1,  # syllable-descending
+                'N' : 0.8,  # final
+                
+                'X' : 1.5,  # vowel in initial syllable
+                'Y' : 1.3,  # vowel in non-final syllable
+                'Z' : 0.8,  # vowel in final syllable
+                'T' : 0.0,  # Tone
+                '_' : 0.0   # break character
                 }
     # default scale for other languages
     else:

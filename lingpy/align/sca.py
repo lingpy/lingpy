@@ -247,10 +247,13 @@ class _Multiple(Multiple):
         # initialization checks first, whether we are dealing with msa-files or
         # with other, unaligned, sequence files and starts the
         # loading-procedures accordingly
-        if infile.endswith('.msa'):
-            self._init_msa(infile,**keywords)
+        if type(infile) == dict:
+            self._init_dict(infile,**keywords)
         else:
-            self._init_seq(infile,**keywords)
+            if infile.endswith('.msa'):
+                self._init_msa(infile,**keywords)
+            else:
+                self._init_seq(infile,**keywords)
 
     def _init_seq(
             self,
@@ -320,11 +323,31 @@ class _Multiple(Multiple):
                 data[:,1],
                 **keywords
                 )
+
+    def _init_dict(
+            self,
+            initdict,
+            **keywords
+            ):
+        """
+        Initialize by passing a dictionary with the relevant values.
+        """
+        
+        for key in initdict:
+
+            if key not in 'seqs':
+                setattr(self,key,initdict[key])
+
+        Multiple.__init__(
+                self,
+                initdict['seqs'],
+                **keywords
+                )
     
     def _init_msa(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load an ``msa``-file.
@@ -927,11 +950,14 @@ class SCA(object):
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
-
-        if infile[-4:] in ['.msa','.msq']:
+        
+        if type(infile) == dict:
             parent = _Multiple(infile,**keywords)
-        elif infile[-4:] in ['.psq','psa']:
-            parent = _Pairwise(infile,**keywords)
+        else:
+            if infile[-4:] in ['.msa','.msq']:
+                parent = _Multiple(infile,**keywords)
+            elif infile[-4:] in ['.psq','psa']:
+                parent = _Pairwise(infile,**keywords)
 
 
         for key in dir(parent):

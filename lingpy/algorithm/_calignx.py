@@ -344,7 +344,7 @@ def sc_align(
 #     matrix,traceback 
 
     # check for correct mode
-    modes = tuple(['global','local','dialign','overlap'])
+    modes = ['global','local','dialign','overlap']
     if mode not in modes:
         raise ValueError(
                 '[!] Alignment mode "{0}" is not available!'.format(
@@ -357,8 +357,8 @@ def sc_align(
     N = len(seqB)
     
     # get the gops
-    gopA = tuple([gop * gopA[i] for i in range(M)])
-    gopB = tuple([gop * gopB[i] for i in range(N)])
+    gopA = [gop * gopA[i] for i in range(M)]
+    gopB = [gop * gopB[i] for i in range(N)]
 
     # get matrix and traceback
     matrix,traceback = _get_matrix(
@@ -421,7 +421,7 @@ def sc_align(
             if proA[j-1] == proB[i-1]:
                 match = matrix[i-1][j-1] + match + match * factor
             elif abs(ord(proA[j-1])-ord(proB[i-1])) >= 2:
-                match = matrix[i-1][j-1] + match + match * factor * 0.5
+                match = matrix[i-1][j-1] + match + match * factor / 2
             else:
                 match = matrix[i-1][j-1] + match
 
@@ -495,6 +495,81 @@ def sc_align(
             return (almA,almB,sim, 1 - (2 * sim / (gapA+gapB)))
         return (almA,almB,1 - (2 * sim / (gapA+gapB)))
 
+def align_sequences_pairwise(
+        seqs,
+        gops,
+        pros,
+        gop,
+        scale,
+        factor,
+        scorer,
+        res,
+        mode
+        ):
+    """
+    Align sequences pairwise and return their alignment score.
+    """
+    alignments = []
+    lS = len(seqs)
+    
+#     i,j
+#     almA,almB,seqA,seqB,gopA,gopB
+#     sim,simA,simB,dist
+#     proA,proB
+
+    # get the self-scores of the sequences
+    self_scores = []
+    for i in range(lS):
+        seqA = seqs[i]
+        sim = _self_sc_score(
+                seqA,
+                len(seqA),
+                scorer,
+                factor
+                )
+        self_scores.append(sim)
+
+    for i in range(lS):
+        for j in range(lS):
+            if i < j:
+                seqA,seqB = seqs[i],seqs[j]
+                gopA,gopB = gops[i],gops[j]
+                proA,proB = pros[i],pros[j]
+
+                # get the self-scores
+                simA,simB = self_scores[i],self_scores[j]
+
+                # carry out alignment
+                almA,almB,sim = sc_align(
+                        seqA,
+                        seqB,
+                        gopA,
+                        gopB,
+                        proA,
+                        proB,
+                        gop,
+                        scale,
+                        factor,
+                        scorer,
+                        res,
+                        mode
+                        )
+
+                # get the distance
+                dist = 1 - (2 * sim / (simA + simB))
+
+                # append everything to list
+                alignments.append(
+                        (almA,almB,sim,dist)
+                        )
+            elif i == j:
+                seqA = seqs[i]
+                alignments.append(
+                        (seqA,seqA,self_scores[i],0.0)
+                        )
+
+    return alignments
+
 def profile_align(
         seqA, # sequence
         seqB, # sequence
@@ -561,8 +636,8 @@ def profile_align(
     N = len(seqB)
     
     # get the gops
-    gopA = tuple([gop * gopA[i] for i in range(M)])
-    gopB = tuple([gop * gopB[i] for i in range(N)])
+    gopA = [gop * gopA[i] for i in range(M)]
+    gopB = [gop * gopB[i] for i in range(N)]
 
     # get matrix and traceback
     matrix,traceback = _get_matrix(
@@ -666,8 +741,8 @@ def basic_profile_align(
         scorer,
         mode,
         gap_weight,
-        gopA = (),
-        gopB = ()
+        gopA = [],
+        gopB = []
         ):
     """
     Calculate alignment for profiles.
@@ -707,7 +782,7 @@ def basic_profile_align(
 #     matrix,traceback 
 
     # check for correct mode
-    modes = tuple(['global','dialign','overlap'])
+    modes = ['global','dialign','overlap']
     if mode not in modes:
         raise ValueError(
                 '[!] Alignment mode "{0}" is not available!'.format(
@@ -721,8 +796,8 @@ def basic_profile_align(
     
     # get the gops
     if not gopA and not gopB:
-        gopA = tuple([gop for i in range(M)])
-        gopB = tuple([gop for i in range(N)])
+        gopA = [gop for i in range(M)]
+        gopB = [gop for i in range(N)]
 
     # get matrix and traceback
     matrix,traceback = _get_matrix(
@@ -745,7 +820,7 @@ def basic_profile_align(
                 gapA = matrix[i-1][j]
             elif traceback[i-1][j] == 3:
                 gapA = matrix[i-1][j] + _basic_score_profile(
-                        tuple(['X']),
+                        ['X'],
                         seqA[j-1],
                         scorer,
                         gopB[i-1],
@@ -753,7 +828,7 @@ def basic_profile_align(
                         ) * scale
             else:
                 gapA = matrix[i-1][j] + _basic_score_profile(
-                        tuple(['X']),
+                        ['X'],
                         seqA[j-1],
                         scorer,
                         gopB[i-1],
@@ -767,14 +842,14 @@ def basic_profile_align(
                 gapB = matrix[i][j-1]
             elif traceback[i][j-1] == 2:
                 gapB = matrix[i][j-1] + _basic_score_profile(
-                        tuple(['X']),
+                        ['X'],
                         seqB[i-1],
                         scorer,
                         gopA[j-1],
                         gap_weight ) * scale
             else:
                 gapB = matrix[i][j-1] + _basic_score_profile(
-                        tuple(['X']),
+                        ['X'],
                         seqB[i-1],
                         scorer,
                         gopA[j-1],
@@ -843,8 +918,8 @@ def basic_align(
         mode,
         distance = False,
         both = False,
-        gopA = (),
-        gopB = ()
+        gopA = [],
+        gopB = []
         ):
     """
     Calculate alignment using simple character approach.
@@ -882,7 +957,7 @@ def basic_align(
 #     matrix,traceback 
 
     # check for correct mode
-    modes = tuple(['global','local','dialign','overlap'])
+    modes = ['global','local','dialign','overlap']
     if mode not in modes:
         raise ValueError(
                 '[!] Alignment mode "{0}" is not available!'.format(
@@ -895,8 +970,8 @@ def basic_align(
     N = len(seqB)
     
     if not gopA and not gopB:
-        gopA = tuple(M * [gop])
-        gopB = tuple(N * [gop])
+        gopA = M * [gop]
+        gopB = N * [gop]
 
     # get matrix and traceback
     matrix,traceback = _get_matrix(
@@ -1169,7 +1244,7 @@ def edit_dist(
     sim = matrix[N][M]
     
     if normalized:
-        dist = sim / float(max([M,N]))
+        dist = sim / max([M,N])
         return dist
 
     return sim
@@ -1439,3 +1514,6 @@ def we_align(
 
     # return the alignment as a of prefix, alignment, and suffix
     return out
+
+
+
