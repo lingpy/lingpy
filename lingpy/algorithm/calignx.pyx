@@ -382,7 +382,7 @@ def sc_align(
             if j == M and mode == 'overlap':
                 gapA = matrix[i-1][j]
             elif proB[i-1] in res and proA[j-1] not in res and j != M:
-                gapA = matrix[i-1][j] - 1000000000
+                gapA = matrix[i-1][j] - 1000000
             elif mode == 'dialign':
                 gapA = matrix[i-1][j]
             elif traceback[i-1][j] == 3:
@@ -394,7 +394,7 @@ def sc_align(
             if i == N and mode == 'overlap':
                 gapB = matrix[i][j-1]
             elif proA[j-1] in res and proB[i-1] not in res and i != N:
-                gapB = matrix[i][j-1] - 1000000000
+                gapB = matrix[i][j-1] - 1000000
             elif mode == 'dialign':
                 gapB = matrix[i][j-1]
             elif traceback[i][j-1] == 2:
