@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Steven Moran
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 14:05
-# modified : 2013-03-08 09:10
+# modified : 2013-03-11 18:47
 """
 LingPy package for quantitative tasks in historical linguistics.
 
@@ -25,7 +25,7 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 """
 
 __author__="Johann-Mattis List, Steven Moran"
-__date__="2013-03-08"
+__date__="2013-03-11"
 
 # general imports
 from .basic import *
@@ -44,3 +44,9 @@ from .sequence import *
 
 # import thirdparty modules
 from .thirdparty import *
+
+# test whether c-modules are available
+try:
+    from .algorithm import calign
+except:
+    print("[i] Import of c-modules failed, using pure Python implementation instead.")

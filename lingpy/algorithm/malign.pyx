@@ -13,7 +13,7 @@ def nw_align(
         list seqA,
         list seqB,
         dict scorer,
-        int gap = -1
+        int gap
         ):
     """
     Align two sequences using the Needleman-Wunsch algorithm.
@@ -33,26 +33,6 @@ def nw_align(
     # define values for the traceback
     cdef list almA = []
     cdef list almB = []
-    
-    # define lists for tokens (in case no scoring function is provided)
-    cdef list seqA_tokens,seqB_tokens
-    cdef str tA,tB
-    
-    # create scorer
-    cdef dict this_scorer = {}
-    seqA_tokens = list(set(seqA))
-    seqB_tokens = list(set(seqB))
-    if not scorer:
-        for tA in seqA_tokens:
-            for tB in seqB_tokens:
-                if tA == tB:
-                    this_scorer[tA,tB] = 1
-                else:
-                    this_scorer[tA,tB] = -1
-    else:
-        for tA in seqA_tokens:
-            for tB in seqB_tokens:
-                this_scorer[tA,tB] = scorer[tA,tB]
 
     # create matrix and traceback
     cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
@@ -71,7 +51,7 @@ def nw_align(
         for j in range(1,M+1):
             
             # get the penalty
-            match = this_scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j-1],seqB[i-1]]
             
             # get the three scores
             gapA = matrix[i-1][j] + gap
@@ -107,12 +87,12 @@ def nw_align(
             almB += ['-']
             j -= 1
 
-    return (almA[::-1],almB[::-1])
+    return (almA[::-1],almB[::-1],sim)
 
 def edit_dist(
         list seqA,
         list seqB,
-        bint normalized = False
+        bint normalized
         ):
     """
     Return the edit-distance between two strings.
@@ -174,9 +154,7 @@ def sw_align(
     cdef int lenA = len(seqA)
     cdef lenB = len(seqB)
 
-    # define lists for tokens (in case no scoring function is provided)
-
-    # define general and specific integers
+    cdef str s
 
     # define values for the main loop
     cdef int null = 0 # constant during the loop
@@ -194,17 +172,6 @@ def sw_align(
     # create matrix and traceback
     cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-
-    # create scorer, if it is empty
-    if not scorer:
-        seqA_tokens = list(set(seqA))
-        seqB_tokens = list(set(seqB))
-        for tA in seqA_tokens:
-            for tB in seqB_tokens:
-                if tA == tB:
-                    scorer[tA,tB] = 1
-                else:
-                    scorer[tA,tB] = -1
     
     # start the main loop
     for i in range(1,lenB+1):
@@ -294,10 +261,6 @@ def we_align(
     lenA = len(seqA)
     lenB = len(seqB)
 
-    # define lists for tokens (in case no scoring function is provided)
-
-    # define general and specific integers
-
     # define values for the main loop
     null = 0 # constant during the loop
 
@@ -312,17 +275,6 @@ def we_align(
     # create matrix and traceback
     matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-
-    # create scorer, if it is empty
-    if not scorer:
-        seqA_tokens = list(set(seqA))
-        seqB_tokens = list(set(seqB))
-        for tA in seqA_tokens:
-            for tB in seqB_tokens:
-                if tA == tB:
-                    scorer[tA,tB] = 1
-                else:
-                    scorer[tA,tB] = -1
     
     # start the main loop
     for i in range(1,lenB+1):
@@ -475,7 +427,7 @@ def structalign(
         # get the first element of the queue
         alm,thisScore,restA,restB = queue.pop(0)
 
-        if not restA and not restB:
+        if not restA and not restB and thisScore <= maxScore:
             out += [(''.join([a[0] for a in alm]),''.join([a[1] for a in alm]))]
 
         # start adding match
@@ -491,8 +443,11 @@ def structalign(
                 fullScore = newScore + max(len(restA)-1,len(restB)-1)
 
                 # check for better score
-                if fullScore <= maxScore:
+                if fullScore < maxScore:
                     maxScore = fullScore
+
+                # 
+                if newScore <= maxScore:
                     queue += [[alm+[residues],newScore,restA[1:],restB[1:]]]
 
         # start adding gap
@@ -509,8 +464,10 @@ def structalign(
                 fullScore = newScore + max(len(restA)-1,len(restB))
 
                 # check for better score
-                if fullScore <= maxScore:
+                if fullScore < maxScore:
                     maxScore = fullScore
+
+                if newScore <= maxScore:
                     queue += [[alm+[residues],newScore,restA[1:],restB]]
         
         # add gap in a
@@ -527,8 +484,9 @@ def structalign(
                 fullScore = newScore + max(len(restA),len(restB)-1)
 
                 # check for better score
-                if fullScore <= maxScore:
+                if fullScore < maxScore:
                     maxScore = fullScore
+                if newScore <= maxScore:
                     queue += [[alm+[residues],newScore,restA,restB[1:]]]
 
     return out,maxScore

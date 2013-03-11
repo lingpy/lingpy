@@ -335,7 +335,7 @@ def semi_globalign(
     # return alignments
     return almA,almB,sim
 
-def secondary_dialign(
+def secondary_semi_globalign(
         seqA,
         seqB,
         gopA,
@@ -772,16 +772,13 @@ def dialign(
                 match = matrix[i-k-1][j-k-1]
                 for l in range(k,-1,-1):
                     # get temporary match
-                    tmp_match = scorer[seqA[j-l],seqB[i-l]]
-
+                    tmp_match = scorer[seqA[j-l-1],seqB[i-l-1]]
                     # check for common prostrings
-                    if proA[j-l] == proB[i-l]:
-                        tmp_match += tmp_match * factor
-                    elif abs(ord(proA[j-l]) - ord(proB[i-l])) <= 2:
-                        tmp_match += tmp_match * factor / 2
-                    
-                    # get match
-                    match = tmp_match
+                    if proA[j-l-1] == proB[i-l-1]:
+                        tmp_match = tmp_match * ( 1 + factor )
+                    elif abs(ord(proA[j-l-1]) - ord(proB[i-l-1])) <= 2:
+                        tmp_match = tmp_match * ( 1 + factor / 2 )
+                    match += tmp_match
 
                 p = k+1
                 if match > sim:
@@ -824,7 +821,7 @@ def dialign(
     # return alignments
     return almA,almB,sim
 
-def secondary_semi_globalign(
+def secondary_dialign(
         seqA,
         seqB,
         proA,
@@ -884,20 +881,20 @@ def secondary_semi_globalign(
                 match = matrix[i-k-1][j-k-1]
                 for l in range(k,-1,-1):
                     # get temporary match
-                    tmp_match = scorer[seqA[j-l],seqB[i-l]]
+                    tmp_match = scorer[seqA[j-l-1],seqB[i-l-1]]
 
                     # check for common prostrings
-                    if proA[j-l] == proB[i-l]:
+                    if proA[j-l-1] == proB[i-l-1]:
                         tmp_match += tmp_match * factor
-                    elif proA[j-l] in r and proB[i-l] not in r:
+                    elif proA[j-l-1] in r and proB[i-l-1] not in r:
                         tmp_match += -1000000
-                    elif proA[j-l] not in r and proB[i-l] in r:
+                    elif proA[j-l-1] not in r and proB[i-l-1] in r:
                         tmp_match += -1000000
-                    elif abs(ord(proA[j-l]) - ord(proB[i-l])) <= 2:
+                    elif abs(ord(proA[j-l-1]) - ord(proB[i-l-1])) <= 2:
                         tmp_match += tmp_match * factor / 2
                     
                     # get match
-                    match = tmp_match
+                    match += tmp_match
 
                 p = k+1
                 if match > sim:
@@ -1790,7 +1787,74 @@ def align_profile(
 
     return almA,almB,sim
 
+# functions for profile scoring
+def score_profile(
+        colA,
+        colB,
+        scorer,
+        gap_weight = 0.0
+        ):
+    """
+    Basic function for the scoring of profiles.
+    """
+    # basic definitions
+#     i,j
+#     charA,charB
 
-    
+    # define the initial score
+    score = 0.0
 
+    # set a counter
+    counter = 0
 
+    # iterate over all chars
+    for i,charA in enumerate(colA):
+        for j,charB in enumerate(colB):
+            if charA != 'X' and charB != 'X':
+                score += scorer[charA,charB]
+                counter += 1.0
+            else:
+                counter += gap_weight
+
+    return score / counter
+
+def swap_score_profile(
+        colA,
+        colB,
+        scorer,
+        gap_weight = 0.0,
+        swap_penalty = -5
+        ):
+    """
+    Basic function for the scoring of profiles.
+    """
+    # basic definitions
+#     i,j
+#     charA,charB
+
+    # define the initial score
+    score = 0.0
+
+    # set a counter
+    counter = 0
+
+    # iterate over all chars
+    for i,charA in enumerate(colA):
+        for j,charB in enumerate(colB):
+            if charA != 'X' and charB != 'X' and charA != '+' and charB != '+':
+                score += scorer[charA,charB]
+                counter += 1.0
+            elif charA == '+' or charB == '+':
+                if charA == '+' and charB == '+':
+                    score += 0.0
+                    counter += 1.0
+                elif charA == 'X' or charB == 'X':
+                    score += swap_penalty # this is the swap cost
+                    counter += 1.0
+                else:
+                    score += -1000000
+                    counter += 1.0
+            else:
+                counter += gap_weight
+
+    return score / counter

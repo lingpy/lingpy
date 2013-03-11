@@ -1,11 +1,14 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-11 18:38
+# modified : 2013-03-11 18:47
 """
 This module provides functions for basic cluster algorithms.
-
 """
-__author__ = "Johann-Mattis List"
-__date__ = "2012-11-12"
 
-from numpy import array
+__author__="Johann-Mattis List"
+__date__="2013-03-11"
+
 from .misc import squareform
 
 def flat_upgma(
@@ -107,9 +110,7 @@ def _flat_upgma(
                 for vA in valA:
                     for vB in valB:
                         score += [matrix[vA][vB]]
-                score = array(score)
-                score = score.mean() - 0.25 * score.std()
-                scores.append(score)
+                scores.append(sum(score) / len(score))
                 indices.append((i,j))
 
     minimum = min(scores)
@@ -233,9 +234,7 @@ def _upgma(
                 for vA in valA:
                     for vB in valB:
                         score += [matrix[vA][vB]]
-                score = array(score)
-                score = score.mean()
-                scores.append(score)
+                scores.append(sum(score) / len(score))
                 indices.append((i,j))
 
     minimum = min(scores)
@@ -426,7 +425,7 @@ def _neighbor(
     for i in clusters[idxA]:
         for j in clusters[idxB]:
             vals.append(constant_matrix[i][j])
-    tmp_score = array(vals).mean()
+    tmp_score = sum(vals) / len(vals)
 
     
     # append the indices to the tree matrix
@@ -487,123 +486,4 @@ def _neighbor(
             constant_matrix,
             tracer
             )
-
-def _flat_neighbor(
-        matrix,
-        taxa,
-        threshold
-        ):
-    """
-    Function clusters data according to the Neighbor-Joining algorithm \
-    (:evobib:`Saitou1987`).
-    
-    Parameters
-    ----------
-
-    matrix : list or :py:class:`numpy.array`
-        A two-dimensional list containing the distances.
-
-    taxa : list
-        An list containing the names of all taxa corresponding to the distances
-        in the matrix.
-
-    distances : bool
-        If set to ``False``, only the topology of the tree will be returned.
-
-    Returns
-    -------
-
-    newick : str
-        A string in newick-format which can be further used in biological
-        software packages to view and plot the tree.
-
-    Examples
-    --------
-    Function is automatically imported when importing lingpy.
-
-    >>> from lingpy import *
-    
-    Create an arbitrary list of taxa.
-
-    >>> taxa = ['Norwegian','Swedish','Icelandic','Dutch','English']
-    
-    Create an arbitrary matrix.
-
-    >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
-
-    Carry out the cluster analysis.
-
-    >>> neighbor(matrix,taxa)
-    '(((Norwegian,(Swedish,Icelandic)),English),Dutch);'
-
-    See also
-    --------
-    lingpy.algorithm.cluster.upgma
-    lingpy.algorithm.cluster.flat_upgma
-    """
-    
-    x = len(taxa)
-
-    clusters = dict([(i,[i]) for i in range(x)])
-    tree = []
-
-    _upgma(clusters,matrix,tree)
-
-    newick = dict([(i,[i]) for i in range(x)])
-    newick[x] = True
-    clusters = {}
-    y = 0
-    # create different output, depending on the options for the inclusion of
-    # distances or topology only
-    for i,(a,b,c,d) in enumerate(tree):
-        if newick[a] and newick[b]:
-            scores = []
-            for A in newick[a]:
-                for B in newick[b]:
-                    scores.append(matrix[A][B])
-            score = array(scores)
-            score = score.mean() - 0.25 * score.std()
-
-            if score <= threshold and i != len(tree) -1:
-                newick[x+i] = newick[a] + newick[b]
-            elif score > threshold and i != len(tree) - 1:
-                for v in newick[a]:
-                   clusters[v] = y
-                y += 1
-                for v in newick[b]:
-                    clusters[v] = y
-                y += 1
-                newick[x+i] = False
-            elif score <= threshold and i == len(tree) - 1:
-                for v in newick[a] + newick[b]:
-                    clusters[v] = y
-            elif score > threshold and i == len(tree) - 1:
-                for v in newick[a]:
-                   clusters[v] = y
-                y += 1
-                for v in newick[b]:
-                    clusters[v] = y
-                y += 1
-        else:
-            newick[x+i] = False
-            if newick[a]:
-                for v in newick[a]:
-                    clusters[v] = y
-                y += 1
-            if newick[b]:
-                for v in newick[b]:
-                    clusters[v] = y
-                y += 1
-    if clusters:
-        out = {}
-        for i,j in clusters.items():
-            try:
-                out[j] += [taxa[i]]
-            except KeyError:
-                out[j] = [taxa[i]]
-    else:
-        out = dict([(i,[taxa[i]]) for i in range(x)])
-    
-    return out
-    
 
