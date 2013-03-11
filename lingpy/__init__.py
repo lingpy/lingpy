@@ -47,6 +47,6 @@ from .thirdparty import *
 
 # test whether c-modules are available
 try:
-    from .algorithm import calign
+    from .algorithm.cython import calign
 except:
     print("[i] Import of c-modules failed, using pure Python implementation instead.")
