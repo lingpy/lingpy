@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-03-07 17:43
+# modified : 2013-03-11 18:37
 """
 Basic module for the handling of multiple sequence alignments.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-07"
+__date__="2013-03-11"
 
 # thirdparty imports
 import numpy as np
@@ -15,11 +15,15 @@ import numpy as np
 # lingpy imports
 from ..data import *
 try:
-    from ..algorithm import calignx as _calign
+    #from ..algorithm import calignx as _calign
     from ..algorithm import calign
+    from ..algorithm import talign
 except:
-    from ..algorithm import _calignx as _calign
-from ..algorithm.misc import squareform
+    #from ..algorithm import _calignx as _calign
+    from ..algorithm import _calign as calign
+    from ..algorithm import _talign as talign
+
+from ..algorithm.misc import squareform,transpose
 from ..algorithm.cluster import _neighbor,_upgma,_flat_upgma
 from ..sequence.sound_classes import *
 
@@ -365,33 +369,29 @@ class Multiple(object):
                         self._alignments[i][j] = [almA,almB,sim]
                         k += 1
         else:
+            alignments = talign.align_pairwise(
+                    self._numbers,
+                    gop,
+                    scale,
+                    self.scorer,
+                    mode
+                    )
+            k = 0
             for i in range(self.height):
                 for j in range(self.height):
                     if i < j:
-                        almA,almB,sim,dist = _calign.basic_align(
-                                self._numbers[i],
-                                self._numbers[j],
-                                gop,
-                                scale,
-                                self.scorer,
-                                mode,
-                                distance = True,
-                                both = True
-                                )
+                        almA,almB,sim,dist = alignments[k]
                         if mode == 'local':
                             almA = almA[1]
-                            almB = almB[1] 
-                        self._alignments[i][j] = (almA,almB,sim)
-                        self._alignments[j][i] = (almB,almA,sim)
+                            almB = almB[1]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        self._alignments[j][i] = [almA,almB,sim]
                         self.matrix += [dist]
+                        k += 1
                     elif i == j:
-                        alm = self._numbers[i]
-                        sim = _calign._self_basic_score(
-                                alm,
-                                len(alm),
-                                self.scorer
-                                )
-                        self._alignments[i][j] = (alm,alm,sim)
+                        almA,almB,sim,dist = alignments[k]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        k += 1
 
         self.matrix = squareform(self.matrix)
 
@@ -528,74 +528,58 @@ class Multiple(object):
             restricted_chars = "T_"
             ):
 
-        profileA = np.array(almsA).transpose()
-        profileB = np.array(almsB).transpose()
+        profileA = transpose(almsA)
+        profileB = transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
-        m,o = profileA.shape
-        n,p = profileB.shape
+        m,o = len(profileA),len(profileA[0])
+        n,p = len(profileB),len(profileB[0])
+
+        # create the weights by which the gap opening penalties will be
+        # modified
+        sonarA = [[self._get(
+                        char,
+                        value = '_sonars',
+                        error = ('X',0)
+                        ) for char in line] for line in profileA]
+        sonarB = [[self._get(
+                        char,
+                        value = '_sonars',
+                        error = ('X',0)
+                        ) for char in line] for line in profileB]
         
-        # modify the profiles
-        profileA = profileA.tolist()
-        profileB = profileB.tolist()
+        # get the consensus string for the sonority profiles
+        try:
+            consA = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarA]
+            consB = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarB]
 
-        if self._sonars:
-                           
-            # create the weights by which the gap opening penalties will be
-            # modified
-            sonarA = [[self._get(
-                            char,
-                            value = '_sonars',
-                            error = ('X',0)
-                            ) for char in line] for line in profileA]
-            sonarB = [[self._get(
-                            char,
-                            value = '_sonars',
-                            error = ('X',0)
-                            ) for char in line] for line in profileB]
-            
-            # get the consensus string for the sonority profiles
-            try:
-                consA = [int(i[i!=0].mean().round()) for i in np.array(sonarA)]
-                consB = [int(i[i!=0].mean().round()) for i in np.array(sonarB)]
-            except:
-                print(np.array(sonarA))
-                print(np.array(sonarB))
-            
-            # get the prosodic strings
-            prosA = prosodic_string(consA)
-            prosB = prosodic_string(consB)
-            
-            # get the weights
-            weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
+        except:
+            print(np.array(sonarA))
+            print(np.array(sonarB))
+        
+        # get the prosodic strings
+        prosA = prosodic_string(consA)
+        prosB = prosodic_string(consB)
+        
+        # get the weights
+        weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
 
-
-            # carry out the alignment
-            almA,almB,sim = _calign.profile_align(
-                    profileA,
-                    profileB,
-                    weightsA,
-                    weightsB,
-                    prosA,
-                    prosB,
-                    gop,
-                    scale,
-                    factor,
-                    self.scorer,
-                    restricted_chars,
-                    mode,
-                    gap_weight
-                    )
-        else:
-            almA,almB,sim = _calign.basic_profile_align(
-                    profileA,
-                    profileB,
-                    gop,
-                    scale,
-                    self.scorer,
-                    mode,
-                    gap_weight
-                    )
+        # carry out the alignment
+        almA,almB,sim = calign.align_profile(
+                profileA,
+                profileB,
+                weightsA,
+                weightsB,
+                prosA,
+                prosB,
+                gop,
+                scale,
+                factor,
+                self.scorer,
+                restricted_chars,
+                mode,
+                gap_weight
+                )
 
         # return the similarity score, if this option is chosen
         if return_similarity == True:
@@ -603,8 +587,6 @@ class Multiple(object):
 
         # trace the gaps inserted in both aligned profiles and insert them
         # in the original profiles
-        profileA = [list(p) for p in profileA]
-        profileB = [list(p) for p in profileB]
         for i in range(len(almA)):
             if almA[i] == '-':
                 profileA.insert(i,o * ['X'])
@@ -613,14 +595,71 @@ class Multiple(object):
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = np.array(profileA).transpose().tolist()
-        profileB = np.array(profileB).transpose().tolist()
+        profileA = transpose(profileA)
+        profileB = transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:
             return profileA,profileB
         elif iterate == False:
             return profileA+profileB
+
+    def _talign_profile(
+            self,
+            almsA,
+            almsB,
+            mode = 'global',
+            gop = -3,
+            scale = 0.5,
+            gap_weight = 0.5,
+            return_similarity = False,
+            iterate = False,
+            ):
+        """
+        Align profiles for tokens, not sound classes.
+        """
+
+        profileA = transpose(almsA)
+        profileB = transpose(almsB)
+
+        # calculate profile length and profile depth for both profiles
+        m,o = len(profileA),len(profileA[0])
+        n,p = len(profileB),len(profileB[0])
+        
+        # carry out the alignment
+        almA,almB,sim = talign.align_profile(
+                profileA,
+                profileB,
+                gop,
+                scale,
+                self.scorer,
+                mode,
+                gap_weight
+                )
+
+        # return the similarity score, if this option is chosen
+        if return_similarity == True:
+            return sim
+
+        # trace the gaps inserted in both aligned profiles and insert them
+        # in the original profiles
+        for i in range(len(almA)):
+            if almA[i] == '-':
+                profileA.insert(i,o * ['X'])
+            elif almB[i] == '-':
+                profileB.insert(i,p * ['X'])
+
+        # invert the profiles and the weight matrices by turning columns
+        # into rows and rows into columns  
+        profileA = transpose(profileA)
+        profileB = transpose(profileB)
+
+        # return the aligned profiles and weight matrices
+        if iterate == True:
+            return profileA,profileB
+        elif iterate == False:
+            return profileA+profileB
+
 
     def _merge_alignments(
             self,
@@ -636,25 +675,40 @@ class Multiple(object):
         # alignment process
         seq_ord = [[i] for i in range(self.height)]
         alm_lst = [[seq] for seq in self._numbers[:]]
-
+        
         # start the iteration through the tree array: the first two lines
         # in the matrix contain the ids of the sequences in the array,
         # which are aligned along the tree
-        for row in self.tree_matrix:
-            m,n = int(row[0]),int(row[1])
-            seq_ord.append(seq_ord[m] + seq_ord[n])
-            alms = self._align_profile(
-                    alm_lst[m],
-                    alm_lst[n],
-                    mode = mode,
-                    gop = gop,
-                    scale = scale,
-                    factor = factor,
-                    gap_weight = gap_weight,
-                    restricted_chars = restricted_chars
-                    )
-            
-            alm_lst.append(alms)
+        if self._sonars:
+            for row in self.tree_matrix:
+                m,n = int(row[0]),int(row[1])
+                seq_ord.append(seq_ord[m] + seq_ord[n])
+                alms = self._align_profile(
+                        alm_lst[m],
+                        alm_lst[n],
+                        mode = mode,
+                        gop = gop,
+                        scale = scale,
+                        factor = factor,
+                        gap_weight = gap_weight,
+                        restricted_chars = restricted_chars
+                        )
+                
+                alm_lst.append(alms)
+        else:
+            for row in self.tree_matrix:
+                m,n = int(row[0]),int(row[1])
+                seq_ord.append(seq_ord[m] + seq_ord[n])
+                alms = self._talign_profile(
+                        alm_lst[m],
+                        alm_lst[n],
+                        mode = mode,
+                        gop = gop,
+                        scale = scale,
+                        gap_weight = gap_weight,
+                        )
+                
+                alm_lst.append(alms)
             
             # debug
             #for alm in alms:
@@ -694,7 +748,7 @@ class Multiple(object):
             gop = -3,
             scale = 0.5,
             factor = 0.3,
-            tree_calc = 'upgma',
+            tree_calc = 'neighbor',
             gap_weight = 0.5,
             restricted_chars = 'T_',
             classes = True,
@@ -822,7 +876,7 @@ class Multiple(object):
                 ],
             scale = 0.5,
             factor = 0.3,
-            tree_calc = 'upgma',
+            tree_calc = 'neighbor',
             gap_weight = 0.5,
             restricted_chars = 'T_',
             classes = True,
@@ -1143,7 +1197,7 @@ class Multiple(object):
         
         if not self._sonars:
             for i in range(alm_matrix.shape[1]):
-                score += _calign._basic_score_profile(
+                score += talign.score_profile(
                         alm_matrix[:,i].tolist(),
                         alm_matrix[:,i].tolist(),
                         self.scorer,
@@ -1152,7 +1206,7 @@ class Multiple(object):
                         )
         else:
             for i in range(alm_matrix.shape[1]):
-                score += _calign._score_profile(
+                score += calign.score_profile(
                         alm_matrix[:,i].tolist(),
                         alm_matrix[:,i].tolist(),
                         self.scorer,
@@ -1168,15 +1222,25 @@ class Multiple(object):
             ):
         
         score = 0.0
-
-        for i in range(alm_matrix.shape[1]):
-            score += _calign._swap_score_profile(
-                    alm_matrix[:,i].tolist(),
-                    alm_matrix[:,i].tolist(),
-                    self.scorer,
-                    gap_weight = gap_weight,
-                    swap_penalty = swap_penalty
-                    )
+        
+        if not self._sonars:
+            for i in range(alm_matrix.shape[1]):
+                score += talign.swap_score_profile(
+                        alm_matrix[:,i].tolist(),
+                        alm_matrix[:,i].tolist(),
+                        self.scorer,
+                        gap_weight = gap_weight,
+                        swap_penalty = swap_penalty
+                        )
+        else:
+            for i in range(alm_matrix.shape[1]):
+                score += calign.swap_score_profile(
+                        alm_matrix[:,i].tolist(),
+                        alm_matrix[:,i].tolist(),
+                        self.scorer,
+                        gap_weight = gap_weight,
+                        swap_penalty = swap_penalty
+                        )
         return score / alm_matrix.shape[1]
     
     def iterate_orphans(

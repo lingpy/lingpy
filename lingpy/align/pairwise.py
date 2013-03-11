@@ -13,13 +13,13 @@ __date__="2013-03-05"
 from ..data import *
 from ..sequence.sound_classes import *
 try:
-    from ..algorithm import calignx as _calignx
     from ..algorithm import malign as _malign
     from ..algorithm import calign as _calign
+    from ..algorithm import talign as talign
 except:
-    from ..algorithm import _calignx as _calignx
     from ..algorithm import _malign as _malign
     from ..algorithm import _calign as _calign
+    from ..algorithm import _talign as talign
 
 class Pairwise(object):
     """
@@ -323,7 +323,7 @@ def pw_align(
             )
 
     # start alignment
-    return _calignx.basic_align(
+    return talignx.align_pair(
             seqA,
             seqB,
             gop,
@@ -344,15 +344,21 @@ def nw_align(
     Carry out the traditional Needleman-Wunsch algorithm.
     """
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == list:
-        seqA = tuple(seqA)
-        seqB = tuple(seqB)
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
     elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     if not scorer:
         scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
 
     return _malign.nw_align(seqA,seqB,scorer,gap)
 
@@ -395,6 +401,12 @@ def sw_align(
             )
     if not scorer:
         scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
 
     return _malign.sw_align(seqA,seqB,scorer,gap)
 
@@ -417,8 +429,24 @@ def we_align(
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
+
     if not scorer:
         scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
 
     return _malign.we_align(seqA,seqB,scorer,gap)
+
+def structalign(
+        seqA,
+        seqB
+        ):
+    """
+    
+    """
+    return _malign.structalign(seqA,seqB)
 
