@@ -311,7 +311,7 @@ def localign(
     almB += [[x for x in seqB[0:i]]]
 
     # return alignments
-    return almA,almB,sim
+    return almA[::-1],almB[::-1],sim
 
 def dialign(
         list seqA,
