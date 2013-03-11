@@ -9,12 +9,64 @@ This module provides functions for basic cluster algorithms.
 __author__="Johann-Mattis List"
 __date__="2013-03-11"
 
-from .misc import squareform
+cdef extern from "math.h": 
+    double sqrt(double x)
+
+def transpose(list matrix):
+    """
+    Transpose a matrix along its two dimensions.
+
+    Parameters
+    ----------
+    matrix : list
+        A two-dimensional list.
+    """
+    cdef int i,j
+    cdef int lA = len(matrix)
+    cdef int lB = len(matrix[0])
+
+    cdef list out = [[matrix[i][j] for i in range(lA)] for j in range(lB)]
+
+    return out
+
+def squareform(list x):
+    """
+    A simplified version of the :py:func:`scipy.spatial.distance.squareform` \
+    function.
+
+    Parameters
+    ----------
+
+    x : :py:class:`numpy.array` or list
+        The one-dimensional flat representation of a symmetrix distance matrix.
+
+    Returns
+    -------
+    matrix : :py:class:`numpy.array`
+        The two-dimensional redundant representation of a symmetric distance matrix.
+
+    """
+    cdef int i,j,k
+    cdef int l = len(x)
+
+    # calculate the length of the square
+    cdef int s = int(sqrt(2 * l) + 1)
+    
+    cdef list out = [[0.0 for i in range(s)] for j in range(s)]
+    
+    k = 0
+    for i in range(s):
+        for j in range(s):
+            if i < j:
+                out[i][j] = x[k]
+                out[j][i] = x[k]
+                k += 1
+    return out
 
 def flat_upgma(
-        threshold,
-        matrix,
-        taxa = []
+        float threshold,
+        list matrix,
+        list taxa = []
         ):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
@@ -71,11 +123,12 @@ def flat_upgma(
     lingpy.algorithm.clusters.neighbor
 
     """
-    x = len(taxa)
+    cdef int i,key
+    cdef int x = len(taxa)
 
-    clusters = dict([(i,[i]) for i in range(x)])
+    cdef dict clusters = dict([(i,[i]) for i in range(x)])
 
-    tree = []
+    cdef list tree = []
 
     _flat_upgma(clusters,matrix,threshold)
 
@@ -88,20 +141,22 @@ def flat_upgma(
     return clusters
 
 def _flat_upgma(
-        clusters,
-        matrix,
-        threshold
+        dict clusters,
+        list matrix,
+        float threshold
         ):
     """
     Internal implementation of flat_upgma.
     """
+    cdef int i,j,vA,vB,idxA,idxB
+    cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
         return
 
-    scores = []
-    indices = []
+    cdef list scores = []
+    cdef list indices = []
 
     for i,valA in clusters.items():
         for j,valB in clusters.items():
@@ -127,9 +182,9 @@ def _flat_upgma(
         pass
 
 def upgma(
-        matrix,
-        taxa,
-        distances = True,
+        list matrix,
+        list taxa,
+        bint distances = True,
         ):
     """
     Carry out a cluster analysis based on the UPGMA algorithm \
@@ -180,15 +235,18 @@ def upgma(
     lingpy.algorithm.cluster.flat_upgma
    
     """
-    x = len(taxa)
+    cdef int i,a,b
+    cdef int x = len(taxa)
+    cdef float c,d
+    cdef str newick_string
 
-    clusters = dict([(i,[i]) for i in range(x)])
+    cdef dict clusters = dict([(i,[i]) for i in range(x)])
 
-    tree = []
+    cdef list tree = []
 
     _upgma(clusters,matrix,tree)
 
-    newick = dict([(i,taxa[i]) for i in range(len(taxa))])
+    cdef dict newick = dict([(i,taxa[i]) for i in range(len(taxa))])
     
     # create different output, depending on the options for the inclusion of
     # distances or topology only
@@ -207,25 +265,27 @@ def upgma(
                     newick[tree[i][1]]
                     )
     
-    newick = newick[max(newick.keys())] + ';'
+    newick_string = newick[max(newick.keys())] + ';'
 
-    return newick
+    return newick_string
 
 def _upgma(
-        clusters,
-        matrix,
-        tree_matrix
+        dict clusters,
+        list matrix,
+        list tree_matrix
         ):
     """
     Internal implementation of the UPGMA algorithm.
     """
+    cdef int i,vA,vB,idxA,idxB,idxNew
+    cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
         return
 
-    scores = []
-    indices = []
+    cdef list scores = []
+    cdef list indices = []
 
     for i,valA in clusters.items():
         for j,valB in clusters.items():
@@ -257,9 +317,9 @@ def _upgma(
             )
 
 def neighbor(
-        matrix,
-        taxa,
-        distances = True
+        list matrix,
+        list taxa,
+        bint distances = True
         ):
     """
     Function clusters data according to the Neighbor-Joining algorithm \
@@ -309,15 +369,18 @@ def neighbor(
     lingpy.algorithm.cluster.upgma
     lingpy.algorithm.cluster.flat_upgma
     """
+    cdef int i,a,b
+    cdef float c,d
+    cdef str newick_string
     
-    x = len(taxa)
+    cdef int x = len(taxa)
 
-    clusters = dict([(i,[i]) for i in range(x)])
-    tree = []
+    cdef dict clusters = dict([(i,[i]) for i in range(x)])
+    cdef list tree = []
 
     _neighbor(clusters,matrix,tree)
 
-    newick = dict([(i,taxa[i]) for i in range(x)])
+    cdef dict newick = dict([(i,taxa[i]) for i in range(x)])
         
     # create different output, depending on the options for the inclusion of
     # distances or topology only
@@ -336,20 +399,25 @@ def neighbor(
                     newick[tree[i][1]]
                     )
     
-    newick = newick[max(newick.keys())] + ';'
+    newick_string = newick[max(newick.keys())] + ';'
 
-    return newick
+    return newick_string
 
 def _neighbor(
-        clusters,
-        matrix,
-        tree_matrix,
-        constant_matrix = [],
-        tracer = {}
+        dict clusters,
+        list matrix,
+        list tree_matrix,
+        list constant_matrix = [],
+        dict tracer = {}
         ):
     """
     Internal implementation of the neighbor-joining algorithm.
     """
+    cdef int idxA,idxB,idxNew,N,i,j,key
+    cdef float sAX,sBX,new_score,score,dist_a,dist_b,dist_ab
+    cdef list line,new_matrix
+    cdef dict new_clusters
+
     if len(clusters) == 1:
         return
 
@@ -387,18 +455,18 @@ def _neighbor(
 
     # create the constant matrix when the process starts
     if not constant_matrix:
-        constant_matrix = list(matrix.copy())
+        constant_matrix = [[cell for cell in line] for line in matrix]
     
     # get the number of taxa
     N = len(matrix)
 
     # determine the average scores (divergence r)
-    averages = []
+    cdef list averages = []
     for line in matrix:
         averages.append(sum(line) / (N - 2.0))
     
     # create the new matrix
-    new_matrix = matrix.copy()
+    new_matrix = [[cell for cell in line] for line in matrix]
     
     # fill in the new scores
     for i,line in enumerate(matrix):
@@ -409,8 +477,8 @@ def _neighbor(
                 new_matrix[j][i] = new_score
     
     # determine the minimal score
-    scores = []
-    indices = []
+    cdef list scores = []
+    cdef list indices = []
     for i in sorted(clusters.keys()):
         for j in sorted(clusters.keys()):
             if i < j:
@@ -421,11 +489,11 @@ def _neighbor(
     idxA,idxB = indices[scores.index(minimum)]
 
     # check for the average of the clusters
-    vals = []
+    cdef list vals = []
     for i in clusters[idxA]:
         for j in clusters[idxB]:
             vals.append(constant_matrix[i][j])
-    tmp_score = sum(vals) / len(vals)
+    cdef float tmp_score = sum(vals) / len(vals)
 
     
     # append the indices to the tree matrix
