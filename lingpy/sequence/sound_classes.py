@@ -169,7 +169,7 @@ def ipa2tokens(
             start = False
             tone = False
 
-    return tuple(out)
+    return out
 
 def tokens2class(
         tstring,
@@ -227,11 +227,11 @@ def tokens2class(
                     # new character for missing data and spurious items
                     out.append('0')
 
-    return tuple(out)
+    return out
 
 def prosodic_string(
         string,
-        output = 'tuples'
+        _output = True
         ):
     """
     Create a prosodic string of the sonority profile of a sequence.
@@ -296,9 +296,7 @@ def prosodic_string(
         # return the prostrings of the pieces recursively, note that the
         # additional check whether x is True is necessitated by the fact that
         # often errors occur in the coding, i.e. strings are given 
-        return tuple(
-                '_'.join([''.join(prosodic_string(x,output)) for x in nstrings])
-                )
+        return '_'.join([prosodic_string(x,_output) for x in nstrings])
     
     # create the output values
     pstring = ''
@@ -366,13 +364,12 @@ def prosodic_string(
             print(sstring)
             print(pstring)
             print(a,b,c)
-            input("[i] Press any key to carry on.")
+            input("[i] Press the Any-Key to carry on.")
             pstring += '?'
 
-    if output in ["tuples","tuple",'t']:
-        return tuple(pstring)
-    
-    if output in ['prostring','pstring','p']:
+    if _output:
+        return pstring
+    else:
         conv = {
                 "A":"#",
                 "B":"C",
@@ -384,12 +381,12 @@ def prosodic_string(
                 "Y":"v",
                 "Z":">"
                 }
-        return tuple([conv[x] for x in pstring])
+        return ''.join([conv[x] for x in pstring])
 
 def prosodic_weights(
         prostring,
-        scale = None,
-        factor = 0.3
+        factor = 0.3,
+        _transform = {}
         ):
     """
     Calculate prosodic weights for each position of a sequence.
@@ -438,26 +435,10 @@ def prosodic_weights(
     ----
     Change the documentation for the new scaling mode!
     """
+    # check for transformer
+    if _transform:
+        transform = _transform
     
-    if scale:
-        if len(scale) == 3:
-            print('warning, this mode is deprecated...')
-            transform = {
-                    '#' : scale[0] * ( 1 + factor ),
-                    'V' : scale[1] * ( 1 + factor ),
-                    'C' : scale[0], # consonant in ascending position
-                    'c' : scale[2], # consonant in descending position
-                    'v' : scale[1], # 
-                    '<' : scale[1] * ( 1 - factor ), # vowel preceded by a vowel
-                    '$' : scale[2] * ( 1 - factor ), # consonant in end position
-                    '>' : scale[1] * ( 1 - factor ), # vowel in final position
-                    'T' : scale[1],
-                    '_' : 0.0,
-                      }
-        # user-defined scale
-        elif len(scale) == 10:
-            transform = dict([(i[0],i[1]) for i in zip('#VCcv<$>T_',scale)])
-
     # default scale for tonal languages
     elif 'T' in prostring:
         transform = {
@@ -473,18 +454,18 @@ def prosodic_weights(
                 '_' : 0.0,
 
                 # new values for alternative prostrings
-                'A' : 2.0,  # initial
-                'B' : 1.75, # syllable-initial
-                'C' : 1.5,  # ascending
+                'A' : 1.6,  # initial
+                'B' : 1.3, # syllable-initial
+                'C' : 1.2,  # ascending
 
                 'L' : 1.1,  # descending
                 'M' : 1.1,  # syllable-descending
-                'N' : 0.8,  # final
+                'N' : 0.5,  # final
                 
-                'X' : 1.5,  # vowel in initial syllable
-                'Y' : 1.3,  # vowel in non-final syllable
-                'Z' : 0.8,  # vowel in final syllable
-                'T' : 0.0,  # Tone
+                'X' : 3.0,  # vowel in initial syllable
+                'Y' : 3.0,  # vowel in non-final syllable
+                'Z' : 0.7,  # vowel in final syllable
+                'T' : 1.0,  # Tone
                 '_' : 0.0   # break character
                 }
     # default scale for other languages
@@ -518,7 +499,7 @@ def prosodic_weights(
 
                 }
     
-    out = tuple(transform[i] for i in prostring)
+    out = [transform[i] for i in prostring]
 
     return out
 

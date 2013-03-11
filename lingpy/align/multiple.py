@@ -16,6 +16,7 @@ import numpy as np
 from ..data import *
 try:
     from ..algorithm import calignx as _calign
+    from ..algorithm import calign
 except:
     from ..algorithm import _calignx as _calign
 from ..algorithm.misc import squareform
@@ -72,7 +73,7 @@ class Multiple(object):
             tokens = tokenize(seq)
             self.tokens.append(tokens)
             self.numbers.append(
-                    tuple([str(i+1)+'.'+str(j+1) for j in range(len(tokens))])
+                    [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
                     )
 
         # create dictionary of all unique sequences, this is important, since
@@ -231,9 +232,9 @@ class Multiple(object):
         indices = {}
         for i,seq in enumerate(self.classes):
             try:
-                indices[seq] += [i]
+                indices[tuple(seq)] += [i]
             except:
-                indices[seq] = [i]
+                indices[tuple(seq)] = [i]
 
         # create additional matrices for the internal representation of the
         # class sequences
@@ -242,8 +243,8 @@ class Multiple(object):
 
         # add the classes
         self._classes = [self.classes[key] for key in keys]
-        self._numbers = [tuple([str(i+1)+'.'+str(j+1) for j in
-            range(len(self._classes[i]))]) for i in range(self.height)]
+        self._numbers = [[str(i+1)+'.'+str(j+1) for j in
+            range(len(self._classes[i]))] for i in range(self.height)]
 
         # store sonars if they are passed as a list
         if type(sonar) == list:
@@ -336,52 +337,33 @@ class Multiple(object):
             if not hasattr(self,'weights'):
                 self._weights = list(map(prosodic_weights,self._prostrings))
             
+            alignments = calign.align_pairwise(
+                    self._numbers,
+                    self._weights,
+                    self._prostrings,
+                    gop,
+                    scale,
+                    factor,
+                    self.scorer,
+                    restricted_chars,
+                    mode
+                    )
+            k = 0
             for i in range(self.height):
                 for j in range(self.height):
                     if i < j:
-                        
-                        # get the classes
-                        cI,cJ = self._numbers[i],self._numbers[j]
-                            
-                        # get the weights
-                        wI,wJ = self._weights[i],self._weights[j]
-
-                        # get the prostrings
-                        pI,pJ = self._prostrings[i],self._prostrings[j]
-
-                        # carry out alignment analysis
-                        almA,almB,sim,dist = _calign.sc_align(
-                                cI,
-                                cJ,
-                                wI,
-                                wJ,
-                                pI,
-                                pJ,
-                                gop,
-                                scale,
-                                factor,
-                                self.scorer,
-                                restricted_chars,
-                                mode,
-                                distance = True,
-                                both = True
-                                )
-                    
+                        almA,almB,sim,dist = alignments[k]
                         if mode == 'local':
                             almA = almA[1]
-                            almB = almB[1] 
-                        self._alignments[i][j] = (almA,almB,sim)
-                        self._alignments[j][i] = (almB,almA,sim)
+                            almB = almB[1]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        self._alignments[j][i] = [almA,almB,sim]
                         self.matrix += [dist]
+                        k += 1
                     elif i == j:
-                        alm = self._numbers[i]
-                        sim = _calign._self_sc_score(
-                                alm,
-                                len(alm),
-                                self.scorer,
-                                factor
-                                )
-                        self._alignments[i][j] = (alm,alm,sim)
+                        almA,almB,sim,dist = alignments[k]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        k += 1
         else:
             for i in range(self.height):
                 for j in range(self.height):
@@ -554,8 +536,8 @@ class Multiple(object):
         n,p = profileB.shape
         
         # modify the profiles
-        profileA = tuple([tuple(p.tolist()) for p in profileA])
-        profileB = tuple([tuple(p.tolist()) for p in profileB])
+        profileA = profileA.tolist()
+        profileB = profileB.tolist()
 
         if self._sonars:
                            
@@ -574,8 +556,8 @@ class Multiple(object):
             
             # get the consensus string for the sonority profiles
             try:
-                consA = [int(i[i>=0].mean().round()) for i in np.array(sonarA)]
-                consB = [int(i[i>=0].mean().round()) for i in np.array(sonarB)]
+                consA = [int(i[i!=0].mean().round()) for i in np.array(sonarA)]
+                consB = [int(i[i!=0].mean().round()) for i in np.array(sonarB)]
             except:
                 print(np.array(sonarA))
                 print(np.array(sonarB))
@@ -901,12 +883,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1168,8 +1144,8 @@ class Multiple(object):
         if not self._sonars:
             for i in range(alm_matrix.shape[1]):
                 score += _calign._basic_score_profile(
-                        tuple(alm_matrix[:,i].tolist()),
-                        tuple(alm_matrix[:,i].tolist()),
+                        alm_matrix[:,i].tolist(),
+                        alm_matrix[:,i].tolist(),
                         self.scorer,
                         gop,
                         gap_weight
@@ -1177,8 +1153,8 @@ class Multiple(object):
         else:
             for i in range(alm_matrix.shape[1]):
                 score += _calign._score_profile(
-                        tuple(alm_matrix[:,i].tolist()),
-                        tuple(alm_matrix[:,i].tolist()),
+                        alm_matrix[:,i].tolist(),
+                        alm_matrix[:,i].tolist(),
                         self.scorer,
                         gap_weight = gap_weight
                         )
@@ -1195,8 +1171,8 @@ class Multiple(object):
 
         for i in range(alm_matrix.shape[1]):
             score += _calign._swap_score_profile(
-                    tuple(alm_matrix[:,i].tolist()),
-                    tuple(alm_matrix[:,i].tolist()),
+                    alm_matrix[:,i].tolist(),
+                    alm_matrix[:,i].tolist(),
                     self.scorer,
                     gap_weight = gap_weight,
                     swap_penalty = swap_penalty
@@ -1245,12 +1221,6 @@ class Multiple(object):
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
-
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
 
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
@@ -1341,12 +1311,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
 
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1436,12 +1400,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(1.2,1.0,1.1))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1521,12 +1479,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
 
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1591,8 +1543,8 @@ class Multiple(object):
         for i in range(self._alm_matrix.shape[1]):
             peaks.append(
                     _calign._score_profile(
-                        tuple(self._alm_matrix[:,i].tolist()),
-                        tuple(self._alm_matrix[:,i].tolist()),
+                        self._alm_matrix[:,i].tolist(),
+                        self._alm_matrix[:,i].tolist(),
                         self.scorer,
                         gap_weight = gap_weight
                         )
@@ -1668,12 +1620,6 @@ class Multiple(object):
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
-
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
 
         factor : float (default=1)
             The factor by which the initial and the descending position shall

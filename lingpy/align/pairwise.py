@@ -13,9 +13,13 @@ __date__="2013-03-05"
 from ..data import *
 from ..sequence.sound_classes import *
 try:
-    from ..algorithm import calignx as _calign
+    from ..algorithm import calignx as _calignx
+    from ..algorithm import malign as _malign
+    from ..algorithm import calign as _calign
 except:
-    from ..algorithm import _calignx as _calign
+    from ..algorithm import _calignx as _calignx
+    from ..algorithm import _malign as _malign
+    from ..algorithm import _calign as _calign
 
 class Pairwise(object):
     """
@@ -163,6 +167,10 @@ class Pairwise(object):
                 self.tokens
                 ):
             self.classes += [(clA,clB)]
+
+        self.weights = []
+        for prA,prB in self.prostrings:
+            self.weights += [(prosodic_weights(prA),prosodic_weights(prB))]
         
         self.scoredict = self.model.scorer
 
@@ -228,47 +236,61 @@ class Pairwise(object):
             local = True
         else:
             local = False
-
-        # carry out the alignment analysis
-        for i,(clA,clB) in enumerate(self.classes):
-
-            # get the tokens
-            tokA,tokB = self.tokens[i]
-            
-            # get prostrings
-            prA,prB = self.prostrings[i]
-            
-            # get the weights
-            wA,wB = prosodic_weights(prA),prosodic_weights(prB)
-                
-            # get the alignments
-            almA,almB,sim = _calign.sc_align(
-                    clA,
-                    clB,
-                    wA,
-                    wB,
-                    prA,
-                    prB,
+        
+        if not distance:
+            self._alignments = _calign.align_pairs(
+                    self.classes,
+                    self.weights,
+                    self.prostrings,
                     gop,
                     scale,
                     factor,
                     self.scoredict,
-                    restricted_chars,
                     mode,
-                    distance
+                    restricted_chars
                     )
-
-            # append sound classes
-            self._alignments += [(almA,almB,sim)]
+        else:
+            self._alignments = _calign.align_pairs(
+                    self.classes,
+                    self.weights,
+                    self.prostrings,
+                    gop,
+                    scale,
+                    factor,
+                    self.scoredict,
+                    mode,
+                    restricted_chars,
+                    distance = 1
+                    )
+        
+        # switch back to alignments
+        self.alignments = []
+        for i,(almA,almB,sim) in enumerate(self._alignments):
             
-            # append alignments
-            self.alignments += [
-                    (
-                        class2tokens(tokA,almA,local=local),
-                        class2tokens(tokB,almB,local=local),
-                        sim
+            if mode != "local":
+                self.alignments.append(
+                        (
+                            class2tokens(
+                                self.tokens[i][0],almA
+                                ),
+                            class2tokens(
+                                self.tokens[i][1],almB
+                                ),
+                            sim
+                            )
                         )
-                    ]
+            else:
+                self.alignments.append(
+                        (
+                            class2tokens(
+                                self.tokens[i][0],almA,local=True
+                                ),
+                            class2tokens(
+                                self.tokens[i][1],almB,local=True
+                                ),
+                            sim
+                            )
+                        )
 
         # print the alignments, if this is chosen
         if pprint:
@@ -291,17 +313,17 @@ def pw_align(
     Align two sequences in various ways.
     """
 
-    # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == list:
-        seqA = tuple(seqA)
-        seqB = tuple(seqB)
-    elif type(seqA) != tuple:
+    # check whether the sequences are lists
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
 
     # start alignment
-    return _calign.basic_align(
+    return _calignx.basic_align(
             seqA,
             seqB,
             gop,
@@ -325,14 +347,14 @@ def nw_align(
     if type(seqA) == str or type(seqA) == list:
         seqA = tuple(seqA)
         seqB = tuple(seqB)
-    elif type(seqA) != tuple:
+    elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     if not scorer:
         scorer = {}
 
-    return _calign.nw_align(seqA,seqB,scorer,gap)
+    return _malign.nw_align(seqA,seqB,scorer,gap)
 
 def edit_dist(
         seqA,
@@ -343,15 +365,15 @@ def edit_dist(
     Return the edit distance between two strings.
     """
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == list:
-        seqA = tuple(seqA)
-        seqB = tuple(seqB)
-    elif type(seqA) != tuple:
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     
-    return _calign.edit_dist(seqA,seqB,normalized)
+    return _malign.edit_dist(seqA,seqB,normalized)
 
 def sw_align(
         seqA,
@@ -364,17 +386,17 @@ def sw_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == list:
-        seqA = tuple(seqA)
-        seqB = tuple(seqB)
-    elif type(seqA) != tuple:
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     if not scorer:
         scorer = {}
 
-    return _calign.sw_align(seqA,seqB,scorer,gap)
+    return _malign.sw_align(seqA,seqB,scorer,gap)
 
 
 def we_align(
@@ -388,15 +410,15 @@ def we_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == list:
-        seqA = tuple(seqA)
-        seqB = tuple(seqB)
-    elif type(seqA) != tuple:
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     if not scorer:
         scorer = {}
 
-    return _calign.we_align(seqA,seqB,scorer,gap)
+    return _malign.we_align(seqA,seqB,scorer,gap)
 

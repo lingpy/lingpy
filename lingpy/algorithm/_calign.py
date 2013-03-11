@@ -48,7 +48,7 @@ def globalign(
         traceback[0][i] = 2
     for i in range(1,N+1):
         matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -154,7 +154,7 @@ def secondary_globalign(
         traceback[0][i] = 2
     for i in range(1,N+1):
         matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -264,7 +264,7 @@ def semi_globalign(
     for i in range(1,M+1):
         traceback[0][i] = 2
     for i in range(1,N+1):
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -374,7 +374,7 @@ def secondary_dialign(
         traceback[0][i] = 2
     for i in range(1,N+1):
         matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -633,7 +633,7 @@ def secondary_localign(
 
             # calculate costs for gapB
             if proA[j-1] in r and proB[i-1] not in r and j != N:
-                gapA = matrix[i][j-1] - 1000000
+                gapB = matrix[i][j-1] - 1000000
             elif traceback[i][j-1] == 2:
                 gapB = matrix[i][j-1] + gopA[j-1] * scale
             else:
@@ -753,7 +753,7 @@ def dialign(
     for i in range(1,M+1):
         traceback[0][i] = 2
     for i in range(1,N+1):
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -859,7 +859,7 @@ def secondary_semi_globalign(
     for i in range(1,M+1):
         traceback[0][i] = 2
     for i in range(1,N+1):
-        traceback[i][0] = 2
+        traceback[i][0] = 3
 
     # start the loop
     for i in range(1,N+1):
@@ -1136,7 +1136,7 @@ def align_pairwise(
         mode
         ):
     """
-    Align a pair of sequences.
+    Align a of sequences pairwise.
     """
     # define basic stuff
     alignments = []
@@ -1148,29 +1148,30 @@ def align_pairwise(
 #     proA,proB
 
     # get self-scores
-    sims = []
-#     lens
+    sims = [0.0 for i in range(lS)]
+    lens = [0 for i in range(lS)]
+
     for i in range(lS):
         seqA = seqs[i]
         k = len(seqA)
         sim = sum([(1 + factor) * scorer[seqA[j],seqA[j]] for j in range(k)])
-        lens += [k]
-        sims += [sim]
-        gops[i] = [gop * gops[j] for j in range(k)]
+        lens[i] = k
+        sims[i] = sim
+        gops[i] = [gop * gops[i][j] for j in range(k)]
     
-    if mode == "global":
-        # start loop
-        for i in range(lS):
-            for j in range(lS):
-                if i < j:
-                    seqA,seqB = seqs[i],seqs[j]
-                    gopA,gopB = gops[i],gops[j]
-                    proA,proB = pros[i],pros[j]
-                    simA,simB = sims[i],sims[j]
-                    lenA,lenB = lens[i],lens[j]
+    # check for restricted chars in the beginning
+    if not set(restricted_chars).intersection(set(''.join(pros))):
 
-                    # check for secondary structures
-                    if not set(restricted_chars).intersection(set(proA+proB)):
+        if mode == "global":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
 
                         almA,almB,sim = globalign(
                                 seqA,
@@ -1185,8 +1186,143 @@ def align_pairwise(
                                 factor,
                                 scorer
                                 )
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
+                                )
 
-                    else:
+        elif mode == "local":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
+                        # check for secondary structures
+                        almA,almB,sim = localign(
+                                seqA,
+                                seqB,
+                                gopA,
+                                gopB,
+                                proA,
+                                proB,
+                                lenA,
+                                lenB,
+                                scale,
+                                factor,
+                                scorer
+                                ) 
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
+                                )
+
+        elif mode == "overlap":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
+                        almA,almB,sim = semi_globalign(
+                                seqA,
+                                seqB,
+                                gopA,
+                                gopB,
+                                proA,
+                                proB,
+                                lenA,
+                                lenB,
+                                scale,
+                                factor,
+                                scorer
+                                )
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
+                                )
+
+        elif mode == "dialign":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
+                        almA,almB,sim = dialign(
+                               seqA,
+                               seqB,
+                               proA,
+                               proB,
+                               lenA,
+                               lenB,
+                               scale,
+                               factor,
+                               scorer
+                               )
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
+                                )
+    else:
+        if mode == "global":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
                         almA,almB,sim = secondary_globalign(
                                 seqA,
                                 seqB,
@@ -1201,49 +1337,31 @@ def align_pairwise(
                                 scorer,
                                 restricted_chars
                                 )
-
-                    
-                    # get the distance
-                    dist = 1 - ( 2 * sim / ( simA + simB ) )
-                    
-                    # append it to list
-                    alignments.append(
-                            (almA,almB,sim,dist)
-                            )
-                elif i == j:
-                    seqA = seqs[i]
-                    alignments.append(
-                            (seqA,seqA,sims[i],0.0)
-                            )
-
-    elif mode == "local":
-        # start loop
-        for i in range(lS):
-            for j in range(lS):
-                if i < j:
-                    seqA,seqB = seqs[i],seqs[j]
-                    gopA,gopB = gops[i],gops[j]
-                    proA,proB = pros[i],pros[j]
-                    simA,simB = sims[i],sims[j]
-                    lenA,lenB = lens[i],lens[j]
-
-                    # check for secondary structures
-                    if not set(restricted_chars).intersection(set(proA+proB)):
-                      almA,almB,sim = localign(
-                                seqA,
-                                seqB,
-                                gopA,
-                                gopB,
-                                proA,
-                                proB,
-                                lenA,
-                                lenB,
-                                scale,
-                                factor,
-                                scorer
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
                                 )
 
-                    else:
+        elif mode == "local":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
                         almA,almB,sim = secondary_localign(
                                 seqA,
                                 seqB,
@@ -1257,50 +1375,32 @@ def align_pairwise(
                                 factor,
                                 scorer,
                                 restricted_chars
+                                ) 
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
                                 )
- 
-                    
-                    # get the distance
-                    dist = 1 - ( 2 * sim / ( simA + simB ) )
-                    
-                    # append it to list
-                    alignments.append(
-                            (almA,almB,sim,dist)
-                            )
-                elif i == j:
-                    seqA = seqs[i]
-                    alignments.append(
-                            (seqA,seqA,sims[i],0.0)
-                            )
-
-    elif mode == "overlap":
-        # start loop
-        for i in range(lS):
-            for j in range(lS):
-                if i < j:
-                    seqA,seqB = seqs[i],seqs[j]
-                    gopA,gopB = gops[i],gops[j]
-                    proA,proB = pros[i],pros[j]
-                    simA,simB = sims[i],sims[j]
-                    lenA,lenB = lens[i],lens[j]
-
-                    # check for secondary structures
-                    if not set(restricted_chars).intersection(set(proA+proB)):
-                      almA,almB,sim = semi_globalign(
-                                seqA,
-                                seqB,
-                                gopA,
-                                gopB,
-                                proA,
-                                proB,
-                                lenA,
-                                lenB,
-                                scale,
-                                factor,
-                                scorer
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
                                 )
 
-                    else:
+        elif mode == "overlap":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        gopA,gopB = gops[i],gops[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
                         almA,almB,sim = secondary_semi_globalign(
                                 seqA,
                                 seqB,
@@ -1315,75 +1415,236 @@ def align_pairwise(
                                 scorer,
                                 restricted_chars
                                 )
-
-                    
-                    # get the distance
-                    dist = 1 - ( 2 * sim / ( simA + simB ) )
-                    
-                    # append it to list
-                    alignments.append(
-                            (almA,almB,sim,dist)
-                            )
-                elif i == j:
-                    seqA = seqs[i]
-                    alignments.append(
-                            (seqA,seqA,sims[i],0.0)
-                            )
-
-    elif mode == "dialign":
-        # start loop
-        for i in range(lS):
-            for j in range(lS):
-                if i < j:
-                    seqA,seqB = seqs[i],seqs[j]
-                    proA,proB = pros[i],pros[j]
-                    simA,simB = sims[i],sims[j]
-                    lenA,lenB = lens[i],lens[j]
-
-                    # check for secondary structures
-                    if not set(restricted_chars).intersection(set(proA+proB)):
-                      almA,almB,sim = dialign(
-                                seqA,
-                                seqB,
-                                proA,
-                                proB,
-                                lenA,
-                                lenB,
-                                scale,
-                                factor,
-                                scorer
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
                                 )
 
-                    else:
+        elif mode == "dialign":
+            # start loop
+            for i in range(lS):
+                for j in range(lS):
+                    if i < j:
+                        seqA,seqB = seqs[i],seqs[j]
+                        proA,proB = pros[i],pros[j]
+                        simA,simB = sims[i],sims[j]
+                        lenA,lenB = lens[i],lens[j]
+
                         almA,almB,sim = secondary_dialign(
-                                seqA,
-                                seqB,
-                                proA,
-                                proB,
-                                lenA,
-                                lenB,
-                                scale,
-                                factor,
-                                scorer,
-                                restricted_chars
+                               seqA,
+                               seqB,
+                               proA,
+                               proB,
+                               lenA,
+                               lenB,
+                               scale,
+                               factor,
+                               scorer,
+                               restricted_chars
+                               )
+                        
+                        # get the distance
+                        dist = 1 - ( 2 * sim / ( simA + simB ) )
+                        
+                        # append it to list
+                        alignments.append(
+                                (almA,almB,sim,dist)
+                                )
+                    elif i == j:
+                        seqA = seqs[i]
+                        alignments.append(
+                                (seqA,seqA,sims[i],0.0)
                                 )
 
-                    
-                    # get the distance
-                    dist = 1 - ( 2 * sim / ( simA + simB ) )
-                    
-                    # append it to list
-                    alignments.append(
-                            (almA,almB,sim,dist)
-                            )
-                elif i == j:
-                    seqA = seqs[i]
-                    alignments.append(
-                            (seqA,seqA,sims[i],0.0)
-                            )
 
     return alignments
     
+def align_pairs(
+        seqs,
+        gops,
+        pros,
+        gop,
+        scale,
+        factor,
+        scorer,
+        mode,
+        restricted_chars,
+        distance = 0
+        ):
+    """
+    Align multiple sequence pairs.
+    """
+    # basic defs
+#     i,j,M,N,lP
+#     seqA,seqB,almA,almB
+#     sim
+    alignments = []
+
+    # get basic params
+    lP = len(seqs)
+
+    # check for restricted prostrings
+
+    # carry out alignments
+    for i in range(lP):
+        # get sequences
+        seqA,seqB = seqs[i][0],seqs[i][1]
+        
+        # get length of seqs
+        M,N = len(seqA),len(seqB)
+        
+        # get gops
+        gopA = [gop * gops[i][0][j] for j in range(M)]
+        gopB = [gop * gops[i][1][j] for j in range(N)]
+
+        # get pros
+        proA,proB = pros[i][0],pros[i][1]
+
+        # check for restricted chars
+        if not set(restricted_chars).intersection(proA+proB):
+            if mode == "global":
+                almA,almB,sim = globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+            elif mode == "local":
+                almA,almB,sim = localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+
+            elif mode == "overlap":
+                almA,almB,sim = semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+        else:
+            if mode == "global":
+                almA,almB,sim = secondary_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+            elif mode == "local":
+                almA,almB,sim = secondary_localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+            elif mode == "overlap":
+                almA,almB,sim = secondary_semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = secondary_dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+        # calculate distances if option is chose
+        if distance > 0:
+            simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
+            simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
+
+            dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
+            if distance == 1:
+                alignments.append((almA,almB,dist))
+            else:
+                alignments.append((almA,almB,sim,dist))
+        else:
+            alignments.append((almA,almB,sim))
+    
+    return alignments
+
 
 
 
