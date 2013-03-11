@@ -1645,6 +1645,152 @@ def align_pairs(
     
     return alignments
 
+# specific methods for the alignment of profiles
+def align_profile(
+        profileA,
+        profileB,
+        gopA,
+        gopB,
+        proA,
+        proB,
+        gop,
+        scale,
+        factor,
+        scorer,
+        restricted_chars,
+        mode,
+        gap_weight
+        ):
+    """
+    Align two profiles using the basic modes.
+    """
 
+    # basic defs
+#     i,j,k,l,M,N,O,P
+#     sim,count
+#     charA,charB
+#     listA,listB,almA,almB
+    
+    M = len(profileA)
+    N = len(profileB)
+    O = len(profileA[0])
+    P = len(profileB[0])
+
+    tmp_scorer = {}
+
+    listA = [i for i in range(M)]
+    listB = [i for i in range(N)]
+
+    for i in range(M):
+        for j in range(N):
+            sim = 0.0
+            count = 0.0
+            for k in range(O):
+                for l in range(P):
+                    charA = profileA[i][k]
+                    charB = profileB[j][l]
+                    if charA != 'X' and charB != 'X':
+                        sim += scorer[charA,charB]
+                        count += 1.0
+                    else:
+                        count += gap_weight
+            tmp_scorer[i,j] = sim / count
+
+    # get the gop
+    gopA = [gop * gopA[i] for i in range(M)]
+    gopB = [gop * gopB[i] for i in range(N)]
+    
+    if not set(restricted_chars).intersection(proA+proB):
+        if mode == "global":
+            almA,almB,sim = globalign(
+                    listA,
+                    listB,
+                    gopA,
+                    gopB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer
+                    )
+        elif mode == "overlap":
+            almA,almB,sim = semi_globalign(
+                    listA,
+                    listB,
+                    gopA,
+                    gopB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer
+                    )
+        elif mode == "dialign":
+            almA,almB,sim = dialign(
+                    listA,
+                    listB,
+                    gopA,
+                    gopB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer
+                    )
+    else:
+        if mode == "global":
+            almA,almB,sim = secondary_globalign(
+                    listA,
+                    listB,
+                    gopA,
+                    gopB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer,
+                    restricted_chars
+                    )
+        elif mode == "overlap":
+            almA,almB,sim = secondary_semi_globalign(
+                    listA,
+                    listB,
+                    gopA,
+                    gopB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer,
+                    restricted_chars
+                    )
+        elif mode == "dialign":
+            almA,almB,sim = secondary_dialign(
+                    listA,
+                    listB,
+                    proA,
+                    proB,
+                    M,
+                    N,
+                    scale,
+                    factor,
+                    tmp_scorer,
+                    restricted_chars
+                    )
+
+    return almA,almB,sim
+
+
+    
 
 
