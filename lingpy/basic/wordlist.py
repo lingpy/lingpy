@@ -9,7 +9,7 @@ __date__="2013-01-21"
 
 import os
 import builtins
-from datetime import date
+from datetime import date,datetime
 import numpy as np
 import pickle
 
@@ -20,7 +20,6 @@ try:
     from ..algorithm.cython import cluster
 except:
     from ..algorithm.cython import _cluster as cluster
-
 
 class Wordlist(object):
     """
@@ -72,6 +71,7 @@ class Wordlist(object):
             col = 'doculect',
             conf = ''
             ):
+
         # check for existing cache-directory
         if os.path.isdir('__lingpy__'):
             path = '__lingpy__/'+filename.replace('.csv','.bin')
@@ -92,7 +92,11 @@ class Wordlist(object):
                 # reset the class attribute
                 self._class = dict([(key,eval(value)) for key,value in
                     self._class_string.items()])
-        else:
+                
+                loaded = True
+            else:
+                loaded = False
+        if not loaded:
             self._init_first(filename,row,col,conf)
 
     def _init_first(
@@ -112,7 +116,7 @@ class Wordlist(object):
                 raise ValueError('[i] Input data is not specified.')
             else:
                 input_data = filename
-                filename = 'lingpy-{0}'.format(str(date.today()))
+                self.filename = 'lingpy-{0}'.format(str(date.today()))
 
         # load the configuration file
         if not conf:
@@ -371,6 +375,7 @@ class Wordlist(object):
         for key,value in self.__dict__.items():
             if key != '_class': 
                 d[key] = value
+        d['__date__'] = str(datetime.today())
         pickle.dump(d,out)
         out.close()
 
@@ -709,7 +714,7 @@ class Wordlist(object):
                     s = source[key]
                     t = function(s)
                     self[key].append(t)
-
+            
             else:
                 # get the index of the source in self
                 idx = self._header[source]            
@@ -779,7 +784,8 @@ class Wordlist(object):
     def get_etymdict(
             self,
             ref = "cogid",
-            entry = ''
+            entry = '',
+            loans = False
             ):
         """
         Return an etymological dictionary representation of the word list.
@@ -806,7 +812,7 @@ class Wordlist(object):
         """
         
         # make an alias for the reference
-        ref = self._alias[ref]
+        ref = (self._alias[ref],loans)
 
         # check in the cache
         try:
@@ -825,24 +831,37 @@ class Wordlist(object):
                 self._etym_dict = {ref:{}}
             
             # get the index for the cognate id 
-            cogIdx = self._header[ref]
+            cogIdx = self._header[ref[0]]
             
             # iterate over all data
-            for key in self:
-                cogid = self[key][cogIdx]
-                colIdx = self.cols.index(self[key][self._colIdx])
-                #try:
-                #    self._etym_dict[ref][cogid]
-                #except:
-                # assign new line if cogid is missing
-                if cogid not in self._etym_dict[ref]:
-                    self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-                
-                # assign the values for the current session
-                try:
-                    self._etym_dict[ref][cogid][colIdx] += [key]
-                except:
-                    self._etym_dict[ref][cogid][colIdx] = [key]
+            if not loans:
+                for key in self:
+                    cogid = self[key][cogIdx]
+                    colIdx = self.cols.index(self[key][self._colIdx])
+
+                    # assign new line if cogid is missing
+                    if cogid not in self._etym_dict[ref]:
+                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                    
+                    # assign the values for the current session
+                    try:
+                        self._etym_dict[ref][cogid][colIdx] += [key]
+                    except:
+                        self._etym_dict[ref][cogid][colIdx] = [key]
+            else:
+                for key in self:
+                    cogid = abs(self[key][cogIdx])
+                    colIdx = self.cols.index(self[key][self._colIdx])
+
+                    # assign new line if cogid is missing
+                    if cogid not in self._etym_dict[ref]:
+                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                    
+                    # assign the values for the current session
+                    try:
+                        self._etym_dict[ref][cogid][colIdx] += [key]
+                    except:
+                        self._etym_dict[ref][cogid][colIdx] = [key]
         
         if entry:
             # create the output
