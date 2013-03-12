@@ -21,7 +21,7 @@ def globalign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer
+        object scorer
         ):
     """
     Carry out global alignment of two sequences.
@@ -126,7 +126,7 @@ def secondary_globalign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str r # restricted_chars
         ):
     """
@@ -239,7 +239,7 @@ def semi_globalign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -346,7 +346,7 @@ def secondary_semi_globalign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str r # restricted_chars
         ):
     """
@@ -463,7 +463,7 @@ def localign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -592,7 +592,7 @@ def secondary_localign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str r # restricted_chars
         ):
     """
@@ -728,7 +728,7 @@ def dialign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -830,7 +830,7 @@ def secondary_dialign(
         int N, # length of seqB
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str r # restricted chars
         ):
     """
@@ -947,7 +947,7 @@ def align_pair(
         int gop,
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str mode,
         str restricted_chars,
         int distance = 0
@@ -1128,7 +1128,7 @@ def align_pairwise(
         int gop,
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str restricted_chars,
         str mode
         ):
@@ -1472,7 +1472,7 @@ def align_pairs(
         int gop,
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str mode,
         str restricted_chars,
         int distance = 0
@@ -1653,7 +1653,7 @@ def align_profile(
         int gop,
         float scale,
         float factor,
-        dict scorer,
+        object scorer,
         str restricted_chars,
         str mode,
         float gap_weight
@@ -1791,7 +1791,7 @@ def align_profile(
 def score_profile(
         list colA,
         list colB,
-        dict scorer,
+        object scorer,
         float gap_weight = 0.0
         ):
     """
@@ -1821,7 +1821,7 @@ def score_profile(
 def swap_score_profile(
         list colA,
         list colB,
-        dict scorer,
+        object scorer,
         float gap_weight = 0.0,
         int swap_penalty = -5
         ):
@@ -1858,3 +1858,188 @@ def swap_score_profile(
                 counter += gap_weight
 
     return score / counter
+
+def corrdist(
+        float threshold,
+        list seqs,
+        list gops,
+        list pros,
+        int gop,
+        float scale,
+        float factor,
+        object scorer,
+        str mode,
+        str restricted_chars
+        ):
+    """
+    Create a correspondence distribution for a given language pair.
+    """
+
+    # basic defs
+    cdef int i,j,M,N,lP,l
+    cdef list seqA,seqB,almA,almB
+    cdef float sim
+    cdef dict corrs = {}
+
+    # get basic params
+    lP = len(seqs)
+
+    # check for restricted prostrings
+
+    # carry out alignments
+    for i in range(lP):
+        # get sequences
+        seqA,seqB = seqs[i][0],seqs[i][1]
+        
+        # get length of seqs
+        M,N = len(seqA),len(seqB)
+        
+        # get gops
+        gopA = [gop * gops[i][0][j] for j in range(M)]
+        gopB = [gop * gops[i][1][j] for j in range(N)]
+
+        # get pros
+        proA,proB = pros[i][0],pros[i][1]
+
+        # check for restricted chars
+        if not set(restricted_chars).intersection(proA+proB):
+            if mode == "global":
+                almA,almB,sim = globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+            elif mode == "local":
+                almA,almB,sim = localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+                almA = almA[1]
+                almB = almB[1]
+
+
+            elif mode == "overlap":
+                almA,almB,sim = semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+        else:
+            if mode == "global":
+                almA,almB,sim = secondary_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+            elif mode == "local":
+                almA,almB,sim = secondary_localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+                almA = almA[1]
+                almB = almB[1]
+
+            elif mode == "overlap":
+                almA,almB,sim = secondary_semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = secondary_dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+        # calculate distances
+        simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
+        simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
+        dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
+        
+        if dist <= threshold:
+            l = len(almA)
+            for j in range(l):
+                try:
+                    corrs[almA[j],almB[j]] += 1
+                except:
+                    corrs[almA[j],almB[j]] = 1
+
+    return corrs
+
+
