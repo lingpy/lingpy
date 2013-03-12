@@ -42,8 +42,13 @@ class Multiple(object):
             seqs,
             **keywords
             ):
-        # store input sequences 
-        self.seqs = seqs
+        # store input sequences, check whether tokens or strings are passed
+        if type(seqs[0]) == list:
+            self.seqs = [' '.join(s) for s in seqs]
+            self.tokens = [s for s in seqs]
+        else:
+            self.seqs = seqs
+            self.tokens = []
 
         # define a tokenizer function for convenience
         defaults = {
@@ -58,22 +63,29 @@ class Multiple(object):
         for k in keywords:
             if k in defaults:
                 defaults[k] = keywords[k]
+        
+        if self.tokens:
+            self.numbers = []
+            for i,tokens in enumerate(self.tokens):
+                self.numbers.append(
+                        [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
+                        )
+        else:
+            tokenize = lambda x: ipa2tokens(x,**defaults)
 
-        tokenize = lambda x: ipa2tokens(x,**defaults)
-
-        # create a numerical representation of all sequences which reflects the
-        # order of both their position and the position of their tokens. Before
-        # this can be done, a tokenized version of all sequences has to be
-        # created
-        self.tokens = []
-        self.numbers = []
-        for i,seq in enumerate(self.seqs):
-            # check for pre-tokenized strings
-            tokens = tokenize(seq)
-            self.tokens.append(tokens)
-            self.numbers.append(
-                    [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
-                    )
+            # create a numerical representation of all sequences which reflects the
+            # order of both their position and the position of their tokens. Before
+            # this can be done, a tokenized version of all sequences has to be
+            # created
+            self.tokens = []
+            self.numbers = []
+            for i,seq in enumerate(self.seqs):
+                # check for pre-tokenized strings
+                tokens = tokenize(seq)
+                self.tokens.append(tokens)
+                self.numbers.append(
+                        [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
+                        )
 
         # create dictionary of all unique sequences, this is important, since
         # identical sequences should only be counted once in an alignment,
