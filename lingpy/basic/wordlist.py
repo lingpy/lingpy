@@ -11,6 +11,7 @@ import os
 import builtins
 from datetime import date
 import numpy as np
+import pickle
 
 from ..read.csv import qlc2dict
 from ..convert import *
@@ -71,15 +72,47 @@ class Wordlist(object):
             col = 'doculect',
             conf = ''
             ):
-        
+        # check for existing cache-directory
+        if os.path.isdir('__lingpy__'):
+            path = '__lingpy__/'+filename.replace('.csv','.bin')
+            if os.path.isfile(path):
+                # open the infile
+                infile = open(path,'rb')
+
+                # load the dictionary
+                d = pickle.load(infile)
+
+                # close the infile
+                infile.close()
+
+                # set the attributes
+                for key,val in d.items():
+                    setattr(self,key,val)
+                
+                # reset the class attribute
+                self._class = dict([(key,eval(value)) for key,value in
+                    self._class_string.items()])
+        else:
+            self._init_first(filename,row,col,conf)
+
+    def _init_first(
+            self,
+            filename,
+            row,
+            col,
+            conf
+            ):
+
         # try to load the data
         try:
             input_data = qlc2dict(filename)
+            self.filename = filename.replace('.csv','')
         except:
             if not input_data:
                 raise ValueError('[i] Input data is not specified.')
             else:
                 input_data = filename
+                filename = 'lingpy-{0}'.format(str(date.today()))
 
         # load the configuration file
         if not conf:
@@ -96,7 +129,7 @@ class Wordlist(object):
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
-        self._alias,self._class = {},{}
+        self._alias,self._class,self._class_string = {},{},{}
         for name,cls,alias in tmp:
             
             # make sure the name itself is there
@@ -106,12 +139,17 @@ class Wordlist(object):
             self._class[name.lower()] = eval(cls)
             self._class[name.upper()] = eval(cls)
 
+            self._class_string[name.lower()] = cls
+            self._class_string[name.upper()] = cls
+
             # add the aliases
             for a in alias.split(','):
                 self._alias[a.lower()] = name
                 self._alias[a.upper()] = name
                 self._class[a.lower()] = eval(cls)
                 self._class[a.upper()] = eval(cls)
+                self._class_string[a.lower()] = cls
+                self._class_string[a.upper()] = cls
 
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
@@ -320,6 +358,21 @@ class Wordlist(object):
         """
         del self._cache
         self._cache = {}
+
+    def _pickle(self):
+        """
+        Store the current data in a pickled object.
+        """
+        if not os.path.isdir('__lingpy__'):
+            os.mkdir('__lingpy__')
+        path = '__lingpy__/'+self.filename+'.bin'
+        out = open(path,'wb')
+        d = {}
+        for key,value in self.__dict__.items():
+            if key != '_class': 
+                d[key] = value
+        pickle.dump(d,out)
+        out.close()
 
     def get_dict(
             self,
@@ -722,7 +775,6 @@ class Wordlist(object):
 
         # clear the cache
         self._clean_cache()
-        
     
     def get_etymdict(
             self,
@@ -809,7 +861,6 @@ class Wordlist(object):
                                 )
                     else:
                         etym_dict[key].append(0)
-
         else:
             etym_dict = self._etym_dict[ref]
         
