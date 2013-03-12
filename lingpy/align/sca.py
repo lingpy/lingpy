@@ -127,7 +127,6 @@ import numpy as np
 import re
 
 from ..data import *
-from ..algorithm.misc import *
 from .multiple import Multiple
 from .pairwise import Pairwise
 
@@ -926,6 +925,13 @@ class _Pairwise(Pairwise):
 class SCA(object):
     """
     Basic class for handling various kinds of alignment analyses.
+
+    Parameters
+    ----------
+    infile : { str }
+        The name of the input file which can be provided in PSQ, PSQ, MSQ, or
+        MSA format.
+
     """
     
     def __init__(
@@ -968,6 +974,17 @@ class SCA(object):
                     setattr(self,key,parent.__getattribute__(key))
                 except:
                     pass
+    
+    def __len__(self):
+        return self.__len__()
+    def __str__(self):
+        return self.__str__()
+    def __repr__(self):
+        return self.__repr__()
+    def __eq__(self,other):
+        return self.__eq__(other)
+    def __getitem__(self,x):
+        return self.__getitem__(x)
 
         
 

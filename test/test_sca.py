@@ -36,21 +36,22 @@ msa.prog_align(classes=False,sonar=False,gop=-1)
 print(msa)
 
 # check for swapped sites
+msa.prog_align()
 swap = msa.swap_check(swap_penalty=-1)
 if swap:
     print("")
     print("Detected swap of columns {0[0][0]} and {0[0][2]}".format(msa.swap_index))
 
 # check the iterations
-try:
-    msa.iterate_orphans()
-    msa.iterate_clusters(0.5)
-    msa.iterate_similar_gap_sites()
-    msa.iterate_all_sequences()
-    print("")
-    print("Iteration-test was successful.")
-except:
-    print("Error in iteration test.")
+#try:
+msa.iterate_orphans()
+msa.iterate_clusters(0.5)
+msa.iterate_similar_gap_sites()
+msa.iterate_all_sequences()
+print("")
+print("Iteration-test was successful.")
+#except:
+#    print("Error in iteration test.")
 
 # carry out pairwise tests
 msa.get_pairwise_alignments()

@@ -3,7 +3,7 @@
 # created  : 2013-03-05 17:50
 # modified : 2013-03-05 17:50
 """
-Basic module for pairwise alignment analyses.
+Module provides classes and functions for pairwise alignment analyses.
 """
 
 __author__="Johann-Mattis List"
@@ -13,13 +13,13 @@ __date__="2013-03-05"
 from ..data import *
 from ..sequence.sound_classes import *
 try:
-    from ..algorithm import malign as _malign
-    from ..algorithm import calign as _calign
-    from ..algorithm import talign as talign
+    from ..algorithm.cython import malign
+    from ..algorithm.cython import calign
+    from ..algorithm.cython import talign
 except:
-    from ..algorithm import _malign as _malign
-    from ..algorithm import _calign as _calign
-    from ..algorithm import _talign as talign
+    from ..algorithm.cython import _malign as malign
+    from ..algorithm.cython import _calign as calign
+    from ..algorithm.cython import _talign as talign
 
 class Pairwise(object):
     """
@@ -119,6 +119,9 @@ class Pairwise(object):
     def __repr__(self):
 
         return str(self.seqs)
+    
+    def __len__(self):
+        return len(self.seqs)
     
     def __getitem__(
             self,
@@ -238,7 +241,7 @@ class Pairwise(object):
             local = False
         
         if not distance:
-            self._alignments = _calign.align_pairs(
+            self._alignments = calign.align_pairs(
                     self.classes,
                     self.weights,
                     self.prostrings,
@@ -250,7 +253,7 @@ class Pairwise(object):
                     restricted_chars
                     )
         else:
-            self._alignments = _calign.align_pairs(
+            self._alignments = calign.align_pairs(
                     self.classes,
                     self.weights,
                     self.prostrings,
@@ -304,8 +307,7 @@ def pw_align(
         seqB,
         gop = -1,
         scale = 0.5,
-        scorer = {},
-        res = '_',
+        scorer = False,
         mode = 'global',
         distance = False
         ):
@@ -321,15 +323,27 @@ def pw_align(
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
+    if distance:
+        distance = 1
+    else:
+        distance = 0
+    
+    if not scorer:
+        scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
 
     # start alignment
-    return talignx.align_pair(
+    return talign.align_pair(
             seqA,
             seqB,
             gop,
             scale,
             scorer,
-            res,
             mode,
             distance
             )
@@ -360,7 +374,7 @@ def nw_align(
                 else:
                     scorer[a,b] = -1.0
 
-    return _malign.nw_align(seqA,seqB,scorer,gap)
+    return malign.nw_align(seqA,seqB,scorer,gap)
 
 def edit_dist(
         seqA,
@@ -379,7 +393,7 @@ def edit_dist(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
     
-    return _malign.edit_dist(seqA,seqB,normalized)
+    return malign.edit_dist(seqA,seqB,normalized)
 
 def sw_align(
         seqA,
@@ -408,7 +422,7 @@ def sw_align(
                 else:
                     scorer[a,b] = -1.0
 
-    return _malign.sw_align(seqA,seqB,scorer,gap)
+    return malign.sw_align(seqA,seqB,scorer,gap)
 
 
 def we_align(
@@ -439,7 +453,7 @@ def we_align(
                 else:
                     scorer[a,b] = -1.0
 
-    return _malign.we_align(seqA,seqB,scorer,gap)
+    return malign.we_align(seqA,seqB,scorer,gap)
 
 def structalign(
         seqA,
@@ -448,5 +462,5 @@ def structalign(
     """
     
     """
-    return _malign.structalign(seqA,seqB)
+    return malign.structalign(seqA,seqB)
 

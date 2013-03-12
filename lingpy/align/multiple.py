@@ -3,28 +3,23 @@
 # created  : 2013-03-06 16:41
 # modified : 2013-03-11 18:37
 """
-Basic module for the handling of multiple sequence alignments.
+Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
 __date__="2013-03-11"
 
-# thirdparty imports
-import numpy as np
-
 # lingpy imports
 from ..data import *
 try:
-    #from ..algorithm import calignx as _calign
-    from ..algorithm import calign
-    from ..algorithm import talign
+    from ..algorithm.cython import calign
+    from ..algorithm.cython import talign
+    from ..algorithm.cython import cluster
 except:
-    #from ..algorithm import _calignx as _calign
-    from ..algorithm import _calign as calign
-    from ..algorithm import _talign as talign
+    from ..algorithm.cython import _calign as calign
+    from ..algorithm.cython import _talign as talign
+    from ..algorithm.cython import _cluster as cluster
 
-from ..algorithm.misc import squareform,transpose
-from ..algorithm.cluster import _neighbor,_upgma,_flat_upgma
 from ..sequence.sound_classes import *
 
 class Multiple(object):
@@ -100,7 +95,6 @@ class Multiple(object):
         return self._length
 
     def __str__(self):
-        
         # if alignments are present, print the alignments
         try:
             out = '\t'.join(self.alm_matrix[0])
@@ -393,7 +387,7 @@ class Multiple(object):
                         self._alignments[i][j] = [almA,almB,sim]
                         k += 1
 
-        self.matrix = squareform(self.matrix)
+        self.matrix = cluster.squareform(self.matrix)
 
     def _create_library(self):
         """
@@ -508,9 +502,9 @@ class Multiple(object):
         
         # carry out the clustering
         if tree_calc == 'upgma':
-            _upgma(clusters,self.matrix,self.tree_matrix)
+            cluster._upgma(clusters,self.matrix,self.tree_matrix)
         elif tree_calc == 'neighbor':
-            _neighbor(clusters,self.matrix,self.tree_matrix)
+            cluster._neighbor(clusters,self.matrix,self.tree_matrix)
         else:
             raise ValueError('[i] Method <'+tree_calc+'> for tree calculation not available.')
 
@@ -528,8 +522,8 @@ class Multiple(object):
             restricted_chars = "T_"
             ):
 
-        profileA = transpose(almsA)
-        profileB = transpose(almsB)
+        profileA = cluster.transpose(almsA)
+        profileB = cluster.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
         m,o = len(profileA),len(profileA[0])
@@ -554,8 +548,8 @@ class Multiple(object):
             consB = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarB]
 
         except:
-            print(np.array(sonarA))
-            print(np.array(sonarB))
+            print(sonarA)
+            print(sonarB)
         
         # get the prosodic strings
         prosA = prosodic_string(consA)
@@ -595,8 +589,8 @@ class Multiple(object):
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = transpose(profileA)
-        profileB = transpose(profileB)
+        profileA = cluster.transpose(profileA)
+        profileB = cluster.transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:
@@ -619,8 +613,8 @@ class Multiple(object):
         Align profiles for tokens, not sound classes.
         """
 
-        profileA = transpose(almsA)
-        profileB = transpose(almsB)
+        profileA = cluster.transpose(almsA)
+        profileB = cluster.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
         m,o = len(profileA),len(profileA[0])
@@ -651,8 +645,8 @@ class Multiple(object):
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = transpose(profileA)
-        profileB = transpose(profileB)
+        profileA = cluster.transpose(profileA)
+        profileB = cluster.transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:
@@ -724,7 +718,7 @@ class Multiple(object):
         alm_lst = sorted(alm_lst,key=lambda x:sorter.pop())
 
         # create the matrix which stores all alignments
-        self._alm_matrix = np.array(alm_lst)
+        self._alm_matrix = alm_lst
 
     def _update_alignments(self):
 
@@ -1048,14 +1042,16 @@ class Multiple(object):
         Method reduces all columns from an MSA when there are only gaps. This
         method is important for the iterative procedures.
         """
-
-        new_msa = np.array(msa[:])
+        #XXX new_msa = np.array(msa[:])
+        new_msa = [m for m in msa]
         no_gap_index = []
         for i in range(len(new_msa[0])):
-            if list(new_msa[:,i]).count(gap) != len(new_msa):
+            if [line[i] for line in new_msa].count(gap) != len(new_msa):
+            #XXX if list(new_msa[:,i]).count(gap) != len(new_msa):
                 no_gap_index.append(i)
-    
-        new_msa = new_msa[:,no_gap_index].tolist()
+        
+        new_msa = [[line[i] for i in no_gap_index] for line in new_msa]
+        #XXX new_msa = new_msa[:,no_gap_index].tolist()
 
         return new_msa
 
@@ -1066,13 +1062,20 @@ class Multiple(object):
         """
         Split an MSA into two parts and retain their indices. 
         """
-        
+        #XXX
         # create the inverted index
         idxA = idx
         idxB = [i for i in range(self.height) if i not in idx]
+        
+        # get idxA
+        almA = [self._alm_matrix[i] for i in idxA]
+        almB = [self._alm_matrix[i] for i in idxB]
 
-        partA = self._reduce_gap_sites(self._alm_matrix[idxA])
-        partB = self._reduce_gap_sites(self._alm_matrix[idxB])
+        partA = self._reduce_gap_sites(almA)
+        partB = self._reduce_gap_sites(almB)
+
+        #XXX partA = self._reduce_gap_sites(self._alm_matrix[idxA])
+        #XXX partB = self._reduce_gap_sites(self._alm_matrix[idxB])
 
         return partA,partB,idxA,idxB
 
@@ -1096,7 +1099,7 @@ class Multiple(object):
         for i in range(len(almB)):
             out_alm[idxB[i]] = almB[i]
         
-        out_alm = np.array(out_alm)
+        #XXX out_alm = np.array(out_alm)
 
         return out_alm
 
@@ -1106,7 +1109,6 @@ class Multiple(object):
             mode = 'global',
             gop = -3,
             scale = 0.5,
-            #scale = (1,1,1,1,1,1,1,1,1,1),
             factor = 0.0,
             gap_weight = 0.5,
             check = 'final',
@@ -1117,7 +1119,8 @@ class Multiple(object):
         """
 
         sop = self.sum_of_pairs(gap_weight=gap_weight)
-        alm_matrix = self._alm_matrix.copy()
+        alm_matrix = [[cell for cell in line] for line in self._alm_matrix]
+        #XXX .copy()
         
         if len(idx_list) == 1:
             return
@@ -1131,7 +1134,6 @@ class Multiple(object):
                     iterate = True,
                     gop = gop,
                     scale = scale,
-                    #gep_scale = gep_scale,
                     factor = factor,
                     gap_weight = gap_weight
                     )
@@ -1192,27 +1194,33 @@ class Multiple(object):
             alm_matrix = self._alm_matrix
         else:
             alm_matrix = mat
+        
+        lenM = len(alm_matrix[0])
 
         score = 0.0
         
         if not self._sonars:
-            for i in range(alm_matrix.shape[1]):
+            for i in range(lenM):
                 score += talign.score_profile(
-                        alm_matrix[:,i].tolist(),
-                        alm_matrix[:,i].tolist(),
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        #alm_matrix[:,i].tolist(),
+                        #alm_matrix[:,i].tolist(),
                         self.scorer,
                         gop,
                         gap_weight
                         )
         else:
-            for i in range(alm_matrix.shape[1]):
+            for i in range(lenM):
                 score += calign.score_profile(
-                        alm_matrix[:,i].tolist(),
-                        alm_matrix[:,i].tolist(),
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        #alm_matrix[:,i].tolist(),
+                        #alm_matrix[:,i].tolist(),
                         self.scorer,
                         gap_weight = gap_weight
                         )
-        return score / alm_matrix.shape[1]
+        return score / lenM
 
     def _swap_sum_of_pairs(
             self,
@@ -1221,27 +1229,29 @@ class Multiple(object):
             swap_penalty = -5
             ):
         
+        lenM = len(alm_matrix[0])
+        
         score = 0.0
         
         if not self._sonars:
-            for i in range(alm_matrix.shape[1]):
+            for i in range(lenM):
                 score += talign.swap_score_profile(
-                        alm_matrix[:,i].tolist(),
-                        alm_matrix[:,i].tolist(),
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
                         self.scorer,
                         gap_weight = gap_weight,
                         swap_penalty = swap_penalty
                         )
         else:
-            for i in range(alm_matrix.shape[1]):
+            for i in range(lenM):
                 score += calign.swap_score_profile(
-                        alm_matrix[:,i].tolist(),
-                        alm_matrix[:,i].tolist(),
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
                         self.scorer,
                         gap_weight = gap_weight,
                         swap_penalty = swap_penalty
                         )
-        return score / alm_matrix.shape[1]
+        return score / lenM
     
     def iterate_orphans(
             self,
@@ -1309,9 +1319,11 @@ class Multiple(object):
 
         """
         orphans = []
-        means = self.matrix.mean()
+        means = [sum(line) / len(line) for line in self.matrix] #XXX self.matrix.mean()
+        means = sum(means) / len(means) 
+
         for i,line in enumerate(self.matrix):
-            if line.mean() > means:
+            if sum(line) / len(line) > means:
                 orphans.append([i])
 
         self._iter(
@@ -1401,7 +1413,7 @@ class Multiple(object):
                 [(i[0],[i[1]]) for i in zip(range(self.height),range(self.height))]
                 )
 
-        _flat_upgma(
+        cluster._flat_upgma(
                 clusters,
                 self.matrix,
                 threshold,
@@ -1896,17 +1908,12 @@ class Multiple(object):
         @rtype: C{scipy.array}
         """
         self._similar_gap_sites()
+        
+        gap_array = [0 for x in self._alm_matrix]
 
-        gap_array = np.zeros(
-                [len(self.gap_dict),len(self._alm_matrix[0])], 
-                dtype='int'
-                )
-
-        for i in range(len(self.gap_dict)):
-            
-            gap_array[i] = np.array([int(j) for j in list(
-                self.gap_dict.keys()
-                )[i]])
+        for key in self.gap_dict:
+            for i in self.gap_dict[key]:
+                gap_array[i] = [int(x) for x in key]
 
         return gap_array
 
@@ -1925,10 +1932,11 @@ class Multiple(object):
         for i in range(len(gap_array[0])):
 
             try:
-                if 0 not in gap_array[:,i] + gap_array[:,i+2]:
+                if 0 not in [a+b for a,b in zip(
+                    [line[i] for line in gap_array],
+                    [line[i+2] for line in gap_array]
+                    )]:
                     swaps.append((i))
-                #if sum(gap_array[:,i] + gap_array[:,i+2]) / len(gap_array) > 0.75:
-                #    swaps.append((i))
 
             except:
                 pass
@@ -1948,8 +1956,9 @@ class Multiple(object):
         # [i] We define two versions of the possibly swapped region, a first
         # ... one, where the original alignment is unchanged, and a second one,
         # ... where the alignment is shifted, i.e. the gaps are switched.
-        matA = self._alm_matrix.copy()
-        matB = self._alm_matrix.copy()
+
+        matA = [[c for c in line] for line in self._alm_matrix]
+        matB = [[c for c in line] for line in self._alm_matrix]
 
         for i in range(len(self._classes)):
             
@@ -1966,16 +1975,16 @@ class Multiple(object):
 
         # determine in which direction to turn by counting the number of chars
         # in all cols
-        t1 = len([i for i in matA[:,ind] if i != 'X'])
-        t2 = len([i for i in matA[:,ind+2] if i != 'X'])
+        t1 = len([i for i in [line[ind] for line in matA] if i != 'X'])
+        t2 = len([i for i in [line[ind+2] for line in matA] if i != 'X'])
 
         if t1 > t2:
             turnLeftA = True
         else:
             turnLeftA = False
 
-        t1 = len([i for i in matB[:,ind] if i != 'X'])
-        t2 = len([i for i in matB[:,ind+2] if i != 'X'])
+        t1 = len([i for i in [line[ind] for line in matB] if i != 'X'])
+        t2 = len([i for i in [line[ind+2] for line in matB] if i != 'X'])
 
         if t1 > t2:
             turnLeftB = True

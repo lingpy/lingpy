@@ -14,9 +14,12 @@ import numpy as np
 
 from ..read.csv import qlc2dict
 from ..convert import *
-from ..algorithm.cluster import neighbor,upgma
 from ..check.messages import FileWriteMessage
-from ..algorithm.misc import *
+try:
+    from ..algorithm.cython import cluster
+except:
+    from ..algorithm.cython import _cluster as cluster
+
 
 class Wordlist(object):
     """
@@ -992,7 +995,7 @@ class Wordlist(object):
 
                         # append to distances
                         distances += [ 1 - shared / (self.height-missing)]
-            distances = squareform(distances)
+            distances = cluster.squareform(distances)
 
             if fileformat == 'dst':
                 f = open(filename+'.'+fileformat,'w')
@@ -1008,13 +1011,13 @@ class Wordlist(object):
             elif fileformat == 'tre':
                 
                 if keywords['tree_calc'] == 'neighbor':
-                    tree = neighbor(
+                    tree = cluster.neighbor(
                             distances,
                             self.cols,
                             distances=keywords['distances']
                             )
                 elif keywords['tree_calc'] == 'upgma':
-                    tree = ugpma(
+                    tree = cluster.ugpma(
                             distances,
                             self.cols,
                             distances=keywords['distances']
