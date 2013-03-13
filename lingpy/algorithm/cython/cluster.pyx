@@ -9,59 +9,10 @@ This module provides functions for basic cluster algorithms.
 __author__="Johann-Mattis List"
 __date__="2013-03-11"
 
-cdef extern from "math.h": 
-    double sqrt(double x)
-
-def transpose(list matrix):
-    """
-    Transpose a matrix along its two dimensions.
-
-    Parameters
-    ----------
-    matrix : list
-        A two-dimensional list.
-    """
-    cdef int i,j
-    cdef int lA = len(matrix)
-    cdef int lB = len(matrix[0])
-
-    cdef list out = [[matrix[i][j] for i in range(lA)] for j in range(lB)]
-
-    return out
-
-def squareform(list x):
-    """
-    A simplified version of the :py:func:`scipy.spatial.distance.squareform` \
-    function.
-
-    Parameters
-    ----------
-
-    x : :py:class:`numpy.array` or list
-        The one-dimensional flat representation of a symmetrix distance matrix.
-
-    Returns
-    -------
-    matrix : :py:class:`numpy.array`
-        The two-dimensional redundant representation of a symmetric distance matrix.
-
-    """
-    cdef int i,j,k
-    cdef int l = len(x)
-
-    # calculate the length of the square
-    cdef int s = int(sqrt(2 * l) + 1)
-    
-    cdef list out = [[0.0 for i in range(s)] for j in range(s)]
-    
-    k = 0
-    for i in range(s):
-        for j in range(s):
-            if i < j:
-                out[i][j] = x[k]
-                out[j][i] = x[k]
-                k += 1
-    return out
+try:
+    from .misc import transpose,squareform
+except:
+    from ._misc import transpose,squareform
 
 def flat_upgma(
         float threshold,

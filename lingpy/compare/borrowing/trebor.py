@@ -38,11 +38,7 @@ try:
 except ImportError:
     ThirdPartyModuleError('basemap').warning()
 
-# import polygon
-#try:
 from .polygon import getConvexHull
-#except:
-#    ThirdPartyModuleError('polygon').warning()
 
 # lingpy imports
 from ...thirdparty import cogent as cg

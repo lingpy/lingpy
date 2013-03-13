@@ -1858,3 +1858,188 @@ def swap_score_profile(
                 counter += gap_weight
 
     return score / counter
+
+def corrdist(
+        threshold,
+        seqs,
+        gops,
+        pros,
+        gop,
+        scale,
+        factor,
+        scorer,
+        mode,
+        restricted_chars
+        ):
+    """
+    Create a correspondence distribution for a given language pair.
+    """
+
+    # basic defs
+#     i,j,M,N,lP,l
+#     seqA,seqB,almA,almB
+#     sim
+    corrs = {}
+
+    # get basic params
+    lP = len(seqs)
+
+    # check for restricted prostrings
+
+    # carry out alignments
+    for i in range(lP):
+        # get sequences
+        seqA,seqB = seqs[i][0],seqs[i][1]
+        
+        # get length of seqs
+        M,N = len(seqA),len(seqB)
+        
+        # get gops
+        gopA = [gop * gops[i][0][j] for j in range(M)]
+        gopB = [gop * gops[i][1][j] for j in range(N)]
+
+        # get pros
+        proA,proB = pros[i][0],pros[i][1]
+
+        # check for restricted chars
+        if not set(restricted_chars).intersection(proA+proB):
+            if mode == "global":
+                almA,almB,sim = globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+            elif mode == "local":
+                almA,almB,sim = localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer
+                       )
+                almA = almA[1]
+                almB = almB[1]
+
+
+            elif mode == "overlap":
+                almA,almB,sim = semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       )
+
+        else:
+            if mode == "global":
+                almA,almB,sim = secondary_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+            elif mode == "local":
+                almA,almB,sim = secondary_localign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+                almA = almA[1]
+                almB = almB[1]
+
+            elif mode == "overlap":
+                almA,almB,sim = secondary_semi_globalign(
+                       seqA,
+                       seqB,
+                       gopA,
+                       gopB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+            elif mode == "dialign":
+                almA,almB,sim = secondary_dialign(
+                       seqA,
+                       seqB,
+                       proA,
+                       proB,
+                       M,
+                       N,
+                       scale,
+                       factor,
+                       scorer,
+                       restricted_chars
+                       )
+
+        # calculate distances
+        simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
+        simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
+        dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
+        
+        if dist <= threshold:
+            l = len(almA)
+            for j in range(l):
+                try:
+                    corrs[almA[j],almB[j]] += 1
+                except:
+                    corrs[almA[j],almB[j]] = 1
+
+    return corrs
+
+

@@ -18,8 +18,10 @@ from ..convert import *
 from ..check.messages import FileWriteMessage
 try:
     from ..algorithm.cython import cluster
+    from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _cluster as cluster
+    from ..algorithm.cython import _misc as misc
 
 class Wordlist(object):
     """
@@ -71,6 +73,9 @@ class Wordlist(object):
             col = 'doculect',
             conf = ''
             ):
+
+        # set the loaded var
+        loaded = False
 
         # check for existing cache-directory
         if os.path.isdir('__lingpy__'):
@@ -1065,7 +1070,7 @@ class Wordlist(object):
 
                         # append to distances
                         distances += [ 1 - shared / (self.height-missing)]
-            distances = cluster.squareform(distances)
+            distances = misc.squareform(distances)
 
             if fileformat == 'dst':
                 f = open(filename+'.'+fileformat,'w')

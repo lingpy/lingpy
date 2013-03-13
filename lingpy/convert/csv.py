@@ -77,7 +77,10 @@ def wl2csv(
         # add the rest of the values
         for value in line:
             if type(value) == list:
-                out += '\t'+' '.join(value)
+                try:
+                    out += '\t'+' '.join(value)
+                except:
+                    out += '\t'+' '.join([str(v) for v in value])
             elif type(value) == int:
                 out += '\t'+str(value)
             elif type(value) == float:

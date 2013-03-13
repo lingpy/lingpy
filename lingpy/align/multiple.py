@@ -15,10 +15,12 @@ try:
     from ..algorithm.cython import calign
     from ..algorithm.cython import talign
     from ..algorithm.cython import cluster
+    from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _calign as calign
     from ..algorithm.cython import _talign as talign
     from ..algorithm.cython import _cluster as cluster
+    from ..algorithm.cython import _misc as misc
 
 from ..sequence.sound_classes import *
 
@@ -295,7 +297,31 @@ class Multiple(object):
                 else:
                     return -1.0
 
-        self.scoredict = {}
+        # alternative scoring using ScoreDict function
+        #allchars = []
+        #for number in self._numbers:
+        #    allchars += number
+        #matrix = [[0.0 for x in allchars] for y in allchars]
+        ##self.scoredict = misc.ScoreDict(allchars,matrix)
+
+        #for i,charA in enumerate(allchars):
+        #    for j,charB in enumerate(allchars):
+        #        if i < j:
+        #            score = scorer(
+        #                    self._get(charA,'_classes'),
+        #                    self._get(charB,'_classes')
+        #                    )
+        #            matrix[i][j] = score
+        #            matrix[j][i] = score
+        #        if i == j:
+        #            score = scorer(
+        #                    self._get(charA,'_classes'),
+        #                    self._get(charB,'_classes')
+        #                    )
+        #            matrix[j][i] = score
+        #self.scoredict = misc.ScoreDict(allchars,matrix)
+
+        self.scoredict = {} 
         for i,seqA in enumerate(self._numbers):
             for j,seqB in enumerate(self._numbers):
                 if i < j:
@@ -399,7 +425,7 @@ class Multiple(object):
                         self._alignments[i][j] = [almA,almB,sim]
                         k += 1
 
-        self.matrix = cluster.squareform(self.matrix)
+        self.matrix = misc.squareform(self.matrix)
 
     def _create_library(self):
         """
@@ -534,8 +560,8 @@ class Multiple(object):
             restricted_chars = "T_"
             ):
 
-        profileA = cluster.transpose(almsA)
-        profileB = cluster.transpose(almsB)
+        profileA = misc.transpose(almsA)
+        profileB = misc.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
         m,o = len(profileA),len(profileA[0])
@@ -601,8 +627,8 @@ class Multiple(object):
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = cluster.transpose(profileA)
-        profileB = cluster.transpose(profileB)
+        profileA = misc.transpose(profileA)
+        profileB = misc.transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:
@@ -625,8 +651,8 @@ class Multiple(object):
         Align profiles for tokens, not sound classes.
         """
 
-        profileA = cluster.transpose(almsA)
-        profileB = cluster.transpose(almsB)
+        profileA = misc.transpose(almsA)
+        profileB = misc.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
         m,o = len(profileA),len(profileA[0])
@@ -657,8 +683,8 @@ class Multiple(object):
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = cluster.transpose(profileA)
-        profileB = cluster.transpose(profileB)
+        profileA = misc.transpose(profileA)
+        profileB = misc.transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:

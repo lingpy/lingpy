@@ -12,17 +12,23 @@ __date__="2013-03-12"
 # builtin
 import random
 
+# thirdparty
+import numpy as np
+
 # thirdparty modules
 from ..thirdparty import cogent as cg
 
 # lingpy-modules
 from ..data import *
 from ..sequence.sound_classes import *
+from ..sequence.generate import MCPhon
 from ..basic import Wordlist
 try:
     from ..algorithm.cython import calign
+    from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _calign as calign
+    from ..algorithm.cython import _misc as misc
 
 class tdict(object):
     """
@@ -46,151 +52,6 @@ class tdict(object):
 
     def __str__(self):
         return str(list(self.chars2int.items()))
-
-class MCBasic(object):
-
-    def __init__(
-            self,
-            seqs
-            ):
-        """
-        Basic object for Markov chains.
-        """
-
-        self.seqs = seqs
-        
-        # create distribution
-        self.dist = {}
-        for seq in self.seqs:
-
-            for s1,s2 in zip(['#']+seq,seq+['$']):
-                try:
-                    self.dist[s1] += [s2]
-                except:
-                    self.dist[s1] = [s2]
-
-        # create probabilities
-        #self.probs = {}
-        #for key,value in self.dist.items():
-        #    # iterate over all items in the list
-        #    for v in set(value):
-        #        try:
-        #            self.probs[key][v] = np.log10(self.dist[key].count(v)/len(self.dist[key]))
-        #        except:
-        #            self.probs[key] = {}
-        #            self.probs[key][v] = np.log10(self.dist[key].count(v) / len(self.dist[key]))
-
-    def walk(self):
-        """
-        Create random sequence from the distribution.
-        """
-        # out sequence
-        out = []
-
-        # get the start sequence 
-        startS = random.choice(self.dist['#'])
-
-        # add start to out
-        out += [startS]
-
-        # start looping
-        while True:
-
-            # get nextS
-            nextS = random.choice(self.dist[out[-1]])
-
-            # check for terminal symbol
-            if nextS == '$':
-                break
-            
-            out += [nextS]
-
-        return out
-
-    #def evaluate(
-    #        self,
-    #        seq
-    #        ):
-    #    """
-    #    Evaluate the probability of a sequence to be created.
-    #    """
-    #    
-    #    # probability set to zero
-    #    prob = 0.0
-    #    
-    #    before = '#'
-    #    for s in seq:
-    #        try:
-    #            prob += self.probs[before][s]
-    #            before = s
-    #        except:
-    #            prob = 0.0
-    #            break
-    #    
-    #    return prob
-class MCPhon(MCBasic):
-    
-    def __init__(
-            self,
-            words,
-            tokens=False,
-            prostrings=[]
-            ):
-        """
-        Markov Chains for phonetic sequences.
-        """
-        
-        self.words = words
-        self.tokens = []
-        self.bigrams = []
-
-        # start filling the dictionary
-        for i,w in enumerate(words):
-            
-            # check for tokenized string
-            if not tokens:
-                tokens = ipa2tokens(w)
-            else:
-                tokens = w[:]
-            self.tokens += [tokens]
-
-            # create prosodic string
-            if prostrings:
-                p = prostrings[i]
-            else:
-                p = prosodic_string(tokens2class(tokens,model=art))
-
-            # zip the stuff
-            bigrams = list(zip(p,tokens))
-            
-            # start appending the stuff
-            self.bigrams += [bigrams]
-
-            # init the mother object
-            MCBasic.__init__(self,self.bigrams)
-
-    def get_string(
-            self,
-            new=True,
-            tokens=False
-            ):
-        """
-        Function generates a string based on the input data.
-        """
-        
-        # create the first string
-        out = self.walk()
-
-        while new:
-            if out in self.bigrams:
-                out = self.walk()
-            else:
-                break
-
-        if tokens:
-            return out
-        else:
-            return ' '.join([i[1] for i in  out])
 
 class LexStat(Wordlist):
     """
@@ -294,6 +155,7 @@ class LexStat(Wordlist):
         # create an index 
         if not hasattr(self,'freqs'):
             self.chars = []
+            self.rchars = []
             self.freqs = {}
             for taxon in self.taxa:
                 self.freqs[taxon] = {}
@@ -309,7 +171,11 @@ class LexStat(Wordlist):
                         except:
                             self.freqs[taxon][char] = 1
                         self.chars.append(char)
+                        self.rchars.append(char[char.index('.')+1:])
             self.chars = list(set(self.chars))
+            self.rchars = list(set(self.rchars))
+            for i in range(self.width):
+                self.chars += [str(i+1)+'.X.-']
 
         # create a scoring dictionary
         if not hasattr(self,"scorer"):
@@ -333,14 +199,38 @@ class LexStat(Wordlist):
                                 )
                         matrix[i][j] = score
         
-            self.scorer = tdict(self.chars,matrix)
+            self.scorer = misc.ScoreDict(self.chars,matrix)
+
+            matrix = [[0.0 for i in range(len(self.rchars))] for j in
+                    range(len(self.rchars))]
+            for i,charA in enumerate(self.rchars):
+                for j,charB in enumerate(self.rchars):
+                    if i < j:
+                        
+                        # add dictionary scores to the scoredict
+                        score = keywords["model"](
+                                charA[0],
+                                charB[0]
+                                )
+                        matrix[i][j] = score
+                        matrix[j][i] = score
+                    elif i == j:
+                        # add dictionary scores to the scoredict
+                        score = keywords["model"](
+                                charA[0],
+                                charB[0]
+                                )
+                        matrix[i][j] = score
+        
+            self.rscorer = misc.ScoreDict(self.chars,matrix)
+
 
         # make the language pairs
         if not hasattr(self,"pairs"):
             self.pairs = {}
             for i,taxonA in enumerate(self.taxa):
                 for j,taxonB in enumerate(self.taxa):
-                    if i < j:
+                    if i <= j:
                         self.pairs[taxonA,taxonB] = []
 
                         dictA = self.get_dict(col=taxonA)
@@ -441,13 +331,23 @@ class LexStat(Wordlist):
                                 corrdist[tA,tB][a,b] += d / len(modes)
                             except:
                                 corrdist[tA,tB][a,b] = d / len(modes)
+                    if i == j:
+                        numbers = [self[pair,"numbers"] for pair in
+                                self.pairs[tA,tA]]
+                        for a,b in numbers:
+                            l = len(a)
+                            for k in range(l):
+                                d = self.scorer[a[k],b[k]]
+                                try:
+                                    corrdist[tA,tB][a[k],b[k]] += d / len(modes)
+                                except:
+                                    corrdist[tA,tB][a[k],b[k]] = d / len(modes)
 
         return corrdist
 
     def _get_randist(
             self,
             scaler = 5,
-            threshold = 0.7,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
             restricted_chars = '_T'
@@ -496,8 +396,7 @@ class LexStat(Wordlist):
                 cls = tokens2class(w.split(' '),self.model)
                 pros[taxon] += [prosodic_string(w.split(' '))]
                 weights[taxon] += [prosodic_weights(pros[taxon][-1])]
-                seqs[taxon] += [['{0}.{1}.{2}'.format(
-                    i+1,
+                seqs[taxon] += [['{0}.{1}'.format(
                     c,
                     p
                     ) for c,p in zip(cls,pros[taxon][-1])
@@ -540,35 +439,144 @@ class LexStat(Wordlist):
                                 gop,
                                 scale,
                                 factor,
-                                self.scorer,
+                                self.rscorer,
                                 mode,
                                 restricted_chars
                                 )
                                  
                         # change representation of gaps
                         for a,b in list(corrs.keys()):
-                            d = corrs[a,b] / scaler
+
+                            # get the corresondence count
+                            d = corrs[a,b] * len(self.pairs[tA,tB]) / len(numbers)
+
+                            # check for gaps
                             if a == '-':
-                                a = str(i+1)+'.X.-'
+                                a = 'X.-'
                             elif b == '-':
-                                b = str(j+1)+'.X.-'
+                                b = 'X.-'
+                            
+                            a = str(i+1)+'.'+a
+                            b = str(j+1)+'.'+b
+
+                            # append to overall dist
                             try:
-                                corrdist[tA,tB][a,b] += (d / len(modes)) #/ scale
+                                corrdist[tA,tB][a,b] += d / len(modes)
                             except:
-                                corrdist[tA,tB][a,b] = (d / len(modes)) #/ scale
+                                corrdist[tA,tB][a,b] = d / len(modes)
+
+                    if i == j:
+                        numbers = zip(seqs[tA],seqs[tA])
+                        for a,b in numbers:
+                            l = len(a)
+                            for k in range(l):
+                                d = self.scorer[a[k],b[k]]
+                                try:
+                                    corrdist[tA,tB][a[k],b[k]] += d / len(modes)
+                                except:
+                                    corrdist[tA,tB][a[k],b[k]] = d / len(modes)
+
 
         return corrdist
 
+    def _get_scorer(
+            self,
+            ratio = (3,2),
+            vscale = 0.5,
+            scaler = 5,
+            threshold = 0.7,
+            modes = [("global",-2,0.5),("local",-1,0.5)],
+            factor = 0.3,
+            restricted_chars = '_T',
+            force = False
+            ):
+        """
+        Create a scoring function based on sound correspondences.
+        """
+        # check for attribute
+        if hasattr(self,'cscorer') and not force:
+            print("[i] Scoring function has already been calculated, force recalculation by setting 'force' to 'True'.")
+            return
 
+        # get the correspondence distribution
+        corrdist = self._get_corrdist(
+                threshold,
+                modes,
+                factor,
+                restricted_chars
+                )
+        # get the random distribution
+        randist = self._get_randist(
+                scaler,
+                modes,
+                factor,
+                restricted_chars
+                )
+        
+        # get the average gop
+        gop = sum([m[1] for m in modes]) / len(modes)
 
+        # create the new scoring matrix
+        matrix = [[c for c in line] for line in self.scorer.matrix]
+        char_dict = self.scorer.chars2int
 
+        # start the calculation
+        for i,tA in enumerate(self.taxa):
+            for j,tB in enumerate(self.taxa):
+                if i <= j:
+                    for charA in list(self.freqs[tA]) + [str(i)+'.X.-']:
+                        for charB in list(self.freqs[tB]) + [str(i)+'.X.-']:
+                            try:
+                                exp = randist[charA,charB]
+                            except:
+                                exp = False
+                            try:
+                                att = attested[charA,charB]
+                            except:
+                                att = False
 
+                            # in the following we follow the former lexstat
+                            # protocol
+                            if att <= 1 and i != j:
+                                att = False
 
+                            if att and exp:
+                                score = np.log2((att ** 2 ) / ( exp ** 2 ) )
+                            elif att and not exp:
+                                score = np.log2((att ** 2 ) / 0.01 )
+                            elif exp and not att:
+                                score = -5.0
+                            elif not exp and not att:
+                                score = -90.0
 
+                            # combine the scores
+                            if '-' not in charA+charB:
+                                sim = self.scorer[charA,charB]
+                            else:
+                                sim = gop
+
+                            # get the real score
+                            rscore = ( ratio[0] * score + ratio[1] * sim ) / sum (ratio)
+                            
+                            try:
+                                idxA = char2int[charA]
+                                idxB = char2int[charB]
+
+                                # use the vowel scale
+                                if charA[2] in 'XYZT_' and charB[2] in 'XYZT_':
+                                    matrix[idxA][idxB] = vscale * rscore
+                                    matrix[idxB][idxA] = vscale * rscore
+                                else:
+                                    matrix[idxA][idxB] = rscore
+                                    matrix[idxB][idxA] = rscore
+                            except:
+                                pass
+        
+        self.cscorer = misc.ScoreDict(self.chars,matrix)
 
     def _align_pairs(
             self,
-            mode = "global",
+            mode = "overlap",
             gop = -2,
             scale = 0.5,
             factor = 0.3,
@@ -586,20 +594,26 @@ class LexStat(Wordlist):
                     # get the strings
                     numbers = [self[pair,"numbers"] for pair in
                             self.pairs[taxonA,taxonB]]
-                    weights = [self[pair,"weights"] for pair in
-                            self.pairs[taxonA,taxonB]]
                     prostrings = [self[pair,"prostrings"] for pair in
                         self.pairs[taxonA,taxonB]]
 
+                    # note that the weights have to be calculated differently,
+                    # once alignments scores are already calculated
+                    weights = []
+                    for nA,nB in numbers:
+                        weightA = [self.scorer[str(i+1)+'.X.-',n] for n in nA]
+                        weightB = [self.scorer[str(j+1)+'.X.-',n] for n in nB]
+                        weights += [(weightA,weightB)]
+  
                     # carry out alignment
                     alms = calign.align_pairs(
                             numbers,
                             weights,
                             prostrings,
-                            gop,
+                            1.0,
                             scale,
                             factor,
-                            self.scorer,
+                            self.cscorer,
                             mode,
                             restricted_chars,
                             1
