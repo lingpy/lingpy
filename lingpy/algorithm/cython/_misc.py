@@ -101,7 +101,7 @@ class ScoreDict(object):
 
             return self.matrix[i][j]
         except:
-            return -10
+            return -22.5
 
     def __setitem__(
             self,

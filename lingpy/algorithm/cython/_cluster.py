@@ -13,64 +13,12 @@ try:
     from .misc import transpose,squareform
 except:
     from ._misc import transpose,squareform
-# #extern from "math.h": 
-#    double sqrt(double x)
-#
-#def transpose(matrix):
-#    """
-#    Transpose a matrix along its two dimensions.
-#
-#    Parameters
-#    ----------
-#    matrix : list
-#        A two-dimensional list.
-#    """
-# #    i,j
-#    lA = len(matrix)
-#    lB = len(matrix[0])
-#
-#    out = [[matrix[i][j] for i in range(lA)] for j in range(lB)]
-#
-#    return out
-#
-#def squareform(x):
-#    """
-#    A simplified version of the :py:func:`scipy.spatial.distance.squareform` \
-#    function.
-#
-#    Parameters
-#    ----------
-#
-#    x : :py:class:`numpy.array` or list
-#        The one-dimensional flat representation of a symmetrix distance matrix.
-#
-#    Returns
-#    -------
-#    matrix : :py:class:`numpy.array`
-#        The two-dimensional redundant representation of a symmetric distance matrix.
-#
-#    """
-# #    i,j,k
-#    l = len(x)
-#
-#    # calculate the length of the square
-#    s = int(sqrt(2 * l) + 1)
-#    
-#    out = [[0.0 for i in range(s)] for j in range(s)]
-#    
-#    k = 0
-#    for i in range(s):
-#        for j in range(s):
-#            if i < j:
-#                out[i][j] = x[k]
-#                out[j][i] = x[k]
-#                k += 1
-#    return out
 
 def flat_upgma(
         threshold,
         matrix,
-        taxa = []
+        taxa = [],
+        revert = False
         ):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
@@ -128,7 +76,8 @@ def flat_upgma(
 
     """
 #     i,key
-    x = len(taxa)
+    x = len(matrix)
+    out = {}
 
     clusters = dict([(i,[i]) for i in range(x)])
 
@@ -141,7 +90,11 @@ def flat_upgma(
             clusters[key] = [taxa[i] for i in clusters[key]]
 
         return clusters
-    
+    if revert:
+        for key in clusters:
+            for i in clusters[key]:
+                out[i] = key + 1
+        return out
     return clusters
 
 def _flat_upgma(
@@ -171,7 +124,7 @@ def _flat_upgma(
                         score += [matrix[vA][vB]]
                 scores.append(sum(score) / len(score))
                 indices.append((i,j))
-
+    
     minimum = min(scores)
     if minimum <= threshold:
         idxA,idxB = indices[scores.index(minimum)]

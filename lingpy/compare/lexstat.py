@@ -26,32 +26,11 @@ from ..basic import Wordlist
 try:
     from ..algorithm.cython import calign
     from ..algorithm.cython import misc
+    from ..algorithm.cython import cluster
 except:
     from ..algorithm.cython import _calign as calign
     from ..algorithm.cython import _misc as misc
-
-class tdict(object):
-    """
-
-    """
-    def __init__(self,chars,matrix):
-        
-        self.chars2int = dict([(char,i) for char,i in
-            zip(chars,range(len(chars)))])
-        self.matrix = matrix
-
-    def __getitem__(self,x):
-        
-        try:
-            return self.matrix[self.chars2int[x[0]]][self.chars2int[x[1]]]
-        except:
-            return -10.0
-
-    def __repr__(self):
-        return str(list(self.chars2int.keys()))
-
-    def __str__(self):
-        return str(list(self.chars2int.items()))
+    from ..algorithm.cython import _cluster as cluster
 
 class LexStat(Wordlist):
     """
@@ -116,10 +95,25 @@ class LexStat(Wordlist):
                     )
         # get the numbers for all strings
         if not "numbers" in self.header:
+            # change the discriminative potential of the sound-class string
+            # tuples
+            transform = {
+                    'A':'A',
+                    'B':'B',
+                    'C':'C',
+                    'L':'L',
+                    'M':'M',
+                    'N':'N',
+                    'X':'X',
+                    'Y':'Y',
+                    'Z':'Z',
+                    'T':'T',
+                    '_':'_'
+                    }
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
-                    lambda x,y: ["{0}.{1[0]}.{1[1]}".format(x[y[0]],a) for a in zip(x[y[1]],x[y[2]])]    
+                    lambda x,y: ["{0}.{1}.{2}".format(x[y[0]],a,transform[b]) for a,b in zip(x[y[1]],x[y[2]])]    
                     )
 
         # check for weights
@@ -222,7 +216,7 @@ class LexStat(Wordlist):
                                 )
                         matrix[i][j] = score
         
-            self.rscorer = misc.ScoreDict(self.chars,matrix)
+            self.rscorer = misc.ScoreDict(self.rchars,matrix)
 
 
         # make the language pairs
@@ -230,7 +224,7 @@ class LexStat(Wordlist):
             self.pairs = {}
             for i,taxonA in enumerate(self.taxa):
                 for j,taxonB in enumerate(self.taxa):
-                    if i <= j:
+                    if i < j:
                         self.pairs[taxonA,taxonB] = []
 
                         dictA = self.get_dict(col=taxonA)
@@ -247,6 +241,15 @@ class LexStat(Wordlist):
                                         dB = self[idxB,"duplicates"]
                                         if dA != 1 and dB != 1:
                                             self.pairs[taxonA,taxonB] += [(idxA,idxB)]
+                    elif i == j:
+                        self.pairs[taxonA,taxonA] = []
+                        dictAB = self.get_dict(col=taxonA)
+                        for c in dictAB:
+                            valAB = dictAB[c]
+                            for idx in valAB:
+                                dAB = self[idx,"duplicates"]
+                                if dAB != 1:
+                                    self.pairs[taxonA,taxonA] += [(idx,idx)]
 
     def __getitem__(self,idx):
         """
@@ -331,17 +334,19 @@ class LexStat(Wordlist):
                                 corrdist[tA,tB][a,b] += d / len(modes)
                             except:
                                 corrdist[tA,tB][a,b] = d / len(modes)
-                    if i == j:
-                        numbers = [self[pair,"numbers"] for pair in
-                                self.pairs[tA,tA]]
-                        for a,b in numbers:
-                            l = len(a)
-                            for k in range(l):
-                                d = self.scorer[a[k],b[k]]
-                                try:
-                                    corrdist[tA,tB][a[k],b[k]] += d / len(modes)
-                                except:
-                                    corrdist[tA,tB][a[k],b[k]] = d / len(modes)
+                elif i == j:
+                    corrdist[tA,tB] = {}
+
+                    numbers = [self[pair,"numbers"] for pair in
+                            self.pairs[tA,tA]]
+                    for a,b in numbers:
+                        l = len(a)
+                        for k in range(l):
+                            d = self.scorer[a[k],b[k]]
+                            try:
+                                corrdist[tA,tB][a[k],b[k]] += d / len(modes)
+                            except:
+                                corrdist[tA,tB][a[k],b[k]] = d / len(modes)
 
         return corrdist
 
@@ -405,7 +410,7 @@ class LexStat(Wordlist):
         corrdist = {}
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
-                if i < j:
+                if i <= j:
                     print("[i] Calculating random alignments for pair {0} / {1}.".format(
                         tA,
                         tB
@@ -430,7 +435,6 @@ class LexStat(Wordlist):
                                     pros[tB]
                                     )
                                 )
-
                         corrs = calign.corrdist(
                                 2.0,
                                 numbers,
@@ -465,25 +469,13 @@ class LexStat(Wordlist):
                             except:
                                 corrdist[tA,tB][a,b] = d / len(modes)
 
-                    if i == j:
-                        numbers = zip(seqs[tA],seqs[tA])
-                        for a,b in numbers:
-                            l = len(a)
-                            for k in range(l):
-                                d = self.scorer[a[k],b[k]]
-                                try:
-                                    corrdist[tA,tB][a[k],b[k]] += d / len(modes)
-                                except:
-                                    corrdist[tA,tB][a[k],b[k]] = d / len(modes)
-
-
         return corrdist
 
     def _get_scorer(
             self,
             ratio = (3,2),
             vscale = 0.5,
-            scaler = 5,
+            scaler = 10,
             threshold = 0.7,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
@@ -493,10 +485,32 @@ class LexStat(Wordlist):
         """
         Create a scoring function based on sound correspondences.
         """
+        # get parameters and store them in string
+        modestring = []
+        for a,b,c in modes:
+            modestring += ['{0}-{1}-{2:.2f}'.format(a,abs(b),c)]
+        modestring = ':'.join(modestring)
+
+        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}'.format(
+                ratio,
+                vscale,
+                scaler,
+                threshold,
+                modestring,
+                factor,
+                restricted_chars
+                )
+
         # check for attribute
-        if hasattr(self,'cscorer') and not force:
-            print("[i] Scoring function has already been calculated, force recalculation by setting 'force' to 'True'.")
-            return
+        if hasattr(self,'params') and not force:
+            if self.params == params:
+                print("[i] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.")
+                return
+            else:
+                print("[i] A different scoring function has already been calculated, overwriting previous settings.") 
+
+        # store parameters
+        self.params = params
 
         # get the correspondence distribution
         corrdist = self._get_corrdist(
@@ -524,14 +538,14 @@ class LexStat(Wordlist):
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
                 if i <= j:
-                    for charA in list(self.freqs[tA]) + [str(i)+'.X.-']:
-                        for charB in list(self.freqs[tB]) + [str(i)+'.X.-']:
+                    for charA in list(self.freqs[tA]) + [str(i+1)+'.X.-']:
+                        for charB in list(self.freqs[tB]) + [str(j+1)+'.X.-']:
                             try:
-                                exp = randist[charA,charB]
+                                exp = randist[tA,tB][charA,charB]
                             except:
                                 exp = False
                             try:
-                                att = attested[charA,charB]
+                                att = corrdist[tA,tB][charA,charB]
                             except:
                                 att = False
 
@@ -545,9 +559,9 @@ class LexStat(Wordlist):
                             elif att and not exp:
                                 score = np.log2((att ** 2 ) / 0.01 )
                             elif exp and not att:
-                                score = -5.0
+                                score = gop #XXX
                             elif not exp and not att:
-                                score = -90.0
+                                score = -250.0
 
                             # combine the scores
                             if '-' not in charA+charB:
@@ -559,8 +573,8 @@ class LexStat(Wordlist):
                             rscore = ( ratio[0] * score + ratio[1] * sim ) / sum (ratio)
                             
                             try:
-                                idxA = char2int[charA]
-                                idxB = char2int[charB]
+                                idxA = char_dict[charA]
+                                idxB = char_dict[charB]
 
                                 # use the vowel scale
                                 if charA[2] in 'XYZT_' and charB[2] in 'XYZT_':
@@ -576,7 +590,7 @@ class LexStat(Wordlist):
 
     def _align_pairs(
             self,
-            mode = "overlap",
+            mode = "global",
             gop = -2,
             scale = 0.5,
             factor = 0.3,
@@ -601,8 +615,8 @@ class LexStat(Wordlist):
                     # once alignments scores are already calculated
                     weights = []
                     for nA,nB in numbers:
-                        weightA = [self.scorer[str(i+1)+'.X.-',n] for n in nA]
-                        weightB = [self.scorer[str(j+1)+'.X.-',n] for n in nB]
+                        weightA = [self.cscorer[str(j+1)+'.X.-',n] for n in nA]
+                        weightB = [self.cscorer[str(i+1)+'.X.-',n] for n in nB]
                         weights += [(weightA,weightB)]
   
                     # carry out alignment
@@ -616,10 +630,89 @@ class LexStat(Wordlist):
                             self.cscorer,
                             mode,
                             restricted_chars,
-                            1
+                            2
                             )
                     if mode == "local":
-                        alms = [(a[1],b[1],c) for a,b,c in alms]
+                        alms = [(a[1],b[1],c,d) for a,b,c,d in alms]
                     alignments[taxonA,taxonB] = alms
         return alignments
+
+    def _cluster(
+            self,
+            threshold = 0.55,
+            scale = 0.5,
+            factor = 0.3,
+            restricted_chars = '_T',
+            mode = 'overlap'
+            ):
+        """
+        
+        """
+        # for convenience and later addons
+        concepts = self.concepts
+
+        # make a dictionary that stores the clusters for later update
+        clr = {}
+        k = 0
+        for concept in concepts:
+            print("[i] Analyzing concept {0}.".format(concept))
+
+            indices = self.get_list(
+                    row=concept,
+                    flat=True
+                    )
+
+            matrix = []
+            
+            for i,idxA in enumerate(indices):
+                for j,idxB in enumerate(indices):
+                    if i < j:
+                        numA = self[idxA,'numbers']
+                        numB = self[idxB,'numbers']
+                        proA = self[idxA,'prostrings']
+                        proB = self[idxB,'prostrings']
+                        
+                        # get language ids
+                        lA = self[idxA,'langid']
+                        lB = self[idxB,'langid']
+                        
+                        # get the weights
+                        wA = [self.cscorer[lB+'.X.-',n] for n in numA]
+                        wB = [self.cscorer[lA+'.X.-',n] for n in numB]
+
+                        almA,almB,d = calign.align_pair(
+                                numA,
+                                numB,
+                                wA,
+                                wB,
+                                proA,
+                                proB,
+                                1.0,
+                                scale,
+                                factor,
+                                self.cscorer,
+                                mode,
+                                restricted_chars,
+                                1
+                                )
+
+                        # append distance score to matrix
+                        matrix += [d]
+            matrix = misc.squareform(matrix)
+            
+            # calculate the clusters using flat-upgma
+            c = cluster.flat_upgma(threshold,matrix,revert=True)
+
+            # extract the clusters
+            clusters = [c[i]+k for i in range(len(matrix))]
+
+            # reassign the "k" value
+            k = max(clusters)
+            
+            # add values to cluster dictionary
+            for idxA,idxB in zip(indices,clusters):
+                clr[idxA] = idxB
+            
+        self.add_entries("LexStatId",clr,lambda x:x)
+
 

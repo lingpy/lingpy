@@ -17,7 +17,8 @@ except:
 def flat_upgma(
         float threshold,
         list matrix,
-        list taxa = []
+        list taxa = [],
+        bint revert = False
         ):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
@@ -75,7 +76,8 @@ def flat_upgma(
 
     """
     cdef int i,key
-    cdef int x = len(taxa)
+    cdef int x = len(matrix)
+    cdef dict out = {}
 
     cdef dict clusters = dict([(i,[i]) for i in range(x)])
 
@@ -88,7 +90,11 @@ def flat_upgma(
             clusters[key] = [taxa[i] for i in clusters[key]]
 
         return clusters
-    
+    if revert:
+        for key in clusters:
+            for i in clusters[key]:
+                out[i] = key + 1
+        return out
     return clusters
 
 def _flat_upgma(
@@ -118,7 +124,7 @@ def _flat_upgma(
                         score += [matrix[vA][vB]]
                 scores.append(sum(score) / len(score))
                 indices.append((i,j))
-
+    
     minimum = min(scores)
     if minimum <= threshold:
         idxA,idxB = indices[scores.index(minimum)]
