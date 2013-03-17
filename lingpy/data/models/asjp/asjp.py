@@ -111,13 +111,15 @@ for keyA,keyB in asjp.keys():
 for keyA,keyB in keys:
     asjp[keyA,'+'] = -20
     asjp['+',keyB] = -20
-    asjp[keyA,'0'] = -20
-    asjp['0',keyB] = -20
+    asjp[keyA,'0'] = 0
+    asjp['0',keyB] = 0
 
 
 asjp['X','+'] = -5
 asjp['+','X'] = -5
-asjp['+','+'] = 0
+asjp['+','+'] = 0 # swaps
+asjp['0','0'] = 0 # missing values
+
 for i in '0123456':
     for j in '0123456':
         if i == j:
@@ -131,8 +133,8 @@ for keyA,keyB in asjp.keys():
 
 
 for keyA,keyB in keys:
-    for i in '0123456':
-        if keyA not in '0123456' and keyB not in '0123456':
+    for i in '123456':
+        if keyA not in '123456' and keyB not in '123456':
             asjp[keyA,i] = -20
             asjp[i,keyB] = -20
     asjp[keyA,'_'] = -50

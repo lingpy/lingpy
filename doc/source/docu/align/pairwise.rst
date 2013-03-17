@@ -1,7 +1,21 @@
-Pairwise Alignment (:py:class:`~lingpy.align.pairwise.Pairwise`)
-=======================================================
+Pairwise Alignment (:py:mod:`~lingpy.align.pairwise`)
+=====================================================
 
 .. currentmodule:: lingpy.align.pairwise
+
+Functions
+---------
+
+.. autosummary:: 
+   :toctree: generated/
+   
+   nw_align
+   sw_align
+   we_align
+   edit_dist
+
+Classes
+-------
 
 .. autoclass:: Pairwise
 
@@ -10,5 +24,3 @@ Pairwise Alignment (:py:class:`~lingpy.align.pairwise.Pairwise`)
       :toctree: generated/
 
       Pairwise.align
-      Pairwise.distance
-

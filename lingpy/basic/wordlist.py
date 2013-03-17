@@ -9,14 +9,19 @@ __date__="2013-01-21"
 
 import os
 import builtins
-from datetime import date
+from datetime import date,datetime
 import numpy as np
+import pickle
 
 from ..read.csv import qlc2dict
 from ..convert import *
-from ..algorithm.cluster import neighbor,upgma
 from ..check.messages import FileWriteMessage
-from ..algorithm.misc import *
+try:
+    from ..algorithm.cython import cluster
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _cluster as cluster
+    from ..algorithm.cython import _misc as misc
 
 class Wordlist(object):
     """
@@ -24,8 +29,10 @@ class Wordlist(object):
 
     Parameters
     ----------
-    input_data : {dict, string}
-        A dictionary with consecutive integers as keys and lists as values.
+    filename : { string dict }
+        The input file that contains the data. Otherwise a dictionary with
+        consecutive integers as keys and lists as values with the key 0
+        specifying the header.
 
     row : str (default = "concept")
         A string indicating the name of the row that shall be taken as the
@@ -61,18 +68,60 @@ class Wordlist(object):
 
     def __init__(
             self,
-            input_data,
+            filename,
             row = 'concept',
             col = 'doculect',
             conf = ''
             ):
-        
+
+        # set the loaded var
+        loaded = False
+
+        # check for existing cache-directory
+        if os.path.isdir('__lingpy__'):
+            path = '__lingpy__/'+filename.replace('.csv','.bin')
+            if os.path.isfile(path):
+                # open the infile
+                infile = open(path,'rb')
+
+                # load the dictionary
+                d = pickle.load(infile)
+
+                # close the infile
+                infile.close()
+
+                # set the attributes
+                for key,val in d.items():
+                    setattr(self,key,val)
+                
+                # reset the class attribute
+                self._class = dict([(key,eval(value)) for key,value in
+                    self._class_string.items()])
+                
+                loaded = True
+            else:
+                loaded = False
+        if not loaded:
+            self._init_first(filename,row,col,conf)
+
+    def _init_first(
+            self,
+            filename,
+            row,
+            col,
+            conf
+            ):
+
         # try to load the data
         try:
-            input_data = qlc2dict(input_data)
+            input_data = qlc2dict(filename)
+            self.filename = filename.replace('.csv','')
         except:
             if not input_data:
                 raise ValueError('[i] Input data is not specified.')
+            else:
+                input_data = filename
+                self.filename = 'lingpy-{0}'.format(str(date.today()))
 
         # load the configuration file
         if not conf:
@@ -89,7 +138,7 @@ class Wordlist(object):
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
-        self._alias,self._class = {},{}
+        self._alias,self._class,self._class_string = {},{},{}
         for name,cls,alias in tmp:
             
             # make sure the name itself is there
@@ -99,12 +148,17 @@ class Wordlist(object):
             self._class[name.lower()] = eval(cls)
             self._class[name.upper()] = eval(cls)
 
+            self._class_string[name.lower()] = cls
+            self._class_string[name.upper()] = cls
+
             # add the aliases
             for a in alias.split(','):
                 self._alias[a.lower()] = name
                 self._alias[a.upper()] = name
                 self._class[a.lower()] = eval(cls)
                 self._class[a.upper()] = eval(cls)
+                self._class_string[a.lower()] = cls
+                self._class_string[a.upper()] = cls
 
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
@@ -313,6 +367,22 @@ class Wordlist(object):
         """
         del self._cache
         self._cache = {}
+
+    def _pickle(self):
+        """
+        Store the current data in a pickled object.
+        """
+        if not os.path.isdir('__lingpy__'):
+            os.mkdir('__lingpy__')
+        path = '__lingpy__/'+self.filename+'.bin'
+        out = open(path,'wb')
+        d = {}
+        for key,value in self.__dict__.items():
+            if key != '_class': 
+                d[key] = value
+        d['__date__'] = str(datetime.today())
+        pickle.dump(d,out)
+        out.close()
 
     def get_dict(
             self,
@@ -649,7 +719,7 @@ class Wordlist(object):
                     s = source[key]
                     t = function(s)
                     self[key].append(t)
-
+            
             else:
                 # get the index of the source in self
                 idx = self._header[source]            
@@ -715,12 +785,12 @@ class Wordlist(object):
 
         # clear the cache
         self._clean_cache()
-        
     
     def get_etymdict(
             self,
             ref = "cogid",
-            entry = ''
+            entry = '',
+            loans = False
             ):
         """
         Return an etymological dictionary representation of the word list.
@@ -747,7 +817,7 @@ class Wordlist(object):
         """
         
         # make an alias for the reference
-        ref = self._alias[ref]
+        ref = (self._alias[ref],loans)
 
         # check in the cache
         try:
@@ -766,24 +836,37 @@ class Wordlist(object):
                 self._etym_dict = {ref:{}}
             
             # get the index for the cognate id 
-            cogIdx = self._header[ref]
+            cogIdx = self._header[ref[0]]
             
             # iterate over all data
-            for key in self:
-                cogid = self[key][cogIdx]
-                colIdx = self.cols.index(self[key][self._colIdx])
-                #try:
-                #    self._etym_dict[ref][cogid]
-                #except:
-                # assign new line if cogid is missing
-                if cogid not in self._etym_dict[ref]:
-                    self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-                
-                # assign the values for the current session
-                try:
-                    self._etym_dict[ref][cogid][colIdx] += [key]
-                except:
-                    self._etym_dict[ref][cogid][colIdx] = [key]
+            if not loans:
+                for key in self:
+                    cogid = self[key][cogIdx]
+                    colIdx = self.cols.index(self[key][self._colIdx])
+
+                    # assign new line if cogid is missing
+                    if cogid not in self._etym_dict[ref]:
+                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                    
+                    # assign the values for the current session
+                    try:
+                        self._etym_dict[ref][cogid][colIdx] += [key]
+                    except:
+                        self._etym_dict[ref][cogid][colIdx] = [key]
+            else:
+                for key in self:
+                    cogid = abs(self[key][cogIdx])
+                    colIdx = self.cols.index(self[key][self._colIdx])
+
+                    # assign new line if cogid is missing
+                    if cogid not in self._etym_dict[ref]:
+                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                    
+                    # assign the values for the current session
+                    try:
+                        self._etym_dict[ref][cogid][colIdx] += [key]
+                    except:
+                        self._etym_dict[ref][cogid][colIdx] = [key]
         
         if entry:
             # create the output
@@ -802,7 +885,6 @@ class Wordlist(object):
                                 )
                     else:
                         etym_dict[key].append(0)
-
         else:
             etym_dict = self._etym_dict[ref]
         
@@ -988,7 +1070,7 @@ class Wordlist(object):
 
                         # append to distances
                         distances += [ 1 - shared / (self.height-missing)]
-            distances = squareform(distances)
+            distances = misc.squareform(distances)
 
             if fileformat == 'dst':
                 f = open(filename+'.'+fileformat,'w')
@@ -1004,13 +1086,13 @@ class Wordlist(object):
             elif fileformat == 'tre':
                 
                 if keywords['tree_calc'] == 'neighbor':
-                    tree = neighbor(
+                    tree = cluster.neighbor(
                             distances,
                             self.cols,
                             distances=keywords['distances']
                             )
                 elif keywords['tree_calc'] == 'upgma':
-                    tree = ugpma(
+                    tree = cluster.ugpma(
                             distances,
                             self.cols,
                             distances=keywords['distances']
@@ -1022,52 +1104,42 @@ class Wordlist(object):
 
                 FileWriteMessage(filename,'tre').message('written')
 
-#def _load_dict(infile):
-#    """
-#    Simple function only used to test the WordList class.
-#    """
-#
-#    # read the data into a list
-#    data = []
-#
-#    # open the file
-#    f = open(infile)
-#
-#    for line in f:
-#        # ignore hashed lines
-#        if not line.startswith('#') and not line.startswith('@'):
-#
-#            # mind to strip newlines
-#            data.append(line.strip('\n\r').split('\t'))
-#    
-#    # create the dictionary in which the data will be stored
-#    d = {}
-#
-#    # check for first line, if a local ID is given in the header (or simply
-#    # "ID"), take this line as the ID, otherwise create it
-#    if data[0][0].lower() in ['id','local_id','localid']:
-#        local_id = True
-#    else:
-#        local_id = False
-#
-#    # iterate over data and fill the dictionary (a bit inefficient, but enough
-#    # for the moment)
-#    i = 1
-#    for line in data[1:]:
-#        if local_id:
-#            d[int(line[0])] = line[1:]
-#        else:
-#            d[i] = line
-#            i += 1
-#
-#    # assign the header to d[0]
-#    if local_id:
-#        d[0] = [x.lower() for x in data[0][1:]]
-#    else:
-#        d[0] = [x.lower() for x in data[0]]
-#
-#    # return the stuff
-#    return d
-            
+class QLCWordlist(Wordlist):
+    """
+    Basic class for the handling of QLC-formatted word lists.
 
+    Parameters
+    ----------
+    filename : { string dict }
+        The input file that contains the data. Otherwise a dictionary with
+        consecutive integers as keys and lists as values with the key 0
+        specifying the header.
+
+    row : str (default = "concept")
+        A string indicating the name of the row that shall be taken as the
+        basis for the tabular representation of the word list.
+    
+    col : str (default = "doculect")
+        A string indicating the name of the column that shall be taken as the
+        basis for the tabular representation of the word list.
+    
+    conf : string (default='')
+        A string defining the path to the configuration file. 
+    
+    """
+    
+    def __init__(
+            self,
+            filename,
+            row = 'concept',
+            col = 'doculect',
+            conf = ''
+            ):
+        
+        # initialize the wordlist object for the daughter class
+        Wordlist.__init__(self,filename,row,col,conf)
+
+        # now that the wordlist is loaded, additional checking routines can be
+        # carried out to test and to modify it for QLCoperations
+        print("Here I am, the daughter of Wordlist!")
 

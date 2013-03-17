@@ -1,3 +1,7 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-08 17:30
+# modified : 2013-03-08 17:30
 """
 Module for the derivation of sound class models.
 
@@ -6,7 +10,9 @@ All models are defined in simple text files. In order to guarantee their quick
 access when loading the library, the models are compiled and stored in binary
 files.
 """
-from __future__ import division,print_function
+__author__="Johann-Mattis List"
+__date__="2013-03-08"
+
 import networkx as nx
 from pickle import dump
 import os
@@ -319,8 +325,15 @@ def _make_scoring_dictionary(
     # the alignments getting worse, probably because most tests have been based
     # on profiles. we probably need a very good gap score. 
     for node in graph.nodes():
+        # missing data
+        score_dict[(node,'0')] = 0
+        score_dict[('0',node)] = 0
+
+        # swaps
         score_dict[(node,'+')] = -100
         score_dict[('+',node)] = -100
+
+        # specific values
         if graph.node[node]['val'] == 'v':
             score_dict[(node,'X')] = 0
             score_dict[('X',node)] = 0
@@ -330,9 +343,11 @@ def _make_scoring_dictionary(
         else:
             score_dict[(node,'X')] = 0
             score_dict[('X',node)] = 0
+    
     score_dict[('X','+')] = -5
     score_dict[('+','X')] = -5
     score_dict[('+','+')] = 0
+    score_dict[('0','0')] = 0
 
     # define the gaps
     score_dict[('X','X')] = 0

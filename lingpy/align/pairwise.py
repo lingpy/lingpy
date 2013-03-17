@@ -1,11 +1,25 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-05 17:50
+# modified : 2013-03-05 17:50
 """
-Basic module for pairwise alignment analyses.
+Module provides classes and functions for pairwise alignment analyses.
 """
-# modules
-from __future__ import division,print_function
-from ..data import *
-from ..algorithm import *
 
+__author__="Johann-Mattis List"
+__date__="2013-03-05"
+
+# modules
+from ..data import *
+from ..sequence.sound_classes import *
+try:
+    from ..algorithm.cython import malign
+    from ..algorithm.cython import calign
+    from ..algorithm.cython import talign
+except:
+    from ..algorithm.cython import _malign as malign
+    from ..algorithm.cython import _calign as calign
+    from ..algorithm.cython import _talign as talign
 
 class Pairwise(object):
     """
@@ -21,18 +35,14 @@ class Pairwise(object):
     seqB : string or bool (default=None)
         Define the second sequence that shall be aligned with the first
         sequence, if only two sequences shall be compared.
-
-    merge_vowels : bool (default=True)
-        Indicate, whether neighboring vowels should be merged into
-        diphtongs, or whether they should be kept separated during the
-        analysis.
-
+    
     """
+
     def __init__(
             self,
             seqs,
             seqB = False,
-            merge_vowels = True
+            **keywords
             ):
 
         # check, whether there are only two sequences or multiple sequence
@@ -41,55 +51,77 @@ class Pairwise(object):
             self.seqs = [(seqs,seqB)]
         else:
             self.seqs = seqs
-            
-        # create a tokenized representation of all sequences
+
+        # add the basic representation of sequences
         self.tokens = []
-        self.sonars = []
-        self.numbers = []
-        self.prosodics = []
-        for k,(i,j) in enumerate(self.seqs):
-            seqA = ipa2tokens(i,merge_vowels=merge_vowels)
-            seqB = ipa2tokens(j,merge_vowels=merge_vowels)
-            sonA = [int(x) for x in tokens2class(seqA,art)]
-            sonB = [int(x) for x in tokens2class(seqB,art)]
-            self.tokens.append([seqA,seqB])
-            self.sonars.append([sonA,sonB])
-            self.numbers.append([
-                [str(k) +'.0.'+ str(p) for p in range(1,len(seqA)+1)],
-                [str(k) +'.1.'+ str(p) for p in range(1,len(seqB)+1)]
-                ])
-            self.prosodics.append([
-                prosodic_string(sonA),
-                prosodic_string(sonB)
-                ])
+        self.prostrings = []
+
+        # define a tokenizer function for convenience
+        defaults = {
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+        for k in keywords:
+            if k in defaults:
+                defaults[k] = keywords[k]
+
+        tokenize = lambda x: ipa2tokens(x,**defaults)
+
+        # start to loop over data and create the stuff
+        for k,(seqA,seqB) in enumerate(self.seqs):
+
+            # get the tokens
+            tokA,tokB = tokenize(seqA),tokenize(seqB)
+
+            # get the prostrings
+            proA,proB = prosodic_string(tokA),prosodic_string(tokB)
+
+            # append the stuff
+            self.tokens += [[tokA,tokB]]
+            self.prostrings += [[proA,proB]]
     
     def __str__(self):
 
-        # check for alignments
-        #@todo: check bug in output!
         try:
             a,b,c = self.alignments[0]
             out = '{0}\n{1}\n{2}'.format(
-                    '\t'.join(a).encode('utf-8'),
-                    '\t'.join(b).encode('utf-8'),
-                    c)
+                    '\t'.join(a),
+                    '\t'.join(b),
+                    c
+                    )
             for a,b,c in self.alignments[1:]:
                 out += '\n\n' + '{0}\n{1}\n{2}'.format(
-                        '\t'.join(a).encode('utf-8'),
-                        '\t'.join(b).encode('utf-8'),
-                        c)
+                        '\t'.join(a),
+                        '\t'.join(b),
+                        c
+                        )
             return out
+
         # return tokens, if alignments aren't defined
         except:
             a,b = self.tokens[0]
             out = '{0}\n{1}'.format(
-                    '\t'.join(a).encode('utf-8'),
-                    '\t'.join(b).encode('utf-8'))
+                    ''.join(a),
+                    ''.join(b)
+                    )
             for a,b in self.tokens[1:]:
                 out += '\n\n' + '{0}\n{1}'.format(
-                        '\t'.join(a).encode('utf-8'),
-                        '\t'.join(b).encode('utf-8'))
+                        ''.join(a),
+                        ''.join(b)
+                        )
             return out
+
+    def __repr__(self):
+
+        return str(self.seqs)
+    
+    def __len__(self):
+        return len(self.seqs)
     
     def __getitem__(
             self,
@@ -115,246 +147,320 @@ class Pairwise(object):
 
     def _set_model(
             self,
-            model = 'sca'
+            model = None
             ):
         """
         Define the sequence model for the calculation.
-        """
-        
-        try:
-            self.model = eval(model)
-        except:
-            self.model = model
-        
-        self.classes = [[tokenA[:],tokenB[:]] for tokenA,tokenB in self.tokens]
-        
-        letterA,letterB = [],[]
-        
-        # mind that the C++ function expects lists as input.
-        for i,(tokenA,tokenB) in enumerate(self.classes):
-            self.classes[i][0] = list(tokens2class(tokenA,self.model))
-            self.classes[i][1] = list(tokens2class(tokenB,self.model))
-            letterA += self.classes[i][0]
-            letterB += self.classes[i][1]
-
-        self.scoredict = self.model.scorer
-
-    def _get(self,number,value='tokens',error=(0,'-')):
-        """
-        Return a specific segment of the input sequences.
-        """
-        
-        if number == error[1]:
-            return error[1]
-
-        number = [int(i) for i in number.split('.')]
-
-        if value == 'tokens':
-            return self.tokens[number[0]][number[1]][number[2]-1]
-        elif value == 'classes':
-            return self.classes[number[0]][number[1]][number[2]-1]
-
-    def _align_pairwise(
-            self,
-            mode = 'global',
-            scale = (1.2,1.0,1.1),
-            factor = 0.3,
-            gop = -2,
-            gep_scale = 0.5,
-            restricted_chars = '_T'
-            ):
-
-        alms = []
-        weights = []
-        for seqA,seqB in self.prosodics:
-            prosA = gop * array(
-                    prosodic_weights(
-                        seqA,
-                        scale,
-                        factor
-                        ),
-                    dtype='float'
-                    )
-            prosB = gop * array(
-                    prosodic_weights(
-                        seqB,
-                        scale,
-                        factor
-                        ),
-                    dtype = 'float'
-                    )
-            weights.append([prosA.tolist(),prosB.tolist()])
-        restrictions = []
-        prosodic_strings = []
-        for prosA,prosB in self.prosodics:
-            tmpA,tmpB = [],[]
-            for i,char in enumerate(prosA):
-                if char in restricted_chars:
-                    tmpA.append(-(i+1))
-                else:
-                    tmpA.append(i+1)
-            for i,char in enumerate(prosB):
-                if char in restricted_chars:
-                    tmpB.append(-(i+1))
-                else:
-                    tmpB.append(i+1)
-
-            restrictions.append([tmpA,tmpB])
-            prosodic_strings.append([prosA,prosB])
-        
-        self._aligned_classes = align_sequence_pairs(
-                self.classes,
-                weights,
-                restrictions,
-                prosodic_strings,
-                self.scoredict,
-                gep_scale,
-                0.25 * factor,
-                mode
-                )
-        self.weights = weights
-
-        # the following lines convert the output to the different formats
-        self._aligned_numbers = []
-        self.alignments = []
-        for i,(a,b,c) in enumerate(self._aligned_classes):
-            numA = []
-            numB = []
-            k = 0
-            for j in range(len(a)):
-                if a[j] not in '-*':
-                    numA.append(str(i)+'.0.'+str(k+1))
-                    k += 1
-                elif a[j] == '-':
-                    numA.append('-')
-                else:
-                    k += 1
-
-            k = 0
-            for j in range(len(b)):
-                if b[j] not in '-*':
-                    numB.append(str(i)+'.1.'+str(k+1))
-                    k += 1
-                elif b[j] == '-':
-                    numB.append('-')
-                else:
-                    k += 1
-            self._aligned_numbers.append((numA,numB,c))
-            self.alignments.append(
-                    [
-                        [self._get(k) for k in numA],
-                        [self._get(k) for k in numB],
-                        c
-                        ]
-                    )
-
-    def align(
-            self,
-            model = 'sca',
-            mode = 'global',
-            gop = -5,
-            gep_scale = float(0.5),
-            scale = None, #(float(1.2),float(1.0),float(1.1)),
-            factor = float(0.3),
-            restricted_chars = '_T'
-            ):
-        """
-        Align two sequences or a list of sequence pairs pairwise.
 
         Parameters
         ----------
-
-        model : string (default="sca")
-            A string indicating the name of the
-            :py:class:`~lingpy.data.model.Model` object that shall be used for
-            the analysis.
-            Currently, three models are supported:
-            
-            * "dolgo" -- a sound-class model based on :evobib:`Dolgopolsky1986`,
-
-            * "sca" -- an extension of the "dolgo" sound-class model based on
-              :evobib:`List2012a`, and
-            
-            * "asjp" -- an independent sound-class model which is based on the
-              sound-class model of :evobib:`Brown2008` and the empirical data of
-              :evobib:`Brown2011`.
-
-        mode : string (default="global")
-            A string indicating which kind of alignment analysis should be
-            carried out. Select between: 
-            
-            * "global" -- traditional global alignment analysis based on the
-              Needleman-Wunsch algorithm :evobib:`Needleman1971`,
-
-            * "local" -- local alignment analysis based on the Smith-Waterman
-              algorithm :evobib:`Smith1981`,
-
-            * "overlap" -- overlap alignment analysis where gaps introduced in
-              the beginning or the end of the alignment are scored with 0.
-
-            * "dialign" -- global alignment analysis which seeks to maximize
-              local similarities :evobib:`Morgenstern1996`.
-        
-        gop : int (default=-5)
-            The gap opening penalty (gop) on which the analysis shall be based.
-
-        gep_scale : float (default=0.6)
-            The factor by which the penalty for the extension of gaps (gap
-            extension penalty, GEP) shall be decreased. This approach is
-            essentially inspired by the exension of the basic alignment
-            algorithm for affine gap penalties :evobib:`Gotoh1982`.
-
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
-        factor : float (default=0.3)
-            The factor by which the initial and the descending position shall
-            be modified.
-
-        restricted_chars : string (default="T")
-            Define which characters of the prosodic string of a sequence
-            reflect its secondary structure (cf. :evobib:`List2012a`) and
-            should therefore be aligned specifically. This defaults to "T",
-            since this is the character that represents tones in the prosodic
-            strings of sequences.
-              
+        model : { None, lingpy.data.model.Model } (default=None)
+            Specify the sound-class model to which the strings shall be
+            converted.
         """
+        
+        if not model:
+            self.model = sca
+        else:
+            self.model = model
+        
+        self.classes = []
+        for clA,clB in map(
+                lambda x:(tokens2class(x[0],self.model),tokens2class(x[1],self.model)),
+                self.tokens
+                ):
+            self.classes += [(clA,clB)]
 
-        self._set_model(model)
-        self._align_pairwise(
-                mode,
-                scale,
-                factor,
-                gop,
-                gep_scale,
-                restricted_chars
-                )
-    
-    def _self_score(
+        self.weights = []
+        for prA,prB in self.prostrings:
+            self.weights += [(prosodic_weights(prA),prosodic_weights(prB))]
+        
+        self.scoredict = self.model.scorer
+
+    def align(
             self,
-            seq
+            gop = -1,
+            scale = 0.5,
+            mode = 'global',
+            factor = 0.3,
+            restricted_chars = 'T_',
+            distance = False,
+            model = None,
+            pprint = False
             ):
         """
-        Return the score of a sequence with itself.
+        Align a pair of sequences or multiple sequence pairs.
+
+        Parameters
+        ----------
+        gop : int (default=-1)
+            The gap opening penalty (GOP).
+        scale : float (default=0.5)
+            The gap extension penalty (GEP), calculated with help of a scaling
+            factor.
+        mode : {'global','local','overlap','dialign'}
+            The alignment mode, see :evobib:`List2012a` for details.
+        factor : float (default = 0.3)
+            The factor by which matches in identical prosodic position are
+            increased.
+        restricted_chars : str (default="T_")
+            The restricted chars that function as an indicator of syllable or
+            morpheme breaks for secondary alignment, see :evobib:`List2012c`
+            for details.
+        distance : bool (default=False)
+            If set to *True*, return the distance instead of the similarity
+            score. Distance is calculated using the formula by
+            :evobib:`Downey2008`.
+        model : { None, ~lingpy.data.model.Model }
+            Specify the sound class model that shall be used for the analysis.
+            If no model is specified, the default model of :evobib:`List2012a`
+            will be used.
+        pprint : bool (default=False)
+            If set to *True*, the alignments are printed to the screen.
+
         """
 
-        s = 0
-        for x in seq:
-            if x != '-':
-                s += self.model.scorer[x,x]
-        return s
-
-    def distance(
-            self
-            ):
-        """
-        Return the distance from the alignments.
-        """
+        if hasattr(self,'model'):
+            if not model:
+                pass
+            elif model == self.model:
+                pass
+            else:
+                self._set_model(model)
+        else:
+            self._set_model(model)
         
-        for i,(almA,almB,sAB) in enumerate(self._aligned_classes):
-            sA,sB = self._self_score(almA),self._self_score(almB)
-            d = 1 - ((2 * sAB) / (sA+sB))
-            self.alignments[i][2] = d
+        # create the alignments array
+        self._alignments = []
+        self.alignments = []
+        
+        # define local
+        if mode == 'local':
+            local = True
+        else:
+            local = False
+        
+        if not distance:
+            self._alignments = calign.align_pairs(
+                    self.classes,
+                    self.weights,
+                    self.prostrings,
+                    gop,
+                    scale,
+                    factor,
+                    self.scoredict,
+                    mode,
+                    restricted_chars
+                    )
+        else:
+            self._alignments = calign.align_pairs(
+                    self.classes,
+                    self.weights,
+                    self.prostrings,
+                    gop,
+                    scale,
+                    factor,
+                    self.scoredict,
+                    mode,
+                    restricted_chars,
+                    distance = 1
+                    )
+        
+        # switch back to alignments
+        self.alignments = []
+        for i,(almA,almB,sim) in enumerate(self._alignments):
+            
+            if mode != "local":
+                self.alignments.append(
+                        (
+                            class2tokens(
+                                self.tokens[i][0],almA
+                                ),
+                            class2tokens(
+                                self.tokens[i][1],almB
+                                ),
+                            sim
+                            )
+                        )
+            else:
+                self.alignments.append(
+                        (
+                            class2tokens(
+                                self.tokens[i][0],almA,local=True
+                                ),
+                            class2tokens(
+                                self.tokens[i][1],almB,local=True
+                                ),
+                            sim
+                            )
+                        )
+
+        # print the alignments, if this is chosen
+        if pprint:
+            print(self)
+        else:
+            pass
+
+# the following functions provide solutions for convenience
+def pw_align(
+        seqA,
+        seqB,
+        gop = -1,
+        scale = 0.5,
+        scorer = False,
+        mode = 'global',
+        distance = False
+        ):
+    """
+    Align two sequences in various ways.
+    """
+
+    # check whether the sequences are lists
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if distance:
+        distance = 1
+    else:
+        distance = 0
+    
+    if not scorer:
+        scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
+
+    # start alignment
+    return talign.align_pair(
+            seqA,
+            seqB,
+            gop,
+            scale,
+            scorer,
+            mode,
+            distance
+            )
+
+def nw_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Needleman-Wunsch algorithm.
+    """
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if not scorer:
+        scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
+
+    return malign.nw_align(seqA,seqB,scorer,gap)
+
+def edit_dist(
+        seqA,
+        seqB,
+        normalized = False
+        ):
+    """
+    Return the edit distance between two strings.
+    """
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    
+    return malign.edit_dist(seqA,seqB,normalized)
+
+def sw_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Smith-Waterman algorithm.
+    """
+
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+    if not scorer:
+        scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
+
+    return malign.sw_align(seqA,seqB,scorer,gap)
+
+
+def we_align(
+        seqA,
+        seqB,
+        scorer = False,
+        gap = -1
+        ):
+    """
+    Carry out the traditional Waterman-Eggert algorithm.
+    """
+
+    # check whether the sequences are tuples
+    if type(seqA) == str or type(seqA) == tuple:
+        seqA = list(seqA)
+        seqB = list(seqB)
+    elif type(seqA) != list:
+        raise ValueError(
+            "[!] Input sequences should be tuples, lists, or strings!"
+            )
+
+    if not scorer:
+        scorer = {}
+        for a in seqA:
+            for b in seqB:
+                if a == b:
+                    scorer[a,b] = 1.0
+                else:
+                    scorer[a,b] = -1.0
+
+    return malign.we_align(seqA,seqB,scorer,gap)
+
+def structalign(
+        seqA,
+        seqB
+        ):
+    """
+    
+    """
+    return malign.structalign(seqA,seqB)
+

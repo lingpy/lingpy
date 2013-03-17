@@ -1,6 +1,6 @@
-===============
-LingPy Tutorial
-===============
+========
+Tutorial
+========
 
 .. toctree::
    :maxdepth: 1

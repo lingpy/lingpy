@@ -81,6 +81,13 @@ def ipa2tokens(
     tokens2class
     class2tokens
     """
+    # check for pre-tokenized strings
+    if ' ' in istring:
+        out = istring.split(' ')
+        if istring.startswith('#'):
+            return tuple(out[1:-1])
+        else:
+            return tuple(out)
 
     # check for parameters
     if not vowels:
@@ -205,17 +212,17 @@ def tokens2class(
     out = []
     for token in tstring:
         try:
-            out.append(model.converter[token])
+            out.append(model[token])
         except:
             try:
-                out.append(model.converter[token[0]])
+                out.append(model[token[0]])
             except:
                 # check for stressed syllables
                 if token[0] in stress:
                     try:
-                        out.append(model.converter[token[1:]])
+                        out.append(model[token[1:]])
                     except:
-                        out.append(model.converter[token[1]])
+                        out.append(model[token[1]])
                 else:
                     # new character for missing data and spurious items
                     out.append('0')
@@ -224,7 +231,7 @@ def tokens2class(
 
 def prosodic_string(
         string,
-        output = 'tuples'
+        _output = True
         ):
     """
     Create a prosodic string of the sonority profile of a sequence.
@@ -262,6 +269,10 @@ def prosodic_string(
     '#vC>'
 
     """
+    # check for empty string passed
+    if not string:
+        return ''
+
     # check for the right string
     if type(string[0]) != int:
         
@@ -272,6 +283,7 @@ def prosodic_string(
 
     # check for multiple strings in string
     if 9 in sstring[1:-1]:
+
         # break the string into pieces
         nstrings = [[]]
         switch = False
@@ -280,95 +292,101 @@ def prosodic_string(
                 nstrings[-1] += [i]
             else:
                 nstrings += [[]]
-        if output in ['prostring','p','pstring']:
-            return '_'.join([prosodic_string(x,'p') for x in nstrings])
-        else:
-            idx = 0
-            outstrings,outsyllables = [],[]
-            for n in nstrings:
-                pstring,syllables = prosodic_string(n,'t')
-                outstrings += [pstring]
-                outsyllables += [s+idx for s in syllables]
-                idx += len(pstring)
-            return '_'.join(outstrings),outsyllables
+        
+        # return the prostrings of the pieces recursively, note that the
+        # additional check whether x is True is necessitated by the fact that
+        # often errors occur in the coding, i.e. strings are given 
+        return '_'.join([prosodic_string(x,_output) for x in nstrings])
     
     # create the output values
     pstring = ''
-    s = True
-    syllables = []
+    first = True # stores whether first syllable is currently being processed
 
     # start iterating over relevant parts of the string
-
     for i in range(1,len(sstring)-1):
 
         # get all three values
         a,b,c = sstring[i-1],sstring[i],sstring[i+1]
 
-        # check for start
-        if a == 9:
-            s = True
-
         # check for vowel
         if b == 7:
-            pstring += 'v'
+            
+            # check for first
+            if first:
+                pstring += 'X'
+                first = False
+
+            # check for last
+            elif c == 9:
+                pstring += 'Z'
+
+            else:
+                pstring += 'Y'
         
         # check for tones
         elif b == 8:
             pstring += 'T'
 
-        # check for peak (consonants)
-        elif a < b > c:
-            pstring += 'C'
-
         # check for descending position
-        elif a >= b >= c or c == 9:
-            pstring += 'c'
+        elif a >= b >= c or c == 8:
 
-        # ascending #1
+            # check for word final
+            if c == 9:
+                pstring += 'N'
+            else:
+                pstring += 'L'
+
+        # ascending
         elif b < c or a > b <= c or a < b <= c:
-            pstring += 'C'
 
-            if a >= b:
-                s = True
+            # check for syllable first
+            if a == 9:
+                pstring += 'A'
+            elif a >= b:
+                if c == 9:
+                    pstring += 'N'
+                else:
+                    pstring = pstring[:-1]+pstring[-1].replace('L','M')+'B'
+            else:
+                pstring += 'C'
+        
+        # consonant peak
+        elif a < b > c:
+            if first:
+                pstring += 'X'
+                first = False
+            else:
+                pstring += 'Y'
 
         # dummy for other stuff
         else:
+            print("[i] Warning, condition not met in conversion.")
+            print(sstring)
+            print(pstring)
+            print(a,b,c)
+            input("[i] Press the Any-Key to carry on.")
             pstring += '?'
 
-        if s:
-            syllables += [i-1]
-            s = False
-
-    if output in ["tuples","tuple",'t']:
-        return pstring,syllables
-    
-    if output in ['prostring','pstring','p']:
-        cA = {
-                'c':'#',
-                'C':'#',
-                'v':'V'
+    if _output:
+        return pstring
+    else:
+        conv = {
+                "A":"#",
+                "B":"C",
+                "C":"C",
+                "M":"c",
+                "L":"c",
+                "N":"$",
+                "X":"V",
+                "Y":"v",
+                "Z":">"
                 }
-        cB = {
-                'c':'$',
-                'C':'$',
-                'v':'>'
-                }
-
-        if len(syllables) == 1:
-            out = cA[pstring[0]] + pstring[1:-1] + cB[pstring[-1]]
-            return out.replace('v','V')
-        elif len(syllables) == 2:
-            return cA[pstring[0]] + pstring[1:syllables[1]].replace('v','V') +\
-                    pstring[syllables[1]:-1] + cB[pstring[-1]]
-        else:
-            return cA[pstring[0]] + pstring[1:syllables[1]].replace('v','V') +\
-                    pstring[syllables[1]:syllables[-1]] + pstring[syllables[-1]:-1] +\
-                    cB[pstring[-1]]
+        return ''.join([conv[x] for x in pstring])
 
 def prosodic_weights(
         prostring,
-        scale = None,
-        factor = 0.3
+        factor = 0.3,
+        _transform = {}
         ):
     """
     Calculate prosodic weights for each position of a sequence.
@@ -417,26 +435,10 @@ def prosodic_weights(
     ----
     Change the documentation for the new scaling mode!
     """
+    # check for transformer
+    if _transform:
+        transform = _transform
     
-    if scale:
-        if len(scale) == 3:
-            print('warning, this mode is deprecated...')
-            transform = {
-                    '#' : scale[0] * ( 1 + factor ),
-                    'V' : scale[1] * ( 1 + factor ),
-                    'C' : scale[0], # consonant in ascending position
-                    'c' : scale[2], # consonant in descending position
-                    'v' : scale[1], # 
-                    '<' : scale[1] * ( 1 - factor ), # vowel preceded by a vowel
-                    '$' : scale[2] * ( 1 - factor ), # consonant in end position
-                    '>' : scale[1] * ( 1 - factor ), # vowel in final position
-                    'T' : scale[1],
-                    '_' : 0.0
-                    }
-        # user-defined scale
-        elif len(scale) == 10:
-            transform = dict([(i[0],i[1]) for i in zip('#VCcv<$>T_',scale)])
-
     # default scale for tonal languages
     elif 'T' in prostring:
         transform = {
@@ -449,7 +451,22 @@ def prosodic_weights(
                 '$' : 0.5, 
                 '>' : 0.7, 
                 'T' : 1.0,
-                '_' : 0.0
+                '_' : 0.0,
+
+                # new values for alternative prostrings
+                'A' : 1.6,  # initial
+                'B' : 1.3, # syllable-initial
+                'C' : 1.2,  # ascending
+
+                'L' : 1.1,  # descending
+                'M' : 1.1,  # syllable-descending
+                'N' : 0.5,  # final
+                
+                'X' : 3.0,  # vowel in initial syllable
+                'Y' : 3.0,  # vowel in non-final syllable
+                'Z' : 0.7,  # vowel in final syllable
+                'T' : 1.0,  # Tone
+                '_' : 0.0   # break character
                 }
     # default scale for other languages
     else:
@@ -463,7 +480,23 @@ def prosodic_weights(
                 '$' : 0.8, 
                 '>' : 0.7, 
                 'T' : 0.0,
-                '_' : 0.0
+                '_' : 0.0,
+
+                # new values for alternative prostrings
+                'A' : 2.0,  # initial
+                'B' : 1.75, # syllable-initial
+                'C' : 1.5,  # ascending
+
+                'L' : 1.1,  # descending
+                'M' : 1.1,  # syllable-descending
+                'N' : 0.8,  # final
+                
+                'X' : 1.5,  # vowel in initial syllable
+                'Y' : 1.3,  # vowel in non-final syllable
+                'Z' : 0.8,  # vowel in final syllable
+                'T' : 0.0,  # Tone
+                '_' : 0.0   # break character
+
                 }
     
     out = [transform[i] for i in prostring]
@@ -473,7 +506,8 @@ def prosodic_weights(
 def class2tokens(
         tokens,
         classes,
-        gap_char = '-'
+        gap_char = '-',
+        local = False
         ):
     """
     Turn aligned sound-class sequences into an aligned sequences of IPA tokens.
@@ -487,9 +521,11 @@ def class2tokens(
     classes : string or list
         The aligned class string.
 
-    gap_char : string
-        The character which indicates gaps in the aligned class string
-        (defaults to "-").
+    gap_char : string (default="-")
+        The character which indicates gaps in the output string.
+    local : bool (default=False)
+        If set to *True* a local alignment with prefix and suffix can be
+        converted.
     
     Returns
     -------
@@ -511,16 +547,28 @@ def class2tokens(
     t͡s, ɔy, -, ɡ, ə
 
     """
+    if not local:
+        out = [t for t in tokens]
+        for i in range(len(classes)):
+            if classes[i] in '-X':
+                out.insert(i,gap_char)
+    else:        
+        # get the length of the prefix
+        prefix = len(classes[0])
 
-    out = []
+        # get the suffix 
+        suffix = -len(classes[2])
 
-    # copy ipa_tks in order to prevent its original form
-    #_tokens = list(tokens[:])
-    out = [t for t in tokens]
-    for i in range(len(classes)):
-        if classes[i] in ['-','X']:
-            out.insert(i,'-')
+        if suffix == 0:
+            suffix = None
 
+        # get the substring
+        out = [t for t in tokens[prefix:suffix]]
+
+        # start the loop
+        for i in range(len(classes[1])):
+            if classes[1][i] in '-X':
+                out.insert(i,gap_char)            
     return out
 
 def pid(
@@ -685,7 +733,7 @@ def check_tokens(tokens):
     
     return errors
 
-def ngrams(sequence):
+def get_all_ngrams(sequence):
     """
     Function returns all possible n-grams of a given sequence.
 

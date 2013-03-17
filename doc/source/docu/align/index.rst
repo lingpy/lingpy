@@ -2,9 +2,11 @@
 Align Module
 ============
 
+.. automodule:: lingpy.align
+
 .. toctree::
    :maxdepth: 1
-
-   multiple
+  
    pairwise
+   multiple
    sca

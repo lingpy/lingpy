@@ -1,3 +1,8 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-07 20:07
+# modified : 2013-03-07 21:23
+
 """
 Basic module for pairwise and multiple sequence comparison.
 
@@ -113,20 +118,22 @@ are required. See the documentation for the respective classes for details.
         SWAPS..     .    +    -    +    .    .    .    .    .    .
         LOCAL..     *    *    *    .    *    *    *    *    *    .
 
-
 """
-__author__ = "Johann-Mattis List"
-__date__ = "2012-11-12"
 
-from numpy import array
-from re import sub
+__author__="Johann-Mattis List"
+__date__="2013-03-07"
+
+import numpy as np
+import re
+from datetime import datetime
 
 from ..data import *
-from ..algorithm.misc import *
+from ..basic import Wordlist
 from .multiple import Multiple
 from .pairwise import Pairwise
 
-class SCAMultiple(Multiple):
+
+class _Multiple(Multiple):
     """
     Basic class for carrying out multiple sequence alignment analyses.
 
@@ -217,24 +224,42 @@ class SCAMultiple(Multiple):
     def __init__(
             self, 
             infile, 
-            merge_vowels = True,
-            comment = '#'
+            **keywords
             ):
 
-        self.comment=comment
+        # set the defaults
+        defaults = {
+                'comment':'#',
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
         
+        # store comment-string
+        self.comment = keywords['comment']
+
         # initialization checks first, whether we are dealing with msa-files or
         # with other, unaligned, sequence files and starts the
         # loading-procedures accordingly
-        if infile.endswith('.msa'):
-            self._init_msa(infile,merge_vowels)
+        if type(infile) == dict:
+            self._init_dict(infile,**keywords)
         else:
-            self._init_seq(infile,merge_vowels)
+            if infile.endswith('.msa'):
+                self._init_msa(infile,**keywords)
+            else:
+                self._init_seq(infile,**keywords)
 
     def _init_seq(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load an ``msq``-file.
@@ -281,7 +306,7 @@ class SCAMultiple(Multiple):
 
         # check the data for inconsistencies
         try:
-            data = array(data)
+            data = np.array(data)
         except:
             print("[!] Error in file {0}.".format(infile))
             length = len(data[0])
@@ -297,13 +322,33 @@ class SCAMultiple(Multiple):
         Multiple.__init__(
                 self,
                 data[:,1],
-                merge_vowels
+                **keywords
+                )
+
+    def _init_dict(
+            self,
+            initdict,
+            **keywords
+            ):
+        """
+        Initialize by passing a dictionary with the relevant values.
+        """
+        
+        for key in initdict:
+
+            if key not in 'seqs':
+                setattr(self,key,initdict[key])
+
+        Multiple.__init__(
+                self,
+                initdict['seqs'],
+                **keywords
                 )
     
     def _init_msa(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load an ``msa``-file.
@@ -377,13 +422,13 @@ class SCAMultiple(Multiple):
         # by joining it with dots. That looks ugly and nasty and should
         # probably be checked!
         self.seqs = [
-                sub(
+                re.sub(
                     '\.+$',
                     '',
-                    sub(
+                    re.sub(
                         '^\.+',
                         '',
-                        sub(
+                        re.sub(
                             '\.\.+',
                             '.',
                             '.'.join(alm).replace('-','')
@@ -395,7 +440,7 @@ class SCAMultiple(Multiple):
         Multiple.__init__(
                 self,
                 self.seqs,
-                merge_vowels
+                **keywords
                 )
 
     def ipa2cls(
@@ -475,13 +520,6 @@ class SCAMultiple(Multiple):
 
         # define the outfile and check, whether it already exists
         outfile = filename + '.' + fileformat
-        # check whether outfile already exists
-        try:
-            tmp = open(outfile)
-            tmp.close()
-            outfile = filename + '_out.' + fileformat
-        except:
-            pass
 
         # create a specific format string in order to receive taxa of equal
         # length
@@ -566,12 +604,14 @@ class SCAMultiple(Multiple):
                         tmp[i[2]] = '+'
                     out.write('\t'.join(tmp)+'\n')
         try:
-            out.write('# '+self.params+'\n')
+            out.write('# Created using LingPy-2.0\n')
+            out.write('# Parameters: '+self.params+'\n')
+            out.write('# Created: {0}\n'.format(datetime.today()))
         except:
             pass
         out.close()
 
-class SCAPairwise(Pairwise):
+class _Pairwise(Pairwise):
     """
     Basic class for dealing with the pairwise alignment of sequences.
 
@@ -657,21 +697,39 @@ class SCAPairwise(Pairwise):
     def __init__(
             self,
             infile,
-            merge_vowels = True,
-            comment = '#'
+            **keywords
             ):
-        self.comment = comment
+        
+        # set the defaults
+        defaults = {
+                'comment':'#',
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+
+        # check for keywords
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        # add comment-char
+        self.comment = keywords['comment']
 
         # check the ending of the infile
         if infile.endswith('.psa'):
-            self._init_psa(infile,merge_vowels)
+            self._init_psa(infile,**keywords)
         else:
-            self._init_seq(infile,merge_vowels)
+            self._init_seq(infile,**keywords)
 
     def _init_psa(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load a ``psa``-file.
@@ -738,13 +796,13 @@ class SCAPairwise(Pairwise):
         Pairwise.__init__(
                 self,
                 self.pairs,
-                merge_vowels = merge_vowels
+                **keywords
                 )
 
     def _init_seq(
             self,
             infile,
-            merge_vowels
+            **keywords
             ):
         """
         Load a ``psq``-file.
@@ -790,7 +848,7 @@ class SCAPairwise(Pairwise):
         Pairwise.__init__(
                 self,
                 self.pairs,
-                merge_vowels = merge_vowels
+                **keywords
                 )
 
     def output(
@@ -860,3 +918,297 @@ class SCAPairwise(Pairwise):
                 out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
                 out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
             out.close()
+
+class _SCA(Wordlist):
+    """
+    Class handles Wordlists for the purpose of alignment analyses.
+    """
+    def __init__(
+            self,
+            infile,
+            row = 'concept',
+            col = 'doculect',
+            conf = '',
+            **keywords
+            ):
+        
+        # initialize the wordlist
+        Wordlist.__init__(self,infile,row,col,conf)
+        
+        # check for cognate-id or alignment-id in header
+        if 'cogid' in self.header or 'almid' in self.header:
+            self.etd = self.get_etymdict(loans=True)
+
+        # check for strings
+        if 'tokens' in self.header:
+            stridx = self.header['tokens']
+        elif 'orthoparse' in self.header:
+            stridx = self.header['orthoparse']
+        elif 'ipa' in self.header:
+            stridx = self.header['ipa']
+        else:
+            print("[i] No valid source for strings could be found")
+            return 
+
+        # create the alignments by assembling the ids of all sequences
+        self.msa = {}
+        for key,value in self.etd.items():
+            tmp = [x for x in value if x != 0]
+            seqids = []
+            for t in tmp:
+                seqids += t
+            if len(seqids) > 1:
+                
+                # set up the dictionary
+                d = {}
+                d['taxa'] = []
+                d['seqs'] = []
+                d['dataset'] = self.filename
+                if 'concept' in self.header:
+                    concept = self[seqids[0],'concept']
+                    d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
+                else:
+                    d['seq_id'] = 'CogId:{0}'.format(key)
+                
+                # set up the data
+                for seq in seqids:
+                    taxon = self[seq,'taxa']
+                    string = self[seq][stridx]
+                    
+                    d['taxa'] += [self[seq,'taxa']]
+                    d['seqs'] += [self[seq][stridx]]
+                self.msa[key] = d
+
+    def align(
+            self,
+            method = 'progressive',
+            iteration = False,
+            swap_check = False,
+            output = False,
+            model = None,
+            mode = 'global',
+            modes = [
+                ('global',-2,0.5),
+                ('local',-1,0.5),
+                ],
+            gop = -3,
+            scale = 0.5,
+            factor = 0.3,
+            tree_calc = 'neighbor',
+            gap_weight = 0.5,
+            restricted_chars = 'T_',
+            classes = True,
+            sonar = True,
+            scorer = {},
+            verbose = True,
+            ):
+        """
+        Carry out a multiple alignment analysis of the data.
+
+        Parameters
+        ----------
+        method : { "progressive", "library" } (default="progressive")
+            Select the method to use for the analysis.
+        iteration : bool (default=False)
+            Set to c{True} in order to use iterative refinement methods.
+        swap_check : bool (default=False)
+            Set to c{True} in order to carry out a swap-check.
+        output : bool (default=False)
+            Set to c{True} in order to write all alignments to file.
+        model : { 'dolgo', 'sca', 'asjp' }
+            A string indicating the name of the :py:class:`Model \
+            <lingpy.data.model>` object that shall be used for the analysis.
+            Currently, three models are supported:
+            
+            * "dolgo" -- a sound-class model based on :evobib:`Dolgopolsky1986`,
+
+            * "sca" -- an extension of the "dolgo" sound-class model based on
+              :evobib:`List2012b`, and
+            
+            * "asjp" -- an independent sound-class model which is based on the
+              sound-class model of :evobib:`Brown2008` and the empirical data
+              of :evobib:`Brown2011` (see the description in
+              :evobib:`List2012`.
+        
+        mode : { 'global', 'dialign' }
+            A string indicating which kind of alignment analysis should be
+            carried out during the progressive phase. Select between: 
+            
+            * "global" -- traditional global alignment analysis based on the
+              Needleman-Wunsch algorithm :evobib:`Needleman1970`,
+
+            * "dialign" -- global alignment analysis which seeks to maximize
+              local similarities :evobib:`Morgenstern1996`.
+
+        modes : list (default=[('global',-2,0.5),('local',-1,0.5)])
+            Indicate the mode, the gap opening penalties (GOP), and the gap
+            extension scale (GEP scale), of the pairwise alignment analyses
+            which are used to create the library.
+        
+        gop : int (default=-5)
+            The gap opening penalty (GOP) used in the analysis.
+
+        scale : float (default=0.6)
+            The factor by which the penalty for the extension of gaps (gap
+            extension penalty, GEP) shall be decreased. This approach is
+            essentially inspired by the exension of the basic alignment
+            algorithm for affine gap penalties :evobib:`Gotoh1982`.
+
+        factor : float (default=1)
+            The factor by which the initial and the descending position shall
+            be modified.
+
+        tree_calc : { 'neighbor', 'upgma' } (default='upgma')
+            The cluster algorithm which shall be used for the calculation of
+            the guide tree. Select between ``neighbor``, the Neighbor-Joining
+            algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
+            algorithm (:evobib:`Sokal1958`).
+
+        gap_weight : float (default=0)
+            The factor by which gaps in aligned columns contribute to the
+            calculation of the column score. When set to 0, gaps will be
+            ignored in the calculation. When set to 0.5, gaps will count half
+            as much as other characters.
+        
+        restricted_chars : string (default="T")
+            Define which characters of the prosodic string of a sequence
+            reflect its secondary structure (cf. :evobib:`List2012b`) and
+            should therefore be aligned specifically. This defaults to "T",
+            since this is the character that represents tones in the prosodic
+            strings of sequences.
+        """
+        for key,value in self.msa.items():
+            if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
+
+            m = SCA(value)
+            if method == 'progressive':
+                m.prog_align(
+                        model,
+                        mode,
+                        gop,
+                        scale,
+                        factor,
+                        tree_calc,
+                        gap_weight,
+                        restricted_chars,
+                        classes,
+                        sonar,
+                        scorer
+                        )
+            elif method == 'library':
+                m.lib_align(
+                        model,
+                        mode,
+                        modes,
+                        scale,
+                        factor,
+                        tree_calc,
+                        gap_weight,
+                        restricted_chars,
+                        classes,
+                        sonar,
+                        scorer
+                        )
+
+            if iteration:
+                m.iterate_clusters(0.5)
+                m.iterate_orphans()
+                m.iterate_similar_gap_sites()
+
+            if swap_check:
+                m.swap_check()
+
+            if output:
+                try:
+                    m.output(
+                            'msa',
+                            filename='{0}-msa/{1}-{2}'.format(
+                                self.filename,
+                                m.dataset,
+                                key
+                                )
+                            )
+                except:
+                    os.mkdir('{0}-msa'.format(self.filename))
+                    m.output(
+                            'msa',
+                            filename='{0}-msa/{1}-{2}'.format(
+                                self.filename,
+                                m.dataset,
+                                key
+                                )
+                            )
+                self.msa[key]['alignment'] = m.alm_matrix
+                    
+    def __len__(self):
+        return len(self.msa)
+
+class SCA(object):
+    """
+    Basic class for handling various kinds of alignment analyses.
+
+    Parameters
+    ----------
+    infile : { str }
+        The name of the input file which can be provided in PSQ, PSQ, MSQ, or
+        MSA format.
+
+    """
+    
+    def __init__(
+            self, 
+            infile, 
+            **keywords
+            ):
+
+        # set the defaults
+        defaults = {
+                'comment'      : '#',
+                "diacritics"   : None,
+                "vowels"       : None,
+                "tones"        : None,
+                "combiners"    : '\u0361\u035c',
+                "breaks"       : '.-',
+                "stress"       : "ˈˌ'",
+                "merge_vowels" : True
+                }
+
+        # check for keywords
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+        
+        # check for datatype
+        if type(infile) == dict:
+            parent = _Multiple(infile,**keywords)
+        else:
+            if infile[-4:] in ['.msa','.msq']:
+                parent = _Multiple(infile,**keywords)
+            elif infile[-4:] in ['.psq','psa']:
+                parent = _Pairwise(infile,**keywords)
+            elif infile[-4:] in ['.csv','.tsv']:
+                parent = _SCA(infile,**keywords)
+
+        for key in dir(parent):
+            if key not in [
+                    '__class__',
+                    ]:
+                try:
+                    setattr(self,key,parent.__getattribute__(key))
+                except:
+                    pass
+    
+    def __len__(self):
+        return self.__len__()
+    def __str__(self):
+        return self.__str__()
+    def __repr__(self):
+        return self.__repr__()
+    def __eq__(self,other):
+        return self.__eq__(other)
+    def __getitem__(self,x):
+        return self.__getitem__(x)
+
+        
+
+

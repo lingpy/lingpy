@@ -1,40 +1,93 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-06 16:41
+# modified : 2013-03-11 18:37
 """
-Basic module for the handling of multiple sequence alignments.
+Module provides classes and functions for multiple alignment analyses.
 """
-from numpy import array,zeros
+
+__author__="Johann-Mattis List"
+__date__="2013-03-11"
+
+# lingpy imports
 from ..data import *
-from ..algorithm import *
-from ..algorithm.cluster import _neighbor,_upgma,_flat_upgma
+try:
+    from ..algorithm.cython import calign
+    from ..algorithm.cython import talign
+    from ..algorithm.cython import cluster
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _calign as calign
+    from ..algorithm.cython import _talign as talign
+    from ..algorithm.cython import _cluster as cluster
+    from ..algorithm.cython import _misc as misc
+
+from ..sequence.sound_classes import *
 
 class Multiple(object):
     """
     Basic class for multiple sequence alignment analyses.
+
+    Parameters
+    ----------
+    seqs : list
+        List of sequences that shall be aligned.
+
+    Notes
+    -----
+    Depending on the structure of the sequences, further keywords can be
+    specified that manage how the items get tokenized.
+
     """
     def __init__(
             self,
             seqs,
-            merge_vowels = True,
+            **keywords
             ):
-        
-        # store input sequences 
-        self.seqs = seqs
+        # store input sequences, check whether tokens or strings are passed
+        if type(seqs[0]) == list:
+            self.seqs = [' '.join(s) for s in seqs]
+            self.tokens = [s for s in seqs]
+        else:
+            self.seqs = seqs
+            self.tokens = []
 
-        # create a numerical representation of all sequences which reflects the
-        # order of both their position and the position of their tokens. Before
-        # this can be done, a tokenized version of all sequences has to be
-        # created
-        self.tokens = []
-        self.numbers = []
-        for i,seq in enumerate(self.seqs):
-            # check for pre-tokenized strings
-            if ' ' in seq:
-                tokens = [s for s in seq.split(' ')]
-            else:
-                tokens = ipa2tokens(seq,merge_vowels=merge_vowels) 
-            self.tokens.append(tokens)
-            self.numbers.append(
-                    [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
-                    )
+        # define a tokenizer function for convenience
+        defaults = {
+                "diacritics" : None,
+                "vowels":None,
+                "tones":None,
+                "combiners":'\u0361\u035c',
+                "breaks":'.-',
+                "stress":"ˈˌ'",
+                "merge_vowels" : True
+                }
+        for k in keywords:
+            if k in defaults:
+                defaults[k] = keywords[k]
+        
+        if self.tokens:
+            self.numbers = []
+            for i,tokens in enumerate(self.tokens):
+                self.numbers.append(
+                        [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
+                        )
+        else:
+            tokenize = lambda x: ipa2tokens(x,**defaults)
+
+            # create a numerical representation of all sequences which reflects the
+            # order of both their position and the position of their tokens. Before
+            # this can be done, a tokenized version of all sequences has to be
+            # created
+            self.tokens = []
+            self.numbers = []
+            for i,seq in enumerate(self.seqs):
+                # check for pre-tokenized strings
+                tokens = tokenize(seq)
+                self.tokens.append(tokens)
+                self.numbers.append(
+                        [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
+                        )
 
         # create dictionary of all unique sequences, this is important, since
         # identical sequences should only be counted once in an alignment,
@@ -56,7 +109,6 @@ class Multiple(object):
         return self._length
 
     def __str__(self):
-        
         # if alignments are present, print the alignments
         try:
             out = '\t'.join(self.alm_matrix[0])
@@ -109,6 +161,7 @@ class Multiple(object):
         Method returns specific values of the class, depending on the index
         which is used.
         """
+        # XXX this should be evaluated, maybe it is not needed in the future.
         
         if number == error[0]:
             return error[1]
@@ -150,20 +203,38 @@ class Multiple(object):
             elif value == '_classes':
                 return self._classes[int(number)-1]
 
-    def _set_model(self,model):
+    def _set_model(
+            self,
+            model = None,
+            classes = True,
+            sonar = True,
+            scorer = {}
+            ):
         """
         Method defines a specific class model for the calculation.
+
+        Parameters
+        ----------
+        model : { None ~lingpy.data.model.Model } (default=None)
+            A sound class model.
         """
-        
-        # store the class-model which is applied in the respective analysis
-        try:
-            self.model = eval(model)
-        except:
-            self.model = model
-        
-        self.classes = [token[:] for token in self.tokens]
-        for i,tokens in enumerate(self.tokens):
-            self.classes[i] = tokens2class(tokens,self.model)
+        # check for keyword classes
+        if not classes:
+            classify = lambda x:x
+        else: 
+            # check for the model
+            if not model:
+                self.model = sca
+            else:
+                self.model = model
+
+            # define classification function
+            classify = lambda x:tokens2class(x,self.model)
+
+        # create the sound-classes or the fake classes
+        self.classes = []
+        for cls in map(classify,self.tokens):
+            self.classes += [cls]
 
         # once a class model is defined, there may be identical sequences,
         # which in IPA terms are different. In order to avoid computing
@@ -181,40 +252,90 @@ class Multiple(object):
         # class sequences
         keys = [val[0] for val in indices.values()]
         self.height = len(keys)
-        self._classes = [self.classes[key][:] for key in keys]
+
+        # add the classes
+        self._classes = [self.classes[key] for key in keys]
         self._numbers = [[str(i+1)+'.'+str(j+1) for j in
             range(len(self._classes[i]))] for i in range(self.height)]
 
-        # create sonars
-        self._sonars = [self.tokens[key][:] for key in keys]
-        for i,sonar in enumerate(self._sonars):
-            self._sonars[i] = [int(x) for x in tokens2class(sonar,art)]
-        
-        self._prosodics = [prosodic_string(sonar) for sonar in
-            self._sonars]
+        # store sonars if they are passed as a list
+        if type(sonar) == list:
+            self._sonars = sonar
+            self._prostrings = list([prosodic_string(s) for s in self._sonars])
+        # create sonars if the argument is true
+        elif sonar:
+            self._sonars = list(
+                    map(
+                        lambda x: [int(t) for t in tokens2class(x,art)],
+                        [self.tokens[key] for key in keys]
+                        )
+                    )
+            self._prostrings = list([prosodic_string(s) for s in self._sonars])
+        # do nothing if no arguments are passed
+        else:
+            self._sonars = False
+            self._prostrings = False
 
         # create an index which allows to quickly interchange between classes
         # and given sequences
         self.int2ext = dict(
                 [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]    
                 )
-
+        
         # create a scoredict for the calculation of alignment analyses
-        self.scoredict = {}
+        # append the scorer if it is given with the model
+        if classes:
+            scorer = lambda x,y:self.model.scorer[x,y]
+        # leave the scorer that was passed if it is not empty
+        elif scorer:
+            scorer = lambda x,y:scorer[x,y]
+        # create a short function if the scorer is empty
+        else:
+            def scorer(x,y):
+                if x == y:
+                    return 1.0
+                else:
+                    return -1.0
+
+        # alternative scoring using ScoreDict function
+        #allchars = []
+        #for number in self._numbers:
+        #    allchars += number
+        #matrix = [[0.0 for x in allchars] for y in allchars]
+        ##self.scoredict = misc.ScoreDict(allchars,matrix)
+
+        #for i,charA in enumerate(allchars):
+        #    for j,charB in enumerate(allchars):
+        #        if i < j:
+        #            score = scorer(
+        #                    self._get(charA,'_classes'),
+        #                    self._get(charB,'_classes')
+        #                    )
+        #            matrix[i][j] = score
+        #            matrix[j][i] = score
+        #        if i == j:
+        #            score = scorer(
+        #                    self._get(charA,'_classes'),
+        #                    self._get(charB,'_classes')
+        #                    )
+        #            matrix[j][i] = score
+        #self.scoredict = misc.ScoreDict(allchars,matrix)
+
+        self.scoredict = {} 
         for i,seqA in enumerate(self._numbers):
             for j,seqB in enumerate(self._numbers):
                 if i < j:
                     for numA in seqA:
                         for numB in seqB:
-                            self.scoredict[numA,numB] = self.model.scorer[
+                            self.scoredict[numA,numB] = scorer(
                                     self._get(numA,'_classes'),
                                     self._get(numB,'_classes')
-                                    ]
+                                    )
                             self.scoredict[numB,numA] = self.scoredict[numA,numB]
                 elif i == j:
                     for num in seqA:
                         char = self._get(num,'_classes')
-                        self.scoredict[num,num] = self.model.scorer[char,char]
+                        self.scoredict[num,num] = scorer(char,char)
     
     def _set_scorer(self,score_mode='classes'):
         """
@@ -231,8 +352,7 @@ class Multiple(object):
             self,
             mode = 'global',
             gop = -2,
-            gep_scale = 0.5,
-            scale = None, 
+            scale = 0.5, 
             factor = 0.3,
             restricted_chars = 'T_'
             ):
@@ -240,62 +360,72 @@ class Multiple(object):
         Function calculates all pairwise alignments from the data.
         """
         
-        self._alignments = [[0 for i in range(self.height)] for j in
-                range(self.height)]
+        # create array for alignments
+        self._alignments = [[0 for i in range(self.height)] for i in range(self.height)]
 
-        weights = []
-        for seq in self._prosodics:
-            pros = gop * array(prosodic_weights(
-                    seq,
+        # create the distance matrix
+        self.matrix = []
+        
+        # check for the mode, if sonority profiles are not chose, take the
+        # simple alignment function
+        if self._sonars:
+            # get the weights
+            if not hasattr(self,'weights'):
+                self._weights = list(map(prosodic_weights,self._prostrings))
+            
+            alignments = calign.align_pairwise(
+                    self._numbers,
+                    self._weights,
+                    self._prostrings,
+                    gop,
                     scale,
-                    factor
-                    ),dtype="float")
-            weights.append(pros.tolist())
+                    factor,
+                    self.scorer,
+                    restricted_chars,
+                    mode
+                    )
+            k = 0
+            for i in range(self.height):
+                for j in range(self.height):
+                    if i < j:
+                        almA,almB,sim,dist = alignments[k]
+                        if mode == 'local':
+                            almA = almA[1]
+                            almB = almB[1]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        self._alignments[j][i] = [almA,almB,sim]
+                        self.matrix += [dist]
+                        k += 1
+                    elif i == j:
+                        almA,almB,sim,dist = alignments[k]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        k += 1
+        else:
+            alignments = talign.align_pairwise(
+                    self._numbers,
+                    gop,
+                    scale,
+                    self.scorer,
+                    mode
+                    )
+            k = 0
+            for i in range(self.height):
+                for j in range(self.height):
+                    if i < j:
+                        almA,almB,sim,dist = alignments[k]
+                        if mode == 'local':
+                            almA = almA[1]
+                            almB = almB[1]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        self._alignments[j][i] = [almA,almB,sim]
+                        self.matrix += [dist]
+                        k += 1
+                    elif i == j:
+                        almA,almB,sim,dist = alignments[k]
+                        self._alignments[i][j] = [almA,almB,sim]
+                        k += 1
 
-        restrictions = []
-        prosodic_strings = []
-        for pros in self._prosodics:
-            tmp = []
-            for i,char in enumerate(pros):
-                if char in restricted_chars:
-                    tmp.append(-(i+1))
-                else:
-                    tmp.append(i+1)
-            restrictions.append(tmp)
-            prosodic_strings.append(pros)
-        
-        alignments = align_sequences_pairwise(
-                self._numbers,
-                weights,
-                restrictions,
-                prosodic_strings,
-                self.scorer,
-                gep_scale,
-                0.25 * factor,
-                mode
-                )
-        
-        k = 0
-        for i in range(self.height):
-            for j in range(self.height):
-                if i < j:
-                    almA,almB,sim = alignments[k]
-                    if mode == 'local':
-                        almA = [char for char in almA if char != '*']
-                        almB = [char for char in almB if char != '*']
-                    self._alignments[i][j] = [almA,almB,sim]
-                    self._alignments[j][i] = [almB,almA,sim]
-                    k += 1
-                elif i == j:
-                    self._alignments[i][j] = [
-                            #zip(
-                                self._numbers[i],
-                                self._numbers[j],
-                                #),
-                            sum(
-                                [self.scorer[char,char] for char in self._numbers[i]]
-                                )
-                            ]
+        self.matrix = misc.squareform(self.matrix)
 
     def _create_library(self):
         """
@@ -304,31 +434,47 @@ class Multiple(object):
         """
         self.library = {}
         
-        # note that we somehow HAVE to include a sensitivity for V-C
-        # distinctions in the library mode, otherwise it may get complicated
-        # sometimes, therefore, the library is initialized by setting only the
-        # scores for c-c and v-v matches to 0, the other scores get their
-        # original penalty defined by the old scorer
-        for i,numA in enumerate(self._numbers):
-            for j,numB in enumerate(self._numbers):
-                if i < j:
-                    for k in numA:
-                        for l in numB:
-                            # see the comment above for the add-on in this
-                            # line
-                            a = self._get(k,'_sonars')
-                            b = self._get(l,'_sonars')
-                            if a >= 7 or b >= 7 and a + b < 14:                                
-                                self.library[k,l] = self.scoredict[k,l]
-                                self.library[l,k] = self.scoredict[l,k]
-                            else:
+        # create library for non-sound-class approaches
+        if not self._sonars:
+
+            for i,numA in enumerate(self._numbers):
+                for j,numB in enumerate(self._numbers):
+                    if i < j:
+                        for k in numA:
+                            for l in numB:
                                 self.library[k,l] = 0.0
                                 self.library[l,k] = 0.0
-                elif i == j:
-                    for k in numA:
-                        for l in numB:
-                            self.library[k,l] = 0.0
-                            self.library[l,k] = 0.0
+                    elif i == j:
+                        for k in numA:
+                            for l in numB:
+                                self.library[k,l] = 0.0
+                                self.library[l,k] = 0.0
+        else:
+            # note that we somehow HAVE to include a sensitivity for V-C
+            # distinctions in the library mode, otherwise it may get complicated
+            # sometimes, therefore, the library is initialized by setting only the
+            # scores for c-c and v-v matches to 0, the other scores get their
+            # original penalty defined by the old scorer
+            for i,numA in enumerate(self._numbers):
+                for j,numB in enumerate(self._numbers):
+                    if i < j:
+                        for k in numA:
+                            for l in numB:
+                                # see the comment above for the add-on in this
+                                # line
+                                a = self._get(k,'_sonars')
+                                b = self._get(l,'_sonars')
+                                if a >= 7 or b >= 7 and a + b < 14:                                
+                                    self.library[k,l] = self.scoredict[k,l]
+                                    self.library[l,k] = self.scoredict[l,k]
+                                else:
+                                    self.library[k,l] = 0.0
+                                    self.library[l,k] = 0.0
+                    elif i == j:
+                        for k in numA:
+                            for l in numB:
+                                self.library[k,l] = 0.0
+                                self.library[l,k] = 0.0
 
     def _extend_library(self):
         """
@@ -375,41 +521,6 @@ class Multiple(object):
                        self.library[valJ,valI] = self.library[valI,valJ]
                 except:
                     pass
-       
-    def _score_pairwise(
-            self,
-            idxA,
-            idxB,
-            ):
-        
-        scoreAB = self._alignments[idxA][idxB][2]
-        scoreA = self._alignments[idxA][idxA][2]
-        scoreB = self._alignments[idxB][idxB][2]
-
-        return 1 - (2 * scoreAB / float(scoreA+scoreB))
-
-    def _make_matrix(self):
-        
-        matrix = []
-
-        for i in range(self.height):
-            for j in range(self.height):
-                if i < j:
-                    matrix.append(
-                            self._score_pairwise(i,j)
-                            )
-        
-        self.matrix = squareform(matrix)
-
-    def __make_guide_tree(
-            self,
-            tree_calc = 'median'
-            ):
-
-        self.tree_matrix = linkage(
-                self.matrix,
-                method = tree_calc
-                )
 
     def _make_guide_tree(
             self,
@@ -429,62 +540,11 @@ class Multiple(object):
         
         # carry out the clustering
         if tree_calc == 'upgma':
-            _upgma(clusters,self.matrix,self.tree_matrix)
+            cluster._upgma(clusters,self.matrix,self.tree_matrix)
         elif tree_calc == 'neighbor':
-            _neighbor(clusters,self.matrix,self.tree_matrix)
+            cluster._neighbor(clusters,self.matrix,self.tree_matrix)
         else:
-            raise ValueError('Method <'+tree_calc+'> for tree calculation not available.')
-
-
-    def _profile_score(
-            self,
-            colA,
-            colB,
-            gap_weight = 0.0
-            ):
-
-        score = 0
-        counter = 0.0
-        for i,charA in enumerate(colA):
-            for j,charB in enumerate(colB):
-                if 'X' not in (charA,charB):
-                    score += self.scorer[charA,charB]
-                    counter += 1.0
-                else:
-                    counter += gap_weight
-
-        return score / counter
-
-    def _swap_profile_score(
-            self,
-            colA,
-            colB,
-            gap_weight = 1.0,
-            swap_penalty = -5
-            ):
-
-        score = 0
-        counter = 0.0
-        for i,charA in enumerate(colA):
-            for j,charB in enumerate(colB):
-                if 'X' not in (charA,charB) and '+' not in (charA,charB):
-                    score += self.scorer[charA,charB]
-                    counter += 1.0
-                elif '+' in (charA,charB):
-                    if 'X' in (charA,charB):
-                        counter += 1.0
-                        score += swap_penalty # this is the swap-cost
-                    elif (charA,charB) == ('+','+'):
-                        score += 0.0 # no cost for +/+-scores
-                        counter += 1
-                    else:
-                        counter += 1.0 # all prohibited cases
-                        score += -10000000
-                else:
-                    counter += gap_weight
-
-        return score / counter
-
+            raise ValueError('[i] Method <'+tree_calc+'> for tree calculation not available.')
 
     def _align_profile(
             self,
@@ -492,8 +552,7 @@ class Multiple(object):
             almsB,
             mode = 'global',
             gop = -3,
-            gep_scale = 0.5,
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
             gap_weight = 0.5,
             return_similarity = False,
@@ -501,17 +560,13 @@ class Multiple(object):
             restricted_chars = "T_"
             ):
 
-        profileA = array(almsA).transpose()
-        profileB = array(almsB).transpose()
+        profileA = misc.transpose(almsA)
+        profileB = misc.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
-        m,o = profileA.shape
-        n,p = profileB.shape
+        m,o = len(profileA),len(profileA[0])
+        n,p = len(profileB),len(profileB[0])
 
-        # create the lists which will be passed to the psa align function
-        lstA = list(range(1,m+1))
-        lstB = list(range(1,n+1))
-                           
         # create the weights by which the gap opening penalties will be
         # modified
         sonarA = [[self._get(
@@ -524,72 +579,38 @@ class Multiple(object):
                         value = '_sonars',
                         error = ('X',0)
                         ) for char in line] for line in profileB]
+        
+        # get the consensus string for the sonority profiles
+        try:
+            consA = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarA]
+            consB = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarB]
 
-        consA = [i[i!=0].mean().round() for i in array(sonarA)]
-        consB = [i[i!=0].mean().round() for i in array(sonarB)]
-
+        except:
+            print(sonarA)
+            print(sonarB)
+        
+        # get the prosodic strings
         prosA = prosodic_string(consA)
         prosB = prosodic_string(consB)
-
-        weightsA = gop * array(
-                prosodic_weights(prosA,scale,factor)
-                )
-        weightsB = gop * array(
-            prosodic_weights(prosB,scale,factor)
-            )
         
-        # convert the tonal positions into negative indices
-        resA = []
-        resB = []
-        for i,res in enumerate(prosA):
-            if res in restricted_chars:
-                resA.append(-(i+1))
-            else:
-                resA.append(i+1)
-        for i,res in enumerate(prosB):
-            if res in restricted_chars:
-                resB.append(-(i+1))
-            else:
-                resB.append(i+1)
+        # get the weights
+        weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
 
-        # create a temporary scoring dictionary which will be passed to the
-        # psa align function
-        tmp = {}
-        for i in lstA:        
-            for j in lstB:
-                # XXX temporary solution to account for wrong matchings between
-                # prohibited chars like tones and other chars, etc.
-                # should be change in a more economical way XXX
-                pros_tmp = list(set(prosA[i-1]+prosB[j-1]))
-                if 'T' in pros_tmp and len(pros_tmp) > 1:
-                    score = -100
-                elif '_' in pros_tmp and len(pros_tmp) > 1:
-                    score = -100
-                else:
-                    score = self._profile_score(
-                            profileA[i-1],
-                            profileB[j-1],
-                            gap_weight = gap_weight
-                            )
-                tmp[i,j] = score
-                # XXX note that the following line is redundant. It might be
-                # easily reduced, yet for the moment it is safer, since there
-                # were some issues with the cpp-version 
-                # tmp[j,i] = score
-
-        alignedA,alignedB,sim = align_pairwise(
-                lstA,
-                lstB,
-                weightsA.tolist(),
-                weightsB.tolist(),
-                resA,
-                resB,
+        # carry out the alignment
+        almA,almB,sim = calign.align_profile(
+                profileA,
+                profileB,
+                weightsA,
+                weightsB,
                 prosA,
                 prosB,
-                tmp,
-                gep_scale,
+                gop,
+                scale,
                 factor,
-                mode
+                self.scorer,
+                restricted_chars,
+                mode,
+                gap_weight
                 )
 
         # return the similarity score, if this option is chosen
@@ -598,18 +619,16 @@ class Multiple(object):
 
         # trace the gaps inserted in both aligned profiles and insert them
         # in the original profiles
-        profileA = profileA.tolist()
-        profileB = profileB.tolist()
-        for i in range(len(alignedA)):
-            if alignedA[i] == '-':
+        for i in range(len(almA)):
+            if almA[i] == '-':
                 profileA.insert(i,o * ['X'])
-            elif alignedB[i] == '-':
+            elif almB[i] == '-':
                 profileB.insert(i,p * ['X'])
 
         # invert the profiles and the weight matrices by turning columns
         # into rows and rows into columns  
-        profileA = array(profileA).transpose().tolist()
-        profileB = array(profileB).transpose().tolist()
+        profileA = misc.transpose(profileA)
+        profileB = misc.transpose(profileB)
 
         # return the aligned profiles and weight matrices
         if iterate == True:
@@ -617,12 +636,68 @@ class Multiple(object):
         elif iterate == False:
             return profileA+profileB
 
+    def _talign_profile(
+            self,
+            almsA,
+            almsB,
+            mode = 'global',
+            gop = -3,
+            scale = 0.5,
+            gap_weight = 0.5,
+            return_similarity = False,
+            iterate = False,
+            ):
+        """
+        Align profiles for tokens, not sound classes.
+        """
+
+        profileA = misc.transpose(almsA)
+        profileB = misc.transpose(almsB)
+
+        # calculate profile length and profile depth for both profiles
+        m,o = len(profileA),len(profileA[0])
+        n,p = len(profileB),len(profileB[0])
+        
+        # carry out the alignment
+        almA,almB,sim = talign.align_profile(
+                profileA,
+                profileB,
+                gop,
+                scale,
+                self.scorer,
+                mode,
+                gap_weight
+                )
+
+        # return the similarity score, if this option is chosen
+        if return_similarity == True:
+            return sim
+
+        # trace the gaps inserted in both aligned profiles and insert them
+        # in the original profiles
+        for i in range(len(almA)):
+            if almA[i] == '-':
+                profileA.insert(i,o * ['X'])
+            elif almB[i] == '-':
+                profileB.insert(i,p * ['X'])
+
+        # invert the profiles and the weight matrices by turning columns
+        # into rows and rows into columns  
+        profileA = misc.transpose(profileA)
+        profileB = misc.transpose(profileB)
+
+        # return the aligned profiles and weight matrices
+        if iterate == True:
+            return profileA,profileB
+        elif iterate == False:
+            return profileA+profileB
+
+
     def _merge_alignments(
             self,
             mode = 'global',
             gop = -3,
-            gep_scale = 0.5,
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
             gap_weight = 0.5,
             restricted_chars = 'T_',
@@ -632,29 +707,45 @@ class Multiple(object):
         # alignment process
         seq_ord = [[i] for i in range(self.height)]
         alm_lst = [[seq] for seq in self._numbers[:]]
-
+        
         # start the iteration through the tree array: the first two lines
         # in the matrix contain the ids of the sequences in the array,
         # which are aligned along the tree
-        for row in self.tree_matrix:
-            m,n = int(row[0]),int(row[1])
-            seq_ord.append(seq_ord[m] + seq_ord[n])
-            alms = self._align_profile(
-                    alm_lst[m],
-                    alm_lst[n],
-                    mode = mode,
-                    gop = gop,
-                    gep_scale = gep_scale,
-                    scale = scale,
-                    factor = factor,
-                    gap_weight = gap_weight,
-                    restricted_chars = restricted_chars
-                    )
+        if self._sonars:
+            for row in self.tree_matrix:
+                m,n = int(row[0]),int(row[1])
+                seq_ord.append(seq_ord[m] + seq_ord[n])
+                alms = self._align_profile(
+                        alm_lst[m],
+                        alm_lst[n],
+                        mode = mode,
+                        gop = gop,
+                        scale = scale,
+                        factor = factor,
+                        gap_weight = gap_weight,
+                        restricted_chars = restricted_chars
+                        )
+                
+                alm_lst.append(alms)
+        else:
+            for row in self.tree_matrix:
+                m,n = int(row[0]),int(row[1])
+                seq_ord.append(seq_ord[m] + seq_ord[n])
+                alms = self._talign_profile(
+                        alm_lst[m],
+                        alm_lst[n],
+                        mode = mode,
+                        gop = gop,
+                        scale = scale,
+                        gap_weight = gap_weight,
+                        )
+                
+                alm_lst.append(alms)
             
-            alm_lst.append(alms)
-            #for x in alm_lst[-1]: #_db
-            #    print('\t'.join([self._get(y,'_classes') for y in x])) #_db
-            #print("") #_db
+            # debug
+            #for alm in alms:
+            #    print(' '.join([self._get(x,'_classes') for x in alm]))
+            #print('')
 
         # get the last stage of each alignment process
         alm_lst = alm_lst[-1]
@@ -665,7 +756,7 @@ class Multiple(object):
         alm_lst = sorted(alm_lst,key=lambda x:sorter.pop())
 
         # create the matrix which stores all alignments
-        self._alm_matrix = array(alm_lst)
+        self._alm_matrix = alm_lst
 
     def _update_alignments(self):
 
@@ -684,15 +775,17 @@ class Multiple(object):
 
     def prog_align(
             self,
-            model = 'sca',
+            model = None,
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = None, #(1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0.3,
             tree_calc = 'neighbor',
-            gap_weight = float(0.5),
-            restricted_chars = 'T_'
+            gap_weight = 0.5,
+            restricted_chars = 'T_',
+            classes = True,
+            sonar = True,
+            scorer = {}
             ):
         """
         Carry out a progressive alignment analysis of the input sequences.
@@ -728,23 +821,17 @@ class Multiple(object):
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
 
-        gep_scale : float (default=0.6)
+        scale : float (default=0.6)
             The factor by which the penalty for the extension of gaps (gap
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
 
-        tree_calc : { 'neighbor', 'upgma' }
+        tree_calc : { 'neighbor', 'upgma' } (default='upgma')
             The cluster algorithm which shall be used for the calculation of
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
@@ -763,56 +850,70 @@ class Multiple(object):
             that represents tones in the prosodic strings of sequences.
 
         """
+        # check for model
+        if not model:
+            model = sca
+
         # create a string with the current parameters
         self.params = '_'.join(
                 [
                     'prog',
-                    repr(model),
-                    mode,
+                    model.name,
                     str(gop),
-                    '{0:.1f}'.format(gep_scale),
-                    #'{0[0]:.1f}x{0[1]:.1f}x{0[2]:.1f}'.format(scale),
+                    '{0:.1f}'.format(scale),
                     '{0:.1f}'.format(factor),
                     tree_calc,
                     '{0:.1f}'.format(gap_weight),
                     restricted_chars
-                    ])
+                    ]
+                )
+        
+        # set the model
+        self._set_model(model,classes,sonar,scorer)
 
-        self._set_model(model)
+        # set the scorer
         self._set_scorer('classes')
+
+        # get the pairwise alignments
         self._get_pairwise_alignments(
                 gop = gop,
-                gep_scale = gep_scale,
                 scale = scale,
                 factor = factor,
                 restricted_chars=restricted_chars
                 )
-        self._make_matrix()
+
+        # get the guide-tree 
         self._make_guide_tree(tree_calc=tree_calc)
+
+        # merge the alignments
         self._merge_alignments(
                 mode = mode,
                 gop = gop,
-                gep_scale = gep_scale,
                 scale = scale,
                 factor = factor,
                 restricted_chars = restricted_chars,
                 gap_weight = gap_weight,
                 )
+
+        # update the alignments
         self._update_alignments()
 
     def lib_align(
             self,
-            model = 'sca',
+            model = None,
             mode = 'global',
             modes = [
                 ('global',-2,0.5),
                 ('local',-1,0.5),
                 ],
-            scale = None, #(1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0.3,
             tree_calc = 'neighbor',
             gap_weight = 0.5,
-            restricted_chars = 'T_'
+            restricted_chars = 'T_',
+            classes = True,
+            sonar = True,
+            scorer = {}
             ):
         """
         Carry out a library-based progressive alignment analysis of the sequences.
@@ -868,12 +969,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
@@ -898,28 +993,33 @@ class Multiple(object):
             strings of sequences.
 
         """
+        # set the model to sca if it is not defined
+        if not model: model = sca
+
         # create a string with the current parameters
         params = [
                     'lib',
-                    repr(model),
+                    model.name,
                     mode,
-                    '',
-                    #'{0[0]:.1f}x{0[1]:.1f}x{0[2]:.1f}'.format(scale),
                     '{0:.1f}'.format(factor),
                     tree_calc,
                     '{0:.1f}'.format(gap_weight),
                     restricted_chars
-                    ]
+                ]
+        
+        # append parameters to the params-string
         mode_params = []
         for m in modes:
             mode_params.append('{0[0]}x{0[1]}x{0[2]:.2f}'.format(m))
+
         mode_params = 'y'.join(mode_params)
+
         params[3] = mode_params
         
         self.params = '_'.join(params)
         
         # set the model
-        self._set_model(model)
+        self._set_model(model,classes,sonar,scorer)
         
         # set the score mode to 'classes'
         self._set_scorer('classes')
@@ -935,7 +1035,6 @@ class Multiple(object):
                     run[0],
                     run[1],
                     run[2],
-                    scale,
                     factor,
                     restricted_chars
                     )
@@ -949,13 +1048,9 @@ class Multiple(object):
                 mode,
                 0,
                 0.0,
-                (1,1,1,1,1,1,1,1,1,1),
-                0.3,
+                factor,
                 restricted_chars
                 )
-        
-        # create the matrix
-        self._make_matrix()
 
         # reconstruct the tree
         self._make_guide_tree(tree_calc)
@@ -968,11 +1063,12 @@ class Multiple(object):
                 mode,
                 0,
                 0.0,
-                (1,1,1,1,1,1,1,1,1,1),
                 0.0,
                 gap_weight,
                 restricted_chars
                 )
+
+        # update the alignments
         self._update_alignments()
 
     def _reduce_gap_sites(
@@ -984,14 +1080,16 @@ class Multiple(object):
         Method reduces all columns from an MSA when there are only gaps. This
         method is important for the iterative procedures.
         """
-
-        new_msa = array(msa[:])
+        #XXX new_msa = np.array(msa[:])
+        new_msa = [m for m in msa]
         no_gap_index = []
         for i in range(len(new_msa[0])):
-            if list(new_msa[:,i]).count(gap) != len(new_msa):
+            if [line[i] for line in new_msa].count(gap) != len(new_msa):
+            #XXX if list(new_msa[:,i]).count(gap) != len(new_msa):
                 no_gap_index.append(i)
-    
-        new_msa = new_msa[:,no_gap_index].tolist()
+        
+        new_msa = [[line[i] for i in no_gap_index] for line in new_msa]
+        #XXX new_msa = new_msa[:,no_gap_index].tolist()
 
         return new_msa
 
@@ -1002,13 +1100,20 @@ class Multiple(object):
         """
         Split an MSA into two parts and retain their indices. 
         """
-        
+        #XXX
         # create the inverted index
         idxA = idx
         idxB = [i for i in range(self.height) if i not in idx]
+        
+        # get idxA
+        almA = [self._alm_matrix[i] for i in idxA]
+        almB = [self._alm_matrix[i] for i in idxB]
 
-        partA = self._reduce_gap_sites(self._alm_matrix[idxA])
-        partB = self._reduce_gap_sites(self._alm_matrix[idxB])
+        partA = self._reduce_gap_sites(almA)
+        partB = self._reduce_gap_sites(almB)
+
+        #XXX partA = self._reduce_gap_sites(self._alm_matrix[idxA])
+        #XXX partB = self._reduce_gap_sites(self._alm_matrix[idxB])
 
         return partA,partB,idxA,idxB
 
@@ -1032,7 +1137,7 @@ class Multiple(object):
         for i in range(len(almB)):
             out_alm[idxB[i]] = almB[i]
         
-        out_alm = array(out_alm)
+        #XXX out_alm = np.array(out_alm)
 
         return out_alm
 
@@ -1041,8 +1146,7 @@ class Multiple(object):
             idx_list,
             mode = 'global',
             gop = -3,
-            gep_scale = 0.5,
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0.0,
             gap_weight = 0.5,
             check = 'final',
@@ -1053,7 +1157,8 @@ class Multiple(object):
         """
 
         sop = self.sum_of_pairs(gap_weight=gap_weight)
-        alm_matrix = self._alm_matrix.copy()
+        alm_matrix = [[cell for cell in line] for line in self._alm_matrix]
+        #XXX .copy()
         
         if len(idx_list) == 1:
             return
@@ -1067,7 +1172,6 @@ class Multiple(object):
                     iterate = True,
                     gop = gop,
                     scale = scale,
-                    gep_scale = gep_scale,
                     factor = factor,
                     gap_weight = gap_weight
                     )
@@ -1097,7 +1201,8 @@ class Multiple(object):
             self,
             alm_matrix = 'self',
             mat = None,
-            gap_weight = 0
+            gap_weight = 0.0,
+            gop = -1
             ):
         """
         Calculate the sum-of-pairs score for a given alignment analysis.
@@ -1127,16 +1232,33 @@ class Multiple(object):
             alm_matrix = self._alm_matrix
         else:
             alm_matrix = mat
+        
+        lenM = len(alm_matrix[0])
 
         score = 0.0
-
-        for i in range(alm_matrix.shape[1]):
-            score += self._profile_score(
-                    alm_matrix[:,i],
-                    alm_matrix[:,i],
-                    gap_weight = gap_weight
-                    )
-        return score / alm_matrix.shape[1]
+        
+        if not self._sonars:
+            for i in range(lenM):
+                score += talign.score_profile(
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        #alm_matrix[:,i].tolist(),
+                        #alm_matrix[:,i].tolist(),
+                        self.scorer,
+                        gop,
+                        gap_weight
+                        )
+        else:
+            for i in range(lenM):
+                score += calign.score_profile(
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        #alm_matrix[:,i].tolist(),
+                        #alm_matrix[:,i].tolist(),
+                        self.scorer,
+                        gap_weight = gap_weight
+                        )
+        return score / lenM
 
     def _swap_sum_of_pairs(
             self,
@@ -1145,26 +1267,38 @@ class Multiple(object):
             swap_penalty = -5
             ):
         
+        lenM = len(alm_matrix[0])
+        
         score = 0.0
-
-        for i in range(alm_matrix.shape[1]):
-            score += self._swap_profile_score(
-                    alm_matrix[:,i],
-                    alm_matrix[:,i],
-                    gap_weight = gap_weight,
-                    swap_penalty = swap_penalty
-                    )
-        return score / alm_matrix.shape[1]
+        
+        if not self._sonars:
+            for i in range(lenM):
+                score += talign.swap_score_profile(
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        self.scorer,
+                        gap_weight = gap_weight,
+                        swap_penalty = swap_penalty
+                        )
+        else:
+            for i in range(lenM):
+                score += calign.swap_score_profile(
+                        [line[i] for line in alm_matrix],
+                        [line[i] for line in alm_matrix],
+                        self.scorer,
+                        gap_weight = gap_weight,
+                        swap_penalty = swap_penalty
+                        )
+        return score / lenM
     
     def iterate_orphans(
             self,
             check = 'final',
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
-            gap_weight = 1,
+            gap_weight = 1.0,
             restricted_chars = 'T_'
             ):
         """
@@ -1200,12 +1334,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
 
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1229,9 +1357,11 @@ class Multiple(object):
 
         """
         orphans = []
-        means = self.matrix.mean()
+        means = [sum(line) / len(line) for line in self.matrix] #XXX self.matrix.mean()
+        means = sum(means) / len(means) 
+
         for i,line in enumerate(self.matrix):
-            if line.mean() > means:
+            if sum(line) / len(line) > means:
                 orphans.append([i])
 
         self._iter(
@@ -1240,7 +1370,6 @@ class Multiple(object):
                 mode = mode,
                 scale = scale,
                 gop = gop,
-                gep_scale = gep_scale,
                 factor = factor,
                 gap_weight = gap_weight,
                 restricted_chars = restricted_chars
@@ -1252,8 +1381,7 @@ class Multiple(object):
             check = 'final',
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
             gap_weight = 1,
             restricted_chars = 'T_'
@@ -1297,12 +1425,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
 
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1329,7 +1451,7 @@ class Multiple(object):
                 [(i[0],[i[1]]) for i in zip(range(self.height),range(self.height))]
                 )
 
-        _flat_upgma(
+        cluster._flat_upgma(
                 clusters,
                 self.matrix,
                 threshold,
@@ -1341,7 +1463,6 @@ class Multiple(object):
                 mode = mode,
                 scale = scale,
                 gop = gop,
-                gep_scale = gep_scale,
                 factor = factor,
                 gap_weight = gap_weight,
                 restricted_chars = restricted_chars
@@ -1352,8 +1473,7 @@ class Multiple(object):
             check = 'final',
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
             gap_weight = 1,
             restricted_chars = 'T_'
@@ -1394,12 +1514,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(1.2,1.0,1.1))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1422,14 +1536,12 @@ class Multiple(object):
         
         if len(self.gap_dict) == 1:
             return
-
         self._iter(
-                self.gap_dict.values(),
+                list(self.gap_dict.values()),
                 check = check,
                 mode = mode,
                 scale = scale,
                 gop = gop,
-                gep_scale = gep_scale,
                 factor = factor,
                 gap_weight = gap_weight
                 )
@@ -1439,8 +1551,7 @@ class Multiple(object):
             check = 'final',
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 0,
             gap_weight = 1,
             restricted_chars = 'T_'
@@ -1482,12 +1593,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties [Goto81]_.
 
-        scale : tuple or list (default=(3,1,2))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1514,7 +1619,6 @@ class Multiple(object):
                 mode = mode,
                 scale = scale,
                 gop = gop,
-                gep_scale = gep_scale,
                 factor = factor,
                 gap_weight = gap_weight,
                 restricted_chars = restricted_chars
@@ -1552,9 +1656,10 @@ class Multiple(object):
         peaks = []
         for i in range(self._alm_matrix.shape[1]):
             peaks.append(
-                    self._profile_score(
-                        self._alm_matrix[:,i],
-                        self._alm_matrix[:,i],
+                    _calign._score_profile(
+                        self._alm_matrix[:,i].tolist(),
+                        self._alm_matrix[:,i].tolist(),
+                        self.scorer,
                         gap_weight = gap_weight
                         )
                     )
@@ -1567,7 +1672,7 @@ class Multiple(object):
             gap_weight = 0.0
             ):
 
-        peaks = array(self.peaks(gap_weight = gap_weight))
+        peaks = np.array(self.peaks(gap_weight = gap_weight))
         
         threshold = peaks.mean() + t_scale * peaks.std()
 
@@ -1576,13 +1681,15 @@ class Multiple(object):
     def get_pairwise_alignments(
             self,
             new_calc = True,
-            model = 'sca',
+            model = sca,
             mode = 'global',
             gop = -3,
-            gep_scale = float(0.5),
-            scale = (1,1,1,1,1,1,1,1,1,1),
+            scale = 0.5,
             factor = 1,
             restricted_chars = 'T_',
+            classes = True,
+            sonar = True,
+            scorer = {}
             ):
         """
         Function creates a dictionary of all pairwise alignments  scores.
@@ -1628,12 +1735,6 @@ class Multiple(object):
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        scale : tuple or list (default=(0,0,0))
-            The scaling factors for the modificaton of gap weights. The first
-            value corresponds to sites of ascending sonority, the second value
-            to sites of maximum sonority, and the third value corresponds to
-            sites of decreasing sonority.
-
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
@@ -1661,7 +1762,7 @@ class Multiple(object):
         
         if new_calc:
             # define the class model
-            self._set_model(model)
+            self._set_model(model,classes,sonar,scorer)
 
             # reset the scorer to "classes"
             self._set_scorer('classes')
@@ -1670,14 +1771,10 @@ class Multiple(object):
             self._get_pairwise_alignments(
                     mode,
                     gop,
-                    gep_scale,
                     scale,
                     factor,
                     restricted_chars
                     )
-
-            # retrieve the scores
-            self._make_matrix()
 
             self.alignments = {}
 
@@ -1686,7 +1783,6 @@ class Multiple(object):
                     if i <= j:
                         # get the score of the alignment
                         score = self.matrix[i][j]
-                        sim = self._alignments[i][j][2]
 
                         # retrieve the numeric tokens
                         tokA = self._alignments[i][j][0]
@@ -1850,17 +1946,12 @@ class Multiple(object):
         @rtype: C{scipy.array}
         """
         self._similar_gap_sites()
+        
+        gap_array = [0 for x in self._alm_matrix]
 
-        gap_array = zeros(
-                [len(self.gap_dict),len(self._alm_matrix[0])], 
-                dtype='int'
-                )
-
-        for i in range(len(self.gap_dict)):
-            
-            gap_array[i] = array([int(j) for j in list(
-                self.gap_dict.keys()
-                )[i]])
+        for key in self.gap_dict:
+            for i in self.gap_dict[key]:
+                gap_array[i] = [int(x) for x in key]
 
         return gap_array
 
@@ -1879,10 +1970,11 @@ class Multiple(object):
         for i in range(len(gap_array[0])):
 
             try:
-                if 0 not in gap_array[:,i] + gap_array[:,i+2]:
+                if 0 not in [a+b for a,b in zip(
+                    [line[i] for line in gap_array],
+                    [line[i+2] for line in gap_array]
+                    )]:
                     swaps.append((i))
-                #if sum(gap_array[:,i] + gap_array[:,i+2]) / len(gap_array) > 0.75:
-                #    swaps.append((i))
 
             except:
                 pass
@@ -1902,8 +1994,9 @@ class Multiple(object):
         # [i] We define two versions of the possibly swapped region, a first
         # ... one, where the original alignment is unchanged, and a second one,
         # ... where the alignment is shifted, i.e. the gaps are switched.
-        matA = self._alm_matrix.copy()
-        matB = self._alm_matrix.copy()
+
+        matA = [[c for c in line] for line in self._alm_matrix]
+        matB = [[c for c in line] for line in self._alm_matrix]
 
         for i in range(len(self._classes)):
             
@@ -1920,16 +2013,16 @@ class Multiple(object):
 
         # determine in which direction to turn by counting the number of chars
         # in all cols
-        t1 = len([i for i in matA[:,ind] if i != 'X'])
-        t2 = len([i for i in matA[:,ind+2] if i != 'X'])
+        t1 = len([i for i in [line[ind] for line in matA] if i != 'X'])
+        t2 = len([i for i in [line[ind+2] for line in matA] if i != 'X'])
 
         if t1 > t2:
             turnLeftA = True
         else:
             turnLeftA = False
 
-        t1 = len([i for i in matB[:,ind] if i != 'X'])
-        t2 = len([i for i in matB[:,ind+2] if i != 'X'])
+        t1 = len([i for i in [line[ind] for line in matB] if i != 'X'])
+        t2 = len([i for i in [line[ind+2] for line in matB] if i != 'X'])
 
         if t1 > t2:
             turnLeftB = True
@@ -2030,7 +2123,7 @@ class Multiple(object):
         
         Notes
         -----
-        The method for swap detection is described in detail in [LisB12]_.
+        The method for swap detection is described in detail in :evobib:`List2012b`.
 
         Examples
         --------
@@ -2075,14 +2168,47 @@ class Multiple(object):
             self.swap_index = [(i,i+1,i+2) for i in swp]
             
             return True
-        
-    def _get_params(self):
-        """
-        Return a string of all relevant parameters for a calculation.
-        """
 
-        out = ''
-        out += repr(self.model)
+def mult_align(
+        seqs,
+        gop = -1,
+        scale = 0.5,
+        tree_calc = 'upgma',
+        pprint = False
+        ):
+    """
+    A short-cut method for multiple alignment analyses.
 
+    Parameters
+    ----------
+    seqs : list
+        The input sequences.
+    gop = int (default=-1)
+        The gap opening penalty.
+    scale : float (default=0.5)
+        The scaling factor by which penalties for gap extensions are decreased.
+    tree_calc : { "upgma" "neighbor" } (default="upgma")
+        The algorithm which is used for the calculation of the guide tree.
+    pprint : bool (default=False)
+        Indicate whether results shall be printed onto screen.
 
-                                
+    Returns
+    -------
+    alignments : list
+        A two-dimensional list in which alignments are represented as a list of
+        tokens.
+
+    """
+
+    m = Multiple(seqs)
+    m.prog_align(
+            classes=False,
+            sonar = False,
+            gop = gop,
+            tree_calc = tree_calc,
+            scale = scale
+            )
+    if pprint:
+        print(m)
+
+    return m.alm_matrix

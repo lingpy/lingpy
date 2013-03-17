@@ -2,8 +2,9 @@
 Sound-Class Based Alignment (:py:class:`~lingpy.align.sca`)
 ==========================================================
 
-.. toctree::
-   :maxdepth: 1
+.. automodule:: lingpy.align.sca
+.. currentmodule:: lingpy.align.sca
 
-   scamultiple
-   scapairwise
+.. autoclass:: SCA
+
+
