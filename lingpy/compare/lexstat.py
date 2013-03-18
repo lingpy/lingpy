@@ -53,6 +53,9 @@ class LexStat(Wordlist):
         # store the model
         self.model = keywords['model']
 
+        # set the lexstat stamp
+        self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
+
         # initialize the wordlist
         Wordlist.__init__(self,filename)
         
@@ -352,7 +355,8 @@ class LexStat(Wordlist):
 
     def _get_randist(
             self,
-            scaler = 5,
+            method = 'markov',
+            runs = 1000,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
             restricted_chars = '_T'
@@ -360,122 +364,201 @@ class LexStat(Wordlist):
         """
         Return the aligned results of randomly aligned sequences.
         """
+        # determine the mode
+        if method in ['markov','markov-chain','mc']:
+            method = 'markov'
+        else:
+            method = 'shuffle'
         
-        seqs = {}
-        pros = {}
-        weights = {}
-
-        # determine the scale for number of random strings
-        limit = self.height * scaler
-        trials = self.height * scaler * 10
-    
-        for i,taxon in enumerate(self.taxa):
-            print("[i] Analyzing taxon {0}.".format(taxon))
-            tokens = self.get_list(
-                    col=taxon,
-                    entry="tokens",
-                    flat=True
-                    )
-            prostrings = self.get_list(
-                    col=taxon,
-                    entry="prostrings",
-                    flat=True
-                    )
-            m = MCPhon(tokens,True,prostrings)
-            words = []
-            j = 0
-            k = 0
-            while j < limit and k < trials:
-                s = m.get_string()
-                if s in words:
-                    k += 1
-                else:
-                    j += 1
-                    words += [s]
+        if method == 'markov':
+            seqs = {}
+            pros = {}
+            weights = {}
             
-            seqs[taxon] = []
-            pros[taxon] = []
-            weights[taxon] = []
+            # determine the scale for number of random strings
+            #limit = self.height * scaler
+            trials = runs * 5
 
-            for w in words:
-                cls = tokens2class(w.split(' '),self.model)
-                pros[taxon] += [prosodic_string(w.split(' '))]
-                weights[taxon] += [prosodic_weights(pros[taxon][-1])]
-                seqs[taxon] += [['{0}.{1}'.format(
-                    c,
-                    p
-                    ) for c,p in zip(cls,pros[taxon][-1])
-                    ]]
+            # get a random distribution for all pairs
 
-        corrdist = {}
-        for i,tA in enumerate(self.taxa):
-            for j,tB in enumerate(self.taxa):
-                if i <= j:
-                    print("[i] Calculating random alignments for pair {0} / {1}.".format(
-                        tA,
-                        tB
-                        ))
-                    corrdist[tA,tB] = {}
-                    for mode,gop,scale in modes:
-                        numbers = list(
-                                zip(
-                                    seqs[tA],
-                                    seqs[tB]
+            sample = random.sample(
+                    [(i,j) for i in range(1000) for j in range(1000)],
+                    runs
+                    )
+
+            for i,taxon in enumerate(self.taxa):
+                print("[i] Analyzing taxon {0}.".format(taxon))
+                tokens = self.get_list(
+                        col=taxon,
+                        entry="tokens",
+                        flat=True
+                        )
+                prostrings = self.get_list(
+                        col=taxon,
+                        entry="prostrings",
+                        flat=True
+                        )
+                m = MCPhon(tokens,True,prostrings)
+                words = []
+                j = 0
+                k = 0
+                while j < 1000: # and k < 10000:
+                    s = m.get_string()
+                    if s in words:
+                        k += 1
+                    else:
+                        j += 1
+                        words += [s]
+                
+                seqs[taxon] = []
+                pros[taxon] = []
+                weights[taxon] = []
+
+                for w in words:
+                    cls = tokens2class(w.split(' '),self.model)
+                    pros[taxon] += [prosodic_string(w.split(' '))]
+                    weights[taxon] += [prosodic_weights(pros[taxon][-1])]
+                    seqs[taxon] += [['{0}.{1}'.format(
+                        c,
+                        p
+                        ) for c,p in zip(cls,pros[taxon][-1])
+                        ]]
+
+            corrdist = {}
+            for i,tA in enumerate(self.taxa):
+                for j,tB in enumerate(self.taxa):
+                    if i <= j:
+                        print("[i] Calculating random alignments for pair {0} / {1}.".format(
+                            tA,
+                            tB
+                            ))
+                        corrdist[tA,tB] = {}
+                        for mode,gop,scale in modes:
+                            #numbers = list(
+                            #        zip(
+                            #            seqs[tA],
+                            #            seqs[tB]
+                            #                )
+                            #            )
+                            #gops = list(
+                            #        zip(
+                            #            weights[tA],
+                            #            weights[tB]
+                            #            )
+                            #        )
+                            #prostrings = list(
+                            #        zip(
+                            #            pros[tA],
+                            #            pros[tB]
+                            #            )
+                            #        )
+                            numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
+                            gops = [(weights[tA][x],weights[tB][y]) for x,y in sample]
+                            prostrings = [(pros[tA][x],pros[tB][y]) for x,y in sample]
+
+                            corrs = calign.corrdist(
+                                    10.0,
+                                    numbers,
+                                    gops,
+                                    prostrings,
+                                    gop,
+                                    scale,
+                                    factor,
+                                    self.rscorer,
+                                    mode,
+                                    restricted_chars
+                                    )
+                                     
+                            # change representation of gaps
+                            for a,b in list(corrs.keys()):
+
+                                # get the corresondence count
+                                d = corrs[a,b] * len(self.pairs[tA,tB]) / runs
+
+                                # check for gaps
+                                if a == '-':
+                                    a = 'X.-'
+                                elif b == '-':
+                                    b = 'X.-'
+                                
+                                a = str(i+1)+'.'+a
+                                b = str(j+1)+'.'+b
+
+                                # append to overall dist
+                                try:
+                                    corrdist[tA,tB][a,b] += d / len(modes)
+                                except:
+                                    corrdist[tA,tB][a,b] = d / len(modes)
+        else:
+            corrdist = {}
+            for i,tA in enumerate(self.taxa):
+                for j,tB in enumerate(self.taxa):
+                    if i <= j:
+                        print("[i] Calculating random alignments for pair {0} / {1}.".format(
+                            tA,
+                            tB
+                            ))
+                        corrdist[tA,tB] = {}
+
+                        # get the number pairs etc.
+                        numbers = [self[pair,'numbers'] for pair in
+                                self.pairs[tA,tB]]
+                        gops = [self[pair,'weights'] for pair in
+                                self.pairs[tA,tB]]
+                        prostrings = [self[pair,'prostrings'] for pair in
+                                self.pairs[tA,tB]]
+                        
+                        # get an index that will be repeatedly changed
+                        indices = list(range(len(numbers)))
+
+                        for mode,gop,scale in modes:
+                            for k in range(runs):
+                                random.shuffle(indices)
+                                nnums = [(numbers[indices[x]][0],numbers[x][1]) for x in
+                                    range(len(indices))]
+                                ggops = [(gops[indices[x]][0],gops[x][1]) for x in
+                                    range(len(indices))]
+                                ppros = [(prostrings[indices[x]][0],prostrings[x][1]) for x in
+                                    range(len(indices))]
+                                corrs = calign.corrdist(
+                                        2.0,
+                                        nnums,
+                                        ggops,
+                                        ppros,
+                                        gop,
+                                        scale,
+                                        factor,
+                                        self.scorer,
+                                        mode,
+                                        restricted_chars
                                         )
-                                    )
-                        gops = list(
-                                zip(
-                                    weights[tA],
-                                    weights[tB]
-                                    )
-                                )
-                        prostrings = list(
-                                zip(
-                                    pros[tA],
-                                    pros[tB]
-                                    )
-                                )
-                        corrs = calign.corrdist(
-                                2.0,
-                                numbers,
-                                gops,
-                                prostrings,
-                                gop,
-                                scale,
-                                factor,
-                                self.rscorer,
-                                mode,
-                                restricted_chars
-                                )
-                                 
-                        # change representation of gaps
-                        for a,b in list(corrs.keys()):
+                                         
+                                # change representation of gaps
+                                for a,b in list(corrs.keys()):
 
-                            # get the corresondence count
-                            d = corrs[a,b] * len(self.pairs[tA,tB]) / len(numbers)
+                                    # get the corresondence count
+                                    d = corrs[a,b] / runs #* len(self.pairs[tA,tB]) / len(numbers)
 
-                            # check for gaps
-                            if a == '-':
-                                a = 'X.-'
-                            elif b == '-':
-                                b = 'X.-'
-                            
-                            a = str(i+1)+'.'+a
-                            b = str(j+1)+'.'+b
+                                    # check for gaps
+                                    if a == '-':
+                                        a = str(i)+'.X.-'
 
-                            # append to overall dist
-                            try:
-                                corrdist[tA,tB][a,b] += d / len(modes)
-                            except:
-                                corrdist[tA,tB][a,b] = d / len(modes)
-
+                                    elif b == '-':
+                                        b = str(j)+'X.-'
+                                    
+                                    # append to overall dist
+                                    try:
+                                        corrdist[tA,tB][a,b] += d / len(modes)
+                                    except:
+                                        corrdist[tA,tB][a,b] = d / len(modes)
         return corrdist
 
     def _get_scorer(
             self,
+            method = 'markov',
             ratio = (3,2),
             vscale = 0.5,
-            scaler = 10,
+            runs = 1000,
             threshold = 0.7,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
@@ -491,14 +574,15 @@ class LexStat(Wordlist):
             modestring += ['{0}-{1}-{2:.2f}'.format(a,abs(b),c)]
         modestring = ':'.join(modestring)
 
-        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}'.format(
+        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}_{7}'.format(
                 ratio,
                 vscale,
-                scaler,
+                runs,
                 threshold,
                 modestring,
                 factor,
-                restricted_chars
+                restricted_chars,
+                method
                 )
 
         # check for attribute
@@ -511,6 +595,7 @@ class LexStat(Wordlist):
 
         # store parameters
         self.params = params
+        self._stamp += "# Parameters: "+params+'\n'
 
         # get the correspondence distribution
         corrdist = self._get_corrdist(
@@ -521,7 +606,8 @@ class LexStat(Wordlist):
                 )
         # get the random distribution
         randist = self._get_randist(
-                scaler,
+                method,
+                runs,
                 modes,
                 factor,
                 restricted_chars

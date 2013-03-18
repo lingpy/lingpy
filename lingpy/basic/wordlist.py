@@ -1,11 +1,13 @@
-# created = Mo 21 Jan 2013 01:43:00  CET
-# modified = Do 24 Jan 2013 04:16:49  CET 
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-03-14 00:21
+# modified : 2013-03-14 00:21
 """
 This module provides a basic class for the handling of word lists.
 """
 
-__author__ = "Johann-Mattis List"
-__date__="2013-01-21"
+__author__="Johann-Mattis List"
+__date__="2013-03-14"
 
 import os
 import builtins
@@ -978,7 +980,10 @@ class Wordlist(object):
         """
         Write wordlist to file.
         """
-        
+        # check for stamp attribute
+        if hasattr(self,"_stamp"):
+            keywords["stamp"] = self._stamp
+
         # add the default parameters, they will be checked against the keywords
         defaults = {
                 'ref'       : 'cogid',
@@ -988,7 +993,11 @@ class Wordlist(object):
                 'formatter' : 'concept',
                 'tree_calc' : 'neighbor',
                 'distances' : False,
-                'ref'       : 'cogid'
+                'ref'       : 'cogid',
+                'threshold' : 0.6, # threshold for flat clustering
+                'subset'    : False, # setup a subset of the data,
+                'cols'      : False,
+                'rows'      : False
                 }
             
         # compare with keywords and add missing ones
@@ -1033,14 +1042,57 @@ class Wordlist(object):
                     )
             header = [h.upper() for h in header]
 
-            # write stuff to file
-            wl2csv(
-                    header,
-                    self._data,
-                    **keywords
-                    )
+            # get the data, in case a subset is chosen
+            if not keywords['subset']:
+                # write stuff to file
+                wl2csv(
+                        header,
+                        self._data,
+                        **keywords
+                        )
+            else:
+                cols,rows = keywords['cols'],keywords['rows']
 
-        if fileformat == 'dst' or fileformat == 'tre':
+                if type(cols) not in [list,tuple,bool]:
+                    raise ValueError(
+                            "[i] Argument 'cols' should be list or tuple."
+                            )
+                if type(rows) not in [dict,bool]:
+                    raise ValueError(
+                            "[i] Argument 'rows' shoudl be a dictionary."
+                            )
+
+                # check for chosen header
+                if cols:
+                    # get indices for header
+                    indices = [self._header[x] for x in cols]
+                    header = [c.upper() for c in cols]
+                else:
+                    indices = [r for r in range(len(w.header))]
+
+                if rows:
+                    stmts = []
+                    for key,value in rows.items():
+                        idx = self._header[key]
+                        stmts += ["line[{0}] ".format(idx)+value]
+
+                # get the data
+                out = {}
+
+                for key,line in self._data.items():
+                    if rows:
+                        if eval(" and ".join(stmts)):
+                            out[key] = [line[i] for i in indices]
+                    else:
+                        out[key] = [line[i] for i in indices]
+
+                wl2csv(
+                        header,
+                        out,
+                        **keywords
+                        )
+
+        if fileformat in ['dst','tre','nwk','cluster','groups']:
             
             # XXX bad line, just for convenience at the moment
             filename = keywords['filename']
@@ -1081,9 +1133,9 @@ class Wordlist(object):
                         distances[i]]))
                     f.write('\n')
                 f.close()
-                FileWriteMessage(filename,'dst').message('written')
+                FileWriteMessage(filename,fileformat).message('written')
 
-            elif fileformat == 'tre':
+            elif fileformat in ['tre','nwk']:
                 
                 if keywords['tree_calc'] == 'neighbor':
                     tree = cluster.neighbor(
@@ -1102,7 +1154,33 @@ class Wordlist(object):
                 f.write(tree)
                 f.close()
 
-                FileWriteMessage(filename,'tre').message('written')
+                FileWriteMessage(filename,fileformat).message('written')
+
+            elif fileformat in ['cluster','groups']:
+
+                flats = cluster.flat_upgma(
+                        keywords['threshold'],
+                        distances,
+                        revert=True
+                        )
+                
+                groups = [flats[i] for i in range(self.width)]
+                
+                # renumber the groups
+                groupset = sorted(set(groups))
+                renum = dict([(i,j+1) for i,j in zip(
+                    groupset,
+                    range(len(groupset))
+                    )])
+                groups = [renum[i] for i in groups]
+
+                f = open(filename+'.'+fileformat,'w')
+                for group,taxon in sorted(zip(groups,self.cols),key=lambda x:x[0]):
+                    f.write('{0}\t{1}\n'.format(taxon,group))
+                f.close()
+
+                FileWriteMessage(filename,fileformat).message('written')
+
 
 class QLCWordlist(Wordlist):
     """

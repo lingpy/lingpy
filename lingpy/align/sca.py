@@ -1001,6 +1001,7 @@ class _SCA(Wordlist):
             sonar = True,
             scorer = {},
             verbose = True,
+            plot = False
             ):
         """
         Carry out a multiple alignment analysis of the data.
@@ -1076,8 +1077,11 @@ class _SCA(Wordlist):
             should therefore be aligned specifically. This defaults to "T",
             since this is the character that represents tones in the prosodic
             strings of sequences.
+
+        plot : bool (default=False)
+            Determine whether MSA should be plotted in HTML.
         """
-        for key,value in self.msa.items():
+        for key,value in sorted(self.msa.items(),key=lambda x:x[0]):
             if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
 
             m = SCA(value)
@@ -1139,6 +1143,15 @@ class _SCA(Wordlist):
                                 )
                             )
                 self.msa[key]['alignment'] = m.alm_matrix
+                #if plot:
+                #    alm2html(
+                #            '{0}-msa/{1}-{2}'.format(
+                #                self.filename,
+                #                self.dataset,
+                #                key
+                #                )
+                #            )
+
                     
     def __len__(self):
         return len(self.msa)

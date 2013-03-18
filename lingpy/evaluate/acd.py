@@ -1,13 +1,15 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-13 18:31
-# modified : 2013-03-13 18:31
+# modified : 2013-03-15 10:48
 """
 Evaluation methods for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-13"
+__date__="2013-03-15"
+
+from ..check.messages import FileWriteMessage
 
 def bcubes(
         lex,
@@ -21,10 +23,16 @@ def bcubes(
     """
 
     # get the etymdicts
-    etdG = [[x[0] for x in v if x != 0] for k,v in 
-            lex.get_etymdict(ref=gold,loans=loans).items()]
-    etdT = [[x[0] for x in v if x != 0] for k,v in
-            lex.get_etymdict(ref=test,loans=loans).items()]
+    etdG = []
+    for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
+        etdG += [[]]
+        for value in [x for x in line if x != 0]:
+            etdG[-1] += value
+    etdT = []
+    for key,line in lex.get_etymdict(ref=test,loans=loans).items():
+        etdT += [[]]
+        for value in [x for x in line if x != 0]:
+            etdT[-1] += value
     
     # b-cubed recall
     bcr = []
@@ -79,13 +87,329 @@ def bcubes(
 
     # print the results if this option is chosen
     if pprint:
-        print('Precision: {0:.2f}'.format(BCP))
-        print('Recall:    {0:.2f}'.format(BCR))
-        print('F-Scores:  {0:.2f}'.format(FSC))
+        print('*****************************')
+        print('* B-Cubed-Scores            *')
+        print('* ------------------------- *')
+        print('* B-Cubed-Precision: {0:.4f} *'.format(BCP))
+        print('* B-Cubed-Recall:    {0:.4f} *'.format(BCR))
+        print('* B-Cubed-F-Scores:  {0:.4f} *'.format(FSC))
+        print('*****************************')
 
     # return the stuff
     return BCP,BCR,FSC
 
+def pairs(
+        lex,
+        gold='cogid',
+        test='lexstatid',
+        loans=True,
+        pprint=True
+        ):
+    """
+    Compute pair scores, following Bouchard-Côté et al. (2013).
+    """
 
+    # get the etymdicts
+    etdG = []
+    for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
+        etdG += [[]]
+        for value in [x for x in line if x != 0]:
+            etdG[-1] += value
+    etdT = []
+    for key,line in lex.get_etymdict(ref=test,loans=loans).items():
+        etdT += [[]]
+        for value in [x for x in line if x != 0]:
+            etdT[-1] += value
+    
+    # get the pairs for gold and test
+    pairsG = []
+    for line in etdG:
+        for i,a in enumerate(line):
+            for j,b in enumerate(line):
+                if i < j:
+                    pairsG += [tuple(sorted([a,b]))]
+    pairsG = set(pairsG)
 
+    pairsT = []
+    for line in etdT:
+        for i,a in enumerate(line):
+            for j,b in enumerate(line):
+                if i < j:
+                    pairsT += [tuple(sorted([a,b]))]
+    pairsT = set(pairsT)
+    
+    # calculate precision and recall
+    pp = len(pairsG.intersection(pairsT)) / len(pairsT)
+    pr = len(pairsG.intersection(pairsT)) / len(pairsG)
+    fs = 2 * ( pp * pr ) / ( pp + pr )
 
+    # print the results if this option is chosen
+    if pprint:
+        print('**************************')
+        print('* Pair-Scores            *')
+        print('* ---------------------- *')
+        print('* Pair-Precision: {0:.4f} *'.format(pp))
+        print('* Pair-Recall:    {0:.4f} *'.format(pr))
+        print('* Pair-F-Scores:  {0:.4f} *'.format(fs))
+        print('**************************')
+    
+    return pp,pr,fs
+
+def diff(
+        lex,
+        gold='cogid',
+        test='lexstatid',
+        loans=True,
+        pprint=True,
+        filename = None
+        ):
+    r"""
+    Write differences in classifications on an item-basis to file.
+
+    Notes
+    -----
+    This function also calculates the "transformation" score. This score is
+    based on the calculation of steps that are needed to transform one cluster
+    for one set of meanings into the other. Ideally, if there are *n* different
+    cognate sets covering one gloss in the gold standard, the minimal length of 
+    a mapping to convert the *m* cognate sets of the test set into the gold standard
+    is *n*. In this case, both gold standard and test set are identical.
+    However, if gold standard and test set differ, the number of mappings
+    necessarily exceeds *m* and *n*. Based on this, the transformation
+    precision is defined as :math:`\frac{m}{M}`, where *m* is the number of
+    distinct clusters in the test set and *M* is the length of the mapping.
+    Accordingly, the recall is defined as :math:`\frac{n}{M}`, where *n* is the
+    number of clusters in the gold standard.
+
+    Note that if precision is lower than 1.0, this means there are false
+    positive decisions in the test set. Accordingly, a recall lower than 1.0
+    indicates that there are false negative decisions in the test set.
+    The drawback of this score is that it is not sensitive regarding the
+    distinct number of decisions in which gold standard and test set differ, so
+    the recall can be very low although most of the words have been grouped
+    accurately. The advantage is that it can be directly interpreted in terms
+    of 'false positive/false negative' decisions. 
+    """
+    # check for filename
+    if not filename:
+        filename = lex.filename
+    else:
+        pass
+
+    if loans:
+        loan = lambda x: abs(x)
+    else:
+        loan = lambda x: x
+
+    # open file
+    f = open(filename+'.diff','w')
+
+    # get a formatter for language names
+    lform = '{0:'+str(max([len(l) for l in lex.cols]))+'}'
+    
+    preT,recT = [],[]
+    preB,recB = [],[]
+    preP,recP = [],[]
+
+    # iterate over all concepts
+    for concept in lex.concepts:
+        idxs = lex.get_list(row=concept,flat=True)
+        cogsG = lex.get_list(row=concept,entry=gold,flat=True)
+        cogsT = lex.get_list(row=concept,entry=test,flat=True)
+
+        # compare cogs and test
+        # get the basic index for all seqs
+        bidx = [i+1 for i in range(len(idxs))]
+        
+        # translate to cogs
+        tmp = {}
+        for a,b in zip(cogsG,bidx):
+            if loan(a) in tmp:
+                pass
+            else:
+                tmp[loan(a)] = b
+        cogsG = [tmp[loan(i)] for i in cogsG]
+
+        # translate to test
+        tmp = {}
+        for a,b in zip(cogsT,bidx):
+            if loan(a) in tmp:
+                pass
+            else:
+                tmp[loan(a)] = b
+        cogsT = [tmp[loan(i)] for i in cogsT]
+        
+        if cogsG != cogsT:
+
+            # calculate the transformation distance of the sets
+            tramGT = len(set(zip(cogsG,cogsT)))
+            tramG  = len(set(cogsG))
+            tramT  = len(set(cogsT))
+            preT += [tramT/tramGT]
+            recT += [tramG/tramGT]
+
+            # calculate the bcubed precision for the sets
+            tmp = {}
+            for x,y in zip(cogsT,cogsG):
+                if x in tmp:
+                    tmp[x] += [y]
+                else:
+                    tmp[x] = [y]
+            bcp = 0.0
+            for x in tmp:
+                for y in tmp[x]:
+                    bcp += tmp[x].count(y) / len(tmp[x])
+            preB += [bcp / len(idxs)]
+            
+            # calculate b-cubed recall
+            tmp = {}
+            for x,y in zip(cogsG,cogsT):
+                if x in tmp:
+                    tmp[x] += [y]
+                else:
+                    tmp[x] = [y]
+            bcr = 0.0
+            for x in tmp:
+                for y in tmp[x]:
+                    bcr += tmp[x].count(y) / len(tmp[x])
+            recB += [bcr / len(idxs)]
+
+            # calculate pair precision
+            tmp = {}
+            for x,y in zip(cogsG,idxs):
+                if x in tmp:
+                    tmp[x] += [y]
+                else:
+                    tmp[x] = [y]
+            pairsG = []
+            for x in tmp:
+                for i,yA in enumerate(tmp[x]):
+                    for j,yB in enumerate(tmp[x]):
+                        if i < j:
+                            pairsG += [tuple(sorted([yA,yB]))]
+            pairsG = set(pairsG)
+            
+            tmp = {}
+            for x,y in zip(cogsT,idxs):
+                if x in tmp:
+                    tmp[x] += [y]
+                else:
+                    tmp[x] = [y]
+            pairsT = []
+            for x in tmp:
+                for i,yA in enumerate(tmp[x]):
+                    for j,yB in enumerate(tmp[x]):
+                        if i < j:
+                            pairsT += [tuple(sorted([yA,yB]))]
+            pairsT = set(pairsT)
+            
+            # append stuff
+            if pairsT:
+                preP += [len(pairsT.intersection(pairsG)) / len(pairsT) ]
+            else:
+                preP += [1.0]
+            if pairsG:
+                recP += [len(pairsT.intersection(pairsG)) / len(pairsG) ]
+            else:
+                recP += [1.0]
+
+            if preP[-1] == 1.0:
+                fp = "no"
+            else:
+                fp = "yes"
+            if recP[-1] == 1.0:
+                fn = "no"
+            else:
+                fn = "yes"
+
+            f.write("Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
+                concept,
+                fp,
+                fn
+                ))
+
+            # get the words
+            words = [lex[i,'ipa'] for i in idxs]
+            langs = [lex[i,'taxa'] for i in idxs]
+
+            # get a word-formater
+            wform = '{0:'+str(max([len(w) for w in words]))+'}'
+
+            # write differences to file
+            for word,lang,cG,cT in sorted(
+                    zip(
+                        words,
+                        langs,
+                        cogsG,
+                        cogsT
+                        ),
+                    key=lambda x:(x[2],x[3])
+                    ):
+                f.write('{0}\t{1}\t{2:4}\t{3:4}\n'.format(
+                    lform.format(lang),
+                    wform.format(word),
+                    cG,
+                    cT
+                    ))
+            f.write('#\n')
+        else:
+            preT += [1.0]
+            recT += [1.0]
+            preB += [1.0]
+            recB += [1.0]
+            preP += [1.0]
+            recP += [1.0]
+
+    hp = sum(preT) / len(preT)
+    hr = sum(recT) / len(recT)
+    hf = 2 * ( hp * hr ) / ( hp + hr )
+    bp = sum(preB) / len(preB)
+    br = sum(recB) / len(recB)
+    bf = 2 * ( bp * br ) / ( bp + br )
+    pp = sum(preP) / len(preP)
+    pr = sum(recP) / len(recP)
+    pf = 2 * ( pp * pr ) / ( pp + pr )
+
+    if pprint:
+        print('**************************')
+        print('* Transformation-Scores  *')
+        print('* ---------------------- *')
+        print('* Tram-Precision: {0:.4f} *'.format(hp))
+        print('* Tram-Recall:    {0:.4f} *'.format(hr))
+        print('* Tram-F-Scores:  {0:.4f} *'.format(hf))
+        print('**************************')
+        print('')
+        print('**************************')
+        print('* B-Cubed-Scores         *')
+        print('* ---------------------- *')
+        print('* B-C.-Precision: {0:.4f} *'.format(bp))
+        print('* B-C.-Recall:    {0:.4f} *'.format(br))
+        print('* B-C.-F-Scores:  {0:.4f} *'.format(bf))
+        print('**************************')
+        print('')
+        print('**************************')
+        print('* Pair-Scores            *')
+        print('* ---------------------- *')
+        print('* Pair-Precision: {0:.4f} *'.format(pp))
+        print('* Pair-Recall:    {0:.4f} *'.format(pr))
+        print('* Pair-F-Scores:  {0:.4f} *'.format(pf))
+        print('**************************')
+    
+    f.write('B-Cubed Scores:\n')
+    f.write('Precision: {0:.4f}\n'.format(bp))
+    f.write('Recall:    {0:.4f}\n'.format(br))
+    f.write('F-Score:   {0:.4f}\n'.format(bf))
+    f.write('#\n')
+    f.write('Pair Scores:\n')
+    f.write('Precision: {0:.4f}\n'.format(pp))
+    f.write('Recall:    {0:.4f}\n'.format(pr))
+    f.write('F-Score:   {0:.4f}\n'.format(pf))
+    f.write('#\n')
+    f.write('Hamming Scores:\n')
+    f.write('Precision: {0:.4f}\n'.format(hp))
+    f.write('Recall:    {0:.4f}\n'.format(hr))
+    f.write('F-Score:   {0:.4f}\n'.format(hf))
+    f.write('#\n')
+    f.close()
+    FileWriteMessage(filename,'diff').message('written')
+    
