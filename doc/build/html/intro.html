@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Introduction &mdash; QLC-LingPy</title>
+    <title>Introduction &mdash; LingPy</title>
     
     <link rel="stylesheet" href="_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '1.0.dev',
+        VERSION:     '2.0.dev',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,11 +26,11 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/favicon.png"/>
-    <link rel="top" title="QLC-LingPy" href="index.html" /> 
+    <link rel="top" title="LingPy" href="index.html" /> 
   </head>
   <body>
 <div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
-QLC-LingPy
+LingPy
 </div>
 
     <div class="related">
@@ -39,20 +39,21 @@ QLC-LingPy
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="index.html">Home</a> |&nbsp;</li>
 	<li><a href="#">Introduction</a> |&nbsp;</li>
 	<li><a href="examples.html">Examples</a> |&nbsp;</li>
 	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="tutorial/index.html">Tutorial</a> |&nbsp;</li>
-        <li><a href="download.html">Download </a> |&nbsp;</li>
-        <li><a href="http://lingulist.de">Back2Main</a></li>
-
+        <li><a href="download.html">Download </a> </li>
 
  
       </ul>
     </div>
 
-<br/><p>This documentation is for version <b>1.0.dev</b>, which is
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
   not released yet.</p>
 
   
@@ -64,20 +65,20 @@ QLC-LingPy
             
   <div class="section" id="introduction">
 <h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="what-is-qlc-lingpy">
-<h2>What is QLC-LingPy?<a class="headerlink" href="#what-is-qlc-lingpy" title="Permalink to this headline">¶</a></h2>
-<p>QLC-LingPy is a suite of open-source Python modules for sequence comparison,
+<div class="section" id="what-is-lingpy">
+<h2>What is LingPy?<a class="headerlink" href="#what-is-lingpy" title="Permalink to this headline">¶</a></h2>
+<p>LingPy is a suite of open-source Python modules for sequence comparison,
 distance analyses, data operations and visualization methods in quantitative
 historical linguistics.</p>
-<p>The main idea of QLC-LingPy is to provide a software package which, on
+<p>The main idea of LingPy is to provide a software package which, on
 the one hand, integrates different methods for data analysis in quantitative
 historical linguistics within a single framework, and, on the other hand,
 serves as an interface for the preparation and analysis of linguistic data
 using biological software packages.</p>
 </div>
-<div class="section" id="what-can-be-done-with-qlc-lingpy">
-<h2>What can be Done with QLC-LingPy?<a class="headerlink" href="#what-can-be-done-with-qlc-lingpy" title="Permalink to this headline">¶</a></h2>
-<p>With the help of QLC-LingPy, one can:</p>
+<div class="section" id="what-can-be-done-with-lingpy">
+<h2>What can be Done with LingPy?<a class="headerlink" href="#what-can-be-done-with-lingpy" title="Permalink to this headline">¶</a></h2>
+<p>With the help of LingPy, one can:</p>
 <ul class="simple">
 <li>tokenize and analyze IPA-encoded sequences,</li>
 <li>carry out pairwise and multiple alignment analyses,</li>
@@ -88,16 +89,16 @@ using biological software packages.</p>
 used as input for external programs, or to visualize the results.</li>
 </ul>
 </div>
-<div class="section" id="how-can-qlc-lingpy-be-used">
-<h2>How can QLC-LingPy be used?<a class="headerlink" href="#how-can-qlc-lingpy-be-used" title="Permalink to this headline">¶</a></h2>
-<p>QLC-LingPy is a library for the Python programming language. It can thus be used
+<div class="section" id="how-can-lingpy-be-used">
+<h2>How can LingPy be used?<a class="headerlink" href="#how-can-lingpy-be-used" title="Permalink to this headline">¶</a></h2>
+<p>LingPy is a library for the Python programming language. It can thus be used
 directly from the Python shell or inside Python scripts.  The Python programming
 language has many benefits. Due to its clear programming style it allows the
 user to write programs very quickly while at the same time being very powerful
 and easy to maintain. See <a class="reference external" href="http://www.python.org">http://www.python.org</a> for details.</p>
 </div>
-<div class="section" id="what-is-the-basic-idea-behind-qlc-lingpy">
-<h2>What is the Basic Idea Behind QLC-LingPy?<a class="headerlink" href="#what-is-the-basic-idea-behind-qlc-lingpy" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="what-is-the-basic-idea-behind-lingpy">
+<h2>What is the Basic Idea Behind LingPy?<a class="headerlink" href="#what-is-the-basic-idea-behind-lingpy" title="Permalink to this headline">¶</a></h2>
 <p>In historical linguistics, one usually deals with the following two entities
 and their components:</p>
 <ul class="simple">
@@ -112,10 +113,10 @@ change, this is usually done by comparing the <em>formal</em> component of signs
 comparing semantic change, the main objective is the <em>functional</em> component of
 signs. And when reconstructing language phylogenies, this is done by comparing
 the <em>signs</em> of different languages.</p>
-<p>In QLC-LingPy, the different entities are represented within an object-oriented
+<p>In LingPy, the different entities are represented within an object-oriented
 frame work. The different aspects of linguistic signs and languages are modeled
 by specific classes. Thus, if one has to deal with the formal part of the
-linguistic sign, the <tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt> class in QLC-LingPy
+linguistic sign, the <tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt> class in LingPy
 makes it possible to deal with various automatic aspects of sound sequences,
 such as, e.g., their prosodic properties, or their sound classes. For the
 comparison of sign forms, one can chose between the
@@ -133,6 +134,7 @@ evolutionary distances between languages.</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docu/index.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 </ul>
 </div>
@@ -148,10 +150,10 @@ evolutionary distances between languages.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Introduction</a><ul>
-<li><a class="reference internal" href="#what-is-qlc-lingpy">What is QLC-LingPy?</a></li>
-<li><a class="reference internal" href="#what-can-be-done-with-qlc-lingpy">What can be Done with QLC-LingPy?</a></li>
-<li><a class="reference internal" href="#how-can-qlc-lingpy-be-used">How can QLC-LingPy be used?</a></li>
-<li><a class="reference internal" href="#what-is-the-basic-idea-behind-qlc-lingpy">What is the Basic Idea Behind QLC-LingPy?</a></li>
+<li><a class="reference internal" href="#what-is-lingpy">What is LingPy?</a></li>
+<li><a class="reference internal" href="#what-can-be-done-with-lingpy">What can be Done with LingPy?</a></li>
+<li><a class="reference internal" href="#how-can-lingpy-be-used">How can LingPy be used?</a></li>
+<li><a class="reference internal" href="#what-is-the-basic-idea-behind-lingpy">What is the Basic Idea Behind LingPy?</a></li>
 <li><a class="reference internal" href="#what-s-next">What&#8217;s Next?</a><ul>
 </ul>
 </li>
@@ -182,21 +184,22 @@ evolutionary distances between languages.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="index.html">Home</a> |&nbsp;</li>
 	<li><a href="#">Introduction</a> |&nbsp;</li>
 	<li><a href="examples.html">Examples</a> |&nbsp;</li>
 	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="tutorial/index.html">Tutorial</a> |&nbsp;</li>
-        <li><a href="download.html">Download </a> |&nbsp;</li>
-        <li><a href="http://lingulist.de">Back2Main</a></li>
-
+        <li><a href="download.html">Download </a> </li>
 
  
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Feb 04, 2013.
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Mar 08, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Word Lists (Wordlist) &mdash; QLC-LingPy</title>
+    <title>Wordlists (Wordlist) &mdash; LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '1.0.dev',
+        VERSION:     '2.0.dev',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -26,11 +26,11 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/favicon.png"/>
-    <link rel="top" title="QLC-LingPy" href="../../index.html" /> 
+    <link rel="top" title="LingPy" href="../../index.html" /> 
   </head>
   <body>
 <div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
-QLC-LingPy
+LingPy
 </div>
 
     <div class="related">
@@ -39,20 +39,21 @@ QLC-LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
 	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
-        <li><a href="../../download.html">Download </a> |&nbsp;</li>
-        <li><a href="http://lingulist.de">Back2Main</a></li>
-
+        <li><a href="../../download.html">Download </a> </li>
 
  
       </ul>
     </div>
 
-<br/><p>This documentation is for version <b>1.0.dev</b>, which is
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
   not released yet.</p>
 
   
@@ -62,19 +63,21 @@ QLC-LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="word-lists-wordlist">
-<h1>Word Lists (<a class="reference internal" href="../lingpy.basic.wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a>)<a class="headerlink" href="#word-lists-wordlist" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="wordlists-wordlist">
+<h1>Wordlists (<a class="reference internal" href="#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a>)<a class="headerlink" href="#wordlists-wordlist" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="lingpy.basic.wordlist.Wordlist">
-<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">Wordlist</tt><big>(</big><em>input_data</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">Wordlist</tt><big>(</big><em>filename</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Basic class for the handling of multilingual word lists.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>input_data</strong> : {dict, string}</p>
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>filename</strong> : { string dict }</p>
 <blockquote>
-<div><p>A dictionary with consecutive integers as keys and lists as values.</p>
+<div><p>The input file that contains the data. Otherwise a dictionary with
+consecutive integers as keys and lists as values with the key 0
+specifying the header.</p>
 </div></blockquote>
 <p><strong>row</strong> : str (default = &#8220;concept&#8221;)</p>
 <blockquote>
@@ -114,26 +117,26 @@ can be easily accessed as two separate two-dimensional lists.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.add_entries.html#lingpy.basic.wordlist.Wordlist.add_entries" title="lingpy.basic.wordlist.Wordlist.add_entries"><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.add_entries.html#lingpy.basic.wordlist.Wordlist.add_entries" title="lingpy.basic.wordlist.Wordlist.add_entries"><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></a>(entry,&nbsp;source,&nbsp;function,&nbsp;**keywords)</td>
+<td>Add new entry-types to the word list by modifying given ones.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></a>([col,&nbsp;row,&nbsp;entry])</td>
+<td>Function returns dictionaries of the cells matched by the indices.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_entries.html#lingpy.basic.wordlist.Wordlist.get_entries" title="lingpy.basic.wordlist.Wordlist.get_entries"><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_entries.html#lingpy.basic.wordlist.Wordlist.get_entries" title="lingpy.basic.wordlist.Wordlist.get_entries"><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></a>(entry)</td>
+<td>Return all entries matching the given entry-type as a two-dimensional list.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_etymdict.html#lingpy.basic.wordlist.Wordlist.get_etymdict" title="lingpy.basic.wordlist.Wordlist.get_etymdict"><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_etymdict.html#lingpy.basic.wordlist.Wordlist.get_etymdict" title="lingpy.basic.wordlist.Wordlist.get_etymdict"><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></a>([ref,&nbsp;entry])</td>
+<td>Return an etymological dictionary representation of the word list.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></a>([row,&nbsp;col,&nbsp;entry,&nbsp;flat])</td>
+<td>Function returns lists of rows and columns specified by their name.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_paps.html#lingpy.basic.wordlist.Wordlist.get_paps" title="lingpy.basic.wordlist.Wordlist.get_paps"><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_paps.html#lingpy.basic.wordlist.Wordlist.get_paps" title="lingpy.basic.wordlist.Wordlist.get_paps"><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></a>([ref,&nbsp;entry,&nbsp;missing])</td>
+<td>Function returns a list of present-absent-patterns of a given word list.</td>
 </tr>
-<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../basic/generated/lingpy.basic.wordlist.Wordlist.output.html#lingpy.basic.wordlist.Wordlist.output" title="lingpy.basic.wordlist.Wordlist.output"><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></a>(fileformat,&nbsp;**keywords)</td>
+<td>Write wordlist to file.</td>
 </tr>
 </tbody>
 </table>
@@ -170,21 +173,22 @@ can be easily accessed as two separate two-dimensional lists.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
 	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
-        <li><a href="../../download.html">Download </a> |&nbsp;</li>
-        <li><a href="http://lingulist.de">Back2Main</a></li>
-
+        <li><a href="../../download.html">Download </a> </li>
 
  
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2012, QLC Research Group, Philipps-University Marburg.
-      Last updated on Feb 04, 2013.
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Mar 08, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
