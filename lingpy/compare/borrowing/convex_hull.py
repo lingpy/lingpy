@@ -9,7 +9,12 @@ This code has been taken from: http://www.scipy.org/Cookbook/Finding_Convex_Hull
 Author: Angus McMorland
 Date: 2007-08-16
 """
-import numpy as n, pylab as p, time
+import numpy as n
+try:
+    import pylab as p
+except:
+    print("[i] Import of matplotlib failed. Some functions may not work.")
+import time
 
 def _angle_to_point(point, centre):
     '''calculate angle in 2-D between points and x axis'''

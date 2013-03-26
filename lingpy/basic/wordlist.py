@@ -10,11 +10,12 @@ __author__="Johann-Mattis List"
 __date__="2013-03-14"
 
 import os
-import builtins
+import builtins # XXX ??? maybe not needed
 from datetime import date,datetime
 import numpy as np
 import pickle
 
+# basic lingpy imports
 from ..read.csv import qlc2dict
 from ..convert import *
 from ..check.messages import FileWriteMessage
@@ -971,6 +972,216 @@ class Wordlist(object):
         self._cache['#paps#'+str(missing)+'#',ref] = paps
         
         return paps
+
+    def _output(
+            self,
+            fileformat,
+            **keywords
+            ):
+        """
+        Internal function that eases its modification by daughter classes.
+        """
+
+        # check for stamp attribute
+        if hasattr(self,"_stamp"):
+            keywords["stamp"] = self._stamp
+
+        # add the default parameters, they will be checked against the keywords
+        defaults = {
+                'ref'       : 'cogid',
+                'entry'     : 'concept',
+                'missing'   : 0,
+                'filename'  : 'lingpy-{0}'.format(str(date.today())),
+                'formatter' : 'concept',
+                'tree_calc' : 'neighbor',
+                'distances' : False,
+                'ref'       : 'cogid',
+                'threshold' : 0.6, # threshold for flat clustering
+                'subset'    : False, # setup a subset of the data,
+                'cols'      : False,
+                'rows'      : False
+                }
+            
+        # compare with keywords and add missing ones
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
+
+        if fileformat in ['paps.nex','paps.csv']:
+            paps = self.get_paps(
+                    ref=keywords['ref'],
+                    entry=keywords['entry'],
+                    missing=keywords['missing']
+                    )
+            if fileformat == 'paps.nex':
+                pap2nex(
+                        self.cols,
+                        paps,
+                        missing=keywords['missing'],
+                        filename=keywords['filename']+'.paps'
+                        )
+            elif fileformat == 'paps.csv':
+                pap2csv(
+                        self.cols,
+                        paps,
+                        filename=keywords['filename']+'.paps'
+                        )
+
+        if fileformat == 'taxa':
+            out = ''
+            for col in self.cols:
+                out += col + '\n'
+            f = open(keywords['filename'] + '.taxa','w')
+            f.write(out)
+            f.close()
+
+        if fileformat == 'csv':
+            
+            # get the header line
+            header = sorted(
+                    [s for s in set(self._alias.values()) if s in self._header],
+                    key = lambda x: self._header[x]
+                    )
+            header = [h.upper() for h in header]
+
+            # get the data, in case a subset is chosen
+            if not keywords['subset']:
+                # write stuff to file
+                wl2csv(
+                        header,
+                        self._data,
+                        **keywords
+                        )
+            else:
+                cols,rows = keywords['cols'],keywords['rows']
+
+                if type(cols) not in [list,tuple,bool]:
+                    raise ValueError(
+                            "[i] Argument 'cols' should be list or tuple."
+                            )
+                if type(rows) not in [dict,bool]:
+                    raise ValueError(
+                            "[i] Argument 'rows' shoudl be a dictionary."
+                            )
+
+                # check for chosen header
+                if cols:
+                    # get indices for header
+                    indices = [self._header[x] for x in cols]
+                    header = [c.upper() for c in cols]
+                else:
+                    indices = [r for r in range(len(w.header))]
+
+                if rows:
+                    stmts = []
+                    for key,value in rows.items():
+                        idx = self._header[key]
+                        stmts += ["line[{0}] ".format(idx)+value]
+
+                # get the data
+                out = {}
+
+                for key,line in self._data.items():
+                    if rows:
+                        if eval(" and ".join(stmts)):
+                            out[key] = [line[i] for i in indices]
+                    else:
+                        out[key] = [line[i] for i in indices]
+
+                wl2csv(
+                        header,
+                        out,
+                        **keywords
+                        )
+
+        if fileformat in ['dst','tre','nwk','cluster','groups']:
+            
+            # XXX bad line, just for convenience at the moment
+            filename = keywords['filename']
+
+            # get distance matrix
+            distances = []
+
+            for i,taxA in enumerate(self.cols):
+                for j,taxB in enumerate(self.cols):
+                    if i < j:
+                        
+                        # get the two dictionaries
+                        dictA = self.get_dict(col=taxA,entry=keywords['ref'])
+                        dictB = self.get_dict(col=taxB,entry=keywords['ref'])
+
+                        # count amount of shared concepts
+                        shared = 0
+                        missing = 0
+                        for concept in self.rows:
+                            try:
+                                if [k for k in dictA[concept] if k in dictB[concept]]:
+                                    shared += 1
+                                else:
+                                    pass
+                            except KeyError:
+                                missing += 1
+
+                        # append to distances
+                        distances += [ 1 - shared / (self.height-missing)]
+            distances = misc.squareform(distances)
+
+            if fileformat == 'dst':
+                f = open(filename+'.'+fileformat,'w')
+                f.write(' {0}\n'.format(self.width))
+                for i,taxon in enumerate(self.cols):
+                    f.write('{0:10}'.format(taxon)[0:11])
+                    f.write(' '.join(['{0:2f}'.format(d) for d in
+                        distances[i]]))
+                    f.write('\n')
+                f.close()
+                FileWriteMessage(filename,fileformat).message('written')
+
+            elif fileformat in ['tre','nwk']:
+                
+                if keywords['tree_calc'] == 'neighbor':
+                    tree = cluster.neighbor(
+                            distances,
+                            self.cols,
+                            distances=keywords['distances']
+                            )
+                elif keywords['tree_calc'] == 'upgma':
+                    tree = cluster.ugpma(
+                            distances,
+                            self.cols,
+                            distances=keywords['distances']
+                            )
+
+                f = open(filename+'.'+fileformat,'w')
+                f.write(tree)
+                f.close()
+
+                FileWriteMessage(filename,fileformat).message('written')
+
+            elif fileformat in ['cluster','groups']:
+
+                flats = cluster.flat_upgma(
+                        keywords['threshold'],
+                        distances,
+                        revert=True
+                        )
+                
+                groups = [flats[i] for i in range(self.width)]
+                
+                # renumber the groups
+                groupset = sorted(set(groups))
+                renum = dict([(i,j+1) for i,j in zip(
+                    groupset,
+                    range(len(groupset))
+                    )])
+                groups = [renum[i] for i in groups]
+
+                f = open(filename+'.'+fileformat,'w')
+                for group,taxon in sorted(zip(groups,self.cols),key=lambda x:x[0]):
+                    f.write('{0}\t{1}\n'.format(taxon,group))
+                f.close()
+
+                FileWriteMessage(filename,fileformat).message('written')
 
     def output(
             self,

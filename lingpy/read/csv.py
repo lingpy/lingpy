@@ -142,13 +142,16 @@ def qlc2dict(infile):
 
     # iterate over data and fill the dictionary (a bit inefficient, but enough
     # for the moment)
-    i = 1
-    for line in data[1:]:
-        if local_id:
-            d[int(line[0])] = line[1:]
-        else:
-            d[i] = line
-            i += 1
+    try:
+        i = 1
+        for line in data[1:]:
+            if local_id:
+                d[int(line[0])] = line[1:]
+            else:
+                d[i] = line
+                i += 1
+    except:
+        print("[!] Something is wrong with your input file. If it contains an ID column, make sure it consists only of integers.")
 
     # assign the header to d[0]
     if local_id:

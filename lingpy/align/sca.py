@@ -129,8 +129,10 @@ from datetime import datetime
 
 from ..data import *
 from ..basic import Wordlist
+from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+
 
 
 class _Multiple(Multiple):
@@ -445,7 +447,7 @@ class _Multiple(Multiple):
 
     def ipa2cls(
             self,
-            model = 'sca'
+            model = None
             ):
         """
         Retrieve sound-class strings from aligned IPA sequences.
@@ -464,7 +466,10 @@ class _Multiple(Multiple):
 
         self.classes = []
         
-        self.model = eval(model)
+        if not model:
+            self.model = sca
+        else:
+            self.model = model
 
         # redefine the sequences of the Multiple class
         class_strings = [tokens2class(seq.split('.'),self.model)
@@ -476,7 +481,7 @@ class _Multiple(Multiple):
             self.classes.append(
                     list(
                         ''.join(
-                            cls2ipa(
+                            class2tokens(
                                 class_strings[i],
                                 aligned_seqs[i]
                                 )

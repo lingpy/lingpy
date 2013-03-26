@@ -46,7 +46,7 @@ from ...convert.gml import *
 from ...basic import Wordlist
 from ...read.csv import csv2dict,csv2list
 
-class TreBor(object):
+class TreBor(Wordlist):
     """
     Basic class for calculations using the TreBor method.
     """
@@ -82,35 +82,36 @@ class TreBor(object):
         self._pap_string = paps
 
         # open csv-file of the data and store it as a word list attribute
-        self.Wordlist = Wordlist(dataset+'.csv')
-        self.wl = self.Wordlist
+        Wordlist.__init__(self,dataset+'.csv',row='concept',col='doculect')
+        #self.Wordlist = Wordlist(dataset+'.csv')
+        self = self
 
         if verbose: print("[i] Loaded the wordlist file.")
 
         # check for glossid
-        if 'glid' not in self.wl.entries:
+        if 'glid' not in self.entries:
             self._gl2id = dict(
                     zip(
-                        self.wl.rows,
-                        [i+1 for i in range(len(self.wl.rows))]
+                        self.rows,
+                        [i+1 for i in range(len(self.rows))]
                         )
                     )
             self._id2gl = dict([(b,a) for a,b in self._gl2id.items()])
 
             f = lambda x: self._gl2id[x]
 
-            self.wl.add_entries(
+            self.add_entries(
                     'glid',
                     'concept',
                     f
                     )
 
         # check for paps as attribute in the wordlist
-        if paps not in self.wl.entries:
+        if paps not in self.entries:
             
             # define the function for conversion
             f = lambda x,y: "{0}:{1}".format(x[y[0]],x[y[1]])
-            self.wl.add_entries(
+            self.add_entries(
                     paps,
                     'cogid,glid',
                     f
@@ -119,17 +120,17 @@ class TreBor(object):
             if verbose: print("[i] Created entry PAP.")
         
         # get the paps and the etymological dictionary
-        self.paps = self.wl.get_paps(ref=paps,missing=-1)
-        self.etd = self.wl.get_etymdict(ref=paps)
+        self.paps = self.get_paps(ref=paps,missing=-1)
+        self.etd = self.get_etymdict(ref=paps)
 
         if verbose: print("[i] Created the PAP matrix.")
 
         # get a list of concepts corresponding to the cogs and get the
         # singletons to be excluded from the calculation
-        tmp = self.wl.get_etymdict(ref=paps,entry='concept')
+        tmp = self.get_etymdict(ref=paps,entry='concept')
         
         # a dictionary with pap-key as key and concept as value
-        self.concepts = {}
+        self.pap2con = {}
 
         # list stores the singletons
         self.singletons = []
@@ -139,14 +140,14 @@ class TreBor(object):
             # get the names of the concepts
             concept_list = [k for k in tmp[key] if k != 0]
             concept = concept_list[0][0]
-            self.concepts[key] = concept
+            self.pap2con[key] = concept
 
             # check for singletons
             if sum([1 for p in self.paps[key] if p >= 1]) == 1:
                 self.singletons.append(key)
         
         # create a list of keys for faster access when iterating
-        self.cogs = [k for k in self.concepts if k not in self.singletons]
+        self.cogs = [k for k in self.pap2con if k not in self.singletons]
 
         if verbose: print("[i] Excluded singletons.")
 
@@ -169,7 +170,7 @@ class TreBor(object):
         if verbose: print("[i] Loaded the tree.")
 
         # get the taxa
-        self.taxa = self.wl.cols
+        #self.taxa = self.cols
 
         if verbose: print("[i] Assigned the taxa.")
 
@@ -888,14 +889,14 @@ class TreBor(object):
         """
         # define taxa and concept as attribute for convenience
         taxa = self.taxa
-        concepts = self.wl.concept #XXX do we need this? XXX
+        concepts = self.concept #XXX do we need this? XXX
 
         # calculate vocabulary size
         forms = []
         meanings = []
         for taxon in taxa:
             f = [x for x in set(
-                self.wl.get_list(col=taxon,entry=self._pap_string,flat=True)
+                self.get_list(col=taxon,entry=self._pap_string,flat=True)
                 ) if x in self.cogs
                 ]
             m = set([x.split(':')[1] for x in f])
@@ -912,13 +913,14 @@ class TreBor(object):
     def get_AVSD(
             self,
             glm,
-            verbose = False
+            verbose = False,
+            write = False
             ):
         """
         Function retrieves all paps for ancestor languages in a given tree.
         """
         # define concepts for convenience
-        concepts = self.wl.concept # XXX do we need this? XXX
+        concepts = self.concepts # XXX do we need this? XXX
         
         # get all internal nodes, i.e. the nontips and also the root
         nodes = ['root'] + sorted(
@@ -993,6 +995,36 @@ class TreBor(object):
         # store the number of forms as an attribute
         self.dists[glm] = [x for x,y in zip(forms,meanings)] # XXX
 
+        # write results of analysis to file 
+        # XXX adjust later
+        if 'write':
+            cogs = [k[self.header['pap']] for k in self._data.values()]
+            protos = [k[self.header['proto']] for k in
+                    self._data.values()]
+
+            cogs2proto = dict(zip(cogs,protos))
+            f = open('ancestral_paps.txt','w')
+            for i,n in enumerate(nodes):
+                for j,p in enumerate(paps):
+                    #print(paps[i])
+                    c = paps[j][i]
+                    if c != 0:
+                        m = self.pap2con[c]
+                        p = cogs2proto[c]
+                        
+                        if n != "root":
+                            node = self.tree.getNodeMatchingName(n)
+                            node = str(node).replace('(','').replace(')','').replace(',','-')
+                        else:
+                            node = n
+                        f.write('{0}\t{1}\t{2}\t{3}\n'.format(
+                            node,
+                            c,
+                            m,
+                            p
+                            ))
+            f.close()
+
 
         if verbose: print("[i] Calculated the distributions for ancestral taxa.")
 
@@ -1011,7 +1043,7 @@ class TreBor(object):
         """
 
         # define concepts and taxa for convenience
-        concepts = self.wl.concept
+        concepts = self.concepts
         taxa = self.taxa
 
         # get all internal nodes, i.e. the nontips and also the root
@@ -1032,7 +1064,7 @@ class TreBor(object):
         for concept in concepts:
 
             # get paps
-            tmp = self.wl.get_dict(row=concept,entry=self._pap_string)
+            tmp = self.get_dict(row=concept,entry=self._pap_string)
 
             # add to list if value is missing
             for taxon in taxa:
@@ -1044,7 +1076,7 @@ class TreBor(object):
 
             # calculate ancestral dists, get all paps first
             pap_set = [i for i in set(
-                    self.wl.get_list(
+                    self.get_list(
                         row=concept,
                         entry=self._pap_string,
                         flat=True
@@ -1320,11 +1352,14 @@ class TreBor(object):
             glm,
             threshold = 1,
             verbose = False,
-            colormap = mpl.cm.jet
+            colormap = None #mpl.cm.jet
             ):
         """
         Compute an evolutionary network for a given model.
         """
+
+        if not colormap:
+            colormap = mpl.cm.jet
         
         # create the primary graph
         gPrm = nx.Graph()
@@ -1653,14 +1688,14 @@ class TreBor(object):
                 for cog in gOut[taxon][key]['cogs'].split(','):
                     tmp = [x for x in self.etd[cog] if x != 0]
                     idx = [x[0] for x in tmp][0]
-                    concept = self.wl[idx,'concept']
+                    concept = self[idx,'concept']
 
-                    if 'proto' in self.wl.entries:
-                        proto = cog + '\t'+self.wl[idx,'proto']
+                    if 'proto' in self.entries:
+                        proto = cog + '\t'+self[idx,'proto']
                     else:
                         proto = cog
-                    if 'note' in self.wl.entries:
-                        proto += '\t'+self.wl[idx,'note']
+                    if 'note' in self.entries:
+                        proto += '\t'+self[idx,'note']
 
                     f.write('{0}\t{1}\t{2}\n'.format(
                         key,
@@ -1727,18 +1762,18 @@ class TreBor(object):
         if verbose: print("[i] Retrieved patchy distributions.")
 
         # get the index for the paps in the wordlist
-        papIdx = self.wl.header['pap']
-        taxIdx = self.wl._colIdx
+        papIdx = self.header['pap']
+        taxIdx = self._colIdx
 
         # create a dictionary as updater for the wordlist
         updater = {}
-        for key in self.wl:
+        for key in self:
 
             # get the taxon first
-            taxon = self.wl[key][taxIdx]
+            taxon = self[key][taxIdx]
 
             # get the pap
-            pap = self.wl[key][papIdx]
+            pap = self[key][papIdx]
             
             try:
                 updater[key] = '{0}:{1}'.format(pap,patchy[pap][taxon])
@@ -1746,20 +1781,20 @@ class TreBor(object):
                 updater[key] = '{0}:{1}'.format(pap,0)
 
         # update the wordlist
-        self.wl.add_entries(
+        self.add_entries(
                 'patchy',
                 updater,
                 lambda x:x
                 )
 
         # write data to file
-        self.wl.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
+        self.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
 
         if verbose: print("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
         f = open(self.dataset + '_trebor/paps-'+glm+'.stats','w')
-        if 'proto' in self.wl.entries:
+        if 'proto' in self.entries:
             f.write('COGID\tGLID\tCONCEPT\tORIGINS\tPROTO\tREFLEXES\n')
         else:
             f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\n')
@@ -1778,8 +1813,8 @@ class TreBor(object):
             l = [k for k in self.etd[a] if k != 0]
 
             # check for proto
-            if 'proto' in self.wl.entries:
-                proto = self.wl[[k[0] for k in l][0],'proto']
+            if 'proto' in self.entries:
+                proto = self[[k[0] for k in l][0],'proto']
                 f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(a1,a2,a3,b,proto,len(l)))
             else:
                 f.write('{0}\t{1}\t{2}\t{3}\n'.format(a1,a2,a3,b,len(l)))
@@ -1826,12 +1861,12 @@ class TreBor(object):
         
         # set defaults
         defaults = {
-                "colorbar" : mpl.cm.jet,
+                "colorbar" : None, #mpl.cm.jet,
                 'threshold':1,
                 'fileformat':'pdf',
                 'usetex':True,
                 'only':[],
-                'colormap':mpl.cm.jet
+                'colormap': None, #mpl.cm.jet
                 }
 
         for key in defaults:
@@ -2094,12 +2129,16 @@ class TreBor(object):
             threshold = 1,
             fileformat = 'pdf',
             usetex = True,
-            colormap = mpl.cm.jet,
+            colormap = None, #mpl.cm.jet,
             taxon_labels = 'taxon.short_labels'
             ):
         """
         Plot the MLN with help of Matplotlib.
         """
+        # if not colormap
+        if not colormap:
+            colormap = mpl.cm.jet
+
         # try to load the configuration file
         try:
             conf = json.load(open(self.dataset+'.json'))
@@ -2285,7 +2324,7 @@ class TreBor(object):
             only = [],
             usetex = True,
             external_edges = False,
-            colormap = mpl.cm.jet
+            colormap = None, #mpl.cm.jet
             ):
         """
         Plot the Minimal Spatial Network.
@@ -2312,6 +2351,9 @@ class TreBor(object):
         if not only:
             only = self.taxa
 
+        if not colormap:
+            colormap = mpl.cm.jet
+
         # usetex
         mpl.rc('text',usetex=True)
     
@@ -2323,7 +2365,7 @@ class TreBor(object):
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
-        if 'coords' in self.wl.entries:
+        if 'coords' in self.entries:
             pass
         
         else:
@@ -2334,12 +2376,12 @@ class TreBor(object):
                     )
 
         # check for groups, add functionality for groups in qlc-file later XXX
-        if 'group' in self.wl.entries:
+        if 'group' in self.entries:
             pass
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
         ## check for color, add functionality for colors later XXX
-        #if 'colors' in self.wl.entries:
+        #if 'colors' in self.entries:
         #    pass
         #else:
         #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
@@ -2721,7 +2763,7 @@ class TreBor(object):
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
-        if 'coords' in self.wl.entries:
+        if 'coords' in self.entries:
             pass
         
         else:
@@ -2732,12 +2774,12 @@ class TreBor(object):
                     )
 
         # check for groups, add functionality for groups in qlc-file later XXX
-        if 'group' in self.wl.entries:
+        if 'group' in self.entries:
             pass
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
         # check for color, add functionality for colors later XXX
-        #if 'colors' in self.wl.entries:
+        #if 'colors' in self.entries:
         #    pass
         #else:
         #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
@@ -2758,7 +2800,7 @@ class TreBor(object):
 
             # get the dictionary and the entry
             try:
-                cogs = self.wl.get_dict(col=taxon,entry='pap')[concept]
+                cogs = self.get_dict(col=taxon,entry='pap')[concept]
             except:
                 cogs = []
             
