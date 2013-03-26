@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-03-11 18:37
+# modified : 2013-03-14 10:35
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-11"
+__date__="2013-03-14"
 
 # lingpy imports
 from ..data import *
@@ -582,12 +582,27 @@ class Multiple(object):
         
         # get the consensus string for the sonority profiles
         try:
-            consA = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarA]
-            consB = [int(sum([k for k in col if k != 0]) / len([k for k in col if k != 0]) + 0.5) for col in sonarB]
+            consA = [int(sum([k for k in col if k != 0]) / len([k for k in col
+                if k >= 0]) + 0.5) for col in sonarA]
+            consB = [int(sum([k for k in col if k != 0]) / len([k for k in col
+                if k >= 0]) + 0.5) for col in sonarB]
 
         except:
-            print(sonarA)
-            print(sonarB)
+            try:
+                consA = [int(sum([k for k in col if k >= 0]) / len([k for k in col
+                    if k >= 0]) + 0.5) for col in sonarA]
+                consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
+                    if k >= 0]) + 0.5) for col in sonarB]
+                print("[!] Warning, there are empty segments in the consensus.")
+            except:
+                print("[!] Warning, sonority profiles could not be calculated")
+                print(sonarA)
+                print(sonarB)
+                print(almsA[0])
+                print([self._get(n,'tokens') for n in almsA[0]])
+                print(almsB[0])
+                print([self._get(n,'tokens') for n in almsB[0]])
+
         
         # get the prosodic strings
         prosA = prosodic_string(consA)

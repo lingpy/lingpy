@@ -85,9 +85,9 @@ def ipa2tokens(
     if ' ' in istring:
         out = istring.split(' ')
         if istring.startswith('#'):
-            return tuple(out[1:-1])
+            return out[1:-1]
         else:
-            return tuple(out)
+            return out
 
     # check for parameters
     if not vowels:

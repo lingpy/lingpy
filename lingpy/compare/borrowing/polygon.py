@@ -1,7 +1,10 @@
 # imports
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mplPatches
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.patches as mplPatches
+except:
+    print("[i] Import of Matplotlib failed. Scripts might not work.")
 import networkx as nx
 
 from .convex_hull import *

@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-28 11:47
-# modified : 2013-01-28 11:47
+# modified : 2013-03-14 10:47
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -21,7 +21,7 @@ given alignment analysis.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-01-28"
+__date__="2013-03-14"
 
 import os
 import colorsys
@@ -35,7 +35,7 @@ except ImportError:
  
 from ..data import *
 from ..data import _color
-from ..align.sca import SCAMultiple
+from ..align.sca import SCA
 from ..check.messages import *
 
 
@@ -618,7 +618,7 @@ def msa2html(
             path += '/'
 
     # load msa
-    msa = Multiple(infile)
+    msa = SCA(infile)
 
     # load templates
     if not template:
@@ -668,11 +668,11 @@ def msa2html(
                     c = _color[char[0]]
                 except:
                     print(char)
-                    raw_input()            
+                    #input()            
             if j in swaps:
-                tmp += td_swap.format(char.encode('utf-8'),c)
+                tmp += td_swap.format(char,c)
             else:
-                tmp += td_residue.format(char.encode('utf-8'),c)
+                tmp += td_residue.format(char,c)
         out += tr.format(tmp)
     html = html.format(
             table = out,
@@ -694,12 +694,6 @@ def msa2html(
         outfile = filename + '.html'
 
     # check, whether the outfile already exists
-    try:
-        open(outfile).close()
-        outfile = outfile.replace('.html','_out.html')
-    except:
-        pass
-
     out = open(outfile,'w')
     out.write(html)
     out.close()

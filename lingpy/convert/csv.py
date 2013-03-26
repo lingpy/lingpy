@@ -91,8 +91,9 @@ def wl2csv(
 
     f = open(filename + '.csv','w')
     f.write(out)
+    if "stamp" in keywords:
+        f.write(keywords['stamp'])
     f.close()
-    
     FileWriteMessage(filename,'csv').message('written')
 
     return 
