@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
-
 """
-Orthography Profile class for parsing strings into Quantitative Language Comparison format
-
-@date: 2010-12-01
-@author: Steven Moran
+This module provides graphemic and orthographic parsing with orthography profiles into QLC format.
 """
+
+__author__ = "Steven Moran"
+__date__ = "2010-12-01"
 
 import sys
 import unicodedata
@@ -16,9 +14,11 @@ class DuplicateExceptation(Exception): pass
 
 class GraphemeParser(object):
     """
-    Simple class to parse Unicode graphemes in a string.
+    Class for graphemic parsing of Unicode strings.
 
-    todo: introduce parser for dealing with Letter Modifiers
+    Notes
+    -----
+    TODO: Introduce parser for dealing with Letter Modifiers, etc.
 
     """
     def __init__(self):
@@ -50,15 +50,24 @@ class GraphemeParser(object):
             temp = ""
         return "# "+" ".join(result[::-1])+" #"
 
-
-
     def parse_graphemes(self, string):
         """
-        Given a string, return a space-delimited string of Unicode graphemes
-        using the "\X" regular expression.
+        Given a string as input, return a space-delimited string of Unicode graphemes using the "\X" regular expression.
 
+        Parameters
+        ----------
+        string : string
+            A Unicode string to be parsed into graphemes.
+
+        Notes
+        -----
         Input is first normalized according to Normalization Ford D(ecomposition).
-        String returned contains "#" to mark word boundaries.
+
+        Return
+        ------
+        result : string
+            String returned is space-delimited on Unicode graphemes and contains "#" to mark word boundaries.
+            The string is in NFD.
         """
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
@@ -73,9 +82,24 @@ class GraphemeParser(object):
         """
         Given a string as input, return a space-delimited string of Unicode characters.
 
+        Parameters
+        ----------
+        string : string
+            A Unicode string to be parsed into graphemes.
+
+        Notes
+        -----
         Input is first normalized according to Normalization Ford D(ecomposition).
         String returned contains "#" to mark word boundaries.
+
+        Return
+        ------
+        result : string
+            String returned is space-delimited on Unicode characters and contains "#" to mark word boundaries.
+            The string is in NFD.
         """
+
+
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
         result = "#"
@@ -100,6 +124,11 @@ class GraphemeParser(object):
         return (success, tuple(graphemes.split(" ")))
 
 class OrthographyRulesParser(object):
+    """
+    Class for orthography rules parsing of Unicode strings.
+
+    """
+
     def __init__(self, orthography_profile_rules):
         try:
             open(orthography_profile_rules)
@@ -142,6 +171,16 @@ class OrthographyRulesParser(object):
 
 class OrthographyParser(object):
     """
+    Class for orthographic parsing using orthography profiles.
+
+    Parameters
+    ----------
+    orthography_profile : file
+        A document-specific orthography profile.
+
+    Notes
+    ----
+
     The orthography profile class for reading in a dictionary's 
     orthography profile and parsing and formating strings into the 
     agreed upon format:
@@ -156,18 +195,6 @@ class OrthographyParser(object):
     """
 
     def __init__(self, orthography_profile):
-        """
-        Constructor of OrthographyParser class.
-
-        Args:
-        - orthography_profile (obligatory): the path to the orthography profile file
-        in the file system.
-
-        Returns:
-        - nothing
-
-        """
-
         try:
             open(orthography_profile)
         except IOError as e:
