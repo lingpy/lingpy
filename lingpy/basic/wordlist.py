@@ -16,7 +16,7 @@ import numpy as np
 import pickle
 
 # basic lingpy imports
-from ..read.csv import qlc2dict
+from ..read.csv import read_qlc
 from ..convert import *
 from ..check.messages import FileWriteMessage
 try:
@@ -117,7 +117,7 @@ class Wordlist(object):
 
         # try to load the data
         try:
-            input_data = qlc2dict(filename)
+            input_data = read_qlc(filename)
             self.filename = filename.replace('.csv','')
         except:
             if not input_data:
@@ -189,12 +189,12 @@ class Wordlist(object):
 
         basic_rows = sorted(
                 set(
-                    [input_data[k][rowIdx] for k in input_data if k > 0]
+                    [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
                     )
                 )
         basic_cols = sorted(
                 set(
-                    [input_data[k][colIdx] for k in input_data if k > 0]
+                    [input_data[k][colIdx] for k in input_data if k != 0 and type(k) == int]
                     )
                 )
         
@@ -219,7 +219,7 @@ class Wordlist(object):
         # first, find out, how many items (== synonyms) are there maximally for
         # each row
         tmp_dict = {}
-        for key,value in [(k,v) for k,v in input_data.items() if k > 0]:
+        for key,value in [(k,v) for k,v in input_data.items() if k != 0 and type(k) == int]:
             try:
                 tmp_dict[value[rowIdx]][value[colIdx]] += [key]
             except KeyError:
@@ -285,7 +285,7 @@ class Wordlist(object):
                 pass
         
         # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in input_data.items() if k != 0])
+        self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
 
         # iterate over self._data and change the values according to the
         # functions
@@ -302,7 +302,12 @@ class Wordlist(object):
 
         # create entry attribute of the wordlist
         self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
-                        
+                       
+        # assign meta-data
+        self._meta = {}
+        for key in [k for k in input_data if type(k) != int]:
+            self._meta[key] = input_data[key]
+
     def __getitem__(self,idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -310,21 +315,24 @@ class Wordlist(object):
         try:
             return self._cache[idx]
         except:
-            pass
-
-        try:
-            # return full data entry as list
-            out = self._data[idx]
-            self._cache[idx] = out
-            return out
-        except:
             try:
-                # return data entry with specified key word
-                out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
+                # return full data entry as list
+                out = self._data[idx]
                 self._cache[idx] = out
                 return out
             except:
-                pass
+                try:
+                    # return data entry with specified key word
+                    out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
+                    self._cache[idx] = out
+                    return out
+                except:
+                    try:
+                        out = self._meta[idx]
+                        self._cache[idx] = out
+                        return out
+                    except:
+                        pass
 
     def __len__(self):
         """
@@ -341,20 +349,23 @@ class Wordlist(object):
         """
         try:
             # get the right name
-            attr = self._alias[attr]
+            nattr = self._alias[attr]
 
-            if attr == self._row_name:
+            if nattr == self._row_name:
                 return self.rows
-            elif attr == self._col_name:
+            elif nattr == self._col_name:
                 return self.cols
-            elif attr in self._header:
-                return self.get_entries(attr)
+            elif nattr in self._header:
+                return self.get_entries(nattr)
             else:
                 raise AttributeError("%r object has no attribute %r" %
-                        (type(self).__class__,attr))
+                        (self.__class__,attr))
         except:
-             raise AttributeError("%r object has no attribute %r" %
-                    (type(self).__class__,attr))
+            try:
+                return self._meta[attr]
+            except:
+                raise AttributeError("%r object has no attribute %r" %
+                        (self.__class__,attr))
 
     def __iter__(self):
         """
@@ -999,7 +1010,8 @@ class Wordlist(object):
                 'threshold' : 0.6, # threshold for flat clustering
                 'subset'    : False, # setup a subset of the data,
                 'cols'      : False,
-                'rows'      : False
+                'rows'      : False,
+                'meta'      : self._meta,
                 }
             
         # compare with keywords and add missing ones
@@ -1091,6 +1103,7 @@ class Wordlist(object):
                 wl2csv(
                         header,
                         out,
+                        meta = self._meta,
                         **keywords
                         )
 

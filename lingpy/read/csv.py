@@ -9,6 +9,11 @@ Module provides functions for reading csv-files.
 __author__="Johann-Mattis List"
 __date__="2013-03-05"
 
+import json
+
+# lingpy-internal imports
+from ..thirdparty import cogent as cg
+
 def csv2list(
         filename,
         fileformat = None,
@@ -101,7 +106,7 @@ def csv2dict(
 
     return d               
 
-def qlc2dict(infile):
+def qlc2dict_deprecated(infile):
     """
     Simple function that loads qlc-format into a dictionary.
 
@@ -201,7 +206,7 @@ def read_csv(
     """
     return csv2dict(filename,fileformat,dtype,comment,sep)
 
-def read_qlc(
+def read_qlcOld(
         infile
         ):
     """
@@ -223,3 +228,174 @@ def read_qlc(
     This is but an alias for the qlc2dict function.
     """
     return qlc2dict(infile)
+
+def read_qlc(infile):
+    """
+    Simple function that loads qlc-format into a dictionary.
+
+    Parameters
+    ----------
+    infile : str
+        Name of the input file.
+
+    Returns
+    -------
+    d : dict
+        A dictionary with integer keys corresponding to the order of the lines
+        of the input file. The header is given 0 as a specific key.
+    """
+    
+    # open the file
+    try:
+        inf = open(infile)
+    except:
+        raise ValueError("[i] Infile could not be opened.")
+    
+    # create data array
+    data = []
+    meta = {}
+
+    # read lines from infile
+    lines = inf.readlines()
+
+    # set dtype to false
+    dtype = False
+
+    # start the loop
+    while lines:
+        line = lines.pop(0)
+
+        # line is empty or starts with hash
+        if line.startswith('#') or not line.strip():
+            pass
+        
+        # line starts with key-value @
+        elif line.startswith('@'):
+            key = line[1:line.index(':')]
+            value = line[line.index(':')+1:].strip()
+            if key not in ['tree']:
+                meta[key] = value
+            else:
+                if key == 'tree':
+                    meta["tree"] = cg.LoadTree(treestring=value)
+        
+        # line starts with complex stuff
+        elif line.startswith('<'):
+            tmp = line[1:line.index('>')]
+            # check for specific keywords
+            if ' ' in tmp:
+                dtype = tmp.split(' ')[0]
+                keys = dict([(k,v[1:-1]) for k,v in [key.split('=') for key in
+                    tmp.split(' ')[1:]]])
+            else:
+                dtype = tmp.strip()
+                keys = {}
+
+            tmp = []
+
+            # iterate
+            while True:
+                line = lines.pop(0)
+
+                if line.startswith('</'+dtype+'>'):
+                    break
+                else:
+                    tmp += [line.strip()]
+
+            tmp = '\n'.join(tmp)
+
+            # check for data stuff
+            # json
+            if dtype == "json":
+                tmp = json.loads(tmp)
+                if not keys:
+                    for key in tmp:
+                        meta[key] = tmp[key]
+                elif keys:
+                    meta[keys["id"]] = {}
+                    for k in tmp:
+                        meta[keys["id"]][k] = tmp[k]
+            
+            # tree
+            if dtype in ['tre','nwk']:
+                # check for "tree" in meta
+                if "tree" not in meta:
+                    meta["tree"] = {}
+                
+                # add the data
+                if not keys:
+                    keys["id"] = "t1"
+
+                meta['tree'][keys["id"]] = cg.LoadTree(treestring=tmp)
+
+            # csv
+            if dtype in ['csv']:
+
+                meta[keys["id"]] = {}
+
+                # check for columns
+                if "ncol" in keys:
+                    ncol = int(keys["ncol"])
+                else:
+                    ncol = 2
+
+                # check for dtype
+                if "dtype" in keys:
+                    transf = eval(keys["dtype"])
+                else:
+                    transf = str
+
+                # split tmp into lines
+                tmp = tmp.split('\n')
+                for l in tmp:
+                    if ncol == 1:
+                        a,b = l.split('\t')
+                        b = transf(b)
+                    else:
+                        l = l.slit('\t')
+                        a = l[0]
+                        b = [transf(b) for b in l[1:]]
+                    meta[keys["id"]][a] = b
+        else:
+            data += [[l.strip() for l in line.split('\t')]]
+    
+    # create the dictionary in which the data will be stored
+    d = {}
+
+    # check for first line, if a local ID is given in the header (or simply
+    # "ID"), take this line as the ID, otherwise create it
+    if data[0][0].lower() in ['id','local_id','localid']:
+        local_id = True
+    else:
+        local_id = False
+
+    # iterate over data and fill the dictionary (a bit inefficient, but enough
+    # for the moment)
+    try:
+        i = 1
+        for line in data[1:]:
+            if local_id:
+                d[int(line[0])] = line[1:]
+            else:
+                d[i] = line
+                i += 1
+    except:
+        print("[!] Something is wrong with your input file. If it contains an ID column, make sure it consists only of integers.")
+
+    # assign the header to d[0]
+    if local_id:
+        d[0] = [x.lower() for x in data[0][1:]]
+    else:
+        d[0] = [x.lower() for x in data[0]]
+    
+    for m in meta:
+        d[m] = meta[m]
+
+    return d
+
+def qlc2dict(infile):
+
+    return read_qlc(infile)
+
+
+

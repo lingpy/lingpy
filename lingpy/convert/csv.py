@@ -10,6 +10,7 @@ Module provides functions and methods for the creation of csv-files.
 
 # imports
 import re
+import json
 
 from ..check.messages import FileWriteMessage
 
@@ -49,8 +50,39 @@ def wl2csv(
     """
     formatter = formatter.upper()
 
+    # create output string
     out = '# Wordlist\n'
-    out += 'ID\t'+'\t'.join(header)+'\n'
+
+    # write meta to file
+    if "meta" in keywords:
+        meta = keywords["meta"]
+    else:
+        meta = {}
+    
+    kvpairs = {}
+    jsonpairs = {}
+
+    for k,v in meta.items():
+        # simple key-value-pairs
+        if type(v) in [str,int] or k == "tree":
+            kvpairs[k] = v
+            #out += '@{0}:{1}\n'.format(k,v)
+        else:
+            jsonpairs[k] = v
+            #out += '\n# JSON\n<json id="{0}">\n'.format(k)
+            #out += json.dumps(meta[k],indent=4)
+            #out += "\n</json>\n\n"
+    if kvpairs:
+        out += '\n# META\n'
+        for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
+            out += '@{0}:{1}\n'.format(k,v)
+    if jsonpairs:
+        out += '\n# JSON\n'
+        out += "<json>\n"
+        out += json.dumps(jsonpairs,indent=4)
+        out += '\n</json>\n'
+
+    out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     
     # check for gloss in header to create nice output format
     if formatter in header:
