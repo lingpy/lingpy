@@ -348,11 +348,11 @@ def read_qlc(infile):
                 # split tmp into lines
                 tmp = tmp.split('\n')
                 for l in tmp:
-                    if ncol == 1:
+                    if ncol == 2:
                         a,b = l.split('\t')
                         b = transf(b)
                     else:
-                        l = l.slit('\t')
+                        l = l.split('\t')
                         a = l[0]
                         b = [transf(b) for b in l[1:]]
                     meta[keys["id"]][a] = b
