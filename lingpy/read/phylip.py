@@ -28,11 +28,12 @@ def read_dst(
         A tuple consisting of a list of taxa and a matrix.
 
     """
-
+    
     try:
         f = open(filename)
     except:
-        print("[!] Could not find the file {0}!".format(filename))
+        f = filename.split('\n') # XXX temporary solution
+        #print("[!] Could not find the file {0}!".format(filename))
 
     taxa,matrix = [],[]
     

@@ -13,6 +13,8 @@ import re
 import json
 
 from ..check.messages import FileWriteMessage
+from .phylip import matrix2dst
+from .misc import msa2str
 
 def pap2csv(
         taxa,
@@ -61,17 +63,21 @@ def wl2csv(
     
     kvpairs = {}
     jsonpairs = {}
+    msapairs = {}
+    distances = ''
 
     for k,v in meta.items():
         # simple key-value-pairs
         if type(v) in [str,int] or k == "tree":
             kvpairs[k] = v
             #out += '@{0}:{1}\n'.format(k,v)
+        elif k == 'msa':
+            for a,b in v.items():
+                msapairs[a] = b
+        elif k == 'distances':
+            distances = matrix2dst(v,meta['taxa'])
         else:
             jsonpairs[k] = v
-            #out += '\n# JSON\n<json id="{0}">\n'.format(k)
-            #out += json.dumps(meta[k],indent=4)
-            #out += "\n</json>\n\n"
     if kvpairs:
         out += '\n# META\n'
         for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
@@ -81,6 +87,18 @@ def wl2csv(
         out += "<json>\n"
         out += json.dumps(jsonpairs,indent=4)
         out += '\n</json>\n'
+    if msapairs:
+        out += "\n# MSA\n"
+        for k,v in msapairs.items():
+            out += '#\n<msa id="{0}">\n'.format(k)
+            out += msa2str(v)
+            #out += v['seq_id']+'\n'
+            #for t,alm in zip(v['taxa'],v['alignment']):
+            #    out += t + '\t' + '\t'.join(alm)+'\n'
+            out += "</msa>\n"
+    if distances:
+        out += '\n# DISTANCES\n<dst>\n'
+        out += distances+'</dst>\n'
 
     out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     

@@ -956,33 +956,34 @@ class _SCA(Wordlist):
             return 
 
         # create the alignments by assembling the ids of all sequences
-        self.msa = {}
-        for key,value in self.etd.items():
-            tmp = [x for x in value if x != 0]
-            seqids = []
-            for t in tmp:
-                seqids += t
-            if len(seqids) > 1:
-                
-                # set up the dictionary
-                d = {}
-                d['taxa'] = []
-                d['seqs'] = []
-                d['dataset'] = self.filename
-                if 'concept' in self.header:
-                    concept = self[seqids[0],'concept']
-                    d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
-                else:
-                    d['seq_id'] = 'CogId:{0}'.format(key)
-                
-                # set up the data
-                for seq in seqids:
-                    taxon = self[seq,'taxa']
-                    string = self[seq][stridx]
+        if 'msa' not in self._meta:
+            self._meta['msa'] = {}
+            for key,value in self.etd.items():
+                tmp = [x for x in value if x != 0]
+                seqids = []
+                for t in tmp:
+                    seqids += t
+                if len(seqids) > 1:
                     
-                    d['taxa'] += [self[seq,'taxa']]
-                    d['seqs'] += [self[seq][stridx]]
-                self.msa[key] = d
+                    # set up the dictionary
+                    d = {}
+                    d['taxa'] = []
+                    d['seqs'] = []
+                    d['dataset'] = self.filename
+                    if 'concept' in self.header:
+                        concept = self[seqids[0],'concept']
+                        d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
+                    else:
+                        d['seq_id'] = 'CogId:{0}'.format(key)
+                    
+                    # set up the data
+                    for seq in seqids:
+                        taxon = self[seq,'taxa']
+                        string = self[seq][stridx]
+                        
+                        d['taxa'] += [self[seq,'taxa']]
+                        d['seqs'] += [self[seq][stridx]]
+                    self._meta['msa'][key] = d
 
     def align(
             self,
@@ -1147,7 +1148,9 @@ class _SCA(Wordlist):
                                 key
                                 )
                             )
-                self.msa[key]['alignment'] = m.alm_matrix
+                #self._meta['msa'][key] = {}
+            #print(m._alm_matrix)
+            self._meta['msa'][key]['alignment'] = m.alm_matrix
                 #if plot:
                 #    alm2html(
                 #            '{0}-msa/{1}-{2}'.format(
@@ -1199,33 +1202,49 @@ class SCA(object):
         # check for datatype
         if type(infile) == dict:
             parent = _Multiple(infile,**keywords)
+            case = 1
         else:
             if infile[-4:] in ['.msa','.msq']:
                 parent = _Multiple(infile,**keywords)
+                case = 1
             elif infile[-4:] in ['.psq','psa']:
                 parent = _Pairwise(infile,**keywords)
+                case = 2
             elif infile[-4:] in ['.csv','.tsv']:
                 parent = _SCA(infile,**keywords)
+                case = 3
+        
+        if case in [1,2]:
+            for key in dir(parent):
+                if key not in [
+                        '__class__',
+                        ]:
+                    try:
+                        setattr(self,key,parent.__getattribute__(key))
+                    except:
+                        pass
+        else:
+            for key in dir(parent):
+                if not key.startswith('__'):
+                    try:
+                        setattr(self,key,parent.__getattribute__(key))
+                    except:
+                        pass
 
-        for key in dir(parent):
-            if key not in [
-                    '__class__',
-                    ]:
-                try:
-                    setattr(self,key,parent.__getattribute__(key))
-                except:
-                    pass
+        self._parent = parent
     
     def __len__(self):
-        return self.__len__()
+        return self._parent.__len__()
     def __str__(self):
-        return self.__str__()
+        return self._parent.__str__()
     def __repr__(self):
-        return self.__repr__()
+        return self.parent.__repr__()
     def __eq__(self,other):
-        return self.__eq__(other)
+        return self._parent.__eq__(other)
     def __getitem__(self,x):
-        return self.__getitem__(x)
+        return self._parent.__getitem__(x)
+    def __getattr__(self,x):
+        return self._parent.__getattr__(x)
 
         
 

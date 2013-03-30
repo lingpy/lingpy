@@ -13,6 +13,7 @@ import json
 
 # lingpy-internal imports
 from ..thirdparty import cogent as cg
+from .phylip import read_dst
 
 def csv2list(
         filename,
@@ -317,7 +318,7 @@ def read_qlc(infile):
                         meta[keys["id"]][k] = tmp[k]
             
             # tree
-            if dtype in ['tre','nwk']:
+            elif dtype in ['tre','nwk']:
                 # check for "tree" in meta
                 if "tree" not in meta:
                     meta["tree"] = {}
@@ -329,7 +330,7 @@ def read_qlc(infile):
                 meta['tree'][keys["id"]] = cg.LoadTree(treestring=tmp)
 
             # csv
-            if dtype in ['csv']:
+            elif dtype in ['csv']:
 
                 meta[keys["id"]] = {}
 
@@ -356,6 +357,44 @@ def read_qlc(infile):
                         a = l[0]
                         b = [transf(b) for b in l[1:]]
                     meta[keys["id"]][a] = b
+            elif dtype == 'msa':
+                
+                # check for dtype
+                tmp = tmp.split('\n')
+                if 'msa' not in meta:
+                    meta['msa'] = {}
+                tmp_msa = {}
+                try:
+                    tmp_msa['dataset'] =  meta['dataset']
+                except:
+                    tmp_msa['dataset'] = infile.replace('.csv','')
+                tmp_msa['seq_id'] = keys['id']
+                tmp_msa['seqs'] = []
+                tmp_msa['alignment'] = []
+                tmp_msa['taxa'] = []
+                for l in tmp[2:]:
+                    this_line = l.split('\t')
+                    tmp_msa['taxa'] += [this_line[0]]
+                    tmp_msa['seqs'] += [' '.join(this_line[1:])]
+                    tmp_msa['alignment'] += [this_line[1:]]
+                try:
+                    meta['msa'][int(keys['id'])] = tmp_msa   
+                except:
+                    meta['msa'][keys['id']] = tmp_msa
+            
+            elif dtype == 'dst':
+                taxa,matrix = read_dst(tmp)
+                new_taxa = sorted(taxa)
+                distances = [[0.0 for line in matrix] for line in matrix]
+                for i,line in enumerate(matrix):
+                    for j,cell in enumerate(line):
+                        if i < j:
+                            idxA = new_taxa.index(taxa[i])
+                            idxB = new_taxa.index(taxa[j])
+                            distances[i][j] = cell
+                            distances[j][i] = cell
+                meta['distances'] = distances
+                    
         else:
             data += [[l.strip() for l in line.split('\t')]]
     

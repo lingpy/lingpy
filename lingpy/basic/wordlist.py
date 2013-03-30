@@ -308,6 +308,10 @@ class Wordlist(object):
         for key in [k for k in input_data if type(k) != int]:
             self._meta[key] = input_data[key]
 
+        # check for taxa in meta
+        if 'taxa' not in self._meta:
+            self._meta['taxa'] = self.taxa
+
     def __getitem__(self,idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -392,7 +396,9 @@ class Wordlist(object):
         out = open(path,'wb')
         d = {}
         for key,value in self.__dict__.items():
-            if key != '_class': 
+            if key not in  [
+                    '_class',
+                    ]: 
                 d[key] = value
         d['__date__'] = str(datetime.today())
         pickle.dump(d,out)
@@ -984,6 +990,33 @@ class Wordlist(object):
         
         return paps
 
+    def calculate(
+            self,
+            data,
+            taxa = 'taxa',
+            concepts = 'concepts',
+            cognates = 'cogid',
+            threshold = 0.6,
+            **keywords
+            ):
+        """
+        Function calculates specific data.
+        """
+        # XXX take care of keywords XXX
+        if data in ['distances','dst']:
+            self._meta['distances'] = wl2dst(self,taxa,concepts,cognates)
+        if data in ['tre','nwk']:
+            self._meta['tree'] = matrix2tre(self)
+        if data in ['groups','cluster']:
+            if 'distances' not in self._meta:
+                self.calculate(taxa,concepts,cognates)
+            self._meta['groups'] = matrix2groups(
+                    threshold,
+                    self.distances,
+                    self.taxa
+                    )
+        print("[i] Successfully calculated {0}.".format(data))
+
     def _output(
             self,
             fileformat,
@@ -996,6 +1029,8 @@ class Wordlist(object):
         # check for stamp attribute
         if hasattr(self,"_stamp"):
             keywords["stamp"] = self._stamp
+        else:
+            keywords["stamp"] = ''
 
         # add the default parameters, they will be checked against the keywords
         defaults = {
@@ -1038,15 +1073,17 @@ class Wordlist(object):
                         paps,
                         filename=keywords['filename']+'.paps'
                         )
-
+        
+        # simple printing of taxa
         if fileformat == 'taxa':
             out = ''
-            for col in self.cols:
-                out += col + '\n'
+            for taxon in self.taxa:
+                out += taxon + '\n'
             f = open(keywords['filename'] + '.taxa','w')
             f.write(out)
             f.close()
-
+        
+        # csv-output
         if fileformat == 'csv':
             
             # get the header line
@@ -1103,98 +1140,84 @@ class Wordlist(object):
                 wl2csv(
                         header,
                         out,
-                        meta = self._meta,
                         **keywords
                         )
+        
+        # output dst-format (phylip)
+        if fileformat == 'dst':
 
-        if fileformat in ['dst','tre','nwk','cluster','groups']:
+            # check for distances as keyword
+            if 'distances' not in self._meta:
+                self._meta['distances'] = wl2dst(self)
+            
+            # write data to file
+            filename = keywords['filename']
+            f = open(filename+'.'+fileformat,'w')
+            out = matrix2dst(
+                    self._meta['distances'],
+                    self.taxa,
+                    stamp=keywords['stamp']
+                    )
+            f.write(out)
+            f.close()
+
+            # display file-write-message
+            FileWriteMessage(filename,fileformat).message('written')
+        
+        # output tre-format (newick)
+        if fileformat in ['tre','nwk']: #,'cluster','groups']:
             
             # XXX bad line, just for convenience at the moment
             filename = keywords['filename']
-
-            # get distance matrix
-            distances = []
-
-            for i,taxA in enumerate(self.cols):
-                for j,taxB in enumerate(self.cols):
-                    if i < j:
-                        
-                        # get the two dictionaries
-                        dictA = self.get_dict(col=taxA,entry=keywords['ref'])
-                        dictB = self.get_dict(col=taxB,entry=keywords['ref'])
-
-                        # count amount of shared concepts
-                        shared = 0
-                        missing = 0
-                        for concept in self.rows:
-                            try:
-                                if [k for k in dictA[concept] if k in dictB[concept]]:
-                                    shared += 1
-                                else:
-                                    pass
-                            except KeyError:
-                                missing += 1
-
-                        # append to distances
-                        distances += [ 1 - shared / (self.height-missing)]
-            distances = misc.squareform(distances)
-
-            if fileformat == 'dst':
-                f = open(filename+'.'+fileformat,'w')
-                f.write(' {0}\n'.format(self.width))
-                for i,taxon in enumerate(self.cols):
-                    f.write('{0:10}'.format(taxon)[0:11])
-                    f.write(' '.join(['{0:2f}'.format(d) for d in
-                        distances[i]]))
-                    f.write('\n')
-                f.close()
-                FileWriteMessage(filename,fileformat).message('written')
-
-            elif fileformat in ['tre','nwk']:
-                
+            
+            if 'tree' not in self._meta:
+            
+                # check for distances
+                if 'distances' not in self._meta:
+                    self._meta['distances'] = wl2dst(self)
+                    
                 if keywords['tree_calc'] == 'neighbor':
                     tree = cluster.neighbor(
-                            distances,
+                            self._meta['distances'],
                             self.cols,
                             distances=keywords['distances']
                             )
                 elif keywords['tree_calc'] == 'upgma':
                     tree = cluster.ugpma(
-                            distances,
+                            self._meta['distances'],
                             self.cols,
                             distances=keywords['distances']
                             )
+            else:
+                tree = self._meta['tree']
 
-                f = open(filename+'.'+fileformat,'w')
-                f.write(tree)
-                f.close()
+            f = open(filename+'.'+fileformat,'w')
+            f.write('{0}'.format(tree))
+            f.close()
 
-                FileWriteMessage(filename,fileformat).message('written')
+            FileWriteMessage(filename,fileformat).message('written')
 
-            elif fileformat in ['cluster','groups']:
+        if fileformat in ['cluster','groups']:
 
-                flats = cluster.flat_upgma(
+            filename = keywords['filename']
+            
+            if 'distances' not in self._meta:
+                
+                self._meta['distances'] = wl2dst(self) # check for keywords
+
+            if 'groups' not in self._meta:
+                self._meta['groups'] = matrix2groups(
                         keywords['threshold'],
-                        distances,
-                        revert=True
+                        self._meta['distances'],
+                        self.taxa
                         )
-                
-                groups = [flats[i] for i in range(self.width)]
-                
-                # renumber the groups
-                groupset = sorted(set(groups))
-                renum = dict([(i,j+1) for i,j in zip(
-                    groupset,
-                    range(len(groupset))
-                    )])
-                groups = [renum[i] for i in groups]
 
-                f = open(filename+'.'+fileformat,'w')
-                for group,taxon in sorted(zip(groups,self.cols),key=lambda x:x[0]):
-                    f.write('{0}\t{1}\n'.format(taxon,group))
-                f.close()
+            f = open(filename+'.'+fileformat,'w')
+            for taxon,group in sorted(self._meta['groups'].items(),key=lambda x:x[0]):
+                f.write('{0}\t{1}\n'.format(taxon,group))
+            f.close()
 
-                FileWriteMessage(filename,fileformat).message('written')
+            FileWriteMessage(filename,fileformat).message('written')
 
     def output(
             self,
