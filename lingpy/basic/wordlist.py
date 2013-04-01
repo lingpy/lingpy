@@ -409,6 +409,7 @@ class Wordlist(object):
             col = '',
             row = '',
             entry = '',
+            **keywords
             ):
         """
         Function returns dictionaries of the cells matched by the indices.
@@ -489,15 +490,33 @@ class Wordlist(object):
         elif row and col:
             print("[!] You should specify only a value for row or for col!")
         else:
+            for key in [k for k in keywords if k in self._alias]:
+                if self._alias[key] == self._col_name:
+                    entries = self.get_dict(
+                            col = keywords[key],
+                            entry = entry,
+                            )
+                    self._cache[col,entry] = entries
+                    return entries
+
+                elif self._alias[key] == self._row_name:
+                    entries = self.get_dict(
+                            row = keywords[key],
+                            entry = entry
+                            )
+                    self._cache[col,entry] = entries
+                    return entries
+
+
             print("[!] Neither rows nor columns are selected!")
-       
 
     def get_list(
             self,
             row='',
             col='',
             entry='',
-            flat=False
+            flat=False,
+            **keywords
             ):
         """
         Function returns lists of rows and columns specified by their name.
@@ -616,7 +635,27 @@ class Wordlist(object):
         elif row and col:
             print("[!] You should specify only a value for row or for col!")
         else:
+            for key in [k for k in keywords if k in self._alias]:
+                if self._alias[key] == self._col_name:
+                    entries = self.get_list(
+                            col = keywords[key],
+                            entry = entry,
+                            flat = flat
+                            )
+                    self._cache[col,entry,flat] = entries
+                    return entries
+
+                elif self._alias[key] == self._row_name:
+                    entries = self.get_list(
+                            row = keywords[key],
+                            entry = entry,
+                            flat = flat
+                            )
+                    self._cache[col,entry,flat] = entries
+                    return entries
+
             print("[!] Neither rows nor columns are selected!")
+            return 
     
     def get_entries(
             self,

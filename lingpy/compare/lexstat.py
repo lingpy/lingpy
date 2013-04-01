@@ -726,20 +726,37 @@ class LexStat(Wordlist):
     def _cluster(
             self,
             threshold = 0.55,
+            method = 'lexstat',
             scale = 0.5,
             factor = 0.3,
             restricted_chars = '_T',
-            mode = 'overlap'
+            mode = 'overlap',
+            gop = 1.0
             ):
         """
         
         """
+        # check for correct method
+        if method not in ['sca','lexstat']:
+            if method in ['turchin']:
+                return self._turchin()
+            else:
+                raise ValueError(
+                        '[!] The method You selected is not available!'
+                        )
         # for convenience and later addons
         concepts = self.concepts
 
         # make a dictionary that stores the clusters for later update
         clr = {}
         k = 0
+
+        # set up the method
+        if method == 'lexstat':
+            scorer = self.cscorer
+        elif method == 'sca':
+            scorer = self.rscorer
+
         for concept in concepts:
             print("[i] Analyzing concept {0}.".format(concept))
 
@@ -773,10 +790,10 @@ class LexStat(Wordlist):
                                 wB,
                                 proA,
                                 proB,
-                                1.0,
+                                gop,
                                 scale,
                                 factor,
-                                self.cscorer,
+                                scorer,
                                 mode,
                                 restricted_chars,
                                 1
@@ -798,7 +815,21 @@ class LexStat(Wordlist):
             # add values to cluster dictionary
             for idxA,idxB in zip(indices,clusters):
                 clr[idxA] = idxB
-            
-        self.add_entries("LexStatId",clr,lambda x:x)
+        if method == 'lexstat':
+            self.add_entries("LexStatId",clr,lambda x:x)
+        elif method == 'sca':
+            self.add_entries("ScaId"),clr,lambda x:x)
+    
+    def _turchin(self):
+        """
+        Calculate distances on the basis of Turchin's et al. approach.
+        """
+        
+        pass
 
-
+    def _edit_dist(self):
+        """
+        Calculate distances on the basis of edit distance.
+        """
+        
+        pass
