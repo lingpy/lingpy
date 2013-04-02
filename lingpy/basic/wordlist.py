@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-03-14 00:21
+# modified : 2013-04-02 07:02
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-14"
+__date__="2013-04-02"
 
 import os
 import builtins # XXX ??? maybe not needed
@@ -1044,16 +1044,32 @@ class Wordlist(object):
         # XXX take care of keywords XXX
         if data in ['distances','dst']:
             self._meta['distances'] = wl2dst(self,taxa,concepts,cognates)
-        if data in ['tre','nwk']:
-            self._meta['tree'] = matrix2tre(self)
-        if data in ['groups','cluster']:
+        elif data in ['tre','nwk','tree']:
             if 'distances' not in self._meta:
-                self.calculate(taxa,concepts,cognates)
+                self.calculate('distances',taxa,concepts,cognates)
+            if 'distances' not in keywords:
+                keywords['distances'] = False
+            if 'tree_calc' not in keywords:
+                keywords['tree_calc'] = 'neighbor'
+
+            self._meta['tree'] = matrix2tree(
+                    self._meta['distances'],
+                    self.taxa,
+                    keywords['tree_calc'],
+                    keywords['distances']
+                    )
+
+        elif data in ['groups','cluster']:
+            if 'distances' not in self._meta:
+                self.calculate('distances',taxa,concepts,cognates)
             self._meta['groups'] = matrix2groups(
                     threshold,
                     self.distances,
                     self.taxa
                     )
+        else:
+            return
+
         print("[i] Successfully calculated {0}.".format(data))
 
     def _output(

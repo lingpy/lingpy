@@ -1,15 +1,22 @@
-# modified: Do 24 Jan 2013 04:07:29  CET
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-04-02 07:01
+# modified : 2013-04-02 07:01
+"""
+Functions for tree calculations and working with Newick files.
+"""
 
-"""
-Various functions for network conversion.
-"""
 __author__="Johann-Mattis List"
-__date__="2012-12-06"
+__date__="2013-04-02"
 
 import xml.dom.minidom as minidom
 
 #import networkx as nx
-#from ..thirdparty import cogent as cg
+from ..thirdparty import cogent as cg
+try:
+    from ..algorithm.cython import cluster
+except:
+    from ..algorithm.cython import _cluster as cluster
 
 def xml2nwk(
         infile,
@@ -116,4 +123,26 @@ def xml2nwk(
         f.close()
         print("[i] Data has been written to file <{0}.nwk>".format(filename))
         return
+
+def matrix2tree(
+        matrix,
+        taxa,
+        tree_calc = "neighbor",
+        distances = True
+        ):
+    """
+    Calculate a tree of a given distance matrix.
+    """
+    
+    if tree_calc == 'upgma':
+        algorithm = cluster.upgma
+    elif tree_calc == 'neighbor':
+        algorithm = cluster.neighbor
+
+    newick = algorithm(matrix,taxa,distances)
+
+    tree = cg.LoadTree(treestring=newick)
+
+    return tree
+
 

@@ -1,3 +1,17 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-04-02 06:55
+# modified : 2013-04-02 06:55
+"""
+Basic routines or creating Phylip output (distance matrices).
+"""
+
+__author__="Johann-Mattis List"
+__date__="2013-04-02"
+
+
+
+
 try:
     from ..algorithm.cython import misc
 except:

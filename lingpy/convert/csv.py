@@ -1,12 +1,13 @@
-# created: Mo 21 Jan 2013 01:48:23  CET
-# modified: Mo 21 Jan 2013 01:48:23  CET
-
-__author__ = "Johann-Mattis List"
-__date__ = "2013-01-21"
-
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-04-02 06:55
+# modified : 2013-04-02 06:55
 """
 Module provides functions and methods for the creation of csv-files.
 """
+
+__author__="Johann-Mattis List"
+__date__="2013-04-02"
 
 # imports
 import re
