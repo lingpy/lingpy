@@ -78,11 +78,14 @@ class TreBor(Wordlist):
         # TODO check for keywords, allow to load trees, etc.
 
         # store the name of the dataset and the identifier for paps
-        self.dataset = dataset
+        if dataset.endswith('.csv'):
+            self.dataset = dataset.replace('.csv','')
+        else:
+            self.dataset = dataset
         self._pap_string = paps
 
         # open csv-file of the data and store it as a word list attribute
-        Wordlist.__init__(self,dataset+'.csv',row='concept',col='doculect')
+        Wordlist.__init__(self,self.dataset+'.csv',row='concept',col='doculect')
         #self.Wordlist = Wordlist(dataset+'.csv')
         self = self
 
@@ -159,8 +162,8 @@ class TreBor(Wordlist):
                 self.tree = cg.LoadTree(dataset+'.tre')
             except:
                 # create it otherwise
+                self.calculate('tree')
                 print("[i] Tree-file was not found, creating it now...")
-                pass
             # XXX TODO
         
         # if it is explicitly defined, try to load that file
@@ -1788,7 +1791,8 @@ class TreBor(Wordlist):
                 )
 
         # write data to file
-        self.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
+        # self.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
+        # XXX change later
 
         if verbose: print("[i] Updated the wordlist.")
 

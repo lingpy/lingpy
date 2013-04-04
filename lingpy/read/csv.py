@@ -394,7 +394,8 @@ def read_qlc(infile):
                             distances[i][j] = cell
                             distances[j][i] = cell
                 meta['distances'] = distances
-                    
+            elif dtype == 'taxa':
+                meta['taxa'] = [t.strip() for t in tmp.split('\n')]          
         else:
             data += [[l.strip() for l in line.split('\t')]]
     

@@ -30,6 +30,9 @@ __date__="2013-03-11"
 # general imports
 from .basic import *
 
+# import converts
+from .convert import *
+
 # we don't import align for the moment for safety reasons...
 from .align import *
 
@@ -44,6 +47,9 @@ from .sequence import *
 
 # import thirdparty modules
 from .thirdparty import *
+
+# import lexstat
+from .compare.lexstat import *
 
 # test whether c-modules are available
 try:

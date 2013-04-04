@@ -66,6 +66,7 @@ def wl2csv(
     jsonpairs = {}
     msapairs = {}
     distances = ''
+    taxa = ''
 
     for k,v in meta.items():
         # simple key-value-pairs
@@ -77,12 +78,16 @@ def wl2csv(
                 msapairs[a] = b
         elif k == 'distances':
             distances = matrix2dst(v,meta['taxa'])
+        elif k == 'taxa':
+            taxa = '\n'.join(meta['taxa'])
         else:
             jsonpairs[k] = v
     if kvpairs:
         out += '\n# META\n'
         for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
             out += '@{0}:{1}\n'.format(k,v)
+    if taxa:
+        out += '\n# TAXA\n<taxa>\n'+taxa+'\n</taxa>\n'
     if jsonpairs:
         out += '\n# JSON\n'
         out += "<json>\n"

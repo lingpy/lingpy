@@ -464,3 +464,25 @@ def structalign(
     """
     return malign.structalign(seqA,seqB)
 
+def turchin(
+        seqA,
+        seqB
+        ):
+    """
+    Return cognate judgment based on Turchin et al.'s (2010) method.
+    """
+    if type(seqA) == str:
+        seqA = ipa2tokens(seqA)
+        seqB = ipa2tokens(seqB)
+        
+    classA = tokens2class(seqA,dolgo)
+    classB = tokens2class(seqB,dolgo)
+
+    if classA[0] == 'V': classA[0] = 'H'
+    if classB[0] == 'V': classB[0] = 'H'
+
+    if ''.join(classA).replace('V','')[:2] == ''.join(classB).replace('V','')[:2]:
+        return 0
+    else:
+        return 1
+

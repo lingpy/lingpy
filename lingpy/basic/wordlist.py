@@ -137,7 +137,8 @@ class Wordlist(object):
                     )[0] + '/data/conf/wordlist.rc'
 
         # read the file defined by its path in conf
-        tmp = [line.strip('\n\r').split('\t') for line in open(conf)]
+        tmp = [line.strip('\n\r').split('\t') for line in open(conf) if not
+                line.startswith('#') and line.strip('\n\r')]
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
@@ -739,7 +740,8 @@ class Wordlist(object):
         if entry in self._header and 'override' not in keywords:
             answer = input("[?] Datatype has already been produced, do you want to override? ")
             if answer.lower() in ['y','yes']:
-                self.add_entries(entry,source,function,override=True,**keywords)
+                keywords['override'] = True
+                self.add_entries(entry,source,function,**keywords)
             else:
                 print("[i] ...aborting...")
                 return
@@ -1102,6 +1104,7 @@ class Wordlist(object):
                 'cols'      : False,
                 'rows'      : False,
                 'meta'      : self._meta,
+                'entry'     : 'word'
                 }
             
         # compare with keywords and add missing ones
@@ -1131,12 +1134,17 @@ class Wordlist(object):
         
         # simple printing of taxa
         if fileformat == 'taxa':
-            out = ''
-            for taxon in self.taxa:
-                out += taxon + '\n'
-            f = open(keywords['filename'] + '.taxa','w')
-            f.write(out)
-            f.close()
+            if hasattr(self,'taxa'):
+                out = ''
+                for taxon in self.taxa:
+                    out += taxon + '\n'
+                f = open(keywords['filename'] + '.taxa','w')
+                f.write(out)
+                f.close()
+            else:
+                raise ValueError(
+                        "[i] Taxa are not available."
+                        )
         
         # csv-output
         if fileformat == 'csv':
@@ -1274,6 +1282,33 @@ class Wordlist(object):
 
             FileWriteMessage(filename,fileformat).message('written')
 
+        if fileformat in ['starling','star.csv']:
+
+            # make lambda inline for data-check
+            l = lambda x: ['-' if x == 0 else x][0]
+
+            fileformat = 'starling_'+keywords['entry']+'.csv'
+
+            f = open(keywords['filename']+'.'+fileformat,'w')
+            if 'cognates' not in keywords:
+                f.write('ID\tConcept\t'+'\t'.join(self.taxa)+'\n')
+                for i,concept in enumerate(self.concepts):
+                    lines = self.get_list(row=concept,entry=keywords['entry'])
+                    for line in lines:
+                        f.write(str(i+1)+'\t'+concept+'\t'+'\t'.join([l(t) for t in line])+'\n')
+            else:
+                f.write('ID\tConcept\t'+'\t'.join(['{0}\t COG'.format(t) for t
+                    in self.taxa])+'\n')
+                for i,concept in enumerate(self.concepts):
+                    lines = self.get_list(row=concept,entry=keywords['entry'])
+                    cogs = self.get_list(row=concept,entry=keywords['cognates'])
+                    for j,line in enumerate(lines):
+                        f.write(str(i+1)+'\t'+concept+'\t')
+                        f.write('\t'.join('{0}\t{1}'.format(l(a),b) for a,b in
+                            zip(line,cogs[j]))+'\n')
+            f.close()
+            FileWriteMessage(keywords['filename'],fileformat).message('written')
+
     def output(
             self,
             fileformat,
@@ -1282,244 +1317,7 @@ class Wordlist(object):
         """
         Write wordlist to file.
         """
-        # check for stamp attribute
-        if hasattr(self,"_stamp"):
-            keywords["stamp"] = self._stamp
 
-        # add the default parameters, they will be checked against the keywords
-        defaults = {
-                'ref'       : 'cogid',
-                'entry'     : 'concept',
-                'missing'   : 0,
-                'filename'  : 'lingpy-{0}'.format(str(date.today())),
-                'formatter' : 'concept',
-                'tree_calc' : 'neighbor',
-                'distances' : False,
-                'ref'       : 'cogid',
-                'threshold' : 0.6, # threshold for flat clustering
-                'subset'    : False, # setup a subset of the data,
-                'cols'      : False,
-                'rows'      : False
-                }
-            
-        # compare with keywords and add missing ones
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        return self._output(fileformat,**keywords)
 
-        if 'paps' in fileformat:
-            paps = self.get_paps(
-                    ref=keywords['ref'],
-                    entry=keywords['entry'],
-                    missing=keywords['missing']
-                    )
-            if fileformat == 'paps.nex':
-                pap2nex(
-                        self.cols,
-                        paps,
-                        missing=keywords['missing'],
-                        filename=keywords['filename']+'.paps'
-                        )
-            elif fileformat == 'paps.csv':
-                pap2csv(
-                        self.cols,
-                        paps,
-                        filename=keywords['filename']+'.paps'
-                        )
-
-        if fileformat == 'taxa':
-            out = ''
-            for col in self.cols:
-                out += col + '\n'
-            f = open(keywords['filename'] + '.taxa','w')
-            f.write(out)
-            f.close()
-
-        if fileformat == 'csv':
-            
-            # get the header line
-            header = sorted(
-                    [s for s in set(self._alias.values()) if s in self._header],
-                    key = lambda x: self._header[x]
-                    )
-            header = [h.upper() for h in header]
-
-            # get the data, in case a subset is chosen
-            if not keywords['subset']:
-                # write stuff to file
-                wl2csv(
-                        header,
-                        self._data,
-                        **keywords
-                        )
-            else:
-                cols,rows = keywords['cols'],keywords['rows']
-
-                if type(cols) not in [list,tuple,bool]:
-                    raise ValueError(
-                            "[i] Argument 'cols' should be list or tuple."
-                            )
-                if type(rows) not in [dict,bool]:
-                    raise ValueError(
-                            "[i] Argument 'rows' shoudl be a dictionary."
-                            )
-
-                # check for chosen header
-                if cols:
-                    # get indices for header
-                    indices = [self._header[x] for x in cols]
-                    header = [c.upper() for c in cols]
-                else:
-                    indices = [r for r in range(len(w.header))]
-
-                if rows:
-                    stmts = []
-                    for key,value in rows.items():
-                        idx = self._header[key]
-                        stmts += ["line[{0}] ".format(idx)+value]
-
-                # get the data
-                out = {}
-
-                for key,line in self._data.items():
-                    if rows:
-                        if eval(" and ".join(stmts)):
-                            out[key] = [line[i] for i in indices]
-                    else:
-                        out[key] = [line[i] for i in indices]
-
-                wl2csv(
-                        header,
-                        out,
-                        **keywords
-                        )
-
-        if fileformat in ['dst','tre','nwk','cluster','groups']:
-            
-            # XXX bad line, just for convenience at the moment
-            filename = keywords['filename']
-
-            # get distance matrix
-            distances = []
-
-            for i,taxA in enumerate(self.cols):
-                for j,taxB in enumerate(self.cols):
-                    if i < j:
-                        
-                        # get the two dictionaries
-                        dictA = self.get_dict(col=taxA,entry=keywords['ref'])
-                        dictB = self.get_dict(col=taxB,entry=keywords['ref'])
-
-                        # count amount of shared concepts
-                        shared = 0
-                        missing = 0
-                        for concept in self.rows:
-                            try:
-                                if [k for k in dictA[concept] if k in dictB[concept]]:
-                                    shared += 1
-                                else:
-                                    pass
-                            except KeyError:
-                                missing += 1
-
-                        # append to distances
-                        distances += [ 1 - shared / (self.height-missing)]
-            distances = misc.squareform(distances)
-
-            if fileformat == 'dst':
-                f = open(filename+'.'+fileformat,'w')
-                f.write(' {0}\n'.format(self.width))
-                for i,taxon in enumerate(self.cols):
-                    f.write('{0:10}'.format(taxon)[0:11])
-                    f.write(' '.join(['{0:2f}'.format(d) for d in
-                        distances[i]]))
-                    f.write('\n')
-                f.close()
-                FileWriteMessage(filename,fileformat).message('written')
-
-            elif fileformat in ['tre','nwk']:
-                
-                if keywords['tree_calc'] == 'neighbor':
-                    tree = cluster.neighbor(
-                            distances,
-                            self.cols,
-                            distances=keywords['distances']
-                            )
-                elif keywords['tree_calc'] == 'upgma':
-                    tree = cluster.ugpma(
-                            distances,
-                            self.cols,
-                            distances=keywords['distances']
-                            )
-
-                f = open(filename+'.'+fileformat,'w')
-                f.write(tree)
-                f.close()
-
-                FileWriteMessage(filename,fileformat).message('written')
-
-            elif fileformat in ['cluster','groups']:
-
-                flats = cluster.flat_upgma(
-                        keywords['threshold'],
-                        distances,
-                        revert=True
-                        )
-                
-                groups = [flats[i] for i in range(self.width)]
-                
-                # renumber the groups
-                groupset = sorted(set(groups))
-                renum = dict([(i,j+1) for i,j in zip(
-                    groupset,
-                    range(len(groupset))
-                    )])
-                groups = [renum[i] for i in groups]
-
-                f = open(filename+'.'+fileformat,'w')
-                for group,taxon in sorted(zip(groups,self.cols),key=lambda x:x[0]):
-                    f.write('{0}\t{1}\n'.format(taxon,group))
-                f.close()
-
-                FileWriteMessage(filename,fileformat).message('written')
-
-
-class QLCWordlist(Wordlist):
-    """
-    Basic class for the handling of QLC-formatted word lists.
-
-    Parameters
-    ----------
-    filename : { string dict }
-        The input file that contains the data. Otherwise a dictionary with
-        consecutive integers as keys and lists as values with the key 0
-        specifying the header.
-
-    row : str (default = "concept")
-        A string indicating the name of the row that shall be taken as the
-        basis for the tabular representation of the word list.
-    
-    col : str (default = "doculect")
-        A string indicating the name of the column that shall be taken as the
-        basis for the tabular representation of the word list.
-    
-    conf : string (default='')
-        A string defining the path to the configuration file. 
-    
-    """
-    
-    def __init__(
-            self,
-            filename,
-            row = 'concept',
-            col = 'doculect',
-            conf = ''
-            ):
-        
-        # initialize the wordlist object for the daughter class
-        Wordlist.__init__(self,filename,row,col,conf)
-
-        # now that the wordlist is loaded, additional checking routines can be
-        # carried out to test and to modify it for QLCoperations
-        print("Here I am, the daughter of Wordlist!")
 

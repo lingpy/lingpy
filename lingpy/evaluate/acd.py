@@ -161,7 +161,8 @@ def diff(
         test='lexstatid',
         loans=True,
         pprint=True,
-        filename = None
+        filename = None,
+        tofile = True
         ):
     r"""
     Write differences in classifications on an item-basis to file.
@@ -202,7 +203,8 @@ def diff(
         loan = lambda x: x
 
     # open file
-    f = open(filename+'.diff','w')
+    if tofile:
+        f = open(filename+'.diff','w')
 
     # get a formatter for language names
     lform = '{0:'+str(max([len(l) for l in lex.cols]))+'}'
@@ -321,12 +323,13 @@ def diff(
                 fn = "no"
             else:
                 fn = "yes"
-
-            f.write("Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
-                concept,
-                fp,
-                fn
-                ))
+            
+            if tofile:
+                f.write("Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
+                    concept,
+                    fp,
+                    fn
+                    ))
 
             # get the words
             words = [lex[i,'ipa'] for i in idxs]
@@ -336,22 +339,23 @@ def diff(
             wform = '{0:'+str(max([len(w) for w in words]))+'}'
 
             # write differences to file
-            for word,lang,cG,cT in sorted(
-                    zip(
-                        words,
-                        langs,
-                        cogsG,
-                        cogsT
-                        ),
-                    key=lambda x:(x[2],x[3])
-                    ):
-                f.write('{0}\t{1}\t{2:4}\t{3:4}\n'.format(
-                    lform.format(lang),
-                    wform.format(word),
-                    cG,
-                    cT
-                    ))
-            f.write('#\n')
+            if tofile:
+                for word,lang,cG,cT in sorted(
+                        zip(
+                            words,
+                            langs,
+                            cogsG,
+                            cogsT
+                            ),
+                        key=lambda x:(x[2],x[3])
+                        ):
+                    f.write('{0}\t{1}\t{2:4}\t{3:4}\n'.format(
+                        lform.format(lang),
+                        wform.format(word),
+                        cG,
+                        cT
+                        ))
+                f.write('#\n')
         else:
             preT += [1.0]
             recT += [1.0]
@@ -371,14 +375,14 @@ def diff(
     pf = 2 * ( pp * pr ) / ( pp + pr )
 
     if pprint:
-        print('**************************')
-        print('* Transformation-Scores  *')
-        print('* ---------------------- *')
-        print('* Tram-Precision: {0:.4f} *'.format(hp))
-        print('* Tram-Recall:    {0:.4f} *'.format(hr))
-        print('* Tram-F-Scores:  {0:.4f} *'.format(hf))
-        print('**************************')
-        print('')
+        #print('**************************')
+        #print('* Transformation-Scores  *')
+        #print('* ---------------------- *')
+        #print('* Tram-Precision: {0:.4f} *'.format(hp))
+        #print('* Tram-Recall:    {0:.4f} *'.format(hr))
+        #print('* Tram-F-Scores:  {0:.4f} *'.format(hf))
+        #print('**************************')
+        #print('')
         print('**************************')
         print('* B-Cubed-Scores         *')
         print('* ---------------------- *')
@@ -395,21 +399,25 @@ def diff(
         print('* Pair-F-Scores:  {0:.4f} *'.format(pf))
         print('**************************')
     
-    f.write('B-Cubed Scores:\n')
-    f.write('Precision: {0:.4f}\n'.format(bp))
-    f.write('Recall:    {0:.4f}\n'.format(br))
-    f.write('F-Score:   {0:.4f}\n'.format(bf))
-    f.write('#\n')
-    f.write('Pair Scores:\n')
-    f.write('Precision: {0:.4f}\n'.format(pp))
-    f.write('Recall:    {0:.4f}\n'.format(pr))
-    f.write('F-Score:   {0:.4f}\n'.format(pf))
-    f.write('#\n')
-    f.write('Hamming Scores:\n')
-    f.write('Precision: {0:.4f}\n'.format(hp))
-    f.write('Recall:    {0:.4f}\n'.format(hr))
-    f.write('F-Score:   {0:.4f}\n'.format(hf))
-    f.write('#\n')
-    f.close()
-    FileWriteMessage(filename,'diff').message('written')
+    if tofile:
+        f.write('B-Cubed Scores:\n')
+        f.write('Precision: {0:.4f}\n'.format(bp))
+        f.write('Recall:    {0:.4f}\n'.format(br))
+        f.write('F-Score:   {0:.4f}\n'.format(bf))
+        f.write('#\n')
+        f.write('Pair Scores:\n')
+        f.write('Precision: {0:.4f}\n'.format(pp))
+        f.write('Recall:    {0:.4f}\n'.format(pr))
+        f.write('F-Score:   {0:.4f}\n'.format(pf))
+        #f.write('#\n')
+        #f.write('Hamming Scores:\n')
+        #f.write('Precision: {0:.4f}\n'.format(hp))
+        #f.write('Recall:    {0:.4f}\n'.format(hr))
+        #f.write('F-Score:   {0:.4f}\n'.format(hf))
+        #f.write('#\n')
+        f.close()
+        FileWriteMessage(filename,'diff').message('written')
+
+    else:
+        return ((bp,br,bf),(pp,pr,pf))
     

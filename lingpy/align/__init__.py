@@ -12,4 +12,4 @@ __date__="2013-03-07"
 
 from .multiple import *
 from .pairwise import *
-from .sca import SCA
+from .sca import *

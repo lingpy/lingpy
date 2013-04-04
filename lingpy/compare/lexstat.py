@@ -23,6 +23,8 @@ from ..data import *
 from ..sequence.sound_classes import *
 from ..sequence.generate import MCPhon
 from ..basic import Wordlist
+from ..align.pairwise import turchin,edit_dist
+
 try:
     from ..algorithm.cython import calign
     from ..algorithm.cython import misc
@@ -722,28 +724,86 @@ class LexStat(Wordlist):
                         alms = [(a[1],b[1],c,d) for a,b,c,d in alms]
                     alignments[taxonA,taxonB] = alms
         return alignments
-
-    def _cluster(
+    
+    def cluster(
             self,
+            method = 'sca',
             threshold = 0.55,
-            method = 'lexstat',
             scale = 0.5,
             factor = 0.3,
             restricted_chars = '_T',
             mode = 'overlap',
-            gop = 1.0
+            verbose = False,
+            gop = -2,
+            **keywords
             ):
         """
-        
+        Internal function for clustering using the LexStat approach.
         """
-        # check for correct method
-        if method not in ['sca','lexstat']:
-            if method in ['turchin']:
-                return self._turchin()
-            else:
-                raise ValueError(
-                        '[!] The method You selected is not available!'
-                        )
+        # check for method
+        if method == 'lexstat':
+            
+            # check for scorer
+            if not hasattr(self,'cscorer'):
+                print("[i] No correspondence-scorer has been specied.")
+                return
+            
+            # define the function with help of lambda
+            function = lambda idxA,idxy: calign.align_pair(
+                    self[idxA,'numbers'],
+                    self[idxB,'numbers'],
+                    [self.cscorer[self[idxB,'langid'] + ".X.-",n] for n in
+                        self[idxA,'numbers']],
+                    [self.cscorer[self[idxA,'langid'] + ".X.-",n] for n in
+                        self[idxB,'numbers']],
+
+                    self[idxA,'prostrings'],
+                    self[idxB,'prostrings'],
+                    1,
+                    scale,
+                    factor,
+                    self.cscorer,
+                    mode,
+                    restricted_chars,
+                    1
+                    )[2]
+        elif method == 'sca':
+            # define the function with help of lambda
+            function = lambda idxA,idxB: calign.align_pair(
+                    self[idxA,'numbers'],
+                    self[idxB,'numbers'],
+                    self[idxA,'weights'],
+                    self[idxB,'weights'],
+                    self[idxA,'prostrings'],
+                    self[idxB,'prostrings'],
+                    gop,
+                    scale,
+                    factor,
+                    self.scorer,
+                    mode,
+                    restricted_chars,
+                    1
+                    )[2]  
+
+        elif method == 'edit-dist':
+            try:
+                entry = keywords['entry']
+            except:
+                entry = 'word'
+
+            # define function with lamda
+            function = lambda idxA,idxB: edit_dist(
+                    self[idxA,entry],
+                    self[idxB,entry],
+                    True
+                    )
+
+        elif method == 'turchin':
+            function = lambda idxA,idxB: turchin(
+                    self[idxA,'tokens'],
+                    self[idxB,'tokens']
+                    )
+        
         # for convenience and later addons
         concepts = self.concepts
 
@@ -751,14 +811,8 @@ class LexStat(Wordlist):
         clr = {}
         k = 0
 
-        # set up the method
-        if method == 'lexstat':
-            scorer = self.cscorer
-        elif method == 'sca':
-            scorer = self.rscorer
-
         for concept in concepts:
-            print("[i] Analyzing concept {0}.".format(concept))
+            if verbose: print("[i] Analyzing concept {0}.".format(concept))
 
             indices = self.get_list(
                     row=concept,
@@ -770,36 +824,8 @@ class LexStat(Wordlist):
             for i,idxA in enumerate(indices):
                 for j,idxB in enumerate(indices):
                     if i < j:
-                        numA = self[idxA,'numbers']
-                        numB = self[idxB,'numbers']
-                        proA = self[idxA,'prostrings']
-                        proB = self[idxB,'prostrings']
-                        
-                        # get language ids
-                        lA = self[idxA,'langid']
-                        lB = self[idxB,'langid']
-                        
-                        # get the weights
-                        wA = [self.cscorer[lB+'.X.-',n] for n in numA]
-                        wB = [self.cscorer[lA+'.X.-',n] for n in numB]
-
-                        almA,almB,d = calign.align_pair(
-                                numA,
-                                numB,
-                                wA,
-                                wB,
-                                proA,
-                                proB,
-                                gop,
-                                scale,
-                                factor,
-                                scorer,
-                                mode,
-                                restricted_chars,
-                                1
-                                )
-
-                        # append distance score to matrix
+                        d = function(idxA,idxB)
+                        ## append distance score to matrix
                         matrix += [d]
             matrix = misc.squareform(matrix)
             
@@ -815,21 +841,203 @@ class LexStat(Wordlist):
             # add values to cluster dictionary
             for idxA,idxB in zip(indices,clusters):
                 clr[idxA] = idxB
-        if method == 'lexstat':
-            self.add_entries("LexStatId",clr,lambda x:x)
+        
+        if method == 'turchin':
+            self.add_entries('turchinid',clr,lambda x:x)
+        elif method == 'lexstat':
+            self.add_entries('lexstatid',clr,lambda x:x)
         elif method == 'sca':
-            self.add_entries("ScaId"),clr,lambda x:x)
-    
-    def _turchin(self):
-        """
-        Calculate distances on the basis of Turchin's et al. approach.
-        """
+            self.add_entries('scaid',clr,lambda x:x)
+        else:
+            self.add_entries('editid',clr,lambda x:x)       
         
-        pass
+        # return the dictionary
+        #return clr
 
-    def _edit_dist(self):
-        """
-        Calculate distances on the basis of edit distance.
-        """
-        
-        pass
+    #def _get_distance(
+    #        self,
+    #        idxA,
+    #        idxB,
+    #        method,
+    #        scorer
+    #        ):
+    #    """
+    #    Internal function returns a distance from the data, depending on the
+    #    method.
+    #    """
+    #    
+    #    numA = self[idxA,'numbers']
+    #    numB = self[idxB,'numbers']
+    #    proA = self[idxA,'prostrings']
+    #    proB = self[idxB,'prostrings']
+    #    
+    #    # get the weights
+    #    wA = self[idxA,'weights']
+    #    wB = self[idxB,'weights']
+    #    almA,almB,d = calign.align_pair(
+    #            numA,
+    #            numB,
+    #            wA,
+    #            wB,
+    #            proA,
+    #            proB,
+    #            gop,
+    #            scale,
+    #            factor,
+    #            scorer,
+    #            mode,
+    #            restricted_chars,
+    #            1
+    #            )
+    #    return d
+
+    #def _sca(
+    #        threshold = 0.55,
+    #        scale = 0.5,
+    #        factor = 0.3,
+    #        restricted_chars = '_T',
+    #        mode = 'overlap',
+    #        gop = -1.0,
+    #        verbose = True,
+    #        **keywords,
+    #        ):
+    #    """
+    #    Carry out an analysis using the SCA distance.
+    #    """
+
+    #    # for convenience and later addons
+    #    concepts = self.concepts
+
+    #    # make a dictionary that stores the clusters for later update
+    #    clr = {}
+    #    k = 0
+
+    #    for concept in concepts:
+    #        print("[i] Analyzing concept {0}.".format(concept))
+
+    #        indices = self.get_list(
+    #                row=concept,
+    #                flat=True
+    #                )
+
+    #        matrix = []
+    #        
+    #        for i,idxA in enumerate(indices):
+    #            for j,idxB in enumerate(indices):
+    #                if i < j:
+    #                    numA = self[idxA,'numbers']
+    #                    numB = self[idxB,'numbers']
+    #                    proA = self[idxA,'prostrings']
+    #                    proB = self[idxB,'prostrings']
+    #                    
+    #                    # get language ids
+    #                    lA = self[idxA,'langid']
+    #                    lB = self[idxB,'langid']
+    #                    
+    #                    # get the weights
+    #                    wA = self[idxA,'weights']
+    #                    wB = self[idxB,'weights']
+    #                    almA,almB,d = calign.align_pair(
+    #                            numA,
+    #                            numB,
+    #                            wA,
+    #                            wB,
+    #                            proA,
+    #                            proB,
+    #                            gop,
+    #                            scale,
+    #                            factor,
+    #                            scorer,
+    #                            mode,
+    #                            restricted_chars,
+    #                            1
+    #                            )
+
+    #                    # append distance score to matrix
+    #                    matrix += [d]
+    #        matrix = misc.squareform(matrix)
+    #        
+    #        # calculate the clusters using flat-upgma
+    #        c = cluster.flat_upgma(threshold,matrix,revert=True)
+
+    #        # extract the clusters
+    #        clusters = [c[i]+k for i in range(len(matrix))]
+
+    #        # reassign the "k" value
+    #        k = max(clusters)
+    #        
+    #        # add values to cluster dictionary
+    #        for idxA,idxB in zip(indices,clusters):
+    #            clr[idxA] = idxB
+    #    return clr
+
+   
+    #def _turchin(self):
+    #    """
+    #    Calculate distances on the basis of Turchin's et al. approach.
+    #    """
+    #    
+    #    pass
+
+    #def _edit_dist(
+    #        threshold = 0.55,
+    #        verbose = True,
+    #        entry = False,
+    #        **keywords,
+    #        ):
+    #    """
+    #    Carry out an analysis using the edit distance.
+    #    """
+
+    #    # check for classes
+    #    if not entry:
+    #        entry = 'words'
+
+    #    # for convenience and later addons
+    #    concepts = self.concepts
+
+    #    # make a dictionary that stores the clusters for later update
+    #    clr = {}
+    #    k = 0
+
+    #    for concept in concepts:
+    #        print("[i] Analyzing concept {0}.".format(concept))
+
+    #        indices = self.get_list(
+    #                row=concept,
+    #                flat=True
+    #                )
+
+    #        matrix = []
+    #        
+    #        for i,idxA in enumerate(indices):
+    #            for j,idxB in enumerate(indices):
+    #                if i < j:
+    #                    wordA = self[idxA,entry]
+    #                    wordB = self[idxB,entry]
+    #                    
+    #                    # get language ids
+    #                    lA = self[idxA,'langid']
+    #                    lB = self[idxB,'langid']
+    #                    
+    #                    # get the distance
+    #                    d = edit_dist(wordA,wordB,normalized=True)
+
+    #                    # append distance score to matrix
+    #                    matrix += [d]
+    #        matrix = misc.squareform(matrix)
+    #        
+    #        # calculate the clusters using flat-upgma
+    #        c = cluster.flat_upgma(threshold,matrix,revert=True)
+
+    #        # extract the clusters
+    #        clusters = [c[i]+k for i in range(len(matrix))]
+
+    #        # reassign the "k" value
+    #        k = max(clusters)
+    #        
+    #        # add values to cluster dictionary
+    #        for idxA,idxB in zip(indices,clusters):
+    #            clr[idxA] = idxB
+
+    #    return clr
