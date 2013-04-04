@@ -1,17 +1,21 @@
-# created: Mo 21 Jan 2013 01:48:23  CET
-# modified: Mo 21 Jan 2013 01:48:23  CET
-
-__author__ = "Johann-Mattis List"
-__date__ = "2013-01-21"
-
+# author   : Johann-Mattis List
+# email    : mattis.list@gmail.com
+# created  : 2013-04-02 06:55
+# modified : 2013-04-02 06:55
 """
 Module provides functions and methods for the creation of csv-files.
 """
 
+__author__="Johann-Mattis List"
+__date__="2013-04-02"
+
 # imports
 import re
+import json
 
 from ..check.messages import FileWriteMessage
+from .phylip import matrix2dst
+from .misc import msa2str
 
 def pap2csv(
         taxa,
@@ -49,8 +53,55 @@ def wl2csv(
     """
     formatter = formatter.upper()
 
+    # create output string
     out = '# Wordlist\n'
-    out += 'ID\t'+'\t'.join(header)+'\n'
+
+    # write meta to file
+    if "meta" in keywords:
+        meta = keywords["meta"]
+    else:
+        meta = {}
+    
+    kvpairs = {}
+    jsonpairs = {}
+    msapairs = {}
+    distances = ''
+
+    for k,v in meta.items():
+        # simple key-value-pairs
+        if type(v) in [str,int] or k == "tree":
+            kvpairs[k] = v
+            #out += '@{0}:{1}\n'.format(k,v)
+        elif k == 'msa':
+            for a,b in v.items():
+                msapairs[a] = b
+        elif k == 'distances':
+            distances = matrix2dst(v,meta['taxa'])
+        else:
+            jsonpairs[k] = v
+    if kvpairs:
+        out += '\n# META\n'
+        for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
+            out += '@{0}:{1}\n'.format(k,v)
+    if jsonpairs:
+        out += '\n# JSON\n'
+        out += "<json>\n"
+        out += json.dumps(jsonpairs,indent=4)
+        out += '\n</json>\n'
+    if msapairs:
+        out += "\n# MSA\n"
+        for k,v in msapairs.items():
+            out += '#\n<msa id="{0}">\n'.format(k)
+            out += msa2str(v)
+            #out += v['seq_id']+'\n'
+            #for t,alm in zip(v['taxa'],v['alignment']):
+            #    out += t + '\t' + '\t'.join(alm)+'\n'
+            out += "</msa>\n"
+    if distances:
+        out += '\n# DISTANCES\n<dst>\n'
+        out += distances+'</dst>\n'
+
+    out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     
     # check for gloss in header to create nice output format
     if formatter in header:

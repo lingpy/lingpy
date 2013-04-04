@@ -135,7 +135,7 @@ from .pairwise import Pairwise
 
 
 
-class _Multiple(Multiple):
+class MSA(Multiple):
     """
     Basic class for carrying out multiple sequence alignment analyses.
 
@@ -616,7 +616,7 @@ class _Multiple(Multiple):
             pass
         out.close()
 
-class _Pairwise(Pairwise):
+class PSA(Pairwise):
     """
     Basic class for dealing with the pairwise alignment of sequences.
 
@@ -924,7 +924,7 @@ class _Pairwise(Pairwise):
                 out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
             out.close()
 
-class _SCA(Wordlist):
+class Alignments(Wordlist):
     """
     Class handles Wordlists for the purpose of alignment analyses.
     """
@@ -936,13 +936,17 @@ class _SCA(Wordlist):
             conf = '',
             **keywords
             ):
-        
         # initialize the wordlist
         Wordlist.__init__(self,infile,row,col,conf)
         
         # check for cognate-id or alignment-id in header
         if 'cogid' in self.header or 'almid' in self.header:
             self.etd = self.get_etymdict(loans=True)
+        # else raise error
+        else: 
+            raise ValueError(
+                    "[i] Did not find a cognate ID in the input file."
+                    )
 
         # check for strings
         if 'tokens' in self.header:
@@ -956,33 +960,34 @@ class _SCA(Wordlist):
             return 
 
         # create the alignments by assembling the ids of all sequences
-        self.msa = {}
-        for key,value in self.etd.items():
-            tmp = [x for x in value if x != 0]
-            seqids = []
-            for t in tmp:
-                seqids += t
-            if len(seqids) > 1:
-                
-                # set up the dictionary
-                d = {}
-                d['taxa'] = []
-                d['seqs'] = []
-                d['dataset'] = self.filename
-                if 'concept' in self.header:
-                    concept = self[seqids[0],'concept']
-                    d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
-                else:
-                    d['seq_id'] = 'CogId:{0}'.format(key)
-                
-                # set up the data
-                for seq in seqids:
-                    taxon = self[seq,'taxa']
-                    string = self[seq][stridx]
+        if 'msa' not in self._meta:
+            self._meta['msa'] = {}
+            for key,value in self.etd.items():
+                tmp = [x for x in value if x != 0]
+                seqids = []
+                for t in tmp:
+                    seqids += t
+                if len(seqids) > 1:
                     
-                    d['taxa'] += [self[seq,'taxa']]
-                    d['seqs'] += [self[seq][stridx]]
-                self.msa[key] = d
+                    # set up the dictionary
+                    d = {}
+                    d['taxa'] = []
+                    d['seqs'] = []
+                    d['dataset'] = self.filename
+                    if 'concept' in self.header:
+                        concept = self[seqids[0],'concept']
+                        d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
+                    else:
+                        d['seq_id'] = 'CogId:{0}'.format(key)
+                    
+                    # set up the data
+                    for seq in seqids:
+                        taxon = self[seq,'taxa']
+                        string = self[seq][stridx]
+                        
+                        d['taxa'] += [self[seq,'taxa']]
+                        d['seqs'] += [self[seq][stridx]]
+                    self._meta['msa'][key] = d
 
     def align(
             self,
@@ -1147,7 +1152,9 @@ class _SCA(Wordlist):
                                 key
                                 )
                             )
-                self.msa[key]['alignment'] = m.alm_matrix
+                #self._meta['msa'][key] = {}
+            #print(m._alm_matrix)
+            self._meta['msa'][key]['alignment'] = m.alm_matrix
                 #if plot:
                 #    alm2html(
                 #            '{0}-msa/{1}-{2}'.format(
@@ -1161,72 +1168,44 @@ class _SCA(Wordlist):
     def __len__(self):
         return len(self.msa)
 
-class SCA(object):
+def SCA(
+        infile,
+        **keywords
+        ):
     """
-    Basic class for handling various kinds of alignment analyses.
+    Method returns alignment objects depending on input file.
 
-    Parameters
-    ----------
-    infile : { str }
-        The name of the input file which can be provided in PSQ, PSQ, MSQ, or
-        MSA format.
-
+    Notes
+    -----
+    This method checks for the type of an alignment object and returns an
+    alignment object of the respective type.
     """
-    
-    def __init__(
-            self, 
-            infile, 
-            **keywords
-            ):
 
-        # set the defaults
-        defaults = {
-                'comment'      : '#',
-                "diacritics"   : None,
-                "vowels"       : None,
-                "tones"        : None,
-                "combiners"    : '\u0361\u035c',
-                "breaks"       : '.-',
-                "stress"       : "ˈˌ'",
-                "merge_vowels" : True
-                }
+    # set the defaults
+    defaults = {
+            'comment'      : '#',
+            "diacritics"   : None,
+            "vowels"       : None,
+            "tones"        : None,
+            "combiners"    : '\u0361\u035c',
+            "breaks"       : '.-',
+            "stress"       : "ˈˌ'",
+            "merge_vowels" : True
+            }
+    # check for keywords
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+   
+    # check for datatype
+    if type(infile) == dict:
+        parent = MSA(infile,**keywords)
+    else:
+        if infile[-4:] in ['.msa','.msq']:
+            parent = MSA(infile,**keywords)
+        elif infile[-4:] in ['.psq','psa']:
+            parent = PSA(infile,**keywords)
+        elif infile[-4:] in ['.csv','.tsv']:
+            parent = Alignments(infile,**keywords)
 
-        # check for keywords
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-        
-        # check for datatype
-        if type(infile) == dict:
-            parent = _Multiple(infile,**keywords)
-        else:
-            if infile[-4:] in ['.msa','.msq']:
-                parent = _Multiple(infile,**keywords)
-            elif infile[-4:] in ['.psq','psa']:
-                parent = _Pairwise(infile,**keywords)
-            elif infile[-4:] in ['.csv','.tsv']:
-                parent = _SCA(infile,**keywords)
-
-        for key in dir(parent):
-            if key not in [
-                    '__class__',
-                    ]:
-                try:
-                    setattr(self,key,parent.__getattribute__(key))
-                except:
-                    pass
-    
-    def __len__(self):
-        return self.__len__()
-    def __str__(self):
-        return self.__str__()
-    def __repr__(self):
-        return self.__repr__()
-    def __eq__(self,other):
-        return self.__eq__(other)
-    def __getitem__(self,x):
-        return self.__getitem__(x)
-
-        
-
-
+    return parent

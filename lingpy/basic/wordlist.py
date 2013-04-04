@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-03-14 00:21
+# modified : 2013-04-02 07:02
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-14"
+__date__="2013-04-02"
 
 import os
 import builtins # XXX ??? maybe not needed
@@ -16,7 +16,7 @@ import numpy as np
 import pickle
 
 # basic lingpy imports
-from ..read.csv import qlc2dict
+from ..read.csv import read_qlc
 from ..convert import *
 from ..check.messages import FileWriteMessage
 try:
@@ -117,7 +117,7 @@ class Wordlist(object):
 
         # try to load the data
         try:
-            input_data = qlc2dict(filename)
+            input_data = read_qlc(filename)
             self.filename = filename.replace('.csv','')
         except:
             if not input_data:
@@ -189,12 +189,12 @@ class Wordlist(object):
 
         basic_rows = sorted(
                 set(
-                    [input_data[k][rowIdx] for k in input_data if k > 0]
+                    [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
                     )
                 )
         basic_cols = sorted(
                 set(
-                    [input_data[k][colIdx] for k in input_data if k > 0]
+                    [input_data[k][colIdx] for k in input_data if k != 0 and type(k) == int]
                     )
                 )
         
@@ -219,7 +219,7 @@ class Wordlist(object):
         # first, find out, how many items (== synonyms) are there maximally for
         # each row
         tmp_dict = {}
-        for key,value in [(k,v) for k,v in input_data.items() if k > 0]:
+        for key,value in [(k,v) for k,v in input_data.items() if k != 0 and type(k) == int]:
             try:
                 tmp_dict[value[rowIdx]][value[colIdx]] += [key]
             except KeyError:
@@ -285,7 +285,7 @@ class Wordlist(object):
                 pass
         
         # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in input_data.items() if k != 0])
+        self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
 
         # iterate over self._data and change the values according to the
         # functions
@@ -302,7 +302,16 @@ class Wordlist(object):
 
         # create entry attribute of the wordlist
         self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
-                        
+                       
+        # assign meta-data
+        self._meta = {}
+        for key in [k for k in input_data if type(k) != int]:
+            self._meta[key] = input_data[key]
+
+        # check for taxa in meta
+        if 'taxa' not in self._meta:
+            self._meta['taxa'] = self.taxa
+
     def __getitem__(self,idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -310,21 +319,24 @@ class Wordlist(object):
         try:
             return self._cache[idx]
         except:
-            pass
-
-        try:
-            # return full data entry as list
-            out = self._data[idx]
-            self._cache[idx] = out
-            return out
-        except:
             try:
-                # return data entry with specified key word
-                out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
+                # return full data entry as list
+                out = self._data[idx]
                 self._cache[idx] = out
                 return out
             except:
-                pass
+                try:
+                    # return data entry with specified key word
+                    out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
+                    self._cache[idx] = out
+                    return out
+                except:
+                    try:
+                        out = self._meta[idx]
+                        self._cache[idx] = out
+                        return out
+                    except:
+                        pass
 
     def __len__(self):
         """
@@ -341,20 +353,23 @@ class Wordlist(object):
         """
         try:
             # get the right name
-            attr = self._alias[attr]
+            nattr = self._alias[attr]
 
-            if attr == self._row_name:
+            if nattr == self._row_name:
                 return self.rows
-            elif attr == self._col_name:
+            elif nattr == self._col_name:
                 return self.cols
-            elif attr in self._header:
-                return self.get_entries(attr)
+            elif nattr in self._header:
+                return self.get_entries(nattr)
             else:
                 raise AttributeError("%r object has no attribute %r" %
-                        (type(self).__class__,attr))
+                        (self.__class__,attr))
         except:
-             raise AttributeError("%r object has no attribute %r" %
-                    (type(self).__class__,attr))
+            try:
+                return self._meta[attr]
+            except:
+                raise AttributeError("%r object has no attribute %r" %
+                        (self.__class__,attr))
 
     def __iter__(self):
         """
@@ -381,7 +396,9 @@ class Wordlist(object):
         out = open(path,'wb')
         d = {}
         for key,value in self.__dict__.items():
-            if key != '_class': 
+            if key not in  [
+                    '_class',
+                    ]: 
                 d[key] = value
         d['__date__'] = str(datetime.today())
         pickle.dump(d,out)
@@ -392,6 +409,7 @@ class Wordlist(object):
             col = '',
             row = '',
             entry = '',
+            **keywords
             ):
         """
         Function returns dictionaries of the cells matched by the indices.
@@ -472,15 +490,33 @@ class Wordlist(object):
         elif row and col:
             print("[!] You should specify only a value for row or for col!")
         else:
+            for key in [k for k in keywords if k in self._alias]:
+                if self._alias[key] == self._col_name:
+                    entries = self.get_dict(
+                            col = keywords[key],
+                            entry = entry,
+                            )
+                    self._cache[col,entry] = entries
+                    return entries
+
+                elif self._alias[key] == self._row_name:
+                    entries = self.get_dict(
+                            row = keywords[key],
+                            entry = entry
+                            )
+                    self._cache[col,entry] = entries
+                    return entries
+
+
             print("[!] Neither rows nor columns are selected!")
-       
 
     def get_list(
             self,
             row='',
             col='',
             entry='',
-            flat=False
+            flat=False,
+            **keywords
             ):
         """
         Function returns lists of rows and columns specified by their name.
@@ -599,7 +635,27 @@ class Wordlist(object):
         elif row and col:
             print("[!] You should specify only a value for row or for col!")
         else:
+            for key in [k for k in keywords if k in self._alias]:
+                if self._alias[key] == self._col_name:
+                    entries = self.get_list(
+                            col = keywords[key],
+                            entry = entry,
+                            flat = flat
+                            )
+                    self._cache[col,entry,flat] = entries
+                    return entries
+
+                elif self._alias[key] == self._row_name:
+                    entries = self.get_list(
+                            row = keywords[key],
+                            entry = entry,
+                            flat = flat
+                            )
+                    self._cache[col,entry,flat] = entries
+                    return entries
+
             print("[!] Neither rows nor columns are selected!")
+            return 
     
     def get_entries(
             self,
@@ -973,6 +1029,49 @@ class Wordlist(object):
         
         return paps
 
+    def calculate(
+            self,
+            data,
+            taxa = 'taxa',
+            concepts = 'concepts',
+            cognates = 'cogid',
+            threshold = 0.6,
+            **keywords
+            ):
+        """
+        Function calculates specific data.
+        """
+        # XXX take care of keywords XXX
+        if data in ['distances','dst']:
+            self._meta['distances'] = wl2dst(self,taxa,concepts,cognates)
+        elif data in ['tre','nwk','tree']:
+            if 'distances' not in self._meta:
+                self.calculate('distances',taxa,concepts,cognates)
+            if 'distances' not in keywords:
+                keywords['distances'] = False
+            if 'tree_calc' not in keywords:
+                keywords['tree_calc'] = 'neighbor'
+
+            self._meta['tree'] = matrix2tree(
+                    self._meta['distances'],
+                    self.taxa,
+                    keywords['tree_calc'],
+                    keywords['distances']
+                    )
+
+        elif data in ['groups','cluster']:
+            if 'distances' not in self._meta:
+                self.calculate('distances',taxa,concepts,cognates)
+            self._meta['groups'] = matrix2groups(
+                    threshold,
+                    self.distances,
+                    self.taxa
+                    )
+        else:
+            return
+
+        print("[i] Successfully calculated {0}.".format(data))
+
     def _output(
             self,
             fileformat,
@@ -985,6 +1084,8 @@ class Wordlist(object):
         # check for stamp attribute
         if hasattr(self,"_stamp"):
             keywords["stamp"] = self._stamp
+        else:
+            keywords["stamp"] = ''
 
         # add the default parameters, they will be checked against the keywords
         defaults = {
@@ -999,7 +1100,8 @@ class Wordlist(object):
                 'threshold' : 0.6, # threshold for flat clustering
                 'subset'    : False, # setup a subset of the data,
                 'cols'      : False,
-                'rows'      : False
+                'rows'      : False,
+                'meta'      : self._meta,
                 }
             
         # compare with keywords and add missing ones
@@ -1026,15 +1128,17 @@ class Wordlist(object):
                         paps,
                         filename=keywords['filename']+'.paps'
                         )
-
+        
+        # simple printing of taxa
         if fileformat == 'taxa':
             out = ''
-            for col in self.cols:
-                out += col + '\n'
+            for taxon in self.taxa:
+                out += taxon + '\n'
             f = open(keywords['filename'] + '.taxa','w')
             f.write(out)
             f.close()
-
+        
+        # csv-output
         if fileformat == 'csv':
             
             # get the header line
@@ -1093,95 +1197,82 @@ class Wordlist(object):
                         out,
                         **keywords
                         )
+        
+        # output dst-format (phylip)
+        if fileformat == 'dst':
 
-        if fileformat in ['dst','tre','nwk','cluster','groups']:
+            # check for distances as keyword
+            if 'distances' not in self._meta:
+                self._meta['distances'] = wl2dst(self)
+            
+            # write data to file
+            filename = keywords['filename']
+            f = open(filename+'.'+fileformat,'w')
+            out = matrix2dst(
+                    self._meta['distances'],
+                    self.taxa,
+                    stamp=keywords['stamp']
+                    )
+            f.write(out)
+            f.close()
+
+            # display file-write-message
+            FileWriteMessage(filename,fileformat).message('written')
+        
+        # output tre-format (newick)
+        if fileformat in ['tre','nwk']: #,'cluster','groups']:
             
             # XXX bad line, just for convenience at the moment
             filename = keywords['filename']
-
-            # get distance matrix
-            distances = []
-
-            for i,taxA in enumerate(self.cols):
-                for j,taxB in enumerate(self.cols):
-                    if i < j:
-                        
-                        # get the two dictionaries
-                        dictA = self.get_dict(col=taxA,entry=keywords['ref'])
-                        dictB = self.get_dict(col=taxB,entry=keywords['ref'])
-
-                        # count amount of shared concepts
-                        shared = 0
-                        missing = 0
-                        for concept in self.rows:
-                            try:
-                                if [k for k in dictA[concept] if k in dictB[concept]]:
-                                    shared += 1
-                                else:
-                                    pass
-                            except KeyError:
-                                missing += 1
-
-                        # append to distances
-                        distances += [ 1 - shared / (self.height-missing)]
-            distances = misc.squareform(distances)
-
-            if fileformat == 'dst':
-                f = open(filename+'.'+fileformat,'w')
-                f.write(' {0}\n'.format(self.width))
-                for i,taxon in enumerate(self.cols):
-                    f.write('{0:10}'.format(taxon)[0:11])
-                    f.write(' '.join(['{0:2f}'.format(d) for d in
-                        distances[i]]))
-                    f.write('\n')
-                f.close()
-                FileWriteMessage(filename,fileformat).message('written')
-
-            elif fileformat in ['tre','nwk']:
-                
+            
+            if 'tree' not in self._meta:
+            
+                # check for distances
+                if 'distances' not in self._meta:
+                    self._meta['distances'] = wl2dst(self)
+                    
                 if keywords['tree_calc'] == 'neighbor':
                     tree = cluster.neighbor(
-                            distances,
+                            self._meta['distances'],
                             self.cols,
                             distances=keywords['distances']
                             )
                 elif keywords['tree_calc'] == 'upgma':
                     tree = cluster.ugpma(
-                            distances,
+                            self._meta['distances'],
                             self.cols,
                             distances=keywords['distances']
                             )
+            else:
+                tree = self._meta['tree']
 
-                f = open(filename+'.'+fileformat,'w')
-                f.write(tree)
-                f.close()
+            f = open(filename+'.'+fileformat,'w')
+            f.write('{0}'.format(tree))
+            f.close()
 
-                FileWriteMessage(filename,fileformat).message('written')
+            FileWriteMessage(filename,fileformat).message('written')
 
-            elif fileformat in ['cluster','groups']:
+        if fileformat in ['cluster','groups']:
 
-                flats = cluster.flat_upgma(
+            filename = keywords['filename']
+            
+            if 'distances' not in self._meta:
+                
+                self._meta['distances'] = wl2dst(self) # check for keywords
+
+            if 'groups' not in self._meta:
+                self._meta['groups'] = matrix2groups(
                         keywords['threshold'],
-                        distances,
-                        revert=True
+                        self._meta['distances'],
+                        self.taxa
                         )
-                
-                groups = [flats[i] for i in range(self.width)]
-                
-                # renumber the groups
-                groupset = sorted(set(groups))
-                renum = dict([(i,j+1) for i,j in zip(
-                    groupset,
-                    range(len(groupset))
-                    )])
-                groups = [renum[i] for i in groups]
 
-                f = open(filename+'.'+fileformat,'w')
-                for group,taxon in sorted(zip(groups,self.cols),key=lambda x:x[0]):
-                    f.write('{0}\t{1}\n'.format(taxon,group))
-                f.close()
+            f = open(filename+'.'+fileformat,'w')
+            for taxon,group in sorted(self._meta['groups'].items(),key=lambda x:x[0]):
+                f.write('{0}\t{1}\n'.format(taxon,group))
+            f.close()
 
-                FileWriteMessage(filename,fileformat).message('written')
+            FileWriteMessage(filename,fileformat).message('written')
 
     def output(
             self,
