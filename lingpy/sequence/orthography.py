@@ -200,6 +200,9 @@ class OrthographyParser(object):
         except IOError as e:
             print("\nWARNING: There is no file at the path you've specified.\n\n")
 
+        # path and filename of orthography profile
+        self.orthography_profile = orthography_profile
+
         # read in orthography profile and create a tree structure
         self.root = createTree(orthography_profile)
 
@@ -212,6 +215,10 @@ class OrthographyParser(object):
 
         file = open(orthography_profile, "r", encoding="utf-8")
 
+        # an orthography profile may have one or more comma delimited columns
+        # the first column is graphemes, the second IPA, etc.
+        self.multiple_columns = False
+
         line_count = 0
         for line in file:
             line_count += 1
@@ -222,11 +229,16 @@ class OrthographyParser(object):
                 continue
 
             line = unicodedata.normalize("NFD", line)
+
             tokens = line.split(",") # split the orthography profile into columns
+
+            if len(tokens) > 1:
+                self.multiple_columns = True
 
             grapheme = tokens[0].strip()
             phoneme = tokens[1].strip()
-            
+
+            # TODO: assuming that we have two filled columns; we should throw an error otherwise
             if not grapheme in self.grapheme_to_phoneme:
                 self.grapheme_to_phoneme[grapheme] = phoneme
             else:
@@ -236,12 +248,81 @@ class OrthographyParser(object):
         # uncomment this line if you want to see the orthography profile tree structure
         # printTree(self.root, "")
 
+    def exists_multiple_columns(self):
+        """
+        Returns boolean of whether multiple columns exist in the orthography profile, e.g. graphemes and IPA and x, etc.
+        """
+        return self.multiple_columns
+
     def parse_string_to_graphemes_string_DEPRECATED(self, string):
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
         result = ""
         result += printMultigraphs(self.root, string, result+"# ")
         return (True, result)
+
+
+
+    # updated for LINGPY - deal with error handling in THIS class
+    # TODO -- write unparsables to disk!
+    def parse_graphemes(self, string):
+        """
+        Parses orthograhy profile specified graphemes given a string.
+
+        Args:
+        - string (obligatory): the string to be parsed and formatted
+
+        Returns:    
+        - the parsed and formatted string
+
+        For example:
+           dog shit => # d o g # sh i t #
+        """
+        success = True
+        parses = []
+        string = unicodedata.normalize("NFD", string)
+        for word in string.split():
+            parse = getParse(self.root, word)
+            if len(parse) == 0:
+                print("[i] The string <"+string+"> does not parse given the specified orthography profile.\n")
+                parse = " <no-valid-parse> "
+            parses.append(parse)
+        # Use "#" as a word boundary token (a special 'grapheme').
+        result = "".join(parses).replace("##", "#")  # Ugly. Oh well.
+        return result
+
+
+    # updated for LINGPY - deal with error handling in THIS class
+    # TODO -- write unparsables to disk!
+    def graphemes_to_ipa(self, string):
+        """
+        Returns the parsed and formated string given the graphemes encoded in the 
+        orthography profile and the IPA row. Uses a global scope lookup hash for
+        the time being.
+
+        Args:
+        - string (obligatory): the string to be parsed and formatted
+
+        Returns:    
+        - the parsed and formatted string
+        """
+        graphemes = self.parse_graphemes(string)
+        ipa = graphemes
+
+        # flip the graphemes into phonemes
+        # TODO: probably don't need a loop for *every string* -- refactor
+        # ASSUMES that every grapheme has a corresponding ipa character
+
+        for k, v in self.grapheme_to_phoneme.items():
+            if k == "#" or k == " ":
+                continue
+            ipa = ipa.replace(k, v)
+
+        return ipa
+
+
+
+
 
     def parse_string_to_graphemes_string(self, string):
         """
@@ -324,7 +405,7 @@ class OrthographyParser(object):
     def parse_string_to_ipa_string(self, string):
         """
         Returns the parsed and formated string given the graphemes encoded in the 
-        orthography profile and the IPA row. Uses a global scrope lookup hash for
+        orthography profile and the IPA row. Uses a global scope lookup hash for
         the time being.
 
         Args:
