@@ -18,7 +18,7 @@ Other relevant work related to the development of the library and research using
 
 ## Setup
 
-To use the library in its pre-setup.py stage, git clone the library and either put the library's "lingpy/lingpy" folder your path (or Python path).
+To use the library in its pre-setup.py stage, git clone the library and put the library's "lingpy/lingpy" folder in your path (or Python path).
 
 Alternatively, you can make a symlink in your Python 3 site-packages folder called "lingpy" and link it to "lingpy/lingpy". For example:
 
