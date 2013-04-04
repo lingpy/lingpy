@@ -1,34 +1,21 @@
-# -*- coding: utf-8 -*-
 """
-This module provides a basic class for reading in a simple spreadsheet 
-(delimited text file) for concepts and words in a set of languages.
+This module provides a basic class for reading in a simple spreadsheet (delimited text file) for concepts and words in a set of languages.
 """
+
+__author__="Steven Moran"
+__date__="2013-04"
 
 import csv
 import sys 
 import unicodedata
 from time import gmtime, strftime
-
-"""
-default:
-commas (",") == alternative transcriptions
--- end of word comma == mistake
-backslash ("\") == two different words for the same thing
-periods (".") == identify affixes or units of meaning
-
-brackets ("[", "]") == 
-  1a. after the word, e.g. mba [?] -- means "is it correct?"
-  1b. after the word -- when an informant gives two different words
-  2. within a word -- transcriber thinks segment is phonetic only
-  3. after a word but not with "?" -- optional compounded word
-  4. next to a word -- also optional compounded word
-
-"""
+from datetime import date,datetime
 
 
 class Spreadsheet:
     """
-    Basic class for reading CSV files and outputting QLC format.
+    Basic class for reading "CSV" files into a matrix and outputting modified lingpy file format
+    aka.
 
     Parameters
     ----------
@@ -47,17 +34,43 @@ class Spreadsheet:
 
     .. todo:: finish documentation; what to do about cell encapsulation (e.g. "data")
 
+    # workflow
+
+    0. dump to delimited format
+    1. csv2list(fileformat)
+    2. pass this module arguments (header:linenumber, data:rownumber, default 0:ids, 1:concepts, 2-n:languages)
+    2. col and row names (range or integer) - can tell the number of languages and concepts, etc.
+    2. irrelevant order (loop over the dictionary and use alias dictionary; doculect / language / )
+    2. header
+    2. spreadsheet.rc **keywords, use aliases
+    x. define for the output - keyword for output e.g. full rows, or rows >= n, also have to define what we have; want specific languages, specific cognate IDs
+    x. black list parsing (no empty cells, etc.)
+    x. separator for multientries for keywords in the output as "," as default, etc. (list of separators)
+    x. parse as a list and do a type check
+    x. then flip into harry potter format
+    x. then flip into wordlist format
+    x. then add tokenization / orthographic parsing
 
     """
-    def __init__(self, filename, delimiter="\t", output_dir="."):
+    def __init__(self, 
+                 filename, 
+                 sep="\t", 
+                 header=0,
+                 concepts=1,
+                 languages=[1:]
+                 ):
 
         self.filename = filename
-        self.matrix = []
         self.header = []
+        self.matrix = []
+
+        # try and load the data
+        # if not self.filename:
+        #    raise ValueError("[i] Input data is not specified.")
 
         row_num = 0
         with open(self.filename, newline='') as file:
-            reader = csv.reader(file, delimiter='\t')
+            reader = csv.reader(file, sep=sep)
             self.header = reader.__next__()
 
             for row in reader:
@@ -149,6 +162,42 @@ class Spreadsheet:
                 else:
                     row = str(id)+"\t"+self.header[j]+"\t"+self.matrix[i][0]+"\t"+self.matrix[i][j]
                 print(row)        
+
+    def output(self, fileformat, **keywords):
+        """
+        Method to output the spreadsheet data into other formats.
+        """
+
+        """
+        default:
+        commas (",") == alternative transcriptions
+        -- end of word comma == mistake
+        backslash ("\") == two different words for the same thing
+        periods (".") == identify affixes or units of meaning
+
+        brackets ("[", "]") == 
+        1a. after the word, e.g. mba [?] -- means "is it correct?"
+        1b. after the word -- when an informant gives two different words
+        2. within a word -- transcriber thinks segment is phonetic only
+        3. after a word but not with "?" -- optional compounded word
+        4. next to a word -- also optional compounded word
+
+        """
+
+        # first do the data checks
+
+        defaults = {
+            "filename"  : "lingpy-{0}".format(str(date.today())),
+            "subset"    : False,
+            "blacklist" : None, # filename path
+            "rows"      : 200, # minimum number of concepts
+            "cols"      : 15 # minimum number of taxa
+            }
+
+
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
 
 
 if __name__=="__main__":
