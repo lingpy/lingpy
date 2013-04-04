@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 """
-This module provides some basic ngram functions, such as parsing QLC-string formatted 
-strings into ngrams sequences and generating unigram models for intial orthography 
-profiles.
-
-@date: 2011-01-01
-@author: Steven Moran
+This module provides some basic ngram functions, such as parsing QLC-string formatted strings into ngrams sequences and generating unigram models for intial orthography profiles.
 """
+
+__author__ = "Steven Moran"
+__date__ = "2011-01-01"
 
 import collections
 import numpy
@@ -79,15 +75,28 @@ def unicode_model(list):
         combining_class = unicodedata.combining(segment)
         decomposition = unicodedata.decomposition(segment)
 
-
         print(segment+"\t"+str(ord(segment))+"\t"+name+"\t"+category+"\t"+str(combining_class)+"\t"+decomposition+"\t"+str(count)+"\t"+str(frequency))
-
 
 
 def ngrams_from_graphemes(graphemes, n=1):
     """
     Takes a tuple of (orthographically parsed) graphemes and returns a tuple of ngrams.
 
+    Parameters
+    ----------
+    graphemes : tuple
+        a tuple of grapheme strings from which the tuple of ngrams is extracted
+
+    n : int (default = 1)
+        the number of graphemes that have to be looked at for the ngram
+        
+    Return
+    ------
+    _ : tuple
+        a tuple of tupled ngrams for the input string
+
+    Notes
+    -----
     Default is 1 ngram, i.e. methods will return a tuple of unigrams.
 
     Note: a word in a dataset should never have less than three elements, 
@@ -101,18 +110,6 @@ def ngrams_from_graphemes(graphemes, n=1):
     >>> l = ["1"]
     >>> print tuple(l)
     ('1',)
-    
-    Parameters
-    ----------
-    graphemes: tuple of strings
-        a tuple from which the tuple of ngrams is extracted
-    n: integer
-        the number of graphemes that have to be looked at for the ngram
-        default: n = 1 (unigram mode)
-        
-    Returns
-    -------
-    a tuple of tupled ngrams for the input string
     """
 
     # we don't except ngrams less than length 3 (1 sound + 2 word boundaries)
@@ -219,7 +216,6 @@ def words_ngrams_matrix_for_graphemes_list(graphemes_list, n=1):
     return matrix
         
 if __name__ == '__main__':
-    """
     # NgramTest().run()
     # tuple = ('#', 'h', 'a', 'd', 'ɯ', '#')
     graphemes = ('#', 'h', '#')
@@ -227,7 +223,7 @@ if __name__ == '__main__':
     print()
     print("ngrams_from_graphemes, tuple:", ngrams_from_graphemes(graphemes, 1))
     print()
-    """
-    from qlc import tokenizer
-    t = tokenizer.tokenizer()
-    unigram_model(t)
+
+#    from lingpy.sequence import tokenizer
+#    t = tokenizer.tokenizer()
+#    unigram_model(t)
