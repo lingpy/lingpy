@@ -17,6 +17,7 @@ class Spreadsheet:
     Basic class for reading "CSV" files into a matrix and outputting modified lingpy file format
     aka.
 
+
     Parameters
     ----------
     filename : str
@@ -57,12 +58,13 @@ class Spreadsheet:
                  sep="\t", 
                  header=0,
                  concepts=1,
-                 languages=[1:]
+                 languages=[]
                  ):
 
         self.filename = filename
         self.header = []
         self.matrix = []
+        self.sep = sep
 
         # try and load the data
         # if not self.filename:
@@ -70,7 +72,9 @@ class Spreadsheet:
 
         row_num = 0
         with open(self.filename, newline='') as file:
-            reader = csv.reader(file, sep=sep)
+            reader = csv.reader(file)
+
+            # TODO: deal with identifying the header
             self.header = reader.__next__()
 
             for row in reader:
@@ -201,8 +205,8 @@ class Spreadsheet:
 
 
 if __name__=="__main__":
-    s = Spreadsheet("/Users/stiv/Dropbox/Projects/dogon/Moran_Dogon.comp.vocab.UNICODE.csv")
-    # s = Spreadsheet("/Users/stiv/Projects/lingpy/test/spreadsheet.tsv")
+    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/dogon/Moran_Dogon.comp.vocab.UNICODE.csv")
+    s = Spreadsheet("/Users/stiv/Projects/lingpy/test/spreadsheet.tsv")
 
     # s.print_matrix_stats()
     s.print_qlc_format()
