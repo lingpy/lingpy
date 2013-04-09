@@ -1,16 +1,15 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-04-02 07:02
+# modified : 2013-04-06 22:54
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-02"
+__date__="2013-04-06"
 
 import os
-import builtins # XXX ??? maybe not needed
 from datetime import date,datetime
 import numpy as np
 import pickle
@@ -702,6 +701,7 @@ class Wordlist(object):
             entry,
             source,
             function,
+            override = False,
             **keywords
             ):
         """
@@ -735,9 +735,13 @@ class Wordlist(object):
         if not entry:
             print("[i] Entry was not properly specified!")
             return
+        
+        # check for override stuff, this causes otherwise an error message
+        if entry not in self.header and override:
+            return self.add_entries(entry,source,function,override=False)
 
         # check whether the stuff is already there
-        if entry in self._header and 'override' not in keywords:
+        if entry in self._header and not override:
             answer = input("[?] Datatype has already been produced, do you want to override? ")
             if answer.lower() in ['y','yes']:
                 keywords['override'] = True
@@ -745,7 +749,7 @@ class Wordlist(object):
             else:
                 print("[i] ...aborting...")
                 return
-        elif 'override' not in keywords:
+        elif not override:
 
             # get the new index into the header
             self._header[entry.lower()] = max(self._header.values())+1
@@ -797,7 +801,7 @@ class Wordlist(object):
                     # add
                     self[key].append(t)
         
-        elif 'override' in keywords:
+        elif override:
 
             # get the index that shall be replaced
             rIdx = self._header[entry.lower()]

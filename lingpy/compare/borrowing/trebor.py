@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-02-25 15:07
+# modified : 2013-04-09 08:38
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-02-25"
+__date__="2013-04-09"
 
 
 # basic imports
@@ -86,6 +86,7 @@ class TreBor(Wordlist):
 
         # open csv-file of the data and store it as a word list attribute
         Wordlist.__init__(self,self.dataset+'.csv',row='concept',col='doculect')
+        
         #self.Wordlist = Wordlist(dataset+'.csv')
         self = self
 
@@ -156,7 +157,7 @@ class TreBor(Wordlist):
 
         # Load the tree, if it is not defined, assume that the treefile has the
         # same name as the dataset
-        if not tree:
+        if not tree and not hasattr(self,'tree'):
             # try to load the tree first
             try:
                 self.tree = cg.LoadTree(dataset+'.tre')
@@ -167,8 +168,10 @@ class TreBor(Wordlist):
             # XXX TODO
         
         # if it is explicitly defined, try to load that file
+        elif not hasattr(self,'tree'):
+            self.tree = cg.LoadTree(tree)
         else:
-            self.tree = LoadTree(tree)
+            pass
 
         if verbose: print("[i] Loaded the tree.")
 
@@ -1000,7 +1003,7 @@ class TreBor(Wordlist):
 
         # write results of analysis to file 
         # XXX adjust later
-        if 'write':
+        if write:
             cogs = [k[self.header['pap']] for k in self._data.values()]
             protos = [k[self.header['proto']] for k in
                     self._data.values()]
@@ -1375,10 +1378,12 @@ class TreBor(Wordlist):
         try:
             gTpl = nx.read_gml(self.dataset+'.gml')
         except:
-            nwk2gml(self.dataset+'.tre',filename=self.dataset)
-            input("[i] Created GML file from tree. ")
-            gTpl = nx.read_gml(self.dataset+'.gml')
-
+            
+            # if no good topology is given, create it automatically, using
+            # the radial layout function
+            gTpl = radial_layout(str(self.tree),filename=self.dataset)
+            print("[i] Created GML file from tree. ")
+            
         # make alias for the current gls for convenience
         scenarios = self.gls[glm]
 
@@ -1407,6 +1412,8 @@ class TreBor(Wordlist):
 
         # load edge data into new graph
         for nodeA,nodeB,data in gTpl.edges(data=True):
+            if 'graphics' not in data:
+                data['graphics'] = {}
             data['graphics']['width'] = 10.0
             data['graphics']['fill'] = '#000000'
             data['label'] = 'vertical'
@@ -1527,7 +1534,7 @@ class TreBor(Wordlist):
             edge_weights.append(data['weight'])
         
         # determine a colorfunction
-        cfunc = np.array(np.linspace(0,256,len(set(edge_weights))),dtype='int')
+        cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
         lfunc = np.linspace(0.5,8,len(set(edge_weights)))
 
         # sort the weights
@@ -1556,8 +1563,10 @@ class TreBor(Wordlist):
             data['graphics']['width'] = 10.0
             data['graphics']['fill'] = '#000000'
             data['label'] = 'vertical'
-            del data['graphics']['Line']
-
+            try:
+                del data['graphics']['Line']
+            except:
+                pass
             gOut.add_edge(
                     gTpl.node[nodeA]['label'],
                     gTpl.node[nodeB]['label'],
@@ -1588,6 +1597,7 @@ class TreBor(Wordlist):
                         nodeB,
                         **data
                         )
+        # transfer node data
 
         # verbose output
         if verbose: print("[i] Writing graph to file...")
@@ -1881,20 +1891,20 @@ class TreBor(Wordlist):
         if runs == 'default':
             runs = [
                     ('weighted',(3,1)),
-                    ('weighted',(11,4)),
+                    #('weighted',(11,4)),
                     ('weighted',(5,2)),
-                    ('weighted',(9,4)),
+                    #('weighted',(9,4)),
                     ('weighted',(2,1)),
-                    ('weighted',(7,4)),
+                    #('weighted',(7,4)),
                     ('weighted',(3,2)),
-                    ('weighted',(5,4)),
+                    #('weighted',(5,4)),
                     ('weighted',(1,1)),
-                    ('restriction',3),
-                    ('restriction',4),
-                    ('restriction',5),
-                    ('topdown',2),
-                    ('topdown',3),
-                    ('topdown',4),
+                    #('restriction',3),
+                    #('restriction',4),
+                    #('restriction',5),
+                    #('topdown',2),
+                    #('topdown',3),
+                    #('topdown',4),
                     ]
         
         # carry out the various analyses
@@ -2173,10 +2183,10 @@ class TreBor(Wordlist):
             if d['label'] not in self.taxa:
                 inodes += [(x,y)]
             else:
-                #if usetex:
-                #    enodes += [(x,y,r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}')]
-                #else:
-                enodes += [(x,y,tfunc(d['label']))]
+                if usetex:
+                    enodes += [(x,y,r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}')]
+                else:
+                    enodes += [(x,y,tfunc(d['label']))]
         
         # store vertical and lateral edges
         vedges = []
@@ -2385,10 +2395,10 @@ class TreBor(Wordlist):
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
         ## check for color, add functionality for colors later XXX
-        #if 'colors' in self.entries:
-        #    pass
-        #else:
-        #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
+        if 'colors' in self.entries:
+            pass
+        else:
+            colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
         if verbose: LoadDataMessage('coordinates','groups','colors').message('loaded')
         

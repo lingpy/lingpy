@@ -348,6 +348,8 @@ def _make_scoring_dictionary(
     score_dict[('+','X')] = -5
     score_dict[('+','+')] = 0
     score_dict[('0','0')] = 0
+    score_dict[('0','X')] = 0
+    score_dict[('X','0')] = 0
 
     # define the gaps
     score_dict[('X','X')] = 0

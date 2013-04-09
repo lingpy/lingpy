@@ -119,6 +119,8 @@ asjp['X','+'] = -5
 asjp['+','X'] = -5
 asjp['+','+'] = 0 # swaps
 asjp['0','0'] = 0 # missing values
+asjp['X','0'] = 0
+asjp['0','X'] = 0
 
 for i in '0123456':
     for j in '0123456':

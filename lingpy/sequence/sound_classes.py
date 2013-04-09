@@ -1,14 +1,14 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:27
-# modified : 2013-03-04 14:28
+# modified : 2013-04-06 12:25
 """
 Module provides various methods for the handling of sound classes.
 
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-04"
+__date__="2013-04-06"
 
 # lingpy imports
 from ..data import *
@@ -259,8 +259,21 @@ def prosodic_string(
     
     A prosodic string is a sequence of specific characters which indicating
     their resprective prosodic context (see :evobib:`List2012` or
-    :evobib:`List2012a` for a detailed description).
-
+    :evobib:`List2012a` for a detailed description). 
+    In contrast to the previous model, the current implementation allows for a
+    more fine-graded distinction between different prosodic segments. The
+    current scheme distinguishes 9 prosodic positions:
+    
+    * ``A``: sequence-initial consonant
+    * ``B``: syllable-initial, non-sequence initial consonant in a context of
+      ascending sonority
+    * ``C``: non-syllable, non-initial consonant in ascending sonority context
+    * ``L``: non-syllable-final consonant in descending environment
+    * ``M``: syllable-final consonant in descending environment
+    * ``N``: word-final consonant
+    * ``X``: first vowel in a word
+    * ``Y``: non-final vowel in a words
+    * ``Z``: vowel occuring in the last position of a word
 
     Examples
     --------

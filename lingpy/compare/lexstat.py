@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-03-12 11:56
+# modified : 2013-04-06 16:03
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-12"
+__date__="2013-04-06"
 
 # builtin
 import random
@@ -36,6 +36,12 @@ except:
 
 class LexStat(Wordlist):
     """
+    Basic class for automatic cognate detection.
+
+    Parameters
+    ----------
+    filename : str 
+        The name of the file that shall be loaded.
 
     """
     
@@ -101,24 +107,29 @@ class LexStat(Wordlist):
         # get the numbers for all strings
         if not "numbers" in self.header:
             # change the discriminative potential of the sound-class string
-            # tuples
-            transform = {
-                    'A':'A',
+            # tuples, note that this is still wip, we have to tweak around with
+            # this in order to find an optimum for the calculation
+            self._transform = {
+                    'A':'B', 
                     'B':'B',
-                    'C':'C',
+                    'C':'B',
                     'L':'L',
-                    'M':'M',
-                    'N':'N',
-                    'X':'X',
-                    'Y':'Y',
-                    'Z':'Z',
-                    'T':'T',
+                    'M':'L',
+                    'N':'L',
+                    'X':'X', #
+                    'Y':'X', #
+                    'Z':'X', #
+                    'T':'T', #
                     '_':'_'
                     }
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
-                    lambda x,y: ["{0}.{1}.{2}".format(x[y[0]],a,transform[b]) for a,b in zip(x[y[1]],x[y[2]])]    
+                    lambda x,y: ["{0}.{1}.{2}".format(
+                        x[y[0]],
+                        a,
+                        self._transform[b]
+                        ) for a,b in zip(x[y[1]],x[y[2]])]    
                     )
 
         # check for weights
@@ -294,42 +305,82 @@ class LexStat(Wordlist):
             threshold = 0.7,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
-            restricted_chars = '_T'
+            restricted_chars = '_T',
+            preprocessing = False,
+            gop = -2,
+            cluster_method = "ugpma"
             ):
         """
         Use alignments to get a correspondences statistics.
         """
+        self._included = {}
         corrdist = {}
+
+        if preprocessing:
+            if 'scaid' in self.header:
+                pass
+            else:
+                self.cluster(
+                        method='sca',
+                        threshold=threshold,
+                        gop = gop,
+                        cluster_method=cluster_method
+                        )
+        
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
-                if i < j:
+                if i <= j:
                     print("[i] Calculating alignments for pair {0} / {1}.".format(
                         tA,
                         tB
                         ))
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in modes:
-                        numbers = [self[pair,"numbers"] for pair in
+                        if preprocessing: 
+                            numbers = [self[pair,"numbers"] for pair in
+                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                            weights = [self[pair,"weights"] for pair in
+                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                            prostrings = [self[pair,"prostrings"] for pair in
+                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                            corrs,included = calign.corrdist(
+                                    10.0,
+                                    numbers,
+                                    weights,
+                                    prostrings,
+                                    gop,
+                                    scale,
+                                    factor,
+                                    self.scorer,
+                                    mode,
+                                    restricted_chars
+                                    )
+
+                        else:    
+                            numbers = [self[pair,"numbers"] for pair in
+                                    self.pairs[tA,tB]]
+                            weights = [self[pair,"weights"] for pair in
+                                    self.pairs[tA,tB]]
+                            prostrings = [self[pair,"prostrings"] for pair in
                                 self.pairs[tA,tB]]
-                        weights = [self[pair,"weights"] for pair in
-                                self.pairs[tA,tB]]
-                        prostrings = [self[pair,"prostrings"] for pair in
-                            self.pairs[tA,tB]]
-                        corrs = calign.corrdist(
-                                threshold,
-                                numbers,
-                                weights,
-                                prostrings,
-                                gop,
-                                scale,
-                                factor,
-                                self.scorer,
-                                mode,
-                                restricted_chars
-                                )
-                                 
+                            corrs,included = calign.corrdist(
+                                    threshold,
+                                    numbers,
+                                    weights,
+                                    prostrings,
+                                    gop,
+                                    scale,
+                                    factor,
+                                    self.scorer,
+                                    mode,
+                                    restricted_chars
+                                    )
+
+                        self._included[tA,tB] = included
+
                         # change representation of gaps
                         for a,b in list(corrs.keys()):
+                            # XXX check for bias XXX
                             d = corrs[a,b]
                             if a == '-':
                                 a = str(i+1)+'.X.-'
@@ -339,19 +390,6 @@ class LexStat(Wordlist):
                                 corrdist[tA,tB][a,b] += d / len(modes)
                             except:
                                 corrdist[tA,tB][a,b] = d / len(modes)
-                elif i == j:
-                    corrdist[tA,tB] = {}
-
-                    numbers = [self[pair,"numbers"] for pair in
-                            self.pairs[tA,tA]]
-                    for a,b in numbers:
-                        l = len(a)
-                        for k in range(l):
-                            d = self.scorer[a[k],b[k]]
-                            try:
-                                corrdist[tA,tB][a[k],b[k]] += d / len(modes)
-                            except:
-                                corrdist[tA,tB][a[k],b[k]] = d / len(modes)
 
         return corrdist
 
@@ -361,7 +399,10 @@ class LexStat(Wordlist):
             runs = 1000,
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
-            restricted_chars = '_T'
+            restricted_chars = '_T',
+            rands = 1000,
+            limit = 10000,
+            verbose = True
             ):
         """
         Return the aligned results of randomly aligned sequences.
@@ -376,15 +417,10 @@ class LexStat(Wordlist):
             seqs = {}
             pros = {}
             weights = {}
-            
-            # determine the scale for number of random strings
-            #limit = self.height * scaler
-            trials = runs * 5
 
             # get a random distribution for all pairs
-
             sample = random.sample(
-                    [(i,j) for i in range(1000) for j in range(1000)],
+                    [(i,j) for i in range(rands) for j in range(rands)],
                     runs
                     )
 
@@ -404,10 +440,13 @@ class LexStat(Wordlist):
                 words = []
                 j = 0
                 k = 0
-                while j < 1000: # and k < 10000:
-                    s = m.get_string()
+                while j < rands:
+                    s = m.get_string(new=False)
                     if s in words:
                         k += 1
+                    elif k < limit:
+                        j += 1
+                        words += [s]
                     else:
                         j += 1
                         words += [s]
@@ -423,42 +462,27 @@ class LexStat(Wordlist):
                     seqs[taxon] += [['{0}.{1}'.format(
                         c,
                         p
-                        ) for c,p in zip(cls,pros[taxon][-1])
+                        ) for c,p in zip(
+                            cls,
+                            [self._transform[pr] for pr in pros[taxon][-1]]
+                            )
                         ]]
-
+            
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
-                        print("[i] Calculating random alignments for pair {0} / {1}.".format(
+                        if verbose: print("[i] Calculating random alignments for pair {0} / {1}.".format(
                             tA,
                             tB
                             ))
                         corrdist[tA,tB] = {}
                         for mode,gop,scale in modes:
-                            #numbers = list(
-                            #        zip(
-                            #            seqs[tA],
-                            #            seqs[tB]
-                            #                )
-                            #            )
-                            #gops = list(
-                            #        zip(
-                            #            weights[tA],
-                            #            weights[tB]
-                            #            )
-                            #        )
-                            #prostrings = list(
-                            #        zip(
-                            #            pros[tA],
-                            #            pros[tB]
-                            #            )
-                            #        )
                             numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
                             gops = [(weights[tA][x],weights[tB][y]) for x,y in sample]
                             prostrings = [(pros[tA][x],pros[tB][y]) for x,y in sample]
 
-                            corrs = calign.corrdist(
+                            corrs,included = calign.corrdist(
                                     10.0,
                                     numbers,
                                     gops,
@@ -474,8 +498,8 @@ class LexStat(Wordlist):
                             # change representation of gaps
                             for a,b in list(corrs.keys()):
 
-                                # get the corresondence count
-                                d = corrs[a,b] * len(self.pairs[tA,tB]) / runs
+                                # get the correspondence count
+                                d = corrs[a,b] * self._included[tA,tB] / included # XXX check XXX * len(self.pairs[tA,tB]) / runs
 
                                 # check for gaps
                                 if a == '-':
@@ -491,12 +515,14 @@ class LexStat(Wordlist):
                                     corrdist[tA,tB][a,b] += d / len(modes)
                                 except:
                                     corrdist[tA,tB][a,b] = d / len(modes)
+
+        # use shuffle approach otherwise
         else:
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
-                        print("[i] Calculating random alignments for pair {0} / {1}.".format(
+                        if verbose: print("[i] Calculating random alignments for pair {0} / {1}.".format(
                             tA,
                             tB
                             ))
@@ -509,55 +535,65 @@ class LexStat(Wordlist):
                                 self.pairs[tA,tB]]
                         prostrings = [self[pair,'prostrings'] for pair in
                                 self.pairs[tA,tB]]
+
+                        try:
+                            sample = random.sample(
+                                    [(x,y) for x in range(len(numbers)) for y in
+                                        range(len(numbers))],
+                                    runs
+                                    )
+                        # handle exception of sample is larger than population
+                        except ValueError:
+                            sample = [(x,y) for x in range(len(numbers)) for y
+                                    in range(len(numbers))]
                         
                         # get an index that will be repeatedly changed
-                        indices = list(range(len(numbers)))
+                        #indices = list(range(len(numbers)))
 
                         for mode,gop,scale in modes:
-                            for k in range(runs):
-                                random.shuffle(indices)
-                                nnums = [(numbers[indices[x]][0],numbers[x][1]) for x in
-                                    range(len(indices))]
-                                ggops = [(gops[indices[x]][0],gops[x][1]) for x in
-                                    range(len(indices))]
-                                ppros = [(prostrings[indices[x]][0],prostrings[x][1]) for x in
-                                    range(len(indices))]
-                                corrs = calign.corrdist(
-                                        2.0,
-                                        nnums,
-                                        ggops,
-                                        ppros,
-                                        gop,
-                                        scale,
-                                        factor,
-                                        self.scorer,
-                                        mode,
-                                        restricted_chars
-                                        )
-                                         
-                                # change representation of gaps
-                                for a,b in list(corrs.keys()):
+                            nnums = [(numbers[s[0]][0],numbers[s[1]][1]) for
+                                    s in sample]
+                            ggops = [(gops[s[0]][0],gops[s[1]][1]) for s in
+                                    sample]
+                            ppros = [(prostrings[s[0]][0],prostrings[s[1]][1]) for s in
+                                    sample]
 
-                                    # get the corresondence count
-                                    d = corrs[a,b] / runs #* len(self.pairs[tA,tB]) / len(numbers)
+                            corrs,included = calign.corrdist(
+                                    10.0,
+                                    nnums,
+                                    ggops,
+                                    ppros,
+                                    gop,
+                                    scale,
+                                    factor,
+                                    self.scorer,
+                                    mode,
+                                    restricted_chars
+                                    )
+                                     
+                            # change representation of gaps
+                            for a,b in list(corrs.keys()):
 
-                                    # check for gaps
-                                    if a == '-':
-                                        a = str(i)+'.X.-'
+                                # get the correspondence count
+                                d = corrs[a,b] * self._included[tA,tB] / included #XXX check XXX* len(self.pairs[tA,tB]) / runs
 
-                                    elif b == '-':
-                                        b = str(j)+'X.-'
-                                    
-                                    # append to overall dist
-                                    try:
-                                        corrdist[tA,tB][a,b] += d / len(modes)
-                                    except:
-                                        corrdist[tA,tB][a,b] = d / len(modes)
+                                # check for gaps
+                                if a == '-':
+                                    a = str(i+1)+'.X.-'
+
+                                elif b == '-':
+                                    b = str(j+1)+'.X.-'
+                                
+                                # append to overall dist
+                                try:
+                                    corrdist[tA,tB][a,b] += d / len(modes)
+                                except:
+                                    corrdist[tA,tB][a,b] = d / len(modes)
         return corrdist
 
-    def _get_scorer(
+    def get_scorer(
             self,
-            method = 'markov',
+            method = 'shuffle',
             ratio = (3,2),
             vscale = 0.5,
             runs = 1000,
@@ -565,10 +601,60 @@ class LexStat(Wordlist):
             modes = [("global",-2,0.5),("local",-1,0.5)],
             factor = 0.3,
             restricted_chars = '_T',
-            force = False
+            force = False,
+            preprocessing = True,
+            rands = 1000,
+            limit = 10000,
+            verbose = True,
+            cluster_method = "upgma",
+            gop = -2
             ):
         """
         Create a scoring function based on sound correspondences.
+
+        Parameters
+        ----------
+        method : str (default='markov')
+            Select between "markov", for automatically generated random
+            strings, and "shuffle", for random strings taken directly from the
+            data.
+        ratio : tuple (default=3,2)
+            Define the ratio between derived and original score for
+            sound-matches.
+        vscale : float (default=0.5)
+            Define a scaling factor for vowels, in order to decrease their
+            score in the calculations.
+        runs : int (default=1000)
+            Choose the number of random runs that shall be made in order to
+            derive the random distribution.
+        threshold : float (default=0.7)
+            The threshold which used to select those words that are compared in
+            order to derive the attested distribution. 
+        modes : list (default = [("global",-2,0.5),("local",-1,0.5)])
+            The modes which are used in order to derive the distributions from
+            pairwise alignments.
+        factor : float (default=0.3)
+            The scaling factor for sound segments with identical prosodic
+            environment.
+        force : bool (default=False)
+            Force recalculation of existing distribution.
+        preprocessing: bool (default=False)
+            Select whether SCA-analysis shall be used to derive a preliminary
+            set of cognates from which the attested distribution shall be
+            derived.
+        rands : int (default=1000)
+            If "method" is set to "markov", this parameter defines the number
+            of strings to produce for the calculation of the random
+            distribution.
+        limit : int (default=10000)
+            If "method" is set to "markov", this parameter defines the limit
+            above which no more search for unique strings will be carried out.
+        cluster_method : {"upgma" "single" "complete"} (default="upgma")
+            Select the method to be used for the calculation of cognates in the
+            preprocessing phase, if "preprocessing" is set to c{True}.
+        gop : int (default=-2)
+            If "preprocessing" is selected, define the gap opening penalty for
+            the preprocessing calculation of cognates.
         """
         # get parameters and store them in string
         modestring = []
@@ -576,7 +662,7 @@ class LexStat(Wordlist):
             modestring += ['{0}-{1}-{2:.2f}'.format(a,abs(b),c)]
         modestring = ':'.join(modestring)
 
-        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}_{7}'.format(
+        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}_{7}_{8}'.format(
                 ratio,
                 vscale,
                 runs,
@@ -584,19 +670,32 @@ class LexStat(Wordlist):
                 modestring,
                 factor,
                 restricted_chars,
-                method
+                method,
+                '{0}:{1}:{2}'.format(
+                    preprocessing,
+                    cluster_method,
+                    gop
+                    )
                 )
 
         # check for attribute
         if hasattr(self,'params') and not force:
-            if self.params == params:
-                print("[i] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.")
+            if self.params['scorer'] == params:
+                print(
+                        "[i] An identical scoring function has already been calculated, ",
+                        end=''
+                        )
+                print("force recalculation by setting 'force' to 'True'.")
                 return
             else:
-                print("[i] A different scoring function has already been calculated, overwriting previous settings.") 
+                print(
+                        "[i] A different scoring function has already been calculated, ",
+                        end=''
+                        )
+                print("overwriting previous settings.") 
 
         # store parameters
-        self.params = params
+        self.params = {'scorer':params }
         self._stamp += "# Parameters: "+params+'\n'
 
         # get the correspondence distribution
@@ -604,7 +703,10 @@ class LexStat(Wordlist):
                 threshold,
                 modes,
                 factor,
-                restricted_chars
+                restricted_chars,
+                preprocessing,
+                gop,
+                cluster_method
                 )
         # get the random distribution
         randist = self._get_randist(
@@ -612,8 +714,15 @@ class LexStat(Wordlist):
                 runs,
                 modes,
                 factor,
-                restricted_chars
+                restricted_chars,
+                rands,
+                limit,
+                verbose
                 )
+        
+        # store the distributions as attributes
+        self._corrdist = corrdist
+        self._randist = randist
         
         # get the average gop
         gop = sum([m[1] for m in modes]) / len(modes)
@@ -645,11 +754,11 @@ class LexStat(Wordlist):
                             if att and exp:
                                 score = np.log2((att ** 2 ) / ( exp ** 2 ) )
                             elif att and not exp:
-                                score = np.log2((att ** 2 ) / 0.01 )
+                                score = np.log2((att ** 2 ) / 0.00001 )
                             elif exp and not att:
-                                score = gop #XXX
+                                score = -5  #XXX gop ??? 
                             elif not exp and not att:
-                                score = -250.0
+                                score = -90 # ???
 
                             # combine the scores
                             if '-' not in charA+charB:
@@ -665,7 +774,7 @@ class LexStat(Wordlist):
                                 idxB = char_dict[charB]
 
                                 # use the vowel scale
-                                if charA[2] in 'XYZT_' and charB[2] in 'XYZT_':
+                                if charA[4] in 'XYZT_' and charB[4] in 'XYZT_':
                                     matrix[idxA][idxB] = vscale * rscore
                                     matrix[idxB][idxA] = vscale * rscore
                                 else:
@@ -676,58 +785,150 @@ class LexStat(Wordlist):
         
         self.cscorer = misc.ScoreDict(self.chars,matrix)
 
-    def _align_pairs(
+    def align_pairs(
             self,
+            idxA,
+            idxB,
+            method = 'lexstat',
             mode = "global",
             gop = -2,
             scale = 0.5,
             factor = 0.3,
-            restricted_chars = '_T'
+            restricted_chars = '_T',
+            distance = True,
+            concept = None,
+            pprint = True,
+            return_distance = False,
+            **keywords
             ):
         """
-        Align all words for all language pairs.
-        """
-        # XXX note that we can improve timing here if we no longer go for
-        # distances XXX
-        alignments = {}
-        for i,taxonA in enumerate(self.taxa):
-            for j,taxonB in enumerate(self.taxa):
-                if i < j:
-                    # get the strings
-                    numbers = [self[pair,"numbers"] for pair in
-                            self.pairs[taxonA,taxonB]]
-                    prostrings = [self[pair,"prostrings"] for pair in
-                        self.pairs[taxonA,taxonB]]
+        Align all or some words of a given pair of languages.
 
-                    # note that the weights have to be calculated differently,
-                    # once alignments scores are already calculated
-                    weights = []
-                    for nA,nB in numbers:
-                        weightA = [self.cscorer[str(j+1)+'.X.-',n] for n in nA]
-                        weightB = [self.cscorer[str(i+1)+'.X.-',n] for n in nB]
-                        weights += [(weightA,weightB)]
-  
-                    # carry out alignment
-                    alms = calign.align_pairs(
-                            numbers,
-                            weights,
-                            prostrings,
-                            1.0,
-                            scale,
-                            factor,
-                            self.cscorer,
-                            mode,
-                            restricted_chars,
-                            2
+        Paramters
+        ---------
+        idxA,idxB : {int, str}
+            Use an integer to refer to the words by their unique internal ID,
+            use language names to select all words for a given language.
+        method : {'lexstat','sca'}
+            Define the method to be used for the alignment of the words.
+        mode : {'global','local','overlap','dialign'} (default='overlap')
+            Select the mode for the alignment analysis.
+        gop : int (default=-2)
+            If 'sca' is selected as a method, define the gap opening penalty.
+        scale : float (default=0.5)
+            Select the scale for the gap extension penalty.
+        factor : float (default=0.3)
+            Select the factor for extra scores for identical prosodic segments.
+        restricted_chars : str (default="T_")
+            Select the restricted chars (boundary markers) in the prosodic
+            strings in order to enable secondary alignment.
+        distance : bool (default=True)
+            If set to c{True}, return the distance instead of the similarity
+            score.
+        pprint : bool (default=True)
+            If set to c{True}, print the results to the terminal.
+        return_distance : bool (default=False)
+            If set to c{True}, return the distance score, otherwise, nothing
+            will be returned.
+        """
+        # add keywords to keywords
+        keywords['method'] = method
+        keywords['mode'] = mode
+        keywords['scale'] = scale
+        keywords['factor'] = factor
+        keywords['distance'] = distance
+        keywords['restricted_chars'] = restricted_chars
+
+        if type(idxA) in [tuple,str]:
+            if type(idxA) == tuple:
+                idxsA = self.get_dict(col=idxA[0])[idxA[1]]
+                idxsB = self.get_dict(col=idxB[0])[idxB[1]]
+                for i,idxA in enumerate(idxsA):
+                    for j,idxB in enumerate(idxsB):
+                        self.align_pairs(idxA,idxB,**keywords)
+
+            else:
+                if not concept:
+                    for c in self.concepts:
+                        print("Concept: {0}".format(c))
+                        keywords['concept'] = c
+                        self.align_pairs(idxA,idxB,**keywords)
+                        print('')
+                else:
+                    self.align_pairs(
+                            (idxA,concept),
+                            (idxB,concept),
+                            concept=None,
+                            **keywords
                             )
-                    if mode == "local":
-                        alms = [(a[1],b[1],c,d) for a,b,c,d in alms]
-                    alignments[taxonA,taxonB] = alms
-        return alignments
-    
+            return
+
+        # assign the distance value
+        distance = 1 if distance else 0
+
+        # get the language ids
+        lA = self[idxA,'langid']
+        lB = self[idxB,'langid']
+
+        if method == 'lexstat':
+            scorer = self.cscorer
+            gop = 1.0
+            weightsA = [self.cscorer[str(lA)+'.X.-',n] for n in
+                self[idxA,'numbers']]
+            weightsB = [self.cscorer[str(lB)+'.X.-',n] for n in
+                self[idxB,'numbers']]
+
+        else:
+            weightsA = self[idxA,'weights']
+            weightsB = self[idxB,'weights']
+            scorer = self.scorer
+
+        almA,almB,d = calign.align_pair(
+                self[idxA,'numbers'],
+                self[idxB,'numbers'],
+                weightsA,
+                weightsB,
+                self[idxA,'prostrings'],
+                self[idxB,'prostrings'],
+                gop,
+                scale,
+                factor,
+                scorer,
+                mode,
+                restricted_chars,
+                distance
+                )
+
+        # get a string of scores
+        if method == 'lexstat':
+            fun = lambda x,y: x if x != '-' else '{0}.X.-'.format(y)
+
+            scoreA = [fun(a,lA) for a in almA]
+            scoreB = [fun(b,lB) for b in almB]
+        else:
+            scoreA = almA
+            scoreB = almB
+
+        scores = ['{0:.2f}'.format(scorer[a,b]) for a,b in zip(scoreA,scoreB)]
+
+        almA = class2tokens(self[idxA,'tokens'],almA)
+        almB = class2tokens(self[idxB,'tokens'],almB)
+        if pprint:
+            print('\t'.join(almA))
+            print('\t'.join(almB))
+            print('\t'.join(scores))
+            if distance:
+                print('Distance: {0:.2f}'.format(d))
+            else:
+                print('Similarity: {0:.2f}'.format(d))
+        
+        if return_distance:
+            return d
+            
     def cluster(
             self,
             method = 'sca',
+            cluster_method='upgma',
             threshold = 0.55,
             scale = 0.5,
             factor = 0.3,
@@ -738,8 +939,63 @@ class LexStat(Wordlist):
             **keywords
             ):
         """
-        Internal function for clustering using the LexStat approach.
+        Function for flat clustering of words into cognate sets.
+
+        Parameters
+        ----------
+        method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
+            Select the method that shall be used for the calculation.
+        cluster_method : {'upgma','single','complete'} (default='upgma')
+            Select the cluster method. 'upgma' (:evobib:`Sokal1958` refers to
+            average linkage clustering.
+        threshold : float (default=0.6)
+            Select the threshold for the cluster approach. If set to c{False},
+            an automatic threshold will be calculated by calculating the
+            average distance of unrelated sequences (use with care).
+        scale : float (default=0.5)
+            Select the scale for the gap extension penalty.
+        factor : float (default=0.3)
+            Select the factor for extra scores for identical prosodic segments.
+        restricted_chars : str (default="T_")
+            Select the restricted chars (boundary markers) in the prosodic
+            strings in order to enable secondary alignment.
+        mode : {'global','local','overlap','dialign'} (default='overlap')
+            Select the mode for the alignment analysis.
+        verbose : bool (default=False)
+            Define whether verbose output should be used or not.
+        gop : int (default=-2)
+            If 'sca' is selected as a method, define the gap opening penalty.
+
         """
+        if not threshold:
+            # use the 5 percentile of the random distribution of non-related
+            # words (cross-semantic alignments) in order to determine a
+            # suitable threshold for the analysis.
+            if verbose: print("[i] Calculating a threshold for the calculation.")
+            d = self.get_random_distances(
+                    method=method,
+                    mode=mode
+                    )
+            threshold = d[int(len(d) * 15 / 1000)]
+
+        if hasattr(self,'params'):
+            pass
+        else:
+            self.params = {}
+        
+        self.params['cluster'] = "{0}_{1}_{2:.2f}".format(
+                method,
+                cluster_method,
+                threshold
+                )
+        self._stamp += '# Cluster: ' + self.params['cluster']
+
+        
+        if method not in ['lexstat','sca','turchin','edit-dist']:
+            raise ValueError(
+                    "[!] The method you selected is not available."
+                    )
+
         # check for method
         if method == 'lexstat':
             
@@ -789,7 +1045,7 @@ class LexStat(Wordlist):
             try:
                 entry = keywords['entry']
             except:
-                entry = 'word'
+                entry = 'tokens'
 
             # define function with lamda
             function = lambda idxA,idxB: edit_dist(
@@ -825,12 +1081,13 @@ class LexStat(Wordlist):
                 for j,idxB in enumerate(indices):
                     if i < j:
                         d = function(idxA,idxB)
+                        
                         ## append distance score to matrix
                         matrix += [d]
             matrix = misc.squareform(matrix)
             
             # calculate the clusters using flat-upgma
-            c = cluster.flat_upgma(threshold,matrix,revert=True)
+            c = cluster.flat_cluster(cluster_method,threshold,matrix,revert=True)
 
             # extract the clusters
             clusters = [c[i]+k for i in range(len(matrix))]
@@ -842,202 +1099,105 @@ class LexStat(Wordlist):
             for idxA,idxB in zip(indices,clusters):
                 clr[idxA] = idxB
         
-        if method == 'turchin':
-            self.add_entries('turchinid',clr,lambda x:x)
-        elif method == 'lexstat':
-            self.add_entries('lexstatid',clr,lambda x:x)
-        elif method == 'sca':
-            self.add_entries('scaid',clr,lambda x:x)
+        if 'override' in keywords:
+            override = keywords['override']
         else:
-            self.add_entries('editid',clr,lambda x:x)       
+            override = False
+
+        if method == 'turchin':
+            self.add_entries('turchinid',clr,lambda x:x,override=override)
+        elif method == 'lexstat':
+            self.add_entries('lexstatid',clr,lambda x:x,override=override)
+        elif method == 'sca':
+            self.add_entries('scaid',clr,lambda x:x,override=override)
+        else:
+            self.add_entries('editid',clr,lambda x:x,override=override)       
         
-        # return the dictionary
-        #return clr
+    def get_random_distances(
+            self,
+            method='lexstat',
+            runs = 100,
+            mode = 'overlap',
+            gop = -2,
+            scale = 0.5,
+            factor = 0.3,
+            restricted_chars = 'T_'
+            ):
+        """
+        Method calculates randoms scores for unrelated words in a dataset.
 
-    #def _get_distance(
-    #        self,
-    #        idxA,
-    #        idxB,
-    #        method,
-    #        scorer
-    #        ):
-    #    """
-    #    Internal function returns a distance from the data, depending on the
-    #    method.
-    #    """
-    #    
-    #    numA = self[idxA,'numbers']
-    #    numB = self[idxB,'numbers']
-    #    proA = self[idxA,'prostrings']
-    #    proB = self[idxB,'prostrings']
-    #    
-    #    # get the weights
-    #    wA = self[idxA,'weights']
-    #    wB = self[idxB,'weights']
-    #    almA,almB,d = calign.align_pair(
-    #            numA,
-    #            numB,
-    #            wA,
-    #            wB,
-    #            proA,
-    #            proB,
-    #            gop,
-    #            scale,
-    #            factor,
-    #            scorer,
-    #            mode,
-    #            restricted_chars,
-    #            1
-    #            )
-    #    return d
+        Parameters
+        ----------
+        method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
+            Select the method that shall be used for the calculation.
+        runs : int (default=100)
+            Select the number of random alignments for each language pair.
+        mode : {'global','local','overlap','dialign'} (default='overlap')
+            Select the mode for the alignment analysis.
+        gop : int (default=-2)
+            If 'sca' is selected as a method, define the gap opening penalty.
+        scale : float (default=0.5)
+            Select the scale for the gap extension penalty.
+        factor : float (default=0.3)
+            Select the factor for extra scores for identical prosodic segments.
+        restricted_chars : str (default="T_")
+            Select the restricted chars (boundary markers) in the prosodic
+            strings in order to enable secondary alignment.
 
-    #def _sca(
-    #        threshold = 0.55,
-    #        scale = 0.5,
-    #        factor = 0.3,
-    #        restricted_chars = '_T',
-    #        mode = 'overlap',
-    #        gop = -1.0,
-    #        verbose = True,
-    #        **keywords,
-    #        ):
-    #    """
-    #    Carry out an analysis using the SCA distance.
-    #    """
+        Returns
+        -------
+        D : c{numpy.array}
+            An array with all distances calculated for each sequence pair.
+        """
+        D = []
+        
+        if method in ['sca','lexstat']:
+            function = lambda x,y: self.align_pairs(
+                    x,
+                    y,
+                    method=method,
+                    distance=True,
+                    return_distance=True,
+                    pprint=False,
+                    mode = mode,
+                    scale = scale,
+                    factor = factor,
+                    gop = gop
+                    )
+        else:
+            function = lambda x,y: edit_dist(
+                    self[x,'tokens'],
+                    self[y,'tokens']
+                    )
 
-    #    # for convenience and later addons
-    #    concepts = self.concepts
+        for i,taxA in enumerate(self.taxa):
+            for j,taxB in enumerate(self.taxa):
+                if i < j:
 
-    #    # make a dictionary that stores the clusters for later update
-    #    clr = {}
-    #    k = 0
+                    # get a random selection of words from both taxa
+                    pairs = self.pairs[taxA,taxB]
 
-    #    for concept in concepts:
-    #        print("[i] Analyzing concept {0}.".format(concept))
+                    sample = random.sample(
+                            [(x,y) for x in range(len(pairs)) for y in
+                                range(len(pairs))],
+                            runs
+                            )
+                    sample_pairs = [(pairs[x][0],pairs[y][1]) for x,y in sample]
+                    for pA,pB in sample_pairs:
+                        d = function(pA,pB)
+                        #d = self.align_pairs(
+                        #        pA,
+                        #        pB,
+                        #        method=method,
+                        #        distance=True,
+                        #        return_distance = True,
+                        #        pprint = False,
+                        #        mode = mode,
+                        #        scale = scale,
+                        #        factor = factor,
+                        #        gop = gop
+                        #        )
+                        D += [d]
 
-    #        indices = self.get_list(
-    #                row=concept,
-    #                flat=True
-    #                )
+        return sorted(D)
 
-    #        matrix = []
-    #        
-    #        for i,idxA in enumerate(indices):
-    #            for j,idxB in enumerate(indices):
-    #                if i < j:
-    #                    numA = self[idxA,'numbers']
-    #                    numB = self[idxB,'numbers']
-    #                    proA = self[idxA,'prostrings']
-    #                    proB = self[idxB,'prostrings']
-    #                    
-    #                    # get language ids
-    #                    lA = self[idxA,'langid']
-    #                    lB = self[idxB,'langid']
-    #                    
-    #                    # get the weights
-    #                    wA = self[idxA,'weights']
-    #                    wB = self[idxB,'weights']
-    #                    almA,almB,d = calign.align_pair(
-    #                            numA,
-    #                            numB,
-    #                            wA,
-    #                            wB,
-    #                            proA,
-    #                            proB,
-    #                            gop,
-    #                            scale,
-    #                            factor,
-    #                            scorer,
-    #                            mode,
-    #                            restricted_chars,
-    #                            1
-    #                            )
-
-    #                    # append distance score to matrix
-    #                    matrix += [d]
-    #        matrix = misc.squareform(matrix)
-    #        
-    #        # calculate the clusters using flat-upgma
-    #        c = cluster.flat_upgma(threshold,matrix,revert=True)
-
-    #        # extract the clusters
-    #        clusters = [c[i]+k for i in range(len(matrix))]
-
-    #        # reassign the "k" value
-    #        k = max(clusters)
-    #        
-    #        # add values to cluster dictionary
-    #        for idxA,idxB in zip(indices,clusters):
-    #            clr[idxA] = idxB
-    #    return clr
-
-   
-    #def _turchin(self):
-    #    """
-    #    Calculate distances on the basis of Turchin's et al. approach.
-    #    """
-    #    
-    #    pass
-
-    #def _edit_dist(
-    #        threshold = 0.55,
-    #        verbose = True,
-    #        entry = False,
-    #        **keywords,
-    #        ):
-    #    """
-    #    Carry out an analysis using the edit distance.
-    #    """
-
-    #    # check for classes
-    #    if not entry:
-    #        entry = 'words'
-
-    #    # for convenience and later addons
-    #    concepts = self.concepts
-
-    #    # make a dictionary that stores the clusters for later update
-    #    clr = {}
-    #    k = 0
-
-    #    for concept in concepts:
-    #        print("[i] Analyzing concept {0}.".format(concept))
-
-    #        indices = self.get_list(
-    #                row=concept,
-    #                flat=True
-    #                )
-
-    #        matrix = []
-    #        
-    #        for i,idxA in enumerate(indices):
-    #            for j,idxB in enumerate(indices):
-    #                if i < j:
-    #                    wordA = self[idxA,entry]
-    #                    wordB = self[idxB,entry]
-    #                    
-    #                    # get language ids
-    #                    lA = self[idxA,'langid']
-    #                    lB = self[idxB,'langid']
-    #                    
-    #                    # get the distance
-    #                    d = edit_dist(wordA,wordB,normalized=True)
-
-    #                    # append distance score to matrix
-    #                    matrix += [d]
-    #        matrix = misc.squareform(matrix)
-    #        
-    #        # calculate the clusters using flat-upgma
-    #        c = cluster.flat_upgma(threshold,matrix,revert=True)
-
-    #        # extract the clusters
-    #        clusters = [c[i]+k for i in range(len(matrix))]
-
-    #        # reassign the "k" value
-    #        k = max(clusters)
-    #        
-    #        # add values to cluster dictionary
-    #        for idxA,idxB in zip(indices,clusters):
-    #            clr[idxA] = idxB
-
-    #    return clr

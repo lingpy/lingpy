@@ -97,6 +97,97 @@ def flat_upgma(
         return out
     return clusters
 
+def flat_cluster(
+        method,
+        threshold,
+        matrix,
+        taxa = [],
+        revert = False
+        ):
+    """
+    Carry out a flat cluster analysis based on the UPGMA algorithm.
+    
+    Parameters
+    ----------
+    method : { 'upgma', 'single', 'complete' }
+        Select between 'ugpma', 'single', and 'complete'.
+ 
+    threshold : float
+        The threshold which terminates the algorithm.   
+    
+    matrix : or :py:class:`numpy.array`
+        A two-dimensional containing the distances.
+
+    taxa : (default = [])
+        A containing the names of the taxa. If the is left empty, the
+        indices of the taxa will be returned instead of their names.
+    
+    Returns
+    -------
+    
+    clusters : dict
+        A dictionary with cluster-IDs as keys and a of the taxa
+        corresponding to the respective ID as values.
+
+    Examples
+    --------
+    The function is automatically imported along with LingPy.
+
+    >>> from lingpy import *
+    
+    Create a of arbitrary taxa.
+
+    >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    Create an arbitrary distance matrix.
+
+    >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
+    >>> matrix
+    array([[ 0.  ,  0.5 ,  0.67,  0.8 ,  0.2 ],
+           [ 0.5 ,  0.  ,  0.4 ,  0.7 ,  0.6 ],
+           [ 0.67,  0.4 ,  0.  ,  0.8 ,  0.8 ],
+           [ 0.8 ,  0.7 ,  0.8 ,  0.  ,  0.3 ],
+           [ 0.2 ,  0.6 ,  0.8 ,  0.3 ,  0.  ]])
+
+    Carry out the flat cluster analysis.
+
+    >>> flat_upgma(0.5,matrix,taxa)
+    {0: ['German', 'Dutch', 'English'], 1: ['Swedish', 'Icelandic']}
+
+    See also
+    --------
+    lingpy.algorithm.clusters.upgma
+    lingpy.algorithm.clusters.neighbor
+
+    """
+#     i,key
+    x = len(matrix)
+    out = {}
+
+    clusters = dict([(i,[i]) for i in range(x)])
+
+    tree = []
+
+    if method == 'upgma':
+        _flat_upgma(clusters,matrix,threshold)
+    elif method == 'single':
+        _flat_single_linkage(clusters,matrix,threshold)
+    elif method == 'complete':
+        _flat_complete_linkage(clusters,matrix,threshold)
+
+    if taxa:
+        for key in clusters:
+            clusters[key] = [taxa[i] for i in clusters[key]]
+
+        return clusters
+    if revert:
+        for key in clusters:
+            for i in clusters[key]:
+                out[i] = key + 1
+        return out
+    return clusters
+
+
 def _flat_upgma(
         clusters,
         matrix,
@@ -137,6 +228,89 @@ def _flat_upgma(
                 )
     else:
         pass
+
+def _flat_single_linkage(
+        clusters,
+        matrix,
+        threshold
+        ):
+    """
+    Internal implementation of flat_upgma.
+    """
+#     i,j,vA,vB,idxA,idxB
+#     score,valA,valB
+    
+    # terminate when the dictionary is of length 1
+    if len(clusters) == 1:
+        return
+
+    scores = []
+    indices = []
+
+    for i,valA in clusters.items():
+        for j,valB in clusters.items():
+            if i != j:
+                score = []
+                for vA in valA:
+                    for vB in valB:
+                        score += [matrix[vA][vB]]
+                scores.append(min(score))
+                indices.append((i,j))
+    
+    minimum = min(scores)
+    if minimum <= threshold:
+        idxA,idxB = indices[scores.index(minimum)]
+        clusters[idxA] += clusters[idxB]
+        del clusters[idxB]
+        return _flat_single_linkage(
+                clusters,
+                matrix,
+                threshold
+                )
+    else:
+        pass
+
+def _flat_complete_linkage(
+        clusters,
+        matrix,
+        threshold
+        ):
+    """
+    Internal implementation of flat_upgma.
+    """
+#     i,j,vA,vB,idxA,idxB
+#     score,valA,valB
+    
+    # terminate when the dictionary is of length 1
+    if len(clusters) == 1:
+        return
+
+    scores = []
+    indices = []
+
+    for i,valA in clusters.items():
+        for j,valB in clusters.items():
+            if i != j:
+                score = []
+                for vA in valA:
+                    for vB in valB:
+                        score += [matrix[vA][vB]]
+                scores.append(max(score))
+                indices.append((i,j))
+    
+    minimum = min(scores)
+    if minimum <= threshold:
+        idxA,idxB = indices[scores.index(minimum)]
+        clusters[idxA] += clusters[idxB]
+        del clusters[idxB]
+        return _flat_complete_linkage(
+                clusters,
+                matrix,
+                threshold
+                )
+    else:
+        pass
+
 
 def upgma(
         matrix,

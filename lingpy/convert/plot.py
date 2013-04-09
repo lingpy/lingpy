@@ -203,10 +203,10 @@ def alm2html(
                             error = True
                     alm += '<td width="30px" align="center"'
                     if error:
-                        alm += 'bgcolor="{0}"><font color="red"><b>{1}</b></font></td>'.format(c,char.encode('utf-8'))
+                        alm += 'bgcolor="{0}"><font color="red"><b>{1}</b></font></td>'.format(c,char)
                        
                     else:
-                        alm += 'bgcolor="{0}"><font color="white"><b>{1}</b></font></td>'.format(c,char.encode('utf-8'))
+                        alm += 'bgcolor="{0}"><font color="white"><b>{1}</b></font></td>'.format(c,char)
             else:
                 alm = '<td bgcolor="white">{0}'.format('--')
 
@@ -404,7 +404,7 @@ def msa2tex(
             path += '/'
 
     # load msa
-    msa = Multiple(infile)
+    msa = SCA(infile)
 
     ## load templates
     if not template:
@@ -429,7 +429,7 @@ def msa2tex(
     start += r'\bf\ttfamily Taxon & \multicolumn{'+str(width)+r'}{l}{\bf\ttfamily Alignment}\\'+'\n'
 
     # get the dolgo model for colors
-    msa.ipa2cls('dolgo')
+    msa.ipa2cls(dolgo)
     
     # check for swaps in the alignment
     if hasattr(msa,'swap_index'):
@@ -441,7 +441,7 @@ def msa2tex(
 
     body = start
     for i,taxon in enumerate(msa.taxa):
-        body += r'\ttfamily '+unicode(taxon,'utf-8')
+        body += r'\ttfamily '+taxon.replace('_',r'\_')
         for j,cls in enumerate(msa.classes[i]):
             char = msa.alm_matrix[i][j]
             if char == '_':
@@ -472,7 +472,7 @@ def msa2tex(
     tex = tex.replace('<+NEWY+>','{0:.2f}'.format((h-0.5)/2.0))
 
     # insert the rest
-    tex = tex.replace('<+CONTENT+>',body.encode('utf-8'))
+    tex = tex.replace('<+CONTENT+>',body)
 
     # write to file
     if not filename:
@@ -541,8 +541,6 @@ def string2html(
             out += td_residue.format(char,c,fg)
 
     return out
-
-
 
 def msa2html(
         infile,
