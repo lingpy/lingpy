@@ -27,7 +27,8 @@ Language Comparison
 
 .. toctree::
    :maxdepth: 1
-
+   
+   compare/index
    compare/borrowing/index
 
 

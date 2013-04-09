@@ -9,9 +9,9 @@ Load the library::
 
     >>> import lingpy
 
-Retrieve basic information about the library::
-
-    >>> print(lingpy.__doc__)
+    Retrieve basic information about the library::
+    
+        >>> print(lingpy.__doc__)
     LingPy package for quantitative tasks in historical linguistics.
     
     Documentation is available in the docstrings. Online documentation is available
@@ -31,9 +31,34 @@ Retrieve basic information about the library::
     sequence   --- Basic Functions for Sequence Modeling
     thirdparty --- Temporary Forks of Third-Party-Modules
 
+
 Load all important packages::
 
     >>> from lingpy import *
+
+Alignment Analyses
+------------------
+
+Carry out a multiple alignment analysis of four sequences. First, define the sequences::
+
+   >>> seqs = ['woldemort','waldemar','wladimir','vladymyr']
+
+Create an instance of the :py:class:`~lingpy.align.multiple.Multiple` class::
+
+   >>> msa = Multiple(seqs)
+
+Align the sequences, using simpole progressive alignment with default parameters::
+
+   >>> msa.prog_align()
+
+Print out the results to the screen::
+
+   >>> print(msa)
+   w    o    l    -    d    e    m    o    r    t
+   w    a    l    -    d    e    m    a    r    -
+   w    -    l    a    d    i    m    i    r    -
+   v    -    l    a    d    y    m    y    r    -
+
 
 What's Next?
 ------------
