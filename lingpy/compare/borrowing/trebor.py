@@ -1358,10 +1358,25 @@ class TreBor(Wordlist):
             glm,
             threshold = 1,
             verbose = False,
-            colormap = None #mpl.cm.jet
+            colormap = None,
+            degree = 100
             ):
         """
         Compute an evolutionary network for a given model.
+
+        Parameters
+        ----------
+        glm : str 
+            The dictionary key for the gain-loss-model.
+        threshold : int (default=1)
+            The threshold used to exclude edges.
+        verbose : bool (default=False)
+            Set to c{True} for verbose output.
+        colormap : {None matplotlib.cm}
+            A :py:class:`matplotlib.colormap` instance. If set to c{None}, this
+            defaults to :py:class:`~matplotlib.cm.jet`.
+        degree : int (default=100)
+            The degree which is chosen for the projection of the tree layout.
         """
 
         if not colormap:
@@ -1381,8 +1396,9 @@ class TreBor(Wordlist):
             
             # if no good topology is given, create it automatically, using
             # the radial layout function
-            gTpl = radial_layout(str(self.tree),filename=self.dataset)
-            print("[i] Created GML file from tree. ")
+            gTpl = radial_layout(str(self.tree),filename='',degree=degree)
+            
+            if verbose: print("[i] Calculated radial layout for the tree. ")
             
         # make alias for the current gls for convenience
         scenarios = self.gls[glm]
@@ -2183,10 +2199,19 @@ class TreBor(Wordlist):
             if d['label'] not in self.taxa:
                 inodes += [(x,y)]
             else:
-                if usetex:
-                    enodes += [(x,y,r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}')]
+                if 'angle' in d['graphics']:
+                    r = d['graphics']['angle']
                 else:
-                    enodes += [(x,y,tfunc(d['label']))]
+                    r = 0
+                if usetex:
+                    enodes += [(
+                        x,
+                        y,
+                        r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}',
+                        r
+                        )]
+                else:
+                    enodes += [(x,y,tfunc(d['label']),r)]
         
         # store vertical and lateral edges
         vedges = []
@@ -2276,17 +2301,22 @@ class TreBor(Wordlist):
                     )
 
         # draw the leaves
-        for x,y,t in enodes:
+        for x,y,t,r in enodes:
             plt.text(
                     x,
                     y,
                     t,
                     size = '7',
                     verticalalignment='center',
-                    backgroundcolor='black',
+                    #backgroundcolor='black',
                     horizontalalignment='center',
                     fontweight = 'bold',
-                    color='white'
+                    color='white',
+                    bbox = dict(
+                        facecolor='black',
+                        boxstyle='square'
+                        ),
+                    rotation=r
                     )
 
         # add a colorbar

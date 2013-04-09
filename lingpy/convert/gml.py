@@ -175,8 +175,9 @@ def nwk2gml(
 
 def radial_layout(
         treestring,
-        filename='lingpy',
-        change = lambda x:x**2
+        change = lambda x:x**1.75,
+        degree = 100,
+        filename = ''
         ):
     """
     Function calculates a simple radial tree layout.
@@ -186,15 +187,37 @@ def radial_layout(
     treefile : str
         Either a str defining the path to a file containing the tree in
         Newick-format, or the tree-string itself.
-    filename : str (default='lingpy')
-        The name of the output GML-file. If filename is set to c{None}, the
-        function returns a :py:class:`~networkx.Graph`.
+    filename : str (default=None)
+        The name of the output file (GML-format). If set to c{None}, no output
+        will be written to file.
     change : function (default = lambda x:2 * x**2)
         The function used to modify the radius in the polar projection of the
         tree.
-    """
-    # define private function for centering of nodes
 
+    Returns
+    -------
+    graph : networkx.Graph
+        A graph representation of the tree with coordinates specified in the
+        graphics-attribute of the nodes.
+
+    Note
+    ----
+    This function creates a radial tree-layout from a given tree specified in
+    Newick format.
+
+    """
+    # calculate the factor for projection from the degree
+    pfactor = degree / 360
+
+    # calculate the projection (should be centered)
+    if degree < 180:
+        pstart = (180 - degree) / 360 * np.pi
+        pend = pstart + 2 * np.pi * pfactor
+    else:
+        pstart = 0
+        pend = 2 * np.pi * pfactor
+
+    # define private function for centering of nodes
     def get_center(nodes):
         
         # first sort all values since we need max and min of the theta values
@@ -236,7 +259,7 @@ def radial_layout(
     # get the initial coordinates
     coords = {}
 
-    for node,x in zip(leaves,np.linspace(0,2*np.pi,len(leaves)+1)):
+    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves)+1)):
         coords[node] = (x,maxL)
 
     # assign leaves to queue
@@ -283,34 +306,49 @@ def radial_layout(
                 
                 if parent != 'root':
                     queue += [parent]
+    
+    # convert tree to graph
+    graph = nwk2gml(treestring,filename=None)
+    
+    # iterate over the graph and assign the data
+    for n,d in graph.nodes(data=True):
+        x,y = coords[n]
 
-    for node,(x,y) in coords.items():
-        
+        # change coordinates
         xN = change(y) * np.cos(x)
         yN = change(y) * np.sin(x)
 
-        coords[node] = (xN,yN)
+        # get angle for text-rotation in degrees
+        angle = x * 180 / np.pi
 
-    # if filename is chosen, everything is converted to gml and then output
+        # assign the data to the graph
+        d['graphics'] = {'x':xN,'y':yN,'angle':angle}
+
+        # don't forget the label
+        d['label'] = n
+    
+    #for node,(x,y) in coords.items():
+    #    
+    #    xN = change(y) * np.cos(x)
+    #    yN = change(y) * np.sin(x)
+
+    #    coords[node] = (xN,yN)
+
+    #
+    ## append coords to graph
+    #for node,data in graph.nodes(data=True):
+    #    x,y = coords[node]
+    #    data['graphics'] = {'x':x,'y':y}
+    #    data['label'] = node
+
+    #    graph.add_node(node,**data)
+    
     if filename:
-        # convert tree to graph
-        graph = nwk2gml(treestring,filename=None)
-        
-        # append coords to graph
-        for node,data in graph.nodes(data=True):
-            x,y = coords[node]
-            data['graphics'] = {'x':x,'y':y}
-            data['label'] = node
-
-            graph.add_node(node,**data)
-        
         f = open(filename+'.gml','w')
         for line in nx.generate_gml(graph):
             f.write(line+'\n')
         f.close()
-
         FileWriteMessage(filename,'gml').message('written')
-        return graph
-    else:
-        return coords
+
+    return graph
 
