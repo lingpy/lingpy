@@ -5,35 +5,19 @@ This module provides a basic class for reading in a simple spreadsheet (delimite
 __author__="Steven Moran"
 __date__="2013-04"
 
-import csv
+
 import sys 
 import unicodedata
 from time import gmtime, strftime
 from datetime import date,datetime
 
+from lingpy.sequence.ngram import *
+from lingpy.read.csv import *
+
 
 class Spreadsheet:
     """
-    Basic class for reading "CSV" files into a matrix and outputting modified lingpy file format
-    aka.
-
-
-    Parameters
-    ----------
-    filename : str
-       Path to the file to be loaded.
-
-    delimiter : str
-       The delimiter used in the CSV file. Default it tab.
-
-    output_dir : str
-       The output directory to write data to.
-
-    Notes
-    -----
-    Here will be some notes.
-
-    .. todo:: finish documentation; what to do about cell encapsulation (e.g. "data")
+    Basic class for reading spreadsheet data that has been outputted into a deliminted format, e.g. tab.
 
     # workflow
 
@@ -52,44 +36,83 @@ class Spreadsheet:
     x. then flip into wordlist format
     x. then add tokenization / orthographic parsing
 
+    # add stats to harry potter output
+
     """
     def __init__(self, 
-                 filename, 
-                 sep="\t", 
-                 header=0,
-                 concepts=1,
-                 languages=[]
+                 filename,
+                 fileformat = None,
+                 dtype = None, 
+                 comment = '#',
+                 sep = '\t',
+                 header = 0, # row of the header
+                 concepts = 0, # column for the concepts
+                 languages = [], # columns with language data -- TODO: must be ints
+                 blacklist = "", # location of blacklist
+                 conf = "" # spreadsheet .rc file
                  ):
 
         self.filename = filename
-        self.header = []
-        self.matrix = []
+        self.fileformat = fileformat
+        self.dtype = dtype
+        self.comment = comment
         self.sep = sep
+        self.header = header
+        self.concepts = concepts
+        self.languages = languages
 
-        # try and load the data
-        # if not self.filename:
-        #    raise ValueError("[i] Input data is not specified.")
+        # create a 2D array and Unicode normalize its contents
+        self.spreadsheet = csv2list(self.filename, self.fileformat, self.dtype, self.comment, self.sep)
+        self._normalize()
 
-        row_num = 0
-        with open(self.filename, newline='') as file:
-            reader = csv.reader(file)
+        # given the header, concepts, and languages extract the data for processing
+        # return a new matrix
+        self.matrix = self._process_data()
 
-            # TODO: deal with identifying the header
-            self.header = reader.__next__()
 
-            for row in reader:
-                row_num += 1
+    def _process_data(self):
+        """
+        Take spreadsheet input data and create matrix data given concept and language constraints.
+        """
 
-                # data check: all rows should have same length as the header row
-                if not len(row) == len(self.header):
-                    print("err:", len(row), str(row_num), row)
+        if self.concepts == 0 and len(self.languages) == 0:
+            print("[i] No concepts column and language columns specified. Assuming concepts in column 1 and all other cols language data.")
+            return self.spreadsheet
 
-                # Unicode normalization (form D) and strip whitespace
-                for token in row:
-                    token = unicodedata.normalize("NFD", token)
-                    token = token.strip()
+        # else create a matrix given user-specified input
+        matrix = []
+        spreadsheet_header = self.spreadsheet[self.header] # get original header
 
-                self.matrix.append(row)
+        # create new header
+        matrix_header = []
+        matrix_header.append(spreadsheet_header[self.concepts])
+
+        # TODO: this self.languages input must be int values
+        for language in self.languages:
+            matrix_header.append(spreadsheet_header[language])
+        matrix.append(matrix_header)
+
+        # append the concepts and words in languages and append the rows
+        for i in range(self.header+1, len(self.spreadsheet)):
+            row = []
+            row.append(self.spreadsheet[i][self.concepts])
+            for language in self.languages:
+                row.append(self.spreadsheet[i][language])
+            matrix.append(row)
+
+        return matrix
+
+
+    def _normalize(self):
+        """
+        Function to Unicode normalize (NFD) cells in the matrix.
+        """
+        for i in range(0, len(self.spreadsheet)):
+            for j in range(0, len(self.spreadsheet[i])):
+                normalized_cell = unicodedata.normalize("NFD", self.spreadsheet[i][j])
+                if not normalized_cell == self.spreadsheet[i][j]:
+                    print("[i] Input cell at <"+spreadsheet[i][j]+"> at ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing...")
+                    self.spreadsheet[i][j] = normalized_cell
 
 
     def get_matrix_full_rows(self):
@@ -110,6 +133,14 @@ class Spreadsheet:
                 full_row_matrix.append(row)
 
         return(full_row_matrix)
+
+    def print_doculect_character_counts(self, doculects=1):
+        for i in range(0, len(self.matrix)):
+            print(self.matrix[i])
+            for j in range(doculects, len(self.matrix[i])):
+                if not self.matrix[i][j] == "":
+                    print(self.matrix[i][j])
+                    
 
     def print_matrix_stats(self):
         """
@@ -137,9 +168,13 @@ class Spreadsheet:
         for i in range(0, len(self.header)):
             print(self.header[i], "\t", entries[i])
 
-    def pprint(self, matrix):
+    
+    def pprint(self):
+        self.print_matrix(self.matrix)
+
+    def print_matrix(self, matrix):
         """
-        Print the matrix in tab delimited format
+        Print a matrix in tab delimited format
         """
         for i in range(0, len(matrix)):
             row = ""
@@ -206,10 +241,15 @@ class Spreadsheet:
 
 if __name__=="__main__":
     # s = Spreadsheet("/Users/stiv/Dropbox/Projects/dogon/Moran_Dogon.comp.vocab.UNICODE.csv")
-    s = Spreadsheet("/Users/stiv/Projects/lingpy/test/spreadsheet.tsv")
+    s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv", concepts=2, languages=[3,5,6])
+    s.pprint()
+
+    # print(s.get_matrix_full_rows()) # bug with "0"
+
+    # s.print_doculect_character_counts()
 
     # s.print_matrix_stats()
-    s.print_qlc_format()
+    # s.print_qlc_format()
 
     # frm = s.get_matrix_full_rows()
     # s.pprint(frm)
