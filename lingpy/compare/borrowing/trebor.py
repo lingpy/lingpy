@@ -77,6 +77,7 @@ class TreBor(Wordlist):
         """
         # TODO check for keywords, allow to load trees, etc.
 
+
         # store the name of the dataset and the identifier for paps
         if dataset.endswith('.csv'):
             self.dataset = dataset.replace('.csv','')
@@ -124,36 +125,38 @@ class TreBor(Wordlist):
             if verbose: print("[i] Created entry PAP.")
         
         # get the paps and the etymological dictionary
-        self.paps = self.get_paps(ref=paps,missing=-1)
-        self.etd = self.get_etymdict(ref=paps)
+        if not hasattr(self,'paps'):
+            self.paps = self.get_paps(ref=paps,missing=-1)
+            self.etd = self.get_etymdict(ref=paps)
 
         if verbose: print("[i] Created the PAP matrix.")
 
         # get a list of concepts corresponding to the cogs and get the
         # singletons to be excluded from the calculation
-        tmp = self.get_etymdict(ref=paps,entry='concept')
-        
-        # a dictionary with pap-key as key and concept as value
-        self.pap2con = {}
-
-        # list stores the singletons
-        self.singletons = []
-
-        for key in self.paps:
+        if not hasattr(self,'singletons'):
+            tmp = self.get_etymdict(ref=paps,entry='concept')
             
-            # get the names of the concepts
-            concept_list = [k for k in tmp[key] if k != 0]
-            concept = concept_list[0][0]
-            self.pap2con[key] = concept
+            # a dictionary with pap-key as key and concept as value
+            self.pap2con = {}
 
-            # check for singletons
-            if sum([1 for p in self.paps[key] if p >= 1]) == 1:
-                self.singletons.append(key)
-        
-        # create a list of keys for faster access when iterating
-        self.cogs = [k for k in self.pap2con if k not in self.singletons]
+            # list stores the singletons
+            self.singletons = []
 
-        if verbose: print("[i] Excluded singletons.")
+            for key in self.paps:
+                
+                # get the names of the concepts
+                concept_list = [k for k in tmp[key] if k != 0]
+                concept = concept_list[0][0]
+                self.pap2con[key] = concept
+
+                # check for singletons
+                if sum([1 for p in self.paps[key] if p >= 1]) == 1:
+                    self.singletons.append(key)
+            
+            # create a list of keys for faster access when iterating
+            self.cogs = [k for k in self.pap2con if k not in self.singletons]
+
+            if verbose: print("[i] Excluded singletons.")
 
         # Load the tree, if it is not defined, assume that the treefile has the
         # same name as the dataset
@@ -170,27 +173,21 @@ class TreBor(Wordlist):
         # if it is explicitly defined, try to load that file
         elif not hasattr(self,'tree'):
             self.tree = cg.LoadTree(tree)
+            if verbose: print("[i] Loaded the tree.")
         else:
             pass
 
-        if verbose: print("[i] Loaded the tree.")
 
-        # get the taxa
-        #self.taxa = self.cols
 
-        if verbose: print("[i] Assigned the taxa.")
+        ## get the taxa
+        ##self.taxa = self.cols
 
-        # create a stats-dictionary
-        self.stats = {}
-
-        # create gls-dictionary
-        self.gls = {}
-
-        # create dictionary for distributions
-        self.dists = {}
-
-        # create dictionary for graph attributes
-        self.graph = {}
+        #if verbose: print("[i] Assigned the taxa.")
+        
+        # create a couple of further attributes
+        for a in ['stats','gls','dists','graph']:
+            if not hasattr(self,a):
+                setattr(self,a,{})
     
     def _get_GLS_top_down(
             self,
@@ -2160,7 +2157,8 @@ class TreBor(Wordlist):
             fileformat = 'pdf',
             usetex = True,
             colormap = None, #mpl.cm.jet,
-            taxon_labels = 'taxon.short_labels'
+            taxon_labels = 'taxon.short_labels',
+            **keywords
             ):
         """
         Plot the MLN with help of Matplotlib.
@@ -2168,6 +2166,12 @@ class TreBor(Wordlist):
         # if not colormap
         if not colormap:
             colormap = mpl.cm.jet
+
+        # set default, XXX change later
+        if 'height' not in keywords:
+            keywords['height'] = 7
+        if 'width' not in keywords:
+            keywords['width'] = 10
 
         # try to load the configuration file
         try:
@@ -2188,6 +2192,9 @@ class TreBor(Wordlist):
         inodes = []
         enodes = []
 
+        # get some data on the taxa
+        max_label_len = max([len(tfunc(t)) for t in self.taxa])
+
         # get the nodes
         for n,d in graph.nodes(data=True):
             g = d['graphics']
@@ -2203,6 +2210,11 @@ class TreBor(Wordlist):
                     r = d['graphics']['angle']
                 else:
                     r = 0
+
+                # get the difference between the current label and it's
+                # original lenght for formatting output
+                ll = max_label_len - len(tfunc(d['label']))
+
                 if usetex:
                     enodes += [(
                         x,
@@ -2244,7 +2256,10 @@ class TreBor(Wordlist):
         mpl.rc('text',usetex = usetex)
 
         # create the figure
-        fig = plt.figure(facecolor='white')
+        fig = plt.figure(
+                facecolor='white',
+                figsize = (keywords['width'],keywords['height'])
+                    )
         figsp = fig.add_subplot(111)
         
         # create the axis
@@ -2282,9 +2297,15 @@ class TreBor(Wordlist):
                     color='1.0',
                     linewidth=2,
                     )
+        # store x,y values for ylim,xlim drawing
+        xvals = []
+        yvals = []
 
         # draw the nodes
         for x,y in inodes:
+            xvals += [x]
+            yvals += [y]
+
             plt.plot(
                     x,
                     y,
@@ -2299,24 +2320,34 @@ class TreBor(Wordlist):
                     markersize=6,
                     color='white'
                     )
-
+        
         # draw the leaves
+        # store x and y-maxima for ylim, xlim drawing
         for x,y,t,r in enodes:
+            
+            xvals += [x]
+            yvals += [y]
+
+            if r > 270:
+                ha = 'right'
+            else:
+                ha = 'left'
             plt.text(
                     x,
                     y,
                     t,
                     size = '7',
-                    verticalalignment='center',
-                    #backgroundcolor='black',
-                    horizontalalignment='center',
+                    verticalalignment='baseline',
+                    backgroundcolor='black',
+                    horizontalalignment=ha,
                     fontweight = 'bold',
                     color='white',
                     bbox = dict(
                         facecolor='black',
                         boxstyle='square'
                         ),
-                    rotation=r
+                    rotation=r,
+                    rotation_mode = 'anchor'
                     )
 
         # add a colorbar
@@ -2348,11 +2379,16 @@ class TreBor(Wordlist):
                     str(max(weights))
                     ]
                 )
+        plt.ylim(min(yvals),max(yvals))
+        plt.xlim(min(xvals),max(xvals))
+        plt.subplots_adjust(left=0.05,right=0.99,top=0.95,bottom=0.00)
+        #fig.axes.get_xaxis().set_visible(False)
+        #fig.axes.get_yaxis().set_visible(False)
+        plt.axis('off')
 
-        plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
 
         # save the figure
-        plt.savefig(filename+'.'+fileformat)
+        plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
         if verbose: FileWriteMessage(filename,fileformat).message('written')
 
