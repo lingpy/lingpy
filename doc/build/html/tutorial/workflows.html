@@ -153,6 +153,47 @@ we specify the keyword <strong>formatter</strong> as &#8216;concepts&#8217;:</p>
 </div>
 <p>This produces the file <a class="reference external" href="examples/DOGON_lexstat.csv">DOGON_lexstat.csv</a> in our folder.</p>
 </div>
+<div class="section" id="phonetic-alignment">
+<h2>Phonetic Alignment<a class="headerlink" href="#phonetic-alignment" title="Permalink to this headline">¶</a></h2>
+<p>Phonetic alignment is the basis of the LexStat analysis we just carried out. However, it is also
+useful for the purpose of visualization, especially multiple alignment analyses can give us a quick
+hint whether the cognates that an algorithm detected are &#8220;good&#8221; ones, or not. In order to carry out
+multiple alignment analyses from a cognate set, we can load the data that we just wrote to file in
+the previous step into an <a class="reference internal" href="../docu/align/sca.html#lingpy.align.sca.Alignments" title="lingpy.align.sca.Alignments"><tt class="xref py py-class docutils literal"><span class="pre">Alignments</span></tt></a> object. Note that we should
+specify, where the cognates are. In the case of a LexStat analysis, they are stored in the
+&#8216;lexstatid&#8217; column:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span> <span class="o">=</span> <span class="n">Alignments</span><span class="p">(</span><span class="s">&#39;DOGON_lexstat.csv&#39;</span><span class="p">,</span><span class="n">cognates</span><span class="o">=</span><span class="s">&#39;lexstatid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Carrying out a default alignment analysis is now very simple. We choose the default parameters, and
+the &#8216;library&#8217;-method for multiple alignments (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012a"><span class="pre">List2012a</span></a></tt>), we also set the <strong>output</strong>
+kewyord to c{True} in order to have all alignments written to separate files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;library&#39;</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will produce a new folder <tt class="docutils literal"><span class="pre">DOGON_lexstat_msa/</span></tt> that contains all multiple alignments in
+separate MSA-files. More information regarding the format of these files can be found under: <a class="reference internal" href="formats.html#msa-formats"><em>Multiple Alignments (MSQ and MSA)</em></a>.
+The MSA-format is useful for manual editing and comparing of multiple alignments. In order to view a
+whole dataset of cognate judgments and aligmnents, however, it not very appropriate. Here, LingPy
+offers a specific colored HTML-output that is very helpful to inspect the results. In order to
+create this output, we first have to write the aligned data to a specific format with the extension
+<tt class="docutils literal"><span class="pre">alm</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s">&#39;alm&#39;</span><span class="p">,</span><span class="n">cognates</span><span class="o">=</span><span class="s">&#39;lexstatid&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, that we created the file <a class="reference external" href="examples/DOGON.alm">DOGON.alm</a>, we have to load the <tt class="xref py py-func docutils literal"><span class="pre">alm2html()</span></tt> from the
+<tt class="xref py py-mod docutils literal"><span class="pre">plot</span></tt>-module. This module is not automatically loaded when importing
+LingPy, so we have to import it explicitly:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy.convert.plot</span> <span class="kn">import</span> <span class="n">alm2hmtl</span>
+</pre></div>
+</div>
+<p>Once the module is imported, we can use the function to convert the file <a class="reference external" href="examples/DOGON.alm">DOGON.alm</a> to colored
+HTML-output:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm2html</span><span class="p">(</span><span class="s">&#39;DOGON.alm&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a result, we get the file <a class="reference external" href="examples/DOGON.html">DOGON.html</a> in our folder.</p>
+</div>
 </div>
 
 
@@ -167,6 +208,7 @@ we specify the keyword <strong>formatter</strong> as &#8216;concepts&#8217;:</p>
 <li><a class="reference internal" href="#getting-started">Getting Started</a></li>
 <li><a class="reference internal" href="#orthographic-parsing">Orthographic Parsing</a></li>
 <li><a class="reference internal" href="#automatic-cognate-detection">Automatic Cognate Detection</a></li>
+<li><a class="reference internal" href="#phonetic-alignment">Phonetic Alignment</a></li>
 </ul>
 </li>
 </ul>
@@ -209,7 +251,7 @@ we specify the keyword <strong>formatter</strong> as &#8216;concepts&#8217;:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Apr 10, 2013.
+      Last updated on Apr 11, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

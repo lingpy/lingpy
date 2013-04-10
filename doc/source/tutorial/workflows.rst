@@ -95,9 +95,54 @@ we specify the keyword **formatter** as 'concepts'::
 
 This produces the file DOGON_lexstat.csv_ in our folder.
 
+Phonetic Alignment
+==================
+
+Phonetic alignment is the basis of the LexStat analysis we just carried out. However, it is also
+useful for the purpose of visualization, especially multiple alignment analyses can give us a quick
+hint whether the cognates that an algorithm detected are "good" ones, or not. In order to carry out
+multiple alignment analyses from a cognate set, we can load the data that we just wrote to file in
+the previous step into an :py:class:`~lingpy.align.sca.Alignments` object. Note that we should
+specify, where the cognates are. In the case of a LexStat analysis, they are stored in the
+'lexstatid' column::
+
+  >>> alm = Alignments('DOGON_lexstat.csv',cognates='lexstatid')
+
+Carrying out a default alignment analysis is now very simple. We choose the default parameters, and
+the 'library'-method for multiple alignments (see :evobib:`List2012a`), we also set the **output**
+kewyord to c{True} in order to have all alignments written to separate files::
+
+  >>> alm.align(method='library',output=True)
+
+This will produce a new folder ``DOGON_lexstat_msa/`` that contains all multiple alignments in
+separate MSA-files. More information regarding the format of these files can be found under: :ref:`msa_formats`.
+The MSA-format is useful for manual editing and comparing of multiple alignments. In order to view a
+whole dataset of cognate judgments and aligmnents, however, it not very appropriate. Here, LingPy
+offers a specific colored HTML-output that is very helpful to inspect the results. In order to
+create this output, we first have to write the aligned data to a specific format with the extension
+``alm``::
+
+  >>> alm.output('alm',cognates='lexstatid',filename='DOGON')
+
+Now, that we created the file DOGON.alm_, we have to load the :py:func:`~lingpy.convert.plot.alm2html` from the
+:py:mod:`~lingpy.convert.plot`-module. This module is not automatically loaded when importing
+LingPy, so we have to import it explicitly::
+
+  >>> from lingpy.convert.plot import alm2hmtl
+
+Once the module is imported, we can use the function to convert the file DOGON.alm_ to colored
+HTML-output::
+
+  >>> alm2html('DOGON.alm',filename='DOGON')
+
+As a result, we get the file DOGON.html_ in our folder.
+
+
+
 .. _Heath2013.prf: examples/Heath2013.prf
 .. _DOGON.csv: examples/DOGON.csv
 .. _DOGON_tokens.csv: examples/DOGON_tokens.csv
 .. _DOGON_lexstat.csv: examples/DOGON_lexstat.csv
-
+.. _DOGON.alm: examples/DOGON.alm
+.. _DOGON.html: examples/DOGON.html
 
