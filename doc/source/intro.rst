@@ -20,34 +20,33 @@ using biological software packages.
 What can be done with LingPy?
 -----------------------------
 
-With the help of LingPy, one can:
+With the help of LingPy, users can:
 
 * tokenize and analyze IPA-encoded sequences, 
 * carry out pairwise and multiple alignment analyses,
 * conduct automatic cognate judgments for multiple languages, 
 * calculate lexicostatistic distances between languages, 
 * reconstruct language phylogenies using basic cluster algorithms, and
-* export the results of these analyses to various formats which can either be
+* export the results of these analyses to various formats which can be either
   used as input for external programs, or to visualize the results. 
 
 How can LingPy be used?
 -----------------------
 
-LingPy is a library for the Python programming language. It can thus be used
-directly from the Python shell or inside Python scripts.  The Python programming
-language has many benefits. Due to its clear programming style it allows the
-user to write programs very quickly while at the same time being very powerful
-and easy to maintain. See http://www.python.org for details.
+LingPy is a library written in the Python programming language. It can be used
+directly in the Python interpreter or imported into Python scripts. See the LingPy 
+README_ file for instructions. For more information about Python, see 
+http://www.python.org for details.
 
-What is the Basic Idea Behind LingPy?
+What is the basic idea behind LingPy?
 -------------------------------------
 
 In historical linguistics, one usually deals with the following two entities
 and their components:
 
-* *signs* -- form-meaning pairs, i.e. *sequences* (words, morphemes) which
+* *signs* -- form-meaning pairs, i.e. *sequences* (words, morphemes) that
   carry a certain *functon* (meaning), and
-* *languages* -- collections of *signs*.
+* *languages* -- collections of *signs*
 
 These entities are dealt with by *comparison*. Signs and languages are compared
 in different ways in order to reconstruct how they evolved from their
@@ -67,12 +66,12 @@ comparison of sign forms, one can chose between the
 :py:class:`~lingpy.algorithm.classes` and the
 :py:class:`~lingpy.compare.Multiple` class, which can be used to conduct
 automatic alignment analyses or to calculate the similarity or distance between
-sound sequences. Even language comparison is possible with help of the
-:py:class:`~lingpy.lexstat.LexStat` class which can be used to conduct an
+sound sequences. Even language comparison is possible with the help of the
+:py:class:`~lingpy.lexstat.LexStat` class, which can be used to conduct an
 automatic search for cognates in lexicostatistical datasets or to calculate
 evolutionary distances between languages.
 
-What's Next?
+What's next?
 -------------------------
 
 .. toctree::
@@ -83,3 +82,4 @@ What's Next?
    tutorial/index
    download
 
+.. _README: link2readmefile
