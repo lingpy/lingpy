@@ -1,6 +1,6 @@
-================================
-Handling Multilingual Word Lists
-================================
+=========
+Wordlists
+=========
 
 What is a Word List?
 --------------------
@@ -41,10 +41,11 @@ cognate::
 When dealing with word lists in general, we thus need something more than just a
 two-dimensional representation format. A solution is to use a simple csv-format
 with a header which specifies not only the concept and the language, but also
-all different possible **entry-types** a word can have::
+all different possible **entry-types** a word can have, just as in the file `harry_potter.csv`_::
 
     @author: Potter, Harry
     @date: 2012-11-07
+    #
     ID   CONCEPT     COUNTERPART   IPA         DOCULECT     COGID
     1    hand        Hand          hant        German       1
     2    hand        hand          hænd        English      1
@@ -69,7 +70,10 @@ concept in a given language. Moreover, this format is the basic of the
 :py:class:`~lingpy.basic.wordlist.Wordlist` class in LingPy, which makes it easy
 to handle word lists with multiple entry-types of words.
 
-The above-given csv-file `harry_potter.csv` is available in the test folder of LingPy.
+Basic Operations with Help of Wordlists
+---------------------------------------
+
+The above-given csv-file `harry_potter.csv`_ is available in the test folder of LingPy.
 In order to get it loaded, we simply pass it as first argument to the Wordlist
 class::
     
@@ -99,7 +103,7 @@ Or for the languages and the concepts in the dataset::
     
 Furthermore, using specific functions, even more concise samples of the data can
 be extracted, thus, using the
-:py:class:`~lingpy.basic.wordlist.Wordlist.getDict` function, we can specify a
+:py:class:`~lingpy.basic.wordlist.Wordlist.get_dict` function, we can specify a
 given language and extract all phonetic transcriptions corresponding to a given
 concept as a dictionary::
 
@@ -110,7 +114,7 @@ concept as a dictionary::
      'leg': ['bain']}
 
 We can likewise extract all cognate IDs corresponding to a given concept by
-using the function :py:class:`~lingpy.basic.wordlist.Wordlist.getList`::
+using the function :py:class:`~lingpy.basic.wordlist.Wordlist.get_list`::
 
     >>> wl.get_list(row="hand",entry="cogid",flat=True)
     [1, 1, 2, 2]
@@ -137,17 +141,10 @@ Other entry-types can be added::
       ['g', 'a', 'r', 'i'],
       ['g', 'a', 'r', 'i']]]
     
-    
-
-How are Word Lists defined?
----------------------------
-
-In LingPy the Wordlist class handles wordlists. 
-
 The wordlist.rc file
 ----------------------
 
-The structure of word lists is defined by the configuration file `wordlists.rc`. This file is
+The structure of word lists is defined by the configuration file `wordlist.rc`_. This file is
 automatically loaded when initializing a Wordlist instance::
 
     >>> wl = Wordlist(data)
@@ -167,4 +164,8 @@ The file is a simple tab-delimited csv-file and has the following structure::
     ipa         str                     ipa
 
 According to this structure, the first column indicates the name which is internally used to address
-the given datatype. The second column indicates the program-internal datatype. The third row 
+the given datatype. The second column indicates the program-internal datatype. The third row
+indicates aliases that can be used to address the datatype when using it in calculations.
+
+.. _harry_potter.csv: examples/harry_potter.csv
+.. _wordlist.rc: examples/wordlist.rc

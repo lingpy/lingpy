@@ -19,4 +19,5 @@ Wordlists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
       Wordlist.get_paps
       Wordlist.output
       Wordlist.calculate
+      Wordlist.tokenize
 
