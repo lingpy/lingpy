@@ -1,0 +1,35 @@
+# Wordlist
+
+# META
+@author:Potter, Harry
+@date:2012-11-07
+
+# JSON
+<json>
+{
+    "taxa": [
+        "English", 
+        "German", 
+        "Russian", 
+        "Ukrainian"
+    ]
+}
+</json>
+
+# DATA
+ID	CONCEPT	COUNTERPART	IPA	DOCULECT	COGID	GLID	PAP	PATCHY
+#
+1	hand	Hand	hant	German	1	2	1:2	1:2:0
+2	hand	hand	hænd	English	1	2	1:2	1:2:0
+3	hand	рука	ruka	Russian	2	2	2:2	2:2:0
+4	hand	рука	ruka	Ukrainian	2	2	2:2	2:2:0
+#
+5	leg	Bein	bain	German	3	3	3:3	3:3:0
+6	leg	leg	lɛg	English	4	3	4:3	4:3:0
+7	leg	нога	noga	Russian	5	3	5:3	5:3:0
+8	leg	нога	noga	Ukrainian	5	3	5:3	5:3:0
+#
+9	Harry	Harald	haralt	German	7	1	7:1	7:1:0
+10	Harry	Harry	hæri	English	7	1	7:1	7:1:0
+11	Harry	Гарри	gari	Russian	7	1	7:1	7:1:0
+12	Harry	Гаррi	gari	Ukrainian	7	1	7:1	7:1:0

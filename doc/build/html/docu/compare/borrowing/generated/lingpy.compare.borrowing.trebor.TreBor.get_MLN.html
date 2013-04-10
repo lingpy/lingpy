@@ -67,8 +67,37 @@ LingPy
 <h1>lingpy.compare.borrowing.trebor.TreBor.get_MLN<a class="headerlink" href="#lingpy-compare-borrowing-trebor-trebor-get-mln" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="lingpy.compare.borrowing.trebor.TreBor.get_MLN">
-<tt class="descclassname">TreBor.</tt><tt class="descname">get_MLN</tt><big>(</big><em>glm</em>, <em>threshold=1</em>, <em>verbose=False</em>, <em>colormap=&lt;matplotlib.colors.LinearSegmentedColormap object at 0x7f9d33151cd0&gt;</em><big>)</big><a class="headerlink" href="#lingpy.compare.borrowing.trebor.TreBor.get_MLN" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">TreBor.</tt><tt class="descname">get_MLN</tt><big>(</big><em>glm</em>, <em>threshold=1</em>, <em>verbose=False</em>, <em>colormap=None</em>, <em>degree=100</em><big>)</big><a class="headerlink" href="#lingpy.compare.borrowing.trebor.TreBor.get_MLN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute an evolutionary network for a given model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>glm</strong> : str</p>
+<blockquote>
+<div><p>The dictionary key for the gain-loss-model.</p>
+</div></blockquote>
+<p><strong>threshold</strong> : int (default=1)</p>
+<blockquote>
+<div><p>The threshold used to exclude edges.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool (default=False)</p>
+<blockquote>
+<div><p>Set to c{True} for verbose output.</p>
+</div></blockquote>
+<p><strong>colormap</strong> : {None matplotlib.cm}</p>
+<blockquote>
+<div><p>A <tt class="xref py py-class docutils literal"><span class="pre">matplotlib.colormap</span></tt> instance. If set to c{None}, this
+defaults to <tt class="xref py py-class docutils literal"><span class="pre">jet</span></tt>.</p>
+</div></blockquote>
+<p><strong>degree</strong> : int (default=100)</p>
+<blockquote class="last">
+<div><p>The degree which is chosen for the projection of the tree layout.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -117,7 +146,7 @@ LingPy
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Mar 08, 2013.
+      Last updated on Apr 10, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

@@ -67,7 +67,7 @@ LingPy
 <h1>lingpy.basic.wordlist.Wordlist.get_list<a class="headerlink" href="#lingpy-basic-wordlist-wordlist-get-list" title="Permalink to this headline">¶</a></h1>
 <dl class="method">
 <dt id="lingpy.basic.wordlist.Wordlist.get_list">
-<tt class="descclassname">Wordlist.</tt><tt class="descname">get_list</tt><big>(</big><em>row=''</em>, <em>col=''</em>, <em>entry=''</em>, <em>flat=False</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.get_list" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Wordlist.</tt><tt class="descname">get_list</tt><big>(</big><em>row=''</em>, <em>col=''</em>, <em>entry=''</em>, <em>flat=False</em>, <em>**keywords</em><big>)</big><a class="headerlink" href="#lingpy.basic.wordlist.Wordlist.get_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function returns lists of rows and columns specified by their name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -86,18 +86,67 @@ LingPy
 <div><p>The entry-type which is selected from the data.</p>
 </div></blockquote>
 <p><strong>flat</strong> : bool (default = False)</p>
-<blockquote class="last">
+<blockquote>
 <div><p>Specify whether the returned list should be one- or
 two-dimensional, or whether it should contain gaps or not.</p>
 </div></blockquote>
 </td>
 </tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>data</strong> : list</p>
+<blockquote class="last">
+<div><p>A list representing the selected part of the
+data.</p>
+</div></blockquote>
+</td>
+</tr>
 </tbody>
 </table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../../generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-obj docutils literal"><span class="pre">Wordlist.get_list</span></tt></a>, <a class="reference internal" href="../../generated/lingpy.basic.wordlist.Wordlist.add_entries.html#lingpy.basic.wordlist.Wordlist.add_entries" title="lingpy.basic.wordlist.Wordlist.add_entries"><tt class="xref py py-obj docutils literal"><span class="pre">Wordlist.add_entries</span></tt></a></p>
+</div>
 <p class="rubric">Notes</p>
-<p>Tobeadded</p>
+<p>The &#8216;col&#8217; and &#8216;row&#8217; keywords in the function are all aliased according
+to the description in the <tt class="docutils literal"><span class="pre">wordlist.rc</span></tt> file. Thus, instead of
+using these attributes, the aliases can also be taken. For selecting a
+language, one may type something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Wordlist</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s">&#39;LANGUAGE&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and for the selection of a concept, one may type something like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Wordlist</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">concept</span><span class="o">=</span><span class="s">&#39;CONCEPT&#39;</span><span class="p">)</span>    
+</pre></div>
+</div>
+<p>See the examples below for details.</p>
 <p class="rubric">Examples</p>
-<p>All examples make use of the small sample dataset</p>
+<p>Load the <tt class="docutils literal"><span class="pre">harry_potter.csv</span></tt> file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">Wordlist</span><span class="p">(</span><span class="s">&#39;harry_potter.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select all IPA-entries for the language &#8220;German&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s">&#39;German&#39;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&#39;ipa&#39;</span>
+<span class="go">[&#39;bain&#39;, &#39;hant&#39;, &#39;haralt&#39;]</span>
+</pre></div>
+</div>
+<p>Note that this function returns 0 for missing values (concepts that
+don&#8217;t have a word in the given language). If one wants to avoid this,
+the &#8216;flat&#8217; keyword should be set to c{True}.</p>
+<p>Select all words (orthographical representation) for the concept
+&#8220;Harry&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">concept</span><span class="o">=</span><span class="s">&quot;Harry&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">)</span>
+<span class="go">[[&#39;hæri&#39;, &#39;haralt&#39;, &#39;gari&#39;, &#39;gari&#39;]]            </span>
+</pre></div>
+</div>
+<p>Note that the values of the list that is returned are always
+two-dimensional
+lists, since it is possible that the original file contains synonyms
+(multiple words corresponding to the same concept). If one wants to
+have a flat representation of the entries, the &#8216;flat&#8217; keyword should be
+set to c{True}:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">concept</span><span class="o">=</span><span class="s">&quot;Harry&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;words&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">[&#39;hæri&#39;, &#39;haralt&#39;, &#39;gari&#39;, &#39;gari&#39;]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -146,7 +195,7 @@ two-dimensional, or whether it should contain gaps or not.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Mar 08, 2013.
+      Last updated on Apr 10, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

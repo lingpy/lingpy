@@ -1,0 +1,44 @@
+# Wordlist
+
+# META
+@author:Potter, Harry
+@date:2012-11-07
+@tree:(((English,German),Russian),Ukrainian);
+
+# JSON
+<json>
+{
+    "taxa": [
+        "English", 
+        "German", 
+        "Russian", 
+        "Ukrainian"
+    ], 
+    "groups": {
+        "German": "G_1", 
+        "Ukrainian": "G_2", 
+        "Russian": "G_2", 
+        "English": "G_1"
+    }
+}
+</json>
+
+# DISTANCES
+<dst>
+ 4
+English   0.000000 0.333333 0.666667 0.666667
+German    0.333333 0.000000 0.666667 0.666667
+Russian   0.666667 0.666667 0.000000 0.000000
+Ukrainian 0.666667 0.666667 0.000000 0.000000
+</dst>
+
+# DATA
+ID	LANGUAGE	IPA
+#
+1	German	hant
+#
+2	English	hænd
+#
+3	Russian	ruka
+#
+4	Ukrainian	ruka

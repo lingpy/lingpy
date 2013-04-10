@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Language Comparison (compare) &mdash; LingPy</title>
+    <title>Automatic Cognate Detection (LexStat) &mdash; LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -63,13 +63,81 @@ LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="language-comparison-compare">
-<h1>Language Comparison (<tt class="xref py py-mod docutils literal"><span class="pre">compare</span></tt>)<a class="headerlink" href="#language-comparison-compare" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../compare/borrowing/index.html">Borrowing Detection (<tt class="docutils literal"><span class="pre">borrowing</span></tt>)</a></li>
-</ul>
-</div>
+  <div class="section" id="automatic-cognate-detection-lexstat">
+<h1>Automatic Cognate Detection (<a class="reference internal" href="#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a>)<a class="headerlink" href="#automatic-cognate-detection-lexstat" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="lingpy.compare.lexstat.LexStat">
+<em class="property">class </em><tt class="descclassname">lingpy.compare.lexstat.</tt><tt class="descname">LexStat</tt><big>(</big><em>filename</em>, <em>**keywords</em><big>)</big><a class="headerlink" href="#lingpy.compare.lexstat.LexStat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic class for automatic cognate detection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote class="last">
+<div><p>The name of the file that shall be loaded.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Instantiating this class does not require a lot of parameters. However,
+the user may modify its behaviour by providing additional attributes in the
+input file.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.lexstat.LexStat.align_pairs.html#lingpy.compare.lexstat.LexStat.align_pairs" title="lingpy.compare.lexstat.LexStat.align_pairs"><tt class="xref py py-obj docutils literal"><span class="pre">align_pairs</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">calculate</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.lexstat.LexStat.cluster.html#lingpy.compare.lexstat.LexStat.cluster" title="lingpy.compare.lexstat.LexStat.cluster"><tt class="xref py py-obj docutils literal"><span class="pre">cluster</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.lexstat.LexStat.get_random_distances.html#lingpy.compare.lexstat.LexStat.get_random_distances" title="lingpy.compare.lexstat.LexStat.get_random_distances"><tt class="xref py py-obj docutils literal"><span class="pre">get_random_distances</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.lexstat.LexStat.get_scorer.html#lingpy.compare.lexstat.LexStat.get_scorer" title="lingpy.compare.lexstat.LexStat.get_scorer"><tt class="xref py py-obj docutils literal"><span class="pre">get_scorer</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">pickle</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">tokenize</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 
 
@@ -116,7 +184,7 @@ LingPy
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Mar 08, 2013.
+      Last updated on Apr 10, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

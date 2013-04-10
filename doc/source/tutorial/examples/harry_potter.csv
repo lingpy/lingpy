@@ -1,0 +1,20 @@
+@author: Potter, Harry
+@date: 2012-11-07
+#
+ID	CONCEPT	COUNTERPART	IPA	DOCULECT	COGID
+1	hand	Hand	hant	German	1
+2	hand	hand	hænd	English	1
+3	hand	рука	ruka	Russian	2
+4	hand	рука	ruka	Ukrainian	2
+5	leg	Bein	bain	German	3
+6	leg	leg	lɛg	English	4
+7	leg	нога	noga	Russian	5
+8	leg	нога	noga	Ukrainian	5
+9	Woldemort	Waldemar	valdemar	German	6
+10	Woldemort	Woldemort	wɔldemɔrt	English	6
+11	Woldemort	Владимир	vladimir	Russian	6
+12	Woldemort	Володимир	volodimir	Ukrainian	6
+9	Harry	Harald	haralt	German	7
+10	Harry	Harry	hæri	English	7
+11	Harry	Гарри	gari	Russian	7
+12	Harry	Гаррi	gari	Ukrainian	7

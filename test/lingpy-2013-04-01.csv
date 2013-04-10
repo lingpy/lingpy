@@ -1,0 +1,44 @@
+# Wordlist
+
+# META
+@author:Potter, Harry
+@date:2012-11-07
+
+# JSON
+<json>
+{
+    "taxa": [
+        "English", 
+        "German", 
+        "Russian", 
+        "Ukrainian"
+    ]
+}
+</json>
+
+# DISTANCES
+<dst>
+ 4
+English   0.000000 0.333333 0.666667 0.666667
+German    0.333333 0.000000 0.666667 0.666667
+Russian   0.666667 0.666667 0.000000 0.000000
+Ukrainian 0.666667 0.666667 0.000000 0.000000
+</dst>
+
+# DATA
+ID	CONCEPT	COUNTERPART	IPA	DOCULECT	COGID	TOKENS
+#
+1	hand	Hand	hant	German	1	h a n t
+2	hand	hand	hænd	English	1	h æ n d
+3	hand	рука	ruka	Russian	2	r u k a
+4	hand	рука	ruka	Ukrainian	2	r u k a
+#
+5	leg	Bein	bain	German	3	b ai n
+6	leg	leg	lɛg	English	4	l ɛ g
+7	leg	нога	noga	Russian	5	n o g a
+8	leg	нога	noga	Ukrainian	5	n o g a
+#
+9	Harry	Harald	haralt	German	7	h a r a l t
+10	Harry	Harry	hæri	English	7	h æ r i
+11	Harry	Гарри	gari	Russian	7	g a r i
+12	Harry	Гаррi	gari	Ukrainian	7	g a r i

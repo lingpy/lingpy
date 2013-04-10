@@ -1,0 +1,36 @@
+# Wordlist
+
+# META
+@author:Potter, Harry
+@date:2012-11-07
+
+# JSON
+<json>
+{
+    "taxa": [
+        "English", 
+        "German", 
+        "Russian", 
+        "Ukrainian"
+    ]
+}
+</json>
+
+# DATA
+ID	LANGUAGE	CONCEPT	IPA	CLASSES	NUMBERS	SCAID
+#
+1	German	hand	hant	HANT	2.H.A 2.A.X 2.N.L 2.T.N	2
+2	English	hand	hænd	HENT	1.H.A 1.E.X 1.N.L 1.T.N	2
+3	Russian	hand	ruka	RYKA	3.R.A 3.Y.X 3.K.B 3.A.Z	4
+4	Ukrainian	hand	ruka	RYKA	4.R.A 4.Y.X 4.K.B 4.A.Z	4
+#
+5	German	leg	bain	PAN	2.P.A 2.A.X 2.N.N	6
+6	English	leg	lɛg	LEK	1.L.A 1.E.X 1.K.N	5
+7	Russian	leg	noga	NUKA	3.N.A 3.U.X 3.K.B 3.A.Z	5
+8	Ukrainian	leg	noga	NUKA	4.N.A 4.U.X 4.K.B 4.A.Z	5
+#
+9	German	Harry	haralt	HARALT	2.H.A 2.A.X 2.R.B 2.A.Y 2.L.L 2.T.N	1
+10	English	Harry	hæri	HERI	1.H.A 1.E.X 1.R.B 1.I.Z	1
+11	Russian	Harry	gari	KARI	3.K.A 3.A.X 3.R.B 3.I.Z	1
+12	Ukrainian	Harry	gari	KARI	4.K.A 4.A.X 4.R.B 4.I.Z	1
+# Created using the LexStat class of LingPy-2.0
