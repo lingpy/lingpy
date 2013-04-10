@@ -17,7 +17,7 @@ historical linguistics within a single framework, and, on the other hand,
 serves as an interface for the preparation and analysis of linguistic data
 using biological software packages.
 
-What can be Done with LingPy?
+What can be done with LingPy?
 -----------------------------
 
 With the help of LingPy, one can:
