@@ -2,11 +2,11 @@
 
 Authors: Johann-Mattis List and Steven Moran, Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg.
 
-QLC-LingPy is a Python Library for Historical Linguistics that is under development. It is being developed in Python 3.
+QLC-LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3.
 
 Available at: (https://github.com/lingpy/lingpy)
 
-For a brief overview, see slides from Euroscipy 2012 ("best paper award"): (http://hprints.org/hprints-00758536)
+For a brief overview, see slides from Euroscipy 2012 ("best talk award"): (http://hprints.org/hprints-00758536)
 
 Other relevant work related to the development of the library and research using it, include:
 
