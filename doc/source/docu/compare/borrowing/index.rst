@@ -1,10 +1,6 @@
 Borrowing Detection (:py:mod:`~lingpy.compare.borrowing`)
 =========================================================
 
-
-Classes
--------
-
 .. currentmodule:: lingpy.compare.borrowing.trebor
 
 .. autoclass:: TreBor
@@ -12,7 +8,8 @@ Classes
 .. HACK::
    .. autosummary::
       :toctree: generated/
-
+    
+      TreBor.add_entries
       TreBor.get_GLS
       TreBor.get_CVSD
       TreBor.get_AVSD

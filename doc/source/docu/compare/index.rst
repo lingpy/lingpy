@@ -1,9 +1,15 @@
-Language Comparison (:py:mod:`~lingpy.compare`)
-===============================================
+Automatic Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
+=========================================================================
 
+.. currentmodule:: lingpy.compare.lexstat
 
-.. toctree::
-   :maxdepth: 1
+.. autoclass:: LexStat
 
-   borrowing/index.rst
+.. HACK::
+   .. autosummary::
+      :toctree: generated/
 
+      LexStat.get_scorer
+      LexStat.cluster
+      LexStat.align_pairs
+      LexStat.get_random_distances

@@ -9,7 +9,8 @@ Wordlists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
 .. HACK::
    .. autosummary::
       :toctree: generated/
-   
+      
+      Wordlist.calculate
       Wordlist.get_dict
       Wordlist.get_list
       Wordlist.get_entries
@@ -17,4 +18,5 @@ Wordlists (:py:class:`~lingpy.basic.wordlist.Wordlist`)
       Wordlist.get_etymdict
       Wordlist.get_paps
       Wordlist.output
+      Wordlist.calculate
 

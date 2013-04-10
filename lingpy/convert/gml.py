@@ -321,6 +321,10 @@ def radial_layout(
         # get angle for text-rotation in degrees
         angle = x * 180 / np.pi
 
+        # check for specific parts where the angle has to be adapted
+        if 270 > angle > 90:
+            angle += 180
+
         # assign the data to the graph
         d['graphics'] = {'x':xN,'y':yN,'angle':angle}
 

@@ -6,7 +6,8 @@ Tutorial
    :maxdepth: 1
 
    formats
-   lingpy.basic.wordlist.rst
+   lingpy.basic.wordlist
+   workflows
 
 
 

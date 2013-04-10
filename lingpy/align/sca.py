@@ -172,54 +172,14 @@ class MSA(Multiple):
     w    o    l    -    d    e    m    o    r    t
     w    a    l    -    d    e    m    a    r    -
     v    -    l    a    d    i    m    i    r    -
-    
+
     Notes
     -----
-    In order to read in data from text files, two different file formats can be
-    used along with this class:
+    There are two possible input formats for this class: the MSQ-format, and
+    the MSA-format. 
 
-    *msq-format*
-        The ``msq``-format is a specific format for text files containing unaligned
-        sequences. Files in this format should have the extension ``msq``. The
-        first line of an ``msq``-file contains information regarding the dataset.
-        The second line contains information regarding the sequence (meaning,
-        identifier), and the following lines contain the name of the taxa in the
-        first column and the sequences in IPA format in the second column,
-        separated by a tabstop. As an example, consider the file ``test.msq``::
-    
-            Harry Potter Testset
-            Woldemort (in different languages)
-            German  waldemar
-            English woldemort
-            Russian vladimir
-    
-    *msa-format*
-        The ``msa``-format is a specific format for text files containing already
-        aligned sequence pairs. Files in this format should have the extension
-        ``msa``. 
-        
-        The first line of a ``msa``-file contains information regarding the
-        dataset. The second line contains information regarding the sequence (its
-        meaning, the protoform corresponding to the cognate set, etc.). The aligned
-        sequences are given in the following lines, whereas the taxa are given in
-        the first column and the aligned segments in the following columns.
-        Additionally, there may be a specific line indicating the presence of swaps
-        and a specific line indicating highly consistent sites (local peaks) in the
-        MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
-        character (``+``) marks the beginning of a swapped region, the dash
-        character (``-``) its center and another plus character the end. All sites
-        which are not affected by swaps contain a dot. The line for local peaks
-        starts with the headword ``LOCAL``. All sites which are highly consistent
-        are marked with an asterisk (``*``), all other sites are marked with a dot
-        (``.``). As an example, consider the file ``test.msa``::
-    
-            Harry Potter Testset
-            Woldemort (in different languages)
-            English     w    o    l    -    d    e    m    o    r    t
-            German.     w    a    l    -    d    e    m    a    r    -
-            Russian     v    -    l    a    d    i    m    i    r    -
-            SWAPS..     .    +    -    +    .    .    .    .    .    .
-            LOCAL..     *    *    *    .    *    *    *    *    *    .
+    This class inherits the methods of the
+    :py:class:`~lingpy.align.multiple.Multiple` class.
 
     """
 
@@ -644,59 +604,10 @@ class PSA(Pairwise):
     Notes
     -----
     In order to read in data from text files, two different file formats can be
-    used along with this class:
+    used along with this class: the PSQ-format, and the PSA-format.
 
-    *psq-format*
-        The ``psq``-format is a specific format for text files containing unaligned
-        sequence pairs. Files in this format should have the extension ``psq``. 
-        
-        The first line of a ``psq``-file contains information regarding the dataset.
-        The sequence pairs are given in triplets, with a sequence identifier in the
-        first line of a triplet (containing the meaning, or orthographical
-        information) and the two sequences in the second and third line, whereas
-        the first column of each sequence line contains the name of the taxon and
-        the second column the sequence in IPA format. All triplets are divided by
-        one empty line. As an example, consider the file ``test.psq``::
-    
-            Harry Potter Testset
-            Woldemort in German and Russian
-            German  waldemar
-            Russian vladimir
-    
-            Woldemort in English and Russian
-            English woldemort
-            Russian vladimir
-    
-            Woldemort in English and German
-            English woldemort
-            German  waldemar
-    
-    *psa-format*
-        The ``psa``-format is a specific format for text files containing
-        already aligned sequence pairs. Files in this format should have the
-        extension ``psq``. 
-        
-        The first line of a ``psa``-file contains information regarding the
-        dataset.  The sequence pairs are given in triplets, with a sequence
-        identifier in the first line of a triplet (containing the meaning, or
-        orthographical information) and the aligned sequences in the second and
-        third line, whith the name of the taxon in the first column and all aligned
-        segments in the following columns, separated by tabstops. All
-        triplets are divided by one empty line. As an example, consider the file
-        ``test.psa``::
-    
-            Harry Potter Testset
-            Woldemort in German and Russian
-            German.    w    a    l    -    d    e    m    a    r
-            Russian    v    -    l    a    d    i    m    i    r
-            
-            Woldemort in English and Russian
-            English    w    o    l    -    d    e    m    o    r    t
-            Russian    v    -    l    a    d    i    m    i    r    -
-            
-            Woldemort in English and German
-            English    w    o    l    d    e    m    o    r    t
-            German.    w    a    l    d    e    m    a    r    -
+    This class inherits the methods of the
+    :py:class:`~lingpy.align.pairwise.Pairwise` class.
 
     """
     def __init__(
@@ -927,6 +838,33 @@ class PSA(Pairwise):
 class Alignments(Wordlist):
     """
     Class handles Wordlists for the purpose of alignment analyses.
+
+    Parameters
+    ----------
+    infile : str
+        The name of the input file that should conform to the basic format of
+        the `~lingpy.basic.wordlist.Wordlist` class and define a specific ID
+        for cognate sets.
+    row : str (default = "concept")
+        A string indicating the name of the row that shall be taken as the
+        basis for the tabular representation of the word list.
+    col : str (default = "doculect")
+        A string indicating the name of the column that shall be taken as the
+        basis for the tabular representation of the word list.
+    conf : string (default='')
+        A string defining the path to the configuration file.
+    cognates : string (default='cogid')
+        The name of the column that stores the cognate IDs.
+    loans : bool (default=True)
+        Specify whether loans should be included in the cognate sets.
+
+    Notes
+    -----
+    This class inherits from :py:class:`~lingpy.basic.wordlist.Wordlist` and 
+    additionally creates instances of the
+    :py:class:`~lingpy.align.multiple.Multiple` class for all cognate sets that
+    are specified by the "cognates" keyword.
+
     """
     def __init__(
             self,
@@ -934,16 +872,18 @@ class Alignments(Wordlist):
             row = 'concept',
             col = 'doculect',
             conf = '',
+            cognates = 'cogid',
+            loans = True,
             **keywords
             ):
         # initialize the wordlist
         Wordlist.__init__(self,infile,row,col,conf)
         
         # check for cognate-id or alignment-id in header
-        if 'cogid' in self.header or 'almid' in self.header:
-            self.etd = self.get_etymdict(loans=True)
+        try:
+            self.etd = self.get_etymdict(ref=cognates,loans=loans)
         # else raise error
-        else: 
+        except: 
             raise ValueError(
                     "[i] Did not find a cognate ID in the input file."
                     )
