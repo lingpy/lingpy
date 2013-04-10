@@ -25,6 +25,9 @@ except:
     from ..algorithm.cython import _cluster as cluster
     from ..algorithm.cython import _misc as misc
 
+# import ortho-parser
+from ..sequence.orthography import OrthographyParser
+
 class Wordlist(object):
     """
     Basic class for the handling of multilingual word lists.
@@ -119,11 +122,16 @@ class Wordlist(object):
             input_data = read_qlc(filename)
             self.filename = filename.replace('.csv','')
         except:
-            if not input_data:
-                raise ValueError('[i] Input data is not specified.')
-            else:
+            if type(filename) == dict:
                 input_data = filename
                 self.filename = 'lingpy-{0}'.format(str(date.today()))
+            else:
+                
+            #if not input_data:
+                raise ValueError('[i] Input data is not specified.')
+            #else:
+            #    input_data = filename
+            #    self.filename = 'lingpy-{0}'.format(str(date.today()))
 
         # load the configuration file
         if not conf:
@@ -404,6 +412,22 @@ class Wordlist(object):
         pickle.dump(d,out)
         out.close()
 
+    def pickle(self):
+        """
+        Store a dump of the data in a binary file.
+
+        Notes
+        -----
+        The function creates a folder ``__lingpy__`` on your system containing a
+        binary file called ``FILENAME.bin`` with ``FILENAME`` corresponding to
+        the name of the original CSV-file. Instantiating the same
+        :py:class:`~lingpy.basic.wordlist.Wordlist` instance again will first
+        check for already compiled binary files and, if they are there, load
+        them instead of the CSV-file.
+        """
+
+        self._pickle()
+
     def get_dict(
             self,
             col = '',
@@ -416,23 +440,72 @@ class Wordlist(object):
 
         Parameters
         ----------
-        idxA : string
-            The first index evaluated by the method. It should reflect the name
-            of either one of the rows or one of the columns.
+        col : string (default='')
+            The column index evaluated by the method. It should contain one of the
+            values in the row of the
+            :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
+            taxon (language) name.
         
-        idxB : string (default = '')
-            The second index evaluated by the method. It can be used to specify
-            the datatype of the rows or columns selected.
+        row : string (default='')
+            The row index evaluated by the method. It should contain one of the
+            values in the row of the
+            :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
+            taxon (language) name.
+        
+        entry : string (default = '')
+            The index for the entry evaluated by the method. It can be used to specify
+            the datatype of the rows or columns selected. As a default, the
+            indices of the entries are returned.
+
+        Returns
+        -------
+        entries : dict
+            A dictionary of keys and values specifying the selected part of the
+            data. Typically, this can be a dictionary of a given language with
+            keys for the concept and values as specified in the "entry"
+            keyword.
 
         Notes
         -----
-        Tobeadded
+        The 'col' and 'row' keywords in the function are all aliased according
+        to the description in the ``wordlist.rc`` file. Thus, instead of
+        using these attributes, the aliases can also be taken. For selecting a
+        language, one may type something like::
 
-        Return
-        ------
-        entries : dict
-            A dictionary of keys and values specifying the selected part of the
-            data.
+            >>> Wordlist.get_dict(language='LANGUAGE')
+        
+        and for the selection of a concept, one may type something like::
+
+            >>> Wordlist.get_dict(concept='CONCEPT')    
+        
+        See the examples below for details.
+
+        Examples
+        --------
+        Load the ``harry_potter.csv`` file::
+            
+            >>> wl = Wordlist('harry_potter.csv')
+
+        Select all IPA-entries for the language "German"::
+        
+            >>> wl.get_dict(language='German',entry='ipa')
+            {'Harry': ['haralt'], 'hand': ['hant'], 'leg': ['bain']}
+        
+        Select all words (orthographical representation) for the concept
+        "Harry"::
+        
+            >>> wl.get_dict(concept="Harry",entry="words")
+            {'English': ['hæri'], 'German': ['haralt'], 'Russian': ['gari'], 'Ukrainian': ['gari']}
+            
+        Note that the values of the dictionary that is returned are always
+        lists, since it is possible that the original file contains synonyms
+        (multiple words corresponding to the same concept).
+
+        See also
+        --------
+        Wordlist.get_list
+        Wordlist.add_entries
+
         """
         
         if row and not col:
@@ -536,19 +609,64 @@ class Wordlist(object):
             Specify whether the returned list should be one- or
             two-dimensional, or whether it should contain gaps or not.
 
-        Notes
-        -----
-        Tobeadded
-
-        Examples
-        --------
-        All examples make use of the small sample dataset
-
-        Return
-        ------
+        Returns
+        -------
         data : list
             A list representing the selected part of the
             data.
+
+
+        Notes
+        -----
+        The 'col' and 'row' keywords in the function are all aliased according
+        to the description in the ``wordlist.rc`` file. Thus, instead of
+        using these attributes, the aliases can also be taken. For selecting a
+        language, one may type something like::
+
+            >>> Wordlist.get_list(language='LANGUAGE')
+        
+        and for the selection of a concept, one may type something like::
+
+            >>> Wordlist.get_list(concept='CONCEPT')    
+        
+        See the examples below for details.
+        
+        Examples
+        --------
+        Load the ``harry_potter.csv`` file::
+            
+            >>> wl = Wordlist('harry_potter.csv')
+
+        Select all IPA-entries for the language "German"::
+        
+            >>> wl.get_list(language='German',entry='ipa'
+            ['bain', 'hant', 'haralt']
+
+        Note that this function returns 0 for missing values (concepts that
+        don't have a word in the given language). If one wants to avoid this,
+        the 'flat' keyword should be set to c{True}.
+        
+        Select all words (orthographical representation) for the concept
+        "Harry"::
+        
+            >>> wl.get_list(concept="Harry",entry="words")
+            [['hæri', 'haralt', 'gari', 'gari']]            
+        
+        Note that the values of the list that is returned are always
+        two-dimensional
+        lists, since it is possible that the original file contains synonyms
+        (multiple words corresponding to the same concept). If one wants to
+        have a flat representation of the entries, the 'flat' keyword should be
+        set to c{True}::
+
+            >>> wl.get_list(concept="Harry",entry="words",flat=True)
+            ['hæri', 'haralt', 'gari', 'gari']
+            
+        See also
+        --------
+        Wordlist.get_list
+        Wordlist.add_entries
+
         """
         # if row is chosen
         if row and not col:
@@ -1324,4 +1442,65 @@ class Wordlist(object):
 
         return self._output(fileformat,**keywords)
 
+    def tokenize(
+            self,
+            ortho_profile = '',
+            source = "counterpart",
+            target = "tokens",
+            ** keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
 
+        Parameters
+        ----------
+        ortho_profile : str (default='')
+            Path to the orthographic profile used to convert and tokenize the
+            input data into IPA tokens. If not specified, a simple Unicode
+            grapheme parsing is carried out.
+
+        source : str (default="counterpart")
+            The source data that shall be used for the tokenization procedures.
+
+        target : str (default="tokens")
+            The name of the target column that will be added to the wordlist.
+        
+        Notes
+        -----
+        This is a shortcut to the extended
+        :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
+        automatically tokenizes it.
+        """
+        
+        if os.path.exists(ortho_profile):
+            ortho_path = ortho_profile
+        else:
+            ortho_path = os.path.split(
+                    os.path.dirname(
+                        os.path.abspath(
+                            __file__
+                            )
+                        )
+                    )[0] + '/data/orthography_profiles/' + ortho_profile
+        
+        # if the orthography profile does exist, carry out to tokenize the data
+        if os.path.exists(ortho_path):
+            op = OrthographyParser(ortho_path)
+
+            # check for valid IPA parse
+            if op.exists_multiple_columns():
+
+                # tokenize the data, define specific output if target == 'tokens'
+                # for direct lexstat input
+                if target == 'tokens':
+                    function = lambda x: op.graphemes_to_ipa(x).split(' ')[1:-1]
+                else:
+                    function = lambda x: op.graphemes_to_ipa(x)
+
+                self.add_entries(
+                        target,
+                        source,
+                        function
+                        )
+        
+            

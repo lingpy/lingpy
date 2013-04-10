@@ -49,6 +49,22 @@ from ...read.csv import csv2dict,csv2list
 class TreBor(Wordlist):
     """
     Basic class for calculations using the TreBor method.
+
+        
+    Parameters
+    ----------
+    dataset : string
+        Name of the dataset that shall be analyzed.
+    tree : {None, string}
+        Name of the tree file.
+    paps : string (default="pap")
+        Name of the column that stores the specific cognate IDs consisting
+        of an arbitrary integer key and a key for the concept.
+    cognates : string (default="cogid")
+        Name of the column that stores the general cognate ids.
+    verbose : bool (default=False)
+        Handle verbose output.
+
     """
 
     # XXX generally: find a way to check whether a dataset was already loaded,
@@ -59,24 +75,11 @@ class TreBor(Wordlist):
             dataset,
             tree = None,
             paps = 'pap',
+            cognates = 'cogid',
             verbose = False,
             **keywords
             ):
-        """
-        
-        Parameters
-        ----------
-        dataset : string
-            Name of the dataset that shall be analyzed.
-        tree : {None, string}
-            Name of the tree file.
-        paps : string (default="pap")
-            Name of the column that stores the specific cognate IDs consisting
-            of an arbitrary integer key and a key for the concept.
-
-        """
         # TODO check for keywords, allow to load trees, etc.
-
 
         # store the name of the dataset and the identifier for paps
         if dataset.endswith('.csv'):
@@ -118,7 +121,7 @@ class TreBor(Wordlist):
             f = lambda x,y: "{0}:{1}".format(x[y[0]],x[y[1]])
             self.add_entries(
                     paps,
-                    'cogid,glid',
+                    cognates+',glid',
                     f
                     )
 

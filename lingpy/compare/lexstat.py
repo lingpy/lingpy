@@ -43,6 +43,12 @@ class LexStat(Wordlist):
     filename : str 
         The name of the file that shall be loaded.
 
+    Notes
+    -----
+    Instantiating this class does not require a lot of parameters. However,
+    the user may modify its behaviour by providing additional attributes in the
+    input file.
+
     """
     
     def __init__(
@@ -308,7 +314,8 @@ class LexStat(Wordlist):
             restricted_chars = '_T',
             preprocessing = False,
             gop = -2,
-            cluster_method = "ugpma"
+            cluster_method = "ugpma",
+            verbose = False
             ):
         """
         Use alignments to get a correspondences statistics.
@@ -330,7 +337,7 @@ class LexStat(Wordlist):
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
                 if i <= j:
-                    print("[i] Calculating alignments for pair {0} / {1}.".format(
+                    if verbose: print("[i] Calculating alignments for pair {0} / {1}.".format(
                         tA,
                         tB
                         ))
@@ -402,7 +409,7 @@ class LexStat(Wordlist):
             restricted_chars = '_T',
             rands = 1000,
             limit = 10000,
-            verbose = True
+            verbose = False
             ):
         """
         Return the aligned results of randomly aligned sequences.
@@ -425,7 +432,7 @@ class LexStat(Wordlist):
                     )
 
             for i,taxon in enumerate(self.taxa):
-                print("[i] Analyzing taxon {0}.".format(taxon))
+                if verbose: print("[i] Analyzing taxon {0}.".format(taxon))
                 tokens = self.get_list(
                         col=taxon,
                         entry="tokens",
@@ -605,7 +612,7 @@ class LexStat(Wordlist):
             preprocessing = True,
             rands = 1000,
             limit = 10000,
-            verbose = True,
+            verbose = False,
             cluster_method = "upgma",
             gop = -2
             ):
@@ -706,7 +713,8 @@ class LexStat(Wordlist):
                 restricted_chars,
                 preprocessing,
                 gop,
-                cluster_method
+                cluster_method,
+                verbose = verbose
                 )
         # get the random distribution
         randist = self._get_randist(
@@ -717,7 +725,7 @@ class LexStat(Wordlist):
                 restricted_chars,
                 rands,
                 limit,
-                verbose
+                verbose = verbose
                 )
         
         # store the distributions as attributes
@@ -1176,27 +1184,24 @@ class LexStat(Wordlist):
 
                     # get a random selection of words from both taxa
                     pairs = self.pairs[taxA,taxB]
+                    
+                    try:
+                        sample = random.sample(
+                                [(x,y) for x in range(len(pairs)) for y in
+                                    range(len(pairs))],
+                                runs
+                                )
+                    except ValueError:
+                        sample = random.sample(
+                                [(x,y) for x in range(len(pairs)) for y in
+                                    range(len(pairs))],
+                                len(pairs)
+                                )
 
-                    sample = random.sample(
-                            [(x,y) for x in range(len(pairs)) for y in
-                                range(len(pairs))],
-                            runs
-                            )
                     sample_pairs = [(pairs[x][0],pairs[y][1]) for x,y in sample]
                     for pA,pB in sample_pairs:
                         d = function(pA,pB)
-                        #d = self.align_pairs(
-                        #        pA,
-                        #        pB,
-                        #        method=method,
-                        #        distance=True,
-                        #        return_distance = True,
-                        #        pprint = False,
-                        #        mode = mode,
-                        #        scale = scale,
-                        #        factor = factor,
-                        #        gop = gop
-                        #        )
+
                         D += [d]
 
         return sorted(D)
