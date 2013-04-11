@@ -1,6 +1,6 @@
 lingpy.basic.wordlist.Wordlist.tokenize
 =======================================
 
-.. currentmodule:: lingpy.basic.wordlist.Wordlist
+.. currentmodule:: lingpy.basic.wordlist
 
-.. autofunction:: tokenize
+.. automethod:: Wordlist.tokenize

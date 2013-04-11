@@ -56,3 +56,4 @@ try:
     from .algorithm.cython import calign
 except:
     print("[i] Import of c-modules failed, using pure Python implementation instead.")
+

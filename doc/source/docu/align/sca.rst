@@ -58,3 +58,11 @@ Class :py:class:`~lingpy.align.sca.MSA`
       MSA.sum_of_pairs
       MSA.swap_check
 
+Function :py:func:`~lingpy.align.sca.SCA`
+-----------------------------------------
+
+.. autosummary:: 
+   :toctree: generated/
+
+   SCA
+

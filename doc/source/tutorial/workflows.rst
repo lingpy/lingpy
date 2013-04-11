@@ -1,6 +1,6 @@
-=========
-Workflows
-=========
+================
+Workflow Example
+================
 
 This is an example workflow that illustrates what can be done with LingPy. It starts from a small
 dataset of the Dogon languages and leads through all important stages of a typical automatic
@@ -85,6 +85,55 @@ conservative score that avoids that we get too many false positives::
 
   >>> lex.cluster(method='lexstat',threshold=0.5)
 
+Having calculated the cognates, we can go on, calculating a tree. Here we use the
+:py:func:`lingpy.basic.wordlist.Wordlist.calculate` function. We chose 'neighbor' (see
+:evobib:`Saitou1981`) as algorithm for the tree-calculation, and we have to define 'lexstatid' as
+the column where the cognate IDs are stored::
+
+  >>> lex.calculate('tree',cognates='lexstatid',tree_calc='neighbor')
+
+As a result, the :py:class:`~lingpy.compare.lexstat.LexStat` object gets a **tree** attribute. This
+is again is a specific class taken from the PyCogent library (see http://pycogent.org/). It can be
+visualized as follows::
+
+  >>> print(lex.tree.asciiArt())
+                                                                        /-Bankan_Tey
+                                                              /edge.0--|
+                                                    /edge.1--|          \-Ben_Tey
+                                                   |         |
+                                          /edge.3--|          \-Nanga
+                                         |         |
+                                         |         |          /-Tebul_Ure
+                                /edge.4--|          \edge.2--|
+                               |         |                    \-Yanda_Dom
+                               |         |
+                               |          \-Toro_Tegu
+                               |
+                      /edge.9--|                              /-Gourou
+                     |         |                    /edge.6--|
+                     |         |                   |         |          /-Jamsay
+                     |         |          /edge.7--|          \edge.5--|
+                     |         |         |         |                    \-Jamsay_Mondoro
+                     |          \edge.8--|         |
+                     |                   |          \-Perge_Tegu
+                     |                   |
+            /edge.14-|                    \-Togo_Kan
+           |         |
+           |         |                                        /-Bunoge
+           |         |                              /edge.10-|
+           |         |                    /edge.11-|          \-Tiranige
+           |         |                   |         |
+  -root----|         |          /edge.12-|          \-Mombo
+           |         |         |         |
+           |          \edge.13-|          \-Dogul_Dom
+           |                   |
+           |                    \-Tomo_Kan_Diangassagou
+           |
+           |          /-Tommo_So
+            \edge.15-|
+                      \-Yorno_So
+  
+
 Again, we output the data. But since the LexStat method produces a lot of alternative data that is
 not necessarily needed for the following analyses, we reduce the output in the CSV-format by
 setting the **subset** keyword to c{True} and pass the data we want as a list to the keyword **col**. 
@@ -137,7 +186,13 @@ HTML-output::
 
 As a result, we get the file DOGON.html_ in our folder.
 
+Borrowing Detection
+===================
 
+
+.. image:: examples/mln-w-3-2.svg
+   :width: 1000px
+   :alt: mln-w-3-2.svg
 
 .. _Heath2013.prf: examples/Heath2013.prf
 .. _DOGON.csv: examples/DOGON.csv

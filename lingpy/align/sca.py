@@ -128,7 +128,7 @@ import re
 from datetime import datetime
 
 from ..data import *
-from ..basic import Wordlist
+from ..basic.wordlist import Wordlist
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
@@ -1105,6 +1105,123 @@ class Alignments(Wordlist):
                     
     def __len__(self):
         return len(self.msa)
+
+    def output(
+            self,
+            fileformat,
+            **keywords
+            ):
+        """
+        Write wordlist to file.
+
+        Parameters
+        ----------
+        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+            The format that is written to file. This corresponds to the file
+            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            a file in Phylip-distance format, etc.
+        filename : str
+            Specify the name of the output file (defaults to a filename that
+            indicates the creation date).
+        subset : bool (default=False)
+            If set to c{True}, return only a subset of the data. Which subset
+            is specified in the keywords 'cols' and 'rows'.
+        cols : list
+            If *subset* is set to c{True}, specify the columns that shall be
+            written to the csv-file.
+        rows : dict
+            If *subset* is set to c{True}, use a dictionary consisting of keys
+            that specify a column and values that give a Python-statement in
+            raw text, such as, e.g., "== 'hand'". The content of the specified
+            column will then be checked against statement passed in the
+            dictionary, and if it is evaluated to c{True}, the respective row
+            will be written to file.
+        cognates : str
+            Name of the column that contains the cognate IDs if 'starling' is
+            chosen as an output format.
+
+        missing : { str, int } (default=0)
+            If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
+            will be inserted as an indicator of missing data.
+
+        tree_calc : {'neighbor', 'upgma'}
+            If no tree has been calculated and 'tre' or 'nwk' is chosen as
+            output format, the method that is used to calculate the tree.
+
+        threshold : float (default=0.6)
+            The threshold that is used to carry out a flat cluster analysis if
+            'groups' or 'cluster' is chosen as output format.
+        
+        """
+        
+        if fileformat not in ['alm']:
+            return self._output(fileformat,**keywords)
+        
+        if fileformat == 'alm':
+            # check for "cognates"-keywords
+            if "cognates" not in keywords:
+                cognates = 'cogid'
+            else:
+                cognates = keywords['cognates']
+
+            # check for filename
+            if 'filename' not in keywords:
+                filename = 'dummy'
+            else:
+                filename = keywords['filename']
+
+            # define the string to which the stuff is written
+            out = self.filename+'\n'
+            
+            # get a dictionary for concept-ids
+            concept2id = dict(
+                    zip(
+                        self.concepts,
+                        [i+1 for i in range(len(self.concepts))]
+                            )
+                        )
+            idx = 1
+            for concept in self.concepts:
+                out += '\n'
+                indices = self.get_list(
+                        row=concept,
+                        flat=True
+                        )
+                cogids = [self[i,cognates] for i in indices]
+                cogids = sorted(set(cogids))
+                for cogid in cogids:
+                    if cogid in self.msa:
+                        for i,alm in enumerate(self.msa[cogid]['alignment']):
+                            taxon = self.msa[cogid]['taxa'][i]
+                            seq = self.msa[cogid]['seqs'][i]
+                            cid = concept2id[concept]
+                            out += '\t'.join(
+                                [
+                                    str(cogid),
+                                    taxon,
+                                    concept,
+                                    str(cid),
+                                    '\t'.join(alm)
+                                    ]
+                                )+'\n'
+                    else:
+                        this_idx = [x for x in self.etd[cogid] if x != 0][0][0]
+                        taxon = self[this_idx,'taxon']
+                        seq = self[this_idx,'tokens']
+                        cid = concept2id[concept]
+                        out += '\t'.join(
+                                [
+                                    str(cogid),
+                                    taxon,
+                                    concept,
+                                    str(cid),
+                                    ''.join(seq),
+                                    ]
+                                )+'\n'
+
+            f = open(filename + '.' + fileformat,'w')
+            f.write(out)
+            f.close()
 
 def SCA(
         infile,

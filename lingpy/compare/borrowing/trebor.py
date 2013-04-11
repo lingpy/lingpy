@@ -64,6 +64,9 @@ class TreBor(Wordlist):
         Name of the column that stores the general cognate ids.
     verbose : bool (default=False)
         Handle verbose output.
+    tree_calc : {'neighbor','upgma'} (default='neighbor')
+        Select the algorithm to be used for the tree calculation if no tree is
+        passed with the file.
 
     """
 
@@ -77,6 +80,7 @@ class TreBor(Wordlist):
             paps = 'pap',
             cognates = 'cogid',
             verbose = False,
+            tree_calc = 'neighbor',
             **keywords
             ):
         # TODO check for keywords, allow to load trees, etc.
@@ -169,8 +173,13 @@ class TreBor(Wordlist):
                 self.tree = cg.LoadTree(dataset+'.tre')
             except:
                 # create it otherwise
-                self.calculate('tree')
-                print("[i] Tree-file was not found, creating it now...")
+                self.calculate(
+                        'tree',
+                        cognates=cognates,
+                        tree_calc=tree_calc,
+                        verbose=verbose
+                        )
+                if verbose: print("[i] Tree-file was not found, creating it now...")
             # XXX TODO
         
         # if it is explicitly defined, try to load that file
@@ -1362,7 +1371,7 @@ class TreBor(Wordlist):
             degree = 100
             ):
         """
-        Compute an evolutionary network for a given model.
+        Compute an Minimal Lateral Network for a given model.
 
         Parameters
         ----------
@@ -1868,11 +1877,12 @@ class TreBor(Wordlist):
             verbose = False,
             output_gml = False,
             tar = False,
-            usetex = True,
+            usetex = False,
             full_analysis = True,
-            plot_dists = True,
+            plot_dists = False,
             output_plot=False,
-            plots = True,
+            plot_mln = False,
+            plot_msn = False,
             **keywords
             ):
         """
@@ -1881,11 +1891,34 @@ class TreBor(Wordlist):
         Parameters
         ----------
         runs : {str list} (default="default")
-            Define a couple of different models to be analyzed.
+            Define a couple of different models to be analyzed. Select between:
+            
+            * 'default': weighted analysis, using parsimony and weights for
+              gains and losses
+            * 'topdown': use the traditional approach by
+              :evobib:`Nelson-Sathi2011`
+            * 'restriction': use the restriction approach
+            
+            You can also define your own mix of models.
+
         verbose : bool (default = False)
             If set to c{True}, be verbose when carrying out the analysis.
         usetex : bool (default=True)
             Specify whether you want to use LaTeX to render plots.
+        mixed : bool (default=False)
+            If set to c{True}, calculate a mixed model by selecting the best
+            model for each item separately.
+        verbose : bool (default=False)
+            Set to c{True} for verbose output.
+        output_gml : bool (default=False)
+            Set to c{True} in order to output every gain-loss-scenario in
+            GML-format.
+        full_analysis : bool (default=True)
+            Specifies whether a full analysis is carried out or not.
+        plot_mln : bool (default=True)
+            Select or unselect output plot for the MLN.
+        plot_msn : bool (default=False)
+            Select or unselect output plot for the MSN.
 
         """
         
@@ -1894,7 +1927,7 @@ class TreBor(Wordlist):
                 "colorbar" : None, #mpl.cm.jet,
                 'threshold':1,
                 'fileformat':'pdf',
-                'usetex':True,
+                'usetex':False,
                 'only':[],
                 'colormap': None, #mpl.cm.jet
                 }
@@ -1904,29 +1937,34 @@ class TreBor(Wordlist):
                 keywords[key] = defaults[key]
 
         # define a default set of runs
-        if runs == 'default':
+        if runs in ['default','weighted']:
             runs = [
                     ('weighted',(3,1)),
-                    #('weighted',(11,4)),
                     ('weighted',(5,2)),
-                    #('weighted',(9,4)),
                     ('weighted',(2,1)),
-                    #('weighted',(7,4)),
                     ('weighted',(3,2)),
-                    #('weighted',(5,4)),
                     ('weighted',(1,1)),
-                    #('restriction',3),
-                    #('restriction',4),
-                    #('restriction',5),
-                    #('topdown',2),
-                    #('topdown',3),
-                    #('topdown',4),
+                    ]
+
+        elif runs in ['topdown','top-down']:
+            runs = [('topdown',2),
+                    ('topdown',3),
+                    ('topdown',4),
+                    ('topdown',5),
+                    ]
+
+        elif runs == 'restriction':
+
+            runs = [('restriction',2),
+                    ('restriction',3),
+                    ('restriction',4),
+                    ('restriction',5),
                     ]
         
         # carry out the various analyses
         for mode,params in runs:
             if mode == 'weighted':
-                print(
+                if verbose: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and ratio {0[0]}:{0[1]}...".format(params)
                                 )
@@ -1940,7 +1978,7 @@ class TreBor(Wordlist):
                         output_plot=output_plot
                         )
             elif mode == 'restriction':
-                print(
+                if verbose: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -1954,7 +1992,7 @@ class TreBor(Wordlist):
                         output_plot=output_plot
                         )
             elif mode == 'topdown':
-                print(
+                if verbose: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -2116,6 +2154,9 @@ class TreBor(Wordlist):
                 glm = modes[p_vsd.index(maxP)]
             else:
                 glm = 'mixed'
+            
+            # set the best model
+            self.best_model = glm
 
             self.get_MLN(
                 glm,
@@ -2125,7 +2166,7 @@ class TreBor(Wordlist):
                 )
 
             # check whether plots are chosen
-            if plots:
+            if plot_mln:
                 self.plot_MLN(
                         glm,
                         verbose=verbose,
@@ -2135,6 +2176,7 @@ class TreBor(Wordlist):
                         usetex = keywords['usetex'],
                         colormap = keywords['colormap']
                         )
+            if plot_msn:
                 self.plot_MSN(
                         glm,
                         verbose=verbose,
@@ -2153,19 +2195,52 @@ class TreBor(Wordlist):
 
     def plot_MLN(
             self,
-            glm,
-            verbose = False,
-            filename = 'pdf',
-            threshold = 1,
+            glm = '',
+            filename = '',
             fileformat = 'pdf',
+            threshold = 1,
             usetex = True,
             colormap = None, #mpl.cm.jet,
             taxon_labels = 'taxon.short_labels',
+            verbose = False,
             **keywords
             ):
         """
         Plot the MLN with help of Matplotlib.
+
+        glm : str (default='')
+            Identifier for the gain-loss model that is plotted. Defaults to the
+            model that had the best scores in terms of probability.
+        filename : str (default='')
+            If no filename is selected, the filename is identical with the
+            dataset.
+        fileformat : {'svg','png','jpg','pdf'} (default='pdf')
+            Select the format of the output plot.
+        threshold : int (default=1)
+            Select the threshold for drawing lateral edges.
+        verbose : bool (default = False)
+            If set to c{True}, be verbose when carrying out the analysis.
+        usetex : bool (default=True)
+            Specify whether you want to use LaTeX to render plots.
+        colormap : {None matplotlib.cm}
+            A :py:class:`matplotlib.colormap` instance. If set to c{None}, this
+            defaults to :py:class:`~matplotlib.cm.jet`.
+        taxon_labels : str (default='taxon.short_labels')
+            Specify the taxon labels that should be included in the plot. 
+
         """
+        # check for correct glm
+        if not glm and hasattr(self,'best_model'):
+            glm = self.best_model
+        elif not glm:
+            raise ValueError(
+            "[i] You should select an appropriate model first."
+            )
+        
+        # check for filename
+        if not filename:
+            filename = self.dataset
+
         # if not colormap
         if not colormap:
             colormap = mpl.cm.jet
@@ -2399,7 +2474,7 @@ class TreBor(Wordlist):
 
     def plot_MSN(
             self,
-            glm,
+            glm = '',
             verbose=False,
             filename='pdf',
             fileformat='pdf',
@@ -2414,7 +2489,7 @@ class TreBor(Wordlist):
 
         Parameters
         ----------
-        glm : str
+        glm : str (default='')
             A string that encodes which model should be plotted.
         filename : str
             The name of the file to which the plot shall be written.
@@ -2430,6 +2505,18 @@ class TreBor(Wordlist):
             Specify whether LaTeX shall be used for the plot.
 
         """
+        # check for correct glm
+        if not glm and hasattr(self,'best_model'):
+            glm = self.best_model
+        elif not glm:
+            raise ValueError(
+            "[i] You should select an appropriate model first."
+            )
+        
+        # check for filename
+        if not filename:
+            filename = self.dataset
+
         # check for only
         if not only:
             only = self.taxa

@@ -16,9 +16,9 @@ class GraphemeParser(object):
     """
     Class for graphemic parsing of Unicode strings.
 
-    Notes
-    -----
-    TODO: Introduce parser for dealing with Letter Modifiers, etc.
+    .. Notes
+    .. -----
+    .. TODO: Introduce parser for dealing with Letter Modifiers, etc.
 
     """
     def __init__(self):
@@ -26,11 +26,11 @@ class GraphemeParser(object):
 
     def combine_modifiers(self, string):
         """
-        Given a string that is space-delimited on Unicode graphemes,
-        group Unicode modifier letters with their preceeding base characters.
+        Given a string that is space-delimited on Unicode graphemes, group Unicode modifier letters with their preceeding base characters.
 
-        # TODO: check if we need to apply NDF after string is parsed
         """
+        # TODO: check if we need to apply NDF after string is parsed
+
         result = []
         graphemes = string[1:-1].split()
         temp = ""
@@ -179,7 +179,7 @@ class OrthographyParser(object):
         A document-specific orthography profile.
 
     Notes
-    ----
+    -----
 
     The orthography profile class for reading in a dictionary's 
     orthography profile and parsing and formating strings into the 

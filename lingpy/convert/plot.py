@@ -191,7 +191,7 @@ def alm2html(
             if len(l[4:]) > 1:
                 alm = ''
                 for char in l[4:]:
-                    char = unicode(char,'utf-8')
+                    char = char
                     error = False
                     try:
                         c = _color[char]
@@ -337,7 +337,7 @@ def patchy_alm2html(
                 # this is the difference, it is not the last item that will be
                 # accessed
                 for char in l[4:]:
-                    char = unicode(char,'utf-8')
+                    char = char
                     error = False
                     try:
                         c = _color[char]
@@ -349,10 +349,10 @@ def patchy_alm2html(
                             error = True
                     alm += '<td width="30px" align="center"'
                     if error:
-                        alm += 'bgcolor="{0}"><font color="red"><b>{1}</b></font></td>'.format(c,char.encode('utf-8'))
+                        alm += 'bgcolor="{0}"><font color="red"><b>{1}</b></font></td>'.format(c,char)
                        
                     else:
-                        alm += 'bgcolor="{0}"><font color="white"><b>{1}</b></font></td>'.format(c,char.encode('utf-8'))
+                        alm += 'bgcolor="{0}"><font color="white"><b>{1}</b></font></td>'.format(c,char)
             else:
                 alm = '<td bgcolor="white">{0}'.format('--')
 
@@ -695,5 +695,3 @@ def msa2html(
     out = open(outfile,'w')
     out.write(html)
     out.close()
-
-

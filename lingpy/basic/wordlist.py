@@ -1160,10 +1160,17 @@ class Wordlist(object):
             concepts = 'concepts',
             cognates = 'cogid',
             threshold = 0.6,
+            verbose = False,
             **keywords
             ):
         """
         Function calculates specific data.
+
+        Parameters
+        ----------
+        data : str
+            The type of data that shall be calculated.
+
         """
         # XXX take care of keywords XXX
         if data in ['distances','dst']:
@@ -1194,7 +1201,7 @@ class Wordlist(object):
         else:
             return
 
-        print("[i] Successfully calculated {0}.".format(data))
+        if verbose: print("[i] Successfully calculated {0}.".format(data))
 
     def _output(
             self,
@@ -1295,7 +1302,7 @@ class Wordlist(object):
                             )
                 if type(rows) not in [dict,bool]:
                     raise ValueError(
-                            "[i] Argument 'rows' shoudl be a dictionary."
+                            "[i] Argument 'rows' should be a dictionary."
                             )
 
                 # check for chosen header
@@ -1438,8 +1445,46 @@ class Wordlist(object):
             ):
         """
         Write wordlist to file.
-        """
 
+        Parameters
+        ----------
+        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+            The format that is written to file. This corresponds to the file
+            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            a file in Phylip-distance format, etc.
+        filename : str
+            Specify the name of the output file (defaults to a filename that
+            indicates the creation date).
+        subset : bool (default=False)
+            If set to c{True}, return only a subset of the data. Which subset
+            is specified in the keywords 'cols' and 'rows'.
+        cols : list
+            If *subset* is set to c{True}, specify the columns that shall be
+            written to the csv-file.
+        rows : dict
+            If *subset* is set to c{True}, use a dictionary consisting of keys
+            that specify a column and values that give a Python-statement in
+            raw text, such as, e.g., "== 'hand'". The content of the specified
+            column will then be checked against statement passed in the
+            dictionary, and if it is evaluated to c{True}, the respective row
+            will be written to file.
+        cognates : str
+            Name of the column that contains the cognate IDs if 'starling' is
+            chosen as an output format.
+
+        missing : { str, int } (default=0)
+            If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
+            will be inserted as an indicator of missing data.
+
+        tree_calc : {'neighbor', 'upgma'}
+            If no tree has been calculated and 'tre' or 'nwk' is chosen as
+            output format, the method that is used to calculate the tree.
+
+        threshold : float (default=0.6)
+            The threshold that is used to carry out a flat cluster analysis if
+            'groups' or 'cluster' is chosen as output format.
+
+        """
         return self._output(fileformat,**keywords)
 
     def tokenize(

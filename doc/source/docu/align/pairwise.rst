@@ -13,14 +13,13 @@ Functions
    sw_align
    we_align
    edit_dist
+   ~lingpy.align.sca.SCA
 
 Classes
 -------
 
-.. autoclass:: Pairwise
+.. autosummary::
+   :toctree: generated/
 
-.. HACK::
-   .. autosummary::
-      :toctree: generated/
-
-      Pairwise.align
+   Pairwise
+   ~lingpy.align.sca.PSA

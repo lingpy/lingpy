@@ -19,7 +19,43 @@ def bcubes(
         pprint=True
         ):
     """
-    Compute bcubed-scores for test and reference datasets.
+    Compute B-Cubed scores for test and reference datasets.
+
+    Parameters
+    ----------
+    lex : :py:class:`lingpy.compare.lexstat.LexStat`
+        The :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
+        computation. It should have two columns indicating cognate IDs.
+    gold : str (default='cogid')
+        The name of the column containing the gold standard cognate
+        assignments.
+    test : str (default='lexstatid')
+        The name of the column containing the automatically implemented cognate
+        assignments.
+    loans : bool (default=True)
+        If set to c{False}, loans (indicated by negative IDs in the gold
+        standard) will be treated as separate cognates, otherwise, loans will
+        be treated as cognates.
+    pprint : bool (default=True)
+        Print out the results
+
+    Returns
+    -------
+    t : tuple
+        A tuple consisting of the precision, the recall, and the harmonic mean
+        (F-scores).
+
+    Notes
+    -----
+    B-Cubed scores were first described by :evobib:`Bagga1998` as part of an
+    algorithm. Later on, :evobib:`Amigo2009` showed that they can also used as
+    to compare cluster decisions. :evobib:`Hauer2011` applied the B-Cubed
+    scores first to the task of automatic cognate detection.
+    
+    See also
+    --------
+    diff
+    pairs
     """
 
     # get the etymdicts
@@ -106,7 +142,40 @@ def pairs(
         pprint=True
         ):
     """
-    Compute pair scores, following Bouchard-Côté et al. (2013).
+    Compute pair scores for the evaluation of cognate detection algorithms.
+    
+    .. , following Bouchard-Côté et al. (2013).
+    lex : :py:class:`lingpy.compare.lexstat.LexStat`
+        The :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
+        computation. It should have two columns indicating cognate IDs.
+    gold : str (default='cogid')
+        The name of the column containing the gold standard cognate
+        assignments.
+    test : str (default='lexstatid')
+        The name of the column containing the automatically implemented cognate
+        assignments.
+    loans : bool (default=True)
+        If set to c{False}, loans (indicated by negative IDs in the gold
+        standard) will be treated as separate cognates, otherwise, loans will
+        be treated as cognates.
+    pprint : bool (default=True)
+        Print out the results
+
+    Returns
+    -------
+    t : tuple
+        A tuple consisting of the precision, the recall, and the harmonic mean
+        (F-scores).
+    
+    Notes
+    -----
+    Pair-scores can be computed in different ways, with often different
+    results. This variant follows the description by :evobib:`Bouchard-Cote2013`.
+    
+    See also
+    --------
+    diff
+    bcubes
     """
 
     # get the etymdicts
@@ -161,35 +230,76 @@ def diff(
         test='lexstatid',
         loans=True,
         pprint=True,
-        filename = None,
+        filename = '',
         tofile = True
         ):
     r"""
     Write differences in classifications on an item-basis to file.
 
+    lex : :py:class:`lingpy.compare.lexstat.LexStat`
+        The :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
+        computation. It should have two columns indicating cognate IDs.
+    gold : str (default='cogid')
+        The name of the column containing the gold standard cognate
+        assignments.
+    test : str (default='lexstatid')
+        The name of the column containing the automatically implemented cognate
+        assignments.
+    loans : bool (default=True)
+        If set to c{False}, loans (indicated by negative IDs in the gold
+        standard) will be treated as separate cognates, otherwise, loans will
+        be treated as cognates.
+    pprint : bool (default=True)
+        Print out the results
+    filename : str (default='')
+        Name of the output file. If not specified, it is identical with the
+        name of the :py:class:`~lingpy.compare.lexstat.LexStat`, but with the
+        extension ``diff``.
+    tofile : bool (default=True)
+        If set to c{False}, no data will be written to file, but instead, the
+        data will be returned.
+
+    Returns
+    -------
+    t : tuple
+        A nested tuple consisting of two further tuples. The first 
+        containing precision, recall, and harmonic mean
+        (F-scores), the second containing the same values for the pair-scores.
+
     Notes
     -----
-    This function also calculates the "transformation" score. This score is
-    based on the calculation of steps that are needed to transform one cluster
-    for one set of meanings into the other. Ideally, if there are *n* different
-    cognate sets covering one gloss in the gold standard, the minimal length of 
-    a mapping to convert the *m* cognate sets of the test set into the gold standard
-    is *n*. In this case, both gold standard and test set are identical.
-    However, if gold standard and test set differ, the number of mappings
-    necessarily exceeds *m* and *n*. Based on this, the transformation
-    precision is defined as :math:`\frac{m}{M}`, where *m* is the number of
-    distinct clusters in the test set and *M* is the length of the mapping.
-    Accordingly, the recall is defined as :math:`\frac{n}{M}`, where *n* is the
-    number of clusters in the gold standard.
+    If the **tofile** option is chosen, the results are written to a specific
+    file with the extension ``diff``. This file contains all cognate sets in
+    which there are differences between gold standard and test sets. It also
+    gives detailed information regarding false positives, false negatives, and
+    the words involved in these wrong decisions.
 
-    Note that if precision is lower than 1.0, this means there are false
-    positive decisions in the test set. Accordingly, a recall lower than 1.0
-    indicates that there are false negative decisions in the test set.
-    The drawback of this score is that it is not sensitive regarding the
-    distinct number of decisions in which gold standard and test set differ, so
-    the recall can be very low although most of the words have been grouped
-    accurately. The advantage is that it can be directly interpreted in terms
-    of 'false positive/false negative' decisions. 
+    .. This function also calculates the "transformation" score. This score is
+    .. based on the calculation of steps that are needed to transform one cluster
+    .. for one set of meanings into the other. Ideally, if there are *n* different
+    .. cognate sets covering one gloss in the gold standard, the minimal length of 
+    .. a mapping to convert the *m* cognate sets of the test set into the gold standard
+    .. is *n*. In this case, both gold standard and test set are identical.
+    .. However, if gold standard and test set differ, the number of mappings
+    .. necessarily exceeds *m* and *n*. Based on this, the transformation
+    .. precision is defined as :math:`\frac{m}{M}`, where *m* is the number of
+    .. distinct clusters in the test set and *M* is the length of the mapping.
+    .. Accordingly, the recall is defined as :math:`\frac{n}{M}`, where *n* is the
+    .. number of clusters in the gold standard.
+
+    .. Note that if precision is lower than 1.0, this means there are false
+    .. positive decisions in the test set. Accordingly, a recall lower than 1.0
+    .. indicates that there are false negative decisions in the test set.
+    .. The drawback of this score is that it is not sensitive regarding the
+    .. distinct number of decisions in which gold standard and test set differ, so
+    .. the recall can be very low although most of the words have been grouped
+    .. accurately. The advantage is that it can be directly interpreted in terms
+    .. of 'false positive/false negative' decisions.
+
+    See also
+    --------
+    bcubes
+    pairs
     """
     # check for filename
     if not filename:

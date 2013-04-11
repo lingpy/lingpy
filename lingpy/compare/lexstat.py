@@ -147,6 +147,13 @@ class LexStat(Wordlist):
                     )
 
         # check for duplicates
+        # first, check for item 'words' in data, if this is not given, create
+        # it
+        if 'words' in self.header:
+            pass
+        else:
+            self.add_entries('words','tokens',lambda x:''.join(x))
+
         if not "duplicates" in self.header:
             duplicates = {}
             for taxon in self.taxa:
@@ -1206,3 +1213,67 @@ class LexStat(Wordlist):
 
         return sorted(D)
 
+    #def output(
+    #        fileformat,
+    #        **keywords
+    #        ):
+    #    """
+    #    Write wordlist to file.
+
+    #    Parameters
+    #    ----------
+    #    fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+    #        The format that is written to file. This corresponds to the file
+    #        extension, thus 'csv' creates a file in csv-format, 'dst' creates
+    #        a file in Phylip-distance format, etc.
+    #    filename : str
+    #        Specify the name of the output file (defaults to a filename that
+    #        indicates the creation date).
+    #    subset : bool (default=False)
+    #        If set to c{True}, return only a subset of the data. Which subset
+    #        is specified in the keywords 'cols' and 'rows'.
+    #    cols : list
+    #        If *subset* is set to c{True}, specify the columns that shall be
+    #        written to the csv-file.
+    #    rows : dict
+    #        If *subset* is set to c{True}, use a dictionary consisting of keys
+    #        that specify a column and values that give a Python-statement in
+    #        raw text, such as, e.g., "== 'hand'". The content of the specified
+    #        column will then be checked against statement passed in the
+    #        dictionary, and if it is evaluated to c{True}, the respective row
+    #        will be written to file.
+    #    cognates : str
+    #        Name of the column that contains the cognate IDs if 'starling' is
+    #        chosen as an output format.
+
+    #    missing : { str, int } (default=0)
+    #        If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
+    #        will be inserted as an indicator of missing data.
+
+    #    tree_calc : {'neighbor', 'upgma'}
+    #        If no tree has been calculated and 'tre' or 'nwk' is chosen as
+    #        output format, the method that is used to calculate the tree.
+
+    #    threshold : float (default=0.6)
+    #        The threshold that is used to carry out a flat cluster analysis if
+    #        'groups' or 'cluster' is chosen as output format.
+    #    
+    #    """
+    #    
+    #    if fileformat not in ['alm']:
+    #        return self._output(fileformat,**keywords)
+    #    
+    #    if fileformat == 'alm':
+    #        pass
+
+    #        ## check for "cognates"-keywords
+    #        #if "cognates" not in keywords:
+    #        #    cognates = 'cogid'
+    #        #for concept in self.concepts:
+    #        #    l = self.get_list(
+    #        #            row=concept,
+    #        #            entry=cognates,
+    #        #            flat=True
+    #        #            )
+    #        #    l = sorted(set(l))
+                

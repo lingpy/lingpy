@@ -6,20 +6,31 @@
 Documentation
 =============
 
-Data Manipulation and Representation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sequence Modelling
+^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
 
-   basic/index
-   sequence/index
+   sequence/sound_classes
+   sequence/orthography
+
+Dataset Handling
+^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+   
+   basic/spreadsheet
+   basic/wordlist
 
 Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
-
-   align/index
+   
+   algorithm/distance
+   align/pairwise
+   align/multiple
+..   align/sca
 
 
 Language Comparison
@@ -28,9 +39,17 @@ Language Comparison
 .. toctree::
    :maxdepth: 1
    
-   compare/index
-   compare/borrowing/index
+   algorithm/cluster
+   compare/lexstat
+   compare/trebor
 
+Evaluation
+^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   evaluate/acd
 
 What's Next?
 ------------

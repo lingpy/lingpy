@@ -3,8 +3,14 @@ Distance (:py:class:`~lingpy.algorithm.distance`)
 
 .. currentmodule:: lingpy.algorithm.distance
 
-.. autofunction:: jaccard
+Functions
+---------
 
-.. autofunction:: hamming
+.. autosummary::
+   :toctree: generated/
 
+   jaccard
+   hamming
+   euclidean
+   pearson
 
