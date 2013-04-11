@@ -1,6 +1,6 @@
-=======
-Formats
-=======
+=============
+Basic Formats
+=============
 
 In the following, we list some of the formats that are frequently used by LingPy, be it that they
 are taken as input formats, or that they are produced as output from the classes and methods

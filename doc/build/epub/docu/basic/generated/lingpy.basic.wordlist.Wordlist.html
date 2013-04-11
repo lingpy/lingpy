@@ -1,0 +1,148 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.basic.wordlist.Wordlist</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-basic-wordlist-wordlist">
+<h1>lingpy.basic.wordlist.Wordlist</h1>
+<dl class="class">
+<dt id="lingpy.basic.wordlist.Wordlist">
+<em class="property">class </em><tt class="descclassname">lingpy.basic.wordlist.</tt><tt class="descname">Wordlist</tt><big>(</big><em>filename</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em><big>)</big></dt>
+<dd><p>Basic class for the handling of multilingual word lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>filename</strong> : { string dict }</p>
+<blockquote>
+<div><p>The input file that contains the data. Otherwise a dictionary with
+consecutive integers as keys and lists as values with the key 0
+specifying the header.</p>
+</div></blockquote>
+<p><strong>row</strong> : str (default = &#8220;concept&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the row that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>col</strong> : str (default = &#8220;doculect&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the column that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>conf</strong> : string (default=&#8217;&#8216;)</p>
+<blockquote class="last">
+<div><p>A string defining the path to the configuration file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>A word list is created from a dictionary containing the data. Two keywords
+(row and col) define, which of the dimensions of the original data should
+be used as row and as column of the tabular display. A configuration file
+can be used to change basic names and aliases for the data being used, and
+the classes (data types) of the entries.</p>
+<p>A couple of methods is provided along with the word list class in order to
+access the multi-dimensional input data. The main idea is to provide an
+easy way to access two-dimensional slices of the data by specifying which
+entry type should be returned. Thus, if a word list consists not only of
+simple orthographical entries but also of IPA encoded phonetic
+transcriptions, both the orthographical source and the IPA transcriptions
+can be easily accessed as two separate two-dimensional lists.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.add_entries.html#lingpy.basic.wordlist.Wordlist.add_entries" title="lingpy.basic.wordlist.Wordlist.add_entries"><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.calculate.html#lingpy.basic.wordlist.Wordlist.calculate" title="lingpy.basic.wordlist.Wordlist.calculate"><tt class="xref py py-obj docutils literal"><span class="pre">calculate</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_entries.html#lingpy.basic.wordlist.Wordlist.get_entries" title="lingpy.basic.wordlist.Wordlist.get_entries"><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_etymdict.html#lingpy.basic.wordlist.Wordlist.get_etymdict" title="lingpy.basic.wordlist.Wordlist.get_etymdict"><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.get_paps.html#lingpy.basic.wordlist.Wordlist.get_paps" title="lingpy.basic.wordlist.Wordlist.get_paps"><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.output.html#lingpy.basic.wordlist.Wordlist.output" title="lingpy.basic.wordlist.Wordlist.output"><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">pickle</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.tokenize.html#lingpy.basic.wordlist.Wordlist.tokenize" title="lingpy.basic.wordlist.Wordlist.tokenize"><tt class="xref py py-obj docutils literal"><span class="pre">tokenize</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

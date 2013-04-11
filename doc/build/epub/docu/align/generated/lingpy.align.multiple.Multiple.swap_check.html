@@ -1,0 +1,107 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.multiple.Multiple.swap_check</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-multiple-multiple-swap-check">
+<h1>lingpy.align.multiple.Multiple.swap_check</h1>
+<dl class="method">
+<dt id="lingpy.align.multiple.Multiple.swap_check">
+<tt class="descclassname">Multiple.</tt><tt class="descname">swap_check</tt><big>(</big><em>swap_penalty=-3</em>, <em>score_mode='classes'</em><big>)</big></dt>
+<dd><p>Check for possibly swapped sites in the alignment.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>swap_penalty</strong> : int or float</p>
+<blockquote>
+<div><p>Specify the penalty for swaps in the alignment.</p>
+</div></blockquote>
+<p><strong>score_mode</strong> : { &#8216;classes&#8217;, &#8216;library&#8217; }</p>
+<blockquote>
+<div><p>Define the score-mode of the calculation which is either based on
+sound classes proper, or on the specific scores derived from the
+library approach.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>result</strong> : bool</p>
+<blockquote class="last">
+<div><p>Returns <tt class="docutils literal"><span class="pre">True</span></tt>, if a swap was identified, and <tt class="docutils literal"><span class="pre">False</span></tt>
+otherwise. The information regarding the position of the swap is
+stored in the attribute <tt class="docutils literal"><span class="pre">swap_index</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The method for swap detection is described in detail in <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012b"><span class="pre">List2012b</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=List2012b]</span></span></tt>.</p>
+<p class="rubric">Examples</p>
+<p>Load a file containing swaps from the test data.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mult</span> <span class="o">=</span> <span class="n">Multiple</span><span class="p">(</span><span class="n">get_file</span><span class="p">(</span><span class="s">&#39;test.msq&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Align the data, using the progressive approach.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mult</span><span class="o">.</span><span class="n">prog_align</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Check for swaps.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

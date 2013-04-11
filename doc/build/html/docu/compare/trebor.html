@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tree-Based Borrowing Detection (trebor) &mdash; LingPy</title>
+    <title>Borrowing Detection (borrowing) &mdash; LingPy</title>
     
     <link rel="stylesheet" href="../../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  
@@ -63,56 +60,21 @@ LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-lingpy.compare.trebor.trebor">
-<span id="tree-based-borrowing-detection-trebor"></span><h1>Tree-Based Borrowing Detection (<a class="reference internal" href="#module-lingpy.compare.trebor.trebor" title="lingpy.compare.trebor.trebor"><tt class="xref py py-mod docutils literal"><span class="pre">trebor</span></tt></a>)<a class="headerlink" href="#module-lingpy.compare.trebor.trebor" title="Permalink to this headline">¶</a></h1>
-<p>Tree-based detection of borrowings in lexicostatistical wordlists.</p>
+  <div class="section" id="borrowing-detection-borrowing">
+<h1>Borrowing Detection (<tt class="xref py py-mod docutils literal"><span class="pre">borrowing</span></tt>)<a class="headerlink" href="#borrowing-detection-borrowing" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="lingpy.compare.trebor.trebor.TreBor">
-<em class="property">class </em><tt class="descclassname">lingpy.compare.trebor.trebor.</tt><tt class="descname">TreBor</tt><big>(</big><em>dataset</em>, <em>tree=None</em>, <em>paps='pap'</em>, <em>verbose=False</em>, <em>**keywords</em><big>)</big><a class="headerlink" href="#lingpy.compare.trebor.trebor.TreBor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Basic class for calculations using the TreBor method.</p>
-<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.analyze.html#lingpy.compare.trebor.trebor.TreBor.analyze" title="lingpy.compare.trebor.trebor.TreBor.analyze"><tt class="xref py py-obj docutils literal"><span class="pre">analyze</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_AVSD.html#lingpy.compare.trebor.trebor.TreBor.get_AVSD" title="lingpy.compare.trebor.trebor.TreBor.get_AVSD"><tt class="xref py py-obj docutils literal"><span class="pre">get_AVSD</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_CVSD.html#lingpy.compare.trebor.trebor.TreBor.get_CVSD" title="lingpy.compare.trebor.trebor.TreBor.get_CVSD"><tt class="xref py py-obj docutils literal"><span class="pre">get_CVSD</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_GLS.html#lingpy.compare.trebor.trebor.TreBor.get_GLS" title="lingpy.compare.trebor.trebor.TreBor.get_GLS"><tt class="xref py py-obj docutils literal"><span class="pre">get_GLS</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_IVSD.html#lingpy.compare.trebor.trebor.TreBor.get_IVSD" title="lingpy.compare.trebor.trebor.TreBor.get_IVSD"><tt class="xref py py-obj docutils literal"><span class="pre">get_IVSD</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_MLN.html#lingpy.compare.trebor.trebor.TreBor.get_MLN" title="lingpy.compare.trebor.trebor.TreBor.get_MLN"><tt class="xref py py-obj docutils literal"><span class="pre">get_MLN</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.get_PDC.html#lingpy.compare.trebor.trebor.TreBor.get_PDC" title="lingpy.compare.trebor.trebor.TreBor.get_PDC"><tt class="xref py py-obj docutils literal"><span class="pre">get_PDC</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.plot_MLN.html#lingpy.compare.trebor.trebor.TreBor.plot_MLN" title="lingpy.compare.trebor.trebor.TreBor.plot_MLN"><tt class="xref py py-obj docutils literal"><span class="pre">plot_MLN</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.plot_MSN.html#lingpy.compare.trebor.trebor.TreBor.plot_MSN" title="lingpy.compare.trebor.trebor.TreBor.plot_MSN"><tt class="xref py py-obj docutils literal"><span class="pre">plot_MSN</span></tt></a></td>
-<td></td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="../compare/generated/lingpy.compare.trebor.trebor.TreBor.plot_concepts.html#lingpy.compare.trebor.trebor.TreBor.plot_concepts" title="lingpy.compare.trebor.trebor.TreBor.plot_concepts"><tt class="xref py py-obj docutils literal"><span class="pre">plot_concepts</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../compare/generated/lingpy.compare.borrowing.trebor.TreBor.html#lingpy.compare.borrowing.trebor.TreBor" title="lingpy.compare.borrowing.trebor.TreBor"><tt class="xref py py-obj docutils literal"><span class="pre">TreBor</span></tt></a>(dataset[,&nbsp;tree,&nbsp;paps,&nbsp;cognates,&nbsp;verbose])</td>
+<td>Basic class for calculations using the TreBor method.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 </div>
 </div>
 
@@ -124,7 +86,7 @@ LingPy
         <div class="sphinxsidebarwrapper">
   <h3><a href="../../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Tree-Based Borrowing Detection (<tt class="docutils literal"><span class="pre">trebor</span></tt>)</a><ul>
+<li><a class="reference internal" href="#">Borrowing Detection (<tt class="docutils literal"><span class="pre">borrowing</span></tt>)</a><ul>
 <li><a class="reference internal" href="#classes">Classes</a><ul>
 </ul>
 </li>
@@ -132,6 +94,11 @@ LingPy
 </li>
 </ul>
 
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/docu/compare/trebor.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -155,14 +122,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  
@@ -170,7 +134,7 @@ LingPy
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Mar 08, 2013.
+      Last updated on Apr 11, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

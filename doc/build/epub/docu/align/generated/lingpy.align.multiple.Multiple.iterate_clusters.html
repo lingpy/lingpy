@@ -1,0 +1,128 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.multiple.Multiple.iterate_clusters</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-multiple-multiple-iterate-clusters">
+<h1>lingpy.align.multiple.Multiple.iterate_clusters</h1>
+<dl class="method">
+<dt id="lingpy.align.multiple.Multiple.iterate_clusters">
+<tt class="descclassname">Multiple.</tt><tt class="descname">iterate_clusters</tt><big>(</big><em>threshold</em>, <em>check='final'</em>, <em>mode='global'</em>, <em>gop=-3</em>, <em>scale=0.5</em>, <em>factor=0</em>, <em>gap_weight=1</em>, <em>restricted_chars='T_'</em><big>)</big></dt>
+<dd><p>Iterative refinement based on a flat cluster analysis of the data.</p>
+<p>This method uses the <tt class="xref py py-func docutils literal"><span class="pre">lingpy.algorithm.cluster.flat_upgma()</span></tt>
+function in order to retrieve a flat cluster of the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>threshold</strong> : float</p>
+<blockquote>
+<div><p>The threshold for the flat cluster analysis.</p>
+</div></blockquote>
+<p><strong>check</strong> : string (default=&#8221;final&#8221;)</p>
+<blockquote>
+<div><p>Specify when to check for improved sum-of-pairs scores: After each
+iteration (&#8220;immediate&#8221;) or after all iterations have been carried
+out (&#8220;final&#8221;).</p>
+</div></blockquote>
+<p><strong>mode</strong> : { &#8216;global&#8217;, &#8216;overlap&#8217;, &#8216;dialign&#8217; }</p>
+<blockquote>
+<div><p>A string indicating which kind of alignment analysis should be
+carried out during the progressive phase. Select between:</p>
+<ul class="simple">
+<li>&#8216;global&#8217; &#8211; traditional global alignment analysis based on the
+Needleman-Wunsch algorithm <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Needleman1970"><span class="pre">Needleman1970</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Needleman1970]</span></span></tt>,</li>
+<li>&#8216;dialign&#8217; &#8211; global alignment analysis which seeks to maximize
+local similarities <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Morgenstern1996"><span class="pre">Morgenstern1996</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Morgenstern1996]</span></span></tt>.</li>
+<li>&#8216;overlap&#8217; &#8211; semi-global alignment, where gaps introduced in the
+beginning and the end of a sequence do not score.</li>
+</ul>
+</div></blockquote>
+<p><strong>gop</strong> : int (default=-5)</p>
+<blockquote>
+<div><p>The gap opening penalty (GOP) used in the analysis.</p>
+</div></blockquote>
+<p><strong>gep_scale</strong> : float (default=0.6)</p>
+<blockquote>
+<div><p>The factor by which the penalty for the extension of gaps (gap
+extension penalty, GEP) shall be decreased. This approach is
+essentially inspired by the exension of the basic alignment
+algorithm for affine gap penalties [Goto81].</p>
+</div></blockquote>
+<p><strong>factor</strong> : float (default=0.3)</p>
+<blockquote>
+<div><p>The factor by which the initial and the descending position shall
+be modified.</p>
+</div></blockquote>
+<p><strong>gap_weight</strong> : float (default=0)</p>
+<blockquote class="last">
+<div><p>The factor by which gaps in aligned columns contribute to the
+calculation of the column score. When set to 0, gaps will be
+ignored in the calculation. When set to 0.5, gaps will count half
+as much as other characters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../generated/lingpy.align.multiple.Multiple.iterate_similar_gap_sites.html#lingpy.align.multiple.Multiple.iterate_similar_gap_sites" title="lingpy.align.multiple.Multiple.iterate_similar_gap_sites"><tt class="xref py py-obj docutils literal"><span class="pre">Multiple.iterate_similar_gap_sites</span></tt></a>, <a class="reference internal" href="../generated/lingpy.align.multiple.Multiple.iterate_all_sequences.html#lingpy.align.multiple.Multiple.iterate_all_sequences" title="lingpy.align.multiple.Multiple.iterate_all_sequences"><tt class="xref py py-obj docutils literal"><span class="pre">Multiple.iterate_all_sequences</span></tt></a></p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

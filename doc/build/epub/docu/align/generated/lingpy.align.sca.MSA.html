@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.sca.MSA</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-sca-msa">
+<h1>lingpy.align.sca.MSA</h1>
+<dl class="class">
+<dt id="lingpy.align.sca.MSA">
+<em class="property">class </em><tt class="descclassname">lingpy.align.sca.</tt><tt class="descname">MSA</tt><big>(</big><em>infile</em>, <em>**keywords</em><big>)</big></dt>
+<dd><p>Basic class for carrying out multiple sequence alignment analyses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>infile</strong> : file</p>
+<blockquote>
+<div><p>A file in <tt class="docutils literal"><span class="pre">msq</span></tt>-format or <tt class="docutils literal"><span class="pre">msa</span></tt>-format.</p>
+</div></blockquote>
+<p><strong>merge_vowels</strong> : bool (default=True)</p>
+<blockquote>
+<div><p>Indicate, whether neighboring vowels should be merged into
+diphtongs, or whether they should be kept separated during the
+analysis.</p>
+</div></blockquote>
+<p><strong>comment</strong> : char (default=&#8217;#&#8217;)</p>
+<blockquote class="last">
+<div><p>The comment character which, inserted in the beginning of a line,
+prevents that line from being read.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>There are two possible input formats for this class: the MSQ-format, and
+the MSA-format.</p>
+<p>This class inherits the methods of the
+<a class="reference internal" href="../generated/lingpy.align.multiple.Multiple.html#lingpy.align.multiple.Multiple" title="lingpy.align.multiple.Multiple"><tt class="xref py py-class docutils literal"><span class="pre">Multiple</span></tt></a> class.</p>
+<p class="rubric">Examples</p>
+<p>Get the path to a file from the testset.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">seq_file</span> <span class="o">=</span> <span class="n">get_file</span><span class="p">(</span><span class="s">&#39;test.seq&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Load the file into the Multiple class.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mult</span> <span class="o">=</span> <span class="n">Multiple</span><span class="p">(</span><span class="n">seq_file</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Carry out a progressive alignment analysis of the sequences.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">mult</span><span class="o">.</span><span class="n">prog_align</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Print the result to the screen:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">mult</span><span class="p">)</span>
+<span class="go">w    o    l    -    d    e    m    o    r    t</span>
+<span class="go">w    a    l    -    d    e    m    a    r    -</span>
+<span class="go">v    -    l    a    d    i    m    i    r    -</span>
+</pre></div>
+</div>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.get_pairwise_alignments.html#lingpy.align.sca.MSA.get_pairwise_alignments" title="lingpy.align.sca.MSA.get_pairwise_alignments"><tt class="xref py py-obj docutils literal"><span class="pre">get_pairwise_alignments</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.get_peaks.html#lingpy.align.sca.MSA.get_peaks" title="lingpy.align.sca.MSA.get_peaks"><tt class="xref py py-obj docutils literal"><span class="pre">get_peaks</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.get_pid.html#lingpy.align.sca.MSA.get_pid" title="lingpy.align.sca.MSA.get_pid"><tt class="xref py py-obj docutils literal"><span class="pre">get_pid</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">ipa2cls</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.iterate_all_sequences.html#lingpy.align.sca.MSA.iterate_all_sequences" title="lingpy.align.sca.MSA.iterate_all_sequences"><tt class="xref py py-obj docutils literal"><span class="pre">iterate_all_sequences</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.iterate_clusters.html#lingpy.align.sca.MSA.iterate_clusters" title="lingpy.align.sca.MSA.iterate_clusters"><tt class="xref py py-obj docutils literal"><span class="pre">iterate_clusters</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.iterate_orphans.html#lingpy.align.sca.MSA.iterate_orphans" title="lingpy.align.sca.MSA.iterate_orphans"><tt class="xref py py-obj docutils literal"><span class="pre">iterate_orphans</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.iterate_similar_gap_sites.html#lingpy.align.sca.MSA.iterate_similar_gap_sites" title="lingpy.align.sca.MSA.iterate_similar_gap_sites"><tt class="xref py py-obj docutils literal"><span class="pre">iterate_similar_gap_sites</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.lib_align.html#lingpy.align.sca.MSA.lib_align" title="lingpy.align.sca.MSA.lib_align"><tt class="xref py py-obj docutils literal"><span class="pre">lib_align</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.prog_align.html#lingpy.align.sca.MSA.prog_align" title="lingpy.align.sca.MSA.prog_align"><tt class="xref py py-obj docutils literal"><span class="pre">prog_align</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.sum_of_pairs.html#lingpy.align.sca.MSA.sum_of_pairs" title="lingpy.align.sca.MSA.sum_of_pairs"><tt class="xref py py-obj docutils literal"><span class="pre">sum_of_pairs</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.MSA.swap_check.html#lingpy.align.sca.MSA.swap_check" title="lingpy.align.sca.MSA.swap_check"><tt class="xref py py-obj docutils literal"><span class="pre">swap_check</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

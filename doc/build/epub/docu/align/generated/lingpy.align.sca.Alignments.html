@@ -1,0 +1,151 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.sca.Alignments</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-sca-alignments">
+<h1>lingpy.align.sca.Alignments</h1>
+<dl class="class">
+<dt id="lingpy.align.sca.Alignments">
+<em class="property">class </em><tt class="descclassname">lingpy.align.sca.</tt><tt class="descname">Alignments</tt><big>(</big><em>infile</em>, <em>row='concept'</em>, <em>col='doculect'</em>, <em>conf=''</em>, <em>cognates='cogid'</em>, <em>loans=True</em>, <em>**keywords</em><big>)</big></dt>
+<dd><p>Class handles Wordlists for the purpose of alignment analyses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>infile</strong> : str</p>
+<blockquote>
+<div><p>The name of the input file that should conform to the basic format of
+the <cite>~lingpy.basic.wordlist.Wordlist</cite> class and define a specific ID
+for cognate sets.</p>
+</div></blockquote>
+<p><strong>row</strong> : str (default = &#8220;concept&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the row that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>col</strong> : str (default = &#8220;doculect&#8221;)</p>
+<blockquote>
+<div><p>A string indicating the name of the column that shall be taken as the
+basis for the tabular representation of the word list.</p>
+</div></blockquote>
+<p><strong>conf</strong> : string (default=&#8217;&#8216;)</p>
+<blockquote>
+<div><p>A string defining the path to the configuration file.</p>
+</div></blockquote>
+<p><strong>cognates</strong> : string (default=&#8217;cogid&#8217;)</p>
+<blockquote>
+<div><p>The name of the column that stores the cognate IDs.</p>
+</div></blockquote>
+<p><strong>loans</strong> : bool (default=True)</p>
+<blockquote class="last">
+<div><p>Specify whether loans should be included in the cognate sets.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This class inherits from <a class="reference internal" href="../generated/lingpy.basic.wordlist.Wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> and 
+additionally creates instances of the
+<a class="reference internal" href="../generated/lingpy.align.multiple.Multiple.html#lingpy.align.multiple.Multiple" title="lingpy.align.multiple.Multiple"><tt class="xref py py-class docutils literal"><span class="pre">Multiple</span></tt></a> class for all cognate sets that
+are specified by the &#8220;cognates&#8221; keyword.</p>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">add_entries</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.Alignments.align.html#lingpy.align.sca.Alignments.align" title="lingpy.align.sca.Alignments.align"><tt class="xref py py-obj docutils literal"><span class="pre">align</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">calculate</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_dict</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_entries</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_etymdict</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_list</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">get_paps</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">pickle</span></tt></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">tokenize</span></tt></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

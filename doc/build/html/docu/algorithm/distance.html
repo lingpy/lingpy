@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  
@@ -65,70 +62,29 @@ LingPy
             
   <div class="section" id="distance-distance">
 <h1>Distance (<tt class="xref py py-class docutils literal"><span class="pre">distance</span></tt>)<a class="headerlink" href="#distance-distance" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="lingpy.algorithm.distance.jaccard">
-<tt class="descclassname">lingpy.algorithm.distance.</tt><tt class="descname">jaccard</tt><big>(</big><em>set1</em>, <em>set2</em><big>)</big><a class="headerlink" href="#lingpy.algorithm.distance.jaccard" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computer the Jaccard distance between two sets.</p>
-<p>Jaccard distance measures the dissimilarity between sample sets.
-It is complementary to the Jaccard coefficient and is obtained by 
-subtracting the Jaccard coefficient from 1, or, equivalently, by 
-dividing the difference of the sizes of the union and the intersection 
-of two sets by the size of the union:</p>
-<p>J(A,B) = 1 - J(A,B) = <a href="#id1"><span class="problematic" id="id2">|A ∪ B|</span></a> - <a href="#id3"><span class="problematic" id="id4">|A ∩ B|</span></a> / <a href="#id5"><span class="problematic" id="id6">|A ∪ B|</span></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>set1</strong> : set</p>
-<blockquote>
-<div><p>set to be compared to set2</p>
-</div></blockquote>
-<p><strong>set2</strong> : set</p>
-<blockquote>
-<div><p>set to be compared to set1</p>
-</div></blockquote>
-</td>
+<tr class="row-odd"><td><a class="reference internal" href="../algorithm/generated/lingpy.algorithm.distance.jaccard.html#lingpy.algorithm.distance.jaccard" title="lingpy.algorithm.distance.jaccard"><tt class="xref py py-obj docutils literal"><span class="pre">jaccard</span></tt></a>(set1,&nbsp;set2)</td>
+<td>Computer the Jaccard distance between two sets.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>_</strong> : float</p>
-<blockquote class="last">
-<div><p>the Jaccard distance</p>
-</div></blockquote>
-</td>
+<tr class="row-even"><td><a class="reference internal" href="../algorithm/generated/lingpy.algorithm.distance.hamming.html#lingpy.algorithm.distance.hamming" title="lingpy.algorithm.distance.hamming"><tt class="xref py py-obj docutils literal"><span class="pre">hamming</span></tt></a>(str1,&nbsp;str2)</td>
+<td>Compute the Hamming distance between two strings.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../algorithm/generated/lingpy.algorithm.distance.euclidean.html#lingpy.algorithm.distance.euclidean" title="lingpy.algorithm.distance.euclidean"><tt class="xref py py-obj docutils literal"><span class="pre">euclidean</span></tt></a>(p,&nbsp;q)</td>
+<td>Distance between two points (p, q) in any dimension of space.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../algorithm/generated/lingpy.algorithm.distance.pearson.html#lingpy.algorithm.distance.pearson" title="lingpy.algorithm.distance.pearson"><tt class="xref py py-obj docutils literal"><span class="pre">pearson</span></tt></a>(x,&nbsp;y)</td>
+<td>Pearson correlation coefficient.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="function">
-<dt id="lingpy.algorithm.distance.hamming">
-<tt class="descclassname">lingpy.algorithm.distance.</tt><tt class="descname">hamming</tt><big>(</big><em>str1</em>, <em>str2</em><big>)</big><a class="headerlink" href="#lingpy.algorithm.distance.hamming" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the Hamming distance between two strings.</p>
-<p>The Hamming distance (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Hamming1950"><span class="pre">Hamming1950</span></a></tt>) is defined as the
-number of bits that are different between two vectors.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>str1</strong> : str</p>
-<blockquote>
-<div><p>str to be compared to str2</p>
-</div></blockquote>
-<p><strong>str2</strong> : str</p>
-<blockquote>
-<div><p>str to be compared to str1</p>
-</div></blockquote>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>_</strong> : int</p>
-<blockquote class="last">
-<div><p>the hamming distance</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+</div>
 </div>
 
 
@@ -137,6 +93,21 @@ number of bits that are different between two vectors.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Distance (<tt class="docutils literal"><span class="pre">distance</span></tt>)</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/docu/algorithm/distance.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -160,14 +131,11 @@ number of bits that are different between two vectors.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  

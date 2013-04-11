@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  
@@ -85,47 +82,28 @@ LingPy
 <tr class="row-even"><td><a class="reference internal" href="../align/generated/lingpy.align.pairwise.edit_dist.html#lingpy.align.pairwise.edit_dist" title="lingpy.align.pairwise.edit_dist"><tt class="xref py py-obj docutils literal"><span class="pre">edit_dist</span></tt></a>(seqA,&nbsp;seqB[,&nbsp;normalized])</td>
 <td>Return the edit distance between two strings.</td>
 </tr>
+<tr class="row-odd"><td><a class="reference internal" href="../align/generated/lingpy.align.sca.SCA.html#lingpy.align.sca.SCA" title="lingpy.align.sca.SCA"><tt class="xref py py-obj docutils literal"><span class="pre">SCA</span></tt></a>(infile,&nbsp;**keywords)</td>
+<td>Method returns alignment objects depending on input file.</td>
+</tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="classes">
 <h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="lingpy.align.pairwise.Pairwise">
-<em class="property">class </em><tt class="descclassname">lingpy.align.pairwise.</tt><tt class="descname">Pairwise</tt><big>(</big><em>seqs</em>, <em>seqB=False</em>, <em>**keywords</em><big>)</big><a class="headerlink" href="#lingpy.align.pairwise.Pairwise" title="Permalink to this definition">¶</a></dt>
-<dd><p>Basic class for the handling of pairwise sequence alignments (PSA).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>seqs</strong> : string list</p>
-<blockquote>
-<div><p>Either the first string of a sequence pair that shall be aligned,
-or a list of sequence tuples.</p>
-</div></blockquote>
-<p><strong>seqB</strong> : string or bool (default=None)</p>
-<blockquote class="last">
-<div><p>Define the second sequence that shall be aligned with the first
-sequence, if only two sequences shall be compared.</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
 <col width="10%" />
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../align/generated/lingpy.align.pairwise.Pairwise.align.html#lingpy.align.pairwise.Pairwise.align" title="lingpy.align.pairwise.Pairwise.align"><tt class="xref py py-obj docutils literal"><span class="pre">align</span></tt></a>([gop,&nbsp;scale,&nbsp;mode,&nbsp;factor,&nbsp;...])</td>
-<td>Align a pair of sequences or multiple sequence pairs.</td>
+<tr class="row-odd"><td><a class="reference internal" href="../align/generated/lingpy.align.pairwise.Pairwise.html#lingpy.align.pairwise.Pairwise" title="lingpy.align.pairwise.Pairwise"><tt class="xref py py-obj docutils literal"><span class="pre">Pairwise</span></tt></a>(seqs[,&nbsp;seqB])</td>
+<td>Basic class for the handling of pairwise sequence alignments (PSA).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../align/generated/lingpy.align.sca.PSA.html#lingpy.align.sca.PSA" title="lingpy.align.sca.PSA"><tt class="xref py py-obj docutils literal"><span class="pre">PSA</span></tt></a>(infile,&nbsp;**keywords)</td>
+<td>Basic class for dealing with the pairwise alignment of sequences.</td>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
 </div>
 </div>
 
@@ -148,6 +126,11 @@ sequence, if only two sequences shall be compared.</p>
 </li>
 </ul>
 
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/docu/align/pairwise.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../../search.html" method="get">
@@ -171,14 +154,11 @@ sequence, if only two sequences shall be compared.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../../download.html">Download </a> </li>
 
  

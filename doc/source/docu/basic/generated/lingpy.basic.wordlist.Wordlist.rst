@@ -5,7 +5,24 @@ lingpy.basic.wordlist.Wordlist
 
 .. autoclass:: Wordlist
 
+
+.. HACK::
+
+   .. rubric:: Methods
+
+   .. autosummary::
    
+      ~Wordlist.__init__
+      ~Wordlist.add_entries
+      ~Wordlist.calculate
+      ~Wordlist.get_dict
+      ~Wordlist.get_entries
+      ~Wordlist.get_etymdict
+      ~Wordlist.get_list
+      ~Wordlist.get_paps
+      ~Wordlist.output
+      ~Wordlist.pickle
+      ~Wordlist.tokenize
    
    
 

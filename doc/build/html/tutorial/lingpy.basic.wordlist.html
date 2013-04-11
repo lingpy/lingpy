@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Wordlists &mdash; LingPy</title>
+    <title>Handling Wordlists &mdash; LingPy</title>
     
     <link rel="stylesheet" href="../_static/lingpy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../download.html">Download </a> </li>
 
  
@@ -63,8 +60,8 @@ LingPy
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="wordlists">
-<h1>Wordlists<a class="headerlink" href="#wordlists" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="handling-wordlists">
+<h1>Handling Wordlists<a class="headerlink" href="#handling-wordlists" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="what-is-a-word-list">
 <h2>What is a Word List?<a class="headerlink" href="#what-is-a-word-list" title="Permalink to this headline">¶</a></h2>
 <p>Generally, a word list is a simple tabular data structure in which multiple
@@ -125,7 +122,7 @@ ID   CONCEPT     COUNTERPART   IPA         DOCULECT     COGID
 <p>This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given
 concept in a given language. Moreover, this format is the basic of the
-<a class="reference internal" href="../docu/basic/wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> class in LingPy, which makes it easy
+<a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> class in LingPy, which makes it easy
 to handle word lists with multiple entry-types of words.</p>
 </div>
 <div class="section" id="basic-operations-with-help-of-wordlists">
@@ -160,7 +157,7 @@ is:</p>
 </div>
 <p>Furthermore, using specific functions, even more concise samples of the data can
 be extracted, thus, using the
-<a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-class docutils literal"><span class="pre">get_dict</span></tt></a> function, we can specify a
+<a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.get_dict.html#lingpy.basic.wordlist.Wordlist.get_dict" title="lingpy.basic.wordlist.Wordlist.get_dict"><tt class="xref py py-class docutils literal"><span class="pre">get_dict</span></tt></a> function, we can specify a
 given language and extract all phonetic transcriptions corresponding to a given
 concept as a dictionary:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_dict</span><span class="p">(</span><span class="n">col</span><span class="o">=</span><span class="s">&quot;German&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;ipa&quot;</span><span class="p">)</span>
@@ -171,7 +168,7 @@ concept as a dictionary:</p>
 </pre></div>
 </div>
 <p>We can likewise extract all cognate IDs corresponding to a given concept by
-using the function <a class="reference internal" href="../docu/generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-class docutils literal"><span class="pre">get_list</span></tt></a>:</p>
+using the function <a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.get_list.html#lingpy.basic.wordlist.Wordlist.get_list" title="lingpy.basic.wordlist.Wordlist.get_list"><tt class="xref py py-class docutils literal"><span class="pre">get_list</span></tt></a>:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">get_list</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="s">&quot;hand&quot;</span><span class="p">,</span><span class="n">entry</span><span class="o">=</span><span class="s">&quot;cogid&quot;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="go">[1, 1, 2, 2]</span>
 </pre></div>
@@ -233,7 +230,7 @@ indicates aliases that can be used to address the datatype when using it in calc
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Wordlists</a><ul>
+<li><a class="reference internal" href="#">Handling Wordlists</a><ul>
 <li><a class="reference internal" href="#what-is-a-word-list">What is a Word List?</a></li>
 <li><a class="reference internal" href="#basic-operations-with-help-of-wordlists">Basic Operations with Help of Wordlists</a></li>
 <li><a class="reference internal" href="#the-wordlist-rc-file">The wordlist.rc file</a></li>
@@ -241,6 +238,11 @@ indicates aliases that can be used to address the datatype when using it in calc
 </li>
 </ul>
 
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/lingpy.basic.wordlist.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -264,14 +266,11 @@ indicates aliases that can be used to address the datatype when using it in calc
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../download.html">Download </a> </li>
 
  

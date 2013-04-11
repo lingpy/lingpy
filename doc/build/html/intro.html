@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="index.html">Home</a> |&nbsp;</li>
 	<li><a href="#">Introduction</a> |&nbsp;</li>
 	<li><a href="examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
         <li><a href="download.html">Download </a> </li>
 
  
@@ -78,63 +75,31 @@ using biological software packages.</p>
 </div>
 <div class="section" id="what-can-be-done-with-lingpy">
 <h2>What can be done with LingPy?<a class="headerlink" href="#what-can-be-done-with-lingpy" title="Permalink to this headline">¶</a></h2>
-<p>With the help of LingPy, one can:</p>
+<p>With the help of LingPy, users can:</p>
 <ul class="simple">
 <li>tokenize and analyze IPA-encoded sequences,</li>
 <li>carry out pairwise and multiple alignment analyses,</li>
 <li>conduct automatic cognate judgments for multiple languages,</li>
 <li>calculate lexicostatistic distances between languages,</li>
 <li>reconstruct language phylogenies using basic cluster algorithms, and</li>
-<li>export the results of these analyses to various formats which can either be
+<li>export the results of these analyses to various formats which can be either
 used as input for external programs, or to visualize the results.</li>
 </ul>
 </div>
 <div class="section" id="how-can-lingpy-be-used">
 <h2>How can LingPy be used?<a class="headerlink" href="#how-can-lingpy-be-used" title="Permalink to this headline">¶</a></h2>
-<p>LingPy is a library for the Python programming language. It can thus be used
-directly from the Python shell or inside Python scripts.  The Python programming
-language has many benefits. Due to its clear programming style it allows the
-user to write programs very quickly while at the same time being very powerful
-and easy to maintain. See <a class="reference external" href="http://www.python.org">http://www.python.org</a> for details.</p>
-</div>
-<div class="section" id="what-is-the-basic-idea-behind-lingpy">
-<h2>What is the Basic Idea Behind LingPy?<a class="headerlink" href="#what-is-the-basic-idea-behind-lingpy" title="Permalink to this headline">¶</a></h2>
-<p>In historical linguistics, one usually deals with the following two entities
-and their components:</p>
-<ul class="simple">
-<li><em>signs</em> &#8211; form-meaning pairs, i.e. <em>sequences</em> (words, morphemes) which
-carry a certain <em>functon</em> (meaning), and</li>
-<li><em>languages</em> &#8211; collections of <em>signs</em>.</li>
-</ul>
-<p>These entities are dealt with by <em>comparison</em>. Signs and languages are compared
-in different ways in order to reconstruct how they evolved from their
-respective ancestor entities. Thus, when investigating the phenomena of sound
-change, this is usually done by comparing the <em>formal</em> component of signs. When
-comparing semantic change, the main objective is the <em>functional</em> component of
-signs. And when reconstructing language phylogenies, this is done by comparing
-the <em>signs</em> of different languages.</p>
-<p>In LingPy, the different entities are represented within an object-oriented
-frame work. The different aspects of linguistic signs and languages are modeled
-by specific classes. Thus, if one has to deal with the formal part of the
-linguistic sign, the <tt class="xref py py-class docutils literal"><span class="pre">Sequence</span></tt> class in LingPy
-makes it possible to deal with various automatic aspects of sound sequences,
-such as, e.g., their prosodic properties, or their sound classes. For the
-comparison of sign forms, one can chose between the
-<tt class="xref py py-class docutils literal"><span class="pre">classes</span></tt> and the
-<tt class="xref py py-class docutils literal"><span class="pre">Multiple</span></tt> class, which can be used to conduct
-automatic alignment analyses or to calculate the similarity or distance between
-sound sequences. Even language comparison is possible with help of the
-<tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt> class which can be used to conduct an
-automatic search for cognates in lexicostatistical datasets or to calculate
-evolutionary distances between languages.</p>
+<p>LingPy is a library written in the Python programming language. It can be used
+directly in the Python interpreter or imported into Python scripts. See the LingPy
+<a class="reference external" href="link2readmefile">README</a> file for instructions. For more information about Python, see
+<a class="reference external" href="http://www.python.org">http://www.python.org</a> for details.</p>
 </div>
 <div class="section" id="what-s-next">
-<h2>What&#8217;s Next?<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h2>
+<h2>What&#8217;s next?<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docu/index.html">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docu/index.html">Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="download.html">Download</a></li>
 </ul>
 </div>
@@ -153,14 +118,18 @@ evolutionary distances between languages.</p>
 <li><a class="reference internal" href="#what-is-lingpy">What is LingPy?</a></li>
 <li><a class="reference internal" href="#what-can-be-done-with-lingpy">What can be done with LingPy?</a></li>
 <li><a class="reference internal" href="#how-can-lingpy-be-used">How can LingPy be used?</a></li>
-<li><a class="reference internal" href="#what-is-the-basic-idea-behind-lingpy">What is the Basic Idea Behind LingPy?</a></li>
-<li><a class="reference internal" href="#what-s-next">What&#8217;s Next?</a><ul>
+<li><a class="reference internal" href="#what-s-next">What&#8217;s next?</a><ul>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/intro.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -184,14 +153,11 @@ evolutionary distances between languages.</p>
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="index.html">Home</a> |&nbsp;</li>
 	<li><a href="#">Introduction</a> |&nbsp;</li>
 	<li><a href="examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="docu/index.html">Documentation</a> |&nbsp;</li>
         <li><a href="download.html">Download </a> </li>
 
  

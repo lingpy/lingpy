@@ -39,14 +39,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../download.html">Download </a> </li>
 
  
@@ -65,11 +62,23 @@ LingPy
             
   <div class="section" id="documentation">
 <h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="data-manipulation-and-representation">
-<h2>Data Manipulation and Representation<a class="headerlink" href="#data-manipulation-and-representation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sequence-modelling">
+<h2>Sequence Modelling<a class="headerlink" href="#sequence-modelling" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="basic/index.html">Basic Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequence/sound_classes.html">Sound Classes (<tt class="docutils literal"><span class="pre">sound_classes</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequence/orthography.html">Orthography Parser (<tt class="docutils literal"><span class="pre">orthography</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sequence/generate.html">Generate Random Sequences (<tt class="docutils literal"><span class="pre">generate</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data/derive.html">Creating Sound-Class Models (<tt class="docutils literal"><span class="pre">derive</span></tt>)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="dataset-handling">
+<h2>Dataset Handling<a class="headerlink" href="#dataset-handling" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="basic/spreadsheet.html">Spreadsheets (<tt class="docutils literal"><span class="pre">Spreadsheet</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="basic/wordlist.html">Wordlists (<tt class="docutils literal"><span class="pre">Wordlist</span></tt>)</a></li>
 </ul>
 </div>
 </div>
@@ -77,7 +86,9 @@ LingPy
 <h2>Sequence Comparison<a class="headerlink" href="#sequence-comparison" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="align/index.html">Align Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithm/distance.html">Distance (<tt class="docutils literal"><span class="pre">distance</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="align/pairwise.html">Pairwise Alignment (<tt class="docutils literal"><span class="pre">pairwise</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="align/multiple.html">Multiple Alignment (<tt class="docutils literal"><span class="pre">multiple</span></tt>)</a></li>
 </ul>
 </div>
 </div>
@@ -85,15 +96,23 @@ LingPy
 <h2>Language Comparison<a class="headerlink" href="#language-comparison" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="compare/index.html">Automatic Cognate Detection (<tt class="docutils literal"><span class="pre">LexStat</span></tt>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="compare/borrowing/index.html">Borrowing Detection (<tt class="docutils literal"><span class="pre">borrowing</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithm/cluster.html">Cluster Algorithms (<tt class="docutils literal"><span class="pre">_cluster</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compare/lexstat.html">Cognate Detection (<tt class="docutils literal"><span class="pre">LexStat</span></tt>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compare/trebor.html">Borrowing Detection (<tt class="docutils literal"><span class="pre">borrowing</span></tt>)</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="evaluate/acd.html">Evalute (<tt class="docutils literal"><span class="pre">evaluate</span></tt>)</a></li>
 </ul>
 </div>
 <div class="section" id="what-s-next">
 <h3>What&#8217;s Next?<a class="headerlink" href="#what-s-next" title="Permalink to this headline">¶</a></h3>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorial/index.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../download.html">Download</a></li>
 </ul>
 </div>
@@ -110,13 +129,19 @@ LingPy
   <h3><a href="../index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Documentation</a><ul>
-<li><a class="reference internal" href="#data-manipulation-and-representation">Data Manipulation and Representation</a><ul>
+<li><a class="reference internal" href="#sequence-modelling">Sequence Modelling</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#dataset-handling">Dataset Handling</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#sequence-comparison">Sequence Comparison</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#language-comparison">Language Comparison</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#evaluation">Evaluation</a><ul>
 <li><a class="reference internal" href="#what-s-next">What&#8217;s Next?</a><ul>
 </ul>
 </li>
@@ -126,6 +151,11 @@ LingPy
 </li>
 </ul>
 
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/docu/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
@@ -149,14 +179,11 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
 	<li><a href="../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
-	<li><a href="index.html">Documentation</a> |&nbsp;</li>
 	<li><a href="../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="index.html">Documentation</a> |&nbsp;</li>
         <li><a href="../download.html">Download </a> </li>
 
  

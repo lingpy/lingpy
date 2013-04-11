@@ -2,7 +2,11 @@
 
 .. autosummary::
    :toctree: generated/
-
+   
+   lingpy.sequence.generate.MCBasic
+   lingpy.sequence.generate.MCPhon
+   lingpy.sequence.generate.MCBasic.walk
+   lingpy.sequence.generate.MCPhon.get_string
    GraphemeParser.combine_modifiers
    GraphemeParser.parse_graphemes
    GraphemeParser.parse_string_to_graphemes

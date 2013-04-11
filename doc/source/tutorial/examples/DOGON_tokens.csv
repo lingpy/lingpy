@@ -30,25 +30,25 @@ Yorno_So
 ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 1	Toro_Tegu	zɔ́ŋɔ̀	(a) fight, squabble	z ɔ́ ŋ ɔ̀
-2	Ben_Tey	jáy	(a) fight, squabble	dʒ á dʒ
-3	Bankan_Tey	záy	(a) fight, squabble	z á dʒ
-4	Nanga	jóríyè	(a) fight, squabble	dʒ ó r í dʒ è
-5	Jamsay	jɛ́y	(a) fight, squabble	dʒ ɛ́ dʒ
-6	Perge_Tegu	jáy	(a) fight, squabble	dʒ á dʒ
-7	Gourou	záy	(a) fight, squabble	z á dʒ
-8	Jamsay_Mondoro	jɛ́y	(a) fight, squabble	dʒ ɛ́ dʒ
+2	Ben_Tey	jáy	(a) fight, squabble	dʒ á j
+3	Bankan_Tey	záy	(a) fight, squabble	z á j
+4	Nanga	jóríyè	(a) fight, squabble	dʒ ó r í j è
+5	Jamsay	jɛ́y	(a) fight, squabble	dʒ ɛ́ j
+6	Perge_Tegu	jáy	(a) fight, squabble	dʒ á j
+7	Gourou	záy	(a) fight, squabble	z á j
+8	Jamsay_Mondoro	jɛ́y	(a) fight, squabble	dʒ ɛ́ j
 9	Togo_Kan	já	(a) fight, squabble	dʒ á
-10	Yorno_So	jây	(a) fight, squabble	dʒ â dʒ
+10	Yorno_So	jây	(a) fight, squabble	dʒ â j
 11	Tommo_So	jáw	(a) fight, squabble	dʒ á w
 12	Tebul_Ure	zégé	(a) fight, squabble	z é ɡ é
 13	Yanda_Dom	zǎŋ	(a) fight, squabble	z ǎ ŋ
-14	Tiranige	yàŋù	(a) fight, squabble	dʒ à ŋ ù
+14	Tiranige	yàŋù	(a) fight, squabble	j à ŋ ù
 15	Mombo	jó:ⁿ	(a) fight, squabble	dʒ óːⁿ
 #
 16	Toro_Tegu	dɔ̂m	(not) yet	d ɔ̂ m
 17	Ben_Tey	dɔ̂m	(not) yet	d ɔ̂ m
 18	Bankan_Tey	jínà	(not) yet	dʒ í n à
-19	Nanga	níŋèyⁿ ŋà	(not) yet	n í ŋ è dʒⁿ # ŋ à
+19	Nanga	níŋèyⁿ ŋà	(not) yet	n í ŋ è j̃ # ŋ à
 20	Jamsay	dɔ̂m	(not) yet	d ɔ̂ m
 21	Perge_Tegu	dôm	(not) yet	d ô m
 22	Gourou	dɔ̂m	(not) yet	d ɔ̂ m
@@ -60,7 +60,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 28	Tebul_Ure	nán kàndà là	(not) yet	n á n # k à n d à # l à
 29	Mombo	tápò:ⁿ	(not) yet	t á p òːⁿ
 #
-30	Toro_Tegu	yⁿáŋ̀gó	(sb) not be (somewhere), be absent (suffixed)	dʒⁿ á ŋ̀ ɡ ó
+30	Toro_Tegu	yⁿáŋ̀gó	(sb) not be (somewhere), be absent (suffixed)	j̃ á ŋ̀ ɡ ó
 31	Ben_Tey	ŋ̀gó	(sb) not be (somewhere), be absent (suffixed)	ŋ̀ ɡ ó
 32	Bankan_Tey	ŋ̀gǒ:	(sb) not be (somewhere), be absent (suffixed)	ŋ̀ ɡ ǒː
 33	Nanga	ŋ̀gó	(sb) not be (somewhere), be absent (suffixed)	ŋ̀ ɡ ó
@@ -75,7 +75,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 42	Mombo	ólì	(sb) not be (somewhere), be absent (suffixed)	ó l ì
 43	Bunoge	ʔórì	(sb) not be (somewhere), be absent (suffixed)	ʔ ó r ì
 #
-44	Toro_Tegu	yⁿáŋ̀gó	(sth) not exist, there is/are not	dʒⁿ á ŋ̀ ɡ ó
+44	Toro_Tegu	yⁿáŋ̀gó	(sth) not exist, there is/are not	j̃ á ŋ̀ ɡ ó
 45	Ben_Tey	ŋ̀gó	(sth) not exist, there is/are not	ŋ̀ ɡ ó
 46	Bankan_Tey	ŋ̀gǒ:	(sth) not exist, there is/are not	ŋ̀ ɡ ǒː
 47	Nanga	ŋ̀gó	(sth) not exist, there is/are not	ŋ̀ ɡ ó
@@ -89,7 +89,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 55	Tebul_Ure	ŋ̀gó	(sth) not exist, there is/are not	ŋ̀ ɡ ó
 56	Yanda_Dom	ònú	(sth) not exist, there is/are not	ò n ú
 57	Tiranige	órâ	(sth) not exist, there is/are not	ó r â
-58	Mombo	kóná:ⁿ ólì	(sth) not exist, there is/are not	k ó n ã́ː # ó l ì
+58	Mombo	kóná:ⁿ ólì	(sth) not exist, there is/are not	k ó n áːⁿ # ó l ì
 59	Bunoge	ʔórì	(sth) not exist, there is/are not	ʔ ó r ì
 #
 60	Toro_Tegu	kɛ́rɛ́bɛ́rɛ́	African eggplant (similar to tomato) in two varieties	k ɛ́ r ɛ́ b ɛ́ r ɛ́
@@ -108,7 +108,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 73	Tebul_Ure	kɛ́lbá	African eggplant (similar to tomato) in two varieties	k ɛ́ l b á
 74	Yanda_Dom	cɛ́lbá	African eggplant (similar to tomato) in two varieties	tʃ ɛ́ l b á
 75	Tiranige	cɛ̀llɛ́	African eggplant (similar to tomato) in two varieties	tʃ ɛ̀ l l ɛ́
-76	Mombo	kélyé	African eggplant (similar to tomato) in two varieties	k é l dʒ é
+76	Mombo	kélyé	African eggplant (similar to tomato) in two varieties	k é l j é
 #
 77	Toro_Tegu	dìsìná:	God, Allah	d ì s ì n áː
 78	Ben_Tey	jǐŋjɛ̀	God, Allah	dʒ ǐ ŋ dʒ ɛ̀
@@ -174,34 +174,34 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 134	Toro_Tegu	síwó	animal fat (in meat)	s í w ó
 135	Ben_Tey	sî:ⁿ	animal fat (in meat)	s ĩ̂ː
 136	Bankan_Tey	sî:ⁿ	animal fat (in meat)	s ĩ̂ː
-137	Nanga	síyⁿɛ̂	animal fat (in meat)	s í dʒⁿ ɛ̂
+137	Nanga	síyⁿɛ̂	animal fat (in meat)	s í j̃ ɛ̂
 138	Jamsay	sê:	animal fat (in meat)	s êː
-139	Perge_Tegu	šíyè	animal fat (in meat)	ʃ í dʒ è
+139	Perge_Tegu	šíyè	animal fat (in meat)	ʃ í j è
 140	Jamsay_Mondoro	sê:	animal fat (in meat)	s êː
 141	Togo_Kan	nɔ̀wⁿɔ̀síwé	animal fat (in meat)	n ɔ̀ w̃ ɔ̀ s í w é
 142	Yorno_So	sî:	animal fat (in meat)	s îː
 143	Tomo_Kan_Diangassagou	swé:	animal fat (in meat)	s w éː
-144	Tommo_So	nàmà síyé	animal fat (in meat)	n à m à # s í dʒ é
+144	Tommo_So	nàmà síyé	animal fat (in meat)	n à m à # s í j é
 145	Dogul_Dom	síìŋ	animal fat (in meat)	s í ì ŋ
 146	Tebul_Ure	sé:	animal fat (in meat)	s éː
 147	Yanda_Dom	sɔ́ŋɔ̀	animal fat (in meat)	s ɔ́ ŋ ɔ̀
-148	Tiranige	sìyò	animal fat (in meat)	s ì dʒ ò
+148	Tiranige	sìyò	animal fat (in meat)	s ì j ò
 149	Mombo	síwó	animal fat (in meat)	s í w ó
 150	Bunoge	sìwò	animal fat (in meat)	s ì w ò
 #
 151	Toro_Tegu	dòwⁿòsú	ashes	d ò w̃ ò s ú
-152	Ben_Tey	dɔ̀yⁿɔ̌yⁿ	ashes	d ɔ̀ dʒⁿ ɔ̌ dʒⁿ
-153	Bankan_Tey	dɔ̀yⁿɔ̌yⁿ	ashes	d ɔ̀ dʒⁿ ɔ̌ dʒⁿ
-154	Nanga	dùyá	ashes	d ù dʒ á
-155	Jamsay	dɔ̀yⁿɔ́	ashes	d ɔ̀ dʒⁿ ɔ́
-156	Perge_Tegu	dɔ̀yⁿɔ́	ashes	d ɔ̀ dʒⁿ ɔ́
+152	Ben_Tey	dɔ̀yⁿɔ̌yⁿ	ashes	d ɔ̀ j̃ ɔ̌ j̃
+153	Bankan_Tey	dɔ̀yⁿɔ̌yⁿ	ashes	d ɔ̀ j̃ ɔ̌ j̃
+154	Nanga	dùyá	ashes	d ù j á
+155	Jamsay	dɔ̀yⁿɔ́	ashes	d ɔ̀ j̃ ɔ́
+156	Perge_Tegu	dɔ̀yⁿɔ́	ashes	d ɔ̀ j̃ ɔ́
 157	Gourou	ɛ́:rⁿɛ̀	ashes	ɛ́ː r̃ ɛ̀
-158	Togo_Kan	dɔ̀yⁿɛ́	ashes	d ɔ̀ dʒⁿ ɛ́
+158	Togo_Kan	dɔ̀yⁿɛ́	ashes	d ɔ̀ j̃ ɛ́
 159	Yorno_So	únɔ̀	ashes	ú n ɔ̀
 160	Tomo_Kan_Diangassagou	dwɛ́ⁿ	ashes	d w ɛ̃́
 161	Dogul_Dom	dɔ́ɔ̀	ashes	d ɔ́ ɔ̀
 162	Tebul_Ure	dɔ̀ɛ́	ashes	d ɔ̀ ɛ́
-163	Yanda_Dom	dɔ̀yⁿɛ̀	ashes	d ɔ̀ dʒⁿ ɛ̀
+163	Yanda_Dom	dɔ̀yⁿɛ̀	ashes	d ɔ̀ j̃ ɛ̀
 164	Tiranige	dwɛ́:	ashes	d w ɛ́ː
 165	Mombo	dwɛ̂:	ashes	d w ɛ̂ː
 #
@@ -223,22 +223,22 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 181	Bunoge	pùmbù	back (body)	p ù m b ù
 #
 182	Toro_Tegu	dìŋgú dà	be sitting (stative)	d ì ŋ ɡ ú # d à
-183	Ben_Tey	ìéwyé	be sitting (stative)	ì é w dʒ é
+183	Ben_Tey	ìéwyé	be sitting (stative)	ì é w j é
 184	Nanga	éèwò	be sitting (stative)	é è w ò
 185	Jamsay	dà:ⁿ	be sitting (stative)	d ã̀ː
 186	Perge_Tegu	dàŋgà	be sitting (stative)	d à ŋ ɡ à
 187	Jamsay_Mondoro	dà:ⁿ	be sitting (stative)	d ã̀ː
 188	Togo_Kan	dàŋà	be sitting (stative)	d à ŋ à
-189	Yorno_So	dìdâ:ⁿ	be sitting (stative)	d ì d âːⁿ
-190	Tomo_Kan_Diangassagou	yè dàʔⁿá	be sitting (stative)	dʒ è # d à ʔ á
+189	Yorno_So	dìdâ:ⁿ	be sitting (stative)	d ì d ã̂ː
+190	Tomo_Kan_Diangassagou	yè dàʔⁿá	be sitting (stative)	j è # d à ʔ á
 191	Tommo_So	dàdáá	be sitting (stative)	d à d á á
-192	Dogul_Dom	òbìyé	be sitting (stative)	ò b ì dʒ é
+192	Dogul_Dom	òbìyé	be sitting (stative)	ò b ì j é
 193	Yanda_Dom	óbò	be sitting (stative)	ó b ò
 194	Tiranige	ówà	be sitting (stative)	ó w à
-195	Mombo	dá:ⁿ	be sitting (stative)	d ã́ː
+195	Mombo	dá:ⁿ	be sitting (stative)	d áːⁿ
 #
-196	Ben_Tey	bɛ᷈yⁿ	beard	b ɛ᷈ dʒⁿ
-197	Bankan_Tey	bɛ᷈yⁿ	beard	b ɛ᷈ dʒⁿ
+196	Ben_Tey	bɛ᷈yⁿ	beard	b ɛ᷈ j̃
+197	Bankan_Tey	bɛ᷈yⁿ	beard	b ɛ᷈ j̃
 198	Nanga	bɛ̀bɛ᷈:	beard	b ɛ̀ b ɛ᷈ː
 199	Jamsay	bɛ̀w kúrɔ́	beard	b ɛ̀ w # k ú r ɔ́
 200	Perge_Tegu	bɛ̀bɛ̌w	beard	b ɛ̀ b ɛ̌ w
@@ -246,14 +246,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 202	Jamsay_Mondoro	bɛ̀w kúrɔ́	beard	b ɛ̀ w # k ú r ɔ́
 203	Togo_Kan	bɛ̌	beard	b ɛ̌
 204	Yorno_So	bɛ̌:	beard	b ɛ̌ː
-205	Tomo_Kan_Diangassagou	byà:	beard	b dʒ àː
+205	Tomo_Kan_Diangassagou	byà:	beard	b j àː
 206	Tommo_So	bɛ̀ɛ́	beard	b ɛ̀ ɛ́
-207	Tebul_Ure	bèyà:kúlà	beard	b è dʒ àː k ú l à
-208	Yanda_Dom	bìyàkùlà	beard	b ì dʒ à k ù l à
+207	Tebul_Ure	bèyà:kúlà	beard	b è j àː k ú l à
+208	Yanda_Dom	bìyàkùlà	beard	b ì j à k ù l à
 209	Mombo	bé:ⁿ kùlɛ̀	beard	b ẽ́ # k ù l ɛ̀
 210	Bunoge	ʔɔ̀ndɔ́kùlɛ̀	beard	ʔ ɔ̀ n d ɔ́ k ù l ɛ̀
 #
-211	Toro_Tegu	bèríyò	belching, burp (noun)	b è r í dʒ ò
+211	Toro_Tegu	bèríyò	belching, burp (noun)	b è r í j ò
 212	Ben_Tey	bégérè	belching, burp (noun)	b é ɡ é r è
 213	Bankan_Tey	bè:rê	belching, burp (noun)	b èː r ê
 214	Nanga	jígâ	belching, burp (noun)	dʒ í ɡ â
@@ -262,9 +262,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 217	Gourou	bégúrù	belching, burp (noun)	b é ɡ ú r ù
 218	Yorno_So	bè:gɛ̂:	belching, burp (noun)	b èː ɡ ɛ̂ː
 219	Tomo_Kan_Diangassagou	gè:	belching, burp (noun)	ɡ èː
-220	Tommo_So	gìyǎw	belching, burp (noun)	ɡ ì dʒ ǎ w
-221	Tebul_Ure	bè:líyá	belching, burp (noun)	b èː l í dʒ á
-222	Yanda_Dom	bè:lìyà	belching, burp (noun)	b èː l ì dʒ à
+220	Tommo_So	gìyǎw	belching, burp (noun)	ɡ ì j ǎ w
+221	Tebul_Ure	bè:líyá	belching, burp (noun)	b èː l í j á
+222	Yanda_Dom	bè:lìyà	belching, burp (noun)	b èː l ì j à
 223	Tiranige	bɛ́:w	belching, burp (noun)	b ɛ́ː w
 224	Mombo	gélè	belching, burp (noun)	ɡ é l è
 #
@@ -277,8 +277,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 231	Gourou	tónóróm	bell (e.g. for cow)	t ó n ó r ó m
 232	Jamsay_Mondoro	léŋgúrù	bell (e.g. for cow)	l é ŋ ɡ ú r ù
 233	Togo_Kan	tɔ̀ⁿtɔ̀rⁿɛ́	bell (e.g. for cow)	t ɔ̃̀ t ɔ̀ r̃ ɛ́
-234	Yorno_So	gàndèý	bell (e.g. for cow)	ɡ à n d è dʒ́
-235	Tommo_So	gándèy	bell (e.g. for cow)	ɡ á n d è dʒ
+234	Yorno_So	gàndèý	bell (e.g. for cow)	ɡ à n d è j́
+235	Tommo_So	gándèy	bell (e.g. for cow)	ɡ á n d è j
 236	Dogul_Dom	néɲgùrù	bell (e.g. for cow)	n é ɲ ɡ ù r ù
 237	Yanda_Dom	lèŋgúrù	bell (e.g. for cow)	l è ŋ ɡ ú r ù
 238	Mombo	tɔ́ndɔ́lɔ́	bell (e.g. for cow)	t ɔ́ n d ɔ́ l ɔ́
@@ -306,7 +306,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 258	Jamsay	kàrúm	bit (mouthpiece for horse etc.)	k à r ú m
 259	Perge_Tegu	kàrǔm	bit (mouthpiece for horse etc.)	k à r ǔ m
 260	Gourou	kàrúm	bit (mouthpiece for horse etc.)	k à r ú m
-261	Togo_Kan	kàyⁿɛ́	bit (mouthpiece for horse etc.)	k à dʒⁿ ɛ́
+261	Togo_Kan	kàyⁿɛ́	bit (mouthpiece for horse etc.)	k à j̃ ɛ́
 262	Yorno_So	kàlmú	bit (mouthpiece for horse etc.)	k à l m ú
 263	Tomo_Kan_Diangassagou	kàlàwⁿ	bit (mouthpiece for horse etc.)	k à l à w̃
 264	Tommo_So	kàlàmbú	bit (mouthpiece for horse etc.)	k à l à m b ú
@@ -316,7 +316,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 268	Bunoge	làbàŋgá	bit (mouthpiece for horse etc.)	l à b à ŋ ɡ á
 #
 269	Toro_Tegu	jɛ́m	black, dark	dʒ ɛ́ m
-270	Bankan_Tey	jɛ̀mɛ̂yⁿ	black, dark	dʒ ɛ̀ m ɛ̂ dʒⁿ
+270	Bankan_Tey	jɛ̀mɛ̂yⁿ	black, dark	dʒ ɛ̀ m ɛ̂ j̃
 271	Nanga	jɛ́mí	black, dark	dʒ ɛ́ m í
 272	Jamsay	jɛ́m	black, dark	dʒ ɛ́ m
 273	Perge_Tegu	jém	black, dark	dʒ é m
@@ -329,18 +329,18 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 280	Yanda_Dom	jèmɛ́	black, dark	dʒ è m ɛ́
 281	Tiranige	jɛ́mɛ́	black, dark	dʒ ɛ́ m ɛ́
 282	Mombo	wɛ́rɛ́dɛ́	black, dark	w ɛ́ r ɛ́ d ɛ́
-283	Bunoge	yɔ̀:lɛ̀	black, dark	dʒ ɔ̀ː l ɛ̀
+283	Bunoge	yɔ̀:lɛ̀	black, dark	j ɔ̀ː l ɛ̀
 #
 284	Toro_Tegu	pí:lòm	bladder	p íː l ò m
 285	Ben_Tey	ɔ̀mjù dérí	bladder	ɔ̀ m dʒ ù # d é r í
-286	Bankan_Tey	ɔ̀zɔ̀tǒỳ	bladder	ɔ̀ z ɔ̀ t ǒ dʒ̀
+286	Bankan_Tey	ɔ̀zɔ̀tǒỳ	bladder	ɔ̀ z ɔ̀ t ǒ j̀
 287	Nanga	ònjètúsá	bladder	ò n dʒ è t ú s á
 288	Jamsay	pí:lòm	bladder	p íː l ò m
 289	Perge_Tegu	pí:lòm	bladder	p íː l ò m
 290	Togo_Kan	ìⁿsìrⁿìjógó	bladder	ĩ̀ s ì r̃ ì dʒ ó ɡ ó
 291	Yorno_So	ìsàndǒm	bladder	ì s à n d ǒ m
 292	Tomo_Kan_Diangassagou	ʔùnjùrùsúⁿ	bladder	ʔ ù n dʒ ù r ù s ṹ
-293	Tommo_So	ǹjàrìì bǔy	bladder	ǹ dʒ à r ì ì # b ǔ dʒ
+293	Tommo_So	ǹjàrìì bǔy	bladder	ǹ dʒ à r ì ì # b ǔ j
 294	Dogul_Dom	ɲjátòŋ	bladder	ɲ dʒ á t ò ŋ
 295	Tebul_Ure	èndìlèɔ́gùbɔ̀	bladder	è n d ì l è ɔ́ ɡ ù b ɔ̀
 296	Yanda_Dom	òmzùtél	bladder	ò m z ù t é l
@@ -348,7 +348,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 298	Toro_Tegu	zòrú	blister (on skin)	z ò r ú
 299	Ben_Tey	jòrî:	blister (on skin)	dʒ ò r îː
-300	Bankan_Tey	ìrɛ̌y	blister (on skin)	ì r ɛ̌ dʒ
+300	Bankan_Tey	ìrɛ̌y	blister (on skin)	ì r ɛ̌ j
 301	Nanga	jórô	blister (on skin)	dʒ ó r ô
 302	Jamsay	jòrú	blister (on skin)	dʒ ò r ú
 303	Perge_Tegu	jórò	blister (on skin)	dʒ ó r ò
@@ -365,14 +365,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 313	Ben_Tey	gòŋgòró	blood	ɡ ò ŋ ɡ ò r ó
 314	Bankan_Tey	gòŋgòró	blood	ɡ ò ŋ ɡ ò r ó
 315	Nanga	gòndùgó	blood	ɡ ò n d ù ɡ ó
-316	Jamsay	nɛ̂yⁿ	blood	n ɛ̂ dʒⁿ
+316	Jamsay	nɛ̂yⁿ	blood	n ɛ̂ j̃
 317	Perge_Tegu	nɛ̂m	blood	n ɛ̂ m
-318	Gourou	nɛ̂yⁿ	blood	n ɛ̂ dʒⁿ
-319	Jamsay_Mondoro	nɛ̂yⁿ	blood	n ɛ̂ dʒⁿ
+318	Gourou	nɛ̂yⁿ	blood	n ɛ̂ j̃
+319	Jamsay_Mondoro	nɛ̂yⁿ	blood	n ɛ̂ j̃
 320	Togo_Kan	nɛ́	blood	n ɛ́
 321	Yorno_So	ìllî:	blood	ì l l îː
 322	Tomo_Kan_Diangassagou	ɲí:	blood	ɲ íː
-323	Tommo_So	ìlìyé	blood	ì l ì dʒ é
+323	Tommo_So	ìlìyé	blood	ì l ì j é
 324	Dogul_Dom	gìŋɛ̀nɛ́	blood	ɡ ì ŋ ɛ̀ n ɛ́
 325	Tebul_Ure	jènjé	blood	dʒ è n dʒ é
 326	Yanda_Dom	jènjù	blood	dʒ è n dʒ ù
@@ -396,8 +396,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 343	Mombo	dúmbé	blunt, not sharp (blade)	d ú m b é
 #
 344	Toro_Tegu	cìrá	bone	tʃ ì r á
-345	Ben_Tey	cìrⁿɛ̌yⁿ	bone	tʃ ì r̃ ɛ̌ dʒⁿ
-346	Bankan_Tey	kìrⁿěy	bone	k ì r̃ ě dʒ
+345	Ben_Tey	cìrⁿɛ̌yⁿ	bone	tʃ ì r̃ ɛ̌ j̃
+346	Bankan_Tey	kìrⁿěy	bone	k ì r̃ ě j
 347	Nanga	kìrⁿá	bone	k ì r̃ á
 348	Jamsay	cìrⁿé	bone	tʃ ì r̃ é
 349	Perge_Tegu	kìrⁿé	bone	k ì r̃ é
@@ -406,16 +406,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 352	Togo_Kan	kìrⁿí	bone	k ì r̃ í
 353	Yorno_So	kǐ:	bone	k ǐː
 354	Tomo_Kan_Diangassagou	cìlɛ̀	bone	tʃ ì l ɛ̀
-355	Tommo_So	kìyé	bone	k ì dʒ é
+355	Tommo_So	kìyé	bone	k ì j é
 356	Dogul_Dom	kɛ́nɛ́	bone	k ɛ́ n ɛ́
 357	Tebul_Ure	cìnǎ:	bone	tʃ ì n ǎː
 358	Yanda_Dom	kìrⁿà	bone	k ì r̃ à
 359	Tiranige	cíní	bone	tʃ í n í
 360	Mombo	gà:wⁿě:	bone	ɡ àː w̃ ěː
-361	Bunoge	gá:yè xxx	bone	ɡ áː dʒ è # x x x
+361	Bunoge	gá:yè xxx	bone	ɡ áː j è # x x x
 #
 362	Toro_Tegu	húlɛ́	boundary (of field)	h ú l ɛ́
-363	Bankan_Tey	íyà	boundary (of field)	í dʒ à
+363	Bankan_Tey	íyà	boundary (of field)	í j à
 364	Nanga	sàrⁿá	boundary (of field)	s à r̃ á
 365	Jamsay	úrɔ́	boundary (of field)	ú r ɔ́
 366	Perge_Tegu	úrɔ́	boundary (of field)	ú r ɔ́
@@ -430,13 +430,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 375	Tiranige	bɔ́wⁿ	boundary (of field)	b ɔ́ w̃
 376	Mombo	píŋgì	boundary (of field)	p í ŋ ɡ ì
 #
-377	Ben_Tey	sǔ:ⁿ	breath, breathing	s ǔːⁿ
+377	Ben_Tey	sǔ:ⁿ	breath, breathing	s ũ̌ː
 378	Bankan_Tey	sùmɔ́	breath, breathing	s ù m ɔ́
 379	Nanga	sùmó	breath, breathing	s ù m ó
-380	Jamsay	yîn	breath, breathing	dʒ î n
+380	Jamsay	yîn	breath, breathing	j î n
 381	Perge_Tegu	sùwⁿɔ́	breath, breathing	s ù w̃ ɔ́
 382	Gourou	sùwⁿó	breath, breathing	s ù w̃ ó
-383	Jamsay_Mondoro	yîn	breath, breathing	dʒ î n
+383	Jamsay_Mondoro	yîn	breath, breathing	j î n
 384	Togo_Kan	ɲíní	breath, breathing	ɲ í n í
 385	Yorno_So	nínù	breath, breathing	n í n ù
 386	Tomo_Kan_Diangassagou	ɲú:	breath, breathing	ɲ úː
@@ -447,13 +447,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 391	Mombo	nèndèlé	breath, breathing	n è n d è l é
 392	Bunoge	sìgɔ̀	breath, breathing	s ì ɡ ɔ̀
 #
-393	Ben_Tey	sǔ:ⁿ súⁿ	breathe	s ǔːⁿ # s ṹ
+393	Ben_Tey	sǔ:ⁿ súⁿ	breathe	s ũ̌ː # s ṹ
 394	Bankan_Tey	sùmɔ́ súmɔ́	breathe	s ù m ɔ́ # s ú m ɔ́
 395	Nanga	sùmó súmó	breathe	s ù m ó # s ú m ó
-396	Jamsay	yîn yìné	breathe	dʒ î n # dʒ ì n é
+396	Jamsay	yîn yìné	breathe	j î n # j ì n é
 397	Perge_Tegu	sùwⁿɔ́ súwⁿó	breathe	s ù w̃ ɔ́ # s ú w̃ ó
 398	Gourou	sùwⁿó súwⁿó	breathe	s ù w̃ ó # s ú w̃ ó
-399	Jamsay_Mondoro	yîn yìné	breathe	dʒ î n # dʒ ì n é
+399	Jamsay_Mondoro	yîn yìné	breathe	j î n # j ì n é
 400	Togo_Kan	ɲíní ɲìné	breathe	ɲ í n í # ɲ ì n é
 401	Yorno_So	nínù nínɛ́	breathe	n í n ù # n í n ɛ́
 402	Tomo_Kan_Diangassagou	ɲú: ɲùnì	breathe	ɲ úː # ɲ ù n ì
@@ -480,8 +480,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 422	Bunoge	ɲèníŋgà	broom	ɲ è n í ŋ ɡ à
 #
 423	Toro_Tegu	pùrcɛ̀tá	buttock	p ù r tʃ ɛ̀ t á
-424	Ben_Tey	bìntùmɔ̂yⁿ	buttock	b ì n t ù m ɔ̂ dʒⁿ
-425	Bankan_Tey	bù:tùmbây	buttock	b ùː t ù m b â dʒ
+424	Ben_Tey	bìntùmɔ̂yⁿ	buttock	b ì n t ù m ɔ̂ j̃
+425	Bankan_Tey	bù:tùmbây	buttock	b ùː t ù m b â j
 426	Nanga	dùmbòdúmbá	buttock	d ù m b ò d ú m b á
 427	Jamsay	bɔ̀túmó	buttock	b ɔ̀ t ú m ó
 428	Perge_Tegu	làtúmbɔ́	buttock	l à t ú m b ɔ́
@@ -505,7 +505,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 445	Jamsay_Mondoro	kàjú	calabash (general term)	k à dʒ ú
 446	Togo_Kan	kàjú	calabash (general term)	k à dʒ ú
 447	Yorno_So	kɔ̀rɔ́	calabash (general term)	k ɔ̀ r ɔ́
-448	Tomo_Kan_Diangassagou	kwɛ́y	calabash (general term)	k w ɛ́ dʒ
+448	Tomo_Kan_Diangassagou	kwɛ́y	calabash (general term)	k w ɛ́ j
 449	Tommo_So	kɔ̀rɔ́	calabash (general term)	k ɔ̀ r ɔ́
 450	Dogul_Dom	kùnnɔ́	calabash (general term)	k ù n n ɔ́
 451	Yanda_Dom	kɔ̀dɔ̀	calabash (general term)	k ɔ̀ d ɔ̀
@@ -526,19 +526,19 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 465	Tebul_Ure	tɔ̀dúgɔ́	calf (of leg)	t ɔ̀ d ú ɡ ɔ́
 466	Yanda_Dom	tɔ̀zù	calf (of leg)	t ɔ̀ z ù
 467	Tiranige	tɔ̀jɔ̀	calf (of leg)	t ɔ̀ dʒ ɔ̀
-468	Mombo	tódyè	calf (of leg)	t ó d dʒ è
+468	Mombo	tódyè	calf (of leg)	t ó d j è
 #
 469	Toro_Tegu	ɲɔ́	camel	ɲ ɔ́
 470	Ben_Tey	ɔ̀:ɲùwⁿɔ̂m	camel	ɔ̀ː ɲ ù w̃ ɔ̂ m
 471	Nanga	ɔ̀gɔ̀ɲɔ̀ŋɔ̂	camel	ɔ̀ ɡ ɔ̀ ɲ ɔ̀ ŋ ɔ̂
 472	Jamsay	ɔ̀ɣɔ̀ɲùŋó	camel	ɔ̀ ɣ ɔ̀ ɲ ù ŋ ó
 473	Perge_Tegu	ɔ̀gɔ̀ɲùwⁿó	camel	ɔ̀ ɡ ɔ̀ ɲ ù w̃ ó
-474	Gourou	ɔ̀ɣɔ̀yⁿùwⁿó	camel	ɔ̀ ɣ ɔ̀ dʒⁿ ù w̃ ó
+474	Gourou	ɔ̀ɣɔ̀yⁿùwⁿó	camel	ɔ̀ ɣ ɔ̀ j̃ ù w̃ ó
 475	Togo_Kan	ɔ̀gɔ̀ɲɔ̌	camel	ɔ̀ ɡ ɔ̀ ɲ ɔ̌
-476	Yorno_So	ɔ̀gɔ̀yɔ̌:ⁿ	camel	ɔ̀ ɡ ɔ̀ dʒ ɔ̌ːⁿ
+476	Yorno_So	ɔ̀gɔ̀yɔ̌:ⁿ	camel	ɔ̀ ɡ ɔ̀ j ɔ̌ːⁿ
 477	Tomo_Kan_Diangassagou	ɲɔ̀ʔɔ̀mɛ́	camel	ɲ ɔ̀ ʔ ɔ̀ m ɛ́
 478	Tommo_So	ɲòŋóm	camel	ɲ ò ŋ ó m
-479	Dogul_Dom	yɔ́ŋùmɛ̀	camel	dʒ ɔ́ ŋ ù m ɛ̀
+479	Dogul_Dom	yɔ́ŋùmɛ̀	camel	j ɔ́ ŋ ù m ɛ̀
 480	Tiranige	njèlèbà	camel	n dʒ è l è b à
 481	Mombo	ɲɔ̀ŋɔ̀mɛ́	camel	ɲ ɔ̀ ŋ ɔ̀ m ɛ́
 482	Bunoge	ɲɔ̀ŋɔ́mɛ̀	camel	ɲ ɔ̀ ŋ ɔ́ m ɛ̀
@@ -556,21 +556,21 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 493	Dogul_Dom	kɔ̀mùnú	carapace, shell (of tortoise)	k ɔ̀ m ù n ú
 494	Tebul_Ure	gùmbá:	carapace, shell (of tortoise)	ɡ ù m b áː
 495	Yanda_Dom	gùmà	carapace, shell (of tortoise)	ɡ ù m à
-496	Tiranige	kóy	carapace, shell (of tortoise)	k ó dʒ
+496	Tiranige	kóy	carapace, shell (of tortoise)	k ó j
 #
-497	Toro_Tegu	yɔ̌w	chaff, outer covering of grains and their connection to grain spikes	dʒ ɔ̌ w
-498	Ben_Tey	ɔ̀yⁿɔ̌yⁿ	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ dʒⁿ ɔ̌ dʒⁿ
-499	Bankan_Tey	ɔ̀ɲɔ̌y	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ ɲ ɔ̌ dʒ
-500	Nanga	ɔ̀yⁿɔ́	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ dʒⁿ ɔ́
-501	Perge_Tegu	yòyòrú	chaff, outer covering of grains and their connection to grain spikes	dʒ ò dʒ ò r ú
-502	Jamsay_Mondoro	yɔ̀:rú	chaff, outer covering of grains and their connection to grain spikes	dʒ ɔ̀ː r ú
-503	Togo_Kan	yɔ̀rú	chaff, outer covering of grains and their connection to grain spikes	dʒ ɔ̀ r ú
-504	Yorno_So	yògòtî:	chaff, outer covering of grains and their connection to grain spikes	dʒ ò ɡ ò t îː
-505	Tomo_Kan_Diangassagou	yɔ̀w	chaff, outer covering of grains and their connection to grain spikes	dʒ ɔ̀ w
-506	Tommo_So	yììgìrìyé	chaff, outer covering of grains and their connection to grain spikes	dʒ ì ì ɡ ì r ì dʒ é
+497	Toro_Tegu	yɔ̌w	chaff, outer covering of grains and their connection to grain spikes	j ɔ̌ w
+498	Ben_Tey	ɔ̀yⁿɔ̌yⁿ	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ j̃ ɔ̌ j̃
+499	Bankan_Tey	ɔ̀ɲɔ̌y	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ ɲ ɔ̌ j
+500	Nanga	ɔ̀yⁿɔ́	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ j̃ ɔ́
+501	Perge_Tegu	yòyòrú	chaff, outer covering of grains and their connection to grain spikes	j ò j ò r ú
+502	Jamsay_Mondoro	yɔ̀:rú	chaff, outer covering of grains and their connection to grain spikes	j ɔ̀ː r ú
+503	Togo_Kan	yɔ̀rú	chaff, outer covering of grains and their connection to grain spikes	j ɔ̀ r ú
+504	Yorno_So	yògòtî:	chaff, outer covering of grains and their connection to grain spikes	j ò ɡ ò t îː
+505	Tomo_Kan_Diangassagou	yɔ̀w	chaff, outer covering of grains and their connection to grain spikes	j ɔ̀ w
+506	Tommo_So	yììgìrìyé	chaff, outer covering of grains and their connection to grain spikes	j ì ì ɡ ì r ì j é
 507	Tebul_Ure	ɔ̀ɛ́	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ ɛ́
-508	Yanda_Dom	ɔ̀yɛ̀	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ dʒ ɛ̀
-509	Tiranige	ɔ́yɛ́	chaff, outer covering of grains and their connection to grain spikes	ɔ́ dʒ ɛ́
+508	Yanda_Dom	ɔ̀yɛ̀	chaff, outer covering of grains and their connection to grain spikes	ɔ̀ j ɛ̀
+509	Tiranige	ɔ́yɛ́	chaff, outer covering of grains and their connection to grain spikes	ɔ́ j ɛ́
 510	Mombo	pújù	chaff, outer covering of grains and their connection to grain spikes	p ú dʒ ù
 #
 511	Toro_Tegu	jɛ́mnɛ́	charcoal	dʒ ɛ́ m n ɛ́
@@ -600,10 +600,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 534	Tomo_Kan_Diangassagou	gɔ́ʔⁿɔ́	chest (body)	ɡ ɔ́ ʔ ɔ́
 535	Tommo_So	gèɲɲú	chest (body)	ɡ è ɲ ɲ ú
 536	Dogul_Dom	gɛ̀ɲúŋ	chest (body)	ɡ ɛ̀ ɲ ú ŋ
-537	Tebul_Ure	gwá:ⁿ	chest (body)	ɡ w ã́ː
+537	Tebul_Ure	gwá:ⁿ	chest (body)	ɡ w áːⁿ
 538	Yanda_Dom	jèɲù	chest (body)	dʒ è ɲ ù
 539	Tiranige	bémbé	chest (body)	b é m b é
-540	Mombo	gɔ̂:ⁿ	chest (body)	ɡ ɔ̂ːⁿ
+540	Mombo	gɔ̂:ⁿ	chest (body)	ɡ ɔ̃̂ː
 541	Bunoge	bɛ́mbɔ̀	chest (body)	b ɛ́ m b ɔ̀
 #
 542	Toro_Tegu	ɛ̀ⁿsàsúkú	chicken coop	ɛ̃̀ s à s ú k ú
@@ -622,26 +622,26 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 555	Bunoge	kùrùkùrú	chicken coop	k ù r ù k ù r ú
 #
 556	Toro_Tegu	bɛ̌w	chin	b ɛ̌ w
-557	Ben_Tey	òmbôy	chin	ò m b ô dʒ
-558	Bankan_Tey	ɔ̀mbɔ̂y	chin	ɔ̀ m b ɔ̂ dʒ
+557	Ben_Tey	òmbôy	chin	ò m b ô j
+558	Bankan_Tey	ɔ̀mbɔ̂y	chin	ɔ̀ m b ɔ̂ j
 559	Nanga	ɔ̀:mbɔ̂	chin	ɔ̀ː m b ɔ̂
 560	Jamsay	bɛ̌w	chin	b ɛ̌ w
 561	Gourou	bɛ̌w	chin	b ɛ̌ w
 562	Togo_Kan	bɛ̀dònó	chin	b ɛ̀ d ò n ó
 563	Yorno_So	bìbɛ̌:	chin	b ì b ɛ̌ː
-564	Tomo_Kan_Diangassagou	byà:dòndò	chin	b dʒ àː d ò n d ò
+564	Tomo_Kan_Diangassagou	byà:dòndò	chin	b j àː d ò n d ò
 565	Tommo_So	bɛ̀bɛ̀ɛ́	chin	b ɛ̀ b ɛ̀ ɛ́
 566	Dogul_Dom	ɔ́sɔ̀	chin	ɔ́ s ɔ̀
-567	Tebul_Ure	bèyǎ:	chin	b è dʒ ǎː
-568	Yanda_Dom	bìyà	chin	b ì dʒ à
-569	Tiranige	yéná	chin	dʒ é n á
+567	Tebul_Ure	bèyǎ:	chin	b è j ǎː
+568	Yanda_Dom	bìyà	chin	b ì j à
+569	Tiranige	yéná	chin	j é n á
 570	Mombo	bé:ⁿ	chin	b ẽ́
 571	Bunoge	ʔɔ́ndɔ̀	chin	ʔ ɔ́ n d ɔ̀
 #
 572	Toro_Tegu	kùrɔ́	cloud	k ù r ɔ́
-573	Ben_Tey	yàrkùrɔ́	cloud	dʒ à r k ù r ɔ́
-574	Bankan_Tey	nànà:rⁿǎyⁿ	cloud	n à n àː r̃ ǎ dʒⁿ
-575	Nanga	yàrkùmùrⁿá	cloud	dʒ à r k ù m ù r̃ á
+573	Ben_Tey	yàrkùrɔ́	cloud	j à r k ù r ɔ́
+574	Bankan_Tey	nànà:rⁿǎyⁿ	cloud	n à n àː r̃ ǎ j̃
+575	Nanga	yàrkùmùrⁿá	cloud	j à r k ù m ù r̃ á
 576	Jamsay	kùrùwɔ́	cloud	k ù r ù w ɔ́
 577	Gourou	kùrùwɔ́	cloud	k ù r ù w ɔ́
 578	Jamsay_Mondoro	kùrùwɔ́	cloud	k ù r ù w ɔ́
@@ -663,28 +663,28 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 593	Jamsay_Mondoro	tôm	cold (e.g. water)	t ô m
 594	Togo_Kan	kélú	cold (e.g. water)	k é l ú
 595	Yorno_So	kâ:l	cold (e.g. water)	k âː l
-596	Tommo_So	yégélú	cold (e.g. water)	dʒ é ɡ é l ú
+596	Tommo_So	yégélú	cold (e.g. water)	j é ɡ é l ú
 597	Dogul_Dom	kéllè	cold (e.g. water)	k é l l è
 598	Yanda_Dom	kè:zù	cold (e.g. water)	k èː z ù
 599	Tiranige	témúm	cold (e.g. water)	t é m ú m
 600	Mombo	kéló	cold (e.g. water)	k é l ó
 601	Bunoge	tòmbò	cold (e.g. water)	t ò m b ò
 #
-602	Toro_Tegu	tɔ̀rⁿíyⁿàrⁿà	corn, maize	t ɔ̀ r̃ í dʒⁿ à r̃ à
-603	Ben_Tey	bàrměyⁿ	corn, maize	b à r m ě dʒⁿ
-604	Bankan_Tey	bàràɛ̀mbɛ̌y	corn, maize	b à r à ɛ̀ m b ɛ̌ dʒ
+602	Toro_Tegu	tɔ̀rⁿíyⁿàrⁿà	corn, maize	t ɔ̀ r̃ í j̃ à r̃ à
+603	Ben_Tey	bàrměyⁿ	corn, maize	b à r m ě j̃
+604	Bankan_Tey	bàràɛ̀mbɛ̌y	corn, maize	b à r à ɛ̀ m b ɛ̌ j
 605	Nanga	jàrⁿàmbɛ́	corn, maize	dʒ à r̃ à m b ɛ́
 606	Jamsay	pòrò:ɲú:	corn, maize	p ò r òː ɲ úː
 607	Perge_Tegu	bàràɛ̀:mbɛ́	corn, maize	b à r à ɛ̀ː m b ɛ́
-608	Gourou	pòròyú:ⁿ	corn, maize	p ò r ò dʒ ṹː
+608	Gourou	pòròyú:ⁿ	corn, maize	p ò r ò j ṹː
 609	Togo_Kan	màɲɛ̀rⁿɛ̀má	corn, maize	m à ɲ ɛ̀ r̃ ɛ̀ m á
 610	Yorno_So	sàrⁿàɛ̀mɛ́	corn, maize	s à r̃ à ɛ̀ m ɛ́
 611	Tomo_Kan_Diangassagou	mànjàràɲùmà	corn, maize	m à n dʒ à r à ɲ ù m à
 612	Tommo_So	sànà ɛ̀mmɛ́	corn, maize	s à n à # ɛ̀ m m ɛ́
-613	Dogul_Dom	sàmìyógó	corn, maize	s à m ì dʒ ó ɡ ó
+613	Dogul_Dom	sàmìyógó	corn, maize	s à m ì j ó ɡ ó
 614	Tebul_Ure	sàrⁿàɛ̀mbɛ́	corn, maize	s à r̃ à ɛ̀ m b ɛ́
 615	Yanda_Dom	sànàɛ̀mɛ̀	corn, maize	s à n à ɛ̀ m ɛ̀
-616	Tiranige	dùmàyò:gé	corn, maize	d ù m à dʒ òː ɡ é
+616	Tiranige	dùmàyò:gé	corn, maize	d ù m à j òː ɡ é
 617	Mombo	ɛ̀mbɛ̀dúlúmá	corn, maize	ɛ̀ m b ɛ̀ d ú l ú m á
 618	Bunoge	dìlímà	corn, maize	d ì l í m à
 #
@@ -704,22 +704,22 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 632	Tiranige	kɔ̀:ní	cotton	k ɔ̀ː n í
 633	Mombo	kɔ́:ndí	cotton	k ɔ́ː n d í
 #
-634	Toro_Tegu	nàm gúrèy	cotton seed	n à m # ɡ ú r è dʒ
-635	Ben_Tey	nà:mbùyî:	cotton seed	n àː m b ù dʒ îː
+634	Toro_Tegu	nàm gúrèy	cotton seed	n à m # ɡ ú r è j
+635	Ben_Tey	nà:mbùyî:	cotton seed	n àː m b ù j îː
 636	Bankan_Tey	nàmùìsá	cotton seed	n à m ù ì s á
 637	Nanga	nà:mbìǹjâ	cotton seed	n àː m b ì ǹ dʒ â
 638	Jamsay	nà:mî:ⁿ	cotton seed	n àː m ĩ̂ː
 639	Perge_Tegu	nà:mî:ⁿ	cotton seed	n àː m ĩ̂ː
-640	Togo_Kan	kɔ̀nùí:ⁿ	cotton seed	k ɔ̀ n ù íːⁿ
-641	Yorno_So	nàmǐ:ⁿ	cotton seed	n à m ĩ̌ː
-642	Tomo_Kan_Diangassagou	kùnìʔí:ⁿ	cotton seed	k ù n ì ʔ íːⁿ
+640	Togo_Kan	kɔ̀nùí:ⁿ	cotton seed	k ɔ̀ n ù ĩ́ː
+641	Yorno_So	nàmǐ:ⁿ	cotton seed	n à m ǐːⁿ
+642	Tomo_Kan_Diangassagou	kùnìʔí:ⁿ	cotton seed	k ù n ì ʔ ĩ́ː
 643	Tommo_So	kɛ̀ɲɲɛ̀ íí	cotton seed	k ɛ̀ ɲ ɲ ɛ̀ # í í
-644	Tebul_Ure	cɛ̀msíyɛ́	cotton seed	tʃ ɛ̀ m s í dʒ ɛ́
-645	Yanda_Dom	cèɲíyè	cotton seed	tʃ è ɲ í dʒ è
+644	Tebul_Ure	cɛ̀msíyɛ́	cotton seed	tʃ ɛ̀ m s í j ɛ́
+645	Yanda_Dom	cèɲíyè	cotton seed	tʃ è ɲ í j è
 646	Tiranige	kɔ̀:ní sèŋgé	cotton seed	k ɔ̀ː n í # s è ŋ ɡ é
 647	Mombo	kɔ́:ndí sì	cotton seed	k ɔ́ː n d í # s ì
 #
-648	Toro_Tegu	kòsíyò	coughing (noun)	k ò s í dʒ ò
+648	Toro_Tegu	kòsíyò	coughing (noun)	k ò s í j ò
 649	Ben_Tey	kógúsò	coughing (noun)	k ó ɡ ú s ò
 650	Bankan_Tey	kòsòkósò	coughing (noun)	k ò s ò k ó s ò
 651	Nanga	kókòsô	coughing (noun)	k ó k ò s ô
@@ -737,13 +737,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 663	Bunoge	tìgò nɔ́	coughing (noun)	t ì ɡ ò # n ɔ́
 #
 664	Toro_Tegu	ìsó	country, land	ì s ó
-665	Ben_Tey	ònjǒy	country, land	ò n dʒ ǒ dʒ
-666	Bankan_Tey	òzǒy	country, land	ò z ǒ dʒ
-667	Perge_Tegu	ùsùbǎy	country, land	ù s ù b ǎ dʒ
+665	Ben_Tey	ònjǒy	country, land	ò n dʒ ǒ j
+666	Bankan_Tey	òzǒy	country, land	ò z ǒ j
+667	Perge_Tegu	ùsùbǎy	country, land	ù s ù b ǎ j
 668	Gourou	gáná	country, land	ɡ á n á
 669	Togo_Kan	gáná	country, land	ɡ á n á
 670	Yorno_So	gánà	country, land	ɡ á n à
-671	Tommo_So	yàlú	country, land	dʒ à l ú
+671	Tommo_So	yàlú	country, land	j à l ú
 672	Dogul_Dom	jàmáná	country, land	dʒ à m á n á
 673	Tebul_Ure	gándá	country, land	ɡ á n d á
 674	Yanda_Dom	gàná	country, land	ɡ à n á
@@ -752,8 +752,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 677	Bunoge	gàndà	country, land	ɡ à n d à
 #
 678	Toro_Tegu	gállè	courtyard (enclosed by walls)	ɡ á l l è
-679	Ben_Tey	dámáy	courtyard (enclosed by walls)	d á m á dʒ
-680	Bankan_Tey	dámbáy	courtyard (enclosed by walls)	d á m b á dʒ
+679	Ben_Tey	dámáy	courtyard (enclosed by walls)	d á m á j
+680	Bankan_Tey	dámbáy	courtyard (enclosed by walls)	d á m b á j
 681	Nanga	dámbí	courtyard (enclosed by walls)	d á m b í
 682	Perge_Tegu	dá:m	courtyard (enclosed by walls)	d áː m
 683	Gourou	dà:ràkɛ́nɛ́	courtyard (enclosed by walls)	d àː r à k ɛ́ n ɛ́
@@ -822,23 +822,23 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 742	Jamsay_Mondoro	èjú	cultivated field (for millet etc.) (general word)	è dʒ ú
 743	Togo_Kan	wòrú	cultivated field (for millet etc.) (general word)	w ò r ú
 744	Yorno_So	mìnɛ́	cultivated field (for millet etc.) (general word)	m ì n ɛ́
-745	Tomo_Kan_Diangassagou	ʔyéy	cultivated field (for millet etc.) (general word)	ʔ dʒ é dʒ
+745	Tomo_Kan_Diangassagou	ʔyéy	cultivated field (for millet etc.) (general word)	ʔ j é j
 746	Tommo_So	mìnnɛ́	cultivated field (for millet etc.) (general word)	m ì n n ɛ́
 747	Dogul_Dom	ɔ́ŋùnù	cultivated field (for millet etc.) (general word)	ɔ́ ŋ ù n ù
-748	Tiranige	yálá	cultivated field (for millet etc.) (general word)	dʒ á l á
-749	Mombo	yàlà kúbyè	cultivated field (for millet etc.) (general word)	dʒ à l à # k ú b dʒ è
+748	Tiranige	yálá	cultivated field (for millet etc.) (general word)	j á l á
+749	Mombo	yàlà kúbyè	cultivated field (for millet etc.) (general word)	j à l à # k ú b j è
 750	Bunoge	bílà	cultivated field (for millet etc.) (general word)	b í l à
 #
 751	Toro_Tegu	ɛ̀ŋìnɛ̀ cérúcété	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ ŋ ì n ɛ̀ # tʃ é r ú tʃ é t é
-752	Ben_Tey	ɛ̀lɛ̀y jèwⁿêyⁿ	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ l ɛ̀ dʒ # dʒ è w̃ ê dʒⁿ
-753	Bankan_Tey	ɛ̀rɛ̀rɛ̀y pèrém	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ r ɛ̀ r ɛ̀ dʒ # p è r é m
+752	Ben_Tey	ɛ̀lɛ̀y jèwⁿêyⁿ	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ l ɛ̀ j # dʒ è w̃ ê j̃
+753	Bankan_Tey	ɛ̀rɛ̀rɛ̀y pèrém	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ r ɛ̀ r ɛ̀ j # p è r é m
 754	Nanga	ɛ̀:rɛ̀ jɛ́mí	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː r ɛ̀ # dʒ ɛ́ m í
 755	Jamsay	ɛ̀:rɛ̀ná:	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː r ɛ̀ n áː
 756	Perge_Tegu	ɛ̀:rɛ̀ jém	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː r ɛ̀ # dʒ é m
 757	Gourou	ɛ̀:rɛ̀ ná:	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː r ɛ̀ # n áː
 758	Togo_Kan	ɛ̀:rɛ̀ ná:	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː r ɛ̀ # n áː
 759	Yorno_So	ɛ̀gɛ̀lɛ̀ gɛ̂m	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ ɡ ɛ̀ l ɛ̀ # ɡ ɛ̂ m
-760	Tomo_Kan_Diangassagou	ʔyɛ̀:lɛ́	cultivated groundnut (Vigna subterranea), similar to peanut	ʔ dʒ ɛ̀ː l ɛ́
+760	Tomo_Kan_Diangassagou	ʔyɛ̀:lɛ́	cultivated groundnut (Vigna subterranea), similar to peanut	ʔ j ɛ̀ː l ɛ́
 761	Dogul_Dom	ɛ̀gɛ̀lɛ̀ dénnòò	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ ɡ ɛ̀ l ɛ̀ # d é n n ò ò
 762	Tebul_Ure	ɛ̀jɛ̀: jɛ́mɛ̀:	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ dʒ ɛ̀ː # dʒ ɛ́ m ɛ̀ː
 763	Tiranige	ɛ̀:lɛ̀ŋgè	cultivated groundnut (Vigna subterranea), similar to peanut	ɛ̀ː l ɛ̀ ŋ ɡ è
@@ -847,14 +847,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 766	Toro_Tegu	nátì	cultivated sesame (Sesamum indicum)	n á t ì
 767	Ben_Tey	námjú	cultivated sesame (Sesamum indicum)	n á m dʒ ú
-768	Bankan_Tey	àrɲɛ̌yⁿ	cultivated sesame (Sesamum indicum)	à r ɲ ɛ̌ dʒⁿ
+768	Bankan_Tey	àrɲɛ̌yⁿ	cultivated sesame (Sesamum indicum)	à r ɲ ɛ̌ j̃
 769	Nanga	ɛ̀síkɛ̌:ndɛ̂	cultivated sesame (Sesamum indicum)	ɛ̀ s í k ɛ̌ː n d ɛ̂
 770	Jamsay	námɲú	cultivated sesame (Sesamum indicum)	n á m ɲ ú
-771	Perge_Tegu	pɔ̌y	cultivated sesame (Sesamum indicum)	p ɔ̌ dʒ
+771	Perge_Tegu	pɔ̌y	cultivated sesame (Sesamum indicum)	p ɔ̌ j
 772	Jamsay_Mondoro	námɲú	cultivated sesame (Sesamum indicum)	n á m ɲ ú
 773	Togo_Kan	pɔ̀rú	cultivated sesame (Sesamum indicum)	p ɔ̀ r ú
 774	Tomo_Kan_Diangassagou	hʷùhʷóⁿ	cultivated sesame (Sesamum indicum)	hʷ ù hʷ ṍ
-775	Tommo_So	pɔ̀lìý	cultivated sesame (Sesamum indicum)	p ɔ̀ l ì dʒ́
+775	Tommo_So	pɔ̀lìý	cultivated sesame (Sesamum indicum)	p ɔ̀ l ì j́
 776	Tebul_Ure	pɔ̀lɛ́:	cultivated sesame (Sesamum indicum)	p ɔ̀ l ɛ́ː
 777	Yanda_Dom	pàl	cultivated sesame (Sesamum indicum)	p à l
 778	Tiranige	pàlèŋgé	cultivated sesame (Sesamum indicum)	p à l è ŋ ɡ é
@@ -862,8 +862,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 780	Bunoge	pàlígè	cultivated sesame (Sesamum indicum)	p à l í ɡ è
 #
 781	Toro_Tegu	ɛ̀m nôm	curdled milk (beverage)	ɛ̀ m # n ô m
-782	Ben_Tey	ɛ̀wⁿɛ̀yⁿ ìrɛ̌y	curdled milk (beverage)	ɛ̀ w̃ ɛ̀ dʒⁿ # ì r ɛ̌ dʒ
-783	Bankan_Tey	ɛ̀mmɛ̀yⁿ párùm	curdled milk (beverage)	ɛ̀ m m ɛ̀ dʒⁿ # p á r ù m
+782	Ben_Tey	ɛ̀wⁿɛ̀yⁿ ìrɛ̌y	curdled milk (beverage)	ɛ̀ w̃ ɛ̀ j̃ # ì r ɛ̌ j
+783	Bankan_Tey	ɛ̀mmɛ̀yⁿ párùm	curdled milk (beverage)	ɛ̀ m m ɛ̀ j̃ # p á r ù m
 784	Nanga	ɛ̀mɛ̀ ìrɛ́	curdled milk (beverage)	ɛ̀ m ɛ̀ # ì r ɛ́
 785	Jamsay	ɛ̀m ìrɛ́	curdled milk (beverage)	ɛ̀ m # ì r ɛ́
 786	Perge_Tegu	ɛ̀m ìrɛ́	curdled milk (beverage)	ɛ̀ m # ì r ɛ́
@@ -880,7 +880,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 797	Toro_Tegu	mìrⁿú	cut (small wound)	m ì r̃ ú
 798	Ben_Tey	mi᷈:	cut (small wound)	m i᷈
-799	Bankan_Tey	mìyⁿɛ̂	cut (small wound)	m ì dʒⁿ ɛ̂
+799	Bankan_Tey	mìyⁿɛ̂	cut (small wound)	m ì j̃ ɛ̂
 800	Nanga	mɔ᷈:	cut (small wound)	m ɔ᷈ː
 801	Jamsay	mɛ̌n	cut (small wound)	m ɛ̌ n
 802	Perge_Tegu	mɛ̀rⁿú	cut (small wound)	m ɛ̀ r̃ ú
@@ -889,7 +889,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 805	Togo_Kan	mɛ̌	cut (small wound)	m ɛ̌
 806	Yorno_So	mǐn	cut (small wound)	m ǐ n
 807	Tommo_So	mìnú	cut (small wound)	m ì n ú
-808	Tebul_Ure	mǔ:ⁿ	cut (small wound)	m ǔːⁿ
+808	Tebul_Ure	mǔ:ⁿ	cut (small wound)	m ũ̌ː
 809	Yanda_Dom	làdù	cut (small wound)	l à d ù
 810	Mombo	ní:nà	cut (small wound)	n íː n à
 #
@@ -897,20 +897,20 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 812	Ben_Tey	bɔ̀ndùnǐ:	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ɔ̀ n d ù n ǐː
 813	Nanga	bɔ̀rⁿù gàŋgǎŋ	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ɔ̀ r̃ ù # ɡ à ŋ ɡ ǎ ŋ
 814	Jamsay	bèndǔn	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b è n d ǔ n
-815	Perge_Tegu	dɛ̌:ⁿ bɔ́rⁿù	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	d ɛ̌ːⁿ # b ɔ́ r̃ ù
+815	Perge_Tegu	dɛ̌:ⁿ bɔ́rⁿù	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	d ɛ̃̌ː # b ɔ́ r̃ ù
 816	Gourou	bèndǔn	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b è n d ǔ n
 817	Jamsay_Mondoro	bèndǔn	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b è n d ǔ n
 818	Togo_Kan	bɔ̀ⁿgà:ŋú	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ɔ̃̀ ɡ àː ŋ ú
-819	Yorno_So	bòy yǎ:	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ò dʒ # dʒ ǎː
-820	Tommo_So	yárábá	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	dʒ á r á b á
+819	Yorno_So	bòy yǎ:	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ò j # j ǎː
+820	Tommo_So	yárábá	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	j á r á b á
 821	Dogul_Dom	gàŋgá	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	ɡ à ŋ ɡ á
 822	Tebul_Ure	dógàŋgàm	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	d ó ɡ à ŋ ɡ à m
-823	Yanda_Dom	yàrbà	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	dʒ à r b à
+823	Yanda_Dom	yàrbà	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	j à r b à
 824	Mombo	bòlì dé:jé	cylindrical tomtom carried on hip with a shoulder strap, wooden or metal sides, beaten with one or two simple sticks or curved tapsticks	b ò l ì # d éː dʒ é
 #
-825	Ben_Tey	jìyé jìyé	dance (=perform) a dance	dʒ ì dʒ é # dʒ ì dʒ é
-826	Bankan_Tey	jěy jé	dance (=perform) a dance	dʒ ě dʒ # dʒ é
-827	Nanga	gìyé gìyé	dance (=perform) a dance	ɡ ì dʒ é # ɡ ì dʒ é
+825	Ben_Tey	jìyé jìyé	dance (=perform) a dance	dʒ ì j é # dʒ ì j é
+826	Bankan_Tey	jěy jé	dance (=perform) a dance	dʒ ě j # dʒ é
+827	Nanga	gìyé gìyé	dance (=perform) a dance	ɡ ì j é # ɡ ì j é
 828	Jamsay	gɔ́: gɔ̌:	dance (=perform) a dance	ɡ ɔ́ː # ɡ ɔ̌ː
 829	Perge_Tegu	gɔ́: gɔ̌:	dance (=perform) a dance	ɡ ɔ́ː # ɡ ɔ̌ː
 830	Gourou	gɔ́: gɔ̌:	dance (=perform) a dance	ɡ ɔ́ː # ɡ ɔ̌ː
@@ -918,16 +918,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 832	Togo_Kan	gɔ́: gɔ̌:	dance (=perform) a dance	ɡ ɔ́ː # ɡ ɔ̌ː
 833	Yorno_So	gɔ́: gɔ̌:	dance (=perform) a dance	ɡ ɔ́ː # ɡ ɔ̌ː
 834	Tommo_So	gɔ̀ɔ́	dance (=perform) a dance	ɡ ɔ̀ ɔ́
-835	Dogul_Dom	gìyé gíyò	dance (=perform) a dance	ɡ ì dʒ é # ɡ í dʒ ò
+835	Dogul_Dom	gìyé gíyò	dance (=perform) a dance	ɡ ì j é # ɡ í j ò
 836	Yanda_Dom	jà: jé	dance (=perform) a dance	dʒ àː # dʒ é
-837	Tiranige	yèw yɛ́wɔ́	dance (=perform) a dance	dʒ è w # dʒ ɛ́ w ɔ́
-838	Mombo	yɛ̀bù yɛ́bɛ́	dance (=perform) a dance	dʒ ɛ̀ b ù # dʒ ɛ́ b ɛ́
-839	Bunoge	yóbù yɔ́bɛ̀	dance (=perform) a dance	dʒ ó b ù # dʒ ɔ́ b ɛ̀
+837	Tiranige	yèw yɛ́wɔ́	dance (=perform) a dance	j è w # j ɛ́ w ɔ́
+838	Mombo	yɛ̀bù yɛ́bɛ́	dance (=perform) a dance	j ɛ̀ b ù # j ɛ́ b ɛ́
+839	Bunoge	yóbù yɔ́bɛ̀	dance (=perform) a dance	j ó b ù # j ɔ́ b ɛ̀
 #
 840	Toro_Tegu	jɛ́	dance (noun)	dʒ ɛ́
-841	Ben_Tey	jìyé	dance (noun)	dʒ ì dʒ é
-842	Bankan_Tey	jěy	dance (noun)	dʒ ě dʒ
-843	Nanga	gìyé	dance (noun)	ɡ ì dʒ é
+841	Ben_Tey	jìyé	dance (noun)	dʒ ì j é
+842	Bankan_Tey	jěy	dance (noun)	dʒ ě j
+843	Nanga	gìyé	dance (noun)	ɡ ì j é
 844	Jamsay	gɔ́:	dance (noun)	ɡ ɔ́ː
 845	Perge_Tegu	gɔ́:	dance (noun)	ɡ ɔ́ː
 846	Gourou	gɔ́:	dance (noun)	ɡ ɔ́ː
@@ -935,12 +935,12 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 848	Togo_Kan	gɔ́:	dance (noun)	ɡ ɔ́ː
 849	Yorno_So	gɔ́:	dance (noun)	ɡ ɔ́ː
 850	Tommo_So	gɔ́ɔ́	dance (noun)	ɡ ɔ́ ɔ́
-851	Dogul_Dom	gíyò	dance (noun)	ɡ í dʒ ò
+851	Dogul_Dom	gíyò	dance (noun)	ɡ í j ò
 852	Tebul_Ure	jě	dance (noun)	dʒ ě
 853	Yanda_Dom	jà:	dance (noun)	dʒ àː
-854	Tiranige	yèw	dance (noun)	dʒ è w
-855	Mombo	yɛ́bù	dance (noun)	dʒ ɛ́ b ù
-856	Bunoge	yóbù	dance (noun)	dʒ ó b ù
+854	Tiranige	yèw	dance (noun)	j è w
+855	Mombo	yɛ́bù	dance (noun)	j ɛ́ b ù
+856	Bunoge	yóbù	dance (noun)	j ó b ù
 #
 857	Toro_Tegu	nòndérⁿá	day (as unit of time)	n ò n d é r̃ á
 858	Ben_Tey	ùsú	day (as unit of time)	ù s ú
@@ -950,8 +950,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 862	Perge_Tegu	nǐ:	day (as unit of time)	n ǐː
 863	Gourou	nǐ:	day (as unit of time)	n ǐː
 864	Togo_Kan	nìŋìrⁿí	day (as unit of time)	n ì ŋ ì r̃ í
-865	Yorno_So	bǎy	day (as unit of time)	b ǎ dʒ
-866	Tommo_So	bǎy	day (as unit of time)	b ǎ dʒ
+865	Yorno_So	bǎy	day (as unit of time)	b ǎ j
+866	Tommo_So	bǎy	day (as unit of time)	b ǎ j
 867	Dogul_Dom	ísìgà	day (as unit of time)	í s ì ɡ à
 868	Tebul_Ure	nìŋgèbé:	day (as unit of time)	n ì ŋ ɡ è b éː
 869	Yanda_Dom	bàdèm	day (as unit of time)	b à d è m
@@ -965,9 +965,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 876	Jamsay	nùwⁿó	death	n ù w̃ ó
 877	Perge_Tegu	nùwⁿó	death	n ù w̃ ó
 878	Togo_Kan	nǔ:	death	n ǔː
-879	Yorno_So	yǐm	death	dʒ ǐ m
+879	Yorno_So	yǐm	death	j ǐ m
 880	Tomo_Kan_Diangassagou	nùmù	death	n ù m ù
-881	Tommo_So	yìmú	death	dʒ ì m ú
+881	Tommo_So	yìmú	death	j ì m ú
 882	Dogul_Dom	tìbɔ́	death	t ì b ɔ́
 883	Tebul_Ure	tìbá	death	t ì b á
 884	Yanda_Dom	tìbɛ̀	death	t ì b ɛ̀
@@ -987,13 +987,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 897	Tommo_So	tòógó	deep (hole, well)	t ò ó ɡ ó
 898	Dogul_Dom	mínù	deep (hole, well)	m í n ù
 899	Tebul_Ure	tó:ŋgó	deep (hole, well)	t óː ŋ ɡ ó
-900	Yanda_Dom	tòyⁿ	deep (hole, well)	t ò dʒⁿ
+900	Yanda_Dom	tòyⁿ	deep (hole, well)	t ò j̃
 901	Tiranige	nímí	deep (hole, well)	n í m í
 902	Mombo	súmbù	deep (hole, well)	s ú m b ù
 903	Bunoge	gìmbò	deep (hole, well)	ɡ ì m b ò
 #
 904	Toro_Tegu	lùrɔ́	disease, sickness, illness (general term)	l ù r ɔ́
-905	Ben_Tey	ɔ̀:rɔ̌y	disease, sickness, illness (general term)	ɔ̀ː r ɔ̌ dʒ
+905	Ben_Tey	ɔ̀:rɔ̌y	disease, sickness, illness (general term)	ɔ̀ː r ɔ̌ j
 906	Bankan_Tey	ɔ̀:rɔ̌n xxx	disease, sickness, illness (general term)	ɔ̀ː r ɔ̌ n # x x x
 907	Nanga	mùrⁿá	disease, sickness, illness (general term)	m ù r̃ á
 908	Jamsay	sì:ⁿlɛ́	disease, sickness, illness (general term)	s ìːⁿ l ɛ́
@@ -1026,13 +1026,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 933	Toro_Tegu	gá:mú	door shutter (wooden plank)	ɡ áː m ú
 934	Ben_Tey	ta᷈:ⁿ	door shutter (wooden plank)	t a᷈ːⁿ
 935	Bankan_Tey	ta᷈:ⁿ	door shutter (wooden plank)	t a᷈ːⁿ
-936	Nanga	kìyⁿâ	door shutter (wooden plank)	k ì dʒⁿ â
+936	Nanga	kìyⁿâ	door shutter (wooden plank)	k ì j̃ â
 937	Jamsay	cɛ́wɛ́	door shutter (wooden plank)	tʃ ɛ́ w ɛ́
 938	Perge_Tegu	cíŋgɛ̀	door shutter (wooden plank)	tʃ í ŋ ɡ ɛ̀
 939	Gourou	kɛ́wɛ́	door shutter (wooden plank)	k ɛ́ w ɛ́
 940	Jamsay_Mondoro	cɛ́wɛ́	door shutter (wooden plank)	tʃ ɛ́ w ɛ́
 941	Togo_Kan	kɛ́wɛ́	door shutter (wooden plank)	k ɛ́ w ɛ́
-942	Yorno_So	tǎ:ⁿ	door shutter (wooden plank)	t ǎːⁿ
+942	Yorno_So	tǎ:ⁿ	door shutter (wooden plank)	t ã̌ː
 943	Tommo_So	táá	door shutter (wooden plank)	t á á
 944	Tebul_Ure	káŋgá	door shutter (wooden plank)	k á ŋ ɡ á
 945	Yanda_Dom	sáŋ	door shutter (wooden plank)	s á ŋ
@@ -1057,35 +1057,35 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 962	Ben_Tey	dírè	dream (noun)	d í r è
 963	Bankan_Tey	dírè	dream (noun)	d í r è
 964	Nanga	mónjórò	dream (noun)	m ó n dʒ ó r ò
-965	Jamsay	yàŋàmúɲù	dream (noun)	dʒ à ŋ à m ú ɲ ù
+965	Jamsay	yàŋàmúɲù	dream (noun)	j à ŋ à m ú ɲ ù
 966	Perge_Tegu	mɔ́:ɲù	dream (noun)	m ɔ́ː ɲ ù
-967	Gourou	yⁿàŋàmósù	dream (noun)	dʒⁿ à ŋ à m ó s ù
-968	Jamsay_Mondoro	yàŋàmúɲù	dream (noun)	dʒ à ŋ à m ú ɲ ù
+967	Gourou	yⁿàŋàmósù	dream (noun)	j̃ à ŋ à m ó s ù
+968	Jamsay_Mondoro	yàŋàmúɲù	dream (noun)	j à ŋ à m ú ɲ ù
 969	Togo_Kan	ɲà:múɲúrⁿú	dream (noun)	ɲ àː m ú ɲ ú r̃ ú
-970	Yorno_So	yàŋàyêl	dream (noun)	dʒ à ŋ à dʒ ê l
-971	Tommo_So	yàŋà yélú	dream (noun)	dʒ à ŋ à # dʒ é l ú
-972	Dogul_Dom	yàmìyó	dream (noun)	dʒ à m ì dʒ ó
+970	Yorno_So	yàŋàyêl	dream (noun)	j à ŋ à j ê l
+971	Tommo_So	yàŋà yélú	dream (noun)	j à ŋ à # j é l ú
+972	Dogul_Dom	yàmìyó	dream (noun)	j à m ì j ó
 973	Yanda_Dom	mà:zìndù	dream (noun)	m àː z ì n d ù
 974	Mombo	ámánjì	dream (noun)	á m á n dʒ ì
 #
 975	Toro_Tegu	nàwⁿà ɛ́tú	dried meat	n à w̃ à # ɛ́ t ú
-976	Ben_Tey	nàwⁿà: mǎ:ⁿ	dried meat	n à w̃ àː # m ǎːⁿ
+976	Ben_Tey	nàwⁿà: mǎ:ⁿ	dried meat	n à w̃ àː # m ã̌ː
 977	Bankan_Tey	nàmà: mǎ:	dried meat	n à m àː # m ǎː
 978	Nanga	nàmà mǎ:	dried meat	n à m à # m ǎː
-979	Jamsay	nɔ̀wⁿɔ̀ mǎyⁿ	dried meat	n ɔ̀ w̃ ɔ̀ # m ǎ dʒⁿ
-980	Perge_Tegu	nàwⁿà mǎyⁿ	dried meat	n à w̃ à # m ǎ dʒⁿ
+979	Jamsay	nɔ̀wⁿɔ̀ mǎyⁿ	dried meat	n ɔ̀ w̃ ɔ̀ # m ǎ j̃
+980	Perge_Tegu	nàwⁿà mǎyⁿ	dried meat	n à w̃ à # m ǎ j̃
 981	Togo_Kan	nɔ̀wⁿɔ̀ mǎ	dried meat	n ɔ̀ w̃ ɔ̀ # m ǎ
 982	Yorno_So	nàwⁿà mǎ:	dried meat	n à w̃ à # m ǎː
-983	Tomo_Kan_Diangassagou	nàmà měyⁿ	dried meat	n à m à # m ě dʒⁿ
+983	Tomo_Kan_Diangassagou	nàmà měyⁿ	dried meat	n à m à # m ě j̃
 984	Tommo_So	nàmà màá	dried meat	n à m à # m à á
 985	Dogul_Dom	nàmàà màɲó	dried meat	n à m à à # m à ɲ ó
-986	Tebul_Ure	nàmà màygɔ́	dried meat	n à m à # m à dʒ ɡ ɔ́
-987	Yanda_Dom	nàmà màyⁿ	dried meat	n à m à # m à dʒⁿ
-988	Tiranige	nàmà máníyésá	dried meat	n à m à # m á n í dʒ é s á
+986	Tebul_Ure	nàmà màygɔ́	dried meat	n à m à # m à j ɡ ɔ́
+987	Yanda_Dom	nàmà màyⁿ	dried meat	n à m à # m à j̃
+988	Tiranige	nàmà máníyésá	dried meat	n à m à # m á n í j é s á
 #
 989	Toro_Tegu	kúsò	dust	k ú s ò
-990	Ben_Tey	kùkɔ̀rɔ̌y	dust	k ù k ɔ̀ r ɔ̌ dʒ
-991	Bankan_Tey	kɔ̀kɔ̀rɔ̌y	dust	k ɔ̀ k ɔ̀ r ɔ̌ dʒ
+990	Ben_Tey	kùkɔ̀rɔ̌y	dust	k ù k ɔ̀ r ɔ̌ j
+991	Bankan_Tey	kɔ̀kɔ̀rɔ̌y	dust	k ɔ̀ k ɔ̀ r ɔ̌ j
 992	Nanga	kɔ́ŋgɔ̀	dust	k ɔ́ ŋ ɡ ɔ̀
 993	Jamsay	kɔ́ŋɔ̀	dust	k ɔ́ ŋ ɔ̀
 994	Gourou	kɔ́ŋɔ̀	dust	k ɔ́ ŋ ɔ̀
@@ -1152,8 +1152,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1052	Tiranige	tɛ́mɔ́	eat (snack, e.g. peanuts, dates, biscuits)	t ɛ́ m ɔ́
 1053	Mombo	tɛ́mɛ́	eat (snack, e.g. peanuts, dates, biscuits)	t ɛ́ m ɛ́
 #
-1054	Ben_Tey	ɲɛ̌yⁿ ɲɛ́	eat a meal	ɲ ɛ̌ dʒⁿ # ɲ ɛ́
-1055	Bankan_Tey	ɲɛ̌yⁿ ɲɛ́	eat a meal	ɲ ɛ̌ dʒⁿ # ɲ ɛ́
+1054	Ben_Tey	ɲɛ̌yⁿ ɲɛ́	eat a meal	ɲ ɛ̌ j̃ # ɲ ɛ́
+1055	Bankan_Tey	ɲɛ̌yⁿ ɲɛ́	eat a meal	ɲ ɛ̌ j̃ # ɲ ɛ́
 1056	Nanga	ɲǎ: kɔ́:	eat a meal	ɲ ǎː # k ɔ́ː
 1057	Jamsay	ɲǎ: ɲɛ́:	eat a meal	ɲ ǎː # ɲ ɛ́ː
 1058	Perge_Tegu	já: ɲɛ́:	eat a meal	dʒ áː # ɲ ɛ́ː
@@ -1161,7 +1161,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1060	Togo_Kan	ɲǎ: ɲí:	eat a meal	ɲ ǎː # ɲ íː
 1061	Yorno_So	jâ: ká:	eat a meal	dʒ âː # k áː
 1062	Tomo_Kan_Diangassagou	ɲà: ɲɛ́:	eat a meal	ɲ àː # ɲ ɛ́ː
-1063	Tommo_So	jáá ńyɛ́	eat a meal	dʒ á á # ń dʒ ɛ́
+1063	Tommo_So	jáá ńyɛ́	eat a meal	dʒ á á # ń j ɛ́
 1064	Dogul_Dom	ɲàáŋ ɲɛ̀ɛ́	eat a meal	ɲ à á ŋ # ɲ ɛ̀ ɛ́
 1065	Yanda_Dom	zá ʔə́ɲɛ́	eat a meal	z á # ʔ ə́ ɲ ɛ́
 1066	Tiranige	ɲà:ŋgè ɲɔ́:	eat a meal	ɲ àː ŋ ɡ è # ɲ ɔ́ː
@@ -1186,8 +1186,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1084	Bunoge	pòléŋgè	egg	p ò l é ŋ ɡ è
 #
 1085	Toro_Tegu	gá:rà	eight	ɡ áː r à
-1086	Ben_Tey	gá:rày	eight	ɡ áː r à dʒ
-1087	Bankan_Tey	gá:rày	eight	ɡ áː r à dʒ
+1086	Ben_Tey	gá:rày	eight	ɡ áː r à j
+1087	Bankan_Tey	gá:rày	eight	ɡ áː r à j
 1088	Nanga	gá:rɛ̀	eight	ɡ áː r ɛ̀
 1089	Jamsay	gá:rà	eight	ɡ áː r à
 1090	Perge_Tegu	gá:rà	eight	ɡ áː r à
@@ -1210,7 +1210,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1106	Gourou	bɛ́:	excrement, shit (noun)	b ɛ́ː
 1107	Togo_Kan	bɛ́:	excrement, shit (noun)	b ɛ́ː
 1108	Yorno_So	bɔ́jɔ̀	excrement, shit (noun)	b ɔ́ dʒ ɔ̀
-1109	Tomo_Kan_Diangassagou	byɛ́:	excrement, shit (noun)	b dʒ ɛ́ː
+1109	Tomo_Kan_Diangassagou	byɛ́:	excrement, shit (noun)	b j ɛ́ː
 1110	Tommo_So	bɔ́dɔ́	excrement, shit (noun)	b ɔ́ d ɔ́
 1111	Dogul_Dom	sùgɔ́	excrement, shit (noun)	s ù ɡ ɔ́
 1112	Tebul_Ure	sùgǎ:	excrement, shit (noun)	s ù ɡ ǎː
@@ -1228,7 +1228,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1123	Jamsay_Mondoro	jìré	eye	dʒ ì r é
 1124	Togo_Kan	gìré	eye	ɡ ì r é
 1125	Yorno_So	gìrǐ:	eye	ɡ ì r ǐː
-1126	Tomo_Kan_Diangassagou	jìrí:ⁿ	eye	dʒ ì r íːⁿ
+1126	Tomo_Kan_Diangassagou	jìrí:ⁿ	eye	dʒ ì r ĩ́ː
 1127	Tommo_So	gìré	eye	ɡ ì r é
 1128	Dogul_Dom	gìró	eye	ɡ ì r ó
 1129	Tiranige	jíró	eye	dʒ í r ó
@@ -1237,11 +1237,11 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 1132	Ben_Tey	òròsú	fabric, cloth	ò r ò s ú
 1133	Bankan_Tey	òròzú	fabric, cloth	ò r ò z ú
-1134	Nanga	yùrí	fabric, cloth	dʒ ù r í
-1135	Perge_Tegu	yùrú	fabric, cloth	dʒ ù r ú
-1136	Jamsay_Mondoro	yìrú	fabric, cloth	dʒ ì r ú
+1134	Nanga	yùrí	fabric, cloth	j ù r í
+1135	Perge_Tegu	yùrú	fabric, cloth	j ù r ú
+1136	Jamsay_Mondoro	yìrú	fabric, cloth	j ì r ú
 1137	Togo_Kan	tǔⁿ	fabric, cloth	t ũ̌
-1138	Yorno_So	sɔ̌y	fabric, cloth	s ɔ̌ dʒ
+1138	Yorno_So	sɔ̌y	fabric, cloth	s ɔ̌ j
 1139	Tomo_Kan_Diangassagou	tùsàlà	fabric, cloth	t ù s à l à
 1140	Tommo_So	sɔ̌w	fabric, cloth	s ɔ̌ w
 1141	Dogul_Dom	sɔ̀wɔ́g	fabric, cloth	s ɔ̀ w ɔ́ ɡ
@@ -1285,25 +1285,25 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1177	Bunoge	wàgì	far, distant	w à ɡ ì
 #
 1178	Toro_Tegu	zîwⁿ	fart (noun)	z î w̃
-1179	Ben_Tey	gíyⁿ	fart (noun)	ɡ í dʒⁿ
-1180	Bankan_Tey	zǐ:ⁿ	fart (noun)	z ĩ̌ː
-1181	Nanga	gìyⁿɛ́	fart (noun)	ɡ ì dʒⁿ ɛ́
+1179	Ben_Tey	gíyⁿ	fart (noun)	ɡ í j̃
+1180	Bankan_Tey	zǐ:ⁿ	fart (noun)	z ǐːⁿ
+1181	Nanga	gìyⁿɛ́	fart (noun)	ɡ ì j̃ ɛ́
 1182	Jamsay	jî:ⁿ	fart (noun)	dʒ ĩ̂ː
-1183	Perge_Tegu	gí:ⁿ	fart (noun)	ɡ íːⁿ
+1183	Perge_Tegu	gí:ⁿ	fart (noun)	ɡ ĩ́ː
 1184	Gourou	zî:ⁿ	fart (noun)	z ĩ̂ː
-1185	Togo_Kan	jí:ⁿ	fart (noun)	dʒ íːⁿ
+1185	Togo_Kan	jí:ⁿ	fart (noun)	dʒ ĩ́ː
 1186	Yorno_So	jî:ⁿ	fart (noun)	dʒ ĩ̂ː
 1187	Tomo_Kan_Diangassagou	jìjɛ́ⁿ	fart (noun)	dʒ ì dʒ ɛ̃́
-1188	Tommo_So	gíyⁿɛ́	fart (noun)	ɡ í dʒⁿ ɛ́
+1188	Tommo_So	gíyⁿɛ́	fart (noun)	ɡ í j̃ ɛ́
 1189	Tebul_Ure	jìŋgé	fart (noun)	dʒ ì ŋ ɡ é
 1190	Yanda_Dom	jìŋ	fart (noun)	dʒ ì ŋ
-1191	Tiranige	yɛ́:	fart (noun)	dʒ ɛ́ː
-1192	Mombo	gyⁿê:	fart (noun)	ɡ dʒⁿ êː
+1191	Tiranige	yɛ́:	fart (noun)	j ɛ́ː
+1192	Mombo	gyⁿê:	fart (noun)	ɡ j̃ êː
 #
 1193	Toro_Tegu	kúrɔ́	feather	k ú r ɔ́
-1194	Ben_Tey	kùkùyɔ́	feather	k ù k ù dʒ ɔ́
-1195	Bankan_Tey	kùyá	feather	k ù dʒ á
-1196	Nanga	kìyá	feather	k ì dʒ á
+1194	Ben_Tey	kùkùyɔ́	feather	k ù k ù j ɔ́
+1195	Bankan_Tey	kùyá	feather	k ù j á
+1196	Nanga	kìyá	feather	k ì j á
 1197	Jamsay	kúrɔ́	feather	k ú r ɔ́
 1198	Perge_Tegu	kúrɔ́	feather	k ú r ɔ́
 1199	Gourou	kúrɔ́	feather	k ú r ɔ́
@@ -1316,20 +1316,20 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1206	Yanda_Dom	kùlà	feather	k ù l à
 1207	Mombo	ìní kúlɛ̀	feather	ì n í # k ú l ɛ̀
 #
-1208	Toro_Tegu	yá	female	dʒ á
-1209	Ben_Tey	yǎm	female	dʒ ǎ m
-1210	Nanga	yǎŋ	female	dʒ ǎ ŋ
-1211	Jamsay	yǎ:	female	dʒ ǎː
-1212	Perge_Tegu	yǎ:	female	dʒ ǎː
-1213	Gourou	yǎ:	female	dʒ ǎː
-1214	Togo_Kan	yǎ:	female	dʒ ǎː
-1215	Yorno_So	yǎ:	female	dʒ ǎː
-1216	Tomo_Kan_Diangassagou	yà:	female	dʒ àː
-1217	Tommo_So	yàá	female	dʒ à á
-1218	Dogul_Dom	yáá	female	dʒ á á
-1219	Tiranige	yé:	female	dʒ éː
-1220	Mombo	yɔ̂:	female	dʒ ɔ̂ː
-1221	Bunoge	yɔ̀:	female	dʒ ɔ̀ː
+1208	Toro_Tegu	yá	female	j á
+1209	Ben_Tey	yǎm	female	j ǎ m
+1210	Nanga	yǎŋ	female	j ǎ ŋ
+1211	Jamsay	yǎ:	female	j ǎː
+1212	Perge_Tegu	yǎ:	female	j ǎː
+1213	Gourou	yǎ:	female	j ǎː
+1214	Togo_Kan	yǎ:	female	j ǎː
+1215	Yorno_So	yǎ:	female	j ǎː
+1216	Tomo_Kan_Diangassagou	yà:	female	j àː
+1217	Tommo_So	yàá	female	j à á
+1218	Dogul_Dom	yáá	female	j á á
+1219	Tiranige	yé:	female	j éː
+1220	Mombo	yɔ̂:	female	j ɔ̂ː
+1221	Bunoge	yɔ̀:	female	j ɔ̀ː
 #
 1222	Toro_Tegu	írù	female breast	í r ù
 1223	Ben_Tey	írù	female breast	í r ù
@@ -1346,7 +1346,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1234	Tebul_Ure	ɛ́mnɛ́	female breast	ɛ́ m n ɛ́
 1235	Yanda_Dom	ɛ́mɛ́	female breast	ɛ́ m ɛ́
 1236	Tiranige	ùnjìgè	female breast	ù n dʒ ì ɡ è
-1237	Mombo	ógyé	female breast	ó ɡ dʒ é
+1237	Mombo	ógyé	female breast	ó ɡ j é
 1238	Bunoge	ʔójjè	female breast	ʔ ó dʒ dʒ è
 #
 1239	Toro_Tegu	kí:rà	file (tool)	k íː r à
@@ -1362,7 +1362,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1249	Tommo_So	bìmbú	file (tool)	b ì m b ú
 1250	Dogul_Dom	bìmbú	file (tool)	b ì m b ú
 1251	Yanda_Dom	dì:zù	file (tool)	d ìː z ù
-1252	Mombo	bí:mbyé	file (tool)	b íː m b dʒ é
+1252	Mombo	bí:mbyé	file (tool)	b íː m b j é
 #
 1253	Toro_Tegu	núwⁿɔ́	fire	n ú w̃ ɔ́
 1254	Ben_Tey	go᷈:	fire	ɡ o᷈ː
@@ -1372,13 +1372,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1258	Gourou	núwⁿó	fire	n ú w̃ ó
 1259	Jamsay_Mondoro	núwⁿó	fire	n ú w̃ ó
 1260	Togo_Kan	ɲɛ́:	fire	ɲ ɛ́ː
-1261	Yorno_So	yǎm	fire	dʒ ǎ m
+1261	Yorno_So	yǎm	fire	j ǎ m
 1262	Tomo_Kan_Diangassagou	ɲá:	fire	ɲ áː
 1263	Tommo_So	ɲǎm	fire	ɲ ǎ m
 1264	Dogul_Dom	gógó	fire	ɡ ó ɡ ó
 1265	Tebul_Ure	gǒ:	fire	ɡ ǒː
 1266	Yanda_Dom	gòlò	fire	ɡ ò l ò
-1267	Tiranige	jíyé	fire	dʒ í dʒ é
+1267	Tiranige	jíyé	fire	dʒ í j é
 1268	Mombo	génì	fire	ɡ é n ì
 #
 1269	Toro_Tegu	tìrⁿú	firewood	t ì r̃ ú
@@ -1397,29 +1397,29 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1282	Bunoge	té:ŋgè	firewood	t éː ŋ ɡ è
 #
 1283	Toro_Tegu	lɔ̀kúmò	fist	l ɔ̀ k ú m ò
-1284	Ben_Tey	nà:kúmbòy	fist	n àː k ú m b ò dʒ
+1284	Ben_Tey	nà:kúmbòy	fist	n àː k ú m b ò j
 1285	Bankan_Tey	nà:kúŋgî:	fist	n àː k ú ŋ ɡ îː
-1286	Nanga	nà:kúmbíyè	fist	n àː k ú m b í dʒ è
+1286	Nanga	nà:kúmbíyè	fist	n àː k ú m b í j è
 1287	Jamsay	nùmòkúmò	fist	n ù m ò k ú m ò
 1288	Perge_Tegu	nùwⁿòkúmbò	fist	n ù w̃ ò k ú m b ò
 1289	Togo_Kan	nùmɔ̀kúmó	fist	n ù m ɔ̀ k ú m ó
-1290	Yorno_So	nòyⁿkùmî:	fist	n ò dʒⁿ k ù m îː
+1290	Yorno_So	nòyⁿkùmî:	fist	n ò j̃ k ù m îː
 1291	Tomo_Kan_Diangassagou	nùmàkùmbè	fist	n ù m à k ù m b è
 1292	Tommo_So	nùmɔ̀ kúmbó	fist	n ù m ɔ̀ # k ú m b ó
 1293	Dogul_Dom	nùmɔ̀ kúmbɔ̀	fist	n ù m ɔ̀ # k ú m b ɔ̀
 1294	Tebul_Ure	nùmà:kúmbúgó	fist	n ù m àː k ú m b ú ɡ ó
 1295	Yanda_Dom	nùmàkúmbò	fist	n ù m à k ú m b ò
-1296	Tiranige	númá kúmbíyówà	fist	n ú m á # k ú m b í dʒ ó w à
+1296	Tiranige	númá kúmbíyówà	fist	n ú m á # k ú m b í j ó w à
 1297	Mombo	nɛ̀: kúmbì	fist	n ɛ̀ː # k ú m b ì
 #
-1298	Toro_Tegu	nǔ:y	five	n ǔː dʒ
-1299	Ben_Tey	nùmǔyⁿ	five	n ù m ǔ dʒⁿ
-1300	Bankan_Tey	nùmmǔyⁿ	five	n ù m m ǔ dʒⁿ
+1298	Toro_Tegu	nǔ:y	five	n ǔː j
+1299	Ben_Tey	nùmǔyⁿ	five	n ù m ǔ j̃
+1300	Bankan_Tey	nùmmǔyⁿ	five	n ù m m ǔ j̃
 1301	Nanga	nìmǐ:	five	n ì m ǐː
-1302	Jamsay	nǔ:yⁿ	five	n ǔː dʒⁿ
+1302	Jamsay	nǔ:yⁿ	five	n ǔː j̃
 1303	Perge_Tegu	nùmǐ:	five	n ù m ǐː
-1304	Gourou	nǔ:yⁿ	five	n ǔː dʒⁿ
-1305	Jamsay_Mondoro	nǔ:yⁿ	five	n ǔː dʒⁿ
+1304	Gourou	nǔ:yⁿ	five	n ǔː j̃
+1305	Jamsay_Mondoro	nǔ:yⁿ	five	n ǔː j̃
 1306	Yorno_So	nùmɔ́rⁿɔ́	five	n ù m ɔ́ r̃ ɔ́
 1307	Tommo_So	ǹnɔ́	five	ǹ n ɔ́
 1308	Dogul_Dom	ǹnó	five	ǹ n ó
@@ -1434,7 +1434,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1316	Nanga	pírⁿâ	flour, powder	p í r̃ â
 1317	Gourou	pìnǎm	flour, powder	p ì n ǎ m
 1318	Jamsay_Mondoro	pìrⁿè nǎm	flour, powder	p ì r̃ è # n ǎ m
-1319	Togo_Kan	pùnǎyⁿ	flour, powder	p ù n ǎ dʒⁿ
+1319	Togo_Kan	pùnǎyⁿ	flour, powder	p ù n ǎ j̃
 1320	Yorno_So	pùnǎm	flour, powder	p ù n ǎ m
 1321	Tomo_Kan_Diangassagou	hʷúná	flour, powder	hʷ ú n á
 1322	Tommo_So	fárání	flour, powder	f á r á n í
@@ -1450,10 +1450,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1331	Jamsay	pùrⁿó	flower (of tree or herb)	p ù r̃ ó
 1332	Perge_Tegu	pùrⁿó	flower (of tree or herb)	p ù r̃ ó
 1333	Gourou	pùrⁿó	flower (of tree or herb)	p ù r̃ ó
-1334	Togo_Kan	pìyé	flower (of tree or herb)	p ì dʒ é
-1335	Yorno_So	pǔy	flower (of tree or herb)	p ǔ dʒ
+1334	Togo_Kan	pìyé	flower (of tree or herb)	p ì j é
+1335	Yorno_So	pǔy	flower (of tree or herb)	p ǔ j
 1336	Tomo_Kan_Diangassagou	hʷùjé	flower (of tree or herb)	hʷ ù dʒ é
-1337	Tommo_So	púyó	flower (of tree or herb)	p ú dʒ ó
+1337	Tommo_So	púyó	flower (of tree or herb)	p ú j ó
 1338	Dogul_Dom	púnú	flower (of tree or herb)	p ú n ú
 1339	Tebul_Ure	pùrⁿó	flower (of tree or herb)	p ù r̃ ó
 1340	Yanda_Dom	pùn	flower (of tree or herb)	p ù n
@@ -1464,11 +1464,11 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1344	Ben_Tey	bèrú	fodder (grass or greens, for livestock)	b è r ú
 1345	Bankan_Tey	bèrú	fodder (grass or greens, for livestock)	b è r ú
 1346	Nanga	bèrí	fodder (grass or greens, for livestock)	b è r í
-1347	Jamsay	ɔ̀yɔ́	fodder (grass or greens, for livestock)	ɔ̀ dʒ ɔ́
+1347	Jamsay	ɔ̀yɔ́	fodder (grass or greens, for livestock)	ɔ̀ j ɔ́
 1348	Perge_Tegu	bèrú	fodder (grass or greens, for livestock)	b è r ú
 1349	Togo_Kan	bèrú	fodder (grass or greens, for livestock)	b è r ú
 1350	Yorno_So	běl	fodder (grass or greens, for livestock)	b ě l
-1351	Tomo_Kan_Diangassagou	byé	fodder (grass or greens, for livestock)	b dʒ é
+1351	Tomo_Kan_Diangassagou	byé	fodder (grass or greens, for livestock)	b j é
 1352	Tommo_So	bèlú	fodder (grass or greens, for livestock)	b è l ú
 1353	Tebul_Ure	bèlé	fodder (grass or greens, for livestock)	b è l é
 1354	Yanda_Dom	bèl	fodder (grass or greens, for livestock)	b è l
@@ -1477,7 +1477,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1357	Bunoge	bèléŋgè	fodder (grass or greens, for livestock)	b è l é ŋ ɡ è
 #
 1358	Toro_Tegu	sɛ́rɛ́mbɛ̀	fonio (cultivated grain, Digitaria exilis)	s ɛ́ r ɛ́ m b ɛ̀
-1359	Ben_Tey	pɔ̌:yⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ː dʒⁿ
+1359	Ben_Tey	pɔ̌:yⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ː j̃
 1360	Bankan_Tey	pɔ̌:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ːⁿ
 1361	Nanga	pɔ̌:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ːⁿ
 1362	Jamsay	pɔ̀ŋɔ́	fonio (cultivated grain, Digitaria exilis)	p ɔ̀ ŋ ɔ́
@@ -1488,9 +1488,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1367	Tomo_Kan_Diangassagou	fɔ́ʔⁿɔ́	fonio (cultivated grain, Digitaria exilis)	f ɔ́ ʔ ɔ́
 1368	Tommo_So	pɔ̀ɔ́ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̀ ɔ̃́
 1369	Tebul_Ure	pɔ̌:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ːⁿ
-1370	Yanda_Dom	pɔ̀:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̃̀ː
+1370	Yanda_Dom	pɔ̀:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̀ːⁿ
 1371	Tiranige	pɔ́:ŋgé	fonio (cultivated grain, Digitaria exilis)	p ɔ́ː ŋ ɡ é
-1372	Mombo	pɔ̂:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̂ːⁿ
+1372	Mombo	pɔ̂:ⁿ	fonio (cultivated grain, Digitaria exilis)	p ɔ̃̂ː
 1373	Bunoge	pɔ̌:ŋgè	fonio (cultivated grain, Digitaria exilis)	p ɔ̌ː ŋ ɡ è
 #
 1374	Ben_Tey	lɔ̀sɔ̂:	foot	l ɔ̀ s ɔ̂ː
@@ -1512,7 +1512,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 1390	Toro_Tegu	dìmó	forehead	d ì m ó
 1391	Ben_Tey	dìmbê:	forehead	d ì m b êː
-1392	Bankan_Tey	dìmbêy	forehead	d ì m b ê dʒ
+1392	Bankan_Tey	dìmbêy	forehead	d ì m b ê j
 1393	Nanga	gímbè	forehead	ɡ í m b è
 1394	Jamsay	dìmé	forehead	d ì m é
 1395	Perge_Tegu	dìmbé	forehead	d ì m b é
@@ -1529,15 +1529,15 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1406	Mombo	gíndó	forehead	ɡ í n d ó
 1407	Bunoge	géndè	forehead	ɡ é n d è
 #
-1408	Toro_Tegu	pɛ́này	forty	p ɛ́ n à dʒ
-1409	Ben_Tey	pɛ́nǐ:yⁿ	forty	p ɛ́ n ǐː dʒⁿ
-1410	Bankan_Tey	pɛ́ nìŋŋèyⁿ	forty	p ɛ́ # n ì ŋ ŋ è dʒⁿ
-1411	Nanga	pɛ̌n nɔ̌yⁿ	forty	p ɛ̌ n # n ɔ̌ dʒⁿ
-1412	Jamsay	pɛ́nnàyⁿ	forty	p ɛ́ n n à dʒⁿ
-1413	Perge_Tegu	pɛ́nàyⁿ	forty	p ɛ́ n à dʒⁿ
-1414	Togo_Kan	pɛ̌nàyⁿ	forty	p ɛ̌ n à dʒⁿ
-1415	Yorno_So	pɛ́nǎyⁿ	forty	p ɛ́ n ǎ dʒⁿ
-1416	Tommo_So	pɛ́này	forty	p ɛ́ n à dʒ
+1408	Toro_Tegu	pɛ́này	forty	p ɛ́ n à j
+1409	Ben_Tey	pɛ́nǐ:yⁿ	forty	p ɛ́ n ǐː j̃
+1410	Bankan_Tey	pɛ́ nìŋŋèyⁿ	forty	p ɛ́ # n ì ŋ ŋ è j̃
+1411	Nanga	pɛ̌n nɔ̌yⁿ	forty	p ɛ̌ n # n ɔ̌ j̃
+1412	Jamsay	pɛ́nnàyⁿ	forty	p ɛ́ n n à j̃
+1413	Perge_Tegu	pɛ́nàyⁿ	forty	p ɛ́ n à j̃
+1414	Togo_Kan	pɛ̌nàyⁿ	forty	p ɛ̌ n à j̃
+1415	Yorno_So	pɛ́nǎyⁿ	forty	p ɛ́ n ǎ j̃
+1416	Tommo_So	pɛ́này	forty	p ɛ́ n à j
 1417	Dogul_Dom	dɛ́ɛ̀	forty	d ɛ́ ɛ̀
 1418	Tebul_Ure	pɛ̀:kɛ́dɛ́	forty	p ɛ̀ː k ɛ́ d ɛ́
 1419	Yanda_Dom	pɔ̀lɔ̀cɛ́zó	forty	p ɔ̀ l ɔ̀ tʃ ɛ́ z ó
@@ -1545,16 +1545,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1421	Mombo	dɛ̂:	forty	d ɛ̂ː
 1422	Bunoge	dɛ́:	forty	d ɛ́ː
 #
-1423	Toro_Tegu	nǎy	four	n ǎ dʒ
-1424	Ben_Tey	nǐ:yⁿ	four	n ǐː dʒⁿ
-1425	Bankan_Tey	nìŋŋěyⁿ	four	n ì ŋ ŋ ě dʒⁿ
-1426	Nanga	nɔ̌yⁿ	four	n ɔ̌ dʒⁿ
-1427	Jamsay	nǎyⁿ	four	n ǎ dʒⁿ
-1428	Perge_Tegu	nǎyⁿ	four	n ǎ dʒⁿ
-1429	Gourou	nǎyⁿ	four	n ǎ dʒⁿ
-1430	Togo_Kan	nǎyⁿ	four	n ǎ dʒⁿ
-1431	Yorno_So	nǎyⁿ	four	n ǎ dʒⁿ
-1432	Tommo_So	nǎy	four	n ǎ dʒ
+1423	Toro_Tegu	nǎy	four	n ǎ j
+1424	Ben_Tey	nǐ:yⁿ	four	n ǐː j̃
+1425	Bankan_Tey	nìŋŋěyⁿ	four	n ì ŋ ŋ ě j̃
+1426	Nanga	nɔ̌yⁿ	four	n ɔ̌ j̃
+1427	Jamsay	nǎyⁿ	four	n ǎ j̃
+1428	Perge_Tegu	nǎyⁿ	four	n ǎ j̃
+1429	Gourou	nǎyⁿ	four	n ǎ j̃
+1430	Togo_Kan	nǎyⁿ	four	n ǎ j̃
+1431	Yorno_So	nǎyⁿ	four	n ǎ j̃
+1432	Tommo_So	nǎy	four	n ǎ j
 1433	Dogul_Dom	kɛ́ɛ́sɔ̀	four	k ɛ́ ɛ́ s ɔ̀
 1434	Tebul_Ure	kɛ́dɛ́	four	k ɛ́ d ɛ́
 1435	Tiranige	cɛ̀:jɔ̀	four	tʃ ɛ̀ː dʒ ɔ̀
@@ -1577,8 +1577,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1451	Mombo	kólò	fresh (produce)	k ó l ò
 #
 1452	Toro_Tegu	ɛ̀m ɛ́tú	fresh milk	ɛ̀ m # ɛ́ t ú
-1453	Ben_Tey	ɛ̀wⁿɛ̀yⁿ cèsú	fresh milk	ɛ̀ w̃ ɛ̀ dʒⁿ # tʃ è s ú
-1454	Bankan_Tey	ɛ̀mmɛ̀yⁿ kèsúm	fresh milk	ɛ̀ m m ɛ̀ dʒⁿ # k è s ú m
+1453	Ben_Tey	ɛ̀wⁿɛ̀yⁿ cèsú	fresh milk	ɛ̀ w̃ ɛ̀ j̃ # tʃ è s ú
+1454	Bankan_Tey	ɛ̀mmɛ̀yⁿ kèsúm	fresh milk	ɛ̀ m m ɛ̀ j̃ # k è s ú m
 1455	Nanga	ɛ̀mɛ̀ kè:sí	fresh milk	ɛ̀ m ɛ̀ # k èː s í
 1456	Jamsay	ɛ̀m kòró	fresh milk	ɛ̀ m # k ò r ó
 1457	Perge_Tegu	ɛ̀m kòró	fresh milk	ɛ̀ m # k ò r ó
@@ -1593,18 +1593,18 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1466	Tiranige	ɛ̀mɛ̀ŋgè kóló	fresh milk	ɛ̀ m ɛ̀ ŋ ɡ è # k ó l ó
 1467	Mombo	ɛ̀mɛ̀ kéló	fresh milk	ɛ̀ m ɛ̀ # k é l ó
 #
-1468	Toro_Tegu	kùgíy	froth, foam (on tea)	k ù ɡ í dʒ
-1469	Ben_Tey	yúgúrɔ̀	froth, foam (on tea)	dʒ ú ɡ ú r ɔ̀
+1468	Toro_Tegu	kùgíy	froth, foam (on tea)	k ù ɡ í j
+1469	Ben_Tey	yúgúrɔ̀	froth, foam (on tea)	j ú ɡ ú r ɔ̀
 1470	Bankan_Tey	kùkù:rú	froth, foam (on tea)	k ù k ùː r ú
 1471	Jamsay	pútɔ̀	froth, foam (on tea)	p ú t ɔ̀
-1472	Perge_Tegu	yɔ̀gɔ̀rɔ̀pútɔ̀	froth, foam (on tea)	dʒ ɔ̀ ɡ ɔ̀ r ɔ̀ p ú t ɔ̀
+1472	Perge_Tegu	yɔ̀gɔ̀rɔ̀pútɔ̀	froth, foam (on tea)	j ɔ̀ ɡ ɔ̀ r ɔ̀ p ú t ɔ̀
 1473	Gourou	pútɔ̀	froth, foam (on tea)	p ú t ɔ̀
-1474	Togo_Kan	yùgɔ́rɔ́	froth, foam (on tea)	dʒ ù ɡ ɔ́ r ɔ́
-1475	Yorno_So	yúgɔ̀rɔ̀	froth, foam (on tea)	dʒ ú ɡ ɔ̀ r ɔ̀
-1476	Tomo_Kan_Diangassagou	yúbɛ́rɛ́	froth, foam (on tea)	dʒ ú b ɛ́ r ɛ́
-1477	Tommo_So	yúbúdɔ́	froth, foam (on tea)	dʒ ú b ú d ɔ́
-1478	Dogul_Dom	yúbúlɔ́	froth, foam (on tea)	dʒ ú b ú l ɔ́
-1479	Tebul_Ure	yúbdá	froth, foam (on tea)	dʒ ú b d á
+1474	Togo_Kan	yùgɔ́rɔ́	froth, foam (on tea)	j ù ɡ ɔ́ r ɔ́
+1475	Yorno_So	yúgɔ̀rɔ̀	froth, foam (on tea)	j ú ɡ ɔ̀ r ɔ̀
+1476	Tomo_Kan_Diangassagou	yúbɛ́rɛ́	froth, foam (on tea)	j ú b ɛ́ r ɛ́
+1477	Tommo_So	yúbúdɔ́	froth, foam (on tea)	j ú b ú d ɔ́
+1478	Dogul_Dom	yúbúlɔ́	froth, foam (on tea)	j ú b ú l ɔ́
+1479	Tebul_Ure	yúbdá	froth, foam (on tea)	j ú b d á
 1480	Yanda_Dom	bùɲá	froth, foam (on tea)	b ù ɲ á
 1481	Tiranige	pùlá	froth, foam (on tea)	p ù l á
 1482	Mombo	púlɔ́	froth, foam (on tea)	p ú l ɔ́
@@ -1617,7 +1617,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1488	Perge_Tegu	kɛ̀mnɛ́	fun, game, festivity, song and dance	k ɛ̀ m n ɛ́
 1489	Gourou	kɛ̀rⁿìwⁿɛ́	fun, game, festivity, song and dance	k ɛ̀ r̃ ì w̃ ɛ́
 1490	Jamsay_Mondoro	cɛ̀rⁿɛ̀wⁿɛ́	fun, game, festivity, song and dance	tʃ ɛ̀ r̃ ɛ̀ w̃ ɛ́
-1491	Yorno_So	yɔ́gɔ̀rɔ̀	fun, game, festivity, song and dance	dʒ ɔ́ ɡ ɔ̀ r ɔ̀
+1491	Yorno_So	yɔ́gɔ̀rɔ̀	fun, game, festivity, song and dance	j ɔ́ ɡ ɔ̀ r ɔ̀
 1492	Tommo_So	kìlɛ̀mɔ́	fun, game, festivity, song and dance	k ì l ɛ̀ m ɔ́
 1493	Dogul_Dom	kɛ́l	fun, game, festivity, song and dance	k ɛ́ l
 1494	Tebul_Ure	cɛ̀mnɛ́	fun, game, festivity, song and dance	tʃ ɛ̀ m n ɛ́
@@ -1634,13 +1634,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1504	Tomo_Kan_Diangassagou	gɛ̀lɛ̀ⁿ	gallbladder (containing bile)	ɡ ɛ̀ l ɛ̃̀
 1505	Dogul_Dom	gàlá símɛ̀	gallbladder (containing bile)	ɡ à l á # s í m ɛ̀
 1506	Tebul_Ure	gárúkùmbà	gallbladder (containing bile)	ɡ á r ú k ù m b à
-1507	Yanda_Dom	gá:líyám	gallbladder (containing bile)	ɡ áː l í dʒ á m
+1507	Yanda_Dom	gá:líyám	gallbladder (containing bile)	ɡ áː l í j á m
 1508	Tiranige	ŋgàlàŋgàlà	gallbladder (containing bile)	ŋ ɡ à l à ŋ ɡ à l à
-1509	Mombo	tóndó:ⁿ bòlìyà	gallbladder (containing bile)	t ó n d óːⁿ # b ò l ì dʒ à
+1509	Mombo	tóndó:ⁿ bòlìyà	gallbladder (containing bile)	t ó n d óːⁿ # b ò l ì j à
 1510	Bunoge	gàlàŋgàlà	gallbladder (containing bile)	ɡ à l à ŋ ɡ à l à
 #
-1511	Ben_Tey	ìsìyâ: sá	give out a sneeze, sneeze (verb plus noun)	ì s ì dʒ âː # s á
-1512	Bankan_Tey	tìsìyôw káŋ	give out a sneeze, sneeze (verb plus noun)	t ì s ì dʒ ô w # k á ŋ
+1511	Ben_Tey	ìsìyâ: sá	give out a sneeze, sneeze (verb plus noun)	ì s ì j âː # s á
+1512	Bankan_Tey	tìsìyôw káŋ	give out a sneeze, sneeze (verb plus noun)	t ì s ì j ô w # k á ŋ
 1513	Nanga	ísê ìsé	give out a sneeze, sneeze (verb plus noun)	í s ê # ì s é
 1514	Jamsay	ègèjé sá:	give out a sneeze, sneeze (verb plus noun)	è ɡ è dʒ é # s áː
 1515	Perge_Tegu	ígísɛ̀ ígísɛ́	give out a sneeze, sneeze (verb plus noun)	í ɡ í s ɛ̀ # í ɡ í s ɛ́
@@ -1648,14 +1648,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1517	Jamsay_Mondoro	ègèjé sá:	give out a sneeze, sneeze (verb plus noun)	è ɡ è dʒ é # s áː
 1518	Togo_Kan	àségú sá:	give out a sneeze, sneeze (verb plus noun)	à s é ɡ ú # s áː
 1519	Yorno_So	èjìgílè sá:	give out a sneeze, sneeze (verb plus noun)	è dʒ ì ɡ í l è # s áː
-1520	Tomo_Kan_Diangassagou	yìʔìjà yìʔìjì	give out a sneeze, sneeze (verb plus noun)	dʒ ì ʔ ì dʒ à # dʒ ì ʔ ì dʒ ì
-1521	Tommo_So	ìsùgìlìyé sáá	give out a sneeze, sneeze (verb plus noun)	ì s ù ɡ ì l ì dʒ é # s á á
-1522	Yanda_Dom	ìsìyà ísíyɛ́	give out a sneeze, sneeze (verb plus noun)	ì s ì dʒ à # í s í dʒ ɛ́
+1520	Tomo_Kan_Diangassagou	yìʔìjà yìʔìjì	give out a sneeze, sneeze (verb plus noun)	j ì ʔ ì dʒ à # j ì ʔ ì dʒ ì
+1521	Tommo_So	ìsùgìlìyé sáá	give out a sneeze, sneeze (verb plus noun)	ì s ù ɡ ì l ì j é # s á á
+1522	Yanda_Dom	ìsìyà ísíyɛ́	give out a sneeze, sneeze (verb plus noun)	ì s ì j à # í s í j ɛ́
 1523	Tiranige	íjálí íjáló	give out a sneeze, sneeze (verb plus noun)	í dʒ á l í # í dʒ á l ó
 1524	Mombo	ìjìlì íjílè	give out a sneeze, sneeze (verb plus noun)	ì dʒ ì l ì # í dʒ í l è
 #
 1525	Toro_Tegu	cɛ́ⁿ	gizzard	tʃ ɛ̃́
-1526	Ben_Tey	jɛ̂yⁿ	gizzard	dʒ ɛ̂ dʒⁿ
+1526	Ben_Tey	jɛ̂yⁿ	gizzard	dʒ ɛ̂ j̃
 1527	Bankan_Tey	cɛ̀:ⁿcɛ̂:ⁿ	gizzard	tʃ ɛ̀ːⁿ tʃ ɛ̃̂ː
 1528	Nanga	kársî	gizzard	k á r s î
 1529	Jamsay	jɛ̂:ⁿ	gizzard	dʒ ɛ̃̂ː
@@ -1670,15 +1670,15 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1538	Tiranige	jènjìjènjì	gizzard	dʒ è n dʒ ì dʒ è n dʒ ì
 #
 1539	Ben_Tey	dǎnnà dànní	go hunting, do some hunting (verb plus noun)	d ǎ n n à # d à n n í
-1540	Bankan_Tey	àrⁿáósú òsíyé	go hunting, do some hunting (verb plus noun)	à r̃ á ó s ú # ò s í dʒ é
+1540	Bankan_Tey	àrⁿáósú òsíyé	go hunting, do some hunting (verb plus noun)	à r̃ á ó s ú # ò s í j é
 1541	Jamsay	dàná dàná	go hunting, do some hunting (verb plus noun)	d à n á # d à n á
-1542	Perge_Tegu	dǎnnɛ̀ yǎ:	go hunting, do some hunting (verb plus noun)	d ǎ n n ɛ̀ # dʒ ǎː
+1542	Perge_Tegu	dǎnnɛ̀ yǎ:	go hunting, do some hunting (verb plus noun)	d ǎ n n ɛ̀ # j ǎː
 1543	Gourou	dàná dàná	go hunting, do some hunting (verb plus noun)	d à n á # d à n á
-1544	Jamsay_Mondoro	dàná yǎ:	go hunting, do some hunting (verb plus noun)	d à n á # dʒ ǎː
+1544	Jamsay_Mondoro	dàná yǎ:	go hunting, do some hunting (verb plus noun)	d à n á # j ǎː
 1545	Togo_Kan	dáná dàná	go hunting, do some hunting (verb plus noun)	d á n á # d à n á
 1546	Yorno_So	dánù dàná	go hunting, do some hunting (verb plus noun)	d á n ù # d à n á
 1547	Tomo_Kan_Diangassagou	sù:sɔ̀ swɛ́:	go hunting, do some hunting (verb plus noun)	s ùː s ɔ̀ # s w ɛ́ː
-1548	Tommo_So	àntólú yàá	go hunting, do some hunting (verb plus noun)	à n t ó l ú # dʒ à á
+1548	Tommo_So	àntólú yàá	go hunting, do some hunting (verb plus noun)	à n t ó l ú # j à á
 1549	Dogul_Dom	dànné bɔ̀lɛ́	go hunting, do some hunting (verb plus noun)	d à n n é # b ɔ̀ l ɛ́
 1550	Yanda_Dom	dàná dànú	go hunting, do some hunting (verb plus noun)	d à n á # d à n ú
 1551	Tiranige	tà:nì tá:nó	go hunting, do some hunting (verb plus noun)	t àː n ì # t áː n ó
@@ -1705,15 +1705,15 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1570	Ben_Tey	sàwà: ɔ̀rú	green	s à w àː # ɔ̀ r ú
 1571	Bankan_Tey	sàwà ɔ̀rúm	green	s à w à # ɔ̀ r ú m
 1572	Nanga	sàwà ɔ̀rí	green	s à w à # ɔ̀ r í
-1573	Jamsay	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ dʒ ɔ̀ # ɔ̀ r ú
-1574	Perge_Tegu	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ dʒ ɔ̀ # ɔ̀ r ú
-1575	Gourou	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ dʒ ɔ̀ # ɔ̀ r ú
+1573	Jamsay	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ j ɔ̀ # ɔ̀ r ú
+1574	Perge_Tegu	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ j ɔ̀ # ɔ̀ r ú
+1575	Gourou	ɔ̀yɔ̀ ɔ̀rú	green	ɔ̀ j ɔ̀ # ɔ̀ r ú
 1576	Togo_Kan	bèrùɔ̀rú	green	b è r ù ɔ̀ r ú
 1577	Yorno_So	wɛ́r	green	w ɛ́ r
 1578	Tommo_So	wɛ́rú	green	w ɛ́ r ú
 1579	Dogul_Dom	wɛ́ràŋ	green	w ɛ́ r à ŋ
 1580	Yanda_Dom	vɛ̀rú	green	v ɛ̀ r ú
-1581	Tiranige	kɔ̀ykóló	green	k ɔ̀ dʒ k ó l ó
+1581	Tiranige	kɔ̀ykóló	green	k ɔ̀ j k ó l ó
 1582	Mombo	kɔ́jí kólò	green	k ɔ́ dʒ í # k ó l ò
 #
 1583	Ben_Tey	nàwⁿá	grind up, crush well (e.g. millet grains, for millet cakes) with grindstones	n à w̃ á
@@ -1734,15 +1734,15 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1597	Toro_Tegu	sòló	gutter spout (on roof)	s ò l ó
 1598	Ben_Tey	sòró	gutter spout (on roof)	s ò r ó
 1599	Bankan_Tey	dɛ̀:dɛ̌:	gutter spout (on roof)	d ɛ̀ː d ɛ̌ː
-1600	Nanga	ònjìyé	gutter spout (on roof)	ò n dʒ ì dʒ é
+1600	Nanga	ònjìyé	gutter spout (on roof)	ò n dʒ ì j é
 1601	Jamsay	sòró	gutter spout (on roof)	s ò r ó
 1602	Perge_Tegu	dɔ̌:rɔ̀	gutter spout (on roof)	d ɔ̌ː r ɔ̀
 1603	Gourou	sòró	gutter spout (on roof)	s ò r ó
 1604	Togo_Kan	dɔ̀ŋɔ̀sɔ́:rɔ́	gutter spout (on roof)	d ɔ̀ ŋ ɔ̀ s ɔ́ː r ɔ́
-1605	Yorno_So	dɔ̂:ⁿ	gutter spout (on roof)	d ɔ̂ːⁿ
+1605	Yorno_So	dɔ̂:ⁿ	gutter spout (on roof)	d ɔ̃̂ː
 1606	Tommo_So	dɔ́ɔ́ⁿ	gutter spout (on roof)	d ɔ́ ɔ̃́
 1607	Dogul_Dom	dɔ́ŋɔ́	gutter spout (on roof)	d ɔ́ ŋ ɔ́
-1608	Tebul_Ure	dwǎ:ⁿ	gutter spout (on roof)	d w ǎːⁿ
+1608	Tebul_Ure	dwǎ:ⁿ	gutter spout (on roof)	d w ã̌ː
 1609	Yanda_Dom	dɔ̌:ⁿ	gutter spout (on roof)	d ɔ̌ːⁿ
 1610	Tiranige	sílɔ́ndɔ̀	gutter spout (on roof)	s í l ɔ́ n d ɔ̀
 1611	Mombo	sìlàndá	gutter spout (on roof)	s ì l à n d á
@@ -1750,23 +1750,23 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 1613	Toro_Tegu	àŋkàrá	hail, hailstones	à ŋ k à r á
 1614	Ben_Tey	bòlnì: sàŋárⁿà	hail, hailstones	b ò l n ìː # s à ŋ á r̃ à
-1615	Bankan_Tey	bònnì: sàŋgírây	hail, hailstones	b ò n n ìː # s à ŋ ɡ í r â dʒ
+1615	Bankan_Tey	bònnì: sàŋgírây	hail, hailstones	b ò n n ìː # s à ŋ ɡ í r â j
 1616	Nanga	bòndìsàŋárⁿâ	hail, hailstones	b ò n d ì s à ŋ á r̃ â
 1617	Jamsay	ànnì: sàɣárà	hail, hailstones	à n n ìː # s à ɣ á r à
 1618	Perge_Tegu	ànì:sàŋárⁿà	hail, hailstones	à n ìː s à ŋ á r̃ à
 1619	Gourou	ànnì: sàɣárà	hail, hailstones	à n n ìː # s à ɣ á r à
 1620	Togo_Kan	àrⁿùsàgɛ̀rɛ́ⁿ	hail, hailstones	à r̃ ù s à ɡ ɛ̀ r ɛ̃́
 1621	Yorno_So	àrⁿùmsàŋálà	hail, hailstones	à r̃ ù m s à ŋ á l à
-1622	Tommo_So	ànà sàŋàlàý	hail, hailstones	à n à # s à ŋ à l à dʒ́
+1622	Tommo_So	ànà sàŋàlàý	hail, hailstones	à n à # s à ŋ à l à j́
 1623	Dogul_Dom	áláà sɛ́ŋgúrúmɛ́	hail, hailstones	á l á à # s ɛ́ ŋ ɡ ú r ú m ɛ́
 1624	Tebul_Ure	àrⁿàìnjèsàŋgá	hail, hailstones	à r̃ à ì n dʒ è s à ŋ ɡ á
 1625	Yanda_Dom	àrⁿùnjùsàŋálà	hail, hailstones	à r̃ ù n dʒ ù s à ŋ á l à
 1626	Mombo	kálálì	hail, hailstones	k á l á l ì
 #
 1627	Toro_Tegu	kúrɔ́	hair	k ú r ɔ́
-1628	Ben_Tey	kùkùyɔ́	hair	k ù k ù dʒ ɔ́
-1629	Bankan_Tey	kùyá	hair	k ù dʒ á
-1630	Nanga	kìyá	hair	k ì dʒ á
+1628	Ben_Tey	kùkùyɔ́	hair	k ù k ù j ɔ́
+1629	Bankan_Tey	kùyá	hair	k ù j á
+1630	Nanga	kìyá	hair	k ì j á
 1631	Jamsay	kúrɔ́	hair	k ú r ɔ́
 1632	Perge_Tegu	kúrɔ́	hair	k ú r ɔ́
 1633	Gourou	kúrɔ́	hair	k ú r ɔ́
@@ -1787,7 +1787,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1647	Jamsay	nùmó	hand	n ù m ó
 1648	Perge_Tegu	nùwⁿó	hand	n ù w̃ ó
 1649	Jamsay_Mondoro	nùmɔ́	hand	n ù m ɔ́
-1650	Yorno_So	nǒyⁿ	hand	n ǒ dʒⁿ
+1650	Yorno_So	nǒyⁿ	hand	n ǒ j̃
 1651	Tomo_Kan_Diangassagou	nùmàcàndà	hand	n ù m à tʃ à n d à
 1652	Tommo_So	nùmɔ́	hand	n ù m ɔ́
 1653	Dogul_Dom	nùmɔ́	hand	n ù m ɔ́
@@ -1803,7 +1803,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1662	Perge_Tegu	nùwⁿó	hand, arm	n ù w̃ ó
 1663	Gourou	nùmó	hand, arm	n ù m ó
 1664	Togo_Kan	nùmɔ́	hand, arm	n ù m ɔ́
-1665	Yorno_So	nǒyⁿ	hand, arm	n ǒ dʒⁿ
+1665	Yorno_So	nǒyⁿ	hand, arm	n ǒ j̃
 1666	Tomo_Kan_Diangassagou	nùmà	hand, arm	n ù m à
 1667	Tommo_So	nùmɔ́	hand, arm	n ù m ɔ́
 1668	Dogul_Dom	nùmɔ́	hand, arm	n ù m ɔ́
@@ -1844,23 +1844,23 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1701	Mombo	bá:mbúlà	hat (any type)	b áː m b ú l à
 1702	Bunoge	bàmbúlà	hat (any type)	b à m b ú l à
 #
-1703	Ben_Tey	yá bú	he is there	dʒ á # b ú
-1704	Bankan_Tey	yá bún	he is there	dʒ á # b ú n
-1705	Nanga	yá bù	he is there	dʒ á # b ù
-1706	Perge_Tegu	yɔ̂:	he is there	dʒ ɔ̂ː
-1707	Gourou	yɔ́ wɔ̀	he is there	dʒ ɔ́ # w ɔ̀
-1708	Togo_Kan	wó yɔ́ wɔ̀	he is there	w ó # dʒ ɔ́ # w ɔ̀
-1709	Yorno_So	yá wɔ̀	he is there	dʒ á # w ɔ̀
+1703	Ben_Tey	yá bú	he is there	j á # b ú
+1704	Bankan_Tey	yá bún	he is there	j á # b ú n
+1705	Nanga	yá bù	he is there	j á # b ù
+1706	Perge_Tegu	yɔ̂:	he is there	j ɔ̂ː
+1707	Gourou	yɔ́ wɔ̀	he is there	j ɔ́ # w ɔ̀
+1708	Togo_Kan	wó yɔ́ wɔ̀	he is there	w ó # j ɔ́ # w ɔ̀
+1709	Yorno_So	yá wɔ̀	he is there	j á # w ɔ̀
 1710	Tommo_So	nɔ̀nú kɔ̂	he is there	n ɔ̀ n ú # k ɔ̂
-1711	Dogul_Dom	yò bó	he is there	dʒ ò # b ó
-1712	Tebul_Ure	yé bù	he is there	dʒ é # b ù
-1713	Yanda_Dom	yà bó	he is there	dʒ à # b ó
+1711	Dogul_Dom	yò bó	he is there	j ò # b ó
+1712	Tebul_Ure	yé bù	he is there	j é # b ù
+1713	Yanda_Dom	yà bó	he is there	j à # b ó
 1714	Tiranige	é wò	he is there	é # w ò
 1715	Mombo	òbó:	he is there	ò b óː
 1716	Bunoge	bò	he is there	b ò
 #
 1717	Toro_Tegu	cɛ̀làtóŋó	heart	tʃ ɛ̀ l à t ó ŋ ó
-1718	Ben_Tey	cɛ̀lɛ̀yî:	heart	tʃ ɛ̀ l ɛ̀ dʒ îː
+1718	Ben_Tey	cɛ̀lɛ̀yî:	heart	tʃ ɛ̀ l ɛ̀ j îː
 1719	Bankan_Tey	kɛ̀ndɛ̀ dúwà	heart	k ɛ̀ n d ɛ̀ # d ú w à
 1720	Nanga	kɛ̀ndɛ̀sóró	heart	k ɛ̀ n d ɛ̀ s ó r ó
 1721	Jamsay	cɛ́nɛ̀	heart	tʃ ɛ́ n ɛ̀
@@ -1871,23 +1871,23 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1726	Tomo_Kan_Diangassagou	sóⁿ	heart	s ṍ
 1727	Tommo_So	kìndɛ̀ dúgɔ́	heart	k ì n d ɛ̀ # d ú ɡ ɔ́
 1728	Dogul_Dom	kìɲjɔ́ dònnɛ́	heart	k ì ɲ dʒ ɔ́ # d ò n n ɛ́
-1729	Tebul_Ure	kɛ̀ndɛ̀dùgáyɛ́	heart	k ɛ̀ n d ɛ̀ d ù ɡ á dʒ ɛ́
+1729	Tebul_Ure	kɛ̀ndɛ̀dùgáyɛ́	heart	k ɛ̀ n d ɛ̀ d ù ɡ á j ɛ́
 1730	Tiranige	dòŋgòsèŋgé	heart	d ò ŋ ɡ ò s è ŋ ɡ é
 1731	Mombo	dóŋgósí	heart	d ó ŋ ɡ ó s í
 1732	Bunoge	dòŋgòbè	heart	d ò ŋ ɡ ò b è
 #
 1733	Toro_Tegu	né:sú	hearth for cooking formed by three large stones (or two stones against a wall)	n éː s ú
-1734	Ben_Tey	íyèy	hearth for cooking formed by three large stones (or two stones against a wall)	í dʒ è dʒ
+1734	Ben_Tey	íyèy	hearth for cooking formed by three large stones (or two stones against a wall)	í j è j
 1735	Bankan_Tey	írèjìrè	hearth for cooking formed by three large stones (or two stones against a wall)	í r è dʒ ì r è
-1736	Nanga	ìyê	hearth for cooking formed by three large stones (or two stones against a wall)	ì dʒ ê
+1736	Nanga	ìyê	hearth for cooking formed by three large stones (or two stones against a wall)	ì j ê
 1737	Jamsay	níɲù	hearth for cooking formed by three large stones (or two stones against a wall)	n í ɲ ù
 1738	Perge_Tegu	óŋgù	hearth for cooking formed by three large stones (or two stones against a wall)	ó ŋ ɡ ù
 1739	Jamsay_Mondoro	níɲù	hearth for cooking formed by three large stones (or two stones against a wall)	n í ɲ ù
 1740	Togo_Kan	nìɲìkóró	hearth for cooking formed by three large stones (or two stones against a wall)	n ì ɲ ì k ó r ó
 1741	Yorno_So	níɲù	hearth for cooking formed by three large stones (or two stones against a wall)	n í ɲ ù
-1742	Tomo_Kan_Diangassagou	yùjùkòlè	hearth for cooking formed by three large stones (or two stones against a wall)	dʒ ù dʒ ù k ò l è
+1742	Tomo_Kan_Diangassagou	yùjùkòlè	hearth for cooking formed by three large stones (or two stones against a wall)	j ù dʒ ù k ò l è
 1743	Tommo_So	níɲɲú	hearth for cooking formed by three large stones (or two stones against a wall)	n í ɲ ɲ ú
-1744	Dogul_Dom	ɛ́yɛ́ŋ	hearth for cooking formed by three large stones (or two stones against a wall)	ɛ́ dʒ ɛ́ ŋ
+1744	Dogul_Dom	ɛ́yɛ́ŋ	hearth for cooking formed by three large stones (or two stones against a wall)	ɛ́ j ɛ́ ŋ
 1745	Tebul_Ure	éŋgé	hearth for cooking formed by three large stones (or two stones against a wall)	é ŋ ɡ é
 1746	Yanda_Dom	ɛ̀ŋɛ̀cìn	hearth for cooking formed by three large stones (or two stones against a wall)	ɛ̀ ŋ ɛ̀ tʃ ì n
 1747	Tiranige	èŋù	hearth for cooking formed by three large stones (or two stones against a wall)	è ŋ ù
@@ -1922,7 +1922,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1774	Tommo_So	bílú	heavy wooden ladder for roof (carved from one trunk)	b í l ú
 1775	Dogul_Dom	jónú	heavy wooden ladder for roof (carved from one trunk)	dʒ ó n ú
 1776	Yanda_Dom	bǐl	heavy wooden ladder for roof (carved from one trunk)	b ǐ l
-1777	Tiranige	yòwⁿ	heavy wooden ladder for roof (carved from one trunk)	dʒ ò w̃
+1777	Tiranige	yòwⁿ	heavy wooden ladder for roof (carved from one trunk)	j ò w̃
 #
 1778	Toro_Tegu	bégò	hiccup (noun)	b é ɡ ò
 1779	Ben_Tey	cɛ̀lɛ̀bégù	hiccup (noun)	tʃ ɛ̀ l ɛ̀ b é ɡ ù
@@ -1959,26 +1959,26 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1808	Ben_Tey	dǒ:	hip	d ǒː
 1809	Bankan_Tey	dǒ:	hip	d ǒː
 1810	Nanga	dǒ:	hip	d ǒː
-1811	Jamsay	dɔ̌yⁿ	hip	d ɔ̌ dʒⁿ
-1812	Perge_Tegu	dɛ̌:ⁿ	hip	d ɛ̌ːⁿ
-1813	Jamsay_Mondoro	dɔ̌yⁿ	hip	d ɔ̌ dʒⁿ
+1811	Jamsay	dɔ̌yⁿ	hip	d ɔ̌ j̃
+1812	Perge_Tegu	dɛ̌:ⁿ	hip	d ɛ̃̌ː
+1813	Jamsay_Mondoro	dɔ̌yⁿ	hip	d ɔ̌ j̃
 1814	Togo_Kan	dǐⁿ	hip	d ĩ̌
 1815	Tomo_Kan_Diangassagou	jùⁿ	hip	dʒ ũ̀
 1816	Tommo_So	kéú	hip	k é ú
 1817	Tebul_Ure	dáŋgá:	hip	d á ŋ ɡ áː
-1818	Yanda_Dom	dày	hip	d à dʒ
+1818	Yanda_Dom	dày	hip	d à j
 1819	Tiranige	dé:ŋgé	hip	d éː ŋ ɡ é
 1820	Mombo	péŋgélí	hip	p é ŋ ɡ é l í
 1821	Bunoge	kìbà	hip	k ì b à
 #
 1822	Toro_Tegu	ìwó	honey	ì w ó
-1823	Ben_Tey	yěy	honey	dʒ ě dʒ
-1824	Bankan_Tey	yěy	honey	dʒ ě dʒ
-1825	Gourou	yùŋú	honey	dʒ ù ŋ ú
+1823	Ben_Tey	yěy	honey	j ě j
+1824	Bankan_Tey	yěy	honey	j ě j
+1825	Gourou	yùŋú	honey	j ù ŋ ú
 1826	Togo_Kan	tɛ̌:	honey	t ɛ̌ː
-1827	Yorno_So	yɛ̌yⁿ	honey	dʒ ɛ̌ dʒⁿ
+1827	Yorno_So	yɛ̌yⁿ	honey	j ɛ̌ j̃
 1828	Tomo_Kan_Diangassagou	cà:	honey	tʃ àː
-1829	Tommo_So	ììyé	honey	ì ì dʒ é
+1829	Tommo_So	ììyé	honey	ì ì j é
 1830	Dogul_Dom	úwùŋ	honey	ú w ù ŋ
 1831	Tebul_Ure	ìdé	honey	ì d é
 1832	Yanda_Dom	ìzèŋ	honey	ì z è ŋ
@@ -1987,7 +1987,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1835	Bunoge	ʔígè	honey	ʔ í ɡ è
 #
 1836	Toro_Tegu	círá	horn (of animal)	tʃ í r á
-1837	Ben_Tey	cíyà	horn (of animal)	tʃ í dʒ à
+1837	Ben_Tey	cíyà	horn (of animal)	tʃ í j à
 1838	Nanga	kírâ	horn (of animal)	k í r â
 1839	Jamsay	círɛ́	horn (of animal)	tʃ í r ɛ́
 1840	Perge_Tegu	kírɛ́	horn (of animal)	k í r ɛ́
@@ -2019,18 +2019,18 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1865	Bunoge	dándì	hot chili pepper	d á n d ì
 #
 1866	Toro_Tegu	nùwⁿɔ̀cɛ̀ŋá	hot coal, ember	n ù w̃ ɔ̀ tʃ ɛ̀ ŋ á
-1867	Ben_Tey	gò: bɔ̀rⁿɔ̌yⁿ	hot coal, ember	ɡ òː # b ɔ̀ r̃ ɔ̌ dʒⁿ
-1868	Bankan_Tey	gò:ɲírⁿéyⁿ	hot coal, ember	ɡ òː ɲ í r̃ é dʒⁿ
+1867	Ben_Tey	gò: bɔ̀rⁿɔ̌yⁿ	hot coal, ember	ɡ òː # b ɔ̀ r̃ ɔ̌ j̃
+1868	Bankan_Tey	gò:ɲírⁿéyⁿ	hot coal, ember	ɡ òː ɲ í r̃ é j̃
 1869	Nanga	gò:pùrⁿɔ́	hot coal, ember	ɡ òː p ù r̃ ɔ́
 1870	Jamsay	nùwⁿòcìrɛ́	hot coal, ember	n ù w̃ ò tʃ ì r ɛ́
 1871	Perge_Tegu	nùwⁿò bɔ̀rⁿɔ́	hot coal, ember	n ù w̃ ò # b ɔ̀ r̃ ɔ́
 1872	Togo_Kan	ɲɛ̀:bɛ́:	hot coal, ember	ɲ ɛ̀ː b ɛ́ː
-1873	Yorno_So	yàmbɔ̀rⁿɔ́	hot coal, ember	dʒ à m b ɔ̀ r̃ ɔ́
+1873	Yorno_So	yàmbɔ̀rⁿɔ́	hot coal, ember	j à m b ɔ̀ r̃ ɔ́
 1874	Tomo_Kan_Diangassagou	ɲà:cíʔínà	hot coal, ember	ɲ àː tʃ í ʔ í n à
 1875	Tommo_So	ɲàm bɔ̀nɔ́	hot coal, ember	ɲ à m # b ɔ̀ n ɔ́
 1876	Dogul_Dom	gògò ɛ̀mɛ̀gínɛ́	hot coal, ember	ɡ ò ɡ ò # ɛ̀ m ɛ̀ ɡ í n ɛ́
 1877	Tebul_Ure	gò:bɔ̀rⁿɔ́	hot coal, ember	ɡ òː b ɔ̀ r̃ ɔ́
-1878	Tiranige	jíyé sèŋgé	hot coal, ember	dʒ í dʒ é # s è ŋ ɡ é
+1878	Tiranige	jíyé sèŋgé	hot coal, ember	dʒ í j é # s è ŋ ɡ é
 1879	Mombo	ɲá:ŋgó	hot coal, ember	ɲ áː ŋ ɡ ó
 #
 1880	Toro_Tegu	íló	house	í l ó
@@ -2053,7 +2053,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1896	Toro_Tegu	àŋí	how much?, how many?	à ŋ í
 1897	Ben_Tey	à:ŋgá	how much?, how many?	àː ŋ ɡ á
 1898	Bankan_Tey	à:ŋgá	how much?, how many?	àː ŋ ɡ á
-1899	Nanga	à:ŋgǎy	how much?, how many?	àː ŋ ɡ ǎ dʒ
+1899	Nanga	à:ŋgǎy	how much?, how many?	àː ŋ ɡ ǎ j
 1900	Jamsay	à:ŋá	how much?, how many?	àː ŋ á
 1901	Perge_Tegu	à:ŋgá	how much?, how many?	àː ŋ ɡ á
 1902	Jamsay_Mondoro	à:ŋá	how much?, how many?	àː ŋ á
@@ -2066,18 +2066,18 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1909	Mombo	á:ŋgà	how much?, how many?	áː ŋ ɡ à
 1910	Bunoge	ʔáŋgáwⁿ	how much?, how many?	ʔ á ŋ ɡ á w̃
 #
-1911	Toro_Tegu	yⁿàŋêy	how?	dʒⁿ à ŋ ê dʒ
-1912	Ben_Tey	àŋây	how?	à ŋ â dʒ
-1913	Bankan_Tey	àŋgây	how?	à ŋ ɡ â dʒ
-1914	Nanga	àmâyⁿ	how?	à m â dʒⁿ
-1915	Jamsay	yɔ̌:jǐn	how?	dʒ ɔ̌ː dʒ ǐ n
-1916	Perge_Tegu	yǎwɲɛ̀:	how?	dʒ ǎ w ɲ ɛ̀ː
-1917	Jamsay_Mondoro	yɔ̌:jǐn	how?	dʒ ɔ̌ː dʒ ǐ n
+1911	Toro_Tegu	yⁿàŋêy	how?	j̃ à ŋ ê j
+1912	Ben_Tey	àŋây	how?	à ŋ â j
+1913	Bankan_Tey	àŋgây	how?	à ŋ ɡ â j
+1914	Nanga	àmâyⁿ	how?	à m â j̃
+1915	Jamsay	yɔ̌:jǐn	how?	j ɔ̌ː dʒ ǐ n
+1916	Perge_Tegu	yǎwɲɛ̀:	how?	j ǎ w ɲ ɛ̀ː
+1917	Jamsay_Mondoro	yɔ̌:jǐn	how?	j ɔ̌ː dʒ ǐ n
 1918	Togo_Kan	ɲâŋ	how?	ɲ â ŋ
-1919	Yorno_So	yàŋín	how?	dʒ à ŋ í n
-1920	Tommo_So	yàŋgéni	how?	dʒ à ŋ ɡ é n i
-1921	Dogul_Dom	àyáŋ	how?	à dʒ á ŋ
-1922	Tebul_Ure	áyⁿ	how?	á dʒⁿ
+1919	Yorno_So	yàŋín	how?	j à ŋ í n
+1920	Tommo_So	yàŋgéni	how?	j à ŋ ɡ é n i
+1921	Dogul_Dom	àyáŋ	how?	à j á ŋ
+1922	Tebul_Ure	áyⁿ	how?	á j̃
 1923	Yanda_Dom	ànjǎ:	how?	à n dʒ ǎː
 1924	Mombo	mánà	how?	m á n à
 1925	Bunoge	nánjì	how?	n á n dʒ ì
@@ -2088,9 +2088,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1929	Jamsay	jûŋ	hump (of cow, camel, st donkey)	dʒ û ŋ
 1930	Perge_Tegu	jɔ́ŋgɛ́:rɛ̀	hump (of cow, camel, st donkey)	dʒ ɔ́ ŋ ɡ ɛ́ː r ɛ̀
 1931	Gourou	zàgù túmó	hump (of cow, camel, st donkey)	z à ɡ ù # t ú m ó
-1932	Togo_Kan	yú:jú	hump (of cow, camel, st donkey)	dʒ úː dʒ ú
+1932	Togo_Kan	yú:jú	hump (of cow, camel, st donkey)	j úː dʒ ú
 1933	Yorno_So	tɔ́m	hump (of cow, camel, st donkey)	t ɔ́ m
-1934	Tomo_Kan_Diangassagou	nùʔì:ⁿʔí:ⁿ	hump (of cow, camel, st donkey)	n ù ʔ ìːⁿ ʔ íːⁿ
+1934	Tomo_Kan_Diangassagou	nùʔì:ⁿʔí:ⁿ	hump (of cow, camel, st donkey)	n ù ʔ ìːⁿ ʔ ĩ́ː
 1935	Tommo_So	jɔ́ŋgɔ́	hump (of cow, camel, st donkey)	dʒ ɔ́ ŋ ɡ ɔ́
 1936	Dogul_Dom	jɔ́ŋgɔ̀	hump (of cow, camel, st donkey)	dʒ ɔ́ ŋ ɡ ɔ̀
 1937	Tebul_Ure	tɔ́m	hump (of cow, camel, st donkey)	t ɔ́ m
@@ -2102,7 +2102,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1942	Toro_Tegu	àrkírì	hunger (noun)	à r k í r ì
 1943	Ben_Tey	kɔ̂:	hunger (noun)	k ɔ̂ː
 1944	Bankan_Tey	kɔ̂:	hunger (noun)	k ɔ̂ː
-1945	Nanga	gìyá	hunger (noun)	ɡ ì dʒ á
+1945	Nanga	gìyá	hunger (noun)	ɡ ì j á
 1946	Jamsay	jɛ̌:	hunger (noun)	dʒ ɛ̌ː
 1947	Perge_Tegu	gɛ̌:	hunger (noun)	ɡ ɛ̌ː
 1948	Gourou	gɛ̌:	hunger (noun)	ɡ ɛ̌ː
@@ -2110,8 +2110,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1950	Togo_Kan	gɛ̌:	hunger (noun)	ɡ ɛ̌ː
 1951	Yorno_So	gɛ̌:	hunger (noun)	ɡ ɛ̌ː
 1952	Tomo_Kan_Diangassagou	jà:	hunger (noun)	dʒ àː
-1953	Tommo_So	gíyɛ́	hunger (noun)	ɡ í dʒ ɛ́
-1954	Dogul_Dom	gìyá	hunger (noun)	ɡ ì dʒ á
+1953	Tommo_So	gíyɛ́	hunger (noun)	ɡ í j ɛ́
+1954	Dogul_Dom	gìyá	hunger (noun)	ɡ ì j á
 1955	Tebul_Ure	jǎ:	hunger (noun)	dʒ ǎː
 1956	Yanda_Dom	jà:	hunger (noun)	dʒ àː
 1957	Tiranige	kɔ̀rɛ̀	hunger (noun)	k ɔ̀ r ɛ̀
@@ -2134,31 +2134,31 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 1973	Bunoge	dá:nàmà	hunt (noun)	d áː n à m à
 #
 1974	Toro_Tegu	dò:bú	inner bran of grain	d òː b ú
-1975	Ben_Tey	yórò	inner bran of grain	dʒ ó r ò
-1976	Bankan_Tey	tùsǐ:ⁿ	inner bran of grain	t ù s ĩ̌ː
-1977	Nanga	yó:rò	inner bran of grain	dʒ óː r ò
-1978	Jamsay	yórò	inner bran of grain	dʒ ó r ò
-1979	Perge_Tegu	yórò	inner bran of grain	dʒ ó r ò
-1980	Gourou	yórò	inner bran of grain	dʒ ó r ò
-1981	Togo_Kan	yóró	inner bran of grain	dʒ ó r ó
-1982	Yorno_So	yólò	inner bran of grain	dʒ ó l ò
-1983	Tomo_Kan_Diangassagou	yòló	inner bran of grain	dʒ ò l ó
+1975	Ben_Tey	yórò	inner bran of grain	j ó r ò
+1976	Bankan_Tey	tùsǐ:ⁿ	inner bran of grain	t ù s ǐːⁿ
+1977	Nanga	yó:rò	inner bran of grain	j óː r ò
+1978	Jamsay	yórò	inner bran of grain	j ó r ò
+1979	Perge_Tegu	yórò	inner bran of grain	j ó r ò
+1980	Gourou	yórò	inner bran of grain	j ó r ò
+1981	Togo_Kan	yóró	inner bran of grain	j ó r ó
+1982	Yorno_So	yólò	inner bran of grain	j ó l ò
+1983	Tomo_Kan_Diangassagou	yòló	inner bran of grain	j ò l ó
 1984	Tommo_So	káŋá	inner bran of grain	k á ŋ á
-1985	Tebul_Ure	yóró	inner bran of grain	dʒ ó r ó
+1985	Tebul_Ure	yóró	inner bran of grain	j ó r ó
 1986	Yanda_Dom	káŋá	inner bran of grain	k á ŋ á
 1987	Tiranige	kà:gè	inner bran of grain	k àː ɡ è
 1988	Mombo	pújù	inner bran of grain	p ú dʒ ù
 #
 1989	Toro_Tegu	dɔ́	insult (noun)	d ɔ́
-1990	Ben_Tey	dìyɔ̂:	insult (noun)	d ì dʒ ɔ̂ː
-1991	Bankan_Tey	dìyâ:	insult (noun)	d ì dʒ âː
-1992	Nanga	dùyâ	insult (noun)	d ù dʒ â
+1990	Ben_Tey	dìyɔ̂:	insult (noun)	d ì j ɔ̂ː
+1991	Bankan_Tey	dìyâ:	insult (noun)	d ì j âː
+1992	Nanga	dùyâ	insult (noun)	d ù j â
 1993	Jamsay	dɔ̌:	insult (noun)	d ɔ̌ː
 1994	Perge_Tegu	dɔ́:	insult (noun)	d ɔ́ː
 1995	Jamsay_Mondoro	dɔ̌:	insult (noun)	d ɔ̌ː
 1996	Togo_Kan	dɔ̌:	insult (noun)	d ɔ̌ː
 1997	Yorno_So	dɛ̌:	insult (noun)	d ɛ̌ː
-1998	Tommo_So	dùyɔ́	insult (noun)	d ù dʒ ɔ́
+1998	Tommo_So	dùyɔ́	insult (noun)	d ù j ɔ́
 1999	Tebul_Ure	dwá	insult (noun)	d w á
 2000	Yanda_Dom	dɔ̀:	insult (noun)	d ɔ̀ː
 2001	Tiranige	dwɛ́:	insult (noun)	d w ɛ́ː
@@ -2185,8 +2185,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2020	Perge_Tegu	áŋú	jaw (lower)	á ŋ ú
 2021	Gourou	ɛ̀wⁿɛ̀ kɛ̀nɛ́	jaw (lower)	ɛ̀ w̃ ɛ̀ # k ɛ̀ n ɛ́
 2022	Togo_Kan	ɛ̀wⁿɛ́	jaw (lower)	ɛ̀ w̃ ɛ́
-2023	Yorno_So	àŋgǎ:ⁿ	jaw (lower)	à ŋ ɡ ǎːⁿ
-2024	Tomo_Kan_Diangassagou	ʔyàmàndú	jaw (lower)	ʔ dʒ à m à n d ú
+2023	Yorno_So	àŋgǎ:ⁿ	jaw (lower)	à ŋ ɡ ã̌ː
+2024	Tomo_Kan_Diangassagou	ʔyàmàndú	jaw (lower)	ʔ j à m à n d ú
 2025	Tommo_So	àŋgàà dúú	jaw (lower)	à ŋ ɡ à à # d ú ú
 2026	Dogul_Dom	áŋá	jaw (lower)	á ŋ á
 2027	Tebul_Ure	àŋgǎ:	jaw (lower)	à ŋ ɡ ǎː
@@ -2195,19 +2195,19 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2030	Bunoge	ná:ŋà:	jaw (lower)	n áː ŋ àː
 #
 2031	Toro_Tegu	làràmkúm	kidney	l à r à m k ú m
-2032	Ben_Tey	nàrⁿìyî:	kidney	n à r̃ ì dʒ îː
-2033	Bankan_Tey	nàrⁿâyⁿ	kidney	n à r̃ â dʒⁿ
+2032	Ben_Tey	nàrⁿìyî:	kidney	n à r̃ ì j îː
+2033	Bankan_Tey	nàrⁿâyⁿ	kidney	n à r̃ â j̃
 2034	Nanga	nàrⁿìǹjâ	kidney	n à r̃ ì ǹ dʒ â
 2035	Jamsay	nàrⁿî:	kidney	n à r̃ îː
 2036	Perge_Tegu	nàrⁿî:	kidney	n à r̃ îː
 2037	Togo_Kan	gàríⁿ	kidney	ɡ à r ĩ́
 2038	Yorno_So	nàrⁿǐ:	kidney	n à r̃ ǐː
-2039	Tomo_Kan_Diangassagou	jùⁿʔí:ⁿ	kidney	dʒ ũ̀ ʔ íːⁿ
+2039	Tomo_Kan_Diangassagou	jùⁿʔí:ⁿ	kidney	dʒ ũ̀ ʔ ĩ́ː
 2040	Tommo_So	nàlí	kidney	n à l í
 2041	Dogul_Dom	nàló	kidney	n à l ó
-2042	Tebul_Ure	làlíyɛ́	kidney	l à l í dʒ ɛ́
-2043	Yanda_Dom	làlíyè	kidney	l à l í dʒ è
-2044	Mombo	kíbɛ̂y	kidney	k í b ɛ̂ dʒ
+2042	Tebul_Ure	làlíyɛ́	kidney	l à l í j ɛ́
+2043	Yanda_Dom	làlíyè	kidney	l à l í j è
+2044	Mombo	kíbɛ̂y	kidney	k í b ɛ̂ j
 #
 2045	Toro_Tegu	nìŋó	knee	n ì ŋ ó
 2046	Bankan_Tey	kízì	knee	k í z ì
@@ -2216,9 +2216,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2049	Gourou	nèŋé	knee	n è ŋ é
 2050	Jamsay_Mondoro	nɛ̀ŋɛ́	knee	n ɛ̀ ŋ ɛ́
 2051	Togo_Kan	nèŋèrèkúⁿ	knee	n è ŋ è r è k ṹ
-2052	Yorno_So	yúŋóló	knee	dʒ ú ŋ ó l ó
+2052	Yorno_So	yúŋóló	knee	j ú ŋ ó l ó
 2053	Tomo_Kan_Diangassagou	ɲùŋgòlò	knee	ɲ ù ŋ ɡ ò l ò
-2054	Tommo_So	ànù yóŋóló	knee	à n ù # dʒ ó ŋ ó l ó
+2054	Tommo_So	ànù yóŋóló	knee	à n ù # j ó ŋ ó l ó
 2055	Dogul_Dom	kúɲjù	knee	k ú ɲ dʒ ù
 2056	Tebul_Ure	kúndú	knee	k ú n d ú
 2057	Yanda_Dom	kúnzú	knee	k ú n z ú
@@ -2267,9 +2267,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2097	Gourou	tùŋùnɔ̌:	ladle (noun)	t ù ŋ ù n ɔ̌ː
 2098	Jamsay_Mondoro	tùŋûn	ladle (noun)	t ù ŋ û n
 2099	Togo_Kan	kɔ̀nɔ̌:	ladle (noun)	k ɔ̀ n ɔ̌ː
-2100	Yorno_So	kɔ̀rɔ̀ý	ladle (noun)	k ɔ̀ r ɔ̀ dʒ́
+2100	Yorno_So	kɔ̀rɔ̀ý	ladle (noun)	k ɔ̀ r ɔ̀ j́
 2101	Tomo_Kan_Diangassagou	jògùŋgù	ladle (noun)	dʒ ò ɡ ù ŋ ɡ ù
-2102	Tommo_So	kɔ̀rɔ̀ý	ladle (noun)	k ɔ̀ r ɔ̀ dʒ́
+2102	Tommo_So	kɔ̀rɔ̀ý	ladle (noun)	k ɔ̀ r ɔ̀ j́
 2103	Dogul_Dom	kúddù	ladle (noun)	k ú d d ù
 2104	Tebul_Ure	ìnjìrbɔ̀ŋɔ́	ladle (noun)	ì n dʒ ì r b ɔ̀ ŋ ɔ́
 2105	Yanda_Dom	kɔ̀dɔ̀bènzélè	ladle (noun)	k ɔ̀ d ɔ̀ b è n z é l è
@@ -2340,10 +2340,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2166	Mombo	gúmbà	large wooden eating bowl	ɡ ú m b à
 #
 2167	Toro_Tegu	gà:rí	last year	ɡ àː r í
-2168	Ben_Tey	jɛ᷈yⁿ	last year	dʒ ɛ᷈ dʒⁿ
-2169	Nanga	gɔ᷈yⁿ	last year	ɡ ɔ᷈ dʒⁿ
+2168	Ben_Tey	jɛ᷈yⁿ	last year	dʒ ɛ᷈ j̃
+2169	Nanga	gɔ᷈yⁿ	last year	ɡ ɔ᷈ j̃
 2170	Jamsay	gà:rú	last year	ɡ àː r ú
-2171	Perge_Tegu	gǎ:y	last year	ɡ ǎː dʒ
+2171	Perge_Tegu	gǎ:y	last year	ɡ ǎː j
 2172	Gourou	gà:rú	last year	ɡ àː r ú
 2173	Jamsay_Mondoro	gà:rú	last year	ɡ àː r ú
 2174	Togo_Kan	gà:rú	last year	ɡ àː r ú
@@ -2378,7 +2378,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2201	Gourou	mɔ́wⁿ mɔ̀wⁿɔ́	laugh, give out a laugh	m ɔ́ w̃ # m ɔ̀ w̃ ɔ́
 2202	Jamsay_Mondoro	mɔ́wⁿ mɔ̀wⁿɔ́	laugh, give out a laugh	m ɔ́ w̃ # m ɔ̀ w̃ ɔ́
 2203	Togo_Kan	mɔ́ mɔ̌:	laugh, give out a laugh	m ɔ́ # m ɔ̌ː
-2204	Yorno_So	mɔ̂yⁿ mɔ̌:	laugh, give out a laugh	m ɔ̂ dʒⁿ # m ɔ̌ː
+2204	Yorno_So	mɔ̂yⁿ mɔ̌:	laugh, give out a laugh	m ɔ̂ j̃ # m ɔ̌ː
 2205	Tomo_Kan_Diangassagou	mɔ́ⁿ mɔ̀mɛ̀	laugh, give out a laugh	m ɔ̃́ # m ɔ̀ m ɛ̀
 2206	Tommo_So	mómú mòmó	laugh, give out a laugh	m ó m ú # m ò m ó
 2207	Yanda_Dom	màndù màndú	laugh, give out a laugh	m à n d ù # m à n d ú
@@ -2394,7 +2394,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2216	Gourou	mɔ́wⁿ	laughter	m ɔ́ w̃
 2217	Jamsay_Mondoro	mɔ́wⁿ	laughter	m ɔ́ w̃
 2218	Togo_Kan	mɔ́	laughter	m ɔ́
-2219	Yorno_So	mɔ̂yⁿ	laughter	m ɔ̂ dʒⁿ
+2219	Yorno_So	mɔ̂yⁿ	laughter	m ɔ̂ j̃
 2220	Tomo_Kan_Diangassagou	mɔ́ⁿ	laughter	m ɔ̃́
 2221	Tommo_So	mómú	laughter	m ó m ú
 2222	Dogul_Dom	mándùg	laughter	m á n d ù ɡ
@@ -2412,17 +2412,17 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2233	Togo_Kan	kúrɔ́	leaf (of plant)	k ú r ɔ́
 2234	Yorno_So	lɛ̂:	leaf (of plant)	l ɛ̂ː
 2235	Tomo_Kan_Diangassagou	kɔ̀w	leaf (of plant)	k ɔ̀ w
-2236	Tommo_So	núyɔ́	leaf (of plant)	n ú dʒ ɔ́
+2236	Tommo_So	núyɔ́	leaf (of plant)	n ú j ɔ́
 2237	Tebul_Ure	kúlá	leaf (of plant)	k ú l á
 2238	Yanda_Dom	kùlà	leaf (of plant)	k ù l à
 2239	Tiranige	kómbá	leaf (of plant)	k ó m b á
 2240	Mombo	kúbɛ̀	leaf (of plant)	k ú b ɛ̀
 2241	Bunoge	kóbà	leaf (of plant)	k ó b à
 #
-2242	Toro_Tegu	bàrⁿíyⁿà	left (hand, etc.)	b à r̃ í dʒⁿ à
-2243	Ben_Tey	bànǎyⁿ	left (hand, etc.)	b à n ǎ dʒⁿ
-2244	Bankan_Tey	bàndǎy	left (hand, etc.)	b à n d ǎ dʒ
-2245	Nanga	bàrìyɛ́	left (hand, etc.)	b à r ì dʒ ɛ́
+2242	Toro_Tegu	bàrⁿíyⁿà	left (hand, etc.)	b à r̃ í j̃ à
+2243	Ben_Tey	bànǎyⁿ	left (hand, etc.)	b à n ǎ j̃
+2244	Bankan_Tey	bàndǎy	left (hand, etc.)	b à n d ǎ j
+2245	Nanga	bàrìyɛ́	left (hand, etc.)	b à r ì j ɛ́
 2246	Jamsay	bàná	left (hand, etc.)	b à n á
 2247	Perge_Tegu	bàlá	left (hand, etc.)	b à l á
 2248	Gourou	bàná	left (hand, etc.)	b à n á
@@ -2434,10 +2434,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2254	Tiranige	nɔ́:ndɔ́	left (hand, etc.)	n ɔ́ː n d ɔ́
 2255	Mombo	ná:gà	left (hand, etc.)	n áː ɡ à
 #
-2256	Toro_Tegu	lɔ̀bàrⁿíyⁿà	left hand	l ɔ̀ b à r̃ í dʒⁿ à
-2257	Ben_Tey	nà bànǎyⁿ	left hand	n à # b à n ǎ dʒⁿ
-2258	Bankan_Tey	nà: bàndǎy	left hand	n àː # b à n d ǎ dʒ
-2259	Nanga	nà: bàrìyɛ́	left hand	n àː # b à r ì dʒ ɛ́
+2256	Toro_Tegu	lɔ̀bàrⁿíyⁿà	left hand	l ɔ̀ b à r̃ í j̃ à
+2257	Ben_Tey	nà bànǎyⁿ	left hand	n à # b à n ǎ j̃
+2258	Bankan_Tey	nà: bàndǎy	left hand	n àː # b à n d ǎ j
+2259	Nanga	nà: bàrìyɛ́	left hand	n àː # b à r ì j ɛ́
 2260	Jamsay	nùmòbàná	left hand	n ù m ò b à n á
 2261	Perge_Tegu	nùwⁿò bàlá	left hand	n ù w̃ ò # b à l á
 2262	Jamsay_Mondoro	nùmòbàná	left hand	n ù m ò b à n á
@@ -2467,18 +2467,18 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 2285	Toro_Tegu	ɛ́rú	lightweight	ɛ́ r ú
 2286	Ben_Tey	ɲɛ̀rⁿú	lightweight	ɲ ɛ̀ r̃ ú
-2287	Bankan_Tey	yɛ́mbɛ̀	lightweight	dʒ ɛ́ m b ɛ̀
+2287	Bankan_Tey	yɛ́mbɛ̀	lightweight	j ɛ́ m b ɛ̀
 2288	Nanga	ɛ́rⁿî	lightweight	ɛ́ r̃ î
 2289	Jamsay	ɲɛ́n	lightweight	ɲ ɛ́ n
 2290	Perge_Tegu	ɲɛ́rⁿú	lightweight	ɲ ɛ́ r̃ ú
 2291	Gourou	ɲɛ́n	lightweight	ɲ ɛ́ n
 2292	Jamsay_Mondoro	ɲɛ́n	lightweight	ɲ ɛ́ n
 2293	Togo_Kan	ɲɛ́rⁿú	lightweight	ɲ ɛ́ r̃ ú
-2294	Tommo_So	wɛ́y	lightweight	w ɛ́ dʒ
+2294	Tommo_So	wɛ́y	lightweight	w ɛ́ j
 2295	Dogul_Dom	ɛ́nɛ̀nɛ̀	lightweight	ɛ́ n ɛ̀ n ɛ̀
 2296	Yanda_Dom	ɛ̀n	lightweight	ɛ̀ n
 2297	Tiranige	né:ŋgórá	lightweight	n éː ŋ ɡ ó r á
-2298	Mombo	yáwyáw kánní	lightweight	dʒ á w dʒ á w # k á n n í
+2298	Mombo	yáwyáw kánní	lightweight	j á w j á w # k á n n í
 #
 2299	Toro_Tegu	cɛ́lá	liver	tʃ ɛ́ l á
 2300	Bankan_Tey	kɛ́ndɛ̀	liver	k ɛ́ n d ɛ̀
@@ -2509,14 +2509,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2324	Yorno_So	pàlá	long (e.g. rope)	p à l á
 2325	Tommo_So	pàlá	long (e.g. rope)	p à l á
 2326	Yanda_Dom	zàlà	long (e.g. rope)	z à l à
-2327	Tiranige	yálá	long (e.g. rope)	dʒ á l á
+2327	Tiranige	yálá	long (e.g. rope)	j á l á
 2328	Mombo	góllò	long (e.g. rope)	ɡ ó l l ò
 2329	Bunoge	gòlò	long (e.g. rope)	ɡ ò l ò
 #
 2330	Toro_Tegu	kòlú	lunch	k ò l ú
-2331	Ben_Tey	kɛ̀lɛ̀tɛ᷈y	lunch	k ɛ̀ l ɛ̀ t ɛ᷈ dʒ
+2331	Ben_Tey	kɛ̀lɛ̀tɛ᷈y	lunch	k ɛ̀ l ɛ̀ t ɛ᷈ j
 2332	Bankan_Tey	m̀bùrɔ̀mbúrɔ̀	lunch	m̀ b ù r ɔ̀ m b ú r ɔ̀
-2333	Nanga	kɔ̀rⁿɔ̀ŋɔ̀yⁿ pàndá	lunch	k ɔ̀ r̃ ɔ̀ ŋ ɔ̀ dʒⁿ # p à n d á
+2333	Nanga	kɔ̀rⁿɔ̀ŋɔ̀yⁿ pàndá	lunch	k ɔ̀ r̃ ɔ̀ ŋ ɔ̀ j̃ # p à n d á
 2334	Jamsay	cɛ̀ntɛ̀gú	lunch	tʃ ɛ̀ n t ɛ̀ ɡ ú
 2335	Perge_Tegu	kɛ̀lɛ̀tɛ̀gú	lunch	k ɛ̀ l ɛ̀ t ɛ̀ ɡ ú
 2336	Gourou	nìnúwⁿò kɛ̀ntɛ̀gú	lunch	n ì n ú w̃ ò # k ɛ̀ n t ɛ̀ ɡ ú
@@ -2582,10 +2582,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2392	Ben_Tey	kòwî:	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ò w îː
 2393	Bankan_Tey	ków	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ó w
 2394	Nanga	kǒw	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ǒ w
-2395	Jamsay	yùŋków	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	dʒ ù ŋ k ó w
+2395	Jamsay	yùŋków	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	j ù ŋ k ó w
 2396	Perge_Tegu	ków	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ó w
 2397	Togo_Kan	tɛ̀:kórú	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	t ɛ̀ː k ó r ú
-2398	Yorno_So	yɛ̀yⁿkóm	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	dʒ ɛ̀ dʒⁿ k ó m
+2398	Yorno_So	yɛ̀yⁿkóm	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	j ɛ̀ j̃ k ó m
 2399	Tomo_Kan_Diangassagou	kó	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ó
 2400	Tommo_So	pɔ́mbɔ́	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	p ɔ́ m b ɔ́
 2401	Tebul_Ure	kóbúgó	man-made tree apiary (for honey bees) consisting of a section of a hollow tree trunk placed among branches in a living tree	k ó b ú ɡ ó
@@ -2601,13 +2601,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2410	Gourou	lúgù	manure (sometimes mixed with garbage) as fertilizer	l ú ɡ ù
 2411	Togo_Kan	bínígí	manure (sometimes mixed with garbage) as fertilizer	b í n í ɡ í
 2412	Yorno_So	bìrⁿǐŋ	manure (sometimes mixed with garbage) as fertilizer	b ì r̃ ǐ ŋ
-2413	Tomo_Kan_Diangassagou	yú:	manure (sometimes mixed with garbage) as fertilizer	dʒ úː
+2413	Tomo_Kan_Diangassagou	yú:	manure (sometimes mixed with garbage) as fertilizer	j úː
 2414	Tommo_So	bìlím	manure (sometimes mixed with garbage) as fertilizer	b ì l í m
 2415	Tebul_Ure	lúbé:	manure (sometimes mixed with garbage) as fertilizer	l ú b éː
 2416	Yanda_Dom	lùbú	manure (sometimes mixed with garbage) as fertilizer	l ù b ú
 2417	Tiranige	úwú	manure (sometimes mixed with garbage) as fertilizer	ú w ú
 2418	Mombo	úbù	manure (sometimes mixed with garbage) as fertilizer	ú b ù
-2419	Bunoge	kúyè	manure (sometimes mixed with garbage) as fertilizer	k ú dʒ è
+2419	Bunoge	kúyè	manure (sometimes mixed with garbage) as fertilizer	k ú j è
 #
 2420	Ben_Tey	ɛ́wá:	market	ɛ́ w áː
 2421	Bankan_Tey	ɛ́wá:	market	ɛ́ w áː
@@ -2630,7 +2630,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2437	Jamsay	búsâm	marrow	b ú s â m
 2438	Perge_Tegu	búsâm	marrow	b ú s â m
 2439	Gourou	bú:sɔ̀m	marrow	b úː s ɔ̀ m
-2440	Togo_Kan	sìyèiⁿ bɔ́:nɔ́	marrow	s ì dʒ è ĩ # b ɔ́ː n ɔ́
+2440	Togo_Kan	sìyèiⁿ bɔ́:nɔ́	marrow	s ì j è ĩ # b ɔ́ː n ɔ́
 2441	Yorno_So	bɔ́nɔ̀	marrow	b ɔ́ n ɔ̀
 2442	Tommo_So	bɔ́ndú	marrow	b ɔ́ n d ú
 2443	Dogul_Dom	bɔ́ndù	marrow	b ɔ́ n d ù
@@ -2659,8 +2659,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2465	Bunoge	bé:ŋgè	mat	b éː ŋ ɡ è
 #
 2466	Toro_Tegu	lɛ́	meal (cooked)	l ɛ́
-2467	Ben_Tey	ɲɛ̌yⁿ	meal (cooked)	ɲ ɛ̌ dʒⁿ
-2468	Bankan_Tey	ɲɛ̌yⁿ	meal (cooked)	ɲ ɛ̌ dʒⁿ
+2467	Ben_Tey	ɲɛ̌yⁿ	meal (cooked)	ɲ ɛ̌ j̃
+2468	Bankan_Tey	ɲɛ̌yⁿ	meal (cooked)	ɲ ɛ̌ j̃
 2469	Nanga	ɲǎ:	meal (cooked)	ɲ ǎː
 2470	Jamsay	ɲǎ:	meal (cooked)	ɲ ǎː
 2471	Perge_Tegu	já:	meal (cooked)	dʒ áː
@@ -2711,8 +2711,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2514	Bunoge	jóŋgù	medical treatment, medical care	dʒ ó ŋ ɡ ù
 #
 2515	Toro_Tegu	ɛ̂m	milk	ɛ̂ m
-2516	Ben_Tey	ɛ́wⁿɛ̀yⁿ	milk	ɛ́ w̃ ɛ̀ dʒⁿ
-2517	Bankan_Tey	ɛ́mmɛ̀yⁿ	milk	ɛ́ m m ɛ̀ dʒⁿ
+2516	Ben_Tey	ɛ́wⁿɛ̀yⁿ	milk	ɛ́ w̃ ɛ̀ j̃
+2517	Bankan_Tey	ɛ́mmɛ̀yⁿ	milk	ɛ́ m m ɛ̀ j̃
 2518	Nanga	ɛ́mɛ̂	milk	ɛ́ m ɛ̂
 2519	Jamsay	ɛ̂m	milk	ɛ̂ m
 2520	Perge_Tegu	ɛ̂m	milk	ɛ̂ m
@@ -2728,71 +2728,71 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2530	Mombo	ɛ́mɛ́	milk	ɛ́ m ɛ́
 2531	Bunoge	ʔɛ́mɛ́ŋgè	milk	ʔ ɛ́ m ɛ́ ŋ ɡ è
 #
-2532	Toro_Tegu	yú	millet	dʒ ú
-2533	Ben_Tey	yû:	millet	dʒ ûː
-2534	Bankan_Tey	yû:	millet	dʒ ûː
-2535	Nanga	yû:	millet	dʒ ûː
+2532	Toro_Tegu	yú	millet	j ú
+2533	Ben_Tey	yû:	millet	j ûː
+2534	Bankan_Tey	yû:	millet	j ûː
+2535	Nanga	yû:	millet	j ûː
 2536	Jamsay	ɲú:	millet	ɲ úː
-2537	Perge_Tegu	yú:	millet	dʒ úː
+2537	Perge_Tegu	yú:	millet	j úː
 2538	Jamsay_Mondoro	ɲú:	millet	ɲ úː
 2539	Togo_Kan	ɲú:	millet	ɲ úː
-2540	Yorno_So	yǔ:	millet	dʒ ǔː
+2540	Yorno_So	yǔ:	millet	j ǔː
 2541	Tomo_Kan_Diangassagou	ʔínjá	millet	ʔ í n dʒ á
-2542	Tommo_So	yúú	millet	dʒ ú ú
-2543	Dogul_Dom	sìyɛ́	millet	s ì dʒ ɛ́
-2544	Tebul_Ure	yɔ́	millet	dʒ ɔ́
-2545	Yanda_Dom	yú:	millet	dʒ úː
-2546	Tiranige	yò:gè	millet	dʒ òː ɡ è
+2542	Tommo_So	yúú	millet	j ú ú
+2543	Dogul_Dom	sìyɛ́	millet	s ì j ɛ́
+2544	Tebul_Ure	yɔ́	millet	j ɔ́
+2545	Yanda_Dom	yú:	millet	j úː
+2546	Tiranige	yò:gè	millet	j òː ɡ è
 2547	Mombo	sé:ŋgè	millet	s éː ŋ ɡ è
 2548	Bunoge	sé:ŋgè	millet	s éː ŋ ɡ è
 #
 2549	Toro_Tegu	kɔ̀ⁿsɔ́	millet beer	k ɔ̃̀ s ɔ́
 2550	Ben_Tey	kɔ̀njɔ́	millet beer	k ɔ̀ n dʒ ɔ́
 2551	Nanga	kɔ̀njɔ́	millet beer	k ɔ̀ n dʒ ɔ́
-2552	Perge_Tegu	yù:kɔ̀njɔ́	millet beer	dʒ ùː k ɔ̀ n dʒ ɔ́
+2552	Perge_Tegu	yù:kɔ̀njɔ́	millet beer	j ùː k ɔ̀ n dʒ ɔ́
 2553	Gourou	kɔ̀sɔ́	millet beer	k ɔ̀ s ɔ́
 2554	Jamsay_Mondoro	kɔ̀ɲɔ́	millet beer	k ɔ̀ ɲ ɔ́
 2555	Togo_Kan	ɲú: kɛ́ɲɛ́	millet beer	ɲ úː # k ɛ́ ɲ ɛ́
 2556	Yorno_So	kɔ̀ɲɔ́	millet beer	k ɔ̀ ɲ ɔ́
 2557	Tomo_Kan_Diangassagou	cɛ́njɛ́	millet beer	tʃ ɛ́ n dʒ ɛ́
-2558	Tommo_So	yúú kɔ̀njɔ̀	millet beer	dʒ ú ú # k ɔ̀ n dʒ ɔ̀
-2559	Dogul_Dom	sìyɛ̀ kɔ́ɲjɔ̀	millet beer	s ì dʒ ɛ̀ # k ɔ́ ɲ dʒ ɔ̀
+2558	Tommo_So	yúú kɔ̀njɔ̀	millet beer	j ú ú # k ɔ̀ n dʒ ɔ̀
+2559	Dogul_Dom	sìyɛ̀ kɔ́ɲjɔ̀	millet beer	s ì j ɛ̀ # k ɔ́ ɲ dʒ ɔ̀
 2560	Tebul_Ure	kɔ̀ndɔ́	millet beer	k ɔ̀ n d ɔ́
 2561	Yanda_Dom	kɔ̀nzɔ̀	millet beer	k ɔ̀ n z ɔ̀
 2562	Tiranige	kɔ́njɛ́	millet beer	k ɔ́ n dʒ ɛ́
-2563	Mombo	sè:ŋgè kɔ́ndyɔ́	millet beer	s èː ŋ ɡ è # k ɔ́ n d dʒ ɔ́
+2563	Mombo	sè:ŋgè kɔ́ndyɔ́	millet beer	s èː ŋ ɡ è # k ɔ́ n d j ɔ́
 2564	Bunoge	ʔàmmɛ̀	millet beer	ʔ à m m ɛ̀
 #
-2565	Toro_Tegu	yùpìrⁿá	millet flour	dʒ ù p ì r̃ á
-2566	Ben_Tey	yû: pìnàm	millet flour	dʒ ûː # p ì n à m
-2567	Bankan_Tey	yû: pìrⁿànàmù:	millet flour	dʒ ûː # p ì r̃ à n à m ùː
-2568	Nanga	yù:pírⁿâ	millet flour	dʒ ùː p í r̃ â
-2569	Jamsay	yù:pìnǎm	millet flour	dʒ ùː p ì n ǎ m
-2570	Perge_Tegu	yù:pìnǎm	millet flour	dʒ ùː p ì n ǎ m
-2571	Togo_Kan	ɲù: pùnǎyⁿ	millet flour	ɲ ùː # p ù n ǎ dʒⁿ
-2572	Yorno_So	yù:pùnǎm	millet flour	dʒ ùː p ù n ǎ m
-2573	Tommo_So	yùù púnɔ́	millet flour	dʒ ù ù # p ú n ɔ́
-2574	Dogul_Dom	ʃìyɛ̀ púnó	millet flour	ʃ ì dʒ ɛ̀ # p ú n ó
-2575	Tebul_Ure	yɔ̀púrⁿó	millet flour	dʒ ɔ̀ p ú r̃ ó
-2576	Yanda_Dom	yù:púrⁿá	millet flour	dʒ ùː p ú r̃ á
+2565	Toro_Tegu	yùpìrⁿá	millet flour	j ù p ì r̃ á
+2566	Ben_Tey	yû: pìnàm	millet flour	j ûː # p ì n à m
+2567	Bankan_Tey	yû: pìrⁿànàmù:	millet flour	j ûː # p ì r̃ à n à m ùː
+2568	Nanga	yù:pírⁿâ	millet flour	j ùː p í r̃ â
+2569	Jamsay	yù:pìnǎm	millet flour	j ùː p ì n ǎ m
+2570	Perge_Tegu	yù:pìnǎm	millet flour	j ùː p ì n ǎ m
+2571	Togo_Kan	ɲù: pùnǎyⁿ	millet flour	ɲ ùː # p ù n ǎ j̃
+2572	Yorno_So	yù:pùnǎm	millet flour	j ùː p ù n ǎ m
+2573	Tommo_So	yùù púnɔ́	millet flour	j ù ù # p ú n ɔ́
+2574	Dogul_Dom	ʃìyɛ̀ púnó	millet flour	ʃ ì j ɛ̀ # p ú n ó
+2575	Tebul_Ure	yɔ̀púrⁿó	millet flour	j ɔ̀ p ú r̃ ó
+2576	Yanda_Dom	yù:púrⁿá	millet flour	j ùː p ú r̃ á
 2577	Tiranige	séŋgé pùnàŋgé	millet flour	s é ŋ ɡ é # p ù n à ŋ ɡ é
 2578	Mombo	sè:ŋgè púnáŋgè	millet flour	s èː ŋ ɡ è # p ú n á ŋ ɡ è
 #
 2579	Toro_Tegu	ná:nâ:	mint	n áː n âː
 2580	Ben_Tey	ànàná	mint	à n à n á
 2581	Bankan_Tey	àná:nà	mint	à n áː n à
-2582	Nanga	nàna᷈yⁿ	mint	n à n a᷈ dʒⁿ
+2582	Nanga	nàna᷈yⁿ	mint	n à n a᷈ j̃
 2583	Jamsay	ànà:ná	mint	à n àː n á
 2584	Perge_Tegu	ànàná	mint	à n à n á
-2585	Togo_Kan	nànàyé	mint	n à n à dʒ é
-2586	Yorno_So	nànàyê:	mint	n à n à dʒ êː
-2587	Tomo_Kan_Diangassagou	nànàyè	mint	n à n à dʒ è
-2588	Tommo_So	nànàý	mint	n à n à dʒ́
-2589	Dogul_Dom	nànáày	mint	n à n á à dʒ
-2590	Tebul_Ure	nànǎyⁿ	mint	n à n ǎ dʒⁿ
-2591	Yanda_Dom	nànǎy	mint	n à n ǎ dʒ
-2592	Tiranige	nànàyé	mint	n à n à dʒ é
-2593	Mombo	nànǎy	mint	n à n ǎ dʒ
+2585	Togo_Kan	nànàyé	mint	n à n à j é
+2586	Yorno_So	nànàyê:	mint	n à n à j êː
+2587	Tomo_Kan_Diangassagou	nànàyè	mint	n à n à j è
+2588	Tommo_So	nànàý	mint	n à n à j́
+2589	Dogul_Dom	nànáày	mint	n à n á à j
+2590	Tebul_Ure	nànǎyⁿ	mint	n à n ǎ j̃
+2591	Yanda_Dom	nànǎy	mint	n à n ǎ j
+2592	Tiranige	nànàyé	mint	n à n à j é
+2593	Mombo	nànǎy	mint	n à n ǎ j
 #
 2594	Toro_Tegu	ìwá	moon	ì w á
 2595	Ben_Tey	ùwɔ́	moon	ù w ɔ́
@@ -2803,13 +2803,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2600	Gourou	ɛ̌:	moon	ɛ̌ː
 2601	Jamsay_Mondoro	ɛ̌:	moon	ɛ̌ː
 2602	Togo_Kan	ɔ̌:	moon	ɔ̌ː
-2603	Tommo_So	ììyɛ́	moon	ì ì dʒ ɛ́
+2603	Tommo_So	ììyɛ́	moon	ì ì j ɛ́
 2604	Dogul_Dom	wɔ́ɔ́gù	moon	w ɔ́ ɔ́ ɡ ù
 2605	Tebul_Ure	swǎ:	moon	s w ǎː
 2606	Yanda_Dom	swà:	moon	s w àː
 2607	Tiranige	éŋání	moon	é ŋ á n í
 2608	Mombo	wɛ̂:	moon	w ɛ̂ː
-2609	Bunoge	yá:sìmà	moon	dʒ áː s ì m à
+2609	Bunoge	yá:sìmà	moon	j áː s ì m à
 #
 2610	Toro_Tegu	ná	mother	n á
 2611	Ben_Tey	nàrⁿá	mother	n à r̃ á
@@ -2846,10 +2846,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2640	Toro_Tegu	m̀ bá	my father	m̀ # b á
 2641	Ben_Tey	bɔ᷈:	my father	b ɔ᷈ː
 2642	Bankan_Tey	bɔ᷈:	my father	b ɔ᷈ː
-2643	Nanga	bǎ: yɛ᷈:	my father	b ǎː # dʒ ɛ᷈ː
+2643	Nanga	bǎ: yɛ᷈:	my father	b ǎː # j ɛ᷈ː
 2644	Jamsay	mì dê:	my father	m ì # d êː
 2645	Perge_Tegu	mì bâ:	my father	m ì # b âː
-2646	Gourou	mì díyè	my father	m ì # d í dʒ è
+2646	Gourou	mì díyè	my father	m ì # d í j è
 2647	Jamsay_Mondoro	mì dê:	my father	m ì # d êː
 2648	Togo_Kan	dèdé: mà	my father	d è d éː # m à
 2649	Tommo_So	mí báá	my father	m í # b á á
@@ -2862,7 +2862,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2655	Toro_Tegu	m̀ áwⁿà	my father- or mother-in-law	m̀ # á w̃ à
 2656	Ben_Tey	ɔ̌wⁿrⁿù	my father- or mother-in-law	ɔ̌ w̃ r̃ ù
 2657	Bankan_Tey	ómírⁿì	my father- or mother-in-law	ó m í r̃ ì
-2658	Nanga	òmìrⁿí yɛ᷈:	my father- or mother-in-law	ò m ì r̃ í # dʒ ɛ᷈ː
+2658	Nanga	òmìrⁿí yɛ᷈:	my father- or mother-in-law	ò m ì r̃ í # j ɛ᷈ː
 2659	Jamsay	mì ɔ́wⁿɔ̀	my father- or mother-in-law	m ì # ɔ́ w̃ ɔ̀
 2660	Perge_Tegu	mì áwⁿà	my father- or mother-in-law	m ì # á w̃ à
 2661	Togo_Kan	àwⁿá mà	my father- or mother-in-law	à w̃ á # m à
@@ -2877,7 +2877,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2669	Toro_Tegu	ǹ ná	my mother	ǹ # n á
 2670	Ben_Tey	nǎrⁿà	my mother	n ǎ r̃ à
 2671	Bankan_Tey	nárⁿâ	my mother	n á r̃ â
-2672	Nanga	dě: yɛ᷈:	my mother	d ěː # dʒ ɛ᷈ː
+2672	Nanga	dě: yɛ᷈:	my mother	d ěː # j ɛ᷈ː
 2673	Jamsay	mì nâ:	my mother	m ì # n âː
 2674	Perge_Tegu	mì nâ:	my mother	m ì # n âː
 2675	Gourou	mì nâ:	my mother	m ì # n âː
@@ -2899,9 +2899,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2690	Gourou	kón	navel	k ó n
 2691	Jamsay_Mondoro	kón	navel	k ó n
 2692	Togo_Kan	bɔ̀gú	navel	b ɔ̀ ɡ ú
-2693	Yorno_So	bɔ̀gìý	navel	b ɔ̀ ɡ ì dʒ́
+2693	Yorno_So	bɔ̀gìý	navel	b ɔ̀ ɡ ì j́
 2694	Tomo_Kan_Diangassagou	kù:kwɛ̀ʔɛ̀ⁿ	navel	k ùː k w ɛ̀ ʔ ɛ̃̀
-2695	Tommo_So	bɔ̀ŋgɔ̀ý	navel	b ɔ̀ ŋ ɡ ɔ̀ dʒ́
+2695	Tommo_So	bɔ̀ŋgɔ̀ý	navel	b ɔ̀ ŋ ɡ ɔ̀ j́
 2696	Dogul_Dom	bɔ́ŋgɔ̀	navel	b ɔ́ ŋ ɡ ɔ̀
 2697	Tebul_Ure	bɔ̀ŋgɔ́	navel	b ɔ̀ ŋ ɡ ɔ́
 2698	Yanda_Dom	bɔ̀ŋɔ̀	navel	b ɔ̀ ŋ ɔ̀
@@ -2939,7 +2939,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2728	Dogul_Dom	mɛ̀njɛ̀nɛ́	needle (sewing)	m ɛ̀ n dʒ ɛ̀ n ɛ́
 2729	Tebul_Ure	mɛ̀ndɛ́rⁿɛ́	needle (sewing)	m ɛ̀ n d ɛ́ r̃ ɛ́
 2730	Yanda_Dom	mɛ̀nzínà	needle (sewing)	m ɛ̀ n z í n à
-2731	Mombo	mènyèné	needle (sewing)	m è n dʒ è n é
+2731	Mombo	mènyèné	needle (sewing)	m è n j è n é
 #
 2732	Toro_Tegu	àlká	neighborhood, quarter (section of a village or town)	à l k á
 2733	Ben_Tey	póŋgú	neighborhood, quarter (section of a village or town)	p ó ŋ ɡ ú
@@ -2974,7 +2974,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2761	Mombo	kándá	new	k á n d á
 2762	Bunoge	kàndà	new	k à n d à
 #
-2763	Toro_Tegu	yⁿà:ŋá	night	dʒⁿ àː ŋ á
+2763	Toro_Tegu	yⁿà:ŋá	night	j̃ àː ŋ á
 2764	Ben_Tey	ɲárⁿù	night	ɲ á r̃ ù
 2765	Bankan_Tey	ɲân	night	ɲ â n
 2766	Nanga	dɛ̀:ndɛ̂	night	d ɛ̀ː n d ɛ̂
@@ -2984,12 +2984,12 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2770	Jamsay_Mondoro	dà:gá	night	d àː ɡ á
 2771	Togo_Kan	dà:gá	night	d àː ɡ á
 2772	Yorno_So	dìgɛ́	night	d ì ɡ ɛ́
-2773	Dogul_Dom	yáágà	night	dʒ á á ɡ à
+2773	Dogul_Dom	yáágà	night	j á á ɡ à
 2774	Tebul_Ure	dɛ̀ndɛ́	night	d ɛ̀ n d ɛ́
 2775	Yanda_Dom	dèndà:	night	d è n d àː
-2776	Tiranige	yà:gù	night	dʒ àː ɡ ù
+2776	Tiranige	yà:gù	night	j àː ɡ ù
 2777	Mombo	dó:	night	d óː
-2778	Bunoge	yà	night	dʒ à
+2778	Bunoge	yà	night	j à
 #
 2779	Toro_Tegu	lá:rà	nine	l áː r à
 2780	Ben_Tey	tè:sǐm	nine	t èː s ǐ m
@@ -3042,8 +3042,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 2825	Toro_Tegu	lɔ̀gɔ́	odor, smell (noun)	l ɔ̀ ɡ ɔ́
 2826	Ben_Tey	jî:ⁿ	odor, smell (noun)	dʒ ĩ̂ː
-2827	Bankan_Tey	gìyⁿɛ́	odor, smell (noun)	ɡ ì dʒⁿ ɛ́
-2828	Nanga	gǐ:ⁿ	odor, smell (noun)	ɡ ĩ̌ː
+2827	Bankan_Tey	gìyⁿɛ́	odor, smell (noun)	ɡ ì j̃ ɛ́
+2828	Nanga	gǐ:ⁿ	odor, smell (noun)	ɡ ǐːⁿ
 2829	Jamsay	jíɲù	odor, smell (noun)	dʒ í ɲ ù
 2830	Perge_Tegu	jíŋgì	odor, smell (noun)	dʒ í ŋ ɡ ì
 2831	Gourou	gísù	odor, smell (noun)	ɡ í s ù
@@ -3053,7 +3053,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2835	Tommo_So	jíɲɲú	odor, smell (noun)	dʒ í ɲ ɲ ú
 2836	Dogul_Dom	jìɲú	odor, smell (noun)	dʒ ì ɲ ú
 2837	Yanda_Dom	gìɲú	odor, smell (noun)	ɡ ì ɲ ú
-2838	Mombo	gìyⁿí	odor, smell (noun)	ɡ ì dʒⁿ í
+2838	Mombo	gìyⁿí	odor, smell (noun)	ɡ ì j̃ í
 #
 2839	Toro_Tegu	lǒw	oil (vegetable, liquid or buttery)	l ǒ w
 2840	Bankan_Tey	nǐ:	oil (vegetable, liquid or buttery)	n ǐː
@@ -3065,7 +3065,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2846	Togo_Kan	nìŋí	oil (vegetable, liquid or buttery)	n ì ŋ í
 2847	Yorno_So	nǐ:	oil (vegetable, liquid or buttery)	n ǐː
 2848	Tomo_Kan_Diangassagou	ɲì:	oil (vegetable, liquid or buttery)	ɲ ìː
-2849	Tommo_So	níyɛ́	oil (vegetable, liquid or buttery)	n í dʒ ɛ́
+2849	Tommo_So	níyɛ́	oil (vegetable, liquid or buttery)	n í j ɛ́
 2850	Dogul_Dom	nèègú	oil (vegetable, liquid or buttery)	n è è ɡ ú
 2851	Tebul_Ure	nùrⁿó	oil (vegetable, liquid or buttery)	n ù r̃ ó
 2852	Yanda_Dom	nì:	oil (vegetable, liquid or buttery)	n ìː
@@ -3074,7 +3074,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 2855	Toro_Tegu	tɔ̀rⁿí	okra	t ɔ̀ r̃ í
 2856	Ben_Tey	póró	okra	p ó r ó
-2857	Bankan_Tey	tólóy	okra	t ó l ó dʒ
+2857	Bankan_Tey	tólóy	okra	t ó l ó j
 2858	Nanga	póró	okra	p ó r ó
 2859	Jamsay	póró	okra	p ó r ó
 2860	Perge_Tegu	póró	okra	p ó r ó
@@ -3091,14 +3091,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2870	Ben_Tey	pɛ̌:	old (thing, animal)	p ɛ̌ː
 2871	Bankan_Tey	pɛ̌:	old (thing, animal)	p ɛ̌ː
 2872	Nanga	pɛ̌:	old (thing, animal)	p ɛ̌ː
-2873	Jamsay	pɛ̌yⁿ	old (thing, animal)	p ɛ̌ dʒⁿ
-2874	Perge_Tegu	pɛ̌y	old (thing, animal)	p ɛ̌ dʒ
-2875	Jamsay_Mondoro	pɛ̌yⁿ	old (thing, animal)	p ɛ̌ dʒⁿ
+2873	Jamsay	pɛ̌yⁿ	old (thing, animal)	p ɛ̌ j̃
+2874	Perge_Tegu	pɛ̌y	old (thing, animal)	p ɛ̌ j
+2875	Jamsay_Mondoro	pɛ̌yⁿ	old (thing, animal)	p ɛ̌ j̃
 2876	Togo_Kan	pɛ̌ⁿ	old (thing, animal)	p ɛ̃̌
-2877	Yorno_So	pɛ̌y	old (thing, animal)	p ɛ̌ dʒ
-2878	Tomo_Kan_Diangassagou	pyɛ̀ⁿ	old (thing, animal)	p dʒ ɛ̃̀
-2879	Tommo_So	pɛ̌y	old (thing, animal)	p ɛ̌ dʒ
-2880	Dogul_Dom	dìyɔ́	old (thing, animal)	d ì dʒ ɔ́
+2877	Yorno_So	pɛ̌y	old (thing, animal)	p ɛ̌ j
+2878	Tomo_Kan_Diangassagou	pyɛ̀ⁿ	old (thing, animal)	p j ɛ̃̀
+2879	Tommo_So	pɛ̌y	old (thing, animal)	p ɛ̌ j
+2880	Dogul_Dom	dìyɔ́	old (thing, animal)	d ì j ɔ́
 2881	Tiranige	kúnjú	old (thing, animal)	k ú n dʒ ú
 2882	Mombo	ká:nú	old (thing, animal)	k áː n ú
 2883	Bunoge	ʔìlɛ̀	old (thing, animal)	ʔ ì l ɛ̀
@@ -3123,7 +3123,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2900	Toro_Tegu	àlbásàl	onion	à l b á s à l
 2901	Ben_Tey	gâw	onion	ɡ â w
 2902	Bankan_Tey	gâw	onion	ɡ â w
-2903	Nanga	gâ:ⁿ	onion	ɡ âːⁿ
+2903	Nanga	gâ:ⁿ	onion	ɡ ã̂ː
 2904	Perge_Tegu	gâw	onion	ɡ â w
 2905	Gourou	zàwá	onion	z à w á
 2906	Togo_Kan	jɔ̀wɔ́	onion	dʒ ɔ̀ w ɔ́
@@ -3137,8 +3137,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2914	Mombo	jábà	onion	dʒ á b à
 #
 2915	Toro_Tegu	zómó	pants	z ó m ó
-2916	Ben_Tey	mùrⁿùpàntàlɔ̂:ⁿ	pants	m ù r̃ ù p à n t à l ɔ̂ːⁿ
-2917	Bankan_Tey	yáwà	pants	dʒ á w à
+2916	Ben_Tey	mùrⁿùpàntàlɔ̂:ⁿ	pants	m ù r̃ ù p à n t à l ɔ̃̂ː
+2917	Bankan_Tey	yáwà	pants	j á w à
 2918	Nanga	bùró	pants	b ù r ó
 2919	Jamsay	pɔ̌n	pants	p ɔ̌ n
 2920	Perge_Tegu	bùrú	pants	b ù r ú
@@ -3152,14 +3152,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2928	Tiranige	tá:	pants	t áː
 #
 2929	Toro_Tegu	ɛ̀ŋìnɛ̀ lǒw	peanut	ɛ̀ ŋ ì n ɛ̀ # l ǒ w
-2930	Ben_Tey	ɛ̀lɛ̀y bàrⁿǎyⁿ	peanut	ɛ̀ l ɛ̀ dʒ # b à r̃ ǎ dʒⁿ
-2931	Bankan_Tey	ɛ̀rɛ̀rɛ̀y gùrⁿâwⁿ	peanut	ɛ̀ r ɛ̀ r ɛ̀ dʒ # ɡ ù r̃ â w̃
+2930	Ben_Tey	ɛ̀lɛ̀y bàrⁿǎyⁿ	peanut	ɛ̀ l ɛ̀ j # b à r̃ ǎ j̃
+2931	Bankan_Tey	ɛ̀rɛ̀rɛ̀y gùrⁿâwⁿ	peanut	ɛ̀ r ɛ̀ r ɛ̀ j # ɡ ù r̃ â w̃
 2932	Nanga	ɛ̀:rɛ̀ bárⁿí	peanut	ɛ̀ː r ɛ̀ # b á r̃ í
 2933	Perge_Tegu	ɛ̀:rɛ̀ bárⁿú	peanut	ɛ̀ː r ɛ̀ # b á r̃ ú
 2934	Gourou	ɛ̀:rɛ̀ múzúrú	peanut	ɛ̀ː r ɛ̀ # m ú z ú r ú
 2935	Togo_Kan	ɛ̀:rɛ̀múɲúrⁿú	peanut	ɛ̀ː r ɛ̀ m ú ɲ ú r̃ ú
 2936	Yorno_So	ɛ́gɛ́lɛ́	peanut	ɛ́ ɡ ɛ́ l ɛ́
-2937	Tomo_Kan_Diangassagou	ʔyɛ̀:lɛ̀báʔáwⁿ	peanut	ʔ dʒ ɛ̀ː l ɛ̀ b á ʔ á w̃
+2937	Tomo_Kan_Diangassagou	ʔyɛ̀:lɛ̀báʔáwⁿ	peanut	ʔ j ɛ̀ː l ɛ̀ b á ʔ á w̃
 2938	Dogul_Dom	ɛ́gɛ̀lɛ̀	peanut	ɛ́ ɡ ɛ̀ l ɛ̀
 2939	Tebul_Ure	ɛ̀jɛ̀: bárⁿɛ̀:	peanut	ɛ̀ dʒ ɛ̀ː # b á r̃ ɛ̀ː
 2940	Yanda_Dom	ɛ̀gɛ̀lɛ̀ bǎn	peanut	ɛ̀ ɡ ɛ̀ l ɛ̀ # b ǎ n
@@ -3167,8 +3167,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2942	Mombo	ɔ́lɔ́ŋgé	peanut	ɔ́ l ɔ́ ŋ ɡ é
 2943	Bunoge	màndámù	peanut	m à n d á m ù
 #
-2944	Ben_Tey	ɛ́lɛ́y	peanut or groundnut	ɛ́ l ɛ́ dʒ
-2945	Bankan_Tey	ɛ́rɛ́rɛ̂y	peanut or groundnut	ɛ́ r ɛ́ r ɛ̂ dʒ
+2944	Ben_Tey	ɛ́lɛ́y	peanut or groundnut	ɛ́ l ɛ́ j
+2945	Bankan_Tey	ɛ́rɛ́rɛ̂y	peanut or groundnut	ɛ́ r ɛ́ r ɛ̂ j
 2946	Nanga	ɛ́:rɛ̀	peanut or groundnut	ɛ́ː r ɛ̀
 2947	Jamsay	ɛ́:rɛ́	peanut or groundnut	ɛ́ː r ɛ́
 2948	Perge_Tegu	ɛ́:rɛ́	peanut or groundnut	ɛ́ː r ɛ́
@@ -3195,22 +3195,22 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2968	Dogul_Dom	dúúmò	penis	d ú ú m ò
 2969	Tebul_Ure	dɛ̀gɛ́	penis	d ɛ̀ ɡ ɛ́
 2970	Yanda_Dom	dɛ̀:	penis	d ɛ̀ː
-2971	Mombo	yó:lé	penis	dʒ óː l é
+2971	Mombo	yó:lé	penis	j óː l é
 #
-2972	Ben_Tey	tàlây	pestle (for pounding in a mortar)	t à l â dʒ
-2973	Bankan_Tey	tàndây	pestle (for pounding in a mortar)	t à n d â dʒ
-2974	Nanga	tàrⁿìyɛ̀rⁿî	pestle (for pounding in a mortar)	t à r̃ ì dʒ ɛ̀ r̃ î
+2972	Ben_Tey	tàlây	pestle (for pounding in a mortar)	t à l â j
+2973	Bankan_Tey	tàndây	pestle (for pounding in a mortar)	t à n d â j
+2974	Nanga	tàrⁿìyɛ̀rⁿî	pestle (for pounding in a mortar)	t à r̃ ì j ɛ̀ r̃ î
 2975	Jamsay	mɔ̀tî:ⁿ	pestle (for pounding in a mortar)	m ɔ̀ t ĩ̂ː
 2976	Perge_Tegu	mòtî:ⁿ	pestle (for pounding in a mortar)	m ò t ĩ̂ː
 2977	Gourou	mɔ̀tî:ⁿ	pestle (for pounding in a mortar)	m ɔ̀ t ĩ̂ː
 2978	Jamsay_Mondoro	màtî:ⁿ	pestle (for pounding in a mortar)	m à t ĩ̂ː
-2979	Togo_Kan	dɔ̌yⁿ	pestle (for pounding in a mortar)	d ɔ̌ dʒⁿ
-2980	Yorno_So	kùyî:	pestle (for pounding in a mortar)	k ù dʒ îː
+2979	Togo_Kan	dɔ̌yⁿ	pestle (for pounding in a mortar)	d ɔ̌ j̃
+2980	Yorno_So	kùyî:	pestle (for pounding in a mortar)	k ù j îː
 2981	Tomo_Kan_Diangassagou	dùmɛ̀ⁿ	pestle (for pounding in a mortar)	d ù m ɛ̃̀
-2982	Tommo_So	kúy	pestle (for pounding in a mortar)	k ú dʒ
+2982	Tommo_So	kúy	pestle (for pounding in a mortar)	k ú j
 2983	Dogul_Dom	kùnéégù	pestle (for pounding in a mortar)	k ù n é é ɡ ù
-2984	Tebul_Ure	tìníyɛ́	pestle (for pounding in a mortar)	t ì n í dʒ ɛ́
-2985	Yanda_Dom	kǔnyè	pestle (for pounding in a mortar)	k ǔ n dʒ è
+2984	Tebul_Ure	tìníyɛ́	pestle (for pounding in a mortar)	t ì n í j ɛ́
+2985	Yanda_Dom	kǔnyè	pestle (for pounding in a mortar)	k ǔ n j è
 2986	Bunoge	dɔ́:bè	pestle (for pounding in a mortar)	d ɔ́ː b è
 #
 2987	Toro_Tegu	zípà	pocket	z í p à
@@ -3226,7 +3226,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 2997	Tommo_So	jíbé	pocket	dʒ í b é
 2998	Tebul_Ure	zíbá	pocket	z í b á
 2999	Yanda_Dom	zùbá	pocket	z ù b á
-3000	Tiranige	yùwá	pocket	dʒ ù w á
+3000	Tiranige	yùwá	pocket	j ù w á
 3001	Mombo	gíbá	pocket	ɡ í b á
 #
 3002	Toro_Tegu	dɛ́	pond, pool (any size)	d ɛ́
@@ -3254,26 +3254,26 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3023	Gourou	màná:	pounding mortar (any kind)	m à n áː
 3024	Jamsay_Mondoro	màná:	pounding mortar (any kind)	m à n áː
 3025	Togo_Kan	dògóró	pounding mortar (any kind)	d ò ɡ ó r ó
-3026	Yorno_So	kǔy	pounding mortar (any kind)	k ǔ dʒ
+3026	Yorno_So	kǔy	pounding mortar (any kind)	k ǔ j
 3027	Tomo_Kan_Diangassagou	dùjòⁿ	pounding mortar (any kind)	d ù dʒ õ̀
 3028	Dogul_Dom	kùnnúŋ	pounding mortar (any kind)	k ù n n ú ŋ
 3029	Yanda_Dom	kún	pounding mortar (any kind)	k ú n
 3030	Tiranige	túŋgú	pounding mortar (any kind)	t ú ŋ ɡ ú
 3031	Mombo	dɔ̀:ní	pounding mortar (any kind)	d ɔ̀ː n í
 #
-3032	Toro_Tegu	yɔ̀rù zègírè	rag, tatters (old clothing)	dʒ ɔ̀ r ù # z è ɡ í r è
+3032	Toro_Tegu	yɔ̀rù zègírè	rag, tatters (old clothing)	j ɔ̀ r ù # z è ɡ í r è
 3033	Ben_Tey	jègérè	rag, tatters (old clothing)	dʒ è ɡ é r è
 3034	Bankan_Tey	zěwrè	rag, tatters (old clothing)	z ě w r è
-3035	Nanga	yùrì sɛ́mɛ́rⁿɛ́	rag, tatters (old clothing)	dʒ ù r ì # s ɛ́ m ɛ́ r̃ ɛ́
+3035	Nanga	yùrì sɛ́mɛ́rⁿɛ́	rag, tatters (old clothing)	j ù r ì # s ɛ́ m ɛ́ r̃ ɛ́
 3036	Jamsay	sìsɛ́rⁿɛ́wⁿɛ́	rag, tatters (old clothing)	s ì s ɛ́ r̃ ɛ́ w̃ ɛ́
 3037	Perge_Tegu	jègérè	rag, tatters (old clothing)	dʒ è ɡ é r è
 3038	Togo_Kan	sɛ̀mùrⁿú	rag, tatters (old clothing)	s ɛ̀ m ù r̃ ú
-3039	Yorno_So	sɔ̀ysɛ́mɛ́lɛ́	rag, tatters (old clothing)	s ɔ̀ dʒ s ɛ́ m ɛ́ l ɛ́
+3039	Yorno_So	sɔ̀ysɛ́mɛ́lɛ́	rag, tatters (old clothing)	s ɔ̀ j s ɛ́ m ɛ́ l ɛ́
 3040	Tomo_Kan_Diangassagou	tù sɛ̀lɛ̀	rag, tatters (old clothing)	t ù # s ɛ̀ l ɛ̀
 3041	Tommo_So	sɛ́mmɛ́lɛ́	rag, tatters (old clothing)	s ɛ́ m m ɛ́ l ɛ́
 3042	Tebul_Ure	sɛ́mmé	rag, tatters (old clothing)	s ɛ́ m m é
 3043	Yanda_Dom	sɔ̀ŋ sɛ́mɛ́lɛ́	rag, tatters (old clothing)	s ɔ̀ ŋ # s ɛ́ m ɛ́ l ɛ́
-3044	Tiranige	sɔ̀: yɔ́gɔ́rɔ́	rag, tatters (old clothing)	s ɔ̀ː # dʒ ɔ́ ɡ ɔ́ r ɔ́
+3044	Tiranige	sɔ̀: yɔ́gɔ́rɔ́	rag, tatters (old clothing)	s ɔ̀ː # j ɔ́ ɡ ɔ́ r ɔ́
 3045	Mombo	sójálámì	rag, tatters (old clothing)	s ó dʒ á l á m ì
 #
 3046	Toro_Tegu	àrⁿá	rain (noun)	à r̃ á
@@ -3290,7 +3290,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3057	Yanda_Dom	àrⁿùŋ	rain (noun)	à r̃ ù ŋ
 3058	Tiranige	á:mì	rain (noun)	áː m ì
 3059	Mombo	kúmáŋgà	rain (noun)	k ú m á ŋ ɡ à
-3060	Bunoge	ʔáyà	rain (noun)	ʔ á dʒ à
+3060	Bunoge	ʔáyà	rain (noun)	ʔ á j à
 #
 3061	Ben_Tey	bòlú mìrⁿɛ́	rain fall	b ò l ú # m ì r̃ ɛ́
 3062	Bankan_Tey	bòndú mìrⁿɛ́	rain fall	b ò n d ú # m ì r̃ ɛ́
@@ -3300,16 +3300,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3066	Jamsay_Mondoro	àrⁿá mìrⁿé	rain fall	à r̃ á # m ì r̃ é
 3067	Togo_Kan	àrⁿú lɔ́wɔ́	rain fall	à r̃ ú # l ɔ́ w ɔ́
 3068	Yorno_So	àrⁿá mɛ̌:	rain fall	à r̃ á # m ɛ̌ː
-3069	Tommo_So	ànà míyɛ́	rain fall	à n à # m í dʒ ɛ́
+3069	Tommo_So	ànà míyɛ́	rain fall	à n à # m í j ɛ́
 3070	Dogul_Dom	áláà wɛ̀ɛ́	rain fall	á l á à # w ɛ̀ ɛ́
 3071	Yanda_Dom	àrⁿùŋ tɛ́gɛ́	rain fall	à r̃ ù ŋ # t ɛ́ ɡ ɛ́
 3072	Tiranige	á:mì tɛ́gɔ́	rain fall	áː m ì # t ɛ́ ɡ ɔ́
 3073	Mombo	kúmáŋgà píjé	rain fall	k ú m á ŋ ɡ à # p í dʒ é
-3074	Bunoge	ʔáyà	rain fall	ʔ á dʒ à
+3074	Bunoge	ʔáyà	rain fall	ʔ á j à
 #
 3075	Toro_Tegu	zìrⁿá	rainy season, wet season (June-September)	z ì r̃ á
-3076	Ben_Tey	jìrⁿɛ̌yⁿ	rainy season, wet season (June-September)	dʒ ì r̃ ɛ̌ dʒⁿ
-3077	Bankan_Tey	zèrⁿěyⁿ	rainy season, wet season (June-September)	z è r̃ ě dʒⁿ
+3076	Ben_Tey	jìrⁿɛ̌yⁿ	rainy season, wet season (June-September)	dʒ ì r̃ ɛ̌ j̃
+3077	Bankan_Tey	zèrⁿěyⁿ	rainy season, wet season (June-September)	z è r̃ ě j̃
 3078	Nanga	gèrⁿé	rainy season, wet season (June-September)	ɡ è r̃ é
 3079	Jamsay	jìrⁿé	rainy season, wet season (June-September)	dʒ ì r̃ é
 3080	Perge_Tegu	gìrⁿé	rainy season, wet season (June-September)	ɡ ì r̃ é
@@ -3322,10 +3322,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3087	Tebul_Ure	zìrⁿɛ́	rainy season, wet season (June-September)	z ì r̃ ɛ́
 3088	Yanda_Dom	zèrⁿà	rainy season, wet season (June-September)	z è r̃ à
 3089	Mombo	gé:nà	rainy season, wet season (June-September)	ɡ éː n à
-3090	Bunoge	yénà	rainy season, wet season (June-September)	dʒ é n à
+3090	Bunoge	yénà	rainy season, wet season (June-September)	j é n à
 #
 3091	Toro_Tegu	bárⁿú	red (including brown and orange)	b á r̃ ú
-3092	Bankan_Tey	bàrⁿâyⁿ	red (including brown and orange)	b à r̃ â dʒⁿ
+3092	Bankan_Tey	bàrⁿâyⁿ	red (including brown and orange)	b à r̃ â j̃
 3093	Nanga	bárⁿí	red (including brown and orange)	b á r̃ í
 3094	Jamsay	bán	red (including brown and orange)	b á n
 3095	Perge_Tegu	bárⁿú	red (including brown and orange)	b á r̃ ú
@@ -3340,32 +3340,32 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3104	Mombo	búnú	red (including brown and orange)	b ú n ú
 3105	Bunoge	bɔ̀w	red (including brown and orange)	b ɔ̀ w
 #
-3106	Ben_Tey	èrěy	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	è r ě dʒ
-3107	Bankan_Tey	èrèrěy	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	è r è r ě dʒ
-3108	Nanga	òyó	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	ò dʒ ó
+3106	Ben_Tey	èrěy	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	è r ě j
+3107	Bankan_Tey	èrèrěy	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	è r è r ě j
+3108	Nanga	òyó	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	ò j ó
 3109	Jamsay	bǒ:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	b ǒː
-3110	Perge_Tegu	yù:òyó	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	dʒ ùː ò dʒ ó
+3110	Perge_Tegu	yù:òyó	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	j ùː ò j ó
 3111	Gourou	bǒ:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	b ǒː
 3112	Jamsay_Mondoro	bǒ:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	b ǒː
 3113	Togo_Kan	bǒ	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	b ǒ
-3114	Yorno_So	yù:ǒ:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	dʒ ùː ǒː
+3114	Yorno_So	yù:ǒ:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	j ùː ǒː
 3115	Tomo_Kan_Diangassagou	bòw	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	b ò w
-3116	Tommo_So	yùù àmmú	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	dʒ ù ù # à m m ú
-3117	Tebul_Ure	yùòmbó:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	dʒ ù ò m b óː
-3118	Yanda_Dom	yù:àmù	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	dʒ ùː à m ù
+3116	Tommo_So	yùù àmmú	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	j ù ù # à m m ú
+3117	Tebul_Ure	yùòmbó:	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	j ù ò m b óː
+3118	Yanda_Dom	yù:àmù	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	j ùː à m ù
 3119	Tiranige	ámúgé	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	á m ú ɡ é
 3120	Mombo	ɲámbó	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	ɲ á m b ó
 3121	Bunoge	mùmù	reddish fuzz (flowers) on millet grain spike (just before the first grains appear)	m ù m ù
 #
 3122	Toro_Tegu	jímrò	rib	dʒ í m r ò
-3123	Bankan_Tey	gìmbèrè kìrⁿěyⁿ	rib	ɡ ì m b è r è # k ì r̃ ě dʒⁿ
+3123	Bankan_Tey	gìmbèrè kìrⁿěyⁿ	rib	ɡ ì m b è r è # k ì r̃ ě j̃
 3124	Nanga	gòmbòròkìrⁿá	rib	ɡ ò m b ò r ò k ì r̃ á
 3125	Jamsay	gɔ̀ŋɔ̀cìrⁿé	rib	ɡ ɔ̀ ŋ ɔ̀ tʃ ì r̃ é
 3126	Perge_Tegu	gɔ̀wⁿɔ̀kìrⁿé	rib	ɡ ɔ̀ w̃ ɔ̀ k ì r̃ é
 3127	Togo_Kan	gɔ̀ŋɔ̀kìrⁿí	rib	ɡ ɔ̀ ŋ ɔ̀ k ì r̃ í
-3128	Yorno_So	gɔ̀:ⁿkǐ:	rib	ɡ ɔ̃̀ː k ǐː
+3128	Yorno_So	gɔ̀:ⁿkǐ:	rib	ɡ ɔ̀ːⁿ k ǐː
 3129	Tomo_Kan_Diangassagou	gùʔìnjècílɛ́	rib	ɡ ù ʔ ì n dʒ è tʃ í l ɛ́
-3130	Tommo_So	gìgìyè tànnààý	rib	ɡ ì ɡ ì dʒ è # t à n n à à dʒ́
+3130	Tommo_So	gìgìyè tànnààý	rib	ɡ ì ɡ ì j è # t à n n à à j́
 3131	Tebul_Ure	gwà:ⁿcìnǎ:	rib	ɡ w ã̀ː tʃ ì n ǎː
 3132	Yanda_Dom	jèɲùkìrⁿà	rib	dʒ è ɲ ù k ì r̃ à
 3133	Tiranige	ɛ́:lɛ́ sèŋgé	rib	ɛ́ː l ɛ́ # s è ŋ ɡ é
@@ -3392,8 +3392,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3153	Bunoge	ʔɛ̀ndɛ̀gè	rice	ʔ ɛ̀ n d ɛ̀ ɡ è
 #
 3154	Toro_Tegu	mɔ̀ zálù	rice (cooked meal)	m ɔ̀ # z á l ù
-3155	Ben_Tey	àràbírɛ́yɛ́y	rice (cooked meal)	à r à b í r ɛ́ dʒ ɛ́ dʒ
-3156	Bankan_Tey	àrà ɲɛ̌yⁿ	rice (cooked meal)	à r à # ɲ ɛ̌ dʒⁿ
+3155	Ben_Tey	àràbírɛ́yɛ́y	rice (cooked meal)	à r à b í r ɛ́ j ɛ́ j
+3156	Bankan_Tey	àrà ɲɛ̌yⁿ	rice (cooked meal)	à r à # ɲ ɛ̌ j̃
 3157	Nanga	à:ràɲǎ:	rice (cooked meal)	àː r à ɲ ǎː
 3158	Jamsay	àràɲǎ:	rice (cooked meal)	à r à ɲ ǎː
 3159	Perge_Tegu	à:ràjá:	rice (cooked meal)	àː r à dʒ áː
@@ -3406,13 +3406,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3166	Tiranige	ɛ̀rɛ̀gè ɲà:ŋgé	rice (cooked meal)	ɛ̀ r ɛ̀ ɡ è # ɲ àː ŋ ɡ é
 3167	Mombo	ɛ́rɛ́ ɲá:	rice (cooked meal)	ɛ́ r ɛ́ # ɲ áː
 #
-3168	Toro_Tegu	nǒyⁿ	right (hand, etc.)	n ǒ dʒⁿ
-3169	Ben_Tey	ɲɛ̌yⁿ	right (hand, etc.)	ɲ ɛ̌ dʒⁿ
-3170	Bankan_Tey	ɲɛ̌yⁿ	right (hand, etc.)	ɲ ɛ̌ dʒⁿ
-3171	Nanga	nàrⁿìyⁿɛ́	right (hand, etc.)	n à r̃ ì dʒⁿ ɛ́
+3168	Toro_Tegu	nǒyⁿ	right (hand, etc.)	n ǒ j̃
+3169	Ben_Tey	ɲɛ̌yⁿ	right (hand, etc.)	ɲ ɛ̌ j̃
+3170	Bankan_Tey	ɲɛ̌yⁿ	right (hand, etc.)	ɲ ɛ̌ j̃
+3171	Nanga	nàrⁿìyⁿɛ́	right (hand, etc.)	n à r̃ ì j̃ ɛ́
 3172	Jamsay	ɲǎ:	right (hand, etc.)	ɲ ǎː
 3173	Perge_Tegu	ɲɛ̌:	right (hand, etc.)	ɲ ɛ̌ː
-3174	Gourou	yⁿǎ:	right (hand, etc.)	dʒⁿ ǎː
+3174	Gourou	yⁿǎ:	right (hand, etc.)	j̃ ǎː
 3175	Togo_Kan	ɲǎ:	right (hand, etc.)	ɲ ǎː
 3176	Yorno_So	ɲɛ̌:	right (hand, etc.)	ɲ ɛ̌ː
 3177	Tommo_So	ɲ̀ɲɛ́	right (hand, etc.)	ɲ̀ ɲ ɛ́
@@ -3420,27 +3420,27 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3179	Tebul_Ure	ɲɛ̀ŋgɛ́	right (hand, etc.)	ɲ ɛ̀ ŋ ɡ ɛ́
 3180	Yanda_Dom	ɲɛ̀	right (hand, etc.)	ɲ ɛ̀
 3181	Tiranige	ɲɔ́:	right (hand, etc.)	ɲ ɔ́ː
-3182	Mombo	núyⁿà	right (hand, etc.)	n ú dʒⁿ à
+3182	Mombo	núyⁿà	right (hand, etc.)	n ú j̃ à
 #
-3183	Toro_Tegu	lɔ̀nǔyⁿ	right hand	l ɔ̀ n ǔ dʒⁿ
-3184	Ben_Tey	nà ɲɛ̌yⁿ	right hand	n à # ɲ ɛ̌ dʒⁿ
-3185	Bankan_Tey	ǹdɔ̀sɔ̀ bàndǎy	right hand	ǹ d ɔ̀ s ɔ̀ # b à n d ǎ dʒ
-3186	Nanga	nà: nàrⁿìyⁿɛ́	right hand	n àː # n à r̃ ì dʒⁿ ɛ́
+3183	Toro_Tegu	lɔ̀nǔyⁿ	right hand	l ɔ̀ n ǔ j̃
+3184	Ben_Tey	nà ɲɛ̌yⁿ	right hand	n à # ɲ ɛ̌ j̃
+3185	Bankan_Tey	ǹdɔ̀sɔ̀ bàndǎy	right hand	ǹ d ɔ̀ s ɔ̀ # b à n d ǎ j
+3186	Nanga	nà: nàrⁿìyⁿɛ́	right hand	n àː # n à r̃ ì j̃ ɛ́
 3187	Jamsay	nùmòɲǎ:	right hand	n ù m ò ɲ ǎː
 3188	Perge_Tegu	nùwⁿò ɲɛ̌:	right hand	n ù w̃ ò # ɲ ɛ̌ː
 3189	Jamsay_Mondoro	nùmòɲǎ:	right hand	n ù m ò ɲ ǎː
 3190	Togo_Kan	nùmɔ̀ɲǎ:	right hand	n ù m ɔ̀ ɲ ǎː
-3191	Yorno_So	nòyⁿ ɲɛ̌:	right hand	n ò dʒⁿ # ɲ ɛ̌ː
+3191	Yorno_So	nòyⁿ ɲɛ̌:	right hand	n ò j̃ # ɲ ɛ̌ː
 3192	Tommo_So	nùmɔ̀ ɲ̀ɲɛ́	right hand	n ù m ɔ̀ # ɲ̀ ɲ ɛ́
 3193	Dogul_Dom	nùmɔ̀ ɲáàŋ	right hand	n ù m ɔ̀ # ɲ á à ŋ
 3194	Tebul_Ure	nùmà: ɲɛ̀ŋgɛ́	right hand	n ù m àː # ɲ ɛ̀ ŋ ɡ ɛ́
 3195	Yanda_Dom	nùmà ɲɛ̀	right hand	n ù m à # ɲ ɛ̀
 3196	Tiranige	nùmà ɲɔ́:	right hand	n ù m à # ɲ ɔ́ː
-3197	Mombo	nùyⁿà nɛ́:	right hand	n ù dʒⁿ à # n ɛ́ː
+3197	Mombo	nùyⁿà nɛ́:	right hand	n ù j̃ à # n ɛ́ː
 3198	Bunoge	dínjɔ̀	right hand	d í n dʒ ɔ̀
 #
 3199	Ben_Tey	mǒ: lúgó	rinse out one's mouth	m ǒː # l ú ɡ ó
-3200	Bankan_Tey	mbǔ: yùwó	rinse out one's mouth	m b ǔː # dʒ ù w ó
+3200	Bankan_Tey	mbǔ: yùwó	rinse out one's mouth	m b ǔː # j ù w ó
 3201	Nanga	nɔ̌: lúgó	rinse out one's mouth	n ɔ̌ː # l ú ɡ ó
 3202	Jamsay	ká: lúgó	rinse out one's mouth	k áː # l ú ɡ ó
 3203	Perge_Tegu	ká: lúgó	rinse out one's mouth	k áː # l ú ɡ ó
@@ -3455,8 +3455,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3212	Mombo	dónù úgújè	rinse out one's mouth	d ó n ù # ú ɡ ú dʒ è
 #
 3213	Toro_Tegu	ìrú	ripe (fruit)	ì r ú
-3214	Ben_Tey	ìrɛ̌y	ripe (fruit)	ì r ɛ̌ dʒ
-3215	Bankan_Tey	ìrɛ̌y	ripe (fruit)	ì r ɛ̌ dʒ
+3214	Ben_Tey	ìrɛ̌y	ripe (fruit)	ì r ɛ̌ j
+3215	Bankan_Tey	ìrɛ̌y	ripe (fruit)	ì r ɛ̌ j
 3216	Nanga	bòró	ripe (fruit)	b ò r ó
 3217	Jamsay	ìrɛ́	ripe (fruit)	ì r ɛ́
 3218	Perge_Tegu	ìrɛ́	ripe (fruit)	ì r ɛ́
@@ -3471,8 +3471,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3227	Bunoge	bìlɛ̀	ripe (fruit)	b ì l ɛ̀
 #
 3228	Toro_Tegu	ìrú	ripe (grain)	ì r ú
-3229	Ben_Tey	ìrɛ̌y	ripe (grain)	ì r ɛ̌ dʒ
-3230	Bankan_Tey	ìrɛ̌y	ripe (grain)	ì r ɛ̌ dʒ
+3229	Ben_Tey	ìrɛ̌y	ripe (grain)	ì r ɛ̌ j
+3230	Bankan_Tey	ìrɛ̌y	ripe (grain)	ì r ɛ̌ j
 3231	Nanga	ìrɛ́	ripe (grain)	ì r ɛ́
 3232	Jamsay	ìrɛ́	ripe (grain)	ì r ɛ́
 3233	Perge_Tegu	ìrɛ́	ripe (grain)	ì r ɛ́
@@ -3493,12 +3493,12 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3247	Perge_Tegu	nàwⁿà sìmbú	roasted (grilled) meat	n à w̃ à # s ì m b ú
 3248	Togo_Kan	nɔ̀wⁿɔ̀sìmí	roasted (grilled) meat	n ɔ̀ w̃ ɔ̀ s ì m í
 3249	Yorno_So	nàwⁿà sìmú	roasted (grilled) meat	n à w̃ à # s ì m ú
-3250	Tomo_Kan_Diangassagou	nàmà yɔ̀:rù	roasted (grilled) meat	n à m à # dʒ ɔ̀ː r ù
+3250	Tomo_Kan_Diangassagou	nàmà yɔ̀:rù	roasted (grilled) meat	n à m à # j ɔ̀ː r ù
 3251	Tommo_So	nàmà sìmbú	roasted (grilled) meat	n à m à # s ì m b ú
 3252	Dogul_Dom	nàmàà síŋgú	roasted (grilled) meat	n à m à à # s í ŋ ɡ ú
 3253	Tebul_Ure	nàmà símbú	roasted (grilled) meat	n à m à # s í m b ú
 3254	Yanda_Dom	nàmà sìmbù	roasted (grilled) meat	n à m à # s ì m b ù
-3255	Tiranige	nàmà sáŋgíyè	roasted (grilled) meat	n à m à # s á ŋ ɡ í dʒ è
+3255	Tiranige	nàmà sáŋgíyè	roasted (grilled) meat	n à m à # s á ŋ ɡ í j è
 3256	Mombo	nàmà símbî:	roasted (grilled) meat	n à m à # s í m b îː
 #
 3257	Toro_Tegu	sǔŋ	rope, cord	s ǔ ŋ
@@ -3511,7 +3511,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3264	Togo_Kan	sùŋú	rope, cord	s ù ŋ ú
 3265	Yorno_So	sǔm	rope, cord	s ǔ m
 3266	Tommo_So	súm	rope, cord	s ú m
-3267	Dogul_Dom	síyìŋ	rope, cord	s í dʒ ì ŋ
+3267	Dogul_Dom	síyìŋ	rope, cord	s í j ì ŋ
 3268	Tebul_Ure	sùŋgó	rope, cord	s ù ŋ ɡ ó
 3269	Yanda_Dom	sùŋ	rope, cord	s ù ŋ
 3270	Tiranige	síŋgí	rope, cord	s í ŋ ɡ í
@@ -3527,7 +3527,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3279	Jamsay_Mondoro	àɲú	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	à ɲ ú
 3280	Yorno_So	àɲú	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	à ɲ ú
 3281	Tomo_Kan_Diangassagou	ʔɛ̀njì:ⁿ	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	ʔ ɛ̀ n dʒ ìːⁿ
-3282	Tommo_So	ànjìý	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	à n dʒ ì dʒ́
+3282	Tommo_So	ànjìý	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	à n dʒ ì j́
 3283	Tebul_Ure	ènjé	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	è n dʒ é
 3284	Yanda_Dom	ànzù	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	à n z ù
 3285	Tiranige	ánjígé	roselle, bissap (cultivated hibiscus, used in cooking and for beverages; Hibiscus sabdariffa)	á n dʒ í ɡ é
@@ -3543,7 +3543,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3294	Gourou	nɛ̌m	salt	n ɛ̌ m
 3295	Togo_Kan	mɛ̌:	salt	m ɛ̌ː
 3296	Yorno_So	nɛ̌m	salt	n ɛ̌ m
-3297	Tomo_Kan_Diangassagou	míyɛ̀ⁿ	salt	m í dʒ ɛ̃̀
+3297	Tomo_Kan_Diangassagou	míyɛ̀ⁿ	salt	m í j ɛ̃̀
 3298	Tommo_So	nɛ̌m	salt	n ɛ̌ m
 3299	Dogul_Dom	nèém	salt	n è é m
 3300	Tebul_Ure	nèmé	salt	n è m é
@@ -3552,9 +3552,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3303	Mombo	nêwⁿ	salt	n ê w̃
 3304	Bunoge	kòmúnù	salt	k ò m ú n ù
 #
-3305	Toro_Tegu	ìsòsúměy	sand, sandy soil	ì s ò s ú m ě dʒ
-3306	Ben_Tey	sùmòysô:	sand, sandy soil	s ù m ò dʒ s ôː
-3307	Bankan_Tey	sùmbày bú:rù	sand, sandy soil	s ù m b à dʒ # b úː r ù
+3305	Toro_Tegu	ìsòsúměy	sand, sandy soil	ì s ò s ú m ě j
+3306	Ben_Tey	sùmòysô:	sand, sandy soil	s ù m ò j s ôː
+3307	Bankan_Tey	sùmbày bú:rù	sand, sandy soil	s ù m b à j # b úː r ù
 3308	Perge_Tegu	sùsǔm	sand, sandy soil	s ù s ǔ m
 3309	Gourou	sìsɔ̌m	sand, sandy soil	s ì s ɔ̌ m
 3310	Jamsay_Mondoro	sìsɔ̌m	sand, sandy soil	s ì s ɔ̌ m
@@ -3564,8 +3564,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3314	Dogul_Dom	sòònnò ísílɛ́	sand, sandy soil	s ò ò n n ò # í s í l ɛ́
 3315	Tebul_Ure	sɔ̀lmɔ́	sand, sandy soil	s ɔ̀ l m ɔ́
 3316	Yanda_Dom	sɔ̀nzɔ̀m	sand, sandy soil	s ɔ̀ n z ɔ̀ m
-3317	Tiranige	síyɔ́wⁿ	sand, sandy soil	s í dʒ ɔ́ w̃
-3318	Mombo	sóyndà	sand, sandy soil	s ó dʒ n d à
+3317	Tiranige	síyɔ́wⁿ	sand, sandy soil	s í j ɔ́ w̃
+3318	Mombo	sóyndà	sand, sandy soil	s ó j n d à
 #
 3319	Ben_Tey	cɛ̂:	scale (of fish or snake)	tʃ ɛ̂ː
 3320	Bankan_Tey	kòkòmbû:	scale (of fish or snake)	k ò k ò m b ûː
@@ -3595,37 +3595,37 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3343	Tommo_So	kàrú	scarification (decorative facial scars, general word)	k à r ú
 3344	Tebul_Ure	kàrú	scarification (decorative facial scars, general word)	k à r ú
 3345	Yanda_Dom	pàmàkàdù	scarification (decorative facial scars, general word)	p à m à k à d ù
-3346	Tiranige	cɛ́:jɔ̀ káríyé	scarification (decorative facial scars, general word)	tʃ ɛ́ː dʒ ɔ̀ # k á r í dʒ é
+3346	Tiranige	cɛ́:jɔ̀ káríyé	scarification (decorative facial scars, general word)	tʃ ɛ́ː dʒ ɔ̀ # k á r í j é
 3347	Mombo	kàddí	scarification (decorative facial scars, general word)	k à d d í
 #
 3348	Toro_Tegu	tǒw	seedstock, seeds for sowing	t ǒ w
-3349	Ben_Tey	tǒy	seedstock, seeds for sowing	t ǒ dʒ
+3349	Ben_Tey	tǒy	seedstock, seeds for sowing	t ǒ j
 3350	Nanga	to᷈:	seedstock, seeds for sowing	t o᷈ː
-3351	Jamsay	tǒy	seedstock, seeds for sowing	t ǒ dʒ
-3352	Perge_Tegu	tǒy	seedstock, seeds for sowing	t ǒ dʒ
-3353	Gourou	tǒy	seedstock, seeds for sowing	t ǒ dʒ
+3351	Jamsay	tǒy	seedstock, seeds for sowing	t ǒ j
+3352	Perge_Tegu	tǒy	seedstock, seeds for sowing	t ǒ j
+3353	Gourou	tǒy	seedstock, seeds for sowing	t ǒ j
 3354	Togo_Kan	nóŋó	seedstock, seeds for sowing	n ó ŋ ó
-3355	Yorno_So	dɛ̀rⁿɛ̀tǒy	seedstock, seeds for sowing	d ɛ̀ r̃ ɛ̀ t ǒ dʒ
-3356	Tomo_Kan_Diangassagou	lò:ʔí:ⁿ	seedstock, seeds for sowing	l òː ʔ íːⁿ
+3355	Yorno_So	dɛ̀rⁿɛ̀tǒy	seedstock, seeds for sowing	d ɛ̀ r̃ ɛ̀ t ǒ j
+3356	Tomo_Kan_Diangassagou	lò:ʔí:ⁿ	seedstock, seeds for sowing	l òː ʔ ĩ́ː
 3357	Tommo_So	dɛ̀ntów	seedstock, seeds for sowing	d ɛ̀ n t ó w
 3358	Tebul_Ure	tǒ:	seedstock, seeds for sowing	t ǒː
 3359	Yanda_Dom	tòŋ	seedstock, seeds for sowing	t ò ŋ
 3360	Tiranige	kɔ̀lɛ̀jɛ́	seedstock, seeds for sowing	k ɔ̀ l ɛ̀ dʒ ɛ́
 3361	Mombo	nùgùjí	seedstock, seeds for sowing	n ù ɡ ù dʒ í
 #
-3362	Toro_Tegu	sóyⁿ	seven	s ó dʒⁿ
-3363	Ben_Tey	súyⁿɔ̀yⁿ	seven	s ú dʒⁿ ɔ̀ dʒⁿ
-3364	Bankan_Tey	síyⁿɔ̀yⁿ	seven	s í dʒⁿ ɔ̀ dʒⁿ
-3365	Nanga	súyɛ̂	seven	s ú dʒ ɛ̂
-3366	Jamsay	sûyⁿ	seven	s û dʒⁿ
-3367	Perge_Tegu	sûyⁿ	seven	s û dʒⁿ
-3368	Gourou	sûyⁿ	seven	s û dʒⁿ
+3362	Toro_Tegu	sóyⁿ	seven	s ó j̃
+3363	Ben_Tey	súyⁿɔ̀yⁿ	seven	s ú j̃ ɔ̀ j̃
+3364	Bankan_Tey	síyⁿɔ̀yⁿ	seven	s í j̃ ɔ̀ j̃
+3365	Nanga	súyɛ̂	seven	s ú j ɛ̂
+3366	Jamsay	sûyⁿ	seven	s û j̃
+3367	Perge_Tegu	sûyⁿ	seven	s û j̃
+3368	Gourou	sûyⁿ	seven	s û j̃
 3369	Togo_Kan	sɔ̂:	seven	s ɔ̂ː
-3370	Yorno_So	sɔ̂y	seven	s ɔ̂ dʒ
-3371	Tommo_So	sɔ́y	seven	s ɔ́ dʒ
+3370	Yorno_So	sɔ̂y	seven	s ɔ̂ j
+3371	Tommo_So	sɔ́y	seven	s ɔ́ j
 3372	Dogul_Dom	sɔ́ɔ́wɛ̀	seven	s ɔ́ ɔ́ w ɛ̀
 3373	Tebul_Ure	sɔ́	seven	s ɔ́
-3374	Tiranige	sɔ́:y	seven	s ɔ́ː dʒ
+3374	Tiranige	sɔ́:y	seven	s ɔ́ː j
 3375	Mombo	sɔ́:lì	seven	s ɔ́ː l ì
 3376	Bunoge	sɔ́:wⁿ	seven	s ɔ́ː w̃
 #
@@ -3646,8 +3646,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3391	Mombo	kóbú	sheath (of knife or saber)	k ó b ú
 3392	Bunoge	pòbòlò	sheath (of knife or saber)	p ò b ò l ò
 #
-3393	Ben_Tey	tǎ:yⁿ	shed, thatch-covered shelter or stall open on one or more sides	t ǎː dʒⁿ
-3394	Bankan_Tey	tǎyⁿ	shed, thatch-covered shelter or stall open on one or more sides	t ǎ dʒⁿ
+3393	Ben_Tey	tǎ:yⁿ	shed, thatch-covered shelter or stall open on one or more sides	t ǎː j̃
+3394	Bankan_Tey	tǎyⁿ	shed, thatch-covered shelter or stall open on one or more sides	t ǎ j̃
 3395	Jamsay	tógù	shed, thatch-covered shelter or stall open on one or more sides	t ó ɡ ù
 3396	Perge_Tegu	tàŋgá	shed, thatch-covered shelter or stall open on one or more sides	t à ŋ ɡ á
 3397	Gourou	tógù	shed, thatch-covered shelter or stall open on one or more sides	t ó ɡ ù
@@ -3658,7 +3658,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3402	Dogul_Dom	jáŋgà	shed, thatch-covered shelter or stall open on one or more sides	dʒ á ŋ ɡ à
 3403	Tebul_Ure	tógú	shed, thatch-covered shelter or stall open on one or more sides	t ó ɡ ú
 3404	Yanda_Dom	tógú	shed, thatch-covered shelter or stall open on one or more sides	t ó ɡ ú
-3405	Tiranige	yàŋà	shed, thatch-covered shelter or stall open on one or more sides	dʒ à ŋ à
+3405	Tiranige	yàŋà	shed, thatch-covered shelter or stall open on one or more sides	j à ŋ à
 3406	Bunoge	ɲàŋà	shed, thatch-covered shelter or stall open on one or more sides	ɲ à ŋ à
 #
 3407	Toro_Tegu	bɛ̀lú	sheep	b ɛ̀ l ú
@@ -3688,10 +3688,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3430	Yorno_So	tàgú	shoe, footwear (any kind)	t à ɡ ú
 3431	Tomo_Kan_Diangassagou	tàʔà	shoe, footwear (any kind)	t à ʔ à
 3432	Tommo_So	tàgá	shoe, footwear (any kind)	t à ɡ á
-3433	Tebul_Ure	táy	shoe, footwear (any kind)	t á dʒ
+3433	Tebul_Ure	táy	shoe, footwear (any kind)	t á j
 3434	Yanda_Dom	tàjù	shoe, footwear (any kind)	t à dʒ ù
 3435	Tiranige	tà:ŋgè	shoe, footwear (any kind)	t àː ŋ ɡ è
-3436	Mombo	tágyê:	shoe, footwear (any kind)	t á ɡ dʒ êː
+3436	Mombo	tágyê:	shoe, footwear (any kind)	t á ɡ j êː
 3437	Bunoge	tà:gè	shoe, footwear (any kind)	t àː ɡ è
 #
 3438	Toro_Tegu	dàŋàgúrúmò	shoulderbag from an entire goatskin (carried to fields)	d à ŋ à ɡ ú r ú m ò
@@ -3707,19 +3707,19 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3448	Dogul_Dom	ǹjèmbé	shoulderbag from an entire goatskin (carried to fields)	ǹ dʒ è m b é
 3449	Tebul_Ure	bɛ̀ndɛ́	shoulderbag from an entire goatskin (carried to fields)	b ɛ̀ n d ɛ́
 3450	Yanda_Dom	bɛ̀ndɛ̀	shoulderbag from an entire goatskin (carried to fields)	b ɛ̀ n d ɛ̀
-3451	Tiranige	yɛ́mbɛ́	shoulderbag from an entire goatskin (carried to fields)	dʒ ɛ́ m b ɛ́
+3451	Tiranige	yɛ́mbɛ́	shoulderbag from an entire goatskin (carried to fields)	j ɛ́ m b ɛ́
 3452	Mombo	jɛ́mbú	shoulderbag from an entire goatskin (carried to fields)	dʒ ɛ́ m b ú
 #
 3453	Toro_Tegu	bɔ̀rùkɔ́	shroud (in white cotton cloth, for wrapping a corpse)	b ɔ̀ r ù k ɔ́
 3454	Ben_Tey	kásáŋgà	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ à
-3455	Bankan_Tey	kásáŋgéy	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ é dʒ
+3455	Bankan_Tey	kásáŋgéy	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ é j
 3456	Nanga	kásáŋgɛ̀	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ ɛ̀
 3457	Jamsay	béjéré	shroud (in white cotton cloth, for wrapping a corpse)	b é dʒ é r é
 3458	Perge_Tegu	kásáŋgè	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ è
 3459	Gourou	béséré	shroud (in white cotton cloth, for wrapping a corpse)	b é s é r é
 3460	Togo_Kan	bɛ́jɛ́	shroud (in white cotton cloth, for wrapping a corpse)	b ɛ́ dʒ ɛ́
 3461	Yorno_So	bójó	shroud (in white cotton cloth, for wrapping a corpse)	b ó dʒ ó
-3462	Tomo_Kan_Diangassagou	byàjá	shroud (in white cotton cloth, for wrapping a corpse)	b dʒ à dʒ á
+3462	Tomo_Kan_Diangassagou	byàjá	shroud (in white cotton cloth, for wrapping a corpse)	b j à dʒ á
 3463	Tommo_So	bódú sɔ̀w	shroud (in white cotton cloth, for wrapping a corpse)	b ó d ú # s ɔ̀ w
 3464	Tebul_Ure	kásáŋgɛ́	shroud (in white cotton cloth, for wrapping a corpse)	k á s á ŋ ɡ ɛ́
 3465	Yanda_Dom	bèzélè	shroud (in white cotton cloth, for wrapping a corpse)	b è z é l è
@@ -3751,44 +3751,44 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3489	Jamsay_Mondoro	nûŋ nùŋó	sing a song	n û ŋ # n ù ŋ ó
 3490	Togo_Kan	núŋú núŋɔ́	sing a song	n ú ŋ ú # n ú ŋ ɔ́
 3491	Yorno_So	nɛ́: nɛ̌:	sing a song	n ɛ́ː # n ɛ̌ː
-3492	Tommo_So	núyɔ́ núyɔ́	sing a song	n ú dʒ ɔ́ # n ú dʒ ɔ́
+3492	Tommo_So	núyɔ́ núyɔ́	sing a song	n ú j ɔ́ # n ú j ɔ́
 3493	Yanda_Dom	nùŋà nùŋɔ́	sing a song	n ù ŋ à # n ù ŋ ɔ́
 3494	Tiranige	nwɛ́: nɔ́:	sing a song	n w ɛ́ː # n ɔ́ː
 3495	Mombo	nɔ̀: nwɛ́:	sing a song	n ɔ̀ː # n w ɛ́ː
 3496	Bunoge	núŋɔ̀ núŋɛ̀	sing a song	n ú ŋ ɔ̀ # n ú ŋ ɛ̀
 #
-3497	Toro_Tegu	kúréy	six	k ú r é dʒ
-3498	Ben_Tey	kúròy	six	k ú r ò dʒ
-3499	Bankan_Tey	kúròy	six	k ú r ò dʒ
+3497	Toro_Tegu	kúréy	six	k ú r é j
+3498	Ben_Tey	kúròy	six	k ú r ò j
+3499	Bankan_Tey	kúròy	six	k ú r ò j
 3500	Nanga	kúrê	six	k ú r ê
-3501	Jamsay	kúróy	six	k ú r ó dʒ
-3502	Perge_Tegu	kúró:y	six	k ú r óː dʒ
-3503	Gourou	kúróy	six	k ú r ó dʒ
-3504	Jamsay_Mondoro	kúróy	six	k ú r ó dʒ
+3501	Jamsay	kúróy	six	k ú r ó j
+3502	Perge_Tegu	kúró:y	six	k ú r óː j
+3503	Gourou	kúróy	six	k ú r ó j
+3504	Jamsay_Mondoro	kúróy	six	k ú r ó j
 3505	Togo_Kan	kúré:	six	k ú r éː
-3506	Yorno_So	kúlòy	six	k ú l ò dʒ
-3507	Tommo_So	kúlóy	six	k ú l ó dʒ
+3506	Yorno_So	kúlòy	six	k ú l ò j
+3507	Tommo_So	kúlóy	six	k ú l ó j
 3508	Dogul_Dom	kúlɛ̀	six	k ú l ɛ̀
 3509	Tebul_Ure	kúlé	six	k ú l é
-3510	Yanda_Dom	kúlé yèkúlé	six	k ú l é # dʒ è k ú l é
-3511	Tiranige	kùlèyⁿ	six	k ù l è dʒⁿ
-3512	Mombo	kúléyⁿ	six	k ú l é dʒⁿ
+3510	Yanda_Dom	kúlé yèkúlé	six	k ú l é # j è k ú l é
+3511	Tiranige	kùlèyⁿ	six	k ù l è j̃
+3512	Mombo	kúléyⁿ	six	k ú l é j̃
 3513	Bunoge	kúléwⁿ	six	k ú l é w̃
 #
-3514	Toro_Tegu	pɛ̀rúkúréy	sixty	p ɛ̀ r ú k ú r é dʒ
-3515	Ben_Tey	pɛ̀rkúròy	sixty	p ɛ̀ r k ú r ò dʒ
-3516	Bankan_Tey	pɛ̀rù kúròy	sixty	p ɛ̀ r ù # k ú r ò dʒ
+3514	Toro_Tegu	pɛ̀rúkúréy	sixty	p ɛ̀ r ú k ú r é j
+3515	Ben_Tey	pɛ̀rkúròy	sixty	p ɛ̀ r k ú r ò j
+3516	Bankan_Tey	pɛ̀rù kúròy	sixty	p ɛ̀ r ù # k ú r ò j
 3517	Nanga	pɛ̀r kúrê	sixty	p ɛ̀ r # k ú r ê
-3518	Jamsay	pɛ̀rkúróy	sixty	p ɛ̀ r k ú r ó dʒ
-3519	Perge_Tegu	pɛ̀rkúró:y	sixty	p ɛ̀ r k ú r óː dʒ
+3518	Jamsay	pɛ̀rkúróy	sixty	p ɛ̀ r k ú r ó j
+3519	Perge_Tegu	pɛ̀rkúró:y	sixty	p ɛ̀ r k ú r óː j
 3520	Togo_Kan	pɛ̀kúré:	sixty	p ɛ̀ k ú r éː
-3521	Yorno_So	pɛ́lkúlòy	sixty	p ɛ́ l k ú l ò dʒ
-3522	Tommo_So	pɛ̀lùkúlóy	sixty	p ɛ̀ l ù k ú l ó dʒ
+3521	Yorno_So	pɛ́lkúlòy	sixty	p ɛ́ l k ú l ò j
+3522	Tommo_So	pɛ̀lùkúlóy	sixty	p ɛ̀ l ù k ú l ó j
 3523	Dogul_Dom	pɛ́ɛ̀l kúlɛ̀	sixty	p ɛ́ ɛ̀ l # k ú l ɛ̀
 3524	Tebul_Ure	pɛ̀:kúlé	sixty	p ɛ̀ː k ú l é
 3525	Yanda_Dom	pɔ̀lɔ̀kúlé	sixty	p ɔ̀ l ɔ̀ k ú l é
-3526	Tiranige	pɛ́lkúlêyⁿ	sixty	p ɛ́ l k ú l ê dʒⁿ
-3527	Mombo	pɛ́:lú kúléyⁿ	sixty	p ɛ́ː l ú # k ú l é dʒⁿ
+3526	Tiranige	pɛ́lkúlêyⁿ	sixty	p ɛ́ l k ú l ê j̃
+3527	Mombo	pɛ́:lú kúléyⁿ	sixty	p ɛ́ː l ú # k ú l é j̃
 3528	Bunoge	tǎ:lmà sígù	sixty	t ǎː l m à # s í ɡ ù
 #
 3529	Toro_Tegu	gùsú	skin	ɡ ù s ú
@@ -3808,14 +3808,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3543	Tiranige	gwí:	skin	ɡ w íː
 3544	Mombo	gújù	skin	ɡ ú dʒ ù
 #
-3545	Ben_Tey	tǒy tɔ́	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́
-3546	Bankan_Tey	tǒy tɔ́	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́
+3545	Ben_Tey	tǒy tɔ́	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́
+3546	Bankan_Tey	tǒy tɔ́	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́
 3547	Nanga	tǒ: tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒː # t ɔ́ː
-3548	Jamsay	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́ː
-3549	Perge_Tegu	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́ː
-3550	Gourou	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́ː
+3548	Jamsay	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́ː
+3549	Perge_Tegu	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́ː
+3550	Gourou	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́ː
 3551	Togo_Kan	lɛ̌ lɛ́:	slash earth in field with pick-hoe (to plant seeds)	l ɛ̌ # l ɛ́ː
-3552	Yorno_So	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ dʒ # t ɔ́ː
+3552	Yorno_So	tǒy tɔ́:	slash earth in field with pick-hoe (to plant seeds)	t ǒ j # t ɔ́ː
 3553	Tomo_Kan_Diangassagou	twɛ́:	slash earth in field with pick-hoe (to plant seeds)	t w ɛ́ː
 3554	Tommo_So	tów tɔ́ɔ́	slash earth in field with pick-hoe (to plant seeds)	t ó w # t ɔ́ ɔ́
 3555	Dogul_Dom	tɔ̀wɛ́	slash earth in field with pick-hoe (to plant seeds)	t ɔ̀ w ɛ́
@@ -3832,7 +3832,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3565	Jamsay_Mondoro	gǔ:n	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	ɡ ǔː n
 3566	Togo_Kan	bɛ̀rɛ̀kùnú	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b ɛ̀ r ɛ̀ k ù n ú
 3567	Yorno_So	bèlé	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b è l é
-3568	Tomo_Kan_Diangassagou	byà:là	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b dʒ àː l à
+3568	Tomo_Kan_Diangassagou	byà:là	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b j àː l à
 3569	Tommo_So	bélé	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b é l é
 3570	Dogul_Dom	bèlé	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	b è l é
 3571	Tebul_Ure	gùndú	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	ɡ ù n d ú
@@ -3840,19 +3840,19 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3573	Mombo	tɛ́mɛ̀	slightly concave circular calabash cover and winnowing van, woven from doum-palm fronds	t ɛ́ m ɛ̀
 #
 3574	Toro_Tegu	zùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	z ù r ɔ́
-3575	Ben_Tey	yù:jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ùː dʒ ù r ɔ́
+3575	Ben_Tey	yù:jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	j ùː dʒ ù r ɔ́
 3576	Bankan_Tey	zùrá	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	z ù r á
-3577	Nanga	yù:jùrá	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ùː dʒ ù r á
+3577	Nanga	yù:jùrá	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	j ùː dʒ ù r á
 3578	Jamsay	jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ù r ɔ́
-3579	Perge_Tegu	yù:jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ùː dʒ ù r ɔ́
+3579	Perge_Tegu	yù:jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	j ùː dʒ ù r ɔ́
 3580	Gourou	zùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	z ù r ɔ́
 3581	Jamsay_Mondoro	jùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ù r ɔ́
 3582	Togo_Kan	ɲù:sùrɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	ɲ ùː s ù r ɔ́
-3583	Yorno_So	yù:sùlɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ ùː s ù l ɔ́
+3583	Yorno_So	yù:sùlɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	j ùː s ù l ɔ́
 3584	Tebul_Ure	zùlɔ́	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	z ù l ɔ́
 3585	Yanda_Dom	zùlɔ̀	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	z ù l ɔ̀
-3586	Tiranige	túyɛ̀	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	t ú dʒ ɛ̀
-3587	Mombo	yò:gè tɔ́:ⁿ	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	dʒ òː ɡ è # t ɔ́ːⁿ
+3586	Tiranige	túyɛ̀	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	t ú j ɛ̀
+3587	Mombo	yò:gè tɔ́:ⁿ	small pile of just-harvested millet grain spikes, often carried in animal-hide bags, dumped without careful arrangement, in or next to field	j òː ɡ è # t ɔ́ːⁿ
 #
 3588	Toro_Tegu	kúmó	smoke	k ú m ó
 3589	Ben_Tey	kùkùmbó	smoke	k ù k ù m b ó
@@ -3881,17 +3881,17 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3611	Gourou	ònùrú	smooth, sleek (adjective)	ò n ù r ú
 3612	Jamsay_Mondoro	ònùrⁿú	smooth, sleek (adjective)	ò n ù r̃ ú
 3613	Togo_Kan	ɔ̀rⁿɔ́nɔ́nɔ́	smooth, sleek (adjective)	ɔ̀ r̃ ɔ́ n ɔ́ n ɔ́
-3614	Yorno_So	ɔ́rɔ̀y	smooth, sleek (adjective)	ɔ́ r ɔ̀ dʒ
-3615	Tommo_So	ɔ̀rɔ̌y	smooth, sleek (adjective)	ɔ̀ r ɔ̌ dʒ
+3614	Yorno_So	ɔ́rɔ̀y	smooth, sleek (adjective)	ɔ́ r ɔ̀ j
+3615	Tommo_So	ɔ̀rɔ̌y	smooth, sleek (adjective)	ɔ̀ r ɔ̌ j
 3616	Dogul_Dom	ónònò	smooth, sleek (adjective)	ó n ò n ò
 3617	Yanda_Dom	ɔ̀rⁿɔ̀ndú	smooth, sleek (adjective)	ɔ̀ r̃ ɔ̀ n d ú
 3618	Tiranige	búrádá	smooth, sleek (adjective)	b ú r á d á
 3619	Mombo	ɔ́nɔ́nɔ́	smooth, sleek (adjective)	ɔ́ n ɔ́ n ɔ́
 3620	Bunoge	bòràllàgà	smooth, sleek (adjective)	b ò r à l l à ɡ à
 #
-3621	Toro_Tegu	ìsíyà	sneeze (noun)	ì s í dʒ à
-3622	Ben_Tey	ìsìyâ:	sneeze (noun)	ì s ì dʒ âː
-3623	Bankan_Tey	tìsìyôw	sneeze (noun)	t ì s ì dʒ ô w
+3621	Toro_Tegu	ìsíyà	sneeze (noun)	ì s í j à
+3622	Ben_Tey	ìsìyâ:	sneeze (noun)	ì s ì j âː
+3623	Bankan_Tey	tìsìyôw	sneeze (noun)	t ì s ì j ô w
 3624	Nanga	ísê	sneeze (noun)	í s ê
 3625	Jamsay	ègèjé	sneeze (noun)	è ɡ è dʒ é
 3626	Perge_Tegu	ígísɛ̀	sneeze (noun)	í ɡ í s ɛ̀
@@ -3899,10 +3899,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3628	Jamsay_Mondoro	ègèjé	sneeze (noun)	è ɡ è dʒ é
 3629	Togo_Kan	àségú	sneeze (noun)	à s é ɡ ú
 3630	Yorno_So	èjìgílè	sneeze (noun)	è dʒ ì ɡ í l è
-3631	Tomo_Kan_Diangassagou	yìʔìjà	sneeze (noun)	dʒ ì ʔ ì dʒ à
-3632	Tommo_So	ìsùgìlìyé	sneeze (noun)	ì s ù ɡ ì l ì dʒ é
+3631	Tomo_Kan_Diangassagou	yìʔìjà	sneeze (noun)	j ì ʔ ì dʒ à
+3632	Tommo_So	ìsùgìlìyé	sneeze (noun)	ì s ù ɡ ì l ì j é
 3633	Tebul_Ure	ìsé	sneeze (noun)	ì s é
-3634	Yanda_Dom	ìsìyà	sneeze (noun)	ì s ì dʒ à
+3634	Yanda_Dom	ìsìyà	sneeze (noun)	ì s ì j à
 3635	Tiranige	íjálí	sneeze (noun)	í dʒ á l í
 3636	Mombo	íjílì	sneeze (noun)	í dʒ í l ì
 #
@@ -3937,7 +3937,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3664	Bunoge	sǎmnà	soap	s ǎ m n à
 #
 3665	Toro_Tegu	ɛ́rá	soda ash (all types)	ɛ́ r á
-3666	Ben_Tey	jɛ̌yⁿ	soda ash (all types)	dʒ ɛ̌ dʒⁿ
+3666	Ben_Tey	jɛ̌yⁿ	soda ash (all types)	dʒ ɛ̌ j̃
 3667	Nanga	jè:rî	soda ash (all types)	dʒ èː r î
 3668	Jamsay	ɛ́:rⁿɛ̀	soda ash (all types)	ɛ́ː r̃ ɛ̀
 3669	Gourou	ɛ̀nní:	soda ash (all types)	ɛ̀ n n íː
@@ -3961,7 +3961,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3686	Jamsay_Mondoro	nûŋ	song	n û ŋ
 3687	Togo_Kan	núŋú	song	n ú ŋ ú
 3688	Yorno_So	nɛ́:	song	n ɛ́ː
-3689	Tommo_So	núyɔ́	song	n ú dʒ ɔ́
+3689	Tommo_So	núyɔ́	song	n ú j ɔ́
 3690	Dogul_Dom	nùŋóò	song	n ù ŋ ó ò
 3691	Tebul_Ure	nùŋǎ:	song	n ù ŋ ǎː
 3692	Yanda_Dom	nùŋà	song	n ù ŋ à
@@ -3970,8 +3970,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3695	Bunoge	núŋɔ̀	song	n ú ŋ ɔ̀
 #
 3696	Toro_Tegu	túsú	sorghum	t ú s ú
-3697	Ben_Tey	ɛ̀mɛ̌yⁿ	sorghum	ɛ̀ m ɛ̌ dʒⁿ
-3698	Bankan_Tey	ɛ̀mbɛ̌y	sorghum	ɛ̀ m b ɛ̌ dʒ
+3697	Ben_Tey	ɛ̀mɛ̌yⁿ	sorghum	ɛ̀ m ɛ̌ j̃
+3698	Bankan_Tey	ɛ̀mbɛ̌y	sorghum	ɛ̀ m b ɛ̌ j
 3699	Nanga	ɛ̀:mbɛ́	sorghum	ɛ̀ː m b ɛ́
 3700	Jamsay	ɛ̀mɛ́	sorghum	ɛ̀ m ɛ́
 3701	Perge_Tegu	ɛ̀:mbɛ́	sorghum	ɛ̀ː m b ɛ́
@@ -4007,26 +4007,26 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3729	Ben_Tey	sùsùnî: tɔ́	spit, emit a spit	s ù s ù n îː # t ɔ́
 3730	Bankan_Tey	mìmbèsî tɔ́tí	spit, emit a spit	m ì m b è s î # t ɔ́ t í
 3731	Nanga	tɔ̀njî tɔ́njí	spit, emit a spit	t ɔ̀ n dʒ î # t ɔ́ n dʒ í
-3732	Jamsay	yɔ̀rɔ̀:ní: tɔ́:	spit, emit a spit	dʒ ɔ̀ r ɔ̀ː n íː # t ɔ́ː
-3733	Perge_Tegu	yɔ̀rɔ̀ní: tɔ́:	spit, emit a spit	dʒ ɔ̀ r ɔ̀ n íː # t ɔ́ː
+3732	Jamsay	yɔ̀rɔ̀:ní: tɔ́:	spit, emit a spit	j ɔ̀ r ɔ̀ː n íː # t ɔ́ː
+3733	Perge_Tegu	yɔ̀rɔ̀ní: tɔ́:	spit, emit a spit	j ɔ̀ r ɔ̀ n íː # t ɔ́ː
 3734	Gourou	kàgùzá kágúzá	spit, emit a spit	k à ɡ ù z á # k á ɡ ú z á
 3735	Togo_Kan	tùrɔ̀dí: túrɔ́	spit, emit a spit	t ù r ɔ̀ d íː # t ú r ɔ́
-3736	Yorno_So	yù:jǎ: tɔ́:	spit, emit a spit	dʒ ùː dʒ ǎː # t ɔ́ː
+3736	Yorno_So	yù:jǎ: tɔ́:	spit, emit a spit	j ùː dʒ ǎː # t ɔ́ː
 3737	Tomo_Kan_Diangassagou	tùrɛ̀ⁿjì tùrɛ́	spit, emit a spit	t ù r ɛ̃̀ dʒ ì # t ù r ɛ́
-3738	Tommo_So	yúlɔ́ tɔ́ɔ́	spit, emit a spit	dʒ ú l ɔ́ # t ɔ́ ɔ́
+3738	Tommo_So	yúlɔ́ tɔ́ɔ́	spit, emit a spit	j ú l ɔ́ # t ɔ́ ɔ́
 3739	Dogul_Dom	dòɲjé tùwé	spit, emit a spit	d ò ɲ dʒ é # t ù w é
 3740	Yanda_Dom	sùmzú tó:	spit, emit a spit	s ù m z ú # t óː
 3741	Tiranige	só:ndí tɔ́:	spit, emit a spit	s óː n d í # t ɔ́ː
 3742	Bunoge	sɛ̂:	spit, emit a spit	s ɛ̂ː
 #
-3743	Toro_Tegu	cɛ́lámpárèy	spleen	tʃ ɛ́ l á m p á r è dʒ
-3744	Ben_Tey	kɛ̀lɛ̀pǎ:lày	spleen	k ɛ̀ l ɛ̀ p ǎː l à dʒ
+3743	Toro_Tegu	cɛ́lámpárèy	spleen	tʃ ɛ́ l á m p á r è j
+3744	Ben_Tey	kɛ̀lɛ̀pǎ:lày	spleen	k ɛ̀ l ɛ̀ p ǎː l à j
 3745	Bankan_Tey	kɛ̀ndɛ̀pàrⁿâ	spleen	k ɛ̀ n d ɛ̀ p à r̃ â
 3746	Nanga	kɛ̀ndɛ̀pàrⁿá	spleen	k ɛ̀ n d ɛ̀ p à r̃ á
 3747	Jamsay	cɛ̀nɛ̀ pǎ:làm	spleen	tʃ ɛ̀ n ɛ̀ # p ǎː l à m
 3748	Perge_Tegu	kɛ̀lɛ̀ pǎ:là	spleen	k ɛ̀ l ɛ̀ # p ǎː l à
 3749	Togo_Kan	kɛ̀nɛ̀làlàgá	spleen	k ɛ̀ n ɛ̀ l à l à ɡ á
-3750	Yorno_So	kìnɛ̀ gùgǔyⁿnɛ́	spleen	k ì n ɛ̀ # ɡ ù ɡ ǔ dʒⁿ n ɛ́
+3750	Yorno_So	kìnɛ̀ gùgǔyⁿnɛ́	spleen	k ì n ɛ̀ # ɡ ù ɡ ǔ j̃ n ɛ́
 3751	Tommo_So	kìndɛ̀ pààràá	spleen	k ì n d ɛ̀ # p à à r à á
 3752	Dogul_Dom	dáámòl	spleen	d á á m ò l
 3753	Tebul_Ure	kɛ̀ndɛ̀pàrá	spleen	k ɛ̀ n d ɛ̀ p à r á
@@ -4034,19 +4034,19 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3755	Mombo	nà:gà kíndá	spleen	n àː ɡ à # k í n d á
 3756	Bunoge	nàmmɛ̀	spleen	n à m m ɛ̀
 #
-3757	Ben_Tey	tɔ́rⁿíyⁿí	squat	t ɔ́ r̃ í dʒⁿ í
-3758	Bankan_Tey	tɔ́rⁿíyí	squat	t ɔ́ r̃ í dʒ í
-3759	Nanga	sówyé	squat	s ó w dʒ é
+3757	Ben_Tey	tɔ́rⁿíyⁿí	squat	t ɔ́ r̃ í j̃ í
+3758	Bankan_Tey	tɔ́rⁿíyí	squat	t ɔ́ r̃ í j í
+3759	Nanga	sówyé	squat	s ó w j é
 3760	Jamsay	tɔ́rⁿɔ́	squat	t ɔ́ r̃ ɔ́
-3761	Perge_Tegu	tɔ́rⁿúyⁿɔ́	squat	t ɔ́ r̃ ú dʒⁿ ɔ́
+3761	Perge_Tegu	tɔ́rⁿúyⁿɔ́	squat	t ɔ́ r̃ ú j̃ ɔ́
 3762	Gourou	tɔ́rⁿɔ́	squat	t ɔ́ r̃ ɔ́
 3763	Jamsay_Mondoro	tɔ́rⁿɔ́	squat	t ɔ́ r̃ ɔ́
 3764	Togo_Kan	tɔ́rⁿì:	squat	t ɔ́ r̃ ìː
 3765	Tomo_Kan_Diangassagou	twɛ̀lí	squat	t w ɛ̀ l í
-3766	Tommo_So	tɔ́ɔ́díyɛ́	squat	t ɔ́ ɔ́ d í dʒ ɛ́
-3767	Dogul_Dom	tɔ̀nìyɛ́	squat	t ɔ̀ n ì dʒ ɛ́
-3768	Tiranige	sómbíyó	squat	s ó m b í dʒ ó
-3769	Mombo	sómbyê:	squat	s ó m b dʒ êː
+3766	Tommo_So	tɔ́ɔ́díyɛ́	squat	t ɔ́ ɔ́ d í j ɛ́
+3767	Dogul_Dom	tɔ̀nìyɛ́	squat	t ɔ̀ n ì j ɛ́
+3768	Tiranige	sómbíyó	squat	s ó m b í j ó
+3769	Mombo	sómbyê:	squat	s ó m b j êː
 3770	Bunoge	sǒmbè	squat	s ǒ m b è
 #
 3771	Toro_Tegu	béré	staff, stick (general word)	b é r é
@@ -4064,16 +4064,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3783	Mombo	túmà	staff, stick (general word)	t ú m à
 3784	Bunoge	túmà	staff, stick (general word)	t ú m à
 #
-3785	Toro_Tegu	sémrěy	star	s é m r ě dʒ
+3785	Toro_Tegu	sémrěy	star	s é m r ě j
 3786	Ben_Tey	tóró	star	t ó r ó
-3787	Bankan_Tey	bàndà kɔ̀:rɔ̌y	star	b à n d à # k ɔ̀ː r ɔ̌ dʒ
+3787	Bankan_Tey	bàndà kɔ̀:rɔ̌y	star	b à n d à # k ɔ̀ː r ɔ̌ j
 3788	Nanga	wà:kɔ̀rɔ́	star	w àː k ɔ̀ r ɔ́
 3789	Jamsay	tóró	star	t ó r ó
 3790	Perge_Tegu	tóró	star	t ó r ó
 3791	Gourou	tóró	star	t ó r ó
 3792	Togo_Kan	tóró	star	t ó r ó
-3793	Yorno_So	tònòlòý	star	t ò n ò l ò dʒ́
-3794	Tommo_So	tòndòlòý	star	t ò n d ò l ò dʒ́
+3793	Yorno_So	tònòlòý	star	t ò n ò l ò j́
+3794	Tommo_So	tòndòlòý	star	t ò n d ò l ò j́
 3795	Dogul_Dom	tólò	star	t ó l ò
 3796	Tebul_Ure	tóndó:	star	t ó n d óː
 3797	Tiranige	kɔ̀lɔ̀ŋkɔ́lɔ̀wⁿ	star	k ɔ̀ l ɔ̀ ŋ k ɔ́ l ɔ̀ w̃
@@ -4097,7 +4097,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 3814	Toro_Tegu	bètèká	stomach	b è t è k á
 3815	Ben_Tey	bìnjírì	stomach	b ì n dʒ í r ì
-3816	Bankan_Tey	pìrèkɔ̀rɔ̀ díyⁿàwⁿ	stomach	p ì r è k ɔ̀ r ɔ̀ # d í dʒⁿ à w̃
+3816	Bankan_Tey	pìrèkɔ̀rɔ̀ díyⁿàwⁿ	stomach	p ì r è k ɔ̀ r ɔ̀ # d í j̃ à w̃
 3817	Nanga	bìndì dùgí	stomach	b ì n d ì # d ù ɡ í
 3818	Jamsay	pùró	stomach	p ù r ó
 3819	Perge_Tegu	bìŋgírì	stomach	b ì ŋ ɡ í r ì
@@ -4145,8 +4145,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3859	Bunoge	túntùŋgè	stool (without back)	t ú n t ù ŋ ɡ è
 #
 3860	Toro_Tegu	ísà	stream, small river	í s à
-3861	Ben_Tey	gòrǒy	stream, small river	ɡ ò r ǒ dʒ
-3862	Bankan_Tey	gòrǒy	stream, small river	ɡ ò r ǒ dʒ
+3861	Ben_Tey	gòrǒy	stream, small river	ɡ ò r ǒ j
+3862	Bankan_Tey	gòrǒy	stream, small river	ɡ ò r ǒ j
 3863	Nanga	góró	stream, small river	ɡ ó r ó
 3864	Jamsay	góró	stream, small river	ɡ ó r ó
 3865	Perge_Tegu	gó:ró	stream, small river	ɡ óː r ó
@@ -4157,7 +4157,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3870	Tebul_Ure	gò:ndó	stream, small river	ɡ òː n d ó
 3871	Yanda_Dom	gòndòlò	stream, small river	ɡ ò n d ò l ò
 3872	Mombo	á:mbá	stream, small river	áː m b á
-3873	Bunoge	yì:lì	stream, small river	dʒ ìː l ì
+3873	Bunoge	yì:lì	stream, small river	j ìː l ì
 #
 3874	Toro_Tegu	césú	strength, power, force	tʃ é s ú
 3875	Bankan_Tey	tɔ̀rú	strength, power, force	t ɔ̀ r ú
@@ -4233,7 +4233,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3941	Tommo_So	nǎm	sun	n ǎ m
 3942	Dogul_Dom	ísígú	sun	í s í ɡ ú
 3943	Tebul_Ure	ùdùgó	sun	ù d ù ɡ ó
-3944	Tiranige	yècíndó	sun	dʒ è tʃ í n d ó
+3944	Tiranige	yècíndó	sun	j è tʃ í n d ó
 3945	Mombo	gé:wⁿè	sun	ɡ éː w̃ è
 #
 3946	Toro_Tegu	nè:sé	supper	n èː s é
@@ -4248,16 +4248,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 3955	Dogul_Dom	dɛ̀ndùgàà páná	supper	d ɛ̀ n d ù ɡ à à # p á n á
 3956	Tebul_Ure	dɛ̀ndɛ̀nòmdó	supper	d ɛ̀ n d ɛ̀ n ò m d ó
 3957	Yanda_Dom	dèndàpànù	supper	d è n d à p à n ù
-3958	Tiranige	yángé	supper	dʒ á n ɡ é
+3958	Tiranige	yángé	supper	j á n ɡ é
 3959	Mombo	páléŋgè	supper	p á l é ŋ ɡ è
 3960	Bunoge	dènámpánàŋgè	supper	d è n á m p á n à ŋ ɡ è
 #
 3961	Toro_Tegu	dòró	sweat (noun), perspiration	d ò r ó
 3962	Ben_Tey	sùsǒ:	sweat (noun), perspiration	s ù s ǒː
 3963	Bankan_Tey	sò:só:	sweat (noun), perspiration	s òː s óː
-3964	Nanga	sǒy	sweat (noun), perspiration	s ǒ dʒ
+3964	Nanga	sǒy	sweat (noun), perspiration	s ǒ j
 3965	Jamsay	ò:gú	sweat (noun), perspiration	òː ɡ ú
-3966	Perge_Tegu	sòsǒy	sweat (noun), perspiration	s ò s ǒ dʒ
+3966	Perge_Tegu	sòsǒy	sweat (noun), perspiration	s ò s ǒ j
 3967	Gourou	ò:gú	sweat (noun), perspiration	òː ɡ ú
 3968	Togo_Kan	ò:gú	sweat (noun), perspiration	òː ɡ ú
 3969	Yorno_So	sǒ:	sweat (noun), perspiration	s ǒː
@@ -4323,13 +4323,13 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4025	Nanga	pɛ́njí	take (handful of food) in hand	p ɛ́ n dʒ í
 4026	Jamsay	jɛ̌:	take (handful of food) in hand	dʒ ɛ̌ː
 4027	Perge_Tegu	gùsɔ́	take (handful of food) in hand	ɡ ù s ɔ́
-4028	Gourou	yⁿǎ: zɛ́:	take (handful of food) in hand	dʒⁿ ǎː # z ɛ́ː
+4028	Gourou	yⁿǎ: zɛ́:	take (handful of food) in hand	j̃ ǎː # z ɛ́ː
 4029	Togo_Kan	nùmɔ̀jɛ̌: jɛ̌:	take (handful of food) in hand	n ù m ɔ̀ dʒ ɛ̌ː # dʒ ɛ̌ː
 4030	Yorno_So	pɛ́rɛ́	take (handful of food) in hand	p ɛ́ r ɛ́
 4031	Tomo_Kan_Diangassagou	jɛ̀:	take (handful of food) in hand	dʒ ɛ̀ː
 4032	Tommo_So	gùdɔ́	take (handful of food) in hand	ɡ ù d ɔ́
 4033	Dogul_Dom	gùsɛ́	take (handful of food) in hand	ɡ ù s ɛ́
-4034	Tebul_Ure	nùmà: yɛ̀gɛ́yɛ̀gɛ̀nɛ́ ɲǎ:	take (handful of food) in hand	n ù m àː # dʒ ɛ̀ ɡ ɛ́ dʒ ɛ̀ ɡ ɛ̀ n ɛ́ # ɲ ǎː
+4034	Tebul_Ure	nùmà: yɛ̀gɛ́yɛ̀gɛ̀nɛ́ ɲǎ:	take (handful of food) in hand	n ù m àː # j ɛ̀ ɡ ɛ́ j ɛ̀ ɡ ɛ̀ n ɛ́ # ɲ ǎː
 4035	Yanda_Dom	gùzɔ́	take (handful of food) in hand	ɡ ù z ɔ́
 4036	Tiranige	kújè ɔ́njɔ́	take (handful of food) in hand	k ú dʒ è # ɔ́ n dʒ ɔ́
 4037	Mombo	kémbúlè	take (handful of food) in hand	k é m b ú l è
@@ -4361,7 +4361,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4061	Tommo_So	pɛ́lú	ten	p ɛ́ l ú
 4062	Dogul_Dom	pɛ́ɛ̀l	ten	p ɛ́ ɛ̀ l
 4063	Tebul_Ure	pɛ́lú	ten	p ɛ́ l ú
-4064	Tiranige	pìyɔ̀lù	ten	p ì dʒ ɔ̀ l ù
+4064	Tiranige	pìyɔ̀lù	ten	p ì j ɔ̀ l ù
 4065	Mombo	pɛ́:lù	ten	p ɛ́ː l ù
 4066	Bunoge	kóbéwⁿ	ten	k ó b é w̃
 #
@@ -4395,7 +4395,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4093	Yorno_So	dɔ́lɔ́	testicles	d ɔ́ l ɔ́
 4094	Tommo_So	dɔ́lɔ́	testicles	d ɔ́ l ɔ́
 4095	Dogul_Dom	kùmbírí	testicles	k ù m b í r í
-4096	Tebul_Ure	dwá:ⁿ	testicles	d w ã́ː
+4096	Tebul_Ure	dwá:ⁿ	testicles	d w áːⁿ
 4097	Yanda_Dom	dɔ̀rɔ́	testicles	d ɔ̀ r ɔ́
 4098	Tiranige	sègèlè	testicles	s è ɡ è l è
 4099	Bunoge	pɔ̀ndɛ́sè	testicles	p ɔ̀ n d ɛ́ s è
@@ -4405,7 +4405,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4102	Bankan_Tey	ɔ̀rⁿɔ́:	the bush, outback (away from settlements)	ɔ̀ r̃ ɔ́ː
 4103	Nanga	ǒ:	the bush, outback (away from settlements)	ǒː
 4104	Jamsay	èjú	the bush, outback (away from settlements)	è dʒ ú
-4105	Perge_Tegu	ǒy	the bush, outback (away from settlements)	ǒ dʒ
+4105	Perge_Tegu	ǒy	the bush, outback (away from settlements)	ǒ j
 4106	Gourou	ègú	the bush, outback (away from settlements)	è ɡ ú
 4107	Jamsay_Mondoro	èjù bómó	the bush, outback (away from settlements)	è dʒ ù # b ó m ó
 4108	Togo_Kan	bàrá	the bush, outback (away from settlements)	b à r á
@@ -4413,20 +4413,20 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4110	Tommo_So	òlú	the bush, outback (away from settlements)	ò l ú
 4111	Dogul_Dom	ónùŋ	the bush, outback (away from settlements)	ó n ù ŋ
 4112	Tebul_Ure	ándá	the bush, outback (away from settlements)	á n d á
-4113	Yanda_Dom	òy	the bush, outback (away from settlements)	ò dʒ
+4113	Yanda_Dom	òy	the bush, outback (away from settlements)	ò j
 4114	Tiranige	góló	the bush, outback (away from settlements)	ɡ ó l ó
-4115	Mombo	kɔ̂yⁿ	the bush, outback (away from settlements)	k ɔ̂ dʒⁿ
+4115	Mombo	kɔ̂yⁿ	the bush, outback (away from settlements)	k ɔ̂ j̃
 #
 4116	Toro_Tegu	húwⁿɔ̀ dɛ̀rⁿà	the day after tomorrow	h ú w̃ ɔ̀ # d ɛ̀ r̃ à
 4117	Ben_Tey	ɛ́rɛ́nâ:	the day after tomorrow	ɛ́ r ɛ́ n âː
 4118	Bankan_Tey	ɛ́rⁿɛ́nà	the day after tomorrow	ɛ́ r̃ ɛ́ n à
-4119	Nanga	ɛ́ndɛ̀y	the day after tomorrow	ɛ́ n d ɛ̀ dʒ
-4120	Jamsay	yògòdɛ́rⁿɛ̀	the day after tomorrow	dʒ ò ɡ ò d ɛ́ r̃ ɛ̀
+4119	Nanga	ɛ́ndɛ̀y	the day after tomorrow	ɛ́ n d ɛ̀ j
+4120	Jamsay	yògòdɛ́rⁿɛ̀	the day after tomorrow	j ò ɡ ò d ɛ́ r̃ ɛ̀
 4121	Perge_Tegu	úŋgù dɛ́rⁿɛ̀	the day after tomorrow	ú ŋ ɡ ù # d ɛ́ r̃ ɛ̀
-4122	Jamsay_Mondoro	yògòdɛ́rⁿɛ̀	the day after tomorrow	dʒ ò ɡ ò d ɛ́ r̃ ɛ̀
-4123	Togo_Kan	yògòdɛ́rⁿɛ̀	the day after tomorrow	dʒ ò ɡ ò d ɛ́ r̃ ɛ̀
-4124	Yorno_So	yògòdɛ́rⁿɛ̀	the day after tomorrow	dʒ ò ɡ ò d ɛ́ r̃ ɛ̀
-4125	Tommo_So	yògò dɛ́nɛ́	the day after tomorrow	dʒ ò ɡ ò # d ɛ́ n ɛ́
+4122	Jamsay_Mondoro	yògòdɛ́rⁿɛ̀	the day after tomorrow	j ò ɡ ò d ɛ́ r̃ ɛ̀
+4123	Togo_Kan	yògòdɛ́rⁿɛ̀	the day after tomorrow	j ò ɡ ò d ɛ́ r̃ ɛ̀
+4124	Yorno_So	yògòdɛ́rⁿɛ̀	the day after tomorrow	j ò ɡ ò d ɛ́ r̃ ɛ̀
+4125	Tommo_So	yògò dɛ́nɛ́	the day after tomorrow	j ò ɡ ò # d ɛ́ n ɛ́
 4126	Dogul_Dom	ɛ́ndɛ̀nɛ̀	the day after tomorrow	ɛ́ n d ɛ̀ n ɛ̀
 4127	Yanda_Dom	ɛ̀wdèrⁿɛ́	the day after tomorrow	ɛ̀ w d è r̃ ɛ́
 4128	Tiranige	à:gà dɛ́nɛ́	the day after tomorrow	àː ɡ à # d ɛ́ n ɛ́
@@ -4472,20 +4472,20 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4165	Togo_Kan	dì:nɔ̀:rⁿú	thirst	d ìː n ɔ̀ː r̃ ú
 4166	Yorno_So	dì:nî:	thirst	d ìː n îː
 4167	Tomo_Kan_Diangassagou	jí:nɔ̀	thirst	dʒ íː n ɔ̀
-4168	Tommo_So	dìì nɔ̌y	thirst	d ì ì # n ɔ̌ dʒ
+4168	Tommo_So	dìì nɔ̌y	thirst	d ì ì # n ɔ̌ j
 4169	Dogul_Dom	ɲúnɔ̀ɔ̀n	thirst	ɲ ú n ɔ̀ ɔ̀ n
 4170	Tebul_Ure	ìnjìrgó	thirst	ì n dʒ ì r ɡ ó
 4171	Yanda_Dom	ìŋgìnì:	thirst	ì ŋ ɡ ì n ìː
 4172	Mombo	mì: kúŋgá	thirst	m ìː # k ú ŋ ɡ á
 #
-4173	Bankan_Tey	níyⁿá	this year	n í dʒⁿ á
-4174	Nanga	núyⁿáyⁿ	this year	n ú dʒⁿ á dʒⁿ
+4173	Bankan_Tey	níyⁿá	this year	n í j̃ á
+4174	Nanga	núyⁿáyⁿ	this year	n ú j̃ á j̃
 4175	Jamsay	nɔ́:	this year	n ɔ́ː
 4176	Perge_Tegu	nɔ́:	this year	n ɔ́ː
 4177	Gourou	nɔ́:	this year	n ɔ́ː
 4178	Togo_Kan	nɔ́:wⁿɔ́	this year	n ɔ́ː w̃ ɔ́
-4179	Yorno_So	yɔ́:	this year	dʒ ɔ́ː
-4180	Tommo_So	ííyɔ́ɔ̀	this year	í í dʒ ɔ́ ɔ̀
+4179	Yorno_So	yɔ́:	this year	j ɔ́ː
+4180	Tommo_So	ííyɔ́ɔ̀	this year	í í j ɔ́ ɔ̀
 4181	Dogul_Dom	núŋàà	this year	n ú ŋ à à
 4182	Tebul_Ure	nwǎ:	this year	n w ǎː
 4183	Yanda_Dom	nwá	this year	n w á
@@ -4500,14 +4500,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4191	Perge_Tegu	dòdǒ:	thorn	d ò d ǒː
 4192	Gourou	dìdó:	thorn	d ì d óː
 4193	Jamsay_Mondoro	dìdǒ:	thorn	d ì d ǒː
-4194	Togo_Kan	jìyé	thorn	dʒ ì dʒ é
+4194	Togo_Kan	jìyé	thorn	dʒ ì j é
 4195	Yorno_So	jìjǐ:	thorn	dʒ ì dʒ ǐː
 4196	Tomo_Kan_Diangassagou	jè:	thorn	dʒ èː
-4197	Tommo_So	gíyé	thorn	ɡ í dʒ é
-4198	Dogul_Dom	jìyíg	thorn	dʒ ì dʒ í ɡ
+4197	Tommo_So	gíyé	thorn	ɡ í j é
+4198	Dogul_Dom	jìyíg	thorn	dʒ ì j í ɡ
 4199	Tebul_Ure	dǒ:	thorn	d ǒː
-4200	Yanda_Dom	zìyè	thorn	z ì dʒ è
-4201	Tiranige	yó:	thorn	dʒ óː
+4200	Yanda_Dom	zìyè	thorn	z ì j è
+4201	Tiranige	yó:	thorn	j óː
 4202	Mombo	jô:ⁿ	thorn	dʒ õ̂ː
 #
 4203	Toro_Tegu	zɛ́mbɛ̀rɛ̀	thousand	z ɛ́ m b ɛ̀ r ɛ̀
@@ -4527,7 +4527,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4217	Mombo	múnjù	thousand	m ú n dʒ ù
 4218	Bunoge	múnjù	thousand	m ú n dʒ ù
 #
-4219	Toro_Tegu	ǒyⁿ	thread (any kind)	ǒ dʒⁿ
+4219	Toro_Tegu	ǒyⁿ	thread (any kind)	ǒ j̃
 4220	Ben_Tey	búrɔ̀	thread (any kind)	b ú r ɔ̀
 4221	Bankan_Tey	sìlílì	thread (any kind)	s ì l í l ì
 4222	Nanga	pà:ndí	thread (any kind)	p àː n d í
@@ -4568,7 +4568,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4255	Yorno_So	dámá	tinder (kapok or other soft vegetable material for flint lighter)	d á m á
 4256	Tomo_Kan_Diangassagou	ɲàhúnàwⁿ	tinder (kapok or other soft vegetable material for flint lighter)	ɲ à h ú n à w̃
 4257	Tommo_So	kùùlú	tinder (kapok or other soft vegetable material for flint lighter)	k ù ù l ú
-4258	Tebul_Ure	yúgúrú	tinder (kapok or other soft vegetable material for flint lighter)	dʒ ú ɡ ú r ú
+4258	Tebul_Ure	yúgúrú	tinder (kapok or other soft vegetable material for flint lighter)	j ú ɡ ú r ú
 4259	Yanda_Dom	dùnùkúlò	tinder (kapok or other soft vegetable material for flint lighter)	d ù n ù k ú l ò
 4260	Tiranige	dà:mbú	tinder (kapok or other soft vegetable material for flint lighter)	d àː m b ú
 4261	Mombo	ɲá:ŋgó	tinder (kapok or other soft vegetable material for flint lighter)	ɲ áː ŋ ɡ ó
@@ -4577,11 +4577,11 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4263	Toro_Tegu	tà:gùsú	tobacco pipe	t àː ɡ ù s ú
 4264	Ben_Tey	tàwàsèŋgû:	tobacco pipe	t à w à s è ŋ ɡ ûː
 4265	Bankan_Tey	tàwàsèŋgî:	tobacco pipe	t à w à s è ŋ ɡ îː
-4266	Jamsay	tɔ̀wɔ̀dí:ⁿ	tobacco pipe	t ɔ̀ w ɔ̀ d íːⁿ
-4267	Perge_Tegu	tàwàdɛ̌yⁿ	tobacco pipe	t à w à d ɛ̌ dʒⁿ
-4268	Gourou	tɔ̀wɔ̀děyⁿ	tobacco pipe	t ɔ̀ w ɔ̀ d ě dʒⁿ
+4266	Jamsay	tɔ̀wɔ̀dí:ⁿ	tobacco pipe	t ɔ̀ w ɔ̀ d ĩ́ː
+4267	Perge_Tegu	tàwàdɛ̌yⁿ	tobacco pipe	t à w à d ɛ̌ j̃
+4268	Gourou	tɔ̀wɔ̀děyⁿ	tobacco pipe	t ɔ̀ w ɔ̀ d ě j̃
 4269	Togo_Kan	tɔ̀:wɔ̀dɛ̌ⁿ	tobacco pipe	t ɔ̀ː w ɔ̀ d ɛ̃̌
-4270	Yorno_So	támdóy	tobacco pipe	t á m d ó dʒ
+4270	Yorno_So	támdóy	tobacco pipe	t á m d ó j
 4271	Tommo_So	tàndòó	tobacco pipe	t à n d ò ó
 4272	Dogul_Dom	sùségù	tobacco pipe	s ù s é ɡ ù
 4273	Tebul_Ure	tàbdùgó	tobacco pipe	t à b d ù ɡ ó
@@ -4589,34 +4589,34 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4275	Tiranige	tàwá òrí	tobacco pipe	t à w á # ò r í
 4276	Mombo	tábíjè	tobacco pipe	t á b í dʒ è
 #
-4277	Toro_Tegu	yó	today	dʒ ó
-4278	Ben_Tey	íyé	today	í dʒ é
-4279	Bankan_Tey	íyé	today	í dʒ é
-4280	Nanga	íyé	today	í dʒ é
+4277	Toro_Tegu	yó	today	j ó
+4278	Ben_Tey	íyé	today	í j é
+4279	Bankan_Tey	íyé	today	í j é
+4280	Nanga	íyé	today	í j é
 4281	Jamsay	íjé	today	í dʒ é
-4282	Perge_Tegu	íyé	today	í dʒ é
+4282	Perge_Tegu	íyé	today	í j é
 4283	Gourou	ígé	today	í ɡ é
 4284	Jamsay_Mondoro	íjé	today	í dʒ é
-4285	Togo_Kan	íyé	today	í dʒ é
-4286	Yorno_So	yé:	today	dʒ éː
-4287	Tommo_So	ííyé	today	í í dʒ é
-4288	Dogul_Dom	ííyè	today	í í dʒ è
-4289	Tebul_Ure	yɔ̌:	today	dʒ ɔ̌ː
-4290	Yanda_Dom	íyè	today	í dʒ è
-4291	Tiranige	yò:	today	dʒ òː
+4285	Togo_Kan	íyé	today	í j é
+4286	Yorno_So	yé:	today	j éː
+4287	Tommo_So	ííyé	today	í í j é
+4288	Dogul_Dom	ííyè	today	í í j è
+4289	Tebul_Ure	yɔ̌:	today	j ɔ̌ː
+4290	Yanda_Dom	íyè	today	í j è
+4291	Tiranige	yò:	today	j òː
 4292	Bunoge	jôwⁿ	today	dʒ ô w̃
 #
-4293	Bankan_Tey	ɛ́yⁿ	tomorrow	ɛ́ dʒⁿ
+4293	Bankan_Tey	ɛ́yⁿ	tomorrow	ɛ́ j̃
 4294	Nanga	ɛ́:ŋí	tomorrow	ɛ́ː ŋ í
-4295	Jamsay	yògó	tomorrow	dʒ ò ɡ ó
+4295	Jamsay	yògó	tomorrow	j ò ɡ ó
 4296	Perge_Tegu	úŋgù	tomorrow	ú ŋ ɡ ù
-4297	Gourou	yògó	tomorrow	dʒ ò ɡ ó
-4298	Jamsay_Mondoro	yògó	tomorrow	dʒ ò ɡ ó
-4299	Togo_Kan	yògó	tomorrow	dʒ ò ɡ ó
-4300	Yorno_So	yògó	tomorrow	dʒ ò ɡ ó
-4301	Tommo_So	yògó	tomorrow	dʒ ò ɡ ó
+4297	Gourou	yògó	tomorrow	j ò ɡ ó
+4298	Jamsay_Mondoro	yògó	tomorrow	j ò ɡ ó
+4299	Togo_Kan	yògó	tomorrow	j ò ɡ ó
+4300	Yorno_So	yògó	tomorrow	j ò ɡ ó
+4301	Tommo_So	yògó	tomorrow	j ò ɡ ó
 4302	Dogul_Dom	ɛ́ɛ́nì	tomorrow	ɛ́ ɛ́ n ì
-4303	Tebul_Ure	ɛ́yⁿ	tomorrow	ɛ́ dʒⁿ
+4303	Tebul_Ure	ɛ́yⁿ	tomorrow	ɛ́ j̃
 4304	Tiranige	á:gá	tomorrow	áː ɡ á
 4305	Mombo	ɔ́gɔ̀	tomorrow	ɔ́ ɡ ɔ̀
 4306	Bunoge	ʔógà	tomorrow	ʔ ó ɡ à
@@ -4630,8 +4630,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4313	Gourou	běn	tomtom (general word)	b ě n
 4314	Jamsay_Mondoro	běn	tomtom (general word)	b ě n
 4315	Togo_Kan	bɔ̌ⁿ	tomtom (general word)	b ɔ̃̌
-4316	Yorno_So	bǒy	tomtom (general word)	b ǒ dʒ
-4317	Tommo_So	bǒy	tomtom (general word)	b ǒ dʒ
+4316	Yorno_So	bǒy	tomtom (general word)	b ǒ j
+4317	Tommo_So	bǒy	tomtom (general word)	b ǒ j
 4318	Dogul_Dom	gàŋgá	tomtom (general word)	ɡ à ŋ ɡ á
 4319	Yanda_Dom	bòn	tomtom (general word)	b ò n
 4320	Mombo	bólì	tomtom (general word)	b ó l ì
@@ -4660,7 +4660,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4341	Gourou	nɛ̀nɛ́	tongue	n ɛ̀ n ɛ́
 4342	Jamsay_Mondoro	nɛ̀nɛ́	tongue	n ɛ̀ n ɛ́
 4343	Togo_Kan	nɛ́nɛ́	tongue	n ɛ́ n ɛ́
-4344	Tomo_Kan_Diangassagou	yɛ̀rɛ̀dɛ̀ⁿ	tongue	dʒ ɛ̀ r ɛ̀ d ɛ̃̀
+4344	Tomo_Kan_Diangassagou	yɛ̀rɛ̀dɛ̀ⁿ	tongue	j ɛ̀ r ɛ̀ d ɛ̃̀
 4345	Tommo_So	nííndɛ́	tongue	n í í n d ɛ́
 4346	Dogul_Dom	nɛ̀ɛ̀ndá	tongue	n ɛ̀ ɛ̀ n d á
 4347	Tebul_Ure	nɛ́ndɛ́	tongue	n ɛ́ n d ɛ́
@@ -4706,16 +4706,16 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4384	Perge_Tegu	nùwⁿòpèrú	traditional flint lighter (fire-making device)	n ù w̃ ò p è r ú
 4385	Gourou	nùmò pèrú	traditional flint lighter (fire-making device)	n ù m ò # p è r ú
 4386	Togo_Kan	ɲɛ̀:pèrú	traditional flint lighter (fire-making device)	ɲ ɛ̀ː p è r ú
-4387	Yorno_So	yàmpěl	traditional flint lighter (fire-making device)	dʒ à m p ě l
+4387	Yorno_So	yàmpěl	traditional flint lighter (fire-making device)	j à m p ě l
 4388	Tomo_Kan_Diangassagou	cúbéré	traditional flint lighter (fire-making device)	tʃ ú b é r é
-4389	Tommo_So	ɲàm tǒy	traditional flint lighter (fire-making device)	ɲ à m # t ǒ dʒ
+4389	Tommo_So	ɲàm tǒy	traditional flint lighter (fire-making device)	ɲ à m # t ǒ j
 4390	Dogul_Dom	kébúlúŋ	traditional flint lighter (fire-making device)	k é b ú l ú ŋ
 4391	Yanda_Dom	gòlòpɛ̀l	traditional flint lighter (fire-making device)	ɡ ò l ò p ɛ̀ l
 4392	Tiranige	òlòkwá	traditional flint lighter (fire-making device)	ò l ò k w á
 4393	Mombo	kèbùlú	traditional flint lighter (fire-making device)	k è b ù l ú
 4394	Bunoge	ʔùlékèmbúlè	traditional flint lighter (fire-making device)	ʔ ù l é k è m b ú l è
 #
-4395	Toro_Tegu	kúsěy	trap	k ú s ě dʒ
+4395	Toro_Tegu	kúsěy	trap	k ú s ě j
 4396	Bankan_Tey	èmbî:	trap	è m b îː
 4397	Nanga	děẁ	trap	d ě ẁ
 4398	Jamsay	jɛ́nɛ́ŋɛ́	trap	dʒ ɛ́ n ɛ́ ŋ ɛ́
@@ -4749,9 +4749,9 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4424	Ben_Tey	térèw	truth	t é r è w
 4425	Bankan_Tey	téròwⁿ	truth	t é r ò w̃
 4426	Nanga	tégî	truth	t é ɡ î
-4427	Jamsay	tɔ̀yⁿɔ́	truth	t ɔ̀ dʒⁿ ɔ́
-4428	Perge_Tegu	tɔ̀yⁿɔ́	truth	t ɔ̀ dʒⁿ ɔ́
-4429	Gourou	tɔ̀yⁿɔ́	truth	t ɔ̀ dʒⁿ ɔ́
+4427	Jamsay	tɔ̀yⁿɔ́	truth	t ɔ̀ j̃ ɔ́
+4428	Perge_Tegu	tɔ̀yⁿɔ́	truth	t ɔ̀ j̃ ɔ́
+4429	Gourou	tɔ̀yⁿɔ́	truth	t ɔ̀ j̃ ɔ́
 4430	Togo_Kan	tɔ̀ŋɔ̀rⁿɔ́	truth	t ɔ̀ ŋ ɔ̀ r̃ ɔ́
 4431	Tommo_So	náná	truth	n á n á
 4432	Dogul_Dom	tòŋùnɛ́	truth	t ò ŋ ù n ɛ́
@@ -4761,7 +4761,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4436	Bunoge	tɔ̀ŋɔ́nɔ̀	truth	t ɔ̀ ŋ ɔ́ n ɔ̀
 #
 4437	Toro_Tegu	kùtɔ̌m	turban	k ù t ɔ̌ m
-4438	Bankan_Tey	sɛ́sɛ̂y	turban	s ɛ́ s ɛ̂ dʒ
+4438	Bankan_Tey	sɛ́sɛ̂y	turban	s ɛ́ s ɛ̂ j
 4439	Nanga	dómbó	turban	d ó m b ó
 4440	Jamsay	dómò	turban	d ó m ò
 4441	Perge_Tegu	dómbú	turban	d ó m b ú
@@ -4771,23 +4771,23 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4445	Yorno_So	tɔ́bɔ̀	turban	t ɔ́ b ɔ̀
 4446	Tomo_Kan_Diangassagou	kùⁿtɔ̀wⁿ	turban	k ũ̀ t ɔ̀ w̃
 4447	Tommo_So	tɔ́bɔ́	turban	t ɔ́ b ɔ́
-4448	Tebul_Ure	tɔ̀bɔ̀íyɛ̀	turban	t ɔ̀ b ɔ̀ í dʒ ɛ̀
+4448	Tebul_Ure	tɔ̀bɔ̀íyɛ̀	turban	t ɔ̀ b ɔ̀ í j ɛ̀
 4449	Yanda_Dom	tɔ́bá	turban	t ɔ́ b á
 4450	Tiranige	sɔ̀:jɛ́	turban	s ɔ̀ː dʒ ɛ́
 4451	Mombo	tɔ́wⁿɛ́	turban	t ɔ́ w̃ ɛ́
 4452	Bunoge	sɛ̀:jɛ̀	turban	s ɛ̀ː dʒ ɛ̀
 #
-4453	Toro_Tegu	pélèy	twenty	p é l è dʒ
-4454	Ben_Tey	pèríyěy	twenty	p è r í dʒ ě dʒ
-4455	Bankan_Tey	pɛ̀rí yèy	twenty	p ɛ̀ r í # dʒ è dʒ
-4456	Nanga	pèrí yěy	twenty	p è r í # dʒ ě dʒ
-4457	Jamsay	pɛ́llɛ̀y	twenty	p ɛ́ l l ɛ̀ dʒ
-4458	Perge_Tegu	pɛ́llěy	twenty	p ɛ́ l l ě dʒ
-4459	Togo_Kan	pɛ̌lɔ́y	twenty	p ɛ̌ l ɔ́ dʒ
-4460	Yorno_So	pɛ́:lɛ́y	twenty	p ɛ́ː l ɛ́ dʒ
+4453	Toro_Tegu	pélèy	twenty	p é l è j
+4454	Ben_Tey	pèríyěy	twenty	p è r í j ě j
+4455	Bankan_Tey	pɛ̀rí yèy	twenty	p ɛ̀ r í # j è j
+4456	Nanga	pèrí yěy	twenty	p è r í # j ě j
+4457	Jamsay	pɛ́llɛ̀y	twenty	p ɛ́ l l ɛ̀ j
+4458	Perge_Tegu	pɛ́llěy	twenty	p ɛ́ l l ě j
+4459	Togo_Kan	pɛ̌lɔ́y	twenty	p ɛ̌ l ɔ́ j
+4460	Yorno_So	pɛ́:lɛ́y	twenty	p ɛ́ː l ɛ́ j
 4461	Tommo_So	pɛ̀ɛ̀néé	twenty	p ɛ̀ ɛ̀ n é é
 4462	Dogul_Dom	pɛ̀ néégè	twenty	p ɛ̀ # n é é ɡ è
-4463	Tebul_Ure	pɛ̀gàléy	twenty	p ɛ̀ ɡ à l é dʒ
+4463	Tebul_Ure	pɛ̀gàléy	twenty	p ɛ̀ ɡ à l é j
 4464	Yanda_Dom	pɔ̀:nɔ́:	twenty	p ɔ̀ː n ɔ́ː
 4465	Tiranige	pɛ́nɛ́ŋgà	twenty	p ɛ́ n ɛ́ ŋ ɡ à
 4466	Mombo	pɛ̀:nɛ́:ŋgà	twenty	p ɛ̀ː n ɛ́ː ŋ ɡ à
@@ -4806,7 +4806,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4478	Tebul_Ure	ómgó	udder	ó m ɡ ó
 4479	Yanda_Dom	ándá	udder	á n d á
 4480	Tiranige	ùnjìgè	udder	ù n dʒ ì ɡ è
-4481	Mombo	ógyé	udder	ó ɡ dʒ é
+4481	Mombo	ógyé	udder	ó ɡ j é
 4482	Bunoge	ʔójjè	udder	ʔ ó dʒ dʒ è
 #
 4483	Ben_Tey	òmjú ómjú	urinate, have a piss	ò m dʒ ú # ó m dʒ ú
@@ -4815,8 +4815,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4486	Perge_Tegu	ùsùrⁿú sú:ⁿ	urinate, have a piss	ù s ù r̃ ú # s ṹː
 4487	Gourou	ùsùrⁿù sú:ⁿ	urinate, have a piss	ù s ù r̃ ù # s ṹː
 4488	Jamsay_Mondoro	sùrⁿó sú:ⁿ	urinate, have a piss	s ù r̃ ó # s ṹː
-4489	Togo_Kan	ìⁿsìrⁿí sí:ⁿ	urinate, have a piss	ĩ̀ s ì r̃ í # s íːⁿ
-4490	Yorno_So	ìsán sá:ⁿ	urinate, have a piss	ì s á n # s ã́ː
+4489	Togo_Kan	ìⁿsìrⁿí sí:ⁿ	urinate, have a piss	ĩ̀ s ì r̃ í # s ĩ́ː
+4490	Yorno_So	ìsán sá:ⁿ	urinate, have a piss	ì s á n # s áːⁿ
 4491	Tommo_So	ǹjàrìí sáá	urinate, have a piss	ǹ dʒ à r ì í # s á á
 4492	Dogul_Dom	ɲ̀já sɛ̀ɛ́	urinate, have a piss	ɲ̀ dʒ á # s ɛ̀ ɛ́
 4493	Yanda_Dom	ómzú úmbúló	urinate, have a piss	ó m z ú # ú m b ú l ó
@@ -4860,7 +4860,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4528	Ben_Tey	gòŋgòró ósò	vein, blood vessel	ɡ ò ŋ ɡ ò r ó # ó s ò
 4529	Bankan_Tey	gòŋgòrò ósò	vein, blood vessel	ɡ ò ŋ ɡ ò r ò # ó s ò
 4530	Nanga	wé:rí	vein, blood vessel	w éː r í
-4531	Jamsay	nɛ̂yⁿ ójù	vein, blood vessel	n ɛ̂ dʒⁿ # ó dʒ ù
+4531	Jamsay	nɛ̂yⁿ ójù	vein, blood vessel	n ɛ̂ j̃ # ó dʒ ù
 4532	Perge_Tegu	nɛ̀mósú	vein, blood vessel	n ɛ̀ m ó s ú
 4533	Togo_Kan	á:ɲú	vein, blood vessel	áː ɲ ú
 4534	Tomo_Kan_Diangassagou	nì:ʔùjú	vein, blood vessel	n ìː ʔ ù dʒ ú
@@ -4891,10 +4891,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4557	Ben_Tey	gúrɔ̀ gùrɔ́	vomir, emit vomit	ɡ ú r ɔ̀ # ɡ ù r ɔ́
 4558	Bankan_Tey	gúrà gùrá	vomir, emit vomit	ɡ ú r à # ɡ ù r á
 4559	Nanga	úrô úró	vomir, emit vomit	ú r ô # ú r ó
-4560	Jamsay	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ dʒ # t ɔ́ː
+4560	Jamsay	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ j # t ɔ́ː
 4561	Perge_Tegu	gúrɔ̀ gùrɔ́	vomir, emit vomit	ɡ ú r ɔ̀ # ɡ ù r ɔ́
-4562	Gourou	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ dʒ # t ɔ́ː
-4563	Jamsay_Mondoro	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ dʒ # t ɔ́ː
+4562	Gourou	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ j # t ɔ́ː
+4563	Jamsay_Mondoro	tɔ̌y tɔ́:	vomir, emit vomit	t ɔ̌ j # t ɔ́ː
 4564	Togo_Kan	gúrɔ́ gùrɔ́	vomir, emit vomit	ɡ ú r ɔ́ # ɡ ù r ɔ́
 4565	Yorno_So	gúlɔ̀ gùlɔ́	vomir, emit vomit	ɡ ú l ɔ̀ # ɡ ù l ɔ́
 4566	Tomo_Kan_Diangassagou	gùlɛ́ gùlɛ̀	vomir, emit vomit	ɡ ù l ɛ́ # ɡ ù l ɛ̀
@@ -4908,10 +4908,10 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4573	Ben_Tey	gúrɔ̀	vomit (noun)	ɡ ú r ɔ̀
 4574	Bankan_Tey	gúrà	vomit (noun)	ɡ ú r à
 4575	Nanga	úrô	vomit (noun)	ú r ô
-4576	Jamsay	tɔ̌y	vomit (noun)	t ɔ̌ dʒ
+4576	Jamsay	tɔ̌y	vomit (noun)	t ɔ̌ j
 4577	Perge_Tegu	gúrɔ̀	vomit (noun)	ɡ ú r ɔ̀
-4578	Gourou	tɔ̌y	vomit (noun)	t ɔ̌ dʒ
-4579	Jamsay_Mondoro	tɔ̌y	vomit (noun)	t ɔ̌ dʒ
+4578	Gourou	tɔ̌y	vomit (noun)	t ɔ̌ j
+4579	Jamsay_Mondoro	tɔ̌y	vomit (noun)	t ɔ̌ j
 4580	Yorno_So	gúlɔ̀	vomit (noun)	ɡ ú l ɔ̀
 4581	Tommo_So	gúlɔ́	vomit (noun)	ɡ ú l ɔ́
 4582	Dogul_Dom	wɛ̀súg	vomit (noun)	w ɛ̀ s ú ɡ
@@ -4949,7 +4949,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4612	Dogul_Dom	jáálùgù	war, combat	dʒ á á l ù ɡ ù
 4613	Tebul_Ure	zégé	war, combat	z é ɡ é
 4614	Yanda_Dom	kɔ̀mbɔ̀	war, combat	k ɔ̀ m b ɔ̀
-4615	Tiranige	yàŋù	war, combat	dʒ à ŋ ù
+4615	Tiranige	yàŋù	war, combat	j à ŋ ù
 4616	Mombo	jó:ⁿ	war, combat	dʒ óːⁿ
 #
 4617	Toro_Tegu	ní	water	n í
@@ -4971,26 +4971,26 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4633	Bunoge	gɔ́:	water	ɡ ɔ́ː
 #
 4634	Toro_Tegu	lòkú	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	l ò k ú
-4635	Ben_Tey	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ áː w á
+4635	Ben_Tey	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j áː w á
 4636	Bankan_Tey	zùrú	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	z ù r ú
-4637	Nanga	yáwâ	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ á w â
-4638	Jamsay	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ áː w á
-4639	Perge_Tegu	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ áː w á
-4640	Gourou	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ áː w á
-4641	Togo_Kan	yɔ́:wɔ́	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ ɔ́ː w ɔ́
-4642	Yorno_So	yáwà	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ á w à
-4643	Tebul_Ure	yábá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ á b á
-4644	Yanda_Dom	yàbá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ à b á
+4637	Nanga	yáwâ	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j á w â
+4638	Jamsay	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j áː w á
+4639	Perge_Tegu	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j áː w á
+4640	Gourou	yá:wá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j áː w á
+4641	Togo_Kan	yɔ́:wɔ́	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j ɔ́ː w ɔ́
+4642	Yorno_So	yáwà	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j á w à
+4643	Tebul_Ure	yábá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j á b á
+4644	Yanda_Dom	yàbá	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j à b á
 4645	Tiranige	sàŋkúnɛ̀	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	s à ŋ k ú n ɛ̀
-4646	Mombo	yáó	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	dʒ á ó
+4646	Mombo	yáó	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	j á ó
 4647	Bunoge	sá:mbè	waterbag in well (hide or rubber, lowered on a rope into well to draw water)	s áː m b è
 #
 4648	Toro_Tegu	kònó	watermelon, melon (general term)	k ò n ó
-4649	Ben_Tey	kànárⁿàyⁿ	watermelon, melon (general term)	k à n á r̃ à dʒⁿ
+4649	Ben_Tey	kànárⁿàyⁿ	watermelon, melon (general term)	k à n á r̃ à j̃
 4650	Bankan_Tey	kàndìrá	watermelon, melon (general term)	k à n d ì r á
 4651	Nanga	kǎ:ndâ	watermelon, melon (general term)	k ǎː n d â
 4652	Jamsay	gùgûn	watermelon, melon (general term)	ɡ ù ɡ û n
-4653	Perge_Tegu	kàrⁿíyⁿà	watermelon, melon (general term)	k à r̃ í dʒⁿ à
+4653	Perge_Tegu	kàrⁿíyⁿà	watermelon, melon (general term)	k à r̃ í j̃ à
 4654	Jamsay_Mondoro	gùgûn	watermelon, melon (general term)	ɡ ù ɡ û n
 4655	Togo_Kan	jɛ́rɛ́	watermelon, melon (general term)	dʒ ɛ́ r ɛ́
 4656	Yorno_So	gàbjɔ̀gɔ́	watermelon, melon (general term)	ɡ à b dʒ ɔ̀ ɡ ɔ́
@@ -5018,7 +5018,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 #
 4677	Toro_Tegu	téwó	well (for drawing water)	t é w ó
 4678	Ben_Tey	ɛ̌:	well (for drawing water)	ɛ̌ː
-4679	Bankan_Tey	dǎyⁿ	well (for drawing water)	d ǎ dʒⁿ
+4679	Bankan_Tey	dǎyⁿ	well (for drawing water)	d ǎ j̃
 4680	Nanga	ɛ̌:	well (for drawing water)	ɛ̌ː
 4681	Jamsay	àkɔ́rɔ́	well (for drawing water)	à k ɔ́ r ɔ́
 4682	Perge_Tegu	ɛ̀kɔ́rɔ́	well (for drawing water)	ɛ̀ k ɔ́ r ɔ́
@@ -5031,14 +5031,14 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4689	Mombo	ɔ́ndɔ́	well (for drawing water)	ɔ́ n d ɔ́
 4690	Bunoge	págà	well (for drawing water)	p á ɡ à
 #
-4691	Toro_Tegu	yàgá	where? (location)	dʒ à ɡ á
+4691	Toro_Tegu	yàgá	where? (location)	j à ɡ á
 4692	Ben_Tey	ándá:	where? (location)	á n d áː
 4693	Bankan_Tey	ǎnnì	where? (location)	ǎ n n ì
 4694	Nanga	àrⁿáŋá	where? (location)	à r̃ á ŋ á
-4695	Jamsay	yɔ̌: lé	where? (location)	dʒ ɔ̌ː # l é
-4696	Perge_Tegu	yǎw	where? (location)	dʒ ǎ w
-4697	Jamsay_Mondoro	yɔ̌w lé	where? (location)	dʒ ɔ̌ w # l é
-4698	Togo_Kan	ya᷈:	where? (location)	dʒ a᷈ː
+4695	Jamsay	yɔ̌: lé	where? (location)	j ɔ̌ː # l é
+4696	Perge_Tegu	yǎw	where? (location)	j ǎ w
+4697	Jamsay_Mondoro	yɔ̌w lé	where? (location)	j ɔ̌ w # l é
+4698	Togo_Kan	ya᷈:	where? (location)	j a᷈ː
 4699	Dogul_Dom	àŋá	where? (location)	à ŋ á
 4700	Tebul_Ure	àndí	where? (location)	à n d í
 4701	Yanda_Dom	àmbá:	where? (location)	à m b áː
@@ -5062,7 +5062,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4718	Mombo	tómbò	white, light-colored	t ó m b ò
 4719	Bunoge	sìmà	white, light-colored	s ì m à
 #
-4720	Toro_Tegu	àyé	who?	à dʒ é
+4720	Toro_Tegu	àyé	who?	à j é
 4721	Ben_Tey	ǎm	who?	ǎ m
 4722	Bankan_Tey	ǎm	who?	ǎ m
 4723	Nanga	ǎŋ	who?	ǎ ŋ
@@ -5075,7 +5075,7 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4730	Yanda_Dom	àm	who?	à m
 4731	Tiranige	à:	who?	àː
 4732	Mombo	á:	who?	áː
-4733	Bunoge	ʔà:yè	who?	ʔ àː dʒ è
+4733	Bunoge	ʔà:yè	who?	ʔ àː j è
 #
 4734	Toro_Tegu	nǔŋ	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ǔ ŋ
 4735	Ben_Tey	nùmná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ù m n áː
@@ -5083,15 +5083,15 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4737	Nanga	nɔ̀mí	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ɔ̀ m í
 4738	Jamsay	nùmná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ù m n áː
 4739	Perge_Tegu	nòmná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ò m n áː
-4740	Gourou	yùmná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	dʒ ù m n áː
+4740	Gourou	yùmná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	j ù m n áː
 4741	Togo_Kan	ɲù: ná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	ɲ ùː # n áː
-4742	Yorno_So	yù:ná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	dʒ ùː n áː
+4742	Yorno_So	yù:ná:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	j ùː n áː
 4743	Tomo_Kan_Diangassagou	nù nà:	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ù # n àː
 4744	Tommo_So	nùm náá	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ù m # n á á
-4745	Dogul_Dom	nàmìyɛ́ɛ̀	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n à m ì dʒ ɛ́ ɛ̀
+4745	Dogul_Dom	nàmìyɛ́ɛ̀	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n à m ì j ɛ́ ɛ̀
 4746	Tebul_Ure	dàbá	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	d à b á
-4747	Tiranige	nɛ́míyɛ́	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ɛ́ m í dʒ ɛ́
-4748	Mombo	námyò	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n á m dʒ ò
+4747	Tiranige	nɛ́míyɛ́	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ɛ́ m í j ɛ́
+4748	Mombo	námyò	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n á m j ò
 4749	Bunoge	nɛ̌mmɛ̀	wide, flat, slightly concave grindstone with coarse texture on which one grinds (e.g. millet) with a small round stone	n ɛ̌ m m ɛ̀
 #
 4750	Toro_Tegu	zámà	wind (airflow)	z á m à
@@ -5106,8 +5106,8 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4759	Tommo_So	ódóró	wind (airflow)	ó d ó r ó
 4760	Dogul_Dom	ɛ́nnɛ̀	wind (airflow)	ɛ́ n n ɛ̀
 4761	Tebul_Ure	ídá	wind (airflow)	í d á
-4762	Mombo	yálé	wind (airflow)	dʒ á l é
-4763	Bunoge	yàlè	wind (airflow)	dʒ à l è
+4762	Mombo	yálé	wind (airflow)	j á l é
+4763	Bunoge	yàlè	wind (airflow)	j à l è
 #
 4764	Toro_Tegu	jɛ̀tá	wing (of bird)	dʒ ɛ̀ t á
 4765	Ben_Tey	gámjá	wing (of bird)	ɡ á m dʒ á
@@ -5210,29 +5210,29 @@ ID	DOCULECT	COUNTERPART	CONCEPT	TOKENS
 4856	Ben_Tey	mò:kô:	yawn (noun)	m òː k ôː
 4857	Bankan_Tey	mbù:kô:	yawn (noun)	m b ùː k ôː
 4858	Nanga	à:njâ	yawn (noun)	àː n dʒ â
-4859	Jamsay	kà:kôy	yawn (noun)	k àː k ô dʒ
+4859	Jamsay	kà:kôy	yawn (noun)	k àː k ô j
 4860	Perge_Tegu	kà:pô:	yawn (noun)	k àː p ôː
-4861	Gourou	kà: kôy	yawn (noun)	k àː # k ô dʒ
+4861	Gourou	kà: kôy	yawn (noun)	k àː # k ô j
 4862	Togo_Kan	óŋó	yawn (noun)	ó ŋ ó
 4863	Yorno_So	wà:gɛ̂:	yawn (noun)	w àː ɡ ɛ̂ː
 4864	Tomo_Kan_Diangassagou	ʔàbàgà	yawn (noun)	ʔ à b à ɡ à
-4865	Dogul_Dom	àgàmàkáỳ	yawn (noun)	à ɡ à m à k á dʒ̀
-4866	Tebul_Ure	nɔ̀:rⁿíyà:	yawn (noun)	n ɔ̀ː r̃ í dʒ àː
-4867	Yanda_Dom	à:lìyà	yawn (noun)	àː l ì dʒ à
-4868	Tiranige	á:y	yawn (noun)	áː dʒ
+4865	Dogul_Dom	àgàmàkáỳ	yawn (noun)	à ɡ à m à k á j̀
+4866	Tebul_Ure	nɔ̀:rⁿíyà:	yawn (noun)	n ɔ̀ː r̃ í j àː
+4867	Yanda_Dom	à:lìyà	yawn (noun)	àː l ì j à
+4868	Tiranige	á:y	yawn (noun)	áː j
 4869	Mombo	ábábá	yawn (noun)	á b á b á
 #
 4870	Toro_Tegu	lɔ̀rɔ̀pìrⁿá	yellow flour from fruit of néré tree	l ɔ̀ r ɔ̀ p ì r̃ á
-4871	Ben_Tey	nɔ̀rɔ̀yⁿpìnǎm	yellow flour from fruit of néré tree	n ɔ̀ r ɔ̀ dʒⁿ p ì n ǎ m
+4871	Ben_Tey	nɔ̀rɔ̀yⁿpìnǎm	yellow flour from fruit of néré tree	n ɔ̀ r ɔ̀ j̃ p ì n ǎ m
 4872	Bankan_Tey	nɔ̀rⁿɔ̀pírⁿà	yellow flour from fruit of néré tree	n ɔ̀ r̃ ɔ̀ p í r̃ à
-4873	Nanga	pìrⁿàyó:rò	yellow flour from fruit of néré tree	p ì r̃ à dʒ óː r ò
+4873	Nanga	pìrⁿàyó:rò	yellow flour from fruit of néré tree	p ì r̃ à j óː r ò
 4874	Perge_Tegu	ɲɛ̀:rⁿɛ̀pìrⁿɛ́	yellow flour from fruit of néré tree	ɲ ɛ̀ː r̃ ɛ̀ p ì r̃ ɛ́
-4875	Togo_Kan	yɔ̀rɔ̀pùrⁿú	yellow flour from fruit of néré tree	dʒ ɔ̀ r ɔ̀ p ù r̃ ú
-4876	Yorno_So	yùlɔ̀pɔ̀rⁿɔ́	yellow flour from fruit of néré tree	dʒ ù l ɔ̀ p ɔ̀ r̃ ɔ́
-4877	Tomo_Kan_Diangassagou	yɔ̀lɔ̀hʷúná	yellow flour from fruit of néré tree	dʒ ɔ̀ l ɔ̀ hʷ ú n á
-4878	Tommo_So	yùlɔ̀ púnɔ́	yellow flour from fruit of néré tree	dʒ ù l ɔ̀ # p ú n ɔ́
+4875	Togo_Kan	yɔ̀rɔ̀pùrⁿú	yellow flour from fruit of néré tree	j ɔ̀ r ɔ̀ p ù r̃ ú
+4876	Yorno_So	yùlɔ̀pɔ̀rⁿɔ́	yellow flour from fruit of néré tree	j ù l ɔ̀ p ɔ̀ r̃ ɔ́
+4877	Tomo_Kan_Diangassagou	yɔ̀lɔ̀hʷúná	yellow flour from fruit of néré tree	j ɔ̀ l ɔ̀ hʷ ú n á
+4878	Tommo_So	yùlɔ̀ púnɔ́	yellow flour from fruit of néré tree	j ù l ɔ̀ # p ú n ɔ́
 4879	Dogul_Dom	pòròmíné	yellow flour from fruit of néré tree	p ò r ò m í n é
-4880	Tebul_Ure	yòlpúrⁿó	yellow flour from fruit of néré tree	dʒ ò l p ú r̃ ó
+4880	Tebul_Ure	yòlpúrⁿó	yellow flour from fruit of néré tree	j ò l p ú r̃ ó
 4881	Yanda_Dom	lòlpúrⁿá	yellow flour from fruit of néré tree	l ò l p ú r̃ á
 4882	Tiranige	pórí pùnàŋgé	yellow flour from fruit of néré tree	p ó r í # p ù n à ŋ ɡ é
 4883	Mombo	pùrù púnáŋgè	yellow flour from fruit of néré tree	p ù r ù # p ú n á ŋ ɡ è

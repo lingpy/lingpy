@@ -5,7 +5,8 @@ lingpy.compare.lexstat.LexStat
 
 .. autoclass:: LexStat
 
-   
+.. HACK::
+
    .. automethod:: __init__
 
    

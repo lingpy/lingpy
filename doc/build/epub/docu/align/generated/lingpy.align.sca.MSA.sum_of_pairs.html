@@ -1,0 +1,95 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.sca.MSA.sum_of_pairs</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-sca-msa-sum-of-pairs">
+<h1>lingpy.align.sca.MSA.sum_of_pairs</h1>
+<dl class="method">
+<dt id="lingpy.align.sca.MSA.sum_of_pairs">
+<tt class="descclassname">MSA.</tt><tt class="descname">sum_of_pairs</tt><big>(</big><em>alm_matrix='self'</em>, <em>mat=None</em>, <em>gap_weight=0.0</em>, <em>gop=-1</em><big>)</big></dt>
+<dd><p>Calculate the sum-of-pairs score for a given alignment analysis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>alm_matrix</strong> : { &#8216;self&#8217;, &#8216;other&#8217; }</p>
+<blockquote>
+<div><p>Indicate for which MSA the sum-of-pairs score shall be calculated.</p>
+</div></blockquote>
+<p><strong>mat</strong> : None or <tt class="xref py py-class docutils literal"><span class="pre">numpy.array</span></tt></p>
+<blockquote>
+<div><p>If &#8216;other&#8217; is chosen as an option for <strong>alm_matrix</strong>, define for
+which matrix the sum-of-pairs score shall be calculated.</p>
+</div></blockquote>
+<p><strong>gap_weight</strong> : float (default=0)</p>
+<blockquote>
+<div><p>The factor by which gaps in aligned columns contribute to the
+calculation of the column score. When set to 0, gaps will be
+ignored in the calculation. When set to 0.5, gaps will count half
+as much as other characters.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last"><strong>The sum-of-pairs score of the alignment.</strong> :</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

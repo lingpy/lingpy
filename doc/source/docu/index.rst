@@ -13,6 +13,8 @@ Sequence Modelling
 
    sequence/sound_classes
    sequence/orthography
+   sequence/generate
+   data/derive
 
 Dataset Handling
 ^^^^^^^^^^^^^^^^
@@ -30,7 +32,6 @@ Sequence Comparison
    algorithm/distance
    align/pairwise
    align/multiple
-..   align/sca
 
 
 Language Comparison
@@ -57,7 +58,6 @@ What's Next?
 .. toctree::
    :maxdepth: 1
    
-   ../tutorial/index
    ../download
 
 

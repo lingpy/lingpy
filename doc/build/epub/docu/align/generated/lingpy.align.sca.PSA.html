@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.sca.PSA</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-sca-psa">
+<h1>lingpy.align.sca.PSA</h1>
+<dl class="class">
+<dt id="lingpy.align.sca.PSA">
+<em class="property">class </em><tt class="descclassname">lingpy.align.sca.</tt><tt class="descname">PSA</tt><big>(</big><em>infile</em>, <em>**keywords</em><big>)</big></dt>
+<dd><p>Basic class for dealing with the pairwise alignment of sequences.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>infile</strong> : file</p>
+<blockquote>
+<div><p>A file in <tt class="docutils literal"><span class="pre">psq</span></tt>-format.</p>
+</div></blockquote>
+<p><strong>merge_vowels</strong> : bool (default=True)</p>
+<blockquote>
+<div><p>Indicate, whether neighboring vowels should be merged into
+diphtongs, or whether they should be kept separated during the
+analysis.</p>
+</div></blockquote>
+<p><strong>comment</strong> : char (default=&#8217;#&#8217;)</p>
+<blockquote class="last">
+<div><p>The comment character which, inserted in the beginning of a line,
+prevents that line from being read.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>In order to read in data from text files, two different file formats can be
+used along with this class: the PSQ-format, and the PSA-format.</p>
+<p>This class inherits the methods of the
+<a class="reference internal" href="../generated/lingpy.align.pairwise.Pairwise.html#lingpy.align.pairwise.Pairwise" title="lingpy.align.pairwise.Pairwise"><tt class="xref py py-class docutils literal"><span class="pre">Pairwise</span></tt></a> class.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="5%" />
+<col width="87%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>taxa</td>
+<td>list</td>
+<td>A list of tuples containing the taxa of all sequence pairs.</td>
+</tr>
+<tr class="row-even"><td>seqs</td>
+<td>list</td>
+<td>A list of tuples containing all sequence pairs.</td>
+</tr>
+<tr class="row-odd"><td>tokens</td>
+<td>list</td>
+<td>A list of tuples containing all sequence pairs in a tokenized form.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.align.sca.PSA.align.html#lingpy.align.sca.PSA.align" title="lingpy.align.sca.PSA.align"><tt class="xref py py-obj docutils literal"><span class="pre">align</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.align.sca.PSA.output.html#lingpy.align.sca.PSA.output" title="lingpy.align.sca.PSA.output"><tt class="xref py py-obj docutils literal"><span class="pre">output</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

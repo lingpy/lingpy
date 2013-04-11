@@ -1,6 +1,6 @@
-=========
-Wordlists
-=========
+==================
+Handling Wordlists
+==================
 
 What is a Word List?
 --------------------

@@ -9,6 +9,12 @@ lingpy.data.model.Model
    .. automethod:: __init__
 
    
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Model.__init__
+   
    
 
    

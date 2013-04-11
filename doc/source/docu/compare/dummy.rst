@@ -1,6 +1,8 @@
 .. autosummary::
    :toctree: generated/
-   
+
+   lingpy.compare.lexstat.LexStat 
+   lingpy.compare.borrowing.trebor.Trebor
    lingpy.compare.borrowing.trebor.TreBor
    lingpy.compare.borrowing.trebor.TreBor.add_entries
    lingpy.compare.borrowing.trebor.TreBor.get_GLS

@@ -167,7 +167,7 @@ html_static_path = ['_static']
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-html_show_sourcelink = False
+html_show_sourcelink = True
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 html_show_sphinx = True
@@ -316,5 +316,5 @@ epub_copyright = '2013, Johann-Mattis List, Steven Moran'
 intersphinx_mapping = {
     'http://docs.python.org/': None,
     'http://docs.scipy.org/doc/':None,
-    'http://docs.numpy.org/doc/':None
+    'http://docs.numpy.org/doc/':None,
     }

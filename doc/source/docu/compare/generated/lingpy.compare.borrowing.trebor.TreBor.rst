@@ -5,7 +5,7 @@ lingpy.compare.borrowing.trebor.TreBor
 
 .. autoclass:: TreBor
 
-   
+.. HACK:: 
    .. automethod:: __init__
 
    

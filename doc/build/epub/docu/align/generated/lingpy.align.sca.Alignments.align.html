@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.align.sca.Alignments.align</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-align-sca-alignments-align">
+<h1>lingpy.align.sca.Alignments.align</h1>
+<dl class="method">
+<dt id="lingpy.align.sca.Alignments.align">
+<tt class="descclassname">Alignments.</tt><tt class="descname">align</tt><big>(</big><em>method='progressive', iteration=False, swap_check=False, output=False, model=None, mode='global', modes=[('global', -2, 0.5), ('local', -1, 0.5)], gop=-3, scale=0.5, factor=0.3, tree_calc='neighbor', gap_weight=0.5, restricted_chars='T_', classes=True, sonar=True, scorer={}, verbose=True, plot=False</em><big>)</big></dt>
+<dd><p>Carry out a multiple alignment analysis of the data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>method</strong> : { &#8220;progressive&#8221;, &#8220;library&#8221; } (default=&#8221;progressive&#8221;)</p>
+<blockquote>
+<div><p>Select the method to use for the analysis.</p>
+</div></blockquote>
+<p><strong>iteration</strong> : bool (default=False)</p>
+<blockquote>
+<div><p>Set to c{True} in order to use iterative refinement methods.</p>
+</div></blockquote>
+<p><strong>swap_check</strong> : bool (default=False)</p>
+<blockquote>
+<div><p>Set to c{True} in order to carry out a swap-check.</p>
+</div></blockquote>
+<p><strong>output</strong> : bool (default=False)</p>
+<blockquote>
+<div><p>Set to c{True} in order to write all alignments to file.</p>
+</div></blockquote>
+<p><strong>model</strong> : { &#8216;dolgo&#8217;, &#8216;sca&#8217;, &#8216;asjp&#8217; }</p>
+<blockquote>
+<div><p>A string indicating the name of the <tt class="xref py py-class docutils literal"><span class="pre">Model</span></tt> object that shall be used for the analysis.
+Currently, three models are supported:</p>
+<ul class="simple">
+<li>&#8220;dolgo&#8221; &#8211; a sound-class model based on <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Dolgopolsky1986"><span class="pre">Dolgopolsky1986</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Dolgopolsky1986]</span></span></tt>,</li>
+<li>&#8220;sca&#8221; &#8211; an extension of the &#8220;dolgo&#8221; sound-class model based on
+<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012b"><span class="pre">List2012b</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=List2012b]</span></span></tt>, and</li>
+<li>&#8220;asjp&#8221; &#8211; an independent sound-class model which is based on the
+sound-class model of <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Brown2008"><span class="pre">Brown2008</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Brown2008]</span></span></tt> and the empirical data
+of <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Brown2011"><span class="pre">Brown2011</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Brown2011]</span></span></tt> (see the description in
+<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012"><span class="pre">List2012</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=List2012]</span></span></tt>.</li>
+</ul>
+</div></blockquote>
+<p><strong>mode</strong> : { &#8216;global&#8217;, &#8216;dialign&#8217; }</p>
+<blockquote>
+<div><p>A string indicating which kind of alignment analysis should be
+carried out during the progressive phase. Select between:</p>
+<ul class="simple">
+<li>&#8220;global&#8221; &#8211; traditional global alignment analysis based on the
+Needleman-Wunsch algorithm <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Needleman1970"><span class="pre">Needleman1970</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Needleman1970]</span></span></tt>,</li>
+<li>&#8220;dialign&#8221; &#8211; global alignment analysis which seeks to maximize
+local similarities <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Morgenstern1996"><span class="pre">Morgenstern1996</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Morgenstern1996]</span></span></tt>.</li>
+</ul>
+</div></blockquote>
+<p><strong>modes</strong> : list (default=[(&#8216;global&#8217;,-2,0.5),(&#8216;local&#8217;,-1,0.5)])</p>
+<blockquote>
+<div><p>Indicate the mode, the gap opening penalties (GOP), and the gap
+extension scale (GEP scale), of the pairwise alignment analyses
+which are used to create the library.</p>
+</div></blockquote>
+<p><strong>gop</strong> : int (default=-5)</p>
+<blockquote>
+<div><p>The gap opening penalty (GOP) used in the analysis.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float (default=0.6)</p>
+<blockquote>
+<div><p>The factor by which the penalty for the extension of gaps (gap
+extension penalty, GEP) shall be decreased. This approach is
+essentially inspired by the exension of the basic alignment
+algorithm for affine gap penalties <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Gotoh1982"><span class="pre">Gotoh1982</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Gotoh1982]</span></span></tt>.</p>
+</div></blockquote>
+<p><strong>factor</strong> : float (default=1)</p>
+<blockquote>
+<div><p>The factor by which the initial and the descending position shall
+be modified.</p>
+</div></blockquote>
+<p><strong>tree_calc</strong> : { &#8216;neighbor&#8217;, &#8216;upgma&#8217; } (default=&#8217;upgma&#8217;)</p>
+<blockquote>
+<div><p>The cluster algorithm which shall be used for the calculation of
+the guide tree. Select between <tt class="docutils literal"><span class="pre">neighbor</span></tt>, the Neighbor-Joining
+algorithm (<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Saitou1987"><span class="pre">Saitou1987</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Saitou1987]</span></span></tt>), and <tt class="docutils literal"><span class="pre">upgma</span></tt>, the UPGMA
+algorithm (<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Sokal1958"><span class="pre">Sokal1958</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Sokal1958]</span></span></tt>).</p>
+</div></blockquote>
+<p><strong>gap_weight</strong> : float (default=0)</p>
+<blockquote>
+<div><p>The factor by which gaps in aligned columns contribute to the
+calculation of the column score. When set to 0, gaps will be
+ignored in the calculation. When set to 0.5, gaps will count half
+as much as other characters.</p>
+</div></blockquote>
+<p><strong>restricted_chars</strong> : string (default=&#8221;T&#8221;)</p>
+<blockquote>
+<div><p>Define which characters of the prosodic string of a sequence
+reflect its secondary structure (cf. <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012b"><span class="pre">List2012b</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=List2012b]</span></span></tt>) and
+should therefore be aligned specifically. This defaults to &#8220;T&#8221;,
+since this is the character that represents tones in the prosodic
+strings of sequences.</p>
+</div></blockquote>
+<p><strong>plot</strong> : bool (default=False)</p>
+<blockquote class="last">
+<div><p>Determine whether MSA should be plotted in HTML.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

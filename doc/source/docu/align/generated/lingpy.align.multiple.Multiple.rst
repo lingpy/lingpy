@@ -4,10 +4,13 @@ lingpy.align.multiple.Multiple
 .. currentmodule:: lingpy.align.multiple
 
 .. autoclass:: Multiple
+
+.. HACK::   
+   .. automethod:: __init__
+
    
    .. rubric:: Methods
 
-.. HACK::
    .. autosummary::
    
       ~Multiple.__init__

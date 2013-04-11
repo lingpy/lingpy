@@ -38,39 +38,6 @@ directly in the Python interpreter or imported into Python scripts. See the Ling
 README_ file for instructions. For more information about Python, see 
 http://www.python.org for details.
 
-What is the basic idea behind LingPy?
--------------------------------------
-
-In historical linguistics, one usually deals with the following two entities
-and their components:
-
-* *signs* -- form-meaning pairs, i.e. *sequences* (words, morphemes) that
-  carry a certain *functon* (meaning), and
-* *languages* -- collections of *signs*
-
-These entities are dealt with by *comparison*. Signs and languages are compared
-in different ways in order to reconstruct how they evolved from their
-respective ancestor entities. Thus, when investigating the phenomena of sound
-change, this is usually done by comparing the *formal* component of signs. When
-comparing semantic change, the main objective is the *functional* component of
-signs. And when reconstructing language phylogenies, this is done by comparing
-the *signs* of different languages.
-
-In LingPy, the different entities are represented within an object-oriented
-frame work. The different aspects of linguistic signs and languages are modeled
-by specific classes. Thus, if one has to deal with the formal part of the
-linguistic sign, the :py:class:`~lingpy.sequence.Sequence` class in LingPy
-makes it possible to deal with various automatic aspects of sound sequences,
-such as, e.g., their prosodic properties, or their sound classes. For the
-comparison of sign forms, one can chose between the
-:py:class:`~lingpy.algorithm.classes` and the
-:py:class:`~lingpy.compare.Multiple` class, which can be used to conduct
-automatic alignment analyses or to calculate the similarity or distance between
-sound sequences. Even language comparison is possible with the help of the
-:py:class:`~lingpy.lexstat.LexStat` class, which can be used to conduct an
-automatic search for cognates in lexicostatistical datasets or to calculate
-evolutionary distances between languages.
-
 What's next?
 -------------------------
 
@@ -78,8 +45,8 @@ What's next?
    :maxdepth: 1
 
    examples
-   docu/index
    tutorial/index
+   docu/index
    download
 
 .. _README: link2readmefile

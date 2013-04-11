@@ -65,7 +65,7 @@ What's Next?
 
 .. toctree::
    :maxdepth: 1
-
-   docu/index
+   
    tutorial/index
+   docu/index
    download

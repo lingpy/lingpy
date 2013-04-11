@@ -11,6 +11,7 @@
    lingpy.basic.wordlist.Wordlist.output
    lingpy.basic.wordlist.Wordlist.calculate
    lingpy.basic.wordlist.Wordlist.tokenize
+   lingpy.basic.wordlist.Wordlist.pickle
    lingpy.basic.spreadsheet.Spreadsheet.get_matrix_full_rows
    lingpy.basic.spreadsheet.Spreadsheet.print_matrix_stats
    lingpy.basic.spreadsheet.Spreadsheet.print_qlc_format

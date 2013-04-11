@@ -1,0 +1,117 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.evaluate.acd.bcubes</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-evaluate-acd-bcubes">
+<h1>lingpy.evaluate.acd.bcubes</h1>
+<dl class="function">
+<dt id="lingpy.evaluate.acd.bcubes">
+<tt class="descclassname">lingpy.evaluate.acd.</tt><tt class="descname">bcubes</tt><big>(</big><em>lex</em>, <em>gold='cogid'</em>, <em>test='lexstatid'</em>, <em>loans=True</em>, <em>pprint=True</em><big>)</big></dt>
+<dd><p>Compute B-Cubed scores for test and reference datasets.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>lex</strong> : <a class="reference internal" href="../generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">lingpy.compare.lexstat.LexStat</span></tt></a></p>
+<blockquote>
+<div><p>The <a class="reference internal" href="../generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a> class used for the
+computation. It should have two columns indicating cognate IDs.</p>
+</div></blockquote>
+<p><strong>gold</strong> : str (default=&#8217;cogid&#8217;)</p>
+<blockquote>
+<div><p>The name of the column containing the gold standard cognate
+assignments.</p>
+</div></blockquote>
+<p><strong>test</strong> : str (default=&#8217;lexstatid&#8217;)</p>
+<blockquote>
+<div><p>The name of the column containing the automatically implemented cognate
+assignments.</p>
+</div></blockquote>
+<p><strong>loans</strong> : bool (default=True)</p>
+<blockquote>
+<div><p>If set to c{False}, loans (indicated by negative IDs in the gold
+standard) will be treated as separate cognates, otherwise, loans will
+be treated as cognates.</p>
+</div></blockquote>
+<p><strong>pprint</strong> : bool (default=True)</p>
+<blockquote>
+<div><p>Print out the results</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>t</strong> : tuple</p>
+<blockquote class="last">
+<div><p>A tuple consisting of the precision, the recall, and the harmonic mean
+(F-scores).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../generated/lingpy.evaluate.acd.diff.html#lingpy.evaluate.acd.diff" title="lingpy.evaluate.acd.diff"><tt class="xref py py-obj docutils literal"><span class="pre">diff</span></tt></a>, <a class="reference internal" href="../generated/lingpy.evaluate.acd.pairs.html#lingpy.evaluate.acd.pairs" title="lingpy.evaluate.acd.pairs"><tt class="xref py py-obj docutils literal"><span class="pre">pairs</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>B-Cubed scores were first described by <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Bagga1998"><span class="pre">Bagga1998</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Bagga1998]</span></span></tt> as part of an
+algorithm. Later on, <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Amigo2009"><span class="pre">Amigo2009</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Amigo2009]</span></span></tt> showed that they can also used as
+to compare cluster decisions. <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Hauer2011"><span class="pre">Hauer2011</span></a><span class="link-target"> <span class="pre">[http://lingulist.de/evobib/evobib.php?key=Hauer2011]</span></span></tt> applied the B-Cubed
+scores first to the task of automatic cognate detection.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

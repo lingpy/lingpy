@@ -1,0 +1,116 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lingpy.evaluate.acd.diff</title>
+    
+    <link rel="stylesheet" href="../../../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="../../index.html">Documentation</a> |&nbsp;</li>
+	<li><a href="../../../tutorial/index.html">Tutorial</a> |&nbsp;</li>
+        <li><a href="../../../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body">
+            
+  <div class="section" id="lingpy-evaluate-acd-diff">
+<h1>lingpy.evaluate.acd.diff</h1>
+<dl class="function">
+<dt id="lingpy.evaluate.acd.diff">
+<tt class="descclassname">lingpy.evaluate.acd.</tt><tt class="descname">diff</tt><big>(</big><em>lex</em>, <em>gold='cogid'</em>, <em>test='lexstatid'</em>, <em>loans=True</em>, <em>pprint=True</em>, <em>filename=''</em>, <em>tofile=True</em><big>)</big></dt>
+<dd><p>Write differences in classifications on an item-basis to file.</p>
+<dl class="docutils">
+<dt>lex <span class="classifier-delimiter">:</span> <span class="classifier"><a class="reference internal" href="../generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">lingpy.compare.lexstat.LexStat</span></tt></a></span></dt>
+<dd>The <a class="reference internal" href="../generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a> class used for the
+computation. It should have two columns indicating cognate IDs.</dd>
+<dt>gold <span class="classifier-delimiter">:</span> <span class="classifier">str (default=&#8217;cogid&#8217;)</span></dt>
+<dd>The name of the column containing the gold standard cognate
+assignments.</dd>
+<dt>test <span class="classifier-delimiter">:</span> <span class="classifier">str (default=&#8217;lexstatid&#8217;)</span></dt>
+<dd>The name of the column containing the automatically implemented cognate
+assignments.</dd>
+<dt>loans <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
+<dd>If set to c{False}, loans (indicated by negative IDs in the gold
+standard) will be treated as separate cognates, otherwise, loans will
+be treated as cognates.</dd>
+<dt>pprint <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
+<dd>Print out the results</dd>
+<dt>filename <span class="classifier-delimiter">:</span> <span class="classifier">str (default=&#8217;&#8216;)</span></dt>
+<dd>Name of the output file. If not specified, it is identical with the
+name of the <a class="reference internal" href="../generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a>, but with the
+extension <tt class="docutils literal"><span class="pre">diff</span></tt>.</dd>
+<dt>tofile <span class="classifier-delimiter">:</span> <span class="classifier">bool (default=True)</span></dt>
+<dd>If set to c{False}, no data will be written to file, but instead, the
+data will be returned.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body"><p class="first"><strong>t</strong> : tuple</p>
+<blockquote class="last">
+<div><p>A nested tuple consisting of two further tuples. The first 
+containing precision, recall, and harmonic mean
+(F-scores), the second containing the same values for the pair-scores.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="../generated/lingpy.evaluate.acd.bcubes.html#lingpy.evaluate.acd.bcubes" title="lingpy.evaluate.acd.bcubes"><tt class="xref py py-obj docutils literal"><span class="pre">bcubes</span></tt></a>, <a class="reference internal" href="../generated/lingpy.evaluate.acd.pairs.html#lingpy.evaluate.acd.pairs" title="lingpy.evaluate.acd.pairs"><tt class="xref py py-obj docutils literal"><span class="pre">pairs</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>If the <strong>tofile</strong> option is chosen, the results are written to a specific
+file with the extension <tt class="docutils literal"><span class="pre">diff</span></tt>. This file contains all cognate sets in
+which there are differences between gold standard and test sets. It also
+gives detailed information regarding false positives, false negatives, and
+the words involved in these wrong decisions.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

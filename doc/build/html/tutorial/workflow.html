@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Workflow Example &mdash; LingPy</title>
+    
+    <link rel="stylesheet" href="../_static/lingpy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0.dev',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="top" title="LingPy" href="../index.html" /> 
+  </head>
+  <body>
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+	<li><a href="../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
+        <li><a href="../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+
+<br/><p>This documentation is for version <b>2.0.dev</b>, which is
+  not released yet.</p>
+
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="workflow-example">
+<h1>Workflow Example<a class="headerlink" href="#workflow-example" title="Permalink to this headline">¶</a></h1>
+<p>This is an example workflow that illustrates some of the functionality of LingPy. We start with a
+small dataset from the Dogon Languages Project and we lead users through the stages of a typical
+automatic analysis.</p>
+<p>More about the Dogon languages and the full dataset are available from:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.dogonlanguages.org">http://www.dogonlanguages.org</a></li>
+</ul>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>First, make sure to have the LingPy library installed properly; see the <a class="reference internal" href="installation.html#installation-instructions"><em>Installation Instructions</em></a>
+for details. The dataset that will be used can be downloaded from the following link:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.lingpy.org/download/workflow.zip">http://www.lingpy.org/download/workflow.zip</a></li>
+</ul>
+<p>This folder also includes a Python script that runs the whole code from the beginning to the end.
+In order to start the analysis, unzip the dataset and cd into that folder. Then load the LingPy
+library:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>Then load the dataset into a <a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> object by typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span> <span class="o">=</span> <span class="n">Wordlist</span><span class="p">(</span><span class="s">&#39;DOGON.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will load the wordlist. You can check for some specific characteristics, such as the number
+of languages (the &#8216;width&#8217; of the Wordlist) or the number of concepts (its &#8216;height&#8217;):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">width</span>
+<span class="go">18</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">height</span>
+<span class="go">325</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="orthographic-parsing">
+<h2>Orthographic Parsing<a class="headerlink" href="#orthographic-parsing" title="Permalink to this headline">¶</a></h2>
+<p>Orthographic parsing is the first step in preparing the data. For the analyses in this workflow, an IPA format of tokenized sequences is needed. In order to get the IPA tokens from the raw data, we need an orthography profile that describes the Unicode character sequences in the raw data and their IPA equivalents.
+This has already been prepared. It is stored in the file <a class="reference external" href="examples/Heath2013.prf">Heath2013.prf</a>. In order to parse the data,
+type in the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">ortho_profile</span><span class="o">=</span><span class="s">&#39;Heath2013.prf&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a result, LingPy will iterate over all words in the dataset and convert them to IPA, as specified
+in the orthography profile. We can now write the data to an output file so that we can use it in the next
+step of the workflow:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wl</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s">&#39;csv&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON_tokens&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function writes the data to the file <a class="reference external" href="examples/DOGON_tokens.csv">DOGON_tokens.csv</a></p>
+</div>
+<div class="section" id="automatic-cognate-detection">
+<span id="id1"></span><h2>Automatic Cognate Detection<a class="headerlink" href="#automatic-cognate-detection" title="Permalink to this headline">¶</a></h2>
+<p>Automatic cognate detection in LingPy is basically carried out with help of the
+<a class="reference internal" href="../docu/compare/generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a> class. All classes that inherit from the <a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a>
+class take a filename as parameter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span> <span class="o">=</span> <span class="n">LexStat</span><span class="p">(</span><span class="s">&#39;harry_potter.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once instantiated, a <a class="reference internal" href="../docu/compare/generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a> object offers all methods and
+attributes that are also defined for a <a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.html#lingpy.basic.wordlist.Wordlist" title="lingpy.basic.wordlist.Wordlist"><tt class="xref py py-class docutils literal"><span class="pre">Wordlist</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">width</span>
+<span class="go">18</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">height</span>
+<span class="go">325</span>
+</pre></div>
+</div>
+<p>In order to carry out a cognate detection analysis using the LexStat method (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012b"><span class="pre">List2012b</span></a></tt>), we first have to
+create a scoring dictionary from automatically identified sound correspondences. There are a lot of
+different parameters for this analysis, but for now, the defaults will suffice, so we can call
+this method by simply typing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">get_scorer</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This preprocessing stage is computationally-intensive and make take some time to run the calculations. Therefore it is useful to store the current state before moving on to the next step in the analysis:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">pickle</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now, we can carry out the cognate detection. This is a cluster method that clusters all sequences, which are similar to each other, into the same cognate set. Which sequences are clustered depends on a threshold that we have to pass as an argument to the function. Here we chosen 0.5 as a threshold (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012c"><span class="pre">List2012c</span></a></tt> for a detailed description of the LexStat algorithm). This is a rather conservative score, which avoids generating too many false positives:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">cluster</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;lexstat&#39;</span><span class="p">,</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Having calculated the cognates, we can go on and calculate a tree. Here we use the
+<a class="reference internal" href="../docu/basic/generated/lingpy.basic.wordlist.Wordlist.calculate.html#lingpy.basic.wordlist.Wordlist.calculate" title="lingpy.basic.wordlist.Wordlist.calculate"><tt class="xref py py-func docutils literal"><span class="pre">lingpy.basic.wordlist.Wordlist.calculate()</span></tt></a> function. We&#8217;ve chosen &#8216;neighbor&#8217; (see
+<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Saitou1981"><span class="pre">Saitou1981</span></a></tt>) as the algorithm for the tree-calculation, and we must define &#8216;lexstatid&#8217; as
+the column where the cognate IDs are stored:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="s">&#39;tree&#39;</span><span class="p">,</span><span class="n">cognates</span><span class="o">=</span><span class="s">&#39;lexstatid&#39;</span><span class="p">,</span><span class="n">tree_calc</span><span class="o">=</span><span class="s">&#39;neighbor&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a result, the <a class="reference internal" href="../docu/compare/generated/lingpy.compare.lexstat.LexStat.html#lingpy.compare.lexstat.LexStat" title="lingpy.compare.lexstat.LexStat"><tt class="xref py py-class docutils literal"><span class="pre">LexStat</span></tt></a> object gets a <strong>tree</strong> attribute. This
+is again is a specific class taken from the PyCogent library (see <a class="reference external" href="http://pycogent.org/">http://pycogent.org/</a>). It can be
+visualized as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">lex</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">asciiArt</span><span class="p">())</span>
+<span class="go">                                                                      /-Bankan_Tey</span>
+<span class="go">                                                            /edge.0--|</span>
+<span class="go">                                                  /edge.1--|          \-Ben_Tey</span>
+<span class="go">                                                 |         |</span>
+<span class="go">                                        /edge.3--|          \-Nanga</span>
+<span class="go">                                       |         |</span>
+<span class="go">                                       |         |          /-Tebul_Ure</span>
+<span class="go">                              /edge.4--|          \edge.2--|</span>
+<span class="go">                             |         |                    \-Yanda_Dom</span>
+<span class="go">                             |         |</span>
+<span class="go">                             |          \-Toro_Tegu</span>
+<span class="go">                             |</span>
+<span class="go">                    /edge.9--|                              /-Gourou</span>
+<span class="go">                   |         |                    /edge.6--|</span>
+<span class="go">                   |         |                   |         |          /-Jamsay</span>
+<span class="go">                   |         |          /edge.7--|          \edge.5--|</span>
+<span class="go">                   |         |         |         |                    \-Jamsay_Mondoro</span>
+<span class="go">                   |          \edge.8--|         |</span>
+<span class="go">                   |                   |          \-Perge_Tegu</span>
+<span class="go">                   |                   |</span>
+<span class="go">          /edge.14-|                    \-Togo_Kan</span>
+<span class="go">         |         |</span>
+<span class="go">         |         |                                        /-Bunoge</span>
+<span class="go">         |         |                              /edge.10-|</span>
+<span class="go">         |         |                    /edge.11-|          \-Tiranige</span>
+<span class="go">         |         |                   |         |</span>
+<span class="go">-root----|         |          /edge.12-|          \-Mombo</span>
+<span class="go">         |         |         |         |</span>
+<span class="go">         |          \edge.13-|          \-Dogul_Dom</span>
+<span class="go">         |                   |</span>
+<span class="go">         |                    \-Tomo_Kan_Diangassagou</span>
+<span class="go">         |</span>
+<span class="go">         |          /-Tommo_So</span>
+<span class="go">          \edge.15-|</span>
+<span class="go">                    \-Yorno_So</span>
+</pre></div>
+</div>
+<p>Again, we output the data. However, since the LexStat method produces a lot of alternative data that is
+not necessarily needed for the following analyses, we reduce the output in the CSV-format by
+setting the <strong>subset</strong> keyword to c{True} and pass the data that we want as a list to the keyword <strong>col</strong>.
+In order to have a nice format with all words corresponding to the same concept in the same block,
+we specify the keyword <strong>formatter</strong> as &#8216;concepts&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lex</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s">&#39;csv&#39;</span><span class="p">,</span><span class="n">subset</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON_lexstat&#39;</span><span class="p">,</span><span class="n">subset</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">formatter</span><span class="o">=</span><span class="s">&#39;concepts&#39;</span><span class="p">,</span><span class="n">cols</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;concepts&#39;</span><span class="p">,</span><span class="s">&#39;taxa&#39;</span><span class="p">,</span><span class="s">&#39;counterpart&#39;</span><span class="p">,</span><span class="s">&#39;tokens&#39;</span><span class="p">,</span><span class="s">&#39;lexstatid&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This produces the file <a class="reference external" href="examples/DOGON_lexstat.csv">DOGON_lexstat.csv</a> in our folder.</p>
+</div>
+<div class="section" id="phonetic-alignment">
+<h2>Phonetic Alignment<a class="headerlink" href="#phonetic-alignment" title="Permalink to this headline">¶</a></h2>
+<p>Phonetic alignment is the basis of the LexStat analysis that we just carried out. However, it is also
+useful for the purpose of data visualization. A visualization of multiple alignment analyses can give us a quick
+hint of whether the cognates that an algorithm detected are &#8220;good&#8221; ones, or not. In order to carry out
+multiple alignment analyses from a cognate set, we can load the data that we just wrote to an output file in
+the previous step into an <a class="reference internal" href="../docu/align/generated/lingpy.align.sca.Alignments.html#lingpy.align.sca.Alignments" title="lingpy.align.sca.Alignments"><tt class="xref py py-class docutils literal"><span class="pre">Alignments</span></tt></a> object. Note that we should specify where the cognates are. In the case of a LexStat analysis, they are stored in the &#8216;lexstatid&#8217; column:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span> <span class="o">=</span> <span class="n">Alignments</span><span class="p">(</span><span class="s">&#39;DOGON_lexstat.csv&#39;</span><span class="p">,</span><span class="n">cognates</span><span class="o">=</span><span class="s">&#39;lexstatid&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Carrying out a default alignment analysis is now very simple. We choose the default parameters,
+the &#8216;library&#8217;-method for multiple alignments (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=List2012a"><span class="pre">List2012a</span></a></tt>), and we also set the <strong>output</strong>
+kewyord to c{True} in order to have all alignments written to separate files:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;library&#39;</span><span class="p">,</span><span class="n">output</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will produce a new folder <tt class="docutils literal"><span class="pre">DOGON_lexstat_msa/</span></tt> that contains all multiple alignments in
+separate MSA-files. More information regarding the format of these files can be found under: <a class="reference internal" href="formats.html#msa-formats"><em>Multiple Alignments (MSQ and MSA)</em></a>.
+The MSA-format is useful for manual editing and comparing multiple alignments. In order to view a
+whole dataset of cognate judgments and aligmnents, however, it not very appropriate. Thus LingPy
+offers a specific colored HTML-output that is very helpful for inspecting the results. In order to
+create this output, we first have to write the aligned data to a specific format with the extension
+<tt class="docutils literal"><span class="pre">alm</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="s">&#39;alm&#39;</span><span class="p">,</span><span class="n">cognates</span><span class="o">=</span><span class="s">&#39;lexstatid&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, that we have created the file <a class="reference external" href="examples/DOGON.alm">DOGON.alm</a>, we have to load the <tt class="xref py py-func docutils literal"><span class="pre">alm2html()</span></tt> from the
+<tt class="xref py py-mod docutils literal"><span class="pre">plot</span></tt>-module. This module is not automatically loaded when importing
+LingPy, so we have to import it explicitly:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy.convert.plot</span> <span class="kn">import</span> <span class="n">alm2hmtl</span>
+</pre></div>
+</div>
+<p>Once the module is imported, we can use the function to convert the file <a class="reference external" href="examples/DOGON.alm">DOGON.alm</a> to colored
+HTML-output:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">alm2html</span><span class="p">(</span><span class="s">&#39;DOGON.alm&#39;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&#39;DOGON&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a result, we get the file <a class="reference external" href="examples/DOGON.html">DOGON.html</a> in our folder.</p>
+</div>
+<div class="section" id="borrowing-detection">
+<h2>Borrowing Detection<a class="headerlink" href="#borrowing-detection" title="Permalink to this headline">¶</a></h2>
+<p>Automatic approaches to borrowing detection are still in their infancy in historical linguistics.
+Nevertheless, LingPy offers a full reimplementation along with additional improvements for the MLN
+approach that was originally developed for biological applications (see <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Dagan2007"><span class="pre">Dagan2007</span></a></tt>) and
+first adapted to linguistic data by <tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Nelson-Sathi2011"><span class="pre">Nelson-Sathi2011</span></a></tt>. Borrowing detection is handled by
+the <a class="reference internal" href="../docu/compare/generated/lingpy.compare.borrowing.trebor.TreBor.html#lingpy.compare.borrowing.trebor.TreBor" title="lingpy.compare.borrowing.trebor.TreBor"><tt class="xref py py-class docutils literal"><span class="pre">TreBor</span></tt></a> class. Since this class is quite complex and
+it requires additional thirdparty libraries, such as Matplotlib (<a class="reference external" href="http://matplotlib.org">http://matplotlib.org</a>), it is not
+automatically loaded when importing lingpy. So we first have to import it directly:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">lingpy.compare.borrowing.trebor</span> <span class="kn">import</span> <span class="n">TreBor</span>
+</pre></div>
+</div>
+<p>The method requires not only that the data be clustered into cognate sets, but also a reference tree
+of the languages under investigation. If this tree is not specified in the dataset, a tree will be
+calculated automatically, using either the UPGMA (<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Sokal1958"><span class="pre">Sokal1958</span></a></tt>) or the Neighbor-joining (<tt class="docutils literal"><a class="reference external" href="http://lingulist.de/evobib/evobib.php?key=Saitou1981"><span class="pre">Saitou1981</span></a></tt>)
+method. In a previous
+step (see <a class="reference internal" href="#automatic-cognate-detection"><em>Automatic Cognate Detection</em></a>), we already calculated a tree.
+When writing the results to file, the tree was also automatically stored. When loading the data into
+a <tt class="xref py py-class docutils literal"><span class="pre">Trebor</span></tt> object, this tree will therefore be taken as
+reference tree:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tre</span> <span class="o">=</span> <span class="n">TreBor</span><span class="p">(</span><span class="s">&#39;DOGON_lexstat.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For the analysis, we have to select a couple of <strong>runs</strong> (general analyses with varying parameters) of
+which the best model will then be selected. Here, we chose the &#8216;weighted&#8217; approach which assigns
+different weights to gain and loss events and searches
+for the most parsimonious scenario. As a <strong>mode</strong>, we chose &#8216;mixed&#8217;. This will process the data on
+an item-basis, searching for the best solution for each individual concept in our data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tre</span><span class="o">.</span><span class="n">analyze</span><span class="p">(</span><span class="n">runs</span><span class="o">=</span><span class="s">&#39;weighted&#39;</span><span class="p">,</span><span class="n">mode</span><span class="o">=</span><span class="s">&#39;mixed&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This calculation will also take some time. Once it is finished, we can plot the resulting Minimal
+Lateral Network. Note that this will only work if Matplotlib is installed on your system:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">tre</span><span class="o">.</span><span class="n">plot_MLN</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;DOGON.csv&quot;</span><span class="p">,</span><span class="n">fileformat</span><span class="o">=</span><span class="s">&quot;SVG&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As a result, the following network plot of the data will appear in the working directory:</p>
+<img alt="mln-w-3-2.svg" src="../_images/DOGON.svg" width="500px" /></div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Workflow Example</a><ul>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#orthographic-parsing">Orthographic Parsing</a></li>
+<li><a class="reference internal" href="#automatic-cognate-detection">Automatic Cognate Detection</a></li>
+<li><a class="reference internal" href="#phonetic-alignment">Phonetic Alignment</a></li>
+<li><a class="reference internal" href="#borrowing-detection">Borrowing Detection</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tutorial/workflow.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+	<li><a href="../index.html">Home</a> |&nbsp;</li>
+	<li><a href="../intro.html">Introduction</a> |&nbsp;</li>
+	<li><a href="../examples.html">Examples</a> |&nbsp;</li>
+	<li><a href="index.html">Tutorial</a> |&nbsp;</li>
+	<li><a href="../docu/index.html">Documentation</a> |&nbsp;</li>
+        <li><a href="../download.html">Download </a> </li>
+
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
+      Last updated on Apr 11, 2013.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
