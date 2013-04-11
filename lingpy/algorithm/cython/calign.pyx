@@ -1881,6 +1881,9 @@ def corrdist(
     cdef float sim
     cdef dict corrs = {}
 
+    # return number of sequences considered for initial distribution
+    cdef int included = 0
+
     # get basic params
     lP = len(seqs)
 
@@ -2033,6 +2036,7 @@ def corrdist(
         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
         
         if dist <= threshold:
+            included += 1
             l = len(almA)
             for j in range(l):
                 try:
@@ -2040,6 +2044,6 @@ def corrdist(
                 except:
                     corrs[almA[j],almB[j]] = 1
 
-    return corrs
+    return corrs,included
 
 
