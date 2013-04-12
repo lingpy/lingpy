@@ -30,18 +30,18 @@ def flat_upgma(
     threshold : float
         The threshold which terminates the algorithm.   
     
-    matrix : or :py:class:`numpy.array`
-        A two-dimensional containing the distances.
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
 
-    taxa : (default = [])
-        A containing the names of the taxa. If the is left empty, the
+    taxa : list (default = [])
+        A list containing the names of the taxa. If the list is left empty, the
         indices of the taxa will be returned instead of their names.
     
     Returns
     -------
     
     clusters : dict
-        A dictionary with cluster-IDs as keys and a of the taxa
+        A dictionary with cluster-IDs as keys and a list of the taxa
         corresponding to the respective ID as values.
 
     Examples
@@ -50,7 +50,7 @@ def flat_upgma(
 
     >>> from lingpy import *
     
-    Create a of arbitrary taxa.
+    Create a list of arbitrary taxa.
 
     >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
     
@@ -75,7 +75,7 @@ def flat_upgma(
     lingpy.algorithm.clusters.neighbor
 
     """
-#     i,key
+#     cdef int i,key
     x = len(matrix)
     out = {}
 
@@ -109,24 +109,24 @@ def flat_cluster(
     
     Parameters
     ----------
-    method : { 'upgma', 'single', 'complete' }
+    method : str { 'upgma', 'single', 'complete' }
         Select between 'ugpma', 'single', and 'complete'.
  
     threshold : float
         The threshold which terminates the algorithm.   
     
-    matrix : or :py:class:`numpy.array`
-        A two-dimensional containing the distances.
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
 
-    taxa : (default = [])
-        A containing the names of the taxa. If the is left empty, the
+    taxa : list (default = [])
+        A list containing the names of the taxa. If the list is left empty, the
         indices of the taxa will be returned instead of their names.
     
     Returns
     -------
     
     clusters : dict
-        A dictionary with cluster-IDs as keys and a of the taxa
+        A dictionary with cluster-IDs as keys and a list of the taxa
         corresponding to the respective ID as values.
 
     Examples
@@ -135,7 +135,7 @@ def flat_cluster(
 
     >>> from lingpy import *
     
-    Create a of arbitrary taxa.
+    Create a list of arbitrary taxa.
 
     >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
     
@@ -160,7 +160,7 @@ def flat_cluster(
     lingpy.algorithm.clusters.neighbor
 
     """
-#     i,key
+#     cdef int i,key
     x = len(matrix)
     out = {}
 
@@ -196,8 +196,8 @@ def _flat_upgma(
     """
     Internal implementation of flat_upgma.
     """
-#     i,j,vA,vB,idxA,idxB
-#     score,valA,valB
+#     cdef int i,j,vA,vB,idxA,idxB
+#     cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
@@ -237,8 +237,8 @@ def _flat_single_linkage(
     """
     Internal implementation of flat_upgma.
     """
-#     i,j,vA,vB,idxA,idxB
-#     score,valA,valB
+#     cdef int i,j,vA,vB,idxA,idxB
+#     cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
@@ -278,8 +278,8 @@ def _flat_complete_linkage(
     """
     Internal implementation of flat_upgma.
     """
-#     i,j,vA,vB,idxA,idxB
-#     score,valA,valB
+#     cdef int i,j,vA,vB,idxA,idxB
+#     cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
@@ -324,11 +324,11 @@ def upgma(
     Parameters
     ----------
 
-    matrix : or :py:class:`numpy.array`
-        A two-dimensional containing the distances.
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
 
     taxa : list
-        An containing the names of all taxa corresponding to the distances
+        An list containing the names of all taxa corresponding to the distances
         in the matrix.
 
     distances : bool
@@ -347,7 +347,7 @@ def upgma(
 
     >>> from lingpy import *
     
-    Create an arbitrary of taxa.
+    Create an arbitrary list of taxa.
 
     >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
     
@@ -366,10 +366,10 @@ def upgma(
     lingpy.algorithm.cluster.flat_upgma
    
     """
-#     i,a,b
+#     cdef int i,a,b
     x = len(taxa)
-#     c,d
-#     newick_string
+#     cdef float c,d
+#     cdef str newick_string
 
     clusters = dict([(i,[i]) for i in range(x)])
 
@@ -408,8 +408,8 @@ def _upgma(
     """
     Internal implementation of the UPGMA algorithm.
     """
-#     i,vA,vB,idxA,idxB,idxNew
-#     score,valA,valB
+#     cdef int i,vA,vB,idxA,idxB,idxNew
+#     cdef list score,valA,valB
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
@@ -459,11 +459,11 @@ def neighbor(
     Parameters
     ----------
 
-    matrix : or :py:class:`numpy.array`
-        A two-dimensional containing the distances.
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
 
     taxa : list
-        An containing the names of all taxa corresponding to the distances
+        An list containing the names of all taxa corresponding to the distances
         in the matrix.
 
     distances : bool
@@ -482,7 +482,7 @@ def neighbor(
 
     >>> from lingpy import *
     
-    Create an arbitrary of taxa.
+    Create an arbitrary list of taxa.
 
     >>> taxa = ['Norwegian','Swedish','Icelandic','Dutch','English']
     
@@ -500,9 +500,9 @@ def neighbor(
     lingpy.algorithm.cluster.upgma
     lingpy.algorithm.cluster.flat_upgma
     """
-#     i,a,b
-#     c,d
-#     newick_string
+#     cdef int i,a,b
+#     cdef float c,d
+#     cdef str newick_string
     
     x = len(taxa)
 
@@ -544,10 +544,10 @@ def _neighbor(
     """
     Internal implementation of the neighbor-joining algorithm.
     """
-#     idxA,idxB,idxNew,N,i,j,key
-#     sAX,sBX,new_score,score,dist_a,dist_b,dist_ab
-#     line,new_matrix
-#     new_clusters
+#     cdef int idxA,idxB,idxNew,N,i,j,key
+#     cdef float sAX,sBX,new_score,score,dist_a,dist_b,dist_ab
+#     cdef list line,new_matrix
+#     cdef dict new_clusters
 
     if len(clusters) == 1:
         return

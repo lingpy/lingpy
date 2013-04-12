@@ -13,7 +13,9 @@ __date__="2013-03-13"
 cdef extern from "math.h": 
     double sqrt(double x)
 
-def transpose(list matrix):
+def transpose(
+        list matrix
+        ):
     """
     Transpose a matrix along its two dimensions.
 
@@ -30,7 +32,9 @@ def transpose(list matrix):
 
     return out
 
-def squareform(list x):
+def squareform(
+        list x
+        ):
     """
     A simplified version of the :py:func:`scipy.spatial.distance.squareform` \
     function.
