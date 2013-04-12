@@ -85,7 +85,7 @@ class ScoreDict(object):
 #         i
 #         character
 
-        self.chars2= dict([(character,i) for character,i in
+        self.chars2int= dict([(character,i) for character,i in
             zip(chars,range(len(chars)))])
 
         self.matrix = matrix
