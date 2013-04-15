@@ -11,7 +11,8 @@ import sys
 import operator
 import unicodedata
 
-from lingpy.sequence.orthography import OrthographyParser
+# don't use absolute names for lingpy-imports
+from .orthography import OrthographyParser
 
 def unigram_model(list):
     """
