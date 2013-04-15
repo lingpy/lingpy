@@ -51,9 +51,5 @@ from .thirdparty import *
 # import lexstat
 from .compare.lexstat import *
 
-# test whether c-modules are available
-try:
-    from .algorithm.cython import calign
-except:
-    print("[i] Import of c-modules failed, using pure Python implementation instead.")
-
+# import algorithm-stuff
+from .algorithm import *
