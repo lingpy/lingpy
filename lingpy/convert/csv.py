@@ -72,7 +72,6 @@ def wl2csv(
         # simple key-value-pairs
         if type(v) in [str,int] or k == "tree":
             kvpairs[k] = v
-            #out += '@{0}:{1}\n'.format(k,v)
         elif k == 'msa':
             for a,b in v.items():
                 msapairs[a] = b
@@ -86,7 +85,7 @@ def wl2csv(
         out += '\n# META\n'
         for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
             out += '@{0}:{1}\n'.format(k,v)
-    if taxa:
+    if taxa and keywords['taxa']:
         out += '\n# TAXA\n<taxa>\n'+taxa+'\n</taxa>\n'
     if jsonpairs:
         out += '\n# JSON\n'
