@@ -9,11 +9,12 @@ ipa	str	word,ipa,words
 ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens,tokenized_counterpart,op_tokens
 
 # Specific namespaces for LexStat
-sonars	lambda x:[int(s) for s in x.split(" ")]	
-prostrings	str	
-numbers	lambda x:x.split(" ")	
-langid	int	
-classes	str	
-weights	lambda x:[float(y) for y in x.split(' ')]	
-scaid	int	
-lexstatid	int	
+sonars	lambda x:[int(s) for s in x.split(" ")]	sonars
+prostrings	str	prostrings
+numbers	lambda x:x.split(" ")	numbers
+langid	int	langid
+classes	str	classes
+weights	lambda x:[float(y) for y in x.split(' ')]	weights
+scaid	int	scaid
+lexstatid	int	lexstatid
+editid	int	editid
