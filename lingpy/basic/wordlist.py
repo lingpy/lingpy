@@ -149,7 +149,7 @@ class Wordlist(object):
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
-        self._alias,self._class,self._class_string = {},{},{}
+        self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
         for name,cls,alias in tmp:
             
             # make sure the name itself is there
@@ -170,6 +170,8 @@ class Wordlist(object):
                 self._class[a.upper()] = eval(cls)
                 self._class_string[a.lower()] = cls
                 self._class_string[a.upper()] = cls
+
+            self._alias2[name] = sorted(set(alias.split(','))) + [name]
 
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
@@ -860,7 +862,7 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input("[?] Datatype has already been produced, do you want to override? ")
+            answer = input("[?] Datatype <{entry}> has already been produced, do you want to override? ".format(entry=entry))
             if answer.lower() in ['y','yes']:
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)
@@ -870,9 +872,23 @@ class Wordlist(object):
         elif not override:
 
             # get the new index into the header
-            self._header[entry.lower()] = max(self._header.values())+1
-            self._alias[entry.lower()] = entry.lower()
-            self.header[entry.lower()] = self._header[entry.lower()]
+            # add a new alias if this is not specified
+            if entry.lower() not in self._alias2:
+                self._alias2[entry.lower()] = [entry.lower(),entry.upper()]
+                self._alias[entry.lower()] = entry.lower()
+                self._alias[entry.upper()] = entry.lower()
+
+            # get the true value
+            name = self._alias[entry.lower()]
+
+            # get the new index
+            newIdx = max(self._header.values()) + 1
+            
+            # change the aliassed header for each entry in alias2
+            for a in self._alias2[name]:
+                self._header[a] = newIdx
+
+            self.header[name] = self._header[name]
 
             # modify the entries attribute
             self.entries = sorted(set(self.entries + [entry]))
@@ -1316,8 +1332,11 @@ class Wordlist(object):
                 if rows:
                     stmts = []
                     for key,value in rows.items():
-                        idx = self._header[key]
-                        stmts += ["line[{0}] ".format(idx)+value]
+                        if key == 'ID':
+                            stmts += ["key "+value] #
+                        else:
+                            idx = self._header[key]
+                            stmts += ["line[{0}] ".format(idx)+value]
 
                 # get the data
                 out = {}

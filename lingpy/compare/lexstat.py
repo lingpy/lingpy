@@ -149,10 +149,10 @@ class LexStat(Wordlist):
         # check for duplicates
         # first, check for item 'words' in data, if this is not given, create
         # it
-        if 'words' in self.header:
+        if 'ipa' in self.header:
             pass
         else:
-            self.add_entries('words','tokens',lambda x:''.join(x))
+            self.add_entries('ipa','tokens',lambda x:''.join(x))
 
         if not "duplicates" in self.header:
             duplicates = {}
@@ -163,7 +163,7 @@ class LexStat(Wordlist):
                         flat=True
                         ):
                     # get the words
-                    word = self[idx,'words']
+                    word = self[idx,'ipa']
                     if word in words:
                         duplicates[idx] = 1
                     else:
@@ -1082,8 +1082,8 @@ class LexStat(Wordlist):
         clr = {}
         k = 0
 
-        for concept in concepts:
-            if verbose: print("[i] Analyzing concept {0}.".format(concept))
+        for concept in sorted(concepts):
+            if verbose: print("[i] Analyzing concept <{0}>.".format(concept))
 
             indices = self.get_list(
                     row=concept,
