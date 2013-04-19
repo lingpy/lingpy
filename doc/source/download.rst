@@ -9,12 +9,12 @@ Current Version
 At the moment, we are regularly updating the library, adding new features, and debugging errors.
 For this reason, we don't offer an official relase at the moment. However, you can always download
 our current development version from our github repository. Furthermore, we uploaded a mostly stable
-version with the source code and binaries of the current state of LingPy (April 2013 version), along with the documentation for this
-version.
+version with the source code and binaries of the current state of LingPy (April 2013 version), along
+with the documentation for this version.
 
 * **GIT-Repository**: https://github.com/lingpy/lingpy
-* **April-2013 Version**: http://lingpy.org/download/lingpy-2.0-dev-2013-04-11.zip
-* **Documentation (April-2013 Version)**: http://lingpy.org/download/lingpy-2.0-def-2013-04-11-docu.zip
+* **Development Version (2.0.dev)**: http://lingpy.org/download/lingpy-2.0.dev.tar.gz
+* **Documentation (Version 2.0.dev)**: http://lingpy.org/download/lingpy-2.0.dev-doc.zip
 
 Older Versions
 --------------
