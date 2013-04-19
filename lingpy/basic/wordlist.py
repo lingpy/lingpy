@@ -408,7 +408,7 @@ class Wordlist(object):
         for key,value in self.__dict__.items():
             if key not in  [
                     '_class',
-                    ]: 
+                    ]:
                 d[key] = value
         d['__date__'] = str(datetime.today())
         pickle.dump(d,out)
@@ -849,7 +849,10 @@ class Wordlist(object):
         Notes
         -----
         This method can be used to add new entry-types to the data by
-        converting given ones. 
+        converting given ones. There are a lot of possibilities for adding new
+        entries, but the most basic procedure is to use an existing entry-type
+        and to modify it with help of a function.
+
         """
         # check for emtpy entries etc.
         if not entry:
@@ -862,7 +865,12 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input("[?] Datatype <{entry}> has already been produced, do you want to override? ".format(entry=entry))
+            answer = input(
+                    "[?] Datatype <{entry}> has already been produced, do "\
+                    +"you want to override? ".format(
+                        entry=entry
+                        )
+                    )
             if answer.lower() in ['y','yes']:
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)
@@ -1249,7 +1257,8 @@ class Wordlist(object):
                 'cols'      : False,
                 'rows'      : False,
                 'meta'      : self._meta,
-                'entry'     : 'word'
+                'entry'     : 'word',
+                'taxa'      : False
                 }
             
         # compare with keywords and add missing ones

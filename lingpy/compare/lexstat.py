@@ -42,6 +42,30 @@ class LexStat(Wordlist):
     ----------
     filename : str 
         The name of the file that shall be loaded.
+    model : :py:class:`~lingpy.data.model.Model` 
+        The sound-class model that shall be used for the analysis. Defaults to
+        the SCA sound-class model.
+    merge_vowels : bool (default=True)
+        Indicate whether consecutive vowels should be merged into single tokens or kept
+        apart as separate tokens.
+    transform : dict
+        A dictionary that indicates how prosodic strings should be simplified
+        (or generally transformed), using a simple key-value structure with the
+        key referring to the original prosodic context and the value to the new
+        value.
+        Currently, prosodic strings (see
+        :py:meth:`~lingpy.sequence.sound_classes.prosodic_string`) offer 11
+        different prosodic contexts. Since not all these are helpful in
+        preliminary analyses for cognate detection, it is useful to merge some
+        of these contexts into one. The default settings distinguish only 5
+        instead of 11 available contexts, namely:
+
+        * ``C`` for all consonants in prosodically ascending position,
+        * ``c`` for all consonants in prosodically descending position, 
+        * ``V`` for all vowels,
+        * ``T`` for all tones, and 
+        * ``_`` for word-breaks.
+
 
     Notes
     -----
@@ -58,7 +82,21 @@ class LexStat(Wordlist):
             ):
 
         defaults = {
-                "model" : sca
+                "model" : sca,
+                "merge_vowels" : True,
+                'transform' : {                    
+                    'A':'C', 
+                    'B':'C',
+                    'C':'C',
+                    'L':'c',
+                    'M':'c',
+                    'N':'c',
+                    'X':'V', #
+                    'Y':'V', #
+                    'Z':'V', #
+                    'T':'T', #
+                    '_':'_'
+                    }
                 }
         for k in defaults:
             if k not in keywords:
@@ -76,7 +114,14 @@ class LexStat(Wordlist):
         # check for basic input data
         # tokens
         if not "tokens" in self.header:
-            self.add_entries("tokens","ipa",lambda x:ipa2tokens(x))
+            self.add_entries(
+                    "tokens",
+                    "ipa",
+                    lambda x:ipa2tokens(
+                        x,
+                        merge_vowels = keywords['merge_vowels']
+                        )
+                    )
         
         # sonority profiles
         if not "sonars" in self.header:
@@ -115,19 +160,20 @@ class LexStat(Wordlist):
             # change the discriminative potential of the sound-class string
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
-            self._transform = {
-                    'A':'B', 
-                    'B':'B',
-                    'C':'B',
-                    'L':'L',
-                    'M':'L',
-                    'N':'L',
-                    'X':'X', #
-                    'Y':'X', #
-                    'Z':'X', #
-                    'T':'T', #
-                    '_':'_'
-                    }
+            self._transform =  keywords['transform']
+            #{
+            #        'A':'B', 
+            #        'B':'B',
+            #        'C':'B',
+            #        'L':'L',
+            #        'M':'L',
+            #        'N':'L',
+            #        'X':'X', #
+            #        'Y':'X', #
+            #        'Z':'X', #
+            #        'T':'T', #
+            #        '_':'_'
+            #        }
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
