@@ -491,6 +491,88 @@ def structalign(
 
     return out,maxScore
 
+def restricted_edit_dist(
+        list seqA,
+        list seqB,
+        str resA,
+        str resB,
+        bint normalized
+        ):
+    r"""
+    Return the restricted edit-distance between two strings.
 
+    Notes
+    -----
+    Restrictions follow the definition of :evobib:`Heeringa2006`: Segments that
+    are not allowed to match are given a penalty of :math:`\infty`.
+    """
+    
+    cdef int M = len(seqA)
+    cdef int N = len(seqB)
+    cdef int gapA,gapB,match
+    cdef int i,j,sim
+    cdef float dist
+    
+    # define alignments
+    cdef list almA = []
+    cdef list almB = []
+    
+    # create matrix and traceback
+    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]   
+    
+    for i in range(1,M+1):
+        matrix[0][i] = i
+    for i in range(1,N+1):
+        matrix[i][0] = i
+
+    for i in range(1,N+1):
+        for j in range(1,M+1):
+            
+            if seqA[j-1] == seqB[i-1]:
+                match = matrix[i-1][j-1]
+            elif resA[j-1] == resB[i-1]:
+                match = matrix[i-1][j-1] + 1
+            else:
+                match = matrix[i-1][j-1] + 1000
+
+            gapA = matrix[i-1][j] + 1
+            gapB = matrix[i][j-1] + 1
+
+            if gapA < match and gapA < gapB:
+                matrix[i][j] = gapA
+                traceback[i][j] = 3
+            elif match <= gapB:
+                matrix[i][j] = match
+                traceback[i][j] = 1
+            else:
+                matrix[i][j] = gapB
+                traceback[i][j] = 2
+
+    sim = matrix[N][M]
+    
+    while i > 0 or j > 0:
+        if traceback[i][j] == 3:
+            almA += ['-']
+            almB += [seqB[i-1]]
+            i -= 1 
+        elif traceback[i][j] == 1: 
+            almA += [seqA[j-1]]
+            almB += [seqB[i-1]]
+            i -= 1
+            j -= 1
+        else:
+            almA += [seqA[j-1]]
+            almB += ['-']
+            j -= 1
+    print(almA)
+    print(almB)
+    
+    if normalized:
+        print(sim,len(almA),sim / len(almA))
+        dist = float(sim) / len(almA)
+        return dist
+
+    return sim
 
 

@@ -379,10 +379,26 @@ def nw_align(
 def edit_dist(
         seqA,
         seqB,
-        normalized = False
+        normalized = False,
+        restriction = ''
         ):
     """
     Return the edit distance between two strings.
+
+    Parameters
+    ----------
+    seqA,seqB : str
+        The strings that shall be compared.
+    normalized : bool (default=False)
+        Specify whether the normalized edit distance shall be returned. If no
+        restrictions are chosen, the edit distance is normalized by dividing by
+        the length of the longer string. If *restriction* is set to *cv*
+        (consonant-vowel), the edit distance is normalized by the length of the
+        alignment.
+    restriction : {'cv'} (default='')
+        Specify the restrictions to be used. Currently, only ``cv`` is
+        supported. This prohibits matches of vowels with consonants.
+
     """
     # check whether the sequences are tuples
     if type(seqA) == str or type(seqA) == tuple:
@@ -392,6 +408,19 @@ def edit_dist(
         raise ValueError(
             "[!] Input sequences should be tuples, lists, or strings!"
             )
+    
+    if restriction in ['cv','consonant-vowel']:
+        
+        resA = prosodic_string(seqA,'cv')
+        resB = prosodic_string(seqB,'cv')
+
+        return malign.restricted_edit_dist(
+                seqA,
+                seqB,
+                resA,
+                resB,
+                normalized
+                )
     
     return malign.edit_dist(seqA,seqB,normalized)
 
