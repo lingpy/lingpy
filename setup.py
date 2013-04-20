@@ -56,7 +56,7 @@ setup(
         version = this_version,
         packages = find_packages(),
         include_package_data = True,
-        install_requires = ['numpy','networkx'],
+        install_requires = ['numpy','networkx','regex'],
         author = "Johann-Mattis List, Steven Moran",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [

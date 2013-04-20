@@ -65,7 +65,10 @@ class LexStat(Wordlist):
         * ``V`` for all vowels,
         * ``T`` for all tones, and 
         * ``_`` for word-breaks.
-
+    check : bool (default=False)
+        If set to c{True}, the input file will first be checked for errors
+        before the calculation is carried out. Errors will be written to the
+        file ``errors.log``.
 
     Notes
     -----
@@ -96,7 +99,8 @@ class LexStat(Wordlist):
                     'Z':'V', #
                     'T':'T', #
                     '_':'_'
-                    }
+                    },
+                "check" : False
                 }
         for k in defaults:
             if k not in keywords:
@@ -122,6 +126,64 @@ class LexStat(Wordlist):
                         merge_vowels = keywords['merge_vowels']
                         )
                     )
+
+        # add a debug procedure for tokens
+        if keywords["check"]:
+            errors = []
+            for key in self:
+                line = self[key,"tokens"]
+                if "" in line:
+                    errors += [(
+                        key,
+                        "empty token",
+                        ' '.join(line)
+                        )]
+                else:
+                    try:
+                        sonars = tokens2class(line,art)
+                        if not sonars or sonars == ['0']:
+                            errors += [(
+                                key,
+                                "empty sound-class string",
+                                ' '.join(line)
+                                )]
+                    except:
+                        errors += [(
+                            key,
+                            "sound-class conversion failed",
+                            ' '.join(line)
+                            )]
+            if errors:
+                out = open("errors.log","w")
+                out.write("ID\tTokens\tError-Type\n")
+                for a,b,c in errors:
+                    out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
+                out.close()
+                answer = input("[?] There were errors in the input data. "
+                        "Do you want to exclude the errors? (Y/N) ")
+                if answer in ['Y','y','yes','j','J']:
+                    self.output(
+                            'csv',
+                            filename=self.filename+'_cleaned',
+                            subset=True,
+                            rows = {"ID":"not in "+str([i[0] for i in errors])}
+                            )
+                    # load the data in another wordlist and copy the stuff
+                    wl = Wordlist(self.filename+'_cleaned.csv')
+                    
+                    # change the attributes
+                    self._array = wl._array
+                    self._data = wl._data
+                    self._dict = wl._dict
+                    self._idx = wl._idx
+
+                    # store errors in meta
+                    self._meta['errors'] = [i[0] for i in errors]
+
+                else:
+                    return
+            else:
+                print("[i] No obvious errors found in dataset.")
         
         # sonority profiles
         if not "sonars" in self.header:

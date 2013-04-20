@@ -1336,7 +1336,7 @@ class Wordlist(object):
                     indices = [self._header[x] for x in cols]
                     header = [c.upper() for c in cols]
                 else:
-                    indices = [r for r in range(len(w.header))]
+                    indices = [r for r in range(len(self.header))]
 
                 if rows:
                     stmts = []
