@@ -1367,7 +1367,7 @@ class TreBor(Wordlist):
             glm,
             threshold = 1,
             verbose = False,
-            colormap = None,
+            #colormap = None,
             degree = 100
             ):
         """
@@ -1388,8 +1388,8 @@ class TreBor(Wordlist):
             The degree which is chosen for the projection of the tree layout.
         """
 
-        if not colormap:
-            colormap = mpl.cm.jet
+        #if not colormap:
+        #    colormap = mpl.cm.jet
         
         # create the primary graph
         gPrm = nx.Graph()
@@ -1553,21 +1553,6 @@ class TreBor(Wordlist):
                                 )
                     ile[cog]+= [(nodeA,nodeB)]
 
-        # get colormap for edgeweights
-        edge_weights = []
-        for nodeA,nodeB,data in gMST.edges(data=True):
-            edge_weights.append(data['weight'])
-        
-        # determine a colorfunction
-        cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
-        lfunc = np.linspace(0.5,8,len(set(edge_weights)))
-
-        # sort the weights
-        weights = sorted(set(edge_weights))
-
-        # get the scale for the weights (needed for the line-width)
-        scale = 20.0 / max(edge_weights)
-
         # load data for nodes into new graph
         for node,data in gTpl.nodes(data=True):
             if data['label'] in taxa:
@@ -1603,11 +1588,11 @@ class TreBor(Wordlist):
             w = data['weight']
 
             # get the color for the weight
-            color = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
+            #color = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
 
             data['graphics'] = {}
-            data['graphics']['fill'] = color
-            data['graphics']['width'] = w * scale
+            #data['graphics']['fill'] = color
+            #data['graphics']['width'] = w * scale
             data['cogs'] = ','.join([str(i) for i in data['cogs']])
             data['label'] = 'horizontal'
 
@@ -2162,7 +2147,7 @@ class TreBor(Wordlist):
                 glm,
                 verbose = verbose,
                 threshold = keywords['threshold'],
-                colormap = keywords['colormap']
+                #colormap = keywords['colormap']
                 )
 
             # check whether plots are chosen
@@ -2272,6 +2257,31 @@ class TreBor(Wordlist):
 
         # get some data on the taxa
         max_label_len = max([len(tfunc(t)) for t in self.taxa])
+
+        # get colormap for edgeweights
+        edge_weights = []
+        for nodeA,nodeB,data in graph.edges(data=True):
+            if data['label'] == 'horizontal': 
+                edge_weights.append(data['weight'])
+
+        
+        # determine a colorfunction
+        cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
+        lfunc = np.linspace(0.5,8,len(set(edge_weights)))
+
+        # sort the weights
+        weights = sorted(set(edge_weights))
+
+        # get the scale for the weights (needed for the line-width)
+        scale = 20.0 / max(edge_weights)
+
+        # write colors and scale to graph
+        for nA,nB,data in graph.edges(data=True):
+            if data['label'] == 'horizontal':
+                w = data['weight']
+                data['graphics'] = {}
+                data['graphics']['fill'] = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
+                data['graphics']['width'] = scale * w
 
         # get the nodes
         for n,d in graph.nodes(data=True):

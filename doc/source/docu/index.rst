@@ -10,10 +10,11 @@ Sequence Modelling
 ^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
-
+   
    sequence/sound_classes
    sequence/orthography
    sequence/generate
+   data/data
    data/derive
 
 Dataset Handling

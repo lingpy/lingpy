@@ -5,9 +5,10 @@ QLC wordlist module for orthographic parsing.
 __author__="Steven Moran"
 __date__="2013-03"
 
-from lingpy.basic.wordlist import *
-from lingpy.sequence.orthography import *
-from lingpy.sequence.sound_classes import *
+# don't use absolute imports!!! XXX
+from .wordlist import *
+from ..sequence.orthography import *
+from ..sequence.sound_classes import *
 
 import os
 

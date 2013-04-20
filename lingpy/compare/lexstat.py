@@ -42,6 +42,33 @@ class LexStat(Wordlist):
     ----------
     filename : str 
         The name of the file that shall be loaded.
+    model : :py:class:`~lingpy.data.model.Model` 
+        The sound-class model that shall be used for the analysis. Defaults to
+        the SCA sound-class model.
+    merge_vowels : bool (default=True)
+        Indicate whether consecutive vowels should be merged into single tokens or kept
+        apart as separate tokens.
+    transform : dict
+        A dictionary that indicates how prosodic strings should be simplified
+        (or generally transformed), using a simple key-value structure with the
+        key referring to the original prosodic context and the value to the new
+        value.
+        Currently, prosodic strings (see
+        :py:meth:`~lingpy.sequence.sound_classes.prosodic_string`) offer 11
+        different prosodic contexts. Since not all these are helpful in
+        preliminary analyses for cognate detection, it is useful to merge some
+        of these contexts into one. The default settings distinguish only 5
+        instead of 11 available contexts, namely:
+
+        * ``C`` for all consonants in prosodically ascending position,
+        * ``c`` for all consonants in prosodically descending position, 
+        * ``V`` for all vowels,
+        * ``T`` for all tones, and 
+        * ``_`` for word-breaks.
+    check : bool (default=False)
+        If set to c{True}, the input file will first be checked for errors
+        before the calculation is carried out. Errors will be written to the
+        file ``errors.log``.
 
     Notes
     -----
@@ -58,7 +85,22 @@ class LexStat(Wordlist):
             ):
 
         defaults = {
-                "model" : sca
+                "model" : sca,
+                "merge_vowels" : True,
+                'transform' : {                    
+                    'A':'C', 
+                    'B':'C',
+                    'C':'C',
+                    'L':'c',
+                    'M':'c',
+                    'N':'c',
+                    'X':'V', #
+                    'Y':'V', #
+                    'Z':'V', #
+                    'T':'T', #
+                    '_':'_'
+                    },
+                "check" : False
                 }
         for k in defaults:
             if k not in keywords:
@@ -76,7 +118,72 @@ class LexStat(Wordlist):
         # check for basic input data
         # tokens
         if not "tokens" in self.header:
-            self.add_entries("tokens","ipa",lambda x:ipa2tokens(x))
+            self.add_entries(
+                    "tokens",
+                    "ipa",
+                    lambda x:ipa2tokens(
+                        x,
+                        merge_vowels = keywords['merge_vowels']
+                        )
+                    )
+
+        # add a debug procedure for tokens
+        if keywords["check"]:
+            errors = []
+            for key in self:
+                line = self[key,"tokens"]
+                if "" in line:
+                    errors += [(
+                        key,
+                        "empty token",
+                        ' '.join(line)
+                        )]
+                else:
+                    try:
+                        sonars = tokens2class(line,art)
+                        if not sonars or sonars == ['0']:
+                            errors += [(
+                                key,
+                                "empty sound-class string",
+                                ' '.join(line)
+                                )]
+                    except:
+                        errors += [(
+                            key,
+                            "sound-class conversion failed",
+                            ' '.join(line)
+                            )]
+            if errors:
+                out = open("errors.log","w")
+                out.write("ID\tTokens\tError-Type\n")
+                for a,b,c in errors:
+                    out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
+                out.close()
+                answer = input("[?] There were errors in the input data. "
+                        "Do you want to exclude the errors? (Y/N) ")
+                if answer in ['Y','y','yes','j','J']:
+                    self.output(
+                            'csv',
+                            filename=self.filename+'_cleaned',
+                            subset=True,
+                            rows = {"ID":"not in "+str([i[0] for i in errors])}
+                            )
+                    # load the data in another wordlist and copy the stuff
+                    wl = Wordlist(self.filename+'_cleaned.csv')
+                    
+                    # change the attributes
+                    self._array = wl._array
+                    self._data = wl._data
+                    self._dict = wl._dict
+                    self._idx = wl._idx
+
+                    # store errors in meta
+                    self._meta['errors'] = [i[0] for i in errors]
+
+                else:
+                    return
+            else:
+                print("[i] No obvious errors found in dataset.")
         
         # sonority profiles
         if not "sonars" in self.header:
@@ -115,19 +222,20 @@ class LexStat(Wordlist):
             # change the discriminative potential of the sound-class string
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
-            self._transform = {
-                    'A':'B', 
-                    'B':'B',
-                    'C':'B',
-                    'L':'L',
-                    'M':'L',
-                    'N':'L',
-                    'X':'X', #
-                    'Y':'X', #
-                    'Z':'X', #
-                    'T':'T', #
-                    '_':'_'
-                    }
+            self._transform =  keywords['transform']
+            #{
+            #        'A':'B', 
+            #        'B':'B',
+            #        'C':'B',
+            #        'L':'L',
+            #        'M':'L',
+            #        'N':'L',
+            #        'X':'X', #
+            #        'Y':'X', #
+            #        'Z':'X', #
+            #        'T':'T', #
+            #        '_':'_'
+            #        }
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
@@ -149,10 +257,10 @@ class LexStat(Wordlist):
         # check for duplicates
         # first, check for item 'words' in data, if this is not given, create
         # it
-        if 'words' in self.header:
+        if 'ipa' in self.header:
             pass
         else:
-            self.add_entries('words','tokens',lambda x:''.join(x))
+            self.add_entries('ipa','tokens',lambda x:''.join(x))
 
         if not "duplicates" in self.header:
             duplicates = {}
@@ -163,7 +271,7 @@ class LexStat(Wordlist):
                         flat=True
                         ):
                     # get the words
-                    word = self[idx,'words']
+                    word = self[idx,'ipa']
                     if word in words:
                         duplicates[idx] = 1
                     else:
@@ -951,6 +1059,7 @@ class LexStat(Wordlist):
             mode = 'overlap',
             verbose = False,
             gop = -2,
+            restriction = '',
             **keywords
             ):
         """
@@ -980,6 +1089,13 @@ class LexStat(Wordlist):
             Define whether verbose output should be used or not.
         gop : int (default=-2)
             If 'sca' is selected as a method, define the gap opening penalty.
+        restriction : {'cv'} (default="")
+            Specify the restriction for calculations using the edit-distance.
+            Currently, only "cv" is supported. If *edit-dist* is selected as
+            *method* and *restriction* is set to *cv*, consonant-vowel matches
+            will be prohibited in the calculations and the edit distance will
+            be normalized by the length of the alignment rather than the length
+            of the longest sequence, as described in :evobib:`Heeringa2006`.
 
         """
         if not threshold:
@@ -1004,7 +1120,6 @@ class LexStat(Wordlist):
                 threshold
                 )
         self._stamp += '# Cluster: ' + self.params['cluster']
-
         
         if method not in ['lexstat','sca','turchin','edit-dist']:
             raise ValueError(
@@ -1066,7 +1181,8 @@ class LexStat(Wordlist):
             function = lambda idxA,idxB: edit_dist(
                     self[idxA,entry],
                     self[idxB,entry],
-                    True
+                    True,
+                    restriction
                     )
 
         elif method == 'turchin':
@@ -1082,8 +1198,8 @@ class LexStat(Wordlist):
         clr = {}
         k = 0
 
-        for concept in concepts:
-            if verbose: print("[i] Analyzing concept {0}.".format(concept))
+        for concept in sorted(concepts):
+            if verbose: print("[i] Analyzing concept <{0}>.".format(concept))
 
             indices = self.get_list(
                     row=concept,

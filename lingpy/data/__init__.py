@@ -3,12 +3,12 @@ LingPy comes along with many different kinds of predefined data.  When loading
 the library, the following data are automatically loaded and can be used in all
 applications:
 
-    .. py:data:: ipa_diacritics : unicode
+    .. py:data:: ~lingpy.ipa_diacritics : str
     
        The default string of IPA diacritics which is used for the
        tokenization of IPA strings.
     
-    .. py:data:: ipa_vowels : unicode
+    .. py:data:: ipa_vowels : str
     
        The default string of IPA vowels which is used for the tokenization of IPA
        strings.

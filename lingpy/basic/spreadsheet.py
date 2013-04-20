@@ -11,8 +11,9 @@ import unicodedata
 from time import gmtime, strftime
 from datetime import date,datetime
 
-from lingpy.sequence.ngram import *
-from lingpy.read.csv import *
+# don't use direct imports !!!
+from ..sequence.ngram import *
+from ..read.csv import *
 
 
 class Spreadsheet:
