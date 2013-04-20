@@ -1059,6 +1059,7 @@ class LexStat(Wordlist):
             mode = 'overlap',
             verbose = False,
             gop = -2,
+            restriction = '',
             **keywords
             ):
         """
@@ -1088,6 +1089,13 @@ class LexStat(Wordlist):
             Define whether verbose output should be used or not.
         gop : int (default=-2)
             If 'sca' is selected as a method, define the gap opening penalty.
+        restriction : {'cv'} (default="")
+            Specify the restriction for calculations using the edit-distance.
+            Currently, only "cv" is supported. If *edit-dist* is selected as
+            *method* and *restriction* is set to *cv*, consonant-vowel matches
+            will be prohibited in the calculations and the edit distance will
+            be normalized by the length of the alignment rather than the length
+            of the longest sequence, as described in :evobib:`Heeringa2006`.
 
         """
         if not threshold:
@@ -1112,7 +1120,6 @@ class LexStat(Wordlist):
                 threshold
                 )
         self._stamp += '# Cluster: ' + self.params['cluster']
-
         
         if method not in ['lexstat','sca','turchin','edit-dist']:
             raise ValueError(
@@ -1174,7 +1181,8 @@ class LexStat(Wordlist):
             function = lambda idxA,idxB: edit_dist(
                     self[idxA,entry],
                     self[idxB,entry],
-                    True
+                    True,
+                    restriction
                     )
 
         elif method == 'turchin':

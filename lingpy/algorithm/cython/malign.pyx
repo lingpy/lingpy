@@ -132,7 +132,7 @@ def edit_dist(
     sim = matrix[N][M]
     
     if normalized:
-        dist = sim / max([M,N])
+        dist = float(sim) / max([M,N])
         return dist
 
     return sim
@@ -523,8 +523,10 @@ def restricted_edit_dist(
     
     for i in range(1,M+1):
         matrix[0][i] = i
+        traceback[0][i] = 2
     for i in range(1,N+1):
         matrix[i][0] = i
+        traceback[i][0] = 3
 
     for i in range(1,N+1):
         for j in range(1,M+1):
@@ -565,11 +567,8 @@ def restricted_edit_dist(
             almA += [seqA[j-1]]
             almB += ['-']
             j -= 1
-    print(almA)
-    print(almB)
     
     if normalized:
-        print(sim,len(almA),sim / len(almA))
         dist = float(sim) / len(almA)
         return dist
 
