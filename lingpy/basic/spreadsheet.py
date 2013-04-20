@@ -74,9 +74,10 @@ class Spreadsheet:
         """
         Take spreadsheet input data and create matrix data given concept and language constraints.
         """
-
+        
+        # if no parameters, assume simple spreadsheet format
         if self.concepts == 0 and len(self.languages) == 0:
-            print("[i] No concepts column and language columns specified. Assuming concepts in column 1 and all other cols language data.")
+            print("[i] No concepts or languages specified. Assuming concepts in column 1 and all other cols language data.\n")
             return self.spreadsheet
 
         # else create a matrix given user-specified input
@@ -93,10 +94,20 @@ class Spreadsheet:
         matrix.append(matrix_header)
 
         # append the concepts and words in languages and append the rows
+        n = self.header+1
         for i in range(self.header+1, len(self.spreadsheet)):
+            # check for concept; if missing skip row
+            if self.spreadsheet[i][self.concepts] == "":
+                print("[i] Missing concept in row "+str(i)+". Skipping the row.")
+                continue
+
+            # print(str(n), len(self.spreadsheet[i]))
+            # n += 1
+
             row = []
             row.append(self.spreadsheet[i][self.concepts])
             for language in self.languages:
+                # print("row", str(len(self.spreadsheet[i])), self.spreadsheet[i])                
                 row.append(self.spreadsheet[i][language])
             matrix.append(row)
 
@@ -111,7 +122,7 @@ class Spreadsheet:
             for j in range(0, len(self.spreadsheet[i])):
                 normalized_cell = unicodedata.normalize("NFD", self.spreadsheet[i][j])
                 if not normalized_cell == self.spreadsheet[i][j]:
-                    print("[i] Input cell at <"+spreadsheet[i][j]+"> at ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing...")
+                    print("[i] Cell at <"+self.spreadsheet[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
                     self.spreadsheet[i][j] = normalized_cell
 
 
@@ -202,7 +213,15 @@ class Spreadsheet:
                     row = str(id)+"\t"+self.header[j]+"\t"+self.matrix[i][0]+"\t"+self.matrix[i][j]
                 print(row)        
 
-    def output(self, fileformat, **keywords):
+    def _output(self):
+        filename = "lingpy-{0}".format(str(date.today()))
+        output = open(filename, "w")
+        for row in self.matrix:
+            results = "\t".join(row)
+            output.write(results+"\n")
+
+
+    def output(self, **keywords):
         """
         Method to output the spreadsheet data into other formats.
         """
@@ -221,8 +240,6 @@ class Spreadsheet:
         3. after a word but not with "?" -- optional compounded word
         4. next to a word -- also optional compounded word
 
-        """
-
         # first do the data checks
 
         defaults = {
@@ -233,16 +250,29 @@ class Spreadsheet:
             "cols"      : 15 # minimum number of taxa
             }
 
-
+        # add info to keywords
         for key in defaults:
             if key not in keywords:
                 keywords[key] = defaults[key]
+        """
+        filename = "lingpy-{0}".format(str(date.today()))
+        output = open(filename+".csv", "w")
+        output.write("CONCEPT"+"\t"+"COUNTERPART"+"\t"+"COUNTERPART_DOCULECT"+"\n")
+        for i in range(self.header+1, len(self.matrix)):
+            for j in range(1, len(self.matrix[i])):
+                output.write(self.matrix[i][0]+"\t"+self.matrix[i][j]+"\t"+self.matrix[self.header][j]+"\n")
+            output.write("#\n")
 
 
 if __name__=="__main__":
     # s = Spreadsheet("/Users/stiv/Dropbox/Projects/dogon/Moran_Dogon.comp.vocab.UNICODE.csv")
-    s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv", concepts=2, languages=[3,5,6])
-    s.pprint()
+    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv", concepts=2, languages=[3,5,6])
+    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv")
+    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/Dogon_test.csv", concepts=7, languages=[17,18,19,20,22,23])
+
+
+    s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/scripts/Dogon_100_DH.csv", concepts=2, languages=[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22])
+    s.output()
 
     # print(s.get_matrix_full_rows()) # bug with "0"
 
