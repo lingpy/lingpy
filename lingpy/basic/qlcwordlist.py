@@ -102,5 +102,3 @@ class QLCWordlist(Wordlist):
             g = GraphemeParser()
             self.add_entries("qlc_unicode_grapheme_parse", "counterpart", lambda x:g.parse_graphemes(x))
  
-
-
