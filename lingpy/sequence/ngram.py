@@ -13,6 +13,29 @@ import unicodedata
 
 from lingpy.sequence.orthography import OrthographyParser
 
+def character_model(list):
+    """
+    Method counts characters and their frequences given a list of words.
+    """
+    segments_hash = collections.defaultdict(int)
+    segment_count = 0
+
+    for word in list:
+        word = word.strip()
+
+        for char in word:
+            segment_count += 1
+            segments_hash[segment] += 1            
+
+    # sort the hash set by values (frequencies of unigrams)
+    segments_sorted = sorted(segments_hash.items(), key=operator.itemgetter(1), reverse=True)
+    
+    print("Character"+"\t"+"Count"+"\t"+"Frequency") 
+    for segment in segments_sorted:
+        segment, count = segment[0], segment[1]
+        frequency = segments_hash[segment]/segment_count
+        print(segment+"\t"+str(count)+"\t"+str(frequency))
+
 def unigram_model(list):
     """
     Takes as input a list of QLC tokenized words and outputs a unigram model.
@@ -46,9 +69,9 @@ def unicode_categories(list):
     """
     pass
 
-def unicode_model(list):
+def extended_unicode_model(list):
     """
-    Takes as input a list of QLC-formatted ords and outputs a unigram model.
+    Takes as input a list of QLC-formatted words and outputs a unigram model.
     """
     segments_hash = collections.defaultdict(int)
     segment_count = 0
