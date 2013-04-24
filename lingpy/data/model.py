@@ -14,6 +14,13 @@ from re import findall
 from pickle import load
 import os
 
+from ..check.exceptions import *
+
+try:
+    from .derive import compile_model
+except ImportError:
+    ThirdPartyModuleError('networkx').warning()    
+
 class Model(object):
     """
     Class for the handling of sound-class models.
@@ -104,25 +111,34 @@ class Model(object):
             path = None
             ):
         
-        if not path:
-            path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
+        if path == None:
+            new_path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
         else:
             if path.endswith('/'):
-                path = path+model+'/'
+                new_path = path+model+'/'
             else:
-                path = path + '/' + model + '/'
+                new_path = path + '/' + model + '/'
 
         self.name = model
-        self.converter = load(open(path+'converter.bin','rb'))
         try:
-            self.scorer = load(open(path+'scorer.bin','rb'))
+            self.converter = load(open(new_path+'converter.bin','rb'))
+            try:
+                self.scorer = load(open(new_path+'scorer.bin','rb'))
+            except:
+                pass
         except:
-            pass
+            compile_model(model,path)
+            self.converter = load(open(new_path+'converter.bin','rb'))
+            try:
+                self.scorer = load(open(new_path+'scorer.bin','rb'))
+            except:
+                pass
+
         
         # read information from the info-file
         self.info = {}
         
-        info = open(path+'INFO').read()
+        info = open(new_path+'INFO').read()
         
         data = ['description','compiler','source','date']
         

@@ -459,7 +459,7 @@ def compile_model(
      
     print("[i] Compiling model <"+model+">...")
     # get the path to the models
-    if not path:
+    if path == None:
         path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
     else:
         if path.endswith('/'):
