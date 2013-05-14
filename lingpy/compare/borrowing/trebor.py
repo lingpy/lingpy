@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-04-09 08:38
+# modified : 2013-05-10 00:22
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-04-09"
+__date__="2013-05-10"
 
 
 # basic imports
@@ -24,6 +24,7 @@ import numpy.linalg as linalg
 # import error classes
 from ...check.exceptions import *
 from ...check.messages import *
+from ...align.multiple import Multiple
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
@@ -31,6 +32,12 @@ try:
     import matplotlib.pyplot as plt
 except ImportError:
     ThirdPartyModuleError('matplotlib').warning()
+
+# import 3d-stuff
+try:
+    from mpl_toolkits.mplot3d import Axes3D
+except:
+    ThirdPartyModuleError('mplot3d').warning()
 
 # import the geoplot module
 try:
@@ -67,7 +74,8 @@ class TreBor(Wordlist):
     tree_calc : {'neighbor','upgma'} (default='neighbor')
         Select the algorithm to be used for the tree calculation if no tree is
         passed with the file.
-
+    degree : int (default=100)
+        The degree which is chosen for the projection of the tree layout.
     """
 
     # XXX generally: find a way to check whether a dataset was already loaded,
@@ -84,6 +92,13 @@ class TreBor(Wordlist):
             **keywords
             ):
         # TODO check for keywords, allow to load trees, etc.
+        defaults = {
+                'degree' : 100,
+                'singletons' : True
+                }
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
         # store the name of the dataset and the identifier for paps
         if dataset.endswith('.csv'):
@@ -148,7 +163,8 @@ class TreBor(Wordlist):
 
             # list stores the singletons
             self.singletons = []
-
+        
+            # only calculate singletons if the option is chosen
             for key in self.paps:
                 
                 # get the names of the concepts
@@ -157,8 +173,9 @@ class TreBor(Wordlist):
                 self.pap2con[key] = concept
 
                 # check for singletons
-                if sum([1 for p in self.paps[key] if p >= 1]) == 1:
-                    self.singletons.append(key)
+                if keywords['singletons']:
+                    if sum([1 for p in self.paps[key] if p >= 1]) == 1:
+                        self.singletons.append(key)
             
             # create a list of keys for faster access when iterating
             self.cogs = [k for k in self.pap2con if k not in self.singletons]
@@ -189,15 +206,21 @@ class TreBor(Wordlist):
         else:
             pass
 
-
-
-        ## get the taxa
-        ##self.taxa = self.cols
-
-        #if verbose: print("[i] Assigned the taxa.")
+        # create the template graph XXX add fallback procedure
+        try:
+            gTpl = nx.read_gml(dataset+'.gml')
+        except:
+            
+            # if no good topology is given, create it automatically, using
+            # the radial layout function
+            gTpl = radial_layout(str(self.tree),filename='',degree=keywords['degree'])
+            
+            if verbose: print("[i] Calculated radial layout for the tree. ")
+        
+        self.tgraph = gTpl
         
         # create a couple of further attributes
-        for a in ['stats','gls','dists','graph']:
+        for a in ['stats','gls','dists','graph','acs']:
             if not hasattr(self,a):
                 setattr(self,a,{})
     
@@ -555,6 +578,7 @@ class TreBor(Wordlist):
 
         # the tracer stores all scores
         tracer = []
+        gain_tracer = []
 
         for i,line in enumerate(gls_list):
             
@@ -579,13 +603,26 @@ class TreBor(Wordlist):
             # return the minimal indices, sort them according to the number of
             # gains inferred, thereby pushing gains to the root, similar to
             # Mirkin's (2003) suggestion
-            return sorted(
-                    [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore],
-                    key = lambda x:sum([i[1] for i in x])
-                    )[0]
-        
+            best_gls = [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore]
+            best_gls = sorted(
+                    best_gls,
+                    key = lambda x:sum([i[1] for i in x]),
+                    reverse = True
+                    )
+            return best_gls[0] 
+
         # push gains down to the root as suggested by Mirkin 2003
         minimal_gains = [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore]
+
+        # make sure to check the model with minimal amount of gains
+        minGains = len(self.taxa)
+        for i,line in enumerate(minimal_gains):
+            gains = sum([1 for x in line if x[1] == 1])
+            if gains <= minGains:
+                minGains = gains
+        minimal_gains = [line for line in minimal_gains if sum(
+            [1 for x in line if x[1] == 1]
+            ) == minGains]
         
         best_scenario = None
         old_length_of_tips = len(self.taxa) + 1
@@ -602,6 +639,7 @@ class TreBor(Wordlist):
             if new_length_of_tips < old_length_of_tips:
                 old_length_of_tips = new_length_of_tips
                 best_scenario = i
+        
         return minimal_gains[best_scenario]
 
     def get_GLS(
@@ -612,7 +650,8 @@ class TreBor(Wordlist):
             output_gml = False,
             output_plot = False,
             verbose = False,
-            tar = False
+            tar = False,
+            **keywords
             ):
         """
         Create gain-loss-scenarios for all non-singleton paps in the data.
@@ -652,6 +691,22 @@ class TreBor(Wordlist):
             glm = 'r-{0}'.format(restriction)
         elif mode == 'topdown':
             glm = 't-{0}'.format(restriction)
+
+        # set defaults
+        defaults = {
+                "force" : False
+                }
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
+
+        # check for previous analyses
+        if glm in self.gls and not keywords['force']:
+            print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
+                    end = ""
+                    )
+            print("For recalculation, set 'force' to True.")
+            return
         
         # create statistics for this run
         self.stats[glm] = {}
@@ -665,26 +720,29 @@ class TreBor(Wordlist):
 
         for cog in self.cogs:
             if verbose: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
-            if mode == 'weighted':
-                gls = self._get_GLS(
-                        self.paps[cog],
-                        r = ratio,
-                        mode = 'w'
-                        )
+            # check for singletons
+            if sum([x for x in self.paps[cog] if x == 1]) == 1:
+                gls = [(self.taxa[self.paps[cog].index(1)],1)]
+            else:
+                if mode == 'weighted':
+                    gls = self._get_GLS(
+                            self.paps[cog],
+                            r = ratio,
+                            mode = 'w'
+                            )
 
-            if mode == 'restriction':
-                gls = self._get_GLS(
-                        self.paps[cog],
-                        r = restriction,
-                        mode = 'r'
-                        )
+                if mode == 'restriction':
+                    gls = self._get_GLS(
+                            self.paps[cog],
+                            r = restriction,
+                            mode = 'r'
+                            )
 
-            if mode == 'topdown':
-                gls = self._get_GLS_top_down(
-                        self.paps[cog],
-                        mode = restriction
-                        )
-
+                if mode == 'topdown':
+                    gls = self._get_GLS_top_down(
+                            self.paps[cog],
+                            mode = restriction
+                            )
             noo = sum([t[1] for t in gls])
             
             self.gls[glm][cog] = (gls,noo)
@@ -733,15 +791,12 @@ class TreBor(Wordlist):
             except:
                 pass
 
-            # load the graph
-            self.gml = nx.read_gml(self.dataset+'.gml')
-
             # store the graph
             for cog in self.cogs:
                 gls = self.gls[glm][cog][0]
                 g = gls2gml(
                         gls,
-                        self.gml,
+                        self.tgraph,
                         self.tree,
                         filename = folder+'/gml/{0}-{1}/{2}'.format(
                             self.dataset,
@@ -929,11 +984,29 @@ class TreBor(Wordlist):
             self,
             glm,
             verbose = False,
-            write = False
+            **keywords
             ):
         """
-        Function retrieves all paps for ancestor languages in a given tree.
+        Function retrieves all pap s for ancestor languages in a given tree.
         """
+        # get keywords and defaults
+        defaults = {
+                'proto' : False,
+                'force' : False,
+                }
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
+
+        # check for already calculated glm
+        # check for previous analyses
+        if glm in self.dists and not keywords['force'] and glm != 'mixed':
+            print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
+                    end = ""
+                    )
+            print("For recalculation, set 'force' to True.")
+            return
+
         # define concepts for convenience
         concepts = self.concepts # XXX do we need this? XXX
         
@@ -1010,36 +1083,36 @@ class TreBor(Wordlist):
         # store the number of forms as an attribute
         self.dists[glm] = [x for x,y in zip(forms,meanings)] # XXX
 
-        # write results of analysis to file 
-        # XXX adjust later
-        if write:
-            cogs = [k[self.header['pap']] for k in self._data.values()]
-            protos = [k[self.header['proto']] for k in
+        # store results of the analyses, that is, all paps for each ancestral
+        # node
+        cogs = [k[self.header['pap']] for k in self._data.values()]
+
+        # search for proto as keyword
+        if keywords['proto']:
+            protos = [k[self.header[keywords['proto']]] for k in
                     self._data.values()]
-
             cogs2proto = dict(zip(cogs,protos))
-            f = open('ancestral_paps.txt','w')
-            for i,n in enumerate(nodes):
-                for j,p in enumerate(paps):
-                    #print(paps[i])
-                    c = paps[j][i]
-                    if c != 0:
-                        m = self.pap2con[c]
-                        p = cogs2proto[c]
-                        
-                        if n != "root":
-                            node = self.tree.getNodeMatchingName(n)
-                            node = str(node).replace('(','').replace(')','').replace(',','-')
-                        else:
-                            node = n
-                        f.write('{0}\t{1}\t{2}\t{3}\n'.format(
-                            node,
-                            c,
-                            m,
-                            p
-                            ))
-            f.close()
+        else:
+            cogs2proto = dict(zip(cogs,cogs))
 
+        # store data in acs attribute (ancestral cognate states)
+        self.acs[glm] = {}
+        for i,n in enumerate(nodes):
+            for j,p in enumerate(paps):
+                c = paps[j][i]
+                if c != 0:
+                    m = self.pap2con[c]
+                    p = cogs2proto[c]
+
+                    if n != 'root':
+                        node = self.tree.getNodeMatchingName(n)
+                        node = str(node).replace('(','').replace(')','').replace(',','-')
+                    else:
+                        node = n
+                    try:
+                        self.acs[glm][node] += [(c,m,p)]
+                    except:
+                        self.acs[glm][node] = [(c,m,p)]
 
         if verbose: print("[i] Calculated the distributions for ancestral taxa.")
 
@@ -1143,9 +1216,6 @@ class TreBor(Wordlist):
                     # add the values to the avsd_list
                     avsd_list[-1] = [a+b for a,b in zip(avsd_list[-1],tmp)]
             
-            # check for correctness
-            if verbose: print(concept,avsd_list[-1],models[-1])
-            
             # calculate best distribution
             zp_vsd = []
             cvsd_set = set(cvsd)
@@ -1171,7 +1241,7 @@ class TreBor(Wordlist):
                 best_models[p] = (best_model,noo,maxP)
                 scenarios[p] = (gls,noo)
 
-            # add sum to general model
+            # add sum to general model XXX start here XXX
             all_avsd = [a+b for a,b in zip(avsd_list[maxIdx],all_avsd)]
 
         
@@ -1223,15 +1293,12 @@ class TreBor(Wordlist):
             except:
                 pass
 
-            # load the graph
-            self.gml = nx.read_gml(self.dataset+'.gml')
-
             # store the graph
             for cog in self.cogs:
                 gls = self.gls["mixed"][cog][0]
                 g = gls2gml(
                         gls,
-                        self.gml,
+                        self.tgraph,
                         self.tree,
                         filename = folder+'/gml/{0}-{1}/{2}'.format(
                             self.dataset,
@@ -1362,13 +1429,30 @@ class TreBor(Wordlist):
 
         return 
 
+    def get_ACS(
+            self,
+            glm,
+            proto = False
+            ):
+        """
+        Compute the ancestral character states (ACS) for all internal nodes.
+
+        """
+
+        if glm not in self.acs:
+            self.get_AVSD(glm,proto=proto)
+        
+        f = open(self.dataset+'_trebor/acs-'+glm+'.csv','w')
+        for key in sorted(self.acs[glm].keys(),key=lambda x:len(x)):
+            for c,m,p in sorted(self.acs[glm][key],key=lambda x:x[1]):
+                f.write('{0}\t{1}\t{2}\t{3}\n'.format(key,c,m,p))
+        f.close()
+
     def get_MLN(
             self,
             glm,
             threshold = 1,
             verbose = False,
-            #colormap = None,
-            degree = 100
             ):
         """
         Compute an Minimal Lateral Network for a given model.
@@ -1384,8 +1468,6 @@ class TreBor(Wordlist):
         colormap : {None matplotlib.cm}
             A :py:class:`matplotlib.colormap` instance. If set to c{None}, this
             defaults to :py:class:`~matplotlib.cm.jet`.
-        degree : int (default=100)
-            The degree which is chosen for the projection of the tree layout.
         """
 
         #if not colormap:
@@ -1397,18 +1479,10 @@ class TreBor(Wordlist):
         # make alias for tree and taxa for convenience
         taxa = self.taxa
         tree = self.tree
+        
+        # get the topological graph
+        gTpl = self.tgraph
 
-        # create the template graph XXX add fallback procedure
-        try:
-            gTpl = nx.read_gml(self.dataset+'.gml')
-        except:
-            
-            # if no good topology is given, create it automatically, using
-            # the radial layout function
-            gTpl = radial_layout(str(self.tree),filename='',degree=degree)
-            
-            if verbose: print("[i] Calculated radial layout for the tree. ")
-            
         # make alias for the current gls for convenience
         scenarios = self.gls[glm]
 
@@ -1708,17 +1782,33 @@ class TreBor(Wordlist):
             f = open(self.dataset+'_trebor/taxa-'+glm+'/'+taxon+'.csv','w')
             keys = [n for n in gOut[taxon] if gOut[taxon][n]['label'] == 'horizontal']
             for key in sorted(keys,key=lambda x:gOut[taxon][x]['weight']):
-                for cog in gOut[taxon][key]['cogs'].split(','):
+                for cog in sorted(gOut[taxon][key]['cogs'].split(',')):
                     tmp = [x for x in self.etd[cog] if x != 0]
                     idx = [x[0] for x in tmp][0]
                     concept = self[idx,'concept']
 
-                    if 'proto' in self.entries:
-                        proto = cog + '\t'+self[idx,'proto']
-                    else:
-                        proto = cog
-                    if 'note' in self.entries:
-                        proto += '\t'+self[idx,'note']
+                    #if 'proto' in self.entries:
+                    #    proto = cog + '\t'+self[idx,'proto']
+                    #else:
+                    #    proto = cog
+                    #if 'note' in self.entries:
+                    #    proto += '\t'+self[idx,'note']
+                    
+                    proto = cog
+                    
+                    # get the index of the current entry in its dictionary
+                    # representation
+                    idx = self.get_dict(col=taxon,entry='pap')[concept]
+                    idx = idx.index(cog)
+                    
+                    # get its real index
+                    idx = self.get_dict(col=taxon)[concept][idx]
+
+                    # include entries specified in keywords XXX modify later
+                    # for customization
+                    for entry in ['ipa','proto']:
+                        if entry in self.header:
+                            proto += '\t'+self[idx,entry]
 
                     f.write('{0}\t{1}\t{2}\n'.format(
                         key,
@@ -1726,7 +1816,7 @@ class TreBor(Wordlist):
                         concept
                         ))
             f.close()
-        if verbose: pirnt("[i] Wrote list of edges per taxa to file.")
+        if verbose: print("[i] Wrote list of edges per taxa to file.")
 
         return 
 
@@ -1807,7 +1897,8 @@ class TreBor(Wordlist):
         self.add_entries(
                 'patchy',
                 updater,
-                lambda x:x
+                lambda x:x,
+                override = True
                 )
 
         # write data to file
@@ -1854,6 +1945,80 @@ class TreBor(Wordlist):
             f.write('{0}\t{1:.2f}\n'.format(a,b))
         f.close()
         if verbose: print("[i] Wrote stats on concepts to file.")
+        
+        # write results to alm-file
+        # get all patchy cognates
+        tmp = {}
+        for key in self:
+            patchy = self[key,'patchy']
+            if not patchy.endswith('0'):
+
+                concept = self[key,'concept']
+                taxon = self[key,'doculect']
+                pap = self[key,'pap']
+                
+                # XXX change this later for more flexibility XXX
+                try:
+                    word = self[key,'ipa']
+                except:
+                    word = self[key,'counterpart']
+                
+                if concept not in tmp:
+                    tmp[concept] = {}
+                if pap not in tmp[concept]:
+                    tmp[concept][pap] = {}
+
+                try:
+                    tmp[concept][pap][patchy] += [(taxon,word)]
+                except:
+                    tmp[concept][pap][patchy] = [(taxon,word)]
+
+        # write stuff to alm-file
+        f = open(self.dataset+'_trebor/'+self.dataset+'-'+glm+'.alm.patchy','w')
+        for concept in sorted(tmp.keys()):
+            
+            f.write('# Basic Concept: "{0}"\n\n'.format(concept))
+            
+            for pap in sorted(tmp[concept].keys()):
+
+                f.write('## Cognate-Set: "{0}\n'.format(pap))
+
+                words = []
+                langs = []
+                patchies = []
+                
+                for patchy in sorted(tmp[concept][pap].keys()):
+                    
+                    # get words and languages
+                    words += [t[1].replace("ˈ",'') for t in tmp[concept][pap][patchy]]
+                    langs += [t[0] for t in tmp[concept][pap][patchy]]
+        
+                    patchies += [patchy[-1] for i in
+                            range(len(tmp[concept][pap][patchy]))]
+                
+                msa = Multiple(words)
+                # XXX add for different alignment algorithm later XXX
+                msa.prog_align()
+                alms = msa.alm_matrix
+        
+                # get formatter for languages
+                formatter = max([len(lang) for lang in langs])
+        
+                for i,word in enumerate(words):
+                    
+                    string = '{0:'+str(formatter)+'}\t{1}\t|\t{2}\t|\t[{3}]\n'
+                    f.write(string.format(
+                        langs[i],
+                        patchies[i],
+                        '\t'.join(alms[i]),
+                        word
+                        ))
+                f.write('\n')
+            f.write('\n')
+        
+        f.close()
+
+
 
     def analyze(
             self,
@@ -1915,6 +2080,9 @@ class TreBor(Wordlist):
                 'usetex':False,
                 'only':[],
                 'colormap': None, #mpl.cm.jet
+                'proto' : False,
+                'xticksize' : 6,
+                
                 }
 
         for key in defaults:
@@ -2000,7 +2168,7 @@ class TreBor(Wordlist):
         if verbose: print("[i] Calculating the Ancestral Vocabulary Distributions...")
         modes = list(self.gls.keys())
         for m in modes:
-            self.get_AVSD(m,verbose=verbose)
+            self.get_AVSD(m,verbose=verbose,**keywords)
 
         # calculate mixed model
         if mixed:
@@ -2011,7 +2179,8 @@ class TreBor(Wordlist):
                     output_gml=output_gml,
                     tar=tar
                     )
-            modes += ['mixed']
+            if 'mixed' not in modes:
+                modes += ['mixed']
 
         # compare the distributions using mannwhitneyu
         if verbose: print("[i] Comparing the distributions...")
@@ -2118,7 +2287,20 @@ class TreBor(Wordlist):
                         p
                         ) for m,p in zip(mode_strings,p_vsd)
                         ],
-                    size=18
+                    size=keywords['xticksize'],
+                    rotation = 45,
+                    #rotation_mode='anchor',
+                    ha = 'center',
+                    #va = 'center'
+                    )
+
+            ax.yaxis.grid(
+                    True,
+                    linestyle='-',
+                    which='major',
+                    color='lightgrey',
+                    alpha=0.5,
+                    zorder = 1
                     )
 
             # save the figure
@@ -2146,8 +2328,7 @@ class TreBor(Wordlist):
             self.get_MLN(
                 glm,
                 verbose = verbose,
-                threshold = keywords['threshold'],
-                #colormap = keywords['colormap']
+                threshold = keywords['threshold']
                 )
 
             # check whether plots are chosen
@@ -2188,6 +2369,8 @@ class TreBor(Wordlist):
             colormap = None, #mpl.cm.jet,
             taxon_labels = 'taxon.short_labels',
             verbose = False,
+            alphat = False,
+            alpha = 0.75,
             **keywords
             ):
         """
@@ -2222,6 +2405,13 @@ class TreBor(Wordlist):
             "[i] You should select an appropriate model first."
             )
         
+        # switch backend, depending on whether tex is used or not
+        backend = mpl.get_backend()
+        if usetex and backend != 'pgf':
+            plt.switch_backend('pgf')
+        elif not usetex and backend != 'TkAgg':
+            plt.switch_backend('TkAgg')
+
         # check for filename
         if not filename:
             filename = self.dataset
@@ -2290,6 +2480,7 @@ class TreBor(Wordlist):
             y = g['y']
             h = g['h']
             w = g['w']
+            s = g['s']
 
             if d['label'] not in self.taxa:
                 inodes += [(x,y)]
@@ -2308,10 +2499,11 @@ class TreBor(Wordlist):
                         x,
                         y,
                         r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}',
-                        r
+                        r,
+                        s
                         )]
                 else:
-                    enodes += [(x,y,tfunc(d['label']),r)]
+                    enodes += [(x,y,tfunc(d['label']),r,s)]
         
         # store vertical and lateral edges
         vedges = []
@@ -2333,10 +2525,14 @@ class TreBor(Wordlist):
                 g = d['graphics']
                 f = g['fill']
                 w = g['width']
+                a = alpha
                 if d['weight'] < threshold:
-                    w = 0.0
+                    if alphat:
+                        a = 0.2
+                    else:
+                        w = 0.0
 
-                ledges += [(xA,xB,yA,yB,f,w)]
+                ledges += [(xA,xB,yA,yB,f,w,a)]
 
                 weights.append(d['weight'])
         
@@ -2359,14 +2555,14 @@ class TreBor(Wordlist):
         plt.axis('equal')
 
         # draw the horizontal edges
-        for xA,xB,yA,yB,f,w in sorted(ledges,key=lambda x:x[-1]):
+        for xA,xB,yA,yB,f,w,a in sorted(ledges,key=lambda x:x[-2]):
             plt.plot(
                     [xA,xB],
                     [yA,yB],
                     '-',
                     color=f,
                     linewidth=float(w) / 3,
-                    alpha=0.75
+                    alpha=a
                     )
 
         # draw the vertical edges
@@ -2411,31 +2607,47 @@ class TreBor(Wordlist):
         
         # draw the leaves
         # store x and y-maxima for ylim, xlim drawing
-        for x,y,t,r in enodes:
+        for x,y,t,r,ha in enodes:
             
             xvals += [x]
             yvals += [y]
 
-            if r > 270:
-                ha = 'right'
-            else:
-                ha = 'left'
             plt.text(
                     x,
                     y,
                     t,
                     size = '7',
                     verticalalignment='baseline',
-                    backgroundcolor='black',
+                    backgroundcolor='white',
                     horizontalalignment=ha,
                     fontweight = 'bold',
                     color='white',
                     bbox = dict(
-                        facecolor='black',
-                        boxstyle='square'
+                        facecolor='white',
+                        boxstyle='square,pad=0.25',
+                        ec="none",
+                        alpha = 0.25
                         ),
                     rotation=r,
                     rotation_mode = 'anchor'
+                    )
+        for x,y,t,r,ha in enodes:
+            
+            xvals += [x]
+            yvals += [y]
+
+            plt.text(
+                    x,
+                    y,
+                    t,
+                    size = '7',
+                    verticalalignment='baseline',
+                    horizontalalignment=ha,
+                    fontweight = 'bold',
+                    color='black',
+                    rotation=r,
+                    rotation_mode = 'anchor',
+                    zorder = 10000
                     )
 
         # add a colorbar
@@ -2469,7 +2681,7 @@ class TreBor(Wordlist):
                 )
         plt.ylim(min(yvals),max(yvals))
         plt.xlim(min(xvals),max(xvals))
-        plt.subplots_adjust(left=0.05,right=0.99,top=0.95,bottom=0.00)
+        plt.subplots_adjust(left=0.05,right=0.99,top=0.9,bottom=0.1)
         #fig.axes.get_xaxis().set_visible(False)
         #fig.axes.get_yaxis().set_visible(False)
         plt.axis('off')
@@ -2480,7 +2692,294 @@ class TreBor(Wordlist):
         plt.clf()
         if verbose: FileWriteMessage(filename,fileformat).message('written')
 
-        return 
+        return
+
+    def plot_MLN_3d(
+            self,
+            glm = '',
+            filename = '',
+            fileformat = 'pdf',
+            threshold = 1,
+            usetex = True,
+            colormap = None, #mpl.cm.jet,
+            taxon_labels = 'taxon.short_labels',
+            verbose = False,
+            alphat = False,
+            alpha = 0.75,
+            **keywords
+            ):
+        """
+        Plot the MLN with help of Matplotlib in 3d.
+
+        glm : str (default='')
+            Identifier for the gain-loss model that is plotted. Defaults to the
+            model that had the best scores in terms of probability.
+        filename : str (default='')
+            If no filename is selected, the filename is identical with the
+            dataset.
+        fileformat : {'svg','png','jpg','pdf'} (default='pdf')
+            Select the format of the output plot.
+        threshold : int (default=1)
+            Select the threshold for drawing lateral edges.
+        verbose : bool (default = False)
+            If set to c{True}, be verbose when carrying out the analysis.
+        usetex : bool (default=True)
+            Specify whether you want to use LaTeX to render plots.
+        colormap : {None matplotlib.cm}
+            A :py:class:`matplotlib.colormap` instance. If set to c{None}, this
+            defaults to :py:class:`~matplotlib.cm.jet`.
+        taxon_labels : str (default='taxon.short_labels')
+            Specify the taxon labels that should be included in the plot. 
+
+        """
+        # check for correct glm
+        if not glm and hasattr(self,'best_model'):
+            glm = self.best_model
+        elif not glm:
+            raise ValueError(
+            "[i] You should select an appropriate model first."
+            )
+        
+        # switch backend, depending on whether tex is used or not
+        backend = mpl.get_backend()
+        if usetex and backend != 'pgf':
+            plt.switch_backend('pgf')
+        elif not usetex and backend != 'TkAgg':
+            plt.switch_backend('TkAgg')
+
+        # check for filename
+        if not filename:
+            filename = self.dataset
+
+        # if not colormap
+        if not colormap:
+            colormap = mpl.cm.jet
+
+        # set default, XXX change later
+        if 'height' not in keywords:
+            keywords['height'] = 7
+        if 'width' not in keywords:
+            keywords['width'] = 10
+
+        # try to load the configuration file
+        try:
+            conf = json.load(open(self.dataset+'.json'))
+        except:
+            conf = {}
+        
+        # check for 'taxon.labels' in conf
+        if taxon_labels in conf: #XXX change later
+            tfunc = lambda x:conf[taxon_labels][x]
+        else:
+            tfunc = lambda x:x
+
+        # get the graph
+        graph = self.graph[glm]
+
+        # store in internal and external nodes
+        inodes = []
+        enodes = []
+
+        # get some data on the taxa
+        max_label_len = max([len(tfunc(t)) for t in self.taxa])
+
+        # get colormap for edgeweights
+        edge_weights = []
+        for nodeA,nodeB,data in graph.edges(data=True):
+            if data['label'] == 'horizontal': 
+                edge_weights.append(data['weight'])
+
+        
+        # determine a colorfunction
+        cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
+        lfunc = np.linspace(0.5,8,len(set(edge_weights)))
+
+        # sort the weights
+        weights = sorted(set(edge_weights))
+
+        # get the scale for the weights (needed for the line-width)
+        scale = 20.0 / max(edge_weights)
+
+        # write colors and scale to graph
+        for nA,nB,data in graph.edges(data=True):
+            if data['label'] == 'horizontal':
+                w = data['weight']
+                data['graphics'] = {}
+                data['graphics']['fill'] = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
+                data['graphics']['width'] = scale * w
+
+        # get the nodes
+        for n,d in graph.nodes(data=True):
+            g = d['graphics']
+            x = g['x']
+            y = g['y']
+            z = g['z']
+            h = g['h']
+            w = g['w']
+            s = g['s']
+            zorder = g['zorder']
+
+            if d['label'] not in self.taxa:
+                inodes += [(x,y,-z,zorder)]
+            else:
+                if 'angle' in d['graphics']:
+                    r = d['graphics']['angle']
+                else:
+                    r = 0
+
+                # get the difference between the current label and it's
+                # original lenght for formatting output
+                ll = max_label_len - len(tfunc(d['label']))
+
+                if usetex:
+                    enodes += [(
+                        x,
+                        y,
+                        -z,
+                        r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}',
+                        r,
+                        s,
+                        zorder
+                        )]
+                else:
+                    enodes += [(x,y,-z,tfunc(d['label']),r,s,zorder)]
+        
+        # store vertical and lateral edges
+        vedges = []
+        ledges = []
+        weights = []
+
+        # get the edges
+        for a,b,d in graph.edges(data=True):
+            
+            xA = graph.node[a]['graphics']['x']
+            yA = graph.node[a]['graphics']['y']
+            zA = graph.node[a]['graphics']['z']
+            xB = graph.node[b]['graphics']['x']
+            yB = graph.node[b]['graphics']['y']
+            zB = graph.node[b]['graphics']['z']
+            zoA = graph.node[a]['graphics']['zorder']
+            zoB = graph.node[b]['graphics']['zorder']
+            zorder = int((zoA+zoB) / 2)
+
+            if d['label'] == 'vertical':
+                vedges += [(xA,xB,yA,yB,-zA,-zB,zorder)]
+            else:
+                g = d['graphics']
+                f = g['fill']
+                w = g['width']
+                a = alpha
+                if d['weight'] < threshold:
+                    if alphat:
+                        a = 0.2
+                    else:
+                        w = 0.0
+
+                ledges += [(xA,xB,yA,yB,-zA,-zB,zorder,f,w,a)]
+
+                weights.append(d['weight'])
+        
+        # usetex
+        mpl.rc('text',usetex = usetex)
+
+        # create the figure
+        fig = plt.figure(
+                facecolor='white',
+                figsize = (keywords['width'],keywords['height'])
+                    )
+        figsp = fig.add_subplot(111,projection='3d')
+        
+        # draw the horizontal edges
+        for xA,xB,yA,yB,zA,zB,zorder,f,w,a in sorted(ledges,key=lambda x:x[-2]):
+            figsp.plot(
+                    [xA,xB],
+                    [yA,yB],
+                    [zA,zB],
+                    color=f,
+                    linewidth=float(w) / 4,
+                    alpha=a,
+                    zorder = zorder #100 # * abs(xA-xB) + 100 * abs(yA-yB)
+                    )
+
+        # draw the vertical edges
+        for xA,xB,yA,yB,zA,zB,zorder in vedges:
+            figsp.plot(
+                    [xA,xB],
+                    [yA,yB],
+                    [zA,zB],
+                    color='0.0',
+                    linewidth=3,
+                    alpha = 0.5,
+                    zorder = zorder #100 * abs(xA-xB) + 100 * abs(yA-yB)
+                    )
+            #figsp.plot(
+            #        [xA,xB],
+            #        [yA,yB],
+            #        [zA,zB],
+            #        color='1.0',
+            #        linewidth=1,
+            #        #zorder = 100 * abs(xA-xB) + 100 * abs(yA-yB)
+            #        )
+        # store x,y values for ylim,xlim drawing
+        xvals = []
+        yvals = []
+        zvals = []
+
+        # draw the nodes
+        for x,y,z,zorder in inodes:
+            xvals += [x]
+            yvals += [y]
+            zvals += [z]
+
+            figsp.scatter(
+                    x,
+                    y,
+                    z,
+                    marker = 'o',
+                    s=20,
+                    c='black',
+                    zorder = zorder #100 * x + 100 * y
+                    )
+        
+        # draw the leaves
+        # store x and y-maxima for ylim, xlim drawing
+        for x,y,z,t,r,ha,zorder in enodes:
+            
+            xvals += [x]
+            yvals += [y]
+            zvals += [z]
+
+            figsp.text(
+                    x,
+                    y,
+                    z,
+                    t,
+                    size = '5',
+                    verticalalignment='center',
+                    horizontalalignment='center',
+                    bbox = dict(
+                        facecolor='white',
+                        boxstyle='square,pad=0.2',
+                        ec="none",
+                        #alpha = 0.25
+                        ),
+                    fontweight = 'bold',
+                    color='black',
+                    zorder = zorder + 200 #120 # * x + 100 * y
+                    )
+
+        figsp.view_init(azim=180+40,elev=22)
+        figsp.set_ylim(min(yvals),max(yvals))
+        figsp.set_xlim(min(xvals),max(xvals))
+        figsp.set_zlim(min(zvals),max(zvals))
+
+        figsp.set_axis_off()
+
+        plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
+        plt.clf()
+        if verbose: FileWriteMessage(filename,fileformat).message('written')
+
+        return
 
     def plot_MSN(
             self,
@@ -2490,9 +2989,10 @@ class TreBor(Wordlist):
             fileformat='pdf',
             threshold = 1,
             only = [],
-            usetex = True,
+            usetex = False,
             external_edges = False,
             colormap = None, #mpl.cm.jet
+            **keywords
             ):
         """
         Plot the Minimal Spatial Network.
@@ -2523,6 +3023,29 @@ class TreBor(Wordlist):
             "[i] You should select an appropriate model first."
             )
         
+        # set defaults
+        defaults = {
+                'latex_preamble' : []
+                }
+
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
+
+        # switch backend, depending on whether tex is used or not
+        backend = mpl.get_backend()
+        if usetex and backend != 'pgf':
+            plt.switch_backend('pgf')
+        elif not usetex and backend != 'TkAgg':
+            plt.switch_backend('TkAgg')
+
+        # check for preamble settings
+        if keywords['latex_preamble']:
+            mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
+
+        # usetex
+        mpl.rc('text',usetex=usetex)
+
         # check for filename
         if not filename:
             filename = self.dataset
@@ -2533,9 +3056,6 @@ class TreBor(Wordlist):
 
         if not colormap:
             colormap = mpl.cm.jet
-
-        # usetex
-        mpl.rc('text',usetex=True)
     
         # redefine taxa and tree for convenience
         taxa,tree = self.taxa,self.tree
@@ -2545,8 +3065,8 @@ class TreBor(Wordlist):
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
-        if 'coords' in self.entries:
-            pass
+        if 'coords' in self._meta:
+            coords = self._meta['coords']
         
         else:
             coords = csv2dict(
@@ -2556,23 +3076,26 @@ class TreBor(Wordlist):
                     )
 
         # check for groups, add functionality for groups in qlc-file later XXX
-        if 'group' in self.entries:
-            pass
+        if 'groups' in self._meta:
+            groups = self._meta['groups']
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
         ## check for color, add functionality for colors later XXX
-        if 'colors' in self.entries:
-            pass
-        else:
-            colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
+        #if 'group.colors' in self._meta:
+        #    colors = self._meta['colors']
+        #else:
+        #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
-        if verbose: LoadDataMessage('coordinates','groups','colors').message('loaded')
+        #if verbose: LoadDataMessage('coordinates','groups','colors').message('loaded')
         
         # load the rc-file XXX add internal loading later
         try:
             conf = json.load(open(self.dataset+'.json'))
         except:
-            pass # XXX add fallback later
+            try:
+                conf = self._meta['conf']
+            except:
+                raise ValueError('[!] Configuration is not specified!')
         
         if verbose: LoadDataMessage('configuration')
                 
@@ -2764,6 +3287,15 @@ class TreBor(Wordlist):
         else:
             gfunc = lambda x:x
 
+        # check for defaults
+        defaults = {
+                "markersize" : 10,
+                "table.cell.height" : 0.025,
+                }
+        for k in defaults:
+            if k  not in conf:
+                conf[k] = defaults[k]
+
         for i,(taxon,(lng,lat)) in enumerate(sorted(coords.items(),key=lambda x:x[0])):
             
             # retrieve x and y from the map
@@ -2775,7 +3307,10 @@ class TreBor(Wordlist):
             # get colors from conf
             this_group = groups[taxon]
             taxon_color = conf['groups.colors'][this_group]
-            taxon_marker = conf['groups.markers'][this_group]
+            try:
+                taxon_marker = conf['groups.markers'][this_group]
+            except:
+                taxon_marker = 'o'
 
 
             # check for legend
@@ -2896,6 +3431,7 @@ class TreBor(Wordlist):
         if verbose: FileWriteMessage(filename,fileformat).message('written')
         return
 
+    
     def plot_concepts(
             self,
             concept,
@@ -3118,7 +3654,167 @@ class TreBor(Wordlist):
         plt.clf()
         if verbose: FileWriteMessage(filename,fileformat).message('written')
         return
+    
+    def plot_GLS(
+            self,
+            glm
+            ):
+        """
+        Plot the inferred scenarios for a given model.
+        """
+        
+        # make folder variable
+        folder = self.dataset+'_trebor'
+
+        # make the directory for the files
+        try:
+            os.mkdir(folder+'/gml')
+        except:
+            pass
+
+        # make next directory
+        try:
+            os.mkdir(
+                    folder+'/gml/'+'{0}-{1}'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+
+        # make the folder for png
+        try:
+            os.mkdir(
+                    folder+'/gml/'+'{0}-{1}-figures'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+        
+        # store the graph
+        for cog in self.cogs:
+            gls = self.gls[glm][cog][0]
+            g = gls2gml(
+                    gls,
+                    self.tgraph,
+                    self.tree,
+                    filename = folder+'/gml/{0}-{1}/{2}'.format(
+                        self.dataset,
+                        glm,
+                        cog
+                        ),
+                    )
+
+            # if plot of gml is chose
+            nodes = []
             
+            for n,d in g.nodes(data=True):
+                x = d['graphics']['x']
+                y = d['graphics']['y']
+                f = d['graphics']['fill']
+                try:
+                    r = d['graphics']['angle']
+                    s = d['graphics']['s']
+                except:
+                    r = None
+                    s = None
+
+                o = d['origin']
+                l = d['label']
+                
+                nodes.append((x,y,f,o,l,r,s))
+
+            edges = []
+            for a,b,d in g.edges(data=True):
+            
+                xA = g.node[a]['graphics']['x']
+                xB = g.node[b]['graphics']['x']
+                yA = g.node[a]['graphics']['y']
+                yB = g.node[b]['graphics']['y']
+            
+                edges += [(xA,xB,yA,yB)]
+            
+            #mpl.rc('text',usetex=keywords['usetex'])
+            fig = plt.figure()
+            figsp = fig.add_subplot(111)
+            ax = plt.axes(frameon=False)
+            plt.xticks([])
+            plt.yticks([])
+            
+            plt.axis('equal')
+            
+            for xA,xB,yA,yB in edges:
+            
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color='black',
+                        linewidth=5
+                        )
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color='0.2',
+                        linewidth=4
+                        )
+            for x,y,f,o,l,r,s in nodes:
+
+                if f == '#000000':
+                    f = '#eb3510'
+                    c = '#eb3410'
+                else:
+                    c = '#000000'
+
+                if o == 1:
+                    size = 20
+                else:
+                    size = 10
+                if l.startswith('edge') or l.startswith('root'):
+                    plt.plot(x,y,'o',markersize=size,color=f)
+                else:
+                    if not r:
+                        plt.text(
+                                x,
+                                y,
+                                l,
+                                horizontalalignment='center',
+                                verticalalignment='center',
+                                size=8,fontweight='bold',color=c,backgroundcolor=f
+                                )
+                    else:
+                        plt.text(
+                                x,
+                                y,
+                                l,
+                                ha = s,
+                                va = 'baseline',
+                                size=8,
+                                fontweight='bold',
+                                color=c,
+                                rotation=r,
+                                rotation_mode='anchor',
+                                bbox = dict(
+                                    facecolor='white',
+                                    boxstyle='square,pad=0.25',
+                                    ec="none",
+                                    alpha = 0.25
+                                    ),
+                                )
+            
+            #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
+            plt.savefig(folder+'/gml/{0}-{1}-figures/{2}-{3}.png'.format(
+                self.dataset,
+                glm,
+                self.pap2con[cog],
+                cog
+                ))
+            plt.clf()
+
 
 
 #!depr    def get_weighted_GLS_multi(
