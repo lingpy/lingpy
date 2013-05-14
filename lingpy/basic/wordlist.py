@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-04-06 22:54
+# modified : 2013-05-08 23:22
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-06"
+__date__="2013-05-08"
 
 import os
 from datetime import date,datetime
@@ -865,13 +865,12 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input(
-                    "[?] Datatype <{entry}> has already been produced, do "\
-                    +"you want to override? ".format(
-                        entry=entry
-                        )
+            print(
+                    "[?] Datatype <{entry}> has already been produced, ".format(entry=entry),
+                    end = ''
                     )
-            if answer.lower() in ['y','yes']:
+            answer = input("do you want to override? (y/n) ")
+            if answer.lower() in ['y','yes','j']:
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)
             else:

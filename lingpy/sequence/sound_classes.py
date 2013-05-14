@@ -379,9 +379,26 @@ def prosodic_string(
             print(a,b,c)
             input("[i] Press the Any-Key to carry on.")
             pstring += '?'
+    
+    if _output == 'cv':
+        conv = {
+                "A":"C",
+                "B":"C",
+                "C":"C",
+                "M":"C",
+                "L":"C",
+                "N":"C",
+                "X":"V",
+                "Y":"V",
+                "Z":"V",
+                "T":"T",
+                "_":"_",
+                }
+        return ''.join([conv[x] for x in pstring])
 
-    if _output:
+    elif _output:
         return pstring
+
     else:
         conv = {
                 "A":"#",
