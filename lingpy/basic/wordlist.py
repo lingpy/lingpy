@@ -66,9 +66,6 @@ class Wordlist(object):
     transcriptions, both the orthographical source and the IPA transcriptions
     can be easily accessed as two separate two-dimensional lists.
     
-    .. todo:: Add more documentation...
-
-    .. date:: 2012-11-08
     """
 
     def __init__(

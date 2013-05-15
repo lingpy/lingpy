@@ -32,11 +32,18 @@ try:
     import networkx as nx
 except ImportError:
     ThirdPartyModuleError('networkx').warning
+
+try:
+    import matplotlib.pyplot as plt
+except:
+    ThidPartyModuleError('pyplot').warning
  
 from ..data import *
 from ..data import _color
 from ..align.sca import SCA
 from ..check.messages import *
+from .gml import *
+
 
 
 def colorRange(
@@ -695,3 +702,111 @@ def msa2html(
     out = open(outfile,'w')
     out.write(html)
     out.close()
+
+
+def plot_tree(
+        treestring,
+        degree = 100,
+        fileformat = 'pdf',
+        filename = 'output',
+        **keywords
+        ):
+    """
+    Plot a newick tree to PDF or other graphical formats.
+    """
+
+    default = dict(
+            linewidth = 5,
+            linecolor = 'black',
+            nodesize = 10,
+            nodecolor = 'black',
+            textsize = '10',
+            textcolor = 'white',
+            va = 'center',
+            ha = 'center',
+            bg = 'black',
+            fontweight = 'bold',
+            left = 0.05,
+            right = 0.95,
+            top = 0.95,
+            bottom = 0.05,
+            figsize = (10,10),
+            )
+    for k in default:
+        if k not in keywords:
+            keywords[k] = default[k]
+    
+    # get the tree-graph
+    graph = radial_layout(treestring,degree=degree)
+    
+    # create the figure
+    fig = plt.figure(figsize=keywords['figsize'])
+    fig.add_subplot(111)
+    plt.axes(frameon=False)
+    plt.axis('equal')
+    plt.xticks([])
+    plt.yticks([])
+
+    # start iterating over edges
+    for nA,nB,d in graph.edges(data=True):
+            
+        # get the coordinates
+        xA = graph.node[nA]['graphics']['x']
+        yA = graph.node[nA]['graphics']['y']
+        xB = graph.node[nB]['graphics']['x']
+        yB = graph.node[nB]['graphics']['y']
+
+        # plot the coordinates
+        plt.plot(
+                [xA,xB],
+                [yA,yB],
+                '-',
+                color=keywords['linecolor'],
+                linewidth=keywords['linewidth']
+                )
+
+    # get the nodes
+    for n,d in graph.nodes(data=True):
+           
+        g = d['graphics']
+        x,y = g['x'],g['y']
+    
+        if d['label'].startswith('edge') or d['label'].startswith('root'):
+            plt.plot(
+                    x,
+                    y,
+                    'o',
+                    markersize = keywords['nodesize'],
+                    color = keywords['nodecolor']
+                    )
+        else:
+            plt.text(
+                    x,
+                    y,
+                    d['label'],
+                    color = keywords['textcolor'],
+                    fontweight = keywords['fontweight'],
+                    #backgroundcolor = keywords['bg'],
+                    va = keywords['va'],
+                    ha = g['s'],
+                    bbox = dict(
+                        facecolor=keywords['bg'],
+                        boxstyle = 'square,pad=0.2',
+                        ec="none",
+                        ),
+                    size = keywords['textsize'],
+                    rotation = g['angle'],
+                    rotation_mode = 'anchor'
+                    )
+    plt.subplots_adjust(
+            left = keywords['left'],
+            right = keywords['right'],
+            top = keywords['top'],
+            bottom = keywords['bottom']
+            )
+
+    plt.savefig(filename + '.' + fileformat)
+    plt.clf()
+
+
+

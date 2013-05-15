@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-10 00:22
+# modified : 2013-05-14 19:43
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-05-10"
+__date__="2013-05-14"
 
 
 # basic imports
@@ -1786,13 +1786,6 @@ class TreBor(Wordlist):
                     tmp = [x for x in self.etd[cog] if x != 0]
                     idx = [x[0] for x in tmp][0]
                     concept = self[idx,'concept']
-
-                    #if 'proto' in self.entries:
-                    #    proto = cog + '\t'+self[idx,'proto']
-                    #else:
-                    #    proto = cog
-                    #if 'note' in self.entries:
-                    #    proto += '\t'+self[idx,'note']
                     
                     proto = cog
                     
@@ -2362,11 +2355,9 @@ class TreBor(Wordlist):
     def plot_MLN(
             self,
             glm = '',
-            filename = '',
             fileformat = 'pdf',
             threshold = 1,
             usetex = True,
-            colormap = None, #mpl.cm.jet,
             taxon_labels = 'taxon.short_labels',
             verbose = False,
             alphat = False,
@@ -2412,19 +2403,17 @@ class TreBor(Wordlist):
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
-        # check for filename
-        if not filename:
-            filename = self.dataset
+        defaults = dict(
+                figsize = (10,10),
+                colormap = mpl.cm.jet,
+                filename = self.dataset
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
-        # if not colormap
-        if not colormap:
-            colormap = mpl.cm.jet
-
-        # set default, XXX change later
-        if 'height' not in keywords:
-            keywords['height'] = 7
-        if 'width' not in keywords:
-            keywords['width'] = 10
+        colormap = keywords['colormap']
+        filename = keywords['filename']
 
         # try to load the configuration file
         try:
@@ -2453,7 +2442,6 @@ class TreBor(Wordlist):
         for nodeA,nodeB,data in graph.edges(data=True):
             if data['label'] == 'horizontal': 
                 edge_weights.append(data['weight'])
-
         
         # determine a colorfunction
         cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
@@ -2542,7 +2530,7 @@ class TreBor(Wordlist):
         # create the figure
         fig = plt.figure(
                 facecolor='white',
-                figsize = (keywords['width'],keywords['height'])
+                figsize = keywords['figsize']
                     )
         figsp = fig.add_subplot(111)
         
@@ -2985,13 +2973,11 @@ class TreBor(Wordlist):
             self,
             glm = '',
             verbose=False,
-            filename='pdf',
             fileformat='pdf',
             threshold = 1,
             only = [],
             usetex = False,
             external_edges = False,
-            colormap = None, #mpl.cm.jet
             **keywords
             ):
         """
@@ -3024,9 +3010,12 @@ class TreBor(Wordlist):
             )
         
         # set defaults
-        defaults = {
-                'latex_preamble' : []
-                }
+        defaults = dict(
+                latex_preamble = [],
+                figsize = (10,10),
+                colormap = mpl.cm.jet,
+                filename = self.dataset
+                )
 
         for key in defaults:
             if key not in keywords:
@@ -3046,16 +3035,12 @@ class TreBor(Wordlist):
         # usetex
         mpl.rc('text',usetex=usetex)
 
-        # check for filename
-        if not filename:
-            filename = self.dataset
-
         # check for only
         if not only:
             only = self.taxa
-
-        if not colormap:
-            colormap = mpl.cm.jet
+        
+        filename = keywords['filename']
+        colormap = keywords['colormap']
     
         # redefine taxa and tree for convenience
         taxa,tree = self.taxa,self.tree
@@ -3080,14 +3065,7 @@ class TreBor(Wordlist):
             groups = self._meta['groups']
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
-        ## check for color, add functionality for colors later XXX
-        #if 'group.colors' in self._meta:
-        #    colors = self._meta['colors']
-        #else:
-        #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
-        #if verbose: LoadDataMessage('coordinates','groups','colors').message('loaded')
-        
         # load the rc-file XXX add internal loading later
         try:
             conf = json.load(open(self.dataset+'.json'))
@@ -3223,7 +3201,7 @@ class TreBor(Wordlist):
         min_lon,max_lon = min(longitudes),max(longitudes)
 
         # start to initialize the basemap
-        fig = plt.figure()
+        fig = plt.figure(figsize=keywords['figsize'])
         figsp = fig.add_subplot(111)
         
         # instantiate the basemap
@@ -3429,6 +3407,8 @@ class TreBor(Wordlist):
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
         if verbose: FileWriteMessage(filename,fileformat).message('written')
+
+        #self.geograph[glm] = geoGraph
         return
 
     
@@ -3708,7 +3688,7 @@ class TreBor(Wordlist):
                         ),
                     )
 
-            # if plot of gml is chose
+            # if plot of gml is chosen
             nodes = []
             
             for n,d in g.nodes(data=True):
@@ -3765,8 +3745,8 @@ class TreBor(Wordlist):
             for x,y,f,o,l,r,s in nodes:
 
                 if f == '#000000':
-                    f = '#eb3510'
-                    c = '#eb3410'
+                    f = '#a3a3a3'
+                    c = '#a3a3a3'
                 else:
                     c = '#000000'
 
@@ -3784,7 +3764,10 @@ class TreBor(Wordlist):
                                 l,
                                 horizontalalignment='center',
                                 verticalalignment='center',
-                                size=8,fontweight='bold',color=c,backgroundcolor=f
+                                size=8,
+                                fontweight='bold',
+                                color=c,
+                                backgroundcolor=f
                                 )
                     else:
                         plt.text(
@@ -3814,7 +3797,253 @@ class TreBor(Wordlist):
                 cog
                 ))
             plt.clf()
+    
+    def get_stats(
+            self,
+            glm,
+            verbose = True
+            ):
+        """
+        Calculate basic statistics for a given gain-loss model.
+        """
 
+        gains = [b for a,b in self.gls[glm].values()]
+
+        noo = sum(gains) / len(gains)
+        
+        ppc = sum([1 for g in gains if g > 1]) / len(gains)
+        
+        if verbose:
+            print('Number of Origins: {0:.2f}'.format(noo))
+            print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
+
+        return noo,ppc
+    
+    def plot_concept_evolution(
+            self,
+            glm,
+            concept= '',
+            fileformat = 'png',
+            **keywords
+            ):
+        """
+
+        """
+        # make defaults
+        defaults = dict(
+                figsize = (15,15),
+                left = 0.05,
+                top = 0.95,
+                bottom = 0.05,
+                right = 0.95,
+                colormap = mpl.cm.jet
+                )
+
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+        
+        # check for the correct item
+        if not concept:
+            concepts = self.concepts
+        else:
+            concepts = [i for i in self.concepts if i == concept]
+
+        # make folder variable
+        folder = self.dataset+'_trebor'
+
+        # make the directory for the files
+        try:
+            os.mkdir(folder+'/items')
+        except:
+            pass
+
+        # make next directory
+        try:
+            os.mkdir(
+                    folder+'/items/'+'{0}-{1}'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+
+        # make the folder for png
+        try:
+            os.mkdir(
+                    folder+'/items/'+'{0}-{1}-figures'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+            
+        # XXX customize later XXX
+        colormap = keywords['colormap']
+        
+        # start with the analysis
+        for concept in concepts:
+            print("Plotting concept '{0}'...".format(concept))
+            
+            # make a graph
+            graph = nx.Graph()
+
+            # get all paps that are no singletons
+            paps = sorted(set([p for p in self.get_list(
+                row=concept,
+                flat=True,
+                entry='pap'
+                ) if p not in self.singletons]))
+            
+            # get the number of paps in order to get the right colors
+            cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
+            colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
+                    range(len(paps))])
+
+            # iterate over the paps and append states to the graph
+            for pap in paps:
+                
+                # get the graph with the model
+                gls = self.gls[glm][pap][0]
+                g = gls2gml(
+                        gls,
+                        self.tgraph,
+                        self.tree,
+                        filename = ''
+                        )
+
+                # iterate over the graph
+                for n,d in g.nodes(data=True):
+                    
+                    # add the node if necessary
+                    if n not in graph:
+                        graph.add_node(n)
+                    
+                    # add a pap-dictionary if it's not already there
+                    if 'pap' not in graph.node[n]:
+                        graph.node[n]['pap'] = {}
+
+                    # add data
+                    graph.node[n]['pap'][pap] = d['state']
+            
+            # create the figure
+            fig = plt.figure(figsize=keywords['figsize'])
+            figsp = fig.add_subplot(111)
+            ax = plt.axes(frameon=False)
+            plt.xticks([])
+            plt.yticks([])
+            plt.axis('equal')
+            
+            xvals = []
+            yvals = []
+
+            # iterate over edges first
+            for nA,nB in g.edges():
+                gA = g.node[nA]['graphics']
+                gB = g.node[nB]['graphics']
+                xA,yA = gA['x'],gA['y']
+                xB,yB = gB['x'],gB['y']
+
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color = 'black',
+                        linewidth=5
+                        )
+
+            # now iterate over the nodes
+            for n,d in graph.nodes(data=True):
+                cpaps = d['pap']
+                states = list(cpaps.values())
+                x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
+
+                xvals += [x]
+                yvals += [y]
+                
+                # check for label in taxa
+                if True:
+                    # plot the default black state of nothing happened
+                    plt.plot(
+                            x,
+                            y,
+                            'o',
+                            markersize = 5,
+                            color = 'white',
+                            zorder = 50
+                            )
+
+                    # iterate over paps and plot each state accordingly
+                    for pap in cpaps:
+                        
+                        # get the index and the color
+                        idx = paps.index(pap)
+                        color = colors[pap]
+
+                        if cpaps[pap] == 'l':
+                            pass
+                        elif cpaps[pap] == 'L':
+                            pass
+                            #plt.plot(
+                            #        x,
+                            #        y,
+                            #        '*',
+                            #        markersize = 40 + 10 * idx,
+                            #        zorder = 100 - idx,
+                            #        color = 'black'
+                            #        )
+                        elif cpaps[pap] == 'O':
+                            plt.plot(
+                                    x,
+                                    y,
+                                    '*',
+                                    markersize = 60,
+                                    zorder = 51,
+                                    color = 'white',
+                                    #alpha = 3
+                                    )
+                            plt.plot(
+                                    x,
+                                    y,
+                                    'o',
+                                    markersize = 10 + 8 * idx,
+                                    zorder = 100 - idx,
+                                    color = color
+                                    )
+                        else:
+                            plt.plot(
+                                    x,
+                                    y,
+                                    'o',
+                                    markersize = 10 + 8 * idx,
+                                    zorder = 100 - idx,
+                                    color = color
+                                    )
+
+            plt.xlim((min(xvals)-10,max(xvals)+10))
+            plt.ylim((min(yvals)-10,max(yvals)+10))
+
+            plt.subplots_adjust(
+                    left= keywords['left'],
+                    right= keywords['right'],
+                    top= keywords['top'],
+                    bottom= keywords['bottom']
+                    )
+
+
+            plt.savefig(
+                folder + '/items/{0}-{1}-figures/{2}.'.format(
+                    self.dataset,
+                    glm,
+                    concept
+                    )+fileformat)                
+
+        # return the graph
+        return 
+
+        
 
 
 #!depr    def get_weighted_GLS_multi(
