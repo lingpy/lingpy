@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-14 19:43
+# modified : 2013-05-21 21:42
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-05-14"
+__date__="2013-05-21"
 
 
 # basic imports
@@ -1453,6 +1453,7 @@ class TreBor(Wordlist):
             glm,
             threshold = 1,
             verbose = False,
+            method = 'mr'
             ):
         """
         Compute an Minimal Lateral Network for a given model.
@@ -1561,17 +1562,34 @@ class TreBor(Wordlist):
             # create a graph of weights
             gWeights = nx.Graph()
             
-            # iterate over nodes
-            for i,nodeA in enumerate(oris):
-                for j,nodeB in enumerate(oris):
-                    if i < j:
-                        w = gPrm.edge[nodeA][nodeB]['weight']
-                        gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                                )
-            
+            # calculate majority-rule edges
+            if method in ['majority_rule','mr']:
+                # iterate over nodes
+                for i,nodeA in enumerate(oris):
+                    for j,nodeB in enumerate(oris):
+                        if i < j:
+                            w = gPrm.edge[nodeA][nodeB]['weight']
+                            gWeights.add_edge(
+                                    nodeA,
+                                    nodeB,
+                                    weight=w
+                                    )
+            elif method in ['tree_distance','td']:
+                for i,nodeA in enumerate(oris):
+                    for j,nodeB in enumerate(oris):
+                        if i < j:
+                            w = len(
+                                    self.tree.getConnectingEdges(
+                                        nodeA,
+                                        nodeB
+                                        )
+                                    )
+                            gWeights.add_edge(
+                                    nodeA,
+                                    nodeB,
+                                    weight = w
+                                    )
+
             # if the graph is not empty
             if gWeights:
 
@@ -1584,31 +1602,32 @@ class TreBor(Wordlist):
                     except:
                         tmp_weights[int(d['weight'])] = [(a,b)]
                 
-                # check for identical weights and calculate the tree distance
-                for w in tmp_weights:
-                    elist = tmp_weights[w]
-                    
-                    # check whether there are more identical weights
-                    if len(elist) > 1:
+                if method in ['mr','majority_rule']:
+                    # check for identical weights and calculate the tree distance
+                    for w in tmp_weights:
+                        elist = tmp_weights[w]
                         
-                        # if so, order all stuff according to branch length
-                        branches = []
-                        for a,b in elist:
-                            branch_distance = len(self.tree.getConnectingEdges(a,b))
-                            branches += [(a,b,branch_distance)]
+                        # check whether there are more identical weights
+                        if len(elist) > 1:
+                            
+                            # if so, order all stuff according to branch length
+                            branches = []
+                            for a,b in elist:
+                                branch_distance = len(self.tree.getConnectingEdges(a,b))
+                                branches += [(a,b,branch_distance)]
 
-                        # now change the weights according to the order
-                        scaler = 1 / len(branches)
-                        minus = 1 - scaler
-                        branches = sorted(branches,key=lambda x:(x[2],x[1],x[0]),reverse=True)
-                        for a,b,d in branches:
-                            gWeights.edge[a][b]['weight'] += minus
-                            minus -= scaler
-                
-                # change maximum weights to distance weights
-                for a,b,d in sorted(gWeights.edges(data=True),key=lambda x:x[2]['weight']):
-                    w = d['weight']
-                    gWeights.edge[a][b]['weight'] = int(1000 / w)
+                            # now change the weights according to the order
+                            scaler = 1 / len(branches)
+                            minus = 1 - scaler
+                            branches = sorted(branches,key=lambda x:(x[2],x[1],x[0]),reverse=True)
+                            for a,b,d in branches:
+                                gWeights.edge[a][b]['weight'] += minus
+                                minus -= scaler
+                    
+                    # change maximum weights to distance weights
+                    for a,b,d in sorted(gWeights.edges(data=True),key=lambda x:x[2]['weight']):
+                        w = d['weight']
+                        gWeights.edge[a][b]['weight'] = int(1000 / w)
                 
                 # calculate the MST
                 mst = nx.minimum_spanning_tree(gWeights,weight='weight')
@@ -2075,6 +2094,7 @@ class TreBor(Wordlist):
                 'colormap': None, #mpl.cm.jet
                 'proto' : False,
                 'xticksize' : 6,
+                'method' : 'mr' # majority rule
                 
                 }
 
@@ -2321,7 +2341,8 @@ class TreBor(Wordlist):
             self.get_MLN(
                 glm,
                 verbose = verbose,
-                threshold = keywords['threshold']
+                threshold = keywords['threshold'],
+                method = keywords['method']
                 )
 
             # check whether plots are chosen
@@ -3824,6 +3845,7 @@ class TreBor(Wordlist):
             glm,
             concept= '',
             fileformat = 'png',
+            verbose = True,
             **keywords
             ):
         """
@@ -3837,7 +3859,13 @@ class TreBor(Wordlist):
                 bottom = 0.05,
                 right = 0.95,
                 colormap = mpl.cm.jet,
-                edgewidth = 5
+                edgewidth = 5,
+                radius = 2.5,
+                outer_radius = 0.5,
+                inner_radius = 0.25,
+                cognates = '',
+                usetex = False,
+                latex_preamble = False
                 )
 
         for k in defaults:
@@ -3875,8 +3903,19 @@ class TreBor(Wordlist):
         
         # start with the analysis
         for concept in concepts:
-            print("Plotting concept '{0}'...".format(concept))
+            if verbose: print("Plotting concept '{0}'...".format(concept))
             
+            # switch backend, depending on whether tex is used or not
+            backend = mpl.get_backend()
+            if keywords['usetex'] and backend != 'pgf':
+                plt.switch_backend('pgf')
+            elif not keywords['usetex'] and backend != 'TkAgg':
+                plt.switch_backend('TkAgg')
+
+            # check for preamble settings
+            if keywords['latex_preamble']:
+                mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
+
             # make a graph
             graph = nx.Graph()
 
@@ -3891,6 +3930,36 @@ class TreBor(Wordlist):
             cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
             colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
                     range(len(paps))])
+            
+            # get the wedges for the paps
+            wedges = {}
+            linsp = np.linspace(0,360,len(paps)+1)
+            for i,pap in enumerate(paps):
+                theta1,theta2 = linsp[i],linsp[i+1]
+                wedges[pap] = (theta1,theta2)
+            
+            legendEntries = []
+            legendText = []
+            
+            # add stuff for the legend
+            for pap in paps:
+                w = mpl.patches.Wedge(
+                        (0,0),
+                        1,
+                        wedges[pap][0],
+                        wedges[pap][1],
+                        color = colors[pap],
+                        zorder = 1
+                        )
+                legendEntries += [w]
+                if keywords['cognates']:
+                    idx = [x[0] for x in self.etd[pap] if x != 0][0]
+                    legendText += [self[idx,keywords['cognates']]]
+                else:
+                    legendText += [pap]
+
+            # overwrite stuff
+            plt.plot(0,0,'o',markersize=2,zorder=2,color='white')
 
             # iterate over the paps and append states to the graph
             for pap in paps:
@@ -3921,11 +3990,11 @@ class TreBor(Wordlist):
             # create the figure
             fig = plt.figure(figsize=keywords['figsize'])
             figsp = fig.add_subplot(111)
-            ax = plt.axes(frameon=False)
-            plt.xticks([])
-            plt.yticks([])
+            figsp.axes.get_xaxis().set_visible(False)
+            figsp.axes.get_yaxis().set_visible(False)
+
             plt.axis('equal')
-            
+
             xvals = []
             yvals = []
 
@@ -3953,69 +4022,138 @@ class TreBor(Wordlist):
                 xvals += [x]
                 yvals += [y]
                 
-                # check for label in taxa
-                if True:
-                    # plot the default black state of nothing happened
-                    plt.plot(
+                # plot the default marker
+                plt.plot(
+                        x,
+                        y,
+                        'o',
+                        markersize=5,
+                        color='black',
+                        zorder=50
+                        )
+
+                # plot all wedges
+                for pap in cpaps:
+                    
+                    theta1,theta2 = wedges[pap]
+                    color = colors[pap]
+
+                    
+                    # if there's a loss event or a gain-event, add this
+                    # specifically
+                    if cpaps[pap] == 'O':
+
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='black',
+                                zorder = 55,
+                                )
+                        figsp.add_artist(w)
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['inner_radius'],
+                                0,
+                                360,
+                                color='white',
+                                zorder = 60,
+                                )
+                        figsp.add_artist(w)
+
+                    elif cpaps[pap] == 'o':
+
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='black',
+                                zorder = 55,
+                                alpha = 0.25,
+                                )
+                        figsp.add_artist(w)
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['inner_radius'],
+                                0,
+                                360,
+                                color='white',
+                                zorder = 60,
+                                alpha = 0.25
+                                )
+                        figsp.add_artist(w)
+
+                    elif cpaps[pap] == 'L':
+
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='black',
+                                zorder = 55,
+                                alpha = 0.5,
+                                )
+                        figsp.add_artist(w)
+
+                    # check for characteristics of this pap
+                    if cpaps[pap] == 'l':
+                        pass
+                    elif cpaps[pap] == 'L':
+
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius'],
+                                theta1,
+                                theta2,
+                                color= color,
+                                zorder = 100,
+                                alpha = 0.25
+                                )
+                        figsp.add_artist(w)
+                        
+                    elif cpaps[pap] in ['O','o']:
+
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius'],
+                                theta1,
+                                theta2,
+                                color=color,
+                                zorder = 100
+                                )
+                        figsp.add_artist(w)
+
+                # add number for node
+                if n in self.taxa:
+                    plt.text(
                             x,
                             y,
-                            'o',
-                            markersize = 5,
-                            color = 'white',
-                            zorder = 50
+                            n,
+                            size = 7,
+                            verticalalignment='baseline',
+                            backgroundcolor='white',
+                            horizontalalignment='center',
+                            fontweight = 'bold',
+                            color='black',
+                            bbox = dict(
+                                facecolor='white',
+                                boxstyle='square,pad=0.25',
+                                ec="none",
+                                alpha = 1
+                                ),
+                            zorder = 200
                             )
+                    
 
-                    # iterate over paps and plot each state accordingly
-                    if len(cpaps) == 1:
-                        plt.
-                    for pap in cpaps:
-                        
-                        # get the index and the color
-                        idx = paps.index(pap)
-                        color = colors[pap]
 
-                        if cpaps[pap] == 'l':
-                            pass
-                        elif cpaps[pap] == 'L':
-                            pass
-                            #plt.plot(
-                            #        x,
-                            #        y,
-                            #        '*',
-                            #        markersize = 40 + 10 * idx,
-                            #        zorder = 100 - idx,
-                            #        color = 'black'
-                            #        )
-                        elif cpaps[pap] == 'O':
-                            plt.plot(
-                                    x,
-                                    y,
-                                    '*',
-                                    markersize = 60,
-                                    zorder = 51,
-                                    color = 'white',
-                                    #alpha = 3
-                                    )
-                            plt.plot(
-                                    x,
-                                    y,
-                                    'o',
-                                    markersize = 10 + 8 * idx,
-                                    zorder = 100 - idx,
-                                    color = color
-                                    )
-                        else:
-                            plt.plot(
-                                    x,
-                                    y,
-                                    'o',
-                                    markersize = 10 + 8 * idx,
-                                    zorder = 100 - idx,
-                                    color = color
-                                    )
 
             plt.xlim((min(xvals)-10,max(xvals)+10))
             plt.ylim((min(yvals)-10,max(yvals)+10))
+
+            plt.legend(legendEntries,legendText,loc='upper right',numpoints=1)
 
             plt.subplots_adjust(
                     left= keywords['left'],
@@ -4030,586 +4168,8 @@ class TreBor(Wordlist):
                     self.dataset,
                     glm,
                     concept
-                    )+fileformat)                
+                    )+fileformat)
+            plt.clf()
 
         # return the graph
         return 
-
-        
-
-
-#!depr    def get_weighted_GLS_multi(
-#!depr            self,
-#!depr            pap,
-#!depr            ratio = (1,1),
-#!depr            verbose = False
-#!depr            ):
-#!depr        """
-#!depr        Calculate a weighted gain-loss-scenario (WGLS) for a given PAP.
-#!depr
-#!depr        In contrast to the other modes, bifurcating trees are allowed.
-#!depr        """
-#!depr        
-#!depr        # make a dictionary that stores the scenario
-#!depr        d = {}
-#!depr        
-#!depr        # get the list of nodes that are not missing
-#!depr        taxa,paps = [],[]
-#!depr        for i,taxon in enumerate(self.taxa):
-#!depr            if pap[i] != -1:
-#!depr                taxa += [taxon]
-#!depr                paps += [pap[i]]
-#!depr
-#!depr        # get the subtree of all taxa
-#!depr        tree = self.tree.getSubTree(taxa)
-#!depr
-#!depr        # get the subtree containing all taxa that have positive paps
-#!depr        tree = tree.lowestCommonAncestor(
-#!depr                [
-#!depr                    self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1
-#!depr                    ]
-#!depr                )
-#!depr
-#!depr        if verbose: print("[i] Subtree is {0}.".format(str(tree)))
-#!depr
-#!depr        # assign the basic (starting) values to the dictionary
-#!depr        nodes = [t.Name for t in tree.tips()]
-#!depr
-#!depr        if verbose: print("[i] Nodes are {0}.".format(','.join(nodes)))
-#!depr
-#!depr        # get the first state of all nodes and store the state in the
-#!depr        # dictionary. note that we start from two distinct scenarios: one
-#!depr        # assuming single origin at the root where all present states in the
-#!depr        # leave are treated as retentions, and one assuming multiple origins,
-#!depr        # where all present states in the leaves are treated as origins
-#!depr        for node in nodes:
-#!depr            idx = taxa.index(node)
-#!depr            if paps[idx] >= 1:
-#!depr                state = 1
-#!depr            else:
-#!depr                state = 0
-#!depr            d[node] = [(state,[])]
-#!depr
-#!depr        # return simple scenario, if the group is single-origin
-#!depr        if sum([d[node][0][0] for node in nodes]) == len(nodes):
-#!depr            return [(tree.Name,1)]
-#!depr
-#!depr        # order the internal nodes according to the number of their leaves
-#!depr        ordered_nodes = sorted(
-#!depr                tree.nontips()+[tree],key=lambda x:len(x.tips())
-#!depr                )
-#!depr
-#!depr        # calculate the general restriction value (maximal weight). This is roughly
-#!depr        # spoken simply the minimal value of either all events being counted as
-#!depr        # origins (case 1) or assuming origin of the character at the root and
-#!depr        # counting all leaves that lost the character as single loss events (case
-#!depr        # 2). In case two, the first gain of the character has to be added
-#!depr        # additionally
-#!depr        maxWeight = min(paps.count(1) * ratio[0], paps.count(0) * ratio[1] + ratio[0])
-#!depr
-#!depr        # join the nodes successively
-#!depr        for i,node in enumerate(ordered_nodes):
-#!depr            if verbose: print(node.Name)
-#!depr            
-#!depr            # when dealing with multifurcating trees, we have to store all
-#!depr            # possible scenarios, i.e. we need to store the crossproduct of all
-#!depr            # scenarios
-#!depr
-#!depr            # get the names of the children of the nodes
-#!depr            names = [x.Name for x in node.Children]
-#!depr
-#!depr            # get the nodes with their states from the dictionary
-#!depr            tmp_nodes = [d[x.Name] for x in node.Children]
-#!depr
-#!depr            # get the cross-product of the stuff
-#!depr            crossp = itertools.product(*tmp_nodes)
-#!depr            
-#!depr            newNodes = []
-#!depr            
-#!depr            # combine the histories of the items if all have the same value,
-#!depr            # therefore, we first get the states in a simple list
-#!depr            for cross in crossp:
-#!depr                states = [x[0] for x in cross]
-#!depr                stories = [x[1] for x in cross]
-#!depr                states_sum = sum(states)
-#!depr                states_len = len(states)
-#!depr                
-#!depr                # combine the histories
-#!depr                new_stories = []
-#!depr                for x in stories:
-#!depr                    new_stories += x
-#!depr
-#!depr                if states_sum == states_len or states_sum == 0:
-#!depr
-#!depr                    # add the histories to the queue only if their weight is
-#!depr                    # less or equal to the maxWeight
-#!depr                    gl = [k[1] for k in new_stories]+[x for x in [states[0]] if x == 1]
-#!depr
-#!depr                    weight = gl.count(1) * ratio[0] + gl.count(0) * ratio[1]
-#!depr                    if weight <= maxWeight:
-#!depr                        newNodes.append((states[0],new_stories))
-#!depr
-#!depr                # if the states are not identical, we check for both scenarios
-#!depr                else:
-#!depr                    # first scenario (tmpA) assumes origin, that is, for each node
-#!depr                    # that has a 1, we add an origin to new_stories, same is
-#!depr                    # for loss scenario (tmpB)
-#!depr                    tmpA = [x for x in new_stories]
-#!depr                    tmpB = [x for x in new_stories]
-#!depr                    for c,state in enumerate(states):
-#!depr                        if state == 1:
-#!depr                            tmpA += [(names[c],1)]
-#!depr                        else:
-#!depr                            tmpB += [(names[c],0)]
-#!depr
-#!depr                    # get the vectors to make it easier to retrieve the number
-#!depr                    # of losses and gains
-#!depr                    glA = [k[1] for k in tmpA]
-#!depr                    glB = [k[1] for k in tmpB] + [1] # don't forget adding 1 origin
-#!depr
-#!depr                    # check the gain-loss scores
-#!depr                    weightA = glA.count(1) * ratio[0] + glA.count(0) * ratio[1]
-#!depr                    weightB = glB.count(1) * ratio[0] + glB.count(0) * ratio[1]
-#!depr
-#!depr                    newNodeA = (0,tmpA)
-#!depr                    newNodeB = (1,tmpB)
-#!depr
-#!depr                    if 1 in [k[1] for k in tmpB]:
-#!depr                        noB = True
-#!depr                    else:
-#!depr                        noB = False
-#!depr
-#!depr                    if weightA <= maxWeight:
-#!depr                        newNodes += [newNodeA]
-#!depr                    if weightB <= maxWeight and not noB:
-#!depr                        newNodes += [newNodeB]
-#!depr                        
-#!depr                        # check whether an additional gain is inferred on either of
-#!depr                        # the two possible paths. 
-#!depr                        # XXX reduce later, this is not efficient XXX
-#!depr                        #if nodeB[0] == 1 and 1 in [k[1] for k in tmpA]:
-#!depr                        #    noA = True
-#!depr                        #else:
-#!depr                        #    noA = False
-#!depr                        #if nodeA[0] == 1 and 1 in [k[1] for k in tmpB]:
-#!depr                        #    noB = True
-#!depr                        #else:
-#!depr                        #    noB = False
-#!depr              
-#!depr                        ## if the weights are above the theoretical maximum, discard
-#!depr                        ## the solution
-#!depr                        #if weightA <= maxWeight and not noA:
-#!depr                        #    newNodes += [newNodeA]
-#!depr                        #if weightB <= maxWeight and not noB:
-#!depr                        #    newNodes += [newNodeB]
-#!depr
-#!depr                d[node.Name] = newNodes
-#!depr                if verbose: print("nodelen",len(d[node.Name]))
-#!depr        
-#!depr        # try to find the best scenario by counting the ratio of gains and losses.
-#!depr        # the key idea here is to reduce the number of possible scenarios according
-#!depr        # to a given criterion. We choose the criterion of minimal changes as a
-#!depr        # first criterion to reduce the possibilities, i.e. we weight both gains
-#!depr        # and losses by 1 and select only those scenarios where gains and losses
-#!depr        # sum up to a minimal number of gains and losses. This pre-selection of
-#!depr        # scenarios can be further reduced by weighting gains and losses
-#!depr        # differently. So in a second stage we choose only those scenarios where
-#!depr        # there is a minimal amount of gains. 
-#!depr        
-#!depr        if verbose: print(len(d[tree.Name]))
-#!depr
-#!depr        # convert the specific format of the d[tree.Name] to simple format
-#!depr        gls_list = []
-#!depr        for first,last in d[tree.Name]:
-#!depr            if first == 1:
-#!depr                gls_list.append([(tree.Name,first)]+last)
-#!depr            else:
-#!depr                gls_list.append(last)
-#!depr
-#!depr        # the tracer stores all scores
-#!depr        tracer = []
-#!depr
-#!depr        for i,line in enumerate(gls_list):
-#!depr            
-#!depr            # calculate gains and losses
-#!depr            gains = sum([1 for x in line if x[1] == 1])
-#!depr            losses = sum([1 for x in line if x[1] == 0])
-#!depr
-#!depr            # calculate the score
-#!depr            score = ratio[0] * gains + ratio[1] * losses
-#!depr
-#!depr            # append it to the tracer
-#!depr            tracer.append(score)
-#!depr        
-#!depr        # get the minimum score
-#!depr        minScore = min(tracer)
-#!depr
-#!depr        # return the minimal indices, sort them according to the number of
-#!depr        # gains inferred, thereby pushing gains to the root, similar to
-#!depr        # Mirkin's (2003) suggestion
-#!depr        return sorted(
-#!depr                [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore],
-#!depr                key = lambda x:sum([i[1] for i in x])
-#!depr                )[0]
-#!depr
-#!depr
-#!depr
-#!depr    def get_restricted_GLS(
-#!depr            self,
-#!depr            pap,
-#!depr            restriction = 4,
-#!depr            verbose = False
-#!depr            ):
-#!depr        """
-#!depr        Calculate a restricted gain-loss-scenario (RGLS) for a given PAP.
-#!depr    
-#!depr        """
-#!depr
-#!depr        # make a dictionary that stores the scenario
-#!depr        d = {}
-#!depr
-#!depr        # get the subtree containing all taxa that have positive paps
-#!depr        tree = self.tree.lowestCommonAncestor(
-#!depr                [self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1]
-#!depr                )
-#!depr
-#!depr        # assign the basic (starting) values to the dictionary
-#!depr        nodes = [x.Name for x in tree.tips()]
-#!depr
-#!depr        # get the first state of all nodes and store the state in the dictionary.
-#!depr        # note that we start from two distinct scenarios: one assuming single
-#!depr        # origin at the root, where all present states in the leave are treated as
-#!depr        # retentions, and one assuming multiple origins, where all present states
-#!depr        # in the leaves are treated as origins
-#!depr        for node in nodes:
-#!depr            idx = self.taxa.index(node)
-#!depr            if pap[idx] >= 1:
-#!depr                state = 1
-#!depr            else:
-#!depr                state = 0
-#!depr            d[node] = [(state,[])]
-#!depr
-#!depr        # return simple scenario if the group is single-origin
-#!depr        if sum([d[node][0][0] for node in nodes]) == len(nodes):
-#!depr            return [(tree.Name,1)]
-#!depr
-#!depr        # order the internal nodes according to the number of their leaves
-#!depr        ordered_nodes = sorted(
-#!depr                tree.nontips()+[tree],key=lambda x:len(x.tips())
-#!depr                )
-#!depr
-#!depr        # join the nodes successively
-#!depr        for i,node in enumerate(ordered_nodes):
-#!depr            if verbose: print(node)
-#!depr            
-#!depr            # get the name of the children of the nodes
-#!depr            nameA,nameB = [x.Name for x in node.Children]
-#!depr
-#!depr            # get the nodes with their states from the dictionary
-#!depr            nodesA,nodesB = [d[x.Name] for x in node.Children]
-#!depr
-#!depr            # there might be alternative states, therefore it is important to
-#!depr            # iterate over all possible paths
-#!depr            newNodes = []
-#!depr            for nodeA in nodesA:
-#!depr                for nodeB in nodesB:
-#!depr                    # if the nodes have the same state, the state is assigned to
-#!depr                    # the most recent common ancestor node
-#!depr                    if nodeA[0] == nodeB[0]:
-#!depr
-#!depr                        # combine the rest of the histories of the items
-#!depr                        tmp = nodeA[1] + nodeB[1]
-#!depr
-#!depr                        # append only if tmp is in concordance with maximal_gains
-#!depr                        if len([k for k in tmp if k[1] == 1]) + nodeA[0] <= restriction:
-#!depr                            newNodes.append((nodeA[0],tmp))
-#!depr
-#!depr                    # if the nodes have different states, we go on with two
-#!depr                    # distinct scenarios
-#!depr                    else:
-#!depr                        
-#!depr                        # first scenario assumes retention of nodeA
-#!depr                        tmpA = nodeA[1] + nodeB[1] + [(nameA,nodeA[0])]
-#!depr
-#!depr                        # second scenario assumes retention of nodeB
-#!depr                        tmpB = nodeA[1] + nodeB[1] + [(nameB,nodeB[0])]
-#!depr
-#!depr                        newNodeA = nodeB[0],tmpA
-#!depr                        newNodeB = nodeA[0],tmpB
-#!depr                        
-#!depr                        # check whether one of the solutions is already above the
-#!depr                        # maximum / best scenario with respect to the gain-loss
-#!depr                        # weights as a criterion
-#!depr
-#!depr                        # first, calculate gains and losses
-#!depr                        gainsA = nodeB[0]+sum([k[1] for k in tmpA])
-#!depr                        gainsB = nodeA[0]+sum([k[1] for k in tmpB])
-#!depr
-#!depr                        # check whether an additional gain is inferred on either of
-#!depr                        # the two possible paths. 
-#!depr                        # XXX reduce later, this is not efficient XXX
-#!depr                        if nodeB[0] == 1 and 1 in [k[1] for k in tmpA]:
-#!depr                            noA = True
-#!depr                        else:
-#!depr                            noA = False
-#!depr                        if nodeA[0] == 1 and 1 in [k[1] for k in tmpB]:
-#!depr                            noB = True
-#!depr                        else:
-#!depr                            noB = False
-#!depr                                            
-#!depr                        # if the gains are about the theoretical maximum, discard
-#!depr                        # the solution
-#!depr                        if gainsA <= restriction and not noA:
-#!depr                            newNodes += [newNodeA]
-#!depr                        if gainsB <= restriction and not noB:
-#!depr                            newNodes += [newNodeB]
-#!depr
-#!depr                d[node.Name] = newNodes
-#!depr        
-#!depr        # try to find the best scenario by counting the ratio of gains and losses.
-#!depr        # the key idea here is to reduce the number of possible scenarios according
-#!depr        # to a given criterion. We choose the criterion of minimal changes as a
-#!depr        # first criterion to reduce the possibilities, i.e. we weight both gains
-#!depr        # and losses by 1 and select only those scenarios where gains and losses
-#!depr        # sum up to a minimal number of gains and losses. This pre-selection of
-#!depr        # scenarios can be further reduced by weighting gains and losses
-#!depr        # differently. So in a second stage we choose only those scenarios where
-#!depr        # there is a minimal amount of gains. 
-#!depr        
-#!depr        if verbose: print(len(d[tree.Name]))
-#!depr
-#!depr        # convert the specific format of the d[tree.Name] to simple format
-#!depr        gls_list = []
-#!depr        for first,last in d[tree.Name]:
-#!depr            if first == 1:
-#!depr                gls_list.append([(tree.Name,first)]+last)
-#!depr            else:
-#!depr                gls_list.append(last)
-#!depr
-#!depr        # the tracer stores all scores
-#!depr        tracer = []
-#!depr
-#!depr        for i,line in enumerate(gls_list):
-#!depr            
-#!depr            # calculate gains and losses
-#!depr            gains = sum([1 for x in line if x[1] == 1])
-#!depr            losses = sum([1 for x in line if x[1] == 0])
-#!depr
-#!depr            # calculate the score
-#!depr            score = gains + losses
-#!depr
-#!depr            # append it to the tracer
-#!depr            tracer.append(score)
-#!depr        
-#!depr        # get the minimum score
-#!depr        minScore = min(tracer)
-#!depr
-#!depr        # push gains down to the root as suggested by Mirkin 2003
-#!depr        minimal_gains = [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore]
-#!depr        
-#!depr        best_scenario = None
-#!depr        old_length_of_tips = len(self.taxa) + 1
-#!depr
-#!depr        for i,line in enumerate(minimal_gains):
-#!depr            
-#!depr            # calculate number of tips for the gains of a given scenario
-#!depr            new_length_of_tips = 0
-#!depr            for taxon,state in line:
-#!depr                if state == 1:
-#!depr                    new_length_of_tips += len(
-#!depr                            self.tree.getNodeMatchingName(taxon).getTipNames()
-#!depr                            )
-#!depr            if new_length_of_tips < old_length_of_tips:
-#!depr                old_length_of_tips = new_length_of_tips
-#!depr                best_scenario = i
-#!depr
-#!depr        return minimal_gains[best_scenario]
-
-#!depr    def get_weighted_GLS(
-#!depr            self,
-#!depr            pap,
-#!depr            ratio = (1,1),
-#!depr            verbose = False
-#!depr            ):
-#!depr        """
-#!depr        Calculate a weighted gain-loss-scenario (WGLS) for a given PAP.
-#!depr        """
-#!depr        
-#!depr        # make a dictionary that stores the scenario
-#!depr        d = {}
-#!depr        
-#!depr        # get the list of nodes that are not missing
-#!depr        taxa,paps = [],[]
-#!depr        for i,taxon in enumerate(self.taxa):
-#!depr            if pap[i] != -1:
-#!depr                taxa += [taxon]
-#!depr                paps += [pap[i]]
-#!depr
-#!depr        # get the subtree of all taxa
-#!depr        tree = self.tree.getSubTree(taxa)
-#!depr
-#!depr        # get the subtree containing all taxa that have positive paps
-#!depr        tree = tree.lowestCommonAncestor(
-#!depr                [
-#!depr                    self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1
-#!depr                    ]
-#!depr                )
-#!depr
-#!depr        if verbose: print("[i] Subtree is {0}.".format(str(tree)))
-#!depr
-#!depr        # assign the basic (starting) values to the dictionary
-#!depr        nodes = [t.Name for t in tree.tips()]
-#!depr
-#!depr        if verbose: print("[i] Nodes are {0}.".format(','.join(nodes)))
-#!depr
-#!depr        # get the first state of all nodes and store the state in the
-#!depr        # dictionary. note that we start from two distinct scenarios: one
-#!depr        # assuming single origin at the root where all present states in the
-#!depr        # leave are treated as retentions, and one assuming multiple origins,
-#!depr        # where all present states in the leaves are treated as origins
-#!depr        for node in nodes:
-#!depr            idx = taxa.index(node)
-#!depr            if paps[idx] >= 1:
-#!depr                state = 1
-#!depr            else:
-#!depr                state = 0
-#!depr            d[node] = [(state,[])]
-#!depr
-#!depr        # return simple scenario, if the group is single-origin
-#!depr        if sum([d[node][0][0] for node in nodes]) == len(nodes):
-#!depr            return [(tree.Name,1)]
-#!depr
-#!depr        # order the internal nodes according to the number of their leaves
-#!depr        ordered_nodes = sorted(
-#!depr                tree.nontips()+[tree],key=lambda x:len(x.tips())
-#!depr                )
-#!depr
-#!depr        # calculate the general restriction value (maximal weight). This is roughly
-#!depr        # spoken simply the minimal value of either all events being counted as
-#!depr        # origins (case 1) or assuming origin of the character at the root and
-#!depr        # counting all leaves that lost the character as single loss events (case
-#!depr        # 2). In case two, the first gain of the character has to be added
-#!depr        # additionally
-#!depr        maxWeight = min(paps.count(1) * ratio[0], paps.count(0) * ratio[1] + ratio[0])
-#!depr
-#!depr        # join the nodes successively
-#!depr        for i,node in enumerate(ordered_nodes):
-#!depr            if verbose: print(node.Name)
-#!depr            
-#!depr            # get the name of the children of the nodes
-#!depr            nameA,nameB = [x.Name for x in node.Children]
-#!depr
-#!depr            # get the nodes with their states from the dictionary
-#!depr            nodesA,nodesB = [d[x.Name] for x in node.Children]
-#!depr
-#!depr            # there might be alternative states, therefore it is important to
-#!depr            # iterate over all possible paths
-#!depr            newNodes = []
-#!depr            for nodeA in nodesA:
-#!depr                for nodeB in nodesB:
-#!depr                    # if the nodes have the same state, the state is assigned to
-#!depr                    # the most recent common ancestor node
-#!depr                    if nodeA[0] == nodeB[0]:
-#!depr
-#!depr                        # combine the rest of the histories of the items
-#!depr                        tmp = nodeA[1] + nodeB[1]
-#!depr
-#!depr                        # add them to the queue only if their weight is less or
-#!depr                        # equal to the maxWeight
-#!depr                        gl = [k[1] for k in tmp]+[x for x in [nodeA[0]] if x == 1]
-#!depr                        weight = gl.count(1) * ratio[0] + gl.count(0) * ratio[1]
-#!depr
-#!depr                        if weight <= maxWeight:
-#!depr                            newNodes.append((nodeA[0],tmp))
-#!depr
-#!depr                    # if the nodes have different states, we go on with two
-#!depr                    # distinct scenarios
-#!depr                    else:
-#!depr                        
-#!depr                        # first scenario assumes retention of nodeB
-#!depr                        tmpA = nodeA[1] + nodeB[1] + [(nameA,nodeA[0])]
-#!depr
-#!depr                        # second scenario assumes retention of nodeA
-#!depr                        tmpB = nodeA[1] + nodeB[1] + [(nameB,nodeB[0])]
-#!depr
-#!depr                        # get the vectors in order to make it easier to retrieve
-#!depr                        # the number of losses and gains
-#!depr                        glA = [k[1] for k in tmpA] + [x for x in [nodeB[0]] if x == 1]
-#!depr                        glB = [k[1] for k in tmpB] + [x for x in [nodeA[0]] if x == 1]
-#!depr
-#!depr                        # check the gain-loss scores 
-#!depr                        weightA = glA.count(1) * ratio[0] + glA.count(0) * ratio[1]
-#!depr                        weightB = glB.count(1) * ratio[0] + glB.count(0) * ratio[1]
-#!depr                        
-#!depr                        # check whether an additional gain is inferred on either of
-#!depr                        # the two possible paths. 
-#!depr                        # XXX reduce later, this is not efficient XXX
-#!depr                        if nodeB[0] == 1 and 1 in [k[1] for k in tmpA]:
-#!depr                            noA = True
-#!depr                        else:
-#!depr                            noA = False
-#!depr                        if nodeA[0] == 1 and 1 in [k[1] for k in tmpB]:
-#!depr                            noB = True
-#!depr                        else:
-#!depr                            noB = False
-#!depr
-#!depr                        newNodeA = nodeB[0],tmpA
-#!depr                        newNodeB = nodeA[0],tmpB
-#!depr                                            
-#!depr                        # if the weights are above the theoretical maximum, discard
-#!depr                        # the solution
-#!depr                        if weightA <= maxWeight and not noA:
-#!depr                            newNodes += [newNodeA]
-#!depr                        if weightB <= maxWeight and not noB:
-#!depr                            newNodes += [newNodeB]
-#!depr
-#!depr                d[node.Name] = newNodes
-#!depr                if verbose: print("nodelen",len(d[node.Name]))
-#!depr        
-#!depr        # try to find the best scenario by counting the ratio of gains and losses.
-#!depr        # the key idea here is to reduce the number of possible scenarios according
-#!depr        # to a given criterion. We choose the criterion of minimal changes as a
-#!depr        # first criterion to reduce the possibilities, i.e. we weight both gains
-#!depr        # and losses by 1 and select only those scenarios where gains and losses
-#!depr        # sum up to a minimal number of gains and losses. This pre-selection of
-#!depr        # scenarios can be further reduced by weighting gains and losses
-#!depr        # differently. So in a second stage we choose only those scenarios where
-#!depr        # there is a minimal amount of gains. 
-#!depr        
-#!depr        if verbose: print(len(d[tree.Name]))
-#!depr
-#!depr        # convert the specific format of the d[tree.Name] to simple format
-#!depr        gls_list = []
-#!depr        for first,last in d[tree.Name]:
-#!depr            if first == 1:
-#!depr                gls_list.append([(tree.Name,first)]+last)
-#!depr            else:
-#!depr                gls_list.append(last)
-#!depr
-#!depr        # the tracer stores all scores
-#!depr        tracer = []
-#!depr
-#!depr        for i,line in enumerate(gls_list):
-#!depr            
-#!depr            # calculate gains and losses
-#!depr            gains = sum([1 for x in line if x[1] == 1])
-#!depr            losses = sum([1 for x in line if x[1] == 0])
-#!depr
-#!depr            # calculate the score
-#!depr            score = ratio[0] * gains + ratio[1] * losses
-#!depr
-#!depr            # append it to the tracer
-#!depr            tracer.append(score)
-#!depr        
-#!depr        # get the minimum score
-#!depr        minScore = min(tracer)
-#!depr
-#!depr        # return the minimal indices, sort them according to the number of
-#!depr        # gains inferred, thereby pushing gains to the root, similar to
-#!depr        # Mirkin's (2003) suggestion
-#!depr        return sorted(
-#!depr                [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore],
-#!depr                key = lambda x:sum([i[1] for i in x])
-#!depr                )[0]
-    
-
