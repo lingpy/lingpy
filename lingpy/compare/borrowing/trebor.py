@@ -1,13 +1,21 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
+<<<<<<< HEAD
 # modified : 2013-05-21 21:42
+=======
+# modified : 2013-05-14 19:43
+>>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
+<<<<<<< HEAD
 __date__="2013-05-21"
+=======
+__date__="2013-05-14"
+>>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
 
 
 # basic imports
@@ -3827,8 +3835,249 @@ class TreBor(Wordlist):
         """
         Calculate basic statistics for a given gain-loss model.
         """
+<<<<<<< HEAD
 
         gains = [b for a,b in self.gls[glm].values()]
+=======
+
+        gains = [b for a,b in self.gls[glm].values()]
+
+        noo = sum(gains) / len(gains)
+        
+        ppc = sum([1 for g in gains if g > 1]) / len(gains)
+        
+        if verbose:
+            print('Number of Origins: {0:.2f}'.format(noo))
+            print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
+
+        return noo,ppc
+    
+    def plot_concept_evolution(
+            self,
+            glm,
+            concept= '',
+            fileformat = 'png',
+            **keywords
+            ):
+        """
+
+        """
+        # make defaults
+        defaults = dict(
+                figsize = (15,15),
+                left = 0.05,
+                top = 0.95,
+                bottom = 0.05,
+                right = 0.95,
+                colormap = mpl.cm.jet
+                )
+
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+        
+        # check for the correct item
+        if not concept:
+            concepts = self.concepts
+        else:
+            concepts = [i for i in self.concepts if i == concept]
+
+        # make folder variable
+        folder = self.dataset+'_trebor'
+
+        # make the directory for the files
+        try:
+            os.mkdir(folder+'/items')
+        except:
+            pass
+
+        # make next directory
+        try:
+            os.mkdir(
+                    folder+'/items/'+'{0}-{1}'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+
+        # make the folder for png
+        try:
+            os.mkdir(
+                    folder+'/items/'+'{0}-{1}-figures'.format(
+                        self.dataset,
+                        glm
+                        )
+                    )
+        except:
+            pass
+            
+        # XXX customize later XXX
+        colormap = keywords['colormap']
+        
+        # start with the analysis
+        for concept in concepts:
+            print("Plotting concept '{0}'...".format(concept))
+            
+            # make a graph
+            graph = nx.Graph()
+
+            # get all paps that are no singletons
+            paps = sorted(set([p for p in self.get_list(
+                row=concept,
+                flat=True,
+                entry='pap'
+                ) if p not in self.singletons]))
+            
+            # get the number of paps in order to get the right colors
+            cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
+            colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
+                    range(len(paps))])
+
+            # iterate over the paps and append states to the graph
+            for pap in paps:
+                
+                # get the graph with the model
+                gls = self.gls[glm][pap][0]
+                g = gls2gml(
+                        gls,
+                        self.tgraph,
+                        self.tree,
+                        filename = ''
+                        )
+
+                # iterate over the graph
+                for n,d in g.nodes(data=True):
+                    
+                    # add the node if necessary
+                    if n not in graph:
+                        graph.add_node(n)
+                    
+                    # add a pap-dictionary if it's not already there
+                    if 'pap' not in graph.node[n]:
+                        graph.node[n]['pap'] = {}
+
+                    # add data
+                    graph.node[n]['pap'][pap] = d['state']
+            
+            # create the figure
+            fig = plt.figure(figsize=keywords['figsize'])
+            figsp = fig.add_subplot(111)
+            ax = plt.axes(frameon=False)
+            plt.xticks([])
+            plt.yticks([])
+            plt.axis('equal')
+            
+            xvals = []
+            yvals = []
+
+            # iterate over edges first
+            for nA,nB in g.edges():
+                gA = g.node[nA]['graphics']
+                gB = g.node[nB]['graphics']
+                xA,yA = gA['x'],gA['y']
+                xB,yB = gB['x'],gB['y']
+
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color = 'black',
+                        linewidth=5
+                        )
+
+            # now iterate over the nodes
+            for n,d in graph.nodes(data=True):
+                cpaps = d['pap']
+                states = list(cpaps.values())
+                x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
+
+                xvals += [x]
+                yvals += [y]
+                
+                # check for label in taxa
+                if True:
+                    # plot the default black state of nothing happened
+                    plt.plot(
+                            x,
+                            y,
+                            'o',
+                            markersize = 5,
+                            color = 'white',
+                            zorder = 50
+                            )
+
+                    # iterate over paps and plot each state accordingly
+                    for pap in cpaps:
+                        
+                        # get the index and the color
+                        idx = paps.index(pap)
+                        color = colors[pap]
+
+                        if cpaps[pap] == 'l':
+                            pass
+                        elif cpaps[pap] == 'L':
+                            pass
+                            #plt.plot(
+                            #        x,
+                            #        y,
+                            #        '*',
+                            #        markersize = 40 + 10 * idx,
+                            #        zorder = 100 - idx,
+                            #        color = 'black'
+                            #        )
+                        elif cpaps[pap] == 'O':
+                            plt.plot(
+                                    x,
+                                    y,
+                                    '*',
+                                    markersize = 60,
+                                    zorder = 51,
+                                    color = 'white',
+                                    #alpha = 3
+                                    )
+                            plt.plot(
+                                    x,
+                                    y,
+                                    'o',
+                                    markersize = 10 + 8 * idx,
+                                    zorder = 100 - idx,
+                                    color = color
+                                    )
+                        else:
+                            plt.plot(
+                                    x,
+                                    y,
+                                    'o',
+                                    markersize = 10 + 8 * idx,
+                                    zorder = 100 - idx,
+                                    color = color
+                                    )
+
+            plt.xlim((min(xvals)-10,max(xvals)+10))
+            plt.ylim((min(yvals)-10,max(yvals)+10))
+
+            plt.subplots_adjust(
+                    left= keywords['left'],
+                    right= keywords['right'],
+                    top= keywords['top'],
+                    bottom= keywords['bottom']
+                    )
+
+
+            plt.savefig(
+                folder + '/items/{0}-{1}-figures/{2}.'.format(
+                    self.dataset,
+                    glm,
+                    concept
+                    )+fileformat)                
+
+        # return the graph
+        return 
+
+        
+>>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
 
         noo = sum(gains) / len(gains)
         

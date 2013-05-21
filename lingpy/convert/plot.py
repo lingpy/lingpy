@@ -703,6 +703,10 @@ def msa2html(
     out.write(html)
     out.close()
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
 def plot_tree(
         treestring,
         degree = 100,
