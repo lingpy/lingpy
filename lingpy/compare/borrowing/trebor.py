@@ -1,21 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-<<<<<<< HEAD
-# modified : 2013-05-21 21:42
-=======
-# modified : 2013-05-14 19:43
->>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
+# modified : 2013-05-22 19:27
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-<<<<<<< HEAD
-__date__="2013-05-21"
-=======
-__date__="2013-05-14"
->>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
+__date__="2013-05-22"
 
 
 # basic imports
@@ -102,7 +94,8 @@ class TreBor(Wordlist):
         # TODO check for keywords, allow to load trees, etc.
         defaults = {
                 'degree' : 100,
-                'singletons' : True
+                'singletons' : True,
+                'missing' : -1
                 }
         for k in defaults:
             if k not in keywords:
@@ -156,7 +149,7 @@ class TreBor(Wordlist):
         
         # get the paps and the etymological dictionary
         if not hasattr(self,'paps'):
-            self.paps = self.get_paps(ref=paps,missing=-1)
+            self.paps = self.get_paps(ref=paps,missing=keywords['missing'])
             self.etd = self.get_etymdict(ref=paps)
 
         if verbose: print("[i] Created the PAP matrix.")
@@ -394,7 +387,8 @@ class TreBor(Wordlist):
             pap,
             mode = 'w',
             r = (1,1),
-            verbose = False
+            verbose = False,
+            gpl = 1
             ):
         """
         Calculate a gain-loss scenario (GLS) for a given PAP.
@@ -404,11 +398,13 @@ class TreBor(Wordlist):
         d = {}
         
         # get the list of nodes that are not missing
-        taxa,paps = [],[]
+        taxa,paps,missing = [],[],[]
         for i,taxon in enumerate(self.taxa):
             if pap[i] != -1:
                 taxa += [taxon]
                 paps += [pap[i]]
+            else:
+                missing += [taxon]
 
         # get the subtree of all taxa
         tree = self.tree.getSubTree(taxa)
@@ -551,7 +547,8 @@ class TreBor(Wordlist):
                     # according to the current model, we don't allow for one
                     # character to be gained twice along a branch, i.e. by an
                     # ancestor, then get lost, and than be gained anew
-                    if 1 in [k[1] for k in tmpB]:
+                    gains_per_lineage = sum([1 for k in tmpB if k[1] == 1])
+                    if gains_per_lineage >= gpl: # in [k[1] for k in tmpB]:
                         noB = True
                     else:
                         noB = False
@@ -562,7 +559,7 @@ class TreBor(Wordlist):
                         newNodes += [newNodeB]
                         
                 d[node.Name] = newNodes
-                if verbose: print("nodelen",len(d[node.Name]))
+                if verbose: print("Node length:",len(d[node.Name]))
         
         # try to find the best scenario by counting the ratio of gains and losses.
         # the key idea here is to reduce the number of possible scenarios according
@@ -702,7 +699,8 @@ class TreBor(Wordlist):
 
         # set defaults
         defaults = {
-                "force" : False
+                "force" : False,
+                "gpl" : 1
                 }
         for key in defaults:
             if key not in keywords:
@@ -736,14 +734,16 @@ class TreBor(Wordlist):
                     gls = self._get_GLS(
                             self.paps[cog],
                             r = ratio,
-                            mode = 'w'
+                            mode = 'w',
+                            gpl = keywords['gpl']
                             )
 
                 if mode == 'restriction':
                     gls = self._get_GLS(
                             self.paps[cog],
                             r = restriction,
-                            mode = 'r'
+                            mode = 'r',
+                            gpl = keywords['gpl']
                             )
 
                 if mode == 'topdown':
@@ -1618,11 +1618,23 @@ class TreBor(Wordlist):
                         # check whether there are more identical weights
                         if len(elist) > 1:
                             
-                            # if so, order all stuff according to branch length
+                            # if so, order all stuff according to branch
+                            # length, we need try-except statement for
+                            # branchdistances here, since cogent does not
+                            # calculate distances to the root and back
                             branches = []
                             for a,b in elist:
-                                branch_distance = len(self.tree.getConnectingEdges(a,b))
-                                branches += [(a,b,branch_distance)]
+                                try:
+                                    branch_distance = len(self.tree.getConnectingEdges(a,b))
+                                    branches += [(a,b,branch_distance)]
+                                except:
+                                    bdA = len(
+                                            self.tree.getConnectingEdges('root',a)
+                                            )
+                                    bdB = len(
+                                            self.tree.getConnectingEdges('root',b)
+                                            )
+                                    branches += [(a,b,bdA+bdB)]
 
                             # now change the weights according to the order
                             scaler = 1 / len(branches)
@@ -2102,8 +2114,8 @@ class TreBor(Wordlist):
                 'colormap': None, #mpl.cm.jet
                 'proto' : False,
                 'xticksize' : 6,
-                'method' : 'mr' # majority rule
-                
+                'method' : 'mr', # majority rule
+                'gpl' : 1
                 }
 
         for key in defaults:
@@ -2149,7 +2161,8 @@ class TreBor(Wordlist):
                         verbose = verbose,
                         output_gml = output_gml,
                         tar = tar,
-                        output_plot=output_plot
+                        output_plot=output_plot,
+                        gpl = keywords['gpl']
                         )
             elif mode == 'restriction':
                 if verbose: print(
@@ -2163,7 +2176,8 @@ class TreBor(Wordlist):
                         verbose = verbose,
                         output_gml = output_gml,
                         tar = tar,
-                        output_plot=output_plot
+                        output_plot=output_plot,
+                        gpl = keywords['gpl']
                         )
             elif mode == 'topdown':
                 if verbose: print(
@@ -2435,7 +2449,8 @@ class TreBor(Wordlist):
         defaults = dict(
                 figsize = (10,10),
                 colormap = mpl.cm.jet,
-                filename = self.dataset
+                filename = self.dataset,
+                linescale = 1.0
                 )
         for k in defaults:
             if k not in keywords:
@@ -2480,7 +2495,7 @@ class TreBor(Wordlist):
         weights = sorted(set(edge_weights))
 
         # get the scale for the weights (needed for the line-width)
-        scale = 20.0 / max(edge_weights)
+        scale = 20.0 / max(edge_weights) * keywords['linescale']
 
         # write colors and scale to graph
         for nA,nB,data in graph.edges(data=True):
@@ -3007,6 +3022,8 @@ class TreBor(Wordlist):
             only = [],
             usetex = False,
             external_edges = False,
+            alphat = False,
+            alpha = 0.75,
             **keywords
             ):
         """
@@ -3252,33 +3269,38 @@ class TreBor(Wordlist):
         # plot the lines
         for a,b,d in sorted(geoGraph.edges(data=True),key=lambda x:x[2]['weight']):
             
-            # don't draw lines beyond threshold
-            if d['weight'] < threshold:
-                pass
-            else:
-                if a in coords and b in coords and a in only or b in only:
-                    w = d['weight']
+            if a in coords and b in coords and a in only or b in only:
+                w = d['weight']
+                
+                color = colormap(color_dict[sorted_weights.index(w)])
+                linewidth = line_dict[sorted_weights.index(w)]
 
-                    # retrieve the coords
-                    yA,xA = coords[a]
-                    yB,xB = coords[b]
-                    
-                    # get the points on the map
-                    xA,yA = m(xA,yA)
-                    xB,yB = m(xB,yB)
+                if w < threshold:
+                    if alphat:
+                        alpha = 0.2
+                    else:
+                        linewidth = 0.0
+                else:
+                    alpha = conf['alpha']
 
-                    # plot the points
-                    plt.plot(
-                            [xA,xB],
-                            [yA,yB],
-                            '-',
-                            color=colormap(
-                                color_dict[sorted_weights.index(w)]
-                                ),
-                            alpha = conf['alpha'],
-                            linewidth=line_dict[sorted_weights.index(w)],
-                            zorder = w + 50
-                            )
+                # retrieve the coords
+                yA,xA = coords[a]
+                yB,xB = coords[b]
+                
+                # get the points on the map
+                xA,yA = m(xA,yA)
+                xB,yB = m(xB,yB)
+
+                # plot the points
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color=color, 
+                        alpha = alpha,
+                        linewidth=linewidth,
+                        zorder = w + 50
+                        )
 
         # plot the points for the languages
         cell_text = []
@@ -3835,11 +3857,6 @@ class TreBor(Wordlist):
         """
         Calculate basic statistics for a given gain-loss model.
         """
-<<<<<<< HEAD
-
-        gains = [b for a,b in self.gls[glm].values()]
-=======
-
         gains = [b for a,b in self.gls[glm].values()]
 
         noo = sum(gains) / len(gains)
@@ -3851,244 +3868,7 @@ class TreBor(Wordlist):
             print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
 
         return noo,ppc
-    
-    def plot_concept_evolution(
-            self,
-            glm,
-            concept= '',
-            fileformat = 'png',
-            **keywords
-            ):
-        """
-
-        """
-        # make defaults
-        defaults = dict(
-                figsize = (15,15),
-                left = 0.05,
-                top = 0.95,
-                bottom = 0.05,
-                right = 0.95,
-                colormap = mpl.cm.jet
-                )
-
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-        
-        # check for the correct item
-        if not concept:
-            concepts = self.concepts
-        else:
-            concepts = [i for i in self.concepts if i == concept]
-
-        # make folder variable
-        folder = self.dataset+'_trebor'
-
-        # make the directory for the files
-        try:
-            os.mkdir(folder+'/items')
-        except:
-            pass
-
-        # make next directory
-        try:
-            os.mkdir(
-                    folder+'/items/'+'{0}-{1}'.format(
-                        self.dataset,
-                        glm
-                        )
-                    )
-        except:
-            pass
-
-        # make the folder for png
-        try:
-            os.mkdir(
-                    folder+'/items/'+'{0}-{1}-figures'.format(
-                        self.dataset,
-                        glm
-                        )
-                    )
-        except:
-            pass
             
-        # XXX customize later XXX
-        colormap = keywords['colormap']
-        
-        # start with the analysis
-        for concept in concepts:
-            print("Plotting concept '{0}'...".format(concept))
-            
-            # make a graph
-            graph = nx.Graph()
-
-            # get all paps that are no singletons
-            paps = sorted(set([p for p in self.get_list(
-                row=concept,
-                flat=True,
-                entry='pap'
-                ) if p not in self.singletons]))
-            
-            # get the number of paps in order to get the right colors
-            cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
-            colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
-                    range(len(paps))])
-
-            # iterate over the paps and append states to the graph
-            for pap in paps:
-                
-                # get the graph with the model
-                gls = self.gls[glm][pap][0]
-                g = gls2gml(
-                        gls,
-                        self.tgraph,
-                        self.tree,
-                        filename = ''
-                        )
-
-                # iterate over the graph
-                for n,d in g.nodes(data=True):
-                    
-                    # add the node if necessary
-                    if n not in graph:
-                        graph.add_node(n)
-                    
-                    # add a pap-dictionary if it's not already there
-                    if 'pap' not in graph.node[n]:
-                        graph.node[n]['pap'] = {}
-
-                    # add data
-                    graph.node[n]['pap'][pap] = d['state']
-            
-            # create the figure
-            fig = plt.figure(figsize=keywords['figsize'])
-            figsp = fig.add_subplot(111)
-            ax = plt.axes(frameon=False)
-            plt.xticks([])
-            plt.yticks([])
-            plt.axis('equal')
-            
-            xvals = []
-            yvals = []
-
-            # iterate over edges first
-            for nA,nB in g.edges():
-                gA = g.node[nA]['graphics']
-                gB = g.node[nB]['graphics']
-                xA,yA = gA['x'],gA['y']
-                xB,yB = gB['x'],gB['y']
-
-                plt.plot(
-                        [xA,xB],
-                        [yA,yB],
-                        '-',
-                        color = 'black',
-                        linewidth=5
-                        )
-
-            # now iterate over the nodes
-            for n,d in graph.nodes(data=True):
-                cpaps = d['pap']
-                states = list(cpaps.values())
-                x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
-
-                xvals += [x]
-                yvals += [y]
-                
-                # check for label in taxa
-                if True:
-                    # plot the default black state of nothing happened
-                    plt.plot(
-                            x,
-                            y,
-                            'o',
-                            markersize = 5,
-                            color = 'white',
-                            zorder = 50
-                            )
-
-                    # iterate over paps and plot each state accordingly
-                    for pap in cpaps:
-                        
-                        # get the index and the color
-                        idx = paps.index(pap)
-                        color = colors[pap]
-
-                        if cpaps[pap] == 'l':
-                            pass
-                        elif cpaps[pap] == 'L':
-                            pass
-                            #plt.plot(
-                            #        x,
-                            #        y,
-                            #        '*',
-                            #        markersize = 40 + 10 * idx,
-                            #        zorder = 100 - idx,
-                            #        color = 'black'
-                            #        )
-                        elif cpaps[pap] == 'O':
-                            plt.plot(
-                                    x,
-                                    y,
-                                    '*',
-                                    markersize = 60,
-                                    zorder = 51,
-                                    color = 'white',
-                                    #alpha = 3
-                                    )
-                            plt.plot(
-                                    x,
-                                    y,
-                                    'o',
-                                    markersize = 10 + 8 * idx,
-                                    zorder = 100 - idx,
-                                    color = color
-                                    )
-                        else:
-                            plt.plot(
-                                    x,
-                                    y,
-                                    'o',
-                                    markersize = 10 + 8 * idx,
-                                    zorder = 100 - idx,
-                                    color = color
-                                    )
-
-            plt.xlim((min(xvals)-10,max(xvals)+10))
-            plt.ylim((min(yvals)-10,max(yvals)+10))
-
-            plt.subplots_adjust(
-                    left= keywords['left'],
-                    right= keywords['right'],
-                    top= keywords['top'],
-                    bottom= keywords['bottom']
-                    )
-
-
-            plt.savefig(
-                folder + '/items/{0}-{1}-figures/{2}.'.format(
-                    self.dataset,
-                    glm,
-                    concept
-                    )+fileformat)                
-
-        # return the graph
-        return 
-
-        
->>>>>>> ee82bd5e240577aa9091a05e9dc3fa6d3ba221d3
-
-        noo = sum(gains) / len(gains)
-        
-        ppc = sum([1 for g in gains if g > 1]) / len(gains)
-        
-        if verbose:
-            print('Number of Origins: {0:.2f}'.format(noo))
-            print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
-
-        return noo,ppc
-    
     def plot_concept_evolution(
             self,
             glm,
