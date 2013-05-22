@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-22 19:27
+# modified : 2013-05-22 23:15
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
@@ -388,7 +388,8 @@ class TreBor(Wordlist):
             mode = 'w',
             r = (1,1),
             verbose = False,
-            gpl = 1
+            gpl = 1,
+            push_gains = True
             ):
         """
         Calculate a gain-loss scenario (GLS) for a given PAP.
@@ -612,7 +613,7 @@ class TreBor(Wordlist):
             best_gls = sorted(
                     best_gls,
                     key = lambda x:sum([i[1] for i in x]),
-                    reverse = True
+                    reverse = push_gains
                     )
             return best_gls[0] 
 
@@ -700,18 +701,20 @@ class TreBor(Wordlist):
         # set defaults
         defaults = {
                 "force" : False,
-                "gpl" : 1
+                "gpl" : 1,
+                "push_gains" : True
                 }
         for key in defaults:
             if key not in keywords:
                 keywords[key] = defaults[key]
-
+        
         # check for previous analyses
         if glm in self.gls and not keywords['force']:
-            print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
-                    end = ""
-                    )
-            print("For recalculation, set 'force' to True.")
+            if verbose:
+                print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
+                        end = ""
+                        )
+                print("For recalculation, set 'force' to True.")
             return
         
         # create statistics for this run
@@ -724,42 +727,65 @@ class TreBor(Wordlist):
         # attribute stores all gls for each cog
         self.gls[glm] = {}
 
+        # make a temporary hash in order to decrease the number of calls to the
+        # algorithm
+        cogDict = {}
+        
+        skip,nonskip = 0,0
         for cog in self.cogs:
-            if verbose: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
-            # check for singletons
-            if sum([x for x in self.paps[cog] if x == 1]) == 1:
-                gls = [(self.taxa[self.paps[cog].index(1)],1)]
+
+        
+            # check whether cog has already been calculated
+            cogTuple = tuple(self.paps[cog])
+            if cogTuple in cogDict:
+                skip += 1
+                if verbose: print(
+                    "[i] Skipping already calculated pattern for COG {0}...".format(cog),
+                    end=""
+                    )
+                self.gls[glm][cog] = cogDict[cogTuple]
             else:
-                if mode == 'weighted':
-                    gls = self._get_GLS(
-                            self.paps[cog],
-                            r = ratio,
-                            mode = 'w',
-                            gpl = keywords['gpl']
-                            )
+                nonskip += 1
+                if verbose: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
+                
+                # check for singletons
+                if sum([x for x in self.paps[cog] if x == 1]) == 1:
+                    gls = [(self.taxa[self.paps[cog].index(1)],1)]
+                else:
+                    if mode == 'weighted':
+                        gls = self._get_GLS(
+                                self.paps[cog],
+                                r = ratio,
+                                mode = 'w',
+                                gpl = keywords['gpl'],
+                                push_gains = keywords['push_gains']
+                                )
 
-                if mode == 'restriction':
-                    gls = self._get_GLS(
-                            self.paps[cog],
-                            r = restriction,
-                            mode = 'r',
-                            gpl = keywords['gpl']
-                            )
+                    if mode == 'restriction':
+                        gls = self._get_GLS(
+                                self.paps[cog],
+                                r = restriction,
+                                mode = 'r',
+                                gpl = keywords['gpl'],
+                                push_gains = keywords['push_gains']
+                                )
 
-                if mode == 'topdown':
-                    gls = self._get_GLS_top_down(
-                            self.paps[cog],
-                            mode = restriction
-                            )
-            noo = sum([t[1] for t in gls])
-            
-            self.gls[glm][cog] = (gls,noo)
-
+                    if mode == 'topdown':
+                        gls = self._get_GLS_top_down(
+                                self.paps[cog],
+                                mode = restriction
+                                )
+                noo = sum([t[1] for t in gls])
+                
+                self.gls[glm][cog] = (gls,noo)
+                
+                # append new results to cogDict
+                cogDict[cogTuple] = (gls,noo)
 
             # attend scenario to gls
             if verbose: print(" done.")
         if verbose: print("[i] Successfully calculated Gain-Loss-Scenarios.")
- 
+        
         # write the results to file
         # make the folder for the data to store the stats
         folder = self.dataset+'_trebor'
@@ -1131,13 +1157,13 @@ class TreBor(Wordlist):
             verbose = False,
             output_gml = False,
             output_plot = False,
-            tar = True
+            tar = True,
+            leading_model = False
             ):
         """
         Calculate VSD on the basis of each item.
 
         """
-
         # define concepts and taxa for convenience
         concepts = self.concepts
         taxa = self.taxa
@@ -1180,7 +1206,12 @@ class TreBor(Wordlist):
                     ) if i in self.cogs]
 
             # get the models
-            models = sorted(list(self.gls.keys()))
+            if leading_model:
+                models = [leading_model] + sorted(
+                        [k for k in self.gls.keys() if k != leading_model]
+                        )
+            else:
+                models = sorted(list(self.gls.keys()))
 
             # get the scenarios
             avsd_list = []
@@ -1628,13 +1659,19 @@ class TreBor(Wordlist):
                                     branch_distance = len(self.tree.getConnectingEdges(a,b))
                                     branches += [(a,b,branch_distance)]
                                 except:
-                                    bdA = len(
-                                            self.tree.getConnectingEdges('root',a)
-                                            )
-                                    bdB = len(
-                                            self.tree.getConnectingEdges('root',b)
-                                            )
-                                    branches += [(a,b,bdA+bdB)]
+                                    if 'root' in (a,b):
+                                        branch_distance = len(
+                                                self.tree.getConnectingEdges(b,a)
+                                                )
+                                        branches += [(a,b,branch_distance)]
+                                    else:
+                                        bdA = len(
+                                                self.tree.getConnectingEdges('root',a)
+                                                )
+                                        bdB = len(
+                                                self.tree.getConnectingEdges('root',b)
+                                                )
+                                        branches += [(a,b,bdA+bdB)]
 
                             # now change the weights according to the order
                             scaler = 1 / len(branches)
@@ -2115,7 +2152,8 @@ class TreBor(Wordlist):
                 'proto' : False,
                 'xticksize' : 6,
                 'method' : 'mr', # majority rule
-                'gpl' : 1
+                'gpl' : 1,
+                "push_gains" : True
                 }
 
         for key in defaults:
@@ -2162,7 +2200,8 @@ class TreBor(Wordlist):
                         output_gml = output_gml,
                         tar = tar,
                         output_plot=output_plot,
-                        gpl = keywords['gpl']
+                        gpl = keywords['gpl'],
+                        push_gains = keywords['push_gains']
                         )
             elif mode == 'restriction':
                 if verbose: print(
@@ -2177,7 +2216,8 @@ class TreBor(Wordlist):
                         output_gml = output_gml,
                         tar = tar,
                         output_plot=output_plot,
-                        gpl = keywords['gpl']
+                        gpl = keywords['gpl'],
+                        push_gains = keywords['push_gains']
                         )
             elif mode == 'topdown':
                 if verbose: print(
@@ -2206,16 +2246,16 @@ class TreBor(Wordlist):
             self.get_AVSD(m,verbose=verbose,**keywords)
 
         # calculate mixed model
-        if mixed:
-            if verbose: print("[i] Calculating the mixed model...")
-            self.get_IVSD(
-                    verbose=verbose,
-                    output_plot=output_plot,
-                    output_gml=output_gml,
-                    tar=tar
-                    )
-            if 'mixed' not in modes:
-                modes += ['mixed']
+        #if mixed:
+        #    if verbose: print("[i] Calculating the mixed model...")
+        #    self.get_IVSD(
+        #            verbose=verbose,
+        #            output_plot=output_plot,
+        #            output_gml=output_gml,
+        #            tar=tar
+        #            )
+        #    if 'mixed' not in modes:
+        #        modes += ['mixed']
 
         # compare the distributions using mannwhitneyu
         if verbose: print("[i] Comparing the distributions...")
@@ -2228,6 +2268,37 @@ class TreBor(Wordlist):
                     )
 
             zp_vsd.append(vsd)
+
+        # determine the best model
+        p_vsd = [p for z,p in zp_vsd]
+        maxP = max(p_vsd)
+        glm = modes[p_vsd.index(maxP)]
+        
+        # set the best model
+        self.best_model = glm
+
+        # calculate mixed model
+        if mixed:
+            if verbose: print("[i] Calculating the mixed model...")
+            self.get_IVSD(
+                    verbose=verbose,
+                    output_plot=output_plot,
+                    output_gml=output_gml,
+                    tar=tar,
+                    leading_model = glm 
+                    )
+
+            # set the mixed model as the best one
+            self.best_model = 'mixed'
+
+
+            if 'mixed' not in modes:
+                modes += ['mixed']
+                vsd = sps.mannwhitneyu(
+                        self.dists['contemporary'],
+                        self.dists['mixed']
+                        )
+                zp_vsd.append(vsd)
 
         # write results to file
         if verbose: print("[i] Writing stats to file.")
@@ -2349,19 +2420,19 @@ class TreBor(Wordlist):
         if full_analysis:
             
             # if the mixed model is not chosen
-            if not mixed:
-                # determine the best model
-                p_vsd = [p for z,p in zp_vsd]
-                maxP = max(p_vsd)
-                glm = modes[p_vsd.index(maxP)]
-            else:
-                glm = 'mixed'
+            #if not mixed:
+            #    # determine the best model
+            #    p_vsd = [p for z,p in zp_vsd]
+            #    maxP = max(p_vsd)
+            #    glm = modes[p_vsd.index(maxP)]
+            #else:
+            #    glm = 'mixed'
             
             # set the best model
-            self.best_model = glm
+            #self.best_model = glm
 
             self.get_MLN(
-                glm,
+                self.best_model,
                 verbose = verbose,
                 threshold = keywords['threshold'],
                 method = keywords['method']
