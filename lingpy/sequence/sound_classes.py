@@ -155,6 +155,7 @@ def ipa2tokens(
         
         # check for tones
         elif char in tones:
+            vowel = False
             if tone:
                 out[-1] += char
             else:
@@ -165,6 +166,7 @@ def ipa2tokens(
         # consonants
         else:
             vowel = False
+            tone = False
             out += [char]
             start = False
             tone = False

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-03-14 10:35
+# modified : 2013-05-25 23:57
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-14"
+__date__="2013-05-25"
 
 # lingpy imports
 from ..data import *
@@ -583,10 +583,9 @@ class Multiple(object):
         # get the consensus string for the sonority profiles
         try:
             consA = [int(sum([k for k in col if k != 0]) / len([k for k in col
-                if k >= 0]) + 0.5) for col in sonarA]
+                if k != 0]) + 0.5) for col in sonarA]
             consB = [int(sum([k for k in col if k != 0]) / len([k for k in col
-                if k >= 0]) + 0.5) for col in sonarB]
-
+                if k != 0]) + 0.5) for col in sonarB]
         except:
             try:
                 consA = [int(sum([k for k in col if k >= 0]) / len([k for k in col
@@ -607,6 +606,10 @@ class Multiple(object):
         # get the prosodic strings
         prosA = prosodic_string(consA)
         prosB = prosodic_string(consB)
+
+        # debug
+        #print(prosA,consA)
+        #print(prosB,consB)
         
         # get the weights
         weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
@@ -742,6 +745,12 @@ class Multiple(object):
                         )
                 
                 alm_lst.append(alms)
+
+                # debug
+                #for alm in alms:
+                #    print(' '.join([self._get(x,'_classes') for x in alm]))
+                #print('')
+
         else:
             for row in self.tree_matrix:
                 m,n = int(row[0]),int(row[1])
@@ -756,11 +765,6 @@ class Multiple(object):
                         )
                 
                 alm_lst.append(alms)
-            
-            # debug
-            #for alm in alms:
-            #    print(' '.join([self._get(x,'_classes') for x in alm]))
-            #print('')
 
         # get the last stage of each alignment process
         alm_lst = alm_lst[-1]

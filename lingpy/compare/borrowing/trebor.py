@@ -2521,7 +2521,8 @@ class TreBor(Wordlist):
                 figsize = (10,10),
                 colormap = mpl.cm.jet,
                 filename = self.dataset,
-                linescale = 1.0
+                linescale = 1.0,
+                maxweight = False
                 )
         for k in defaults:
             if k not in keywords:
@@ -2557,6 +2558,10 @@ class TreBor(Wordlist):
         for nodeA,nodeB,data in graph.edges(data=True):
             if data['label'] == 'horizontal': 
                 edge_weights.append(data['weight'])
+
+        # add max weight to edge_weights
+        if keywords['maxweight']:
+            edge_weights += [keywords['maxweight']]
         
         # determine a colorfunction
         cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')
@@ -2771,6 +2776,11 @@ class TreBor(Wordlist):
                 orientation='vertical',
                 shrink=0.55
                 )
+
+        # check for maxweights-keyword
+        if keywords['maxweight']:
+            weights += [keywords['maxweight']]
+
         cbar.set_clim(1.0)
         cbar.set_label('Inferred Links')
         cbar.ax.set_yticklabels(
@@ -4038,8 +4048,8 @@ class TreBor(Wordlist):
                 theta1,theta2 = linsp[i],linsp[i+1]
                 wedges[pap] = (theta1,theta2)
             
-            legendEntries = []
-            legendText = []
+            legendEntriesA = []
+            legendTextA = []
             
             # add stuff for the legend
             for pap in paps:
@@ -4051,12 +4061,22 @@ class TreBor(Wordlist):
                         color = colors[pap],
                         zorder = 1
                         )
-                legendEntries += [w]
+                legendEntriesA += [w]
                 if keywords['cognates']:
                     idx = [x[0] for x in self.etd[pap] if x != 0][0]
-                    legendText += [self[idx,keywords['cognates']]]
+                    legendTextA += [self[idx,keywords['cognates']]]
                 else:
-                    legendText += [pap]
+                    legendTextA += [pap]
+
+            # second legend explains evolution
+            legendEntriesB = []
+            legendTextB = []
+            p = mpl.patches.Wedge((0,0),1,0,360,color='0.5')
+            legendEntriesB += [p]
+            legendTextB += ['Loss Event']
+            p, = plt.plot(0,0,'--',color='black')
+            legendEntriesB += [p]
+            legendTextB += ['Gain Event']
 
             # overwrite stuff
             plt.plot(0,0,'o',markersize=2,zorder=2,color='white')
@@ -4119,6 +4139,12 @@ class TreBor(Wordlist):
                 states = list(cpaps.values())
                 x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
 
+                # get z-value which serves as zorder attribute
+                try:
+                    z = 6 * len(self.tree.getConnectingEdges('root',n))
+                except:
+                    z = 0
+
                 xvals += [x]
                 yvals += [y]
                 
@@ -4131,72 +4157,64 @@ class TreBor(Wordlist):
                         color='black',
                         zorder=50
                         )
+                # check for origins in cpaps
+                if 'O' in cpaps.values():
+                    w = mpl.patches.Wedge(
+                            (x,y),
+                            keywords['radius']+keywords['outer_radius'],
+                            0,
+                            360,
+                            facecolor='white',
+                            zorder = 57+z,
+                            linewidth=2.5,
+                            linestyle = 'dashed',
+                            )
+                    figsp.add_artist(w)
+                elif 'o' in cpaps.values():
+                    w = mpl.patches.Wedge(
+                            (x,y),
+                            keywords['radius']+keywords['outer_radius'],
+                            0,
+                            360,
+                            facecolor='white',
+                            zorder = 56+z,
+                            linewidth=2.5,
+                            linestyle='solid',
+                            )
+                    figsp.add_artist(w)
+                
+                if 'L' in cpaps.values() and 'O' in cpaps.values():
+                    w = mpl.patches.Wedge(
+                            (x,y),
+                            keywords['radius']+keywords['outer_radius'],
+                            0,
+                            360,
+                            facecolor='0.5',
+                            zorder = 58+z,
+                            linewidth = 2.5,
+                            edgecolor='black',
+                            linestyle = 'dashed'
+                            )
+                    figsp.add_artist(w)
+
+                elif "L" in cpaps.values():
+                    w = mpl.patches.Wedge(
+                            (x,y),
+                            keywords['radius']+keywords['outer_radius'],
+                            0,
+                            360,
+                            facecolor='0.5',
+                            zorder = 59+z,
+                            linewidth = 2.5,
+                            edgecolor='black',
+                            )
+                    figsp.add_artist(w)
 
                 # plot all wedges
                 for pap in cpaps:
                     
                     theta1,theta2 = wedges[pap]
                     color = colors[pap]
-
-                    
-                    # if there's a loss event or a gain-event, add this
-                    # specifically
-                    if cpaps[pap] == 'O':
-
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius']+keywords['outer_radius'],
-                                0,
-                                360,
-                                facecolor='black',
-                                zorder = 55,
-                                )
-                        figsp.add_artist(w)
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius']+keywords['inner_radius'],
-                                0,
-                                360,
-                                color='white',
-                                zorder = 60,
-                                )
-                        figsp.add_artist(w)
-
-                    elif cpaps[pap] == 'o':
-
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius']+keywords['outer_radius'],
-                                0,
-                                360,
-                                facecolor='black',
-                                zorder = 55,
-                                alpha = 0.25,
-                                )
-                        figsp.add_artist(w)
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius']+keywords['inner_radius'],
-                                0,
-                                360,
-                                color='white',
-                                zorder = 60,
-                                alpha = 0.25
-                                )
-                        figsp.add_artist(w)
-
-                    elif cpaps[pap] == 'L':
-
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius']+keywords['outer_radius'],
-                                0,
-                                360,
-                                facecolor='black',
-                                zorder = 55,
-                                alpha = 0.5,
-                                )
-                        figsp.add_artist(w)
 
                     # check for characteristics of this pap
                     if cpaps[pap] == 'l':
@@ -4209,7 +4227,7 @@ class TreBor(Wordlist):
                                 theta1,
                                 theta2,
                                 color= color,
-                                zorder = 100,
+                                zorder = 61+z,
                                 alpha = 0.25
                                 )
                         figsp.add_artist(w)
@@ -4222,7 +4240,7 @@ class TreBor(Wordlist):
                                 theta1,
                                 theta2,
                                 color=color,
-                                zorder = 100
+                                zorder = 61+z
                                 )
                         figsp.add_artist(w)
 
@@ -4244,7 +4262,7 @@ class TreBor(Wordlist):
                                 ec="none",
                                 alpha = 1
                                 ),
-                            zorder = 200
+                            zorder = 300
                             )
                     
 
@@ -4253,7 +4271,9 @@ class TreBor(Wordlist):
             plt.xlim((min(xvals)-10,max(xvals)+10))
             plt.ylim((min(yvals)-10,max(yvals)+10))
 
-            plt.legend(legendEntries,legendText,loc='upper right',numpoints=1)
+            legend1 = plt.legend(legendEntriesA,legendTextA,loc='upper right',numpoints=1)
+            plt.legend(legendEntriesB,legendTextB,loc='lower right')
+            figsp.add_artist(legend1)
 
             plt.subplots_adjust(
                     left= keywords['left'],

@@ -137,7 +137,7 @@ def secondary_globalign(
 #     cdef int i,j
 
     # declare floats
-#     cdef gapA,gapB,match,sim
+#     cdef float gapA,gapB,match,sim
 
     # declare lists
     almA = []
