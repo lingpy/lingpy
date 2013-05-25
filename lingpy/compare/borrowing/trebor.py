@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-22 23:15
+# modified : 2013-05-26 00:27
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-05-22"
+__date__="2013-05-26"
 
 
 # basic imports
@@ -2050,7 +2050,7 @@ class TreBor(Wordlist):
             
             for pap in sorted(tmp[concept].keys()):
 
-                f.write('## Cognate-Set: "{0}\n'.format(pap))
+                f.write('## Cognate-Set: "{0}"\n'.format(pap))
 
                 words = []
                 langs = []
@@ -2245,18 +2245,6 @@ class TreBor(Wordlist):
         for m in modes:
             self.get_AVSD(m,verbose=verbose,**keywords)
 
-        # calculate mixed model
-        #if mixed:
-        #    if verbose: print("[i] Calculating the mixed model...")
-        #    self.get_IVSD(
-        #            verbose=verbose,
-        #            output_plot=output_plot,
-        #            output_gml=output_gml,
-        #            tar=tar
-        #            )
-        #    if 'mixed' not in modes:
-        #        modes += ['mixed']
-
         # compare the distributions using mannwhitneyu
         if verbose: print("[i] Comparing the distributions...")
         
@@ -2418,18 +2406,6 @@ class TreBor(Wordlist):
 
         # carry out further analyses if this is specified
         if full_analysis:
-            
-            # if the mixed model is not chosen
-            #if not mixed:
-            #    # determine the best model
-            #    p_vsd = [p for z,p in zp_vsd]
-            #    maxP = max(p_vsd)
-            #    glm = modes[p_vsd.index(maxP)]
-            #else:
-            #    glm = 'mixed'
-            
-            # set the best model
-            #self.best_model = glm
 
             self.get_MLN(
                 self.best_model,
@@ -2441,7 +2417,7 @@ class TreBor(Wordlist):
             # check whether plots are chosen
             if plot_mln:
                 self.plot_MLN(
-                        glm,
+                        self.best_model,
                         verbose=verbose,
                         filename=self.dataset+'_trebor/mln-'+glm,
                         threshold = keywords['threshold'],
@@ -2451,7 +2427,7 @@ class TreBor(Wordlist):
                         )
             if plot_msn:
                 self.plot_MSN(
-                        glm,
+                        self.best_model,
                         verbose=verbose,
                         filename=self.dataset+'_trebor/msn-'+glm,
                         fileformat=keywords['fileformat'],
@@ -2462,7 +2438,7 @@ class TreBor(Wordlist):
                         )
 
             self.get_PDC(
-                    glm,
+                    self.best_model,
                     verbose = verbose
                     )
 
