@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-26 00:27
+# modified : 2013-05-26 01:45
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
@@ -499,8 +499,13 @@ class TreBor(Wordlist):
                         weight = gl.count(1) * r[0] + gl.count(0) * r[1]
                     else:
                         weight = gl.count(1) + 1 # we need to add 1 here
+                    
+                    # when combining two gains, make sure that the allowed
+                    # amount of gains per lineage will not be overwritten by
+                    # the combination of new gains
+                    gains_per_lineage = sum([1 for k in new_stories if k[1] == 1])
 
-                    if weight <= RST:
+                    if weight <= RST and gains_per_lineage < gpl:
                         newNodes.append((1,new_stories))
                 
                 # if states are identical and point to absence of chars

@@ -1671,13 +1671,12 @@ class Multiple(object):
 
 
         """
-        
         peaks = []
-        for i in range(self._alm_matrix.shape[1]):
+        for i in range(len(self._alm_matrix[0])):
             peaks.append(
                     _calign._score_profile(
-                        self._alm_matrix[:,i].tolist(),
-                        self._alm_matrix[:,i].tolist(),
+                        [k[i] for k in self._alm_matrix],
+                        [k[i] for k in self._alm_matrix],
                         self.scorer,
                         gap_weight = gap_weight
                         )

@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-07 20:07
-# modified : 2013-03-07 21:23
+# modified : 2013-05-26 11:39
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -121,7 +121,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-07"
+__date__="2013-05-26"
 
 import numpy as np
 import re
@@ -132,6 +132,10 @@ from ..basic.wordlist import Wordlist
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+try:
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _misc as misc
 
 class MSA(Multiple):
     """
@@ -949,7 +953,7 @@ class Alignments(Wordlist):
             sonar = True,
             scorer = {},
             verbose = True,
-            plot = False
+            plot = False,
             ):
         """
         Carry out a multiple alignment analysis of the data.
@@ -1090,18 +1094,7 @@ class Alignments(Wordlist):
                                 key
                                 )
                             )
-                #self._meta['msa'][key] = {}
-            #print(m._alm_matrix)
             self._meta['msa'][key]['alignment'] = m.alm_matrix
-                #if plot:
-                #    alm2html(
-                #            '{0}-msa/{1}-{2}'.format(
-                #                self.filename,
-                #                self.dataset,
-                #                key
-                #                )
-                #            )
-
                     
     def __len__(self):
         return len(self.msa)
@@ -1264,3 +1257,128 @@ def SCA(
             parent = Alignments(infile,**keywords)
 
     return parent
+
+def consensus(
+        msa,
+        tree = False,
+        gaps = False,
+        taxa = False,
+        classes = False,
+        **keywords
+        ):
+    """
+    Calculate a consensus string of a given MSA.
+    """
+    # set defaults
+    defaults = dict(
+            model = sca,
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
+    
+    # stores the consensus string
+    cons = ''
+
+    # transform the matrix
+    matrix = misc.transpose(msa.alm_matrix)
+
+    # check for classes
+    if classes:
+        # if classes are passed as array, we use this array as is
+        if type(classes) == list:
+            pass
+        # if classes is a Model-object
+        elif hasattr(msa,'ipa2cls'):
+            msa.ipa2cls(model)
+            classes = misc.transpose(msa.classes)
+    
+    # if no tree is passed, it is a simple majority-rule principle that outputs
+    # the consensus string
+    if not tree:
+        if not classes:
+            for col in matrix:
+                tmp = {}
+
+                # count chars in columns
+                for j,c in enumerate(col):
+                    if c in tmp:
+                        tmp[c] += 1
+                    else:
+                        tmp[c] = 1
+
+                # get maximum
+                chars = [c for c,n in sorted(
+                    tmp.items(),
+                    key=lambda x:(x[1],len(x[0])),
+                    reverse=True
+                    )]
+                
+                # append highest-scoring char
+                cons += chars[0]
+        elif classes:
+            for i,col in enumerate(classes):
+                tmpA = {}
+                tmpB = {}
+
+                # count chars in columns
+                for j,c in enumerate(col):
+                    if c in tmpA:
+                        tmpA[c] += 1
+                    else:
+                        tmpA[c] = 1
+
+                    if matrix[i][j] in tmpB:
+                        tmpB[matrix[i][j]] += 1
+                    else:
+                        tmpB[matrix[i][j]] = 1
+
+                # get max
+                chars = [(c,n) for c,n in sorted(
+                    tmpA.items(),
+                    key=lambda x:x[1],
+                    reverse=True
+                    )]
+
+                # check for identical classes
+                maxV = chars.pop(0)
+
+                clss = [maxV[0]]
+                while chars:
+                    newV = chars.pop(0)
+                    if newV[1] == maxV[1]:
+                        clss += [newV[0]]
+                    else:
+                        break
+                
+                tmp = {}
+                for j,c in enumerate(col):
+                    if c in clss:
+                        if matrix[i][j] in tmp:
+                            tmp[matrix[i][j]] += 1
+                        else:
+                            tmp[matrix[i][j]] = 1
+ 
+                # get max
+                chars = [c for c,n in sorted(
+                    tmp.items(),
+                    key=lambda x:(x[1],len(x[0])),
+                    reverse=True
+                    )] 
+
+                cons += chars[0]
+
+    # otherwise, we use a bottom-up parsimony approach to determine the best
+    # match
+    elif tree and not taxa:
+        raise ValueError(
+                "[!] Without a list of taxa, no consensus string can be calculated"
+                )
+    elif tree and taxa:
+        pass # XXX
+
+    if gaps:
+        return cons
+    else:
+        return cons.replace('-','')
