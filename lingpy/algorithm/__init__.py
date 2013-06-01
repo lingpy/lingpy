@@ -20,7 +20,7 @@ try:
     from .cython import misc as misc
 except:
     print(
-        "[i] Import of C-modules failed, using pure Python implementation instead."
+        "[i] Import of Cx-modules failed, using pure Python implementation instead."
         )
     from .cython import _calign as calign
     from .cython import _malign as malign

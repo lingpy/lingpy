@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-28 11:47
-# modified : 2013-05-21 20:30
+# modified : 2013-05-29 11:00
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -21,12 +21,12 @@ given alignment analysis.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-21"
+__date__="2013-05-29"
 
 import os
 import colorsys
 
-from lingpy.check.exceptions import ThirdPartyModuleError
+from ..check.exceptions import ThirdPartyModuleError
 
 try:
     import networkx as nx
@@ -35,16 +35,16 @@ except ImportError:
 
 try:
     import matplotlib.pyplot as plt
+    import matplotlib as mpl
 except:
-    ThidPartyModuleError('pyplot').warning
+    ThirdPartyModuleError('pyplot').warning
  
 from ..data import *
 from ..data import _color
 from ..align.sca import SCA
 from ..check.messages import *
+from ..thirdparty import cogent as cg
 from .gml import *
-
-
 
 def colorRange(
         number,
@@ -703,9 +703,171 @@ def msa2html(
     out.write(html)
     out.close()
 
+def plot_gls(
+        gls,
+        treestring,
+        degree = 90,
+        fileformat = 'pdf',
+        filename = 'output',
+        **keywords
+        ):
+    """
+    Plot a gain-loss scenario for a given reference tree.
+    """
+
+    # get kewyords
+    defaults = dict(
+            figsize = (15,15),
+            left = 0.05,
+            top = 0.95,
+            bottom = 0.05,
+            right = 0.95,
+            radius = 0.5,
+            textsize = 8,
+            edgewidth = 5,
+            linewidth = 2,
+            scale_radius = 1.2,
+            ylim = 1,
+            xlim = 1,
+            text = True,
+            gain_color = 'white',
+            loss_color = 'black',
+            )
+
+    for k in defaults: 
+        if k not in keywords:
+            keywords[k] = defaults[k]
+    
+    try:
+        tree = cg.LoadTree(treestring=treestring)
+    except:
+        try:
+            tree = cg.LoadTree(treestring)
+        except:
+            tree = treestring
+
+    tgraph = radial_layout(treestring,degree=degree)
+    
+    graph = gls2gml(
+            gls,
+            tgraph,
+            tree
+            )
+
+    nodes = []
+
+    # assign nodes and edges
+    for n,d in graph.nodes(data=True):
+        g = d['graphics']
+        x = g['x']
+        y = g['y']
+        s = d['state']
+    
+        nodes += [(x,y,s)]
+
+    # now plot the stuff
+    fig = plt.figure(figsize = keywords['figsize'])
+    figsp = fig.add_subplot(111)
+    figsp.axes.get_xaxis().set_visible(False)
+    figsp.axes.get_yaxis().set_visible(False)
+    
+    #plt.axes(frameon=keywords['frameon'])
+    plt.axis('equal')
+
+    for nA,nB in graph.edges():
+        xA = graph.node[nA]['graphics']['x']
+        xB = graph.node[nB]['graphics']['x']
+        yA = graph.node[nA]['graphics']['y']
+        yB = graph.node[nB]['graphics']['y']
+
+        plt.plot(
+                [xA,xB],
+                [yA,yB],
+                '-',
+                color = 'black',
+                linewidth = keywords['edgewidth'],
+                zorder = 1
+                )
+
+    # now, iterate over nodes
+    for x,y,s in nodes:
+        if s == 'O':
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius'],
+                    0,360,
+                    facecolor = keywords['gain_color'],
+                    linewidth = keywords['linewidth'],
+                    linestyle = 'dashed'
+                    )
+        elif s == 'o':
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius'] / keywords['scale_radius'],
+                    0,360,
+                    facecolor = keywords['gain_color'],
+                    linewidth = keywords['linewidth']
+                    )
+        elif s == 'L':
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius'],
+                    0,360,
+                    facecolor = keywords['loss_color'],
+                    linewidth = keywords['linewidth'],
+                    linestyle = 'dashed'
+                    )
+        else:
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius'] / keywords['scale_radius'],
+                    0,360,
+                    facecolor = keywords['loss_color'],
+                    linewidth = keywords['linewidth']
+                    )
+        figsp.add_artist(w)
+
+        # if text is chosen as argument
+        if keywords['text']:
+            if s in 'Oo': 
+                t = '1'
+                c = 'black'
+            else: 
+                t = '0'
+                c = 'white'
+
+            plt.text(
+                    x,
+                    y,
+                    t,
+                    size = keywords['textsize'],
+                    color = c,
+                    va = "center",
+                    ha = "center",
+                    fontweight = 'bold'
+                    )
+
+    # set x and y-values
+    xvals = [x[0] for x in nodes]
+    yvals = [x[1] for x in nodes]
+    
+    plt.xlim(min(xvals)-keywords['xlim'],max(xvals)+keywords['xlim'])
+    plt.ylim(min(yvals)-keywords['ylim'],max(yvals)+keywords['ylim'])
+    
+    plt.subplots_adjust(
+            left = keywords['left'],
+            right = keywords['right'],
+            top = keywords['top'],
+            bottom = keywords['bottom']
+            )
+    plt.savefig(
+            filename + '.'+fileformat
+            )
+    plt.clf()
+
 def plot_tree(
         treestring,
-        degree = 100,
+        degree = 90,
         fileformat = 'pdf',
         filename = 'output',
         **keywords
@@ -730,73 +892,106 @@ def plot_tree(
             top = 0.95,
             bottom = 0.05,
             figsize = (10,10),
+            node_dict = {},
+            no_labels = False,
+            xlim = 5,
+            ylim = 5,
+            change = lambda x: x**1.75,
+            frameon = False,
+            edge_list = [],
             )
     for k in default:
         if k not in keywords:
             keywords[k] = default[k]
     
     # get the tree-graph
-    graph = radial_layout(treestring,degree=degree)
+    graph = radial_layout(treestring,degree=degree,change=keywords['change'])
     
     # create the figure
     fig = plt.figure(figsize=keywords['figsize'])
     fig.add_subplot(111)
-    plt.axes(frameon=False)
+    plt.axes(frameon=keywords['frameon'])
     plt.axis('equal')
     plt.xticks([])
     plt.yticks([])
-
+    
+    # get xlim and ylim
+    xvals,yvals = [],[]
     # start iterating over edges
-    for nA,nB,d in graph.edges(data=True):
+    for nA,nB,d in graph.edges(data=True)+keywords['edge_list']:
             
         # get the coordinates
         xA = graph.node[nA]['graphics']['x']
         yA = graph.node[nA]['graphics']['y']
         xB = graph.node[nB]['graphics']['x']
         yB = graph.node[nB]['graphics']['y']
-
-        # plot the coordinates
-        plt.plot(
-                [xA,xB],
-                [yA,yB],
-                '-',
-                color=keywords['linecolor'],
-                linewidth=keywords['linewidth']
-                )
+        
+        if 'color' in d:
+            plt.plot(
+                    [xA,xB],
+                    [yA,yB],
+                    '-',
+                    **d
+                    )
+        else:
+            plt.plot(
+                    [xA,xB],
+                    [yA,yB],
+                    '-',
+                    color = keywords['linecolor'],
+                    linewidth = keywords['linewidth'],
+                    )
 
     # get the nodes
     for n,d in graph.nodes(data=True):
            
         g = d['graphics']
         x,y = g['x'],g['y']
+
+        xvals += [x]
+        yvals += [y]
+
+        # try to get information from the node-dict
+        try:
+            settings = keywords['node_dict'][n]
+        except:
+            settings = {}
+        
+        # overwrite the stuff in keywords
+        for k in keywords:
+            if k not in settings:
+                settings[k] = keywords[k]
     
-        if d['label'].startswith('edge') or d['label'].startswith('root'):
+        if d['label'].startswith('edge') or d['label'].startswith('root') or keywords['no_labels']:
             plt.plot(
                     x,
                     y,
                     'o',
-                    markersize = keywords['nodesize'],
-                    color = keywords['nodecolor']
+                    markersize = settings['nodesize'],
+                    color = settings['nodecolor'],
+                    markeredgewidth = settings['linewidth']
                     )
         else:
             plt.text(
                     x,
                     y,
                     d['label'],
-                    color = keywords['textcolor'],
-                    fontweight = keywords['fontweight'],
-                    #backgroundcolor = keywords['bg'],
-                    va = keywords['va'],
+                    color = settings['textcolor'],
+                    fontweight = settings['fontweight'],
+                    va = settings['va'],
                     ha = g['s'],
                     bbox = dict(
-                        facecolor=keywords['bg'],
+                        facecolor=settings['bg'],
                         boxstyle = 'square,pad=0.2',
                         ec="none",
                         ),
-                    size = keywords['textsize'],
+                    size = settings['textsize'],
                     rotation = g['angle'],
-                    rotation_mode = 'anchor'
                     )
+
+    plt.xlim(min(xvals)-keywords['xlim'],max(xvals)+keywords['xlim'])
+    plt.ylim(min(yvals)-keywords['ylim'],max(yvals)+keywords['ylim'])
+
     plt.subplots_adjust(
             left = keywords['left'],
             right = keywords['right'],
@@ -807,5 +1002,329 @@ def plot_tree(
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
 
+def plot_concept_evolution(
+        scenarios,
+        tree,
+        fileformat = 'pdf',
+        degree = 90,
+        filename = 'output',
+        **keywords
+        ):
+    """
+    Plot the evolution of 
+    """
+    
+    # make defaults
+    defaults = dict(
+            figsize = (15,15),
+            left = 0.05,
+            top = 0.95,
+            bottom = 0.05,
+            right = 0.95,
+            colormap = mpl.cm.jet,
+            edgewidth = 5,
+            radius = 2.5,
+            outer_radius = 0.5,
+            inner_radius = 0.25,
+            cognates = '',
+            usetex = False,
+            latex_preamble = False,
+            textsize = 8,
+            change = lambda x:x**1.75,
+            xlim = 0,
+            ylim = 0,
+            rootsize = 10,
+            legend = True,
+            legendsize = 5
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
+    # XXX customize later XXX
+    colormap = keywords['colormap']
+   
+    # switch backend, depending on whether tex is used or not
+    backend = mpl.get_backend()
+    if keywords['usetex'] and backend != 'pgf':
+        plt.switch_backend('pgf')
+    elif not keywords['usetex'] and backend != 'TkAgg':
+        plt.switch_backend('TkAgg')
+
+    # check for preamble settings
+    if keywords['latex_preamble']:
+        mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
+
+    # make a graph
+    graph = nx.Graph()
+
+    # get the tgraph
+    tgraph = radial_layout(tree,degree=degree,change=keywords['change'])
+    
+    # get the number of paps in order to get the right colors
+    cfunc = np.array(np.linspace(10,256,len(scenarios)),dtype='int')
+    colors = dict([(scenarios[i][0],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
+            range(len(scenarios))])
+    
+    # get the wedges for the paps
+    wedges = {}
+    linsp = np.linspace(0,360,len(scenarios)+1)
+    for i,scenario in enumerate(scenarios):
+        pap = scenario[0]
+        theta1,theta2 = linsp[i],linsp[i+1]
+        wedges[pap] = (theta1,theta2)
+    
+    if keywords['legend']:
+        legendEntriesA = []
+        legendTextA = []
+        
+        # add stuff for the legend
+        for pap,gls in scenarios:
+            w = mpl.patches.Wedge(
+                    (0,0),
+                    1,
+                    wedges[pap][0],
+                    wedges[pap][1],
+                    facecolor = colors[pap],
+                    zorder = 1,
+                    linewidth=2,
+                    edgecolor='black'
+                    )
+            legendEntriesA += [w]
+            legendTextA += [pap]
+
+        # second legend explains evolution
+        legendEntriesB = []
+        legendTextB = []
+        p = mpl.patches.Wedge(
+                (0,0),
+                1,
+                0,
+                360,
+                facecolor='0.5',
+                linewidth=2,
+                edgecolor='black',
+                )
+        legendEntriesB += [p]
+        legendTextB += ['Loss Event']
+        p, = plt.plot(0,0,'--',color='black',linewidth=2)
+        legendEntriesB += [p]
+        legendTextB += ['Gain Event']
+
+        # overwrite stuff
+        plt.plot(0,0,'o',markersize=2,zorder=2,color='white')
+
+    # iterate over the paps and append states to the graph
+    for pap,gls in scenarios:
+        
+        # get the graph with the model
+        g = gls2gml(
+                gls,
+                tgraph,
+                tree,
+                filename = ''
+                )
+
+        # iterate over the graph
+        for n,d in g.nodes(data=True):
+            
+            # add the node if necessary
+            if n not in graph:
+                graph.add_node(n)
+            
+            # add a pap-dictionary if it's not already there
+            if 'pap' not in graph.node[n]:
+                graph.node[n]['pap'] = {}
+
+            # add data
+            graph.node[n]['pap'][pap] = d['state']
+    
+    # create the figure
+    fig = plt.figure(figsize=keywords['figsize'])
+    figsp = fig.add_subplot(111)
+    figsp.axes.get_xaxis().set_visible(False)
+    figsp.axes.get_yaxis().set_visible(False)
+
+    plt.axis('equal')
+
+    xvals = []
+    yvals = []
+
+    # iterate over edges first
+    for nA,nB in g.edges():
+        gA = g.node[nA]['graphics']
+        gB = g.node[nB]['graphics']
+        xA,yA = gA['x'],gA['y']
+        xB,yB = gB['x'],gB['y']
+
+        plt.plot(
+                [xA,xB],
+                [yA,yB],
+                '-',
+                color = 'black',
+                linewidth=keywords['edgewidth']
+                )
+
+    # now iterate over the nodes
+    for n,d in graph.nodes(data=True):
+        cpaps = d['pap']
+        states = list(cpaps.values())
+        x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
+
+        # get z-value which serves as zorder attribute
+        try:
+            z = 6 * len(self.tree.getConnectingEdges('root',n))
+        except:
+            z = 0
+
+        xvals += [x]
+        yvals += [y]
+        
+        # plot the default marker
+        plt.plot(
+                x,
+                y,
+                'o',
+                markersize=keywords['rootsize'],
+                color='black',
+                zorder=50
+                )
+        # check for origins in cpaps
+        if 'O' in cpaps.values():
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius']+keywords['outer_radius'],
+                    0,
+                    360,
+                    facecolor='white',
+                    zorder = 57+z,
+                    linewidth=2.5,
+                    linestyle = 'dashed',
+                    )
+            figsp.add_artist(w)
+        elif 'o' in cpaps.values():
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius']+keywords['outer_radius'],
+                    0,
+                    360,
+                    facecolor='white',
+                    zorder = 56+z,
+                    linewidth=2.5,
+                    linestyle='solid',
+                    )
+            figsp.add_artist(w)
+        
+        if 'L' in cpaps.values() and 'O' in cpaps.values():
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius']+keywords['outer_radius'],
+                    0,
+                    360,
+                    facecolor='0.5',
+                    zorder = 58+z,
+                    linewidth = 2.5,
+                    edgecolor='black',
+                    linestyle = 'dashed'
+                    )
+            figsp.add_artist(w)
+
+        elif "L" in cpaps.values():
+            w = mpl.patches.Wedge(
+                    (x,y),
+                    keywords['radius']+keywords['outer_radius'],
+                    0,
+                    360,
+                    facecolor='0.5',
+                    zorder = 59+z,
+                    linewidth = 2.5,
+                    edgecolor='black',
+                    )
+            figsp.add_artist(w)
+
+        # plot all wedges
+        for pap in cpaps:
+            
+            theta1,theta2 = wedges[pap]
+            color = colors[pap]
+
+            # check for characteristics of this pap
+            if cpaps[pap] == 'L':
+
+                w = mpl.patches.Wedge(
+                        (x,y),
+                        keywords['radius'],
+                        theta1,
+                        theta2,
+                        facecolor= color,
+                        zorder = 61+z,
+                        alpha = 0.25,
+                        linewidth = 2,
+                        edgecolor='black',
+                        linestyle = 'dotted'
+                        )
+                figsp.add_artist(w)
+                
+            elif cpaps[pap] == 'o':
+
+                w = mpl.patches.Wedge(
+                        (x,y),
+                        keywords['radius'],
+                        theta1,
+                        theta2,
+                        facecolor=color,
+                        zorder = 61+z,
+                        linewidth = 2,
+                        edgecolor='black'
+                        )
+                figsp.add_artist(w)
+
+            elif cpaps[pap] == 'O':
+
+                w = mpl.patches.Wedge(
+                        (x,y),
+                        keywords['radius'],
+                        theta1,
+                        theta2,
+                        facecolor=color,
+                        zorder = 61+z,
+                        linewidth = 2,
+                        edgecolor='black',
+                        linestyle = 'dashed'
+                        )
+                figsp.add_artist(w)            
+
+    x = keywords['xlim']
+    y = keywords['ylim']
+
+    plt.xlim((min(xvals)-x,max(xvals)+x))
+    plt.ylim((min(yvals)-y,max(yvals)+y))
+
+    prop = mpl.font_manager.FontProperties(size=keywords['legendsize'])
+    
+    if keywords['legend']:
+        legend1 = plt.legend(
+                legendEntriesA,
+                legendTextA,
+                loc='upper right',
+                numpoints=1,
+                prop=prop
+                )
+        plt.legend(
+                legendEntriesB,
+                legendTextB,
+                loc='lower right',
+                prop = prop
+                )
+        figsp.add_artist(legend1)
+
+    plt.subplots_adjust(
+            left= keywords['left'],
+            right= keywords['right'],
+            top= keywords['top'],
+            bottom= keywords['bottom']
+            )
 
 
+    plt.savefig(filename + '.'+fileformat)
+    plt.clf()

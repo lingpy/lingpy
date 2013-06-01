@@ -37,7 +37,10 @@ def gls2gml(
     tree : cogent.tree.PhyloNode
         A tree object. 
     """
-    
+    # check for tree-formatting
+    if type(tree) == str:
+        tree = cg.LoadTree(treestring=tree)
+
     # create a mapper for the ids and the string-names
     mapper = {}
     for node,data in graph.nodes(data=True):

@@ -954,6 +954,7 @@ class Alignments(Wordlist):
             scorer = {},
             verbose = True,
             plot = False,
+            **keywords
             ):
         """
         Carry out a multiple alignment analysis of the data.
@@ -1098,6 +1099,79 @@ class Alignments(Wordlist):
                     
     def __len__(self):
         return len(self.msa)
+
+    def get_consensus(
+            self,
+            tree = False,
+            gaps = False,
+            taxa = False,
+            classes = False,
+            verbose = False,
+            cognates = 'cogid',
+            consensus = 'consensus',
+            counterpart = 'ipa',
+            **keywords
+            ):
+        """
+        Calculate a consensus string of all MSAs in the wordlist.
+
+        Parameters
+        ----------
+        msa : {c{list} ~lingpy.align.multiple.Multiple}
+            Either an MSA object or an MSA matrix.
+        tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
+            A tree object or a Newick string along which the consensus shall be
+            calculated.
+        gaps : c{bool} (default=False)
+            If set to c{True}, return the gap positions in the consensus.
+        taxa : {c{list} bool} (default=False)
+            If *tree* is chosen as a parameter, specify the taxa in order of the aligned
+            strings.
+        classes : c{bool} (default=False)
+            Specify whether sound classes shall be used to calculate the consensus.
+        model : ~lingpy.data.model.Model
+            A sound class model according to which the IPA strings shall be
+            converted to sound-class strings.
+
+        """
+        
+        # check for existing alignments
+        test = list(self.msa.keys())[0]
+        if 'alignment' not in self.msa[test]:
+            print("[!] No alignments could be found, You should carry out"
+                    " an alignment analysis first!")
+            return
+        
+        # go on with the analysis
+        cons_dict = {}
+        for cog in self.etd:
+            if cog in self.msa:
+                if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+
+                cons = get_consensus(
+                        self.msa[cog]['alignment'],
+                        classes = classes,
+                        tree = tree,
+                        gaps = gaps,
+                        taxa = taxa,
+                        **keywords
+                        )
+            # if there's no msa for a given cognate set, this set is a
+            # singleton
+            else:
+                cons = self[[k[0] for k in self.etd[cog] if k != 0][0],counterpart]
+            
+            # add consensus to dictionary
+            cons_dict[cog] = cons
+        
+        
+        # add the entries
+        self.add_entries(
+                consensus,
+                cognates,
+                lambda x:cons_dict[x] 
+                )
+
 
     def output(
             self,
@@ -1258,7 +1332,7 @@ def SCA(
 
     return parent
 
-def consensus(
+def get_consensus(
         msa,
         tree = False,
         gaps = False,
@@ -1268,6 +1342,29 @@ def consensus(
         ):
     """
     Calculate a consensus string of a given MSA.
+
+    Parameters
+    ----------
+    msa : {c{list} ~lingpy.align.multiple.Multiple}
+        Either an MSA object or an MSA matrix.
+    tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
+        A tree object or a Newick string along which the consensus shall be
+        calculated.
+    gaps : c{bool} (default=False)
+        If set to c{True}, return the gap positions in the consensus.
+    taxa : {c{list} bool} (default=False)
+        If *tree* is chosen as a parameter, specify the taxa in order of the aligned
+        strings.
+    classes : c{bool} (default=False)
+        Specify whether sound classes shall be used to calculate the consensus.
+    model : ~lingpy.data.model.Model
+        A sound class model according to which the IPA strings shall be
+        converted to sound-class strings.
+
+    Returns
+    -------
+    cons : c{str}
+        A consensus string of the given MSA.
     """
     # set defaults
     defaults = dict(
@@ -1276,13 +1373,15 @@ def consensus(
     for k in defaults:
         if k not in keywords:
             keywords[k] = defaults[k]
-
     
     # stores the consensus string
     cons = ''
 
     # transform the matrix
-    matrix = misc.transpose(msa.alm_matrix)
+    if hasattr(msa,'alm_matrix'):
+        matrix = misc.transpose(msa.alm_matrix)
+    else:
+        matrix = misc.transpose(msa)
 
     # check for classes
     if classes:

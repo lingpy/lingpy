@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-05-25 23:57
+# modified : 2013-05-31 11:01
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-25"
+__date__="2013-05-31"
 
 # lingpy imports
 from ..data import *
@@ -42,6 +42,7 @@ class Multiple(object):
     def __init__(
             self,
             seqs,
+            verbose = False,
             **keywords
             ):
         # store input sequences, check whether tokens or strings are passed
@@ -60,12 +61,16 @@ class Multiple(object):
                 "combiners":'\u0361\u035c',
                 "breaks":'.-',
                 "stress":"ˈˌ'",
-                "merge_vowels" : True
+                "merge_vowels" : True,
                 }
+
         for k in keywords:
             if k in defaults:
                 defaults[k] = keywords[k]
         
+        # set the verbose flag for the whole object
+        self.verbose = verbose
+
         if self.tokens:
             self.numbers = []
             for i,tokens in enumerate(self.tokens):
@@ -592,7 +597,8 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                print("[!] Warning, there are empty segments in the consensus.")
+                if self.verbose:
+                    print("[!] Warning, there are empty segments in the consensus.")
             except:
                 print("[!] Warning, sonority profiles could not be calculated")
                 print(sonarA)
