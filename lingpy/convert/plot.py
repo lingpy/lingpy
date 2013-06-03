@@ -732,6 +732,9 @@ def plot_gls(
             text = True,
             gain_color = 'white',
             loss_color = 'black',
+            gain_linestyle = 'dotted',
+            loss_linestyle = 'solid',
+            ax_linewidth = 0
             )
 
     for k in defaults: 
@@ -770,6 +773,10 @@ def plot_gls(
     figsp = fig.add_subplot(111)
     figsp.axes.get_xaxis().set_visible(False)
     figsp.axes.get_yaxis().set_visible(False)
+
+    # set the axes linewidht
+    for s in figsp.spines.values():
+        s.set_linewidth(keywords['ax_linewidth'])
     
     #plt.axes(frameon=keywords['frameon'])
     plt.axis('equal')
@@ -798,7 +805,7 @@ def plot_gls(
                     0,360,
                     facecolor = keywords['gain_color'],
                     linewidth = keywords['linewidth'],
-                    linestyle = 'dashed'
+                    linestyle = keywords['gain_linestyle']
                     )
         elif s == 'o':
             w = mpl.patches.Wedge(
@@ -815,7 +822,7 @@ def plot_gls(
                     0,360,
                     facecolor = keywords['loss_color'],
                     linewidth = keywords['linewidth'],
-                    linestyle = 'dashed'
+                    linestyle = keywords['loss_linestyle']
                     )
         else:
             w = mpl.patches.Wedge(
@@ -894,23 +901,49 @@ def plot_tree(
             figsize = (10,10),
             node_dict = {},
             no_labels = False,
-            xlim = 5,
-            ylim = 5,
+            xlim            = 5,
+            ylim            = 5,
+            xlimr           = False,
+            xliml           = False,
+            ylimt           = False,
+            ylimb           = False,
             change = lambda x: x**1.75,
             frameon = False,
             edge_list = [],
+            ax_linewidth = 0,
+            start = 0,
+            usetex = False
             )
     for k in default:
         if k not in keywords:
             keywords[k] = default[k]
+
+    # switch backend, depending on whether tex is used or not
+    backend = mpl.get_backend()
+    if keywords['usetex'] and backend != 'pgf':
+        plt.switch_backend('pgf')
+    elif not keywords['usetex'] and backend != 'TkAgg':
+        plt.switch_backend('TkAgg')
+
     
     # get the tree-graph
-    graph = radial_layout(treestring,degree=degree,change=keywords['change'])
+    graph = radial_layout(
+            treestring,
+            degree=degree,
+            change=keywords['change'],
+            start=keywords['start']
+            )
     
     # create the figure
     fig = plt.figure(figsize=keywords['figsize'])
-    fig.add_subplot(111)
-    plt.axes(frameon=keywords['frameon'])
+    figsp = fig.add_subplot(111)
+    figsp.axes.get_xaxis().set_visible(False)
+    figsp.axes.get_yaxis().set_visible(False)
+
+    for s in figsp.spines.values():
+        s.set_linewidth(keywords['ax_linewidth'])
+
+    #plt.axes(frameon=keywords['frameon'])
     plt.axis('equal')
     plt.xticks([])
     plt.yticks([])
@@ -987,10 +1020,25 @@ def plot_tree(
                         ),
                     size = settings['textsize'],
                     rotation = g['angle'],
+                    rotation_mode = 'anchor'
                     )
+    
+    # set up the xlimits
+    if not keywords['xlimr'] and not keywords['xliml']:
+        xl,xr = 2 * [keywords['xlim']]
+    else:
+        xl,xr = keywords['xliml'],keywords['xlimr']
 
-    plt.xlim(min(xvals)-keywords['xlim'],max(xvals)+keywords['xlim'])
-    plt.ylim(min(yvals)-keywords['ylim'],max(yvals)+keywords['ylim'])
+    # set up the xlimits
+    if not keywords['ylimt'] and not keywords['ylimb']:
+        yb,yt = 2 * [keywords['ylim']]
+    else:
+        yb,yt = keywords['ylimb'],keywords['ylimt']
+
+    plt.xlim((min(xvals)-xl,max(xvals)+xr))
+    plt.ylim((min(yvals)-yb,max(yvals)+yt))           
+    #plt.xlim(min(xvals)-keywords['xlim'],max(xvals)+keywords['xlim'])
+    #plt.ylim(min(yvals)-keywords['ylim'],max(yvals)+keywords['ylim'])
 
     plt.subplots_adjust(
             left = keywords['left'],
@@ -1016,27 +1064,45 @@ def plot_concept_evolution(
     
     # make defaults
     defaults = dict(
-            figsize = (15,15),
-            left = 0.05,
-            top = 0.95,
-            bottom = 0.05,
-            right = 0.95,
-            colormap = mpl.cm.jet,
-            edgewidth = 5,
-            radius = 2.5,
-            outer_radius = 0.5,
-            inner_radius = 0.25,
-            cognates = '',
-            usetex = False,
-            latex_preamble = False,
-            textsize = 8,
-            change = lambda x:x**1.75,
-            xlim = 0,
-            ylim = 0,
-            rootsize = 10,
-            legend = True,
-            legendsize = 5
+            figsize         = (15,15),
+            left            = 0.05,
+            top             = 0.95,
+            bottom          = 0.05,
+            right           = 0.95,
+            colormap        = mpl.cm.jet,
+            edgewidth       = 5,
+            radius          = 2.5,
+            outer_radius    = 0.5,
+            inner_radius    = 0.25,
+            cognates        = '',
+            usetex          = False,
+            latex_preamble  = False,
+            textsize        = 8,
+            change          = lambda x:x**1.75,
+            xlim            = 0,
+            ylim            = 0,
+            xlimr           = False,
+            xliml           = False,
+            ylimt           = False,
+            ylimb           = False,
+            rootsize        = 10,
+            legend          = True,
+            legendsize      = 5,
+            legendAloc      = 'upper right',
+            legendBloc      = 'lower right',
+            markeredgewidth = 2.5,
+            wedgeedgewidth  = 2,
+            gain_linestyle            = 'dotted',
+            show_labels     = False,
+            loss_linestyle = 'solid',
+            ax_linewidth = 0,
+            labels = {},
+            _prefix = '-   ',
+            _suffix = '   -',
+            colors = {},
+            start = 0
             )
+
     for k in defaults:
         if k not in keywords:
             keywords[k] = defaults[k]
@@ -1059,12 +1125,43 @@ def plot_concept_evolution(
     graph = nx.Graph()
 
     # get the tgraph
-    tgraph = radial_layout(tree,degree=degree,change=keywords['change'])
+    tgraph = radial_layout(
+            tree,
+            degree=degree,
+            change=keywords['change'],
+            start=keywords['start']
+            )
+
+    # get the taxa
+    taxa = [n[0] for n in tgraph.nodes(data=True) if n[1]['tip']]
+
+    # set the labels
+    labels = {}
+    for taxon in taxa:
+        if taxon in keywords['labels']:
+            labels[taxon] = keywords['labels'][taxon]
+        else:
+            labels[taxon] = taxon
     
     # get the number of paps in order to get the right colors
     cfunc = np.array(np.linspace(10,256,len(scenarios)),dtype='int')
-    colors = dict([(scenarios[i][0],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
-            range(len(scenarios))])
+
+    if not keywords['colors']:
+        colors = dict(
+                [
+                    (
+                        scenarios[i][0],
+                        mpl.colors.rgb2hex(
+                            colormap(
+                                cfunc[i]
+                                )
+                            )
+                        ) for i in range(len(scenarios)
+                            )
+                        ]
+                )
+    else:
+        colors = keywords['colors']
     
     # get the wedges for the paps
     wedges = {}
@@ -1075,6 +1172,13 @@ def plot_concept_evolution(
         wedges[pap] = (theta1,theta2)
     
     if keywords['legend']:
+        
+        # set the linestyle for the legend
+        if keywords['gain_linestyle'] == 'dotted':
+            ls = ':'
+        elif keywords['gain_linestyle'] == 'dashed':
+            ls = '--'
+
         legendEntriesA = []
         legendTextA = []
         
@@ -1087,7 +1191,7 @@ def plot_concept_evolution(
                     wedges[pap][1],
                     facecolor = colors[pap],
                     zorder = 1,
-                    linewidth=2,
+                    linewidth=keywords['wedgeedgewidth'],
                     edgecolor='black'
                     )
             legendEntriesA += [w]
@@ -1102,12 +1206,17 @@ def plot_concept_evolution(
                 0,
                 360,
                 facecolor='0.5',
-                linewidth=2,
+                linewidth=keywords['wedgeedgewidth'],
                 edgecolor='black',
                 )
         legendEntriesB += [p]
         legendTextB += ['Loss Event']
-        p, = plt.plot(0,0,'--',color='black',linewidth=2)
+        p, = plt.plot(
+                0,0,
+                ls,
+                color='black',
+                linewidth=keywords['wedgeedgewidth']
+                )
         legendEntriesB += [p]
         legendTextB += ['Gain Event']
 
@@ -1144,6 +1253,9 @@ def plot_concept_evolution(
     figsp = fig.add_subplot(111)
     figsp.axes.get_xaxis().set_visible(False)
     figsp.axes.get_yaxis().set_visible(False)
+
+    for s in figsp.spines.values():
+        s.set_linewidth(keywords['ax_linewidth'])
 
     plt.axis('equal')
 
@@ -1198,8 +1310,8 @@ def plot_concept_evolution(
                     360,
                     facecolor='white',
                     zorder = 57+z,
-                    linewidth=2.5,
-                    linestyle = 'dashed',
+                    linewidth= keywords['markeredgewidth'],
+                    linestyle = keywords['gain_linestyle'],
                     )
             figsp.add_artist(w)
         elif 'o' in cpaps.values():
@@ -1210,7 +1322,7 @@ def plot_concept_evolution(
                     360,
                     facecolor='white',
                     zorder = 56+z,
-                    linewidth=2.5,
+                    linewidth=keywords['markeredgewidth'],
                     linestyle='solid',
                     )
             figsp.add_artist(w)
@@ -1223,9 +1335,9 @@ def plot_concept_evolution(
                     360,
                     facecolor='0.5',
                     zorder = 58+z,
-                    linewidth = 2.5,
+                    linewidth = keywords['markeredgewidth'],
                     edgecolor='black',
-                    linestyle = 'dashed'
+                    linestyle = keywords['loss_linestyle']
                     )
             figsp.add_artist(w)
 
@@ -1237,7 +1349,7 @@ def plot_concept_evolution(
                     360,
                     facecolor='0.5',
                     zorder = 59+z,
-                    linewidth = 2.5,
+                    linewidth = keywords['markeredgewidth'],
                     edgecolor='black',
                     )
             figsp.add_artist(w)
@@ -1259,9 +1371,9 @@ def plot_concept_evolution(
                         facecolor= color,
                         zorder = 61+z,
                         alpha = 0.25,
-                        linewidth = 2,
+                        linewidth = keywords['wedgeedgewidth'],
                         edgecolor='black',
-                        linestyle = 'dotted'
+                        linestyle = keywords['loss_linestyle']
                         )
                 figsp.add_artist(w)
                 
@@ -1274,7 +1386,7 @@ def plot_concept_evolution(
                         theta2,
                         facecolor=color,
                         zorder = 61+z,
-                        linewidth = 2,
+                        linewidth = keywords['wedgeedgewidth'],
                         edgecolor='black'
                         )
                 figsp.add_artist(w)
@@ -1288,17 +1400,59 @@ def plot_concept_evolution(
                         theta2,
                         facecolor=color,
                         zorder = 61+z,
-                        linewidth = 2,
+                        linewidth = keywords['wedgeedgewidth'],
                         edgecolor='black',
-                        linestyle = 'dashed'
+                        linestyle = keywords['gain_linestyle']
                         )
-                figsp.add_artist(w)            
+                figsp.add_artist(w)         
 
-    x = keywords['xlim']
-    y = keywords['ylim']
+        # add the labels if this option is chosen
+        if keywords['show_labels']:
+            # if node is a tip
+            if tgraph.node[n]['tip']:
 
-    plt.xlim((min(xvals)-x,max(xvals)+x))
-    plt.ylim((min(yvals)-y,max(yvals)+y))
+                # get the values
+                gf = tgraph.node[n]['graphics']
+                r = gf['angle']
+                x,y = gf['x'],gf['y']
+                ha = gf['s']
+                
+                # modify the text
+                if ha == 'left':
+                    text = keywords['_prefix']+ labels[n]
+                else:
+                    text = labels[n] + keywords['_suffix']
+                
+                # plot the text
+                plt.text(
+                        x,
+                        y,
+                        text,
+                        size = keywords['textsize'],
+                        va = 'center',
+                        ha = ha,
+                        fontweight = 'bold',
+                        color = 'black',
+                        rotation = r,
+                        rotation_mode = 'anchor',
+                        zorder = z
+                        )
+                
+    
+    # set up the xlimits
+    if not keywords['xlimr'] and not keywords['xliml']:
+        xl,xr = 2 * [keywords['xlim']]
+    else:
+        xl,xr = keywords['xliml'],keywords['xlimr']
+
+    # set up the xlimits
+    if not keywords['ylimt'] and not keywords['ylimb']:
+        yb,yt = 2 * [keywords['ylim']]
+    else:
+        yb,yt = keywords['ylimb'],keywords['ylimt']
+
+    plt.xlim((min(xvals)-xl,max(xvals)+xr))
+    plt.ylim((min(yvals)-yb,max(yvals)+yt))
 
     prop = mpl.font_manager.FontProperties(size=keywords['legendsize'])
     
@@ -1306,14 +1460,14 @@ def plot_concept_evolution(
         legend1 = plt.legend(
                 legendEntriesA,
                 legendTextA,
-                loc='upper right',
+                loc=keywords['legendAloc'],
                 numpoints=1,
                 prop=prop
                 )
         plt.legend(
                 legendEntriesB,
                 legendTextB,
-                loc='lower right',
+                loc=keywords['legendBloc'],
                 prop = prop
                 )
         figsp.add_artist(legend1)

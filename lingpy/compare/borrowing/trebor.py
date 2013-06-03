@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-05-30 20:56
+# modified : 2013-06-03 10:34
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-05-30"
+__date__="2013-06-03"
 
 
 # basic imports
@@ -25,7 +25,7 @@ import numpy.linalg as linalg
 from ...check.exceptions import *
 from ...check.messages import *
 from ...align.multiple import Multiple
-from ...convert.plot import plot_tree, plot_gls
+from ...convert.plot import plot_tree, plot_gls, plot_concept_evolution
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
@@ -54,7 +54,7 @@ from ...convert.gml import *
 from ...basic import Wordlist
 from ...read.csv import csv2dict,csv2list
 
-class TreBor(Wordlist):
+class PhyBo(Wordlist):
     """
     Basic class for calculations using the TreBor method.
 
@@ -96,7 +96,9 @@ class TreBor(Wordlist):
         defaults = {
                 'degree' : 100,
                 'singletons' : True,
-                'missing' : -1
+                'missing' : -1,
+                'change' : lambda x: x**1.5,
+                'start' : 0
                 }
         for k in defaults:
             if k not in keywords:
@@ -184,6 +186,8 @@ class TreBor(Wordlist):
 
             if verbose: print("[i] Excluded singletons.")
 
+        # summarize the cognate sets under their common concept
+
         # Load the tree, if it is not defined, assume that the treefile has the
         # same name as the dataset
         if not tree and not hasattr(self,'tree'):
@@ -215,7 +219,13 @@ class TreBor(Wordlist):
             
             # if no good topology is given, create it automatically, using
             # the radial layout function
-            gTpl = radial_layout(str(self.tree),filename='',degree=keywords['degree'])
+            gTpl = radial_layout(
+                    str(self.tree),
+                    filename='',
+                    degree=keywords['degree'],
+                    change= keywords['change'],
+                    start = keywords['start']
+                    )
             
             if verbose: print("[i] Calculated radial layout for the tree. ")
         
@@ -1258,6 +1268,11 @@ class TreBor(Wordlist):
         """
         defaults = dict(
                 scaler = 0.1,
+                degree = 180,
+                change = lambda x: 2.5 * x,
+                figsize = (10,5),
+                colormap = mpl.cm.jet,
+                colors = True
                 )
         for k in defaults:
             if k not in keywords:
@@ -1271,6 +1286,8 @@ class TreBor(Wordlist):
         node_dict = {}
 
         # iterate over contemporary taxa first
+        vsizes = []
+        tmp = {}
         for taxon in self.taxa:
             
             # get all cognates that are not singletongs
@@ -1285,6 +1302,10 @@ class TreBor(Wordlist):
             # count the number of paps
             node_dict[taxon] = dict(nodesize = len(cogs) * keywords['scaler'])
 
+            vsizes += [len(cogs)]
+            tmp[taxon] = len(cogs)
+
+
         # iterate over internal nodes now
         for a,b in [(x,y) for x,y in self.tree.getNodesDict().items() if x not in self.taxa]:
             
@@ -1294,7 +1315,20 @@ class TreBor(Wordlist):
                 node = 'root'
 
             node_dict[a] = dict(nodesize = len(self.acs[glm][node]) * keywords['scaler'])
+            tmp[a] = len(self.acs[glm][node])
+            vsizes += [len(self.acs[glm][node])]
         
+        # define a color-function
+        if keywords['colors']:
+            vsizes = sorted(set(vsizes))
+            cfunc = np.array(np.linspace(10,256,245),dtype='int')
+            for node in node_dict:
+                node_dict[node]['nodecolor'] = mpl.colors.rgb2hex(
+                        keywords['colormap'](
+                            cfunc[int(tmp[node] * 244 / max(vsizes))]
+                            )
+                        )
+
         # add the stuff to keywords
         keywords['node_dict'] = node_dict
 
@@ -1670,19 +1704,29 @@ class TreBor(Wordlist):
             self,
             glm,
             proto = False,
+            force = False,
             **keywords
             ):
         """
         Compute the ancestral character states (ACS) for all internal nodes.
 
         """
+        defaults = dict(
+                proto = proto,
+                force = force,
+                filename = self.dataset+'_trebor/acs-'+glm,
+                fileformat = 'csv'
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
         if glm not in self.acs:
             self.get_AVSD(glm,**keywords)
-        elif proto:
+        elif force:
             self.get_AVSD(glm,**keywords)
         
-        f = open(self.dataset+'_trebor/acs-'+glm+'.csv','w')
+        f = open(keywords['filename']+'.'+keywords['fileformat'],'w')
         for key in sorted(self.acs[glm].keys(),key=lambda x:len(x)):
             for c,m,p in sorted(self.acs[glm][key],key=lambda x:x[1]):
                 f.write('{0}\t{1}\t{2}\t{3}\n'.format(key,c,m,p))
@@ -2741,26 +2785,44 @@ class TreBor(Wordlist):
                 cbar_shrink      = 0.55,
                 cbar_fraction    = 0.1,
                 cbar_pad         = 0.1,
-                cbar_orientation = 'vertical'
+                cbar_orientation = 'vertical',
+                cbar_label       = 'Inferred Links',
+                vedgestyle       = 'double',
+                vedgecolor       = 'black',
+                vedgelinewidth   = 5,
+                hedgescale       = 3,
+                nodestyle        = 'double',
+                nodesize         = 10,
+                nodecolor        = 'black',
+                labels           = {},
+                _prefix = '- ',
+                _suffix = ' -',
+                textsize = '10',
+                latex_preamble = [],
                 )
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
+        
+        if keywords['latex_preamble']:
+            mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
         colormap = keywords['colormap']
         filename = keywords['filename']
+        
+        # define labels
+        labels = {}
+        for taxon in self.taxa:
+            if taxon not in keywords['labels']:
+                labels[taxon] = taxon
+            else:
+                labels[taxon] = keywords['labels'][taxon]
 
         # try to load the configuration file
         try:
             conf = json.load(open(self.dataset+'.json'))
         except:
             conf = {}
-        
-        # check for 'taxon.labels' in conf
-        if taxon_labels in conf: #XXX change later
-            tfunc = lambda x:conf[taxon_labels][x]
-        else:
-            tfunc = lambda x:x
 
         # get the graph
         graph = self.graph[glm]
@@ -2770,7 +2832,7 @@ class TreBor(Wordlist):
         enodes = []
 
         # get some data on the taxa
-        max_label_len = max([len(tfunc(t)) for t in self.taxa])
+        max_label_len = max([len(labels[t]) for t in self.taxa])
 
         # get colormap for edgeweights
         edge_weights = []
@@ -2817,20 +2879,7 @@ class TreBor(Wordlist):
                 else:
                     r = 0
 
-                # get the difference between the current label and it's
-                # original lenght for formatting output
-                ll = max_label_len - len(tfunc(d['label']))
-
-                if usetex:
-                    enodes += [(
-                        x,
-                        y,
-                        r'\textbf{'+tfunc(d['label']).replace('_',r'\_')+r'}',
-                        r,
-                        s
-                        )]
-                else:
-                    enodes += [(x,y,tfunc(d['label']),r,s)]
+                enodes += [(x,y,d['label'],r,s)]
         
         # store vertical and lateral edges
         vedges = []
@@ -2888,7 +2937,7 @@ class TreBor(Wordlist):
                     [yA,yB],
                     '-',
                     color=f,
-                    linewidth=float(w) / 3,
+                    linewidth=float(w) / keywords['hedgescale'],
                     alpha=a
                     )
 
@@ -2898,16 +2947,17 @@ class TreBor(Wordlist):
                     [xA,xB],
                     [yA,yB],
                     '-',
-                    color='0.0',
-                    linewidth=5,
+                    color= keywords['vedgecolor'],
+                    linewidth=keywords['vedgelinewidth'],
                     )
-            plt.plot(
-                    [xA,xB],
-                    [yA,yB],
-                    '-',
-                    color='1.0',
-                    linewidth=2,
-                    )
+            if keywords['vedgestyle'] == 'double':
+                plt.plot(
+                        [xA,xB],
+                        [yA,yB],
+                        '-',
+                        color='1.0',
+                        linewidth=keywords['vedgelinewidth']-3,
+                        )
         # store x,y values for ylim,xlim drawing
         xvals = []
         yvals = []
@@ -2921,61 +2971,60 @@ class TreBor(Wordlist):
                     x,
                     y,
                     'o',
-                    markersize=10,
-                    color='black',
+                    markersize=keywords['nodesize'],
+                    color=keywords['nodecolor'],
                     )
+            if keywords['nodestyle'] == 'double':
+                plt.plot(
+                        x,
+                        y,
+                        'o',
+                        markersize=keywords['nodesize']-4,
+                        color='white'
+                        )
+
+        for x,y,t,r,ha in enodes:
+            
+            xvals += [x]
+            yvals += [y]
+            
+            # plot the marker
             plt.plot(
                     x,
                     y,
                     'o',
-                    markersize=6,
-                    color='white'
-                    )
-        
-        # draw the leaves
-        # store x and y-maxima for ylim, xlim drawing
-        for x,y,t,r,ha in enodes:
-            
-            xvals += [x]
-            yvals += [y]
-
-            plt.text(
-                    x,
-                    y,
-                    t,
-                    size = '7',
-                    verticalalignment='baseline',
-                    backgroundcolor='white',
-                    horizontalalignment=ha,
-                    fontweight = 'bold',
-                    color='white',
-                    bbox = dict(
-                        facecolor='white',
-                        boxstyle='square,pad=0.25',
-                        ec="none",
-                        alpha = 0.5
-                        ),
-                    rotation=r,
-                    rotation_mode = 'anchor',
+                    markersize = keywords['nodesize'],
+                    color = keywords['nodecolor'],
                     zorder = 200
                     )
-        for x,y,t,r,ha in enodes:
             
-            xvals += [x]
-            yvals += [y]
+            if keywords['nodestyle'] == 'double':
+                plt.plot(
+                        x,
+                        y,
+                        'o',
+                        markersize=keywords['nodesize']-4,
+                        color='white'
+                        )
+
+            # this is a workaround to get the text away from the node
+            if ha == 'left':
+                text = keywords['_prefix'] + labels[t]
+            else:
+                text = labels[t] + keywords['_suffix']
 
             plt.text(
                     x,
                     y,
-                    t,
-                    size = '7',
-                    verticalalignment='baseline',
+                    text,
+                    size = keywords['textsize'],
+                    verticalalignment='center',
                     horizontalalignment=ha,
                     fontweight = 'bold',
                     color='black',
                     rotation=r,
                     rotation_mode = 'anchor',
-                    zorder = 200
+                    zorder = 1
                     )
 
         # add a colorbar
@@ -3378,10 +3427,27 @@ class TreBor(Wordlist):
         
         # set defaults
         defaults = dict(
-                latex_preamble = [],
-                figsize = (10,10),
-                colormap = mpl.cm.jet,
-                filename = self.dataset,
+                latex_preamble   = [],
+                figsize          = (10,10),
+                colormap         = mpl.cm.jet,
+                filename         = self.dataset,
+                linescale        = 1.0,
+                maxweight        = False,
+                xlim             = 5,
+                ylim             = 5,
+                xlimr            = False,
+                xliml            = False,
+                ylimt            = False,
+                ylimb            = False,
+                left             = 0.02,
+                right            = 0.98,
+                top              = 1.00,
+                bottom           = 0.00,
+                cbar_shrink      = 0.55,
+                cbar_fraction    = 0.1,
+                cbar_pad         = 0.1,
+                cbar_orientation = 'vertical',
+                cbar_label       = 'Inferred Links'
                 )
 
         for key in defaults:
@@ -3722,18 +3788,20 @@ class TreBor(Wordlist):
                 )
         cbar = fig.colorbar(
                 cax,
-                ticks = [
+                ticks       = [
                     1,
                     1.25,
                     1.5,
                     1.75,
                     2
                     ],
-                orientation='vertical',
-                shrink=0.55
+                orientation = keywords['cbar_orientation'],
+                shrink      = keywords['cbar_shrink'],
+                fraction    = keywords['cbar_fraction'],
+                pad         = keywords['cbar_pad']
                 )
         cbar.set_clim(1.0)
-        cbar.set_label('Inferred Links')
+        cbar.set_label(keywords['cbar_label'])
         cbar.ax.set_yticklabels(
                 [
                     str(min(weights)),
@@ -3774,7 +3842,13 @@ class TreBor(Wordlist):
                     }
                 )
 
-        plt.subplots_adjust(left=0.02,right=0.98,top=1.0,bottom=0.00)
+        plt.subplots_adjust(
+                left   = keywords['left'],
+                right  = keywords['right'],
+                top    = keywords['top'],
+                bottom = keywords['bottom']
+                )
+
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
@@ -4215,20 +4289,21 @@ class TreBor(Wordlist):
         """
         # make defaults
         defaults = dict(
-                figsize = (15,15),
-                left = 0.05,
-                top = 0.95,
-                bottom = 0.05,
-                right = 0.95,
-                colormap = mpl.cm.jet,
-                edgewidth = 5,
-                radius = 2.5,
-                outer_radius = 0.5,
-                inner_radius = 0.25,
-                cognates = '',
-                usetex = False,
+                figsize        = (15,15),
+                left           = 0.05,
+                top            = 0.95,
+                bottom         = 0.05,
+                right          = 0.95,
+                colormap       = mpl.cm.jet,
+                edgewidth      = 5,
+                radius         = 2.5,
+                outer_radius   = 0.5,
+                inner_radius   = 0.25,
+                cognates       = '',
+                usetex         = False,
                 latex_preamble = False,
-                textsize = 8
+                textsize       = 8,
+                subset         = [] 
                 )
 
         for k in defaults:
@@ -4575,3 +4650,6 @@ class TreBor(Wordlist):
 
         # return the graph
         return 
+
+# add an alias for backwards compatibility
+TreBor = PhyBo

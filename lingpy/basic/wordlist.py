@@ -197,12 +197,14 @@ class Wordlist(object):
         basic_rows = sorted(
                 set(
                     [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
-                    )
+                    ),
+                key = lambda x: x.lower()
                 )
         basic_cols = sorted(
                 set(
                     [input_data[k][colIdx] for k in input_data if k != 0 and type(k) == int]
-                    )
+                    ),
+                key = lambda x: x.lower()
                 )
         
         # define rows and cols as attributes of the word list
