@@ -725,6 +725,7 @@ class Wordlist(object):
 
             if col not in self.cols:
                 print("[!] The column you selected is not available!")
+                return
             else:
                 data = self._array[:,self.cols.index(col)]
                 

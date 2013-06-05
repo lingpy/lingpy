@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-06-03 10:34
+# modified : 2013-06-05 00:28
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-06-03"
+__date__="2013-06-05"
 
 
 # basic imports
@@ -2355,7 +2355,137 @@ class PhyBo(Wordlist):
         
         f.close()
 
+    def get_edge(
+            self,
+            glm,
+            nodeA,
+            nodeB,
+            entries = '',
+            verbose = True,
+            mln = False
+            ):
+        """
+        Return the edge data for a given gain-loss model.
+        """
+        # define a warning message 
+        warning = "[!] No edge between {0} and {1} could be found".format(
+                nodeA,
+                nodeB
+                )
+        # check for entryB
+        if type(entries) == str:
+            entries = entries.split(',')
 
+        # get the graph locally for convenience
+        if not mln:
+            graph = self.graph[glm]
+        else:
+            graph = self.geograph[glm]
+
+        # get the edge
+        try:
+            edge = graph.edge[nodeA][nodeB]
+        except:
+            if verbose: print(warning)
+            return
+
+        # check the edge
+        if not mln:
+            if edge['label'] == 'horizontal':
+                cogs = edge['cogs'].split(',')
+            else:
+                if self.verbose: print(warning)
+                return
+        else:
+            cogs = edge['cogs'].split(',')
+        
+        # define list for output
+        outA = {}
+        outB = {}
+
+        # check whether nodes are in list or not
+        if nodeA in self.taxa:
+            nodesA = [nodeA]
+        else:
+            nodesA = self.tree.getNodeMatchingName(nodeA).getTipNames()
+        if nodeB in self.taxa:
+            nodesB = [nodeB]
+        else:
+            nodesB = self.tree.getNodeMatchingName(nodeB).getTipNames()
+        
+        # assemble the data
+        outA = {}
+        for node in nodesA:
+            tmp = dict(
+                    zip(
+                        self.get_list(
+                            col=node,
+                            flat=True,
+                            entry='pap'
+                            ),
+                        self.get_list(
+                            col=node,
+                            flat=True,
+                            )
+                        )
+                    )
+            for cog in cogs:
+                vals = [node]
+                for entry in entries:
+                    try:
+                        vals += [self[tmp[cog],entry]]
+                    except:
+                        pass
+                if len(vals) > 1:
+                    try:
+                        outA[cog] += [tuple(vals)]
+                    except:
+                        outA[cog] = [tuple(vals)]
+
+        # assemble the data
+        outB = {}
+        for node in nodesB:
+            tmp = dict(
+                    zip(
+                        self.get_list(
+                            col=node,
+                            flat=True,
+                            entry='pap'
+                            ),
+                        self.get_list(
+                            col=node,
+                            flat=True,
+                            )
+                        )
+                    )
+            for cog in cogs:
+                vals = [node]
+                for entry in entries:
+                    try:
+                        vals += [self[tmp[cog],entry]]
+                    except:
+                        pass
+                if len(vals) > 1:
+                    try:
+                        outB[cog] += [tuple(vals)]
+                    except:
+                        outB[cog] = [tuple(vals)]
+        
+        # assemble the output
+        output = []
+        for cog in cogs:
+            try:
+                output += [
+                        (
+                            self.pap2con[cog],outA[cog],outB[cog]
+                            )
+                        ]
+            except:
+                print("[!] Error encountered in cognate {0}.".format(
+                    self.pap2con[cog]
+                    )
+                    )
+        return output
 
     def analyze(
             self,
@@ -2721,7 +2851,7 @@ class PhyBo(Wordlist):
             fileformat = 'pdf',
             threshold = 1,
             usetex = True,
-            taxon_labels = 'taxon.short_labels',
+            taxon_labels = 'taxon_short_labels',
             verbose = False,
             alphat = False,
             alpha = 0.75,
@@ -3104,7 +3234,7 @@ class PhyBo(Wordlist):
             threshold = 1,
             usetex = True,
             colormap = None, #mpl.cm.jet,
-            taxon_labels = 'taxon.short_labels',
+            taxon_labels = 'taxon_short_labels',
             verbose = False,
             alphat = False,
             alpha = 0.75,
@@ -3383,17 +3513,13 @@ class PhyBo(Wordlist):
 
         return
 
-    def plot_MSN(
+    def get_MSN(
             self,
             glm = '',
             verbose=False,
             fileformat='pdf',
-            threshold = 1,
-            only = [],
-            usetex = False,
             external_edges = False,
-            alphat = False,
-            alpha = 0.75,
+            deep_nodes = False,
             **keywords
             ):
         """
@@ -3410,9 +3536,6 @@ class PhyBo(Wordlist):
         threshold : int (default=1)
             The threshold for the minimal amount of shared links that shall be
             plotted.
-        only : list (default=[])
-            The list of taxa whose connections with other taxa should be
-            plotted.
         usetex : bool (default=True)
             Specify whether LaTeX shall be used for the plot.
 
@@ -3425,6 +3548,232 @@ class PhyBo(Wordlist):
             "[i] You should select an appropriate model first."
             )
         
+        # redefine taxa and tree for convenience
+        taxa,tree = self.taxa,self.tree
+
+        # get the graph
+        graph = self.graph[glm]
+
+        # XXX check for coordinates of the taxa, otherwise load them from file and
+        # add them to the wordlist XXX add later, we first load it from file
+        if 'coords' in self._meta:
+            coords = self._meta['coords']
+        else:
+            coords = csv2dict(
+                    self.dataset,
+                    'coords',
+                    dtype=[str,float,float]
+                    )
+                
+        # calculate all resulting edges, using convex hull as
+        # approximation 
+        geoGraph = nx.Graph()
+        
+        for nA,nB,d in graph.edges(data=True):
+            
+            # get the labels
+            lA = graph.node[nA]['label']
+            lB = graph.node[nB]['label']
+            
+            # first check, whether edge is horizontal
+            if d['label'] == 'horizontal':
+                
+                # if both labels occur in taxa, it is simple
+                if lA in taxa and lB in taxa:
+                    try:
+                        geoGraph.edge[lA][lB]['weight'] += d['weight']
+                        geoGraph.edge[lA][lB]['cogs'] += ','+d['cogs']
+                    except:
+                        geoGraph.add_edge(lA,lB,weight=d['weight'],cogs=d['cogs'])
+                elif not external_edges:
+                    # if only one in taxa, we need the convex hull for that node
+                    if lA in taxa or lB in taxa:
+
+                        # check which node is in taxa
+                        if lA in taxa:
+                            this_label = lA
+                            other_nodes = tree.getNodeMatchingName(lB).getTipNames()
+                            other_label = lB
+                        elif lB in taxa:
+                            this_label = lB
+                            other_nodes = tree.getNodeMatchingName(lA).getTipNames()
+                            other_label = lA
+
+                        # first, get all the cogs
+                        cogs = d['cogs'].split(',')
+
+                        # iterate over all cogs now
+                        for cog in cogs:
+
+                            # check whether the nodes have the respective cognate
+                            # and take only those that have it
+                            new_other_nodes = []
+                            for other_node in other_nodes:
+                                paps = self.get_list(
+                                        col = other_node,
+                                        entry = 'pap',
+                                        flat = True
+                                        )
+                                if cog in paps and other_node != this_label:
+                                    new_other_nodes += [other_node]
+
+                            # get the convex points of others
+                            these_coords = [(round(coords[t][0],5),round(coords[t][1],5)) for t in
+                                    new_other_nodes]
+                            hulls = getConvexHull(these_coords,polygon=False)
+    
+                            # get the hull with the minimal euclidean distance
+                            distances = []
+                            for hull in hulls:
+                                distances.append(linalg.norm(np.array(hull) - np.array(coords[this_label])))
+                            this_hull = hulls[distances.index(min(distances))]
+                            other_label = new_other_nodes[
+                                    these_coords.index(
+                                        (
+                                            round(this_hull[0],5),
+                                            round(this_hull[1],5)
+                                            )
+                                        )
+                                    ]
+
+                            # append the edge to the graph
+                            try:
+                                geoGraph.edge[this_label][other_label]['weight'] += 1
+                                geoGraph.edge[this_label][other_label]['cogs'] += ','+cog
+
+                            except:
+                                geoGraph.add_edge(this_label,other_label,weight=1,cogs=cog)
+                        
+                    elif deep_nodes:
+                        # get the taxa of a and b
+                        taxA = tree.getNodeMatchingName(lA).getTipNames()
+                        taxB = tree.getNodeMatchingName(lB).getTipNames()
+
+                        # get the cogs
+                        cogs = d['cogs'].split(',')
+
+                        # iterate over the cogs
+                        for cog in cogs:
+                            newtaxA = []
+                            newtaxB = []
+
+                            # get the lists
+                            for t in taxA:
+                                paps = self.get_list(
+                                        col = t,
+                                        entry = 'pap',
+                                        flat = False
+                                        )
+                                if cog in paps:
+                                    newtaxA += [t]
+                            for t in taxB:
+                                paps = self.get_list(
+                                        col = t,
+                                        entry = 'pap',
+                                        flat = False
+                                        )
+                                if cog in paps:
+                                    newtaxB += [t]
+    
+                            # get the convex points
+                            coordsA = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxA]
+                            coordsB = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxB]
+                            hullsA = getConvexHull(coordsA,polygon=False)
+                            hullsB = getConvexHull(coordsB,polygon=False)
+    
+                            # get the closest points
+                            distances = []
+                            hulls = []
+                            for i,hullA in enumerate(hullsA):
+                                for j,hullB in enumerate(hullsB):
+                                    distances.append(linalg.norm(np.array(hullA)-np.array(hullB)))
+                                    hulls.append((hullA,hullB))
+                            minHulls = hulls[distances.index(min(distances))]
+                            
+                            labelA = newtaxA[coordsA.index((round(minHulls[0][0],5),round(minHulls[0][1],5)))]
+                            labelB = newtaxB[coordsB.index((round(minHulls[1][0],5),round(minHulls[1][1],5)))]
+                            
+                            # append the edge to the graph
+                            try:
+                                geoGraph.edge[labelA][labelB]['weight'] += 1
+                                geoGraph.edge[labelA][labelB]['cogs'] += ','+cog
+                            except:
+                                geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
+        
+        # write stats to file
+        f = open(self.dataset+'_trebor/taxa-msn-'+glm+'.stats','w')       
+        
+        # get the degree
+        nodes = tree.getTipNames()
+
+        dgr,wdgr = [],[]
+        for taxon in nodes:
+            
+            horizontals = [g for g in geoGraph[taxon] if 'weight' in geoGraph[taxon][g]]
+            
+            dgr.append(len(horizontals))
+            wdgr.append(sum([geoGraph[taxon][g]['weight'] for g in horizontals]))
+
+        sorted_nodes = sorted(
+                zip(nodes,dgr,wdgr),
+                key=lambda x:x[1],
+                reverse=True
+                )
+        for n,d,w in sorted_nodes:
+            f.write(
+                    '{0}\t{1}\t{2}\t{3}\n'.format(
+                        n,
+                        str(tree.getNodeMatchingName(n)),
+                        d,
+                        w
+                        )
+                    )
+        f.close()
+        
+        # write edge distributions
+        f = open(self.dataset+'_trebor/edge-msn-'+glm+'.stats','w')
+        edges = []
+        edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
+
+        for nA,nB,d in sorted(
+                edges,
+                key=lambda x: x[2]['weight'],
+                reverse = True
+                ):
+            f.write(
+                    '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
+                        nA,
+                        nB,
+                        d['weight'],
+                        d['cogs'],
+                        tree.getNodeMatchingName(nA),
+                        tree.getNodeMatchingName(nB)
+                        )
+                    )
+        f.close()
+
+        try:
+            self.geograph[glm] = geoGraph
+        except:
+            self.geograph = {}
+            self.geograph[glm] = geoGraph
+        return
+
+    def plot_MSN(
+            self,
+            glm = '',
+            verbose=False,
+            fileformat='pdf',
+            threshold = 1,
+            usetex = False,
+            alphat = False,
+            alpha = 0.75,
+            only = [],
+            **keywords
+            ):
+        """
+        Plot a minimal spatial network.
+        """
         # set defaults
         defaults = dict(
                 latex_preamble   = [],
@@ -3447,12 +3796,54 @@ class PhyBo(Wordlist):
                 cbar_fraction    = 0.1,
                 cbar_pad         = 0.1,
                 cbar_orientation = 'vertical',
-                cbar_label       = 'Inferred Links'
+                cbar_label       = 'Inferred Links',
+                resolution = 'l',
+                table_text_color = 'black',
+                water_color = '0.2',
+                lw = 2,
+                cmap_max = 250,
+                continent_color = '0.9',
+                projection = 'merc',
+                legend_size = 18,
+                linewidth = 4,
+                min_lon = False,
+                max_lon = False,
+                min_lat = False,
+                max_lat = False,
+                table_column_width = [0.025,0.1325],
+                coastline_color = "0.5",
+                table_location = 3,
+                legend_location = [0.85,0.02],
+                table_cell_height = 0.024,
+                table_text_size = 10,
+                alpha = 0.75,
+                cmap_min = 30,
+                markersize = 20
                 )
 
+        # load the rc-file XXX add internal loading later
+        try:
+            conf = json.load(open(self.dataset+'.json'))
+        except:
+            try:
+                conf = self._meta['conf']
+            except:
+                raise ValueError('[!] Configuration is not specified!')
+
+        if verbose: LoadDataMessage('configuration')
+
+        # overwrite configuration from keywords
+        for k in keywords:
+            conf[k] = keywords[k]
+
+        # overwrite keywords with defaults
         for key in defaults:
             if key not in keywords:
                 keywords[key] = defaults[key]
+
+        # check for only
+        if not only:
+            only = self.taxa
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -3467,31 +3858,10 @@ class PhyBo(Wordlist):
 
         # usetex
         mpl.rc('text',usetex=usetex)
-
-        # check for only
-        if not only:
-            only = self.taxa
         
+        # define stuff for convenience
         filename = keywords['filename']
         colormap = keywords['colormap']
-    
-        # redefine taxa and tree for convenience
-        taxa,tree = self.taxa,self.tree
-
-        # get the graph
-        graph = self.graph[glm]
-
-        # XXX check for coordinates of the taxa, otherwise load them from file and
-        # add them to the wordlist XXX add later, we first load it from file
-        if 'coords' in self._meta:
-            coords = self._meta['coords']
-        
-        else:
-            coords = csv2dict(
-                    self.dataset,
-                    'coords',
-                    dtype=[str,float,float]
-                    )
 
         # check for groups, add functionality for groups in qlc-file later XXX
         if 'groups' in self._meta:
@@ -3499,103 +3869,14 @@ class PhyBo(Wordlist):
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
 
-        # load the rc-file XXX add internal loading later
-        try:
-            conf = json.load(open(self.dataset+'.json'))
-        except:
-            try:
-                conf = self._meta['conf']
-            except:
-                raise ValueError('[!] Configuration is not specified!')
-        
-        if verbose: LoadDataMessage('configuration')
-                
-        # calculate all resulting edges, using convex hull as
-        # approximation 
-        geoGraph = nx.Graph()
-        
-        for nA,nB,d in graph.edges(data=True):
-            
-            # get the labels
-            lA = graph.node[nA]['label']
-            lB = graph.node[nB]['label']
-            
-            # first check, whether edge is horizontal
-            if d['label'] == 'horizontal':
-                
-                # if both labels occur in taxa, it is simple
-                if lA in taxa and lB in taxa:
-                    try:
-                        geoGraph.edge[lA][lB]['weight'] += d['weight']
-                    except:
-                        geoGraph.add_edge(lA,lB,weight=d['weight'])
-                elif not external_edges:
-                    # if only one in taxa, we need the convex hull for that node
-                    if lA in taxa or lB in taxa:
 
-                        # check which node is in taxa
-                        if lA in taxa:
-                            this_label = lA
-                            other_nodes = tree.getNodeMatchingName(lB).getTipNames()
-                            other_label = lB
-                        elif lB in taxa:
-                            this_label = lB
-                            other_nodes = tree.getNodeMatchingName(lA).getTipNames()
-                            other_label = lA
-
-                        # get the convex points of others
-                        these_coords = [(round(coords[t][0],5),round(coords[t][1],5)) for t in
-                                other_nodes]
-                        hulls = getConvexHull(these_coords,polygon=False)
-    
-                        # get the hull with the minimal euclidean distance
-                        distances = []
-                        for hull in hulls:
-                            distances.append(linalg.norm(np.array(hull) - np.array(coords[this_label])))
-                        this_hull = hulls[distances.index(min(distances))]
-                        other_label = other_nodes[
-                                these_coords.index(
-                                    (
-                                        round(this_hull[0],5),
-                                        round(this_hull[1],5)
-                                        )
-                                    )
-                                ]
-    
-                        # append the edge to the graph
-                        try:
-                            geoGraph.edge[this_label][other_label]['weight'] += d['weight']
-                        except:
-                            geoGraph.add_edge(this_label,other_label,weight=d['weight'])
-                        
-                    #else:
-                    #    # get the taxa of a and b
-                    #    taxA = tree.getNodeMatchingName(lA).getTipNames()
-                    #    taxB = tree.getNodeMatchingName(lB).getTipNames()
-    
-                    #    # get the convex points
-                    #    coordsA = [(round(coords[t][0],5),round(coords[t][1],5)) for t in taxA]
-                    #    coordsB = [(round(coords[t][0],5),round(coords[t][1],5)) for t in taxB]
-                    #    hullsA = getConvexHull(coordsA,polygon=False)
-                    #    hullsB = getConvexHull(coordsB,polygon=False)
-    
-                    #    # get the closest points
-                    #    distances = []
-                    #    hulls = []
-                    #    for i,hullA in enumerate(hullsA):
-                    #        for j,hullB in enumerate(hullsB):
-                    #            distances.append(linalg.norm(np.array(hullA)-np.array(hullB)))
-                    #            hulls.append((hullA,hullB))
-                    #    minHulls = hulls[distances.index(min(distances))]
-                    #    
-                    #    labelA = taxA[coordsA.index((round(minHulls[0][0],5),round(minHulls[0][1],5)))]
-                    #    labelB = taxB[coordsB.index((round(minHulls[1][0],5),round(minHulls[1][1],5)))]
-                    #    
-                    #    # append the edge to the graph
-                    #    try:
-                    #        geoGraph.edge[labelA][labelB]['weight'] += d['weight']
-                    #    except:
-                    #        geoGraph.add_edge(labelA,labelB,weight=d['weight'])
+        # update configuration
+        for k in keywords:
+            if k not in conf:
+                conf[k] = keywords[k]
+        
+        # set the graph variable
+        geoGraph = self.geograph[glm]
 
         # get the weights for the lines
         weights = []
@@ -3625,7 +3906,18 @@ class PhyBo(Wordlist):
         # scale the weights for line-widths
         linescale = conf['linescale'] / (max_weight-threshold) #XXX
         # XXX apparently not needed?
-        
+       
+        # XXX check for coordinates of the taxa, otherwise load them from file and
+        # add them to the wordlist XXX add later, we first load it from file
+        if 'coords' in self._meta:
+            coords = self._meta['coords']
+        else:
+            coords = csv2dict(
+                    self.dataset,
+                    'coords',
+                    dtype=[str,float,float]
+                    )
+
         # determine the maxima of the coordinates
         latitudes = [i[0] for i in coords.values()]
         longitudes = [i[1] for i in coords.values()]
@@ -3694,19 +3986,19 @@ class PhyBo(Wordlist):
         legend_check = []
 
         # check for taxon.labels in conf
-        if 'taxon.labels' in conf:
-            tfunc = lambda x:conf['taxon.labels'][x]
+        if 'taxon_labels' in conf:
+            tfunc = lambda x:conf['taxon_labels'][x]
         else:
             tfunc = lambda x:x
-        if 'groups.labels' in conf:
-            gfunc = lambda x:conf['groups.labels'][x]
+        if 'groups_labels' in conf:
+            gfunc = lambda x:conf['groups_labels'][x]
         else:
             gfunc = lambda x:x
 
         # check for defaults
         defaults = {
                 "markersize" : 10,
-                "table.cell.height" : 0.025,
+                "table_cell_height" : 0.025,
                 }
         for k in defaults:
             if k  not in conf:
@@ -3722,9 +4014,9 @@ class PhyBo(Wordlist):
             
             # get colors from conf
             this_group = groups[taxon]
-            taxon_color = conf['groups.colors'][this_group]
+            taxon_color = conf['groups_colors'][this_group]
             try:
-                taxon_marker = conf['groups.markers'][this_group]
+                taxon_marker = conf['groups_markers'][this_group]
             except:
                 taxon_marker = 'o'
 
@@ -3815,29 +4107,29 @@ class PhyBo(Wordlist):
         # add the legend
         this_table = plt.table(
                 cellText = cell_text,
-                colWidths = conf['table.column.width'],
-                loc = conf['table.location'],
+                colWidths = conf['table_column_width'],
+                loc = conf['table_location'],
                 )
         this_table.auto_set_font_size(False)
-        this_table.set_fontsize(conf['table.text.size'])
+        this_table.set_fontsize(conf['table_text_size'])
 
         # adjust the table
         for line in this_table._cells:
             this_table._cells[line]._text._horizontalalignment = 'left'
             this_table._cells[line]._text._fontproperties.set_weight('bold')
-            this_table._cells[line]._text.set_color(conf['table.text.color'])
-            this_table._cells[line].set_height(conf['table.cell.height'])
+            this_table._cells[line]._text.set_color(conf['table_text_color'])
+            this_table._cells[line].set_height(conf['table_cell_height'])
             #this_table._cells[line]._text._fontproperties.set_size(conf['table.text.size'])
             this_table._cells[line].set_linewidth(0.0)
-            this_table._cells[line].set_color(conf['table.cell.color'])
+            this_table._cells[line].set_color(conf['table_cell_color'])
         
         this_table.set_zorder(100)
         
         plt.legend(
-                loc=conf['legend.location'],
+                loc=conf['legend_location'],
                 numpoints=1,
                 prop={
-                    'size':conf['legend.size'],
+                    'size':conf['legend_size'],
                     'weight':'bold'
                     }
                 )
@@ -3853,10 +4145,6 @@ class PhyBo(Wordlist):
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
         if verbose: FileWriteMessage(filename,fileformat).message('written')
-
-        #self.geograph[glm] = geoGraph
-        return
-
     
     def plot_concepts(
             self,
