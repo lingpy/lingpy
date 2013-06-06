@@ -276,7 +276,13 @@ def read_qlc(infile):
             key = line[1:line.index(':')]
             value = line[line.index(':')+1:].strip()
             if key not in ['tree']:
-                meta[key] = value
+                if key in meta:
+                    if type(meta[key]) is not list:
+                        meta[key] = [meta[key], value]
+                    else:
+                        meta[key].append(value)
+                else:
+                    meta[key] = value
             else:
                 if key == 'tree':
                     meta["tree"] = cg.LoadTree(treestring=value)
