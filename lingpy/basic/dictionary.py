@@ -5,7 +5,7 @@
 This module provides a basic class for the handling of dictionaries.
 
 TODO:
-* What to do with dictionaries with more then 1 translation?
+* How to handle concept comparison in ConceptGraph?
 
 """
 
@@ -17,8 +17,12 @@ import sys
 from datetime import date,datetime
 import numpy as np
 import pickle
+import codecs
+import re
 from operator import itemgetter
 import pdb
+
+from nltk.stem.snowball import SpanishStemmer
 
 # basic lingpy imports
 from ..read.csv import read_qlc
@@ -204,6 +208,17 @@ class Dictionary():
         for key in [k for k in input_data if type(k) != int]:
             self._meta[key] = input_data[key]
 
+        # build a doculect->iso map for @doculect meta data
+        self.doculect2iso = {}
+        # do we have more than one doculect in the header?
+        if type(self._meta["doculect"]) is list:
+            for doculect in self._meta["doculect"]:
+                doculect_entry = re.split(", ?", doculect)
+                self.doculect2iso[doculect_entry[0]] = doculect_entry[1]
+        else:
+            doculect_entry = self._meta["doculect"]
+            self.doculect2iso[doculect_entry[0]] = doculect_entry[1]
+
 
     def __getitem__(self,idx):
         """
@@ -337,3 +352,105 @@ class Dictionary():
                 entries.append(tuple(mygetter(row)))
 
         return entries
+
+
+class ConceptGraph():
+    """
+
+    """
+
+    def __init__(self, concepts, pivot_lang_iso, concept_matcher):
+        """
+
+        """
+        #self.concepts = concepts
+        self.pivot_lang_iso = pivot_lang_iso
+        self.concept_matcher = concept_matcher
+        self.graph = {}
+        self.doculects = set()
+        for concept in concepts:
+            self.graph[concept] = set()
+
+    def add_dictionary(self, dictionary):
+        """
+
+        """
+        for head, translation, head_doculect, translation_doculect in \
+                dictionary.get_tuples(
+                    [ "head", "translation", "head_doculect",
+                    "translation_doculect" ]):
+            spa = ""; trans = ""
+            if dictionary.doculect2iso[head_doculect] == self.pivot_lang_iso:
+                pivot = head
+                trans = translation
+                doculect = translation_doculect
+            elif dictionary.doculect2iso[translation_doculect] == \
+                    self.pivot_lang_iso:
+                pivot = translation
+                trans = head
+                doculect = head_doculect
+            else:
+                continue
+
+            for concept in self.graph:
+                if self.concept_matcher(concept, pivot):
+                    self.graph[concept].add((trans, doculect))
+
+        for doculect, iso in dictionary.doculect2iso.items():
+            self.doculects.add((doculect, iso))
+
+    def write_wordlist(self, filename):
+        """
+
+        """
+        wordlist = codecs.open(filename, "w", "utf-8")
+
+        # write header
+        wordlist.write("@date: {0}\n".format(str(date.today())))
+
+        wordlist.write(
+            "@source_title: Automatically created wordlist, by lingpy.\n")
+
+        for doculect, iso in self.doculects:
+            wordlist.write("@doculect: {0}, {1}\n".format(doculect, iso))
+
+        i = 0
+        for concept in self.graph:
+            for counterpart, counterpart_doculect in self.graph[concept]:
+                wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
+                    i, concept.upper(), counterpart, counterpart_doculect))
+                i += 1
+
+        wordlist.close()
+
+stemmer = SpanishStemmer(True)
+
+def spanish_swadesh_list():
+    # load swadesh list
+    swadesh_file = os.path.split(
+                    os.path.dirname(
+                        os.path.abspath(
+                            __file__
+                            )
+                        )
+                    )[0] + '/data/swadesh/swadesh_spa.txt'
+
+    swadesh = codecs.open(swadesh_file, "r", "utf-8")
+
+    swadesh_entries = []
+    for line in swadesh:
+        line = line.strip()
+        for e in line.split(","):
+            e = e.strip()
+            stem = stemmer.stem(e)
+            swadesh_entries.append(stem)
+    return swadesh_entries
+
+def spanish_stem_matcher(concept, expression):
+    phrase = re.sub(" ?\([^)]\)", "", expression)
+    phrase = phrase.strip()
+    if not " " in phrase:
+        stem = stemmer.stem(phrase)
+        if stem == concept:
+            return True
+    return False
