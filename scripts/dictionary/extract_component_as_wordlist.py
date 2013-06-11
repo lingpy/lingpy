@@ -42,7 +42,8 @@ def main(argv):
             witotoan_sources.append(source[0])
 
     concepts = lingpy.spanish_swadesh_list()
-    cg = lingpy.ConceptGraph(concepts, "spa", lingpy.spanish_stem_matcher)
+    cm = lingpy.ConceptComparerSpanishStem()
+    cg = lingpy.ConceptGraph(concepts, "spa", cm)
 
     for f in glob.glob("*.csv"):
         if ("-" in f and f[:f.index("-")] in witotoan_sources) or \

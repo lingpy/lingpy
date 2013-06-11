@@ -20,6 +20,7 @@ import pickle
 import codecs
 import re
 from operator import itemgetter
+import abc
 import pdb
 
 from nltk.stem.snowball import SpanishStemmer
@@ -393,7 +394,7 @@ class ConceptGraph():
                 continue
 
             for concept in self.graph:
-                if self.concept_matcher(concept, pivot):
+                if self.concept_matcher.compare_to_concept(pivot, concept):
                     self.graph[concept].add((trans, doculect))
 
         for doculect, iso in dictionary.doculect2iso.items():
@@ -423,9 +424,50 @@ class ConceptGraph():
 
         wordlist.close()
 
-stemmer = SpanishStemmer(True)
+
+class ConceptComparerBase():
+    """
+    """
+
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def compare_to_concept(self, element, concept):
+        """Compares a given element to a concept. Implement this for your
+        type of concept.
+
+        Parameters
+        ----------
+        element : str
+            The string to compare to the concept.
+        concept : str or object
+            The conpect to compare to.
+
+        Return
+        ------
+        match : bool
+            True if element matches the given concept, False otherwise.
+
+        """
+        raise NotImplementedError("Method must be implemented")
+
+class ConceptComparerSpanishStem(ConceptComparerBase):
+
+    def __init__(self):
+        self.stemmer = SpanishStemmer(True)
+        self.re_brackets = re.compile(" ?\([^)]\)")
+
+    def compare_to_concept(self, element, concept):
+        element = self.re_brackets.sub("", element)
+        element = element.strip()
+        if not " " in element:
+            stem = self.stemmer.stem(element)
+            if stem == concept:
+                return True
+        return False
 
 def spanish_swadesh_list():
+    stemmer = SpanishStemmer(True)
     # load swadesh list
     swadesh_file = os.path.split(
                     os.path.dirname(
@@ -445,12 +487,3 @@ def spanish_swadesh_list():
             stem = stemmer.stem(e)
             swadesh_entries.append(stem)
     return swadesh_entries
-
-def spanish_stem_matcher(concept, expression):
-    phrase = re.sub(" ?\([^)]\)", "", expression)
-    phrase = phrase.strip()
-    if not " " in phrase:
-        stem = stemmer.stem(phrase)
-        if stem == concept:
-            return True
-    return False
