@@ -10,57 +10,26 @@ import unicodedata
 import regex
 import os
 
-class DuplicateExceptation(Exception): pass
+class DuplicateExceptation(Exception): pass	
 
 class GraphemeParser(object):
     """
-    Class for Unicode graphemic parsing of Unicode strings. 
+    Class for graphemic parsing of Unicode strings.
 
-    Parameters
-    ----------
+    .. Notes
+    .. -----
+    .. TODO: Introduce parser for dealing with Letter Modifiers, etc.
 
-    Notes
-    -----
-    This class handles (just) Unicode grapheme parsing, i.e. it uses the Unicode
-    standard grapheme parsing rules, as implemented in the Python regex package 
-    by Matthew Barnett, to do basic parsing with the "\X" grapheme regular 
-    expression match. This grapheme match combines one or more Combining Diacritical 
-    Marks to their base character. These are called "Grapheme clusters" in 
-    Unicode parlance.
-
-    This class is meant to do basic rudimentary parsing for things like getting 
-    an additional unigram model (segments and their counts) in an input data source.
-
-    For more elaborate orthographic parsing, see the OrthographyParser and the 
-    OrthographyRulesParser.
-
-    An additional method (in its infancy) called combine_modifiers handles the 
-    case where there are Unicode Spacing Modifier Letters, which are not explicitly 
-    combined to their base character in the Unicode Standard. These graphemes 
-    are called "Tailored grapheme clusters" in Unicode. For more information 
-    see the Unicode Standard Annex #29: Unicode Text Segmentation:
-
-    http://www.unicode.org/reports/tr29/
     """
-
     def __init__(self):
-        """
-        Create the Unicode grapheme pattern match object.
-        """
         self.grapheme_pattern = regex.compile("\X", regex.UNICODE)
 
     def combine_modifiers(self, string):
         """
         Given a string that is space-delimited on Unicode graphemes, group Unicode modifier letters with their preceeding base characters.
 
-        Parameters
-        ----------
-
-        string : string
-            A Unicode string to be parsed into graphemes.
-
-        .. todo:: check if we need to apply NDF after string is parsed
         """
+        # TODO: check if we need to apply NDF after string is parsed
 
         result = []
         graphemes = string[1:-1].split()
@@ -71,7 +40,8 @@ class GraphemeParser(object):
             if len(grapheme) == 1 and unicodedata.category(grapheme) == "Lm":
                 temp = grapheme+temp
 
-                # hack for the cases where a space modifier is the first character in the str
+                # hack for the cases where a space modifier is the first character
+                # in the string
                 if count == 0:
                     result[-1] = temp+result[-1]
                 continue
@@ -86,20 +56,19 @@ class GraphemeParser(object):
 
         Parameters
         ----------
-        string : str
+        string : string
             A Unicode string to be parsed into graphemes.
-
-        Returns
-        -------
-        result : str
-            String returned is space-delimited on Unicode graphemes and contains "#" to mark word boundaries.
-            The string is in NFD.
 
         Notes
         -----
         Input is first normalized according to Normalization Ford D(ecomposition).
-        """
 
+        Return
+        ------
+        result : string
+            String returned is space-delimited on Unicode graphemes and contains "#" to mark word boundaries.
+            The string is in NFD.
+        """
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
         result = "#"
@@ -115,20 +84,21 @@ class GraphemeParser(object):
 
         Parameters
         ----------
-        string : str
+        string : string
             A Unicode string to be parsed into graphemes.
-
-        Returns
-        -------
-        result : str
-            String returned is space-delimited on Unicode characters and contains "#" to mark word boundaries.
-            The string is in NFD.
 
         Notes
         -----
         Input is first normalized according to Normalization Ford D(ecomposition).
         String returned contains "#" to mark word boundaries.
+
+        Return
+        ------
+        result : string
+            String returned is space-delimited on Unicode characters and contains "#" to mark word boundaries.
+            The string is in NFD.
         """
+
 
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
@@ -139,11 +109,6 @@ class GraphemeParser(object):
         return (result)
         
     def parse_string_to_graphemes_string(self, string):
-        """
-        Deprecated function to parse graphemes and return a tuple of (T/F success, parse).
-
-        .. todo:: Check code base for calls to this function.
-        """
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
         result = "#"
@@ -155,11 +120,6 @@ class GraphemeParser(object):
         return (True, result)
 
     def parse_string_to_graphemes(self, string):
-        """
-        Deprecated function to parse graphemes and return a tuple of (T/F success, tupled parse).
-
-        .. todo:: Check code base for calls to this function.
-        """
         (success, graphemes) = self.parse_string_to_graphemes_string(string)
         return (success, tuple(graphemes.split(" ")))
 
@@ -167,27 +127,6 @@ class OrthographyRulesParser(object):
     """
     Class for orthography rules parsing of Unicode strings.
 
-    Parameters
-    ----------
-    orthography_profile_rules : file
-        An orthography profile rules file.
-
-
-    Notes
-    -----
-    Orthographic rules are current specified in a separate file from the 
-    orthography profile (that specifics the document specific graphemes, 
-    and possibly their IPA counterparts) and the orthography rules should 
-    be applied to the output of an OrthographyParser.
-
-    In an orthography rules file, rules are given in order in regular 
-    expressions, e.g. this rule replaces a vowel followed by an <n> 
-    followed by <space> followed by a second vowel with first vowel 
-    <space> <n> <space> second vowel, e.g.:
-
-    ([a|á|e|é|i|í|o|ó|u|ú])(n)(\s)([a|á|e|é|i|í|o|ó|u|ú]), \1 \2 \4
-
-    .. todo:: integrate the rules file and the orthography profile into one.
     """
 
     def __init__(self, orthography_profile_rules):
@@ -200,11 +139,9 @@ class OrthographyRulesParser(object):
         self.replacements = []
 
         rules_file = open(orthography_profile_rules, "r", encoding="utf-8")
-
         # loop through the orthography fules and compile them
         for line in rules_file:
             line = line.strip()
-
             # skip any comments
             if line.startswith("#") or line == "":
                 continue
@@ -222,20 +159,6 @@ class OrthographyRulesParser(object):
             sys.exit(1)
 
     def parse_string(self, string):
-        """
-        Function to parse input string and return output of str with ortho rules applied.
-
-        Parameters
-        ----------
-        string : str
-            The input string to be parsed.
-
-        Returns
-        -------
-        result : str
-            Result of the orthography rules applied to the input str.
-
-        """
         result = string
         for i in range(0, len(self.rules)):
             match = self.rules[i].search(result)
@@ -248,43 +171,27 @@ class OrthographyRulesParser(object):
 
 class OrthographyParser(object):
     """
-    Class for orthographic parsing using orthography profiles as designed for the QLC project.
+    Class for orthographic parsing using orthography profiles.
 
     Parameters
     ----------
     orthography_profile : file
-        A document source-specific orthography profile.
-
+        A document-specific orthography profile.
 
     Notes
     -----
-    The OrthographyParser reads in an orthography profile and calls a helper 
-    class to build a trie data structure, which stores the possible Unicode 
-    character combinations that are specified in the orthography profile 
-    and appear in the data source.
 
-    For example, an orthography profile might specify that in source X 
-    <uu> is a single grapheme (Unicode parlance: tailored grapheme) and 
-    thus should be chunked as so. Thus given an orthography profile and 
-    some data to parse, the process would look like this:
+    The orthography profile class for reading in a dictionary's 
+    orthography profile and parsing and formating strings into the 
+    agreed upon format:
 
     input string example: uubo
     output string example: # uu b o #
 
-    where the output is given in QLC string format.
+    Methods in this class return a tuple of (True or False, parsed-string).
+    The first element in the tuple relays whether the string parsed sucessfully.
+    The second element returns the parsed string.
 
-    Additionally, if a second column in an orthography profile is specified 
-    (the first lists the graphemes in a given source), this class assumes 
-    that that column is the IPA translation of the graphemes. A dictionary 
-    is created that keeps a mapping between source-specific graphemes and 
-    their IPA counterparts.
-
-    Deprecated methods in this class return a tuple of (True or False, parsed-string).
-    The first element in the tuple relays whether the string parsed sucessfully. The 
-    second element returns the parsed string.
-
-    .. todo:: remove any code that uses the deprecated methods
-    .. todo:: update the processes so we don't just assume col 2 is IPA
     """
 
     def __init__(self, orthography_profile):
@@ -303,6 +210,9 @@ class OrthographyParser(object):
         self.grapheme_to_phoneme = {}
 
         # create look up table of grapheme to IPA from orthography profile
+        # TODO: move this into a function when we start adding more than just 
+        # 2 columns to the orthography profiles
+
         file = open(orthography_profile, "r", encoding="utf-8")
 
         # an orthography profile may have one or more comma delimited columns
@@ -345,40 +255,29 @@ class OrthographyParser(object):
         return self.multiple_columns
 
     def parse_string_to_graphemes_string_DEPRECATED(self, string):
-        """
-        Deprecated function to parse str into tuples (success, parsed str).
-        """
         string = string.replace(" ", "#") # add boundaries between words
         string = unicodedata.normalize("NFD", string)
         result = ""
         result += printMultigraphs(self.root, string, result+"# ")
         return (True, result)
 
+
+
+    # updated for LINGPY - deal with error handling in THIS class
+    # TODO -- write unparsables to disk!
     def parse_graphemes(self, string):
         """
         Parses orthograhy profile specified graphemes given a string.
 
-        Parameters
-        ----------
-        string : str
-            The str to be parsed and formatted.
+        Args:
+        - string (obligatory): the string to be parsed and formatted
 
-        Returns
-        -------
-        result : str
-            The result of the parsed and QLC formatted str.
+        Returns:    
+        - the parsed and formatted string
 
-        Notes
-        -----
-        An example: 
-        
-        input: dog shit
-        output # d o g # sh i t #
-
-        .. todo:: updated for LINGPY: deal with error handling in THIS class
-        .. todo:: write unparsables to disk!
+        For example:
+           dog shit => # d o g # sh i t #
         """
-
         success = True
         parses = []
         string = unicodedata.normalize("NFD", string)
@@ -397,22 +296,15 @@ class OrthographyParser(object):
     # TODO -- write unparsables to disk!
     def graphemes_to_ipa(self, string):
         """
-        Returns the parsed and formated string given the orthography profile.
+        Returns the parsed and formated string given the graphemes encoded in the 
+        orthography profile and the IPA row. Uses a global scope lookup hash for
+        the time being.
 
-        Parameters
-        ----------
-        string : str
-            The str to be parsed and formatted.
+        Args:
+        - string (obligatory): the string to be parsed and formatted
 
-        Returns
-        -------
-        ipa : str
-            The str parsed and formatted and flipped into IPA.
-
-        Notes
-        -----
-        Graphemes encoded in the orthography profile and the IPA row are used 
-        as a global scope lookup using a dict.
+        Returns:    
+        - the parsed and formatted string
         """
         graphemes = self.parse_graphemes(string)
         ipa = graphemes
@@ -428,11 +320,23 @@ class OrthographyParser(object):
 
         return ipa
 
+
+
+
+
     def parse_string_to_graphemes_string(self, string):
         """
-        Deprecated methods that returns parsed str in a tuple.
+        Returns the parsed and formated string given the graphemes encoded in the 
+        orthography profile.
 
-        .. todo:: check for code calling this function then remove
+        Args:
+        - string (obligatory): the string to be parsed and formatted
+
+        Returns:    
+        - the parsed and formatted string
+
+        For example:
+           dog shit => # d o g # sh i t #
         """
         success = True
         parses = []
@@ -454,9 +358,14 @@ class OrthographyParser(object):
 
     def parse_string_to_graphemes(self, string):
         """
-        Deprecated function that parses string and returns tuple of graphemes.
+        Accepts a string and returns a orthographically parsed tuple of graphemes.
 
-        .. todo:: check code calling this function and remove
+        Args:
+        - string (obligatory): the string to be parsed
+
+        Returns:
+        - the parsed string as a tuple of graphemes
+
         """
         (success, graphemes) = self.parse_string_to_graphemes_string(string)
 
@@ -464,13 +373,19 @@ class OrthographyParser(object):
 
     def parse_string_to_ipa_phonemes(self, string):
         """
-        Deprecated function to parse string and returns tuple of success and phonemes.
+        Accepts a string and returns a IPA parsed tuple of phonemes.
 
-        .. todo:: check for code calling this funtion and update and remove
+        Args:
+        - string (obligatory): the string to be parsed
+
+        Returns:    
+        - the parsed string as a tuple of phonemes
+
         """
         (success, graphemes) = self.parse_string_to_graphemes_string(string)
         if not success:
             return (False, graphemes)
+
 
         # flip the graphemes into phonemes
         # this is so ghetto and fragile -- depends on the precise encoding of the orthography profile
@@ -489,9 +404,15 @@ class OrthographyParser(object):
 
     def parse_string_to_ipa_string(self, string):
         """
-        Deprecated function to parse str into tuple of success and phonemes.
+        Returns the parsed and formated string given the graphemes encoded in the 
+        orthography profile and the IPA row. Uses a global scope lookup hash for
+        the time being.
 
-        .. todo:: check for caller code and update
+        Args:
+        - string (obligatory): the string to be parsed and formatted
+
+        Returns:    
+        - the parsed and formatted string
         """
         (success, graphemes) = self.parse_string_to_graphemes_string(string)
         if not success:
@@ -507,9 +428,18 @@ class OrthographyParser(object):
 
     def parse_formatted_string_to_ipa_string(self, string):
         """
-        Deprecated function to parse formatted string into graphemes.
+        Returns the parsed and formated string given the graphemes encoded in the 
+        orthography profile and the IPA row. Uses a global scrope lookup hash for
+        the time being.
 
-        .. todo:: check for caller code and update
+        Needs to be investigated. Assumes that all graphemes are present
+        in the orthography profile.
+
+        Args:
+        - formatted string (obligatory): the string to be parsed and formatted
+
+        Returns:    
+        - the parsed and formatted string
         """
         string = string.strip()
         # flip the graphemes into phonemes
@@ -534,10 +464,6 @@ class OrthographyParser(object):
 # ---------- Tree node --------
 
 class TreeNode(object):
-    """
-    Private class that creates the trie data structure from the orthography profile for parsing.
-    """
-
     def __init__(self, char):
         self.char = char
         self.children = {}
@@ -663,6 +589,7 @@ def printTree(root, path):
         print(path)
 
 # ---------- Main ------
+
 if __name__=="__main__":
     o = OrthographyParser("../data/orthography_profiles/thiesen1998.txt")
     g = GraphemeParser()

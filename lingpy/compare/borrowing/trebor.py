@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-06-05 00:28
+# modified : 2013-06-06 12:16
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-06-05"
+__date__="2013-06-06"
 
 
 # basic imports
@@ -2928,6 +2928,7 @@ class PhyBo(Wordlist):
                 _prefix = '- ',
                 _suffix = ' -',
                 textsize = '10',
+                vsd_scale = 0.1,
                 latex_preamble = [],
                 )
         for k in defaults:
@@ -2953,7 +2954,35 @@ class PhyBo(Wordlist):
             conf = json.load(open(self.dataset+'.json'))
         except:
             conf = {}
+        
+        # create a dictionary for all nodes 
+        node_dict = {}
 
+        # iterate over contemporary taxa first
+        for taxon in self.taxa:
+            
+            # get all cognates that are not singletongs
+            cogs = [
+                    x for x in self.get_list(
+                        col = taxon,
+                        flat = True,
+                        entry = 'pap'
+                        ) if x in self.cogs
+                    ]
+
+            # count the number of paps
+            node_dict[taxon] = len(cogs) * keywords['vsd_scale']
+
+        # iterate over internal nodes now
+        for a,b in [(x,y) for x,y in self.tree.getNodesDict().items() if x not in self.taxa]:
+            
+            if a != 'root':
+                node = str(b).replace(')','').replace('(','').replace(',','-')
+            else:
+                node = 'root'
+
+            node_dict[a] = len(self.acs[glm][node]) * keywords['vsd_scale']
+        
         # get the graph
         graph = self.graph[glm]
 
@@ -2991,7 +3020,7 @@ class PhyBo(Wordlist):
                 data['graphics'] = {}
                 data['graphics']['fill'] = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
                 data['graphics']['width'] = scale * w
-
+        
         # get the nodes
         for n,d in graph.nodes(data=True):
             g = d['graphics']
@@ -3001,15 +3030,25 @@ class PhyBo(Wordlist):
             w = g['w']
             s = g['s']
 
+            # get the nodesize
+            if keywords['nodestyle'] == 'vsd':
+                try:
+                    ns = node_dict[n]
+                except:
+                    ns = keywords['nodesize']
+            else:
+                ns = keywords['nodesize']
+
+
             if d['label'] not in self.taxa:
-                inodes += [(x,y)]
+                inodes += [(x,y,ns)]
             else:
                 if 'angle' in d['graphics']:
                     r = d['graphics']['angle']
                 else:
                     r = 0
 
-                enodes += [(x,y,d['label'],r,s)]
+                enodes += [(x,y,d['label'],r,s,ns)]
         
         # store vertical and lateral edges
         vedges = []
@@ -3093,7 +3132,7 @@ class PhyBo(Wordlist):
         yvals = []
 
         # draw the nodes
-        for x,y in inodes:
+        for x,y,s in inodes:
             xvals += [x]
             yvals += [y]
 
@@ -3101,7 +3140,7 @@ class PhyBo(Wordlist):
                     x,
                     y,
                     'o',
-                    markersize=keywords['nodesize'],
+                    markersize=s, #keywords['nodesize'],
                     color=keywords['nodecolor'],
                     )
             if keywords['nodestyle'] == 'double':
@@ -3109,11 +3148,11 @@ class PhyBo(Wordlist):
                         x,
                         y,
                         'o',
-                        markersize=keywords['nodesize']-4,
+                        markersize=s,#keywords['nodesize']-4,
                         color='white'
                         )
 
-        for x,y,t,r,ha in enodes:
+        for x,y,t,r,ha,s in enodes:
             
             xvals += [x]
             yvals += [y]
@@ -3123,7 +3162,7 @@ class PhyBo(Wordlist):
                     x,
                     y,
                     'o',
-                    markersize = keywords['nodesize'],
+                    markersize = s,# keywords['nodesize'],
                     color = keywords['nodecolor'],
                     zorder = 200
                     )
@@ -3133,7 +3172,7 @@ class PhyBo(Wordlist):
                         x,
                         y,
                         'o',
-                        markersize=keywords['nodesize']-4,
+                        markersize=s,#keywords['nodesize']-4,
                         color='white'
                         )
 

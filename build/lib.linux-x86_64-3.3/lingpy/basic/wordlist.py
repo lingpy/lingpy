@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-06-11 22:41
+# modified : 2013-04-06 22:54
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-06-11"
+__date__="2013-04-06"
 
 import os
 from datetime import date,datetime
@@ -66,6 +66,9 @@ class Wordlist(object):
     transcriptions, both the orthographical source and the IPA transcriptions
     can be easily accessed as two separate two-dimensional lists.
     
+    .. todo:: Add more documentation...
+
+    .. date:: 2012-11-08
     """
 
     def __init__(
@@ -146,7 +149,7 @@ class Wordlist(object):
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
-        self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
+        self._alias,self._class,self._class_string = {},{},{}
         for name,cls,alias in tmp:
             
             # make sure the name itself is there
@@ -167,8 +170,6 @@ class Wordlist(object):
                 self._class[a.upper()] = eval(cls)
                 self._class_string[a.lower()] = cls
                 self._class_string[a.upper()] = cls
-
-            self._alias2[name] = sorted(set(alias.split(','))) + [name]
 
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
@@ -197,14 +198,12 @@ class Wordlist(object):
         basic_rows = sorted(
                 set(
                     [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
-                    ),
-                key = lambda x: x.lower()
+                    )
                 )
         basic_cols = sorted(
                 set(
                     [input_data[k][colIdx] for k in input_data if k != 0 and type(k) == int]
-                    ),
-                key = lambda x: x.lower()
+                    )
                 )
         
         # define rows and cols as attributes of the word list
@@ -407,7 +406,7 @@ class Wordlist(object):
         for key,value in self.__dict__.items():
             if key not in  [
                     '_class',
-                    ]:
+                    ]: 
                 d[key] = value
         d['__date__'] = str(datetime.today())
         pickle.dump(d,out)
@@ -725,7 +724,6 @@ class Wordlist(object):
 
             if col not in self.cols:
                 print("[!] The column you selected is not available!")
-                return
             else:
                 data = self._array[:,self.cols.index(col)]
                 
@@ -849,10 +847,7 @@ class Wordlist(object):
         Notes
         -----
         This method can be used to add new entry-types to the data by
-        converting given ones. There are a lot of possibilities for adding new
-        entries, but the most basic procedure is to use an existing entry-type
-        and to modify it with help of a function.
-
+        converting given ones. 
         """
         # check for emtpy entries etc.
         if not entry:
@@ -865,12 +860,8 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            print(
-                    "[?] Datatype <{entry}> has already been produced, ".format(entry=entry),
-                    end = ''
-                    )
-            answer = input("do you want to override? (y/n) ")
-            if answer.lower() in ['y','yes','j']:
+            answer = input("[?] Datatype has already been produced, do you want to override? ")
+            if answer.lower() in ['y','yes']:
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)
             else:
@@ -879,23 +870,9 @@ class Wordlist(object):
         elif not override:
 
             # get the new index into the header
-            # add a new alias if this is not specified
-            if entry.lower() not in self._alias2:
-                self._alias2[entry.lower()] = [entry.lower(),entry.upper()]
-                self._alias[entry.lower()] = entry.lower()
-                self._alias[entry.upper()] = entry.lower()
-
-            # get the true value
-            name = self._alias[entry.lower()]
-
-            # get the new index
-            newIdx = max(self._header.values()) + 1
-            
-            # change the aliassed header for each entry in alias2
-            for a in self._alias2[name]:
-                self._header[a] = newIdx
-
-            self.header[name] = self._header[name]
+            self._header[entry.lower()] = max(self._header.values())+1
+            self._alias[entry.lower()] = entry.lower()
+            self.header[entry.lower()] = self._header[entry.lower()]
 
             # modify the entries attribute
             self.entries = sorted(set(self.entries + [entry]))
@@ -1256,8 +1233,7 @@ class Wordlist(object):
                 'cols'      : False,
                 'rows'      : False,
                 'meta'      : self._meta,
-                'entry'     : 'word',
-                'taxa'      : False
+                'entry'     : 'word'
                 }
             
         # compare with keywords and add missing ones
@@ -1335,16 +1311,13 @@ class Wordlist(object):
                     indices = [self._header[x] for x in cols]
                     header = [c.upper() for c in cols]
                 else:
-                    indices = [r for r in range(len(self.header))]
+                    indices = [r for r in range(len(w.header))]
 
                 if rows:
                     stmts = []
                     for key,value in rows.items():
-                        if key == 'ID':
-                            stmts += ["key "+value] #
-                        else:
-                            idx = self._header[key]
-                            stmts += ["line[{0}] ".format(idx)+value]
+                        idx = self._header[key]
+                        stmts += ["line[{0}] ".format(idx)+value]
 
                 # get the data
                 out = {}
@@ -1513,162 +1486,6 @@ class Wordlist(object):
 
         """
         return self._output(fileformat,**keywords)
-    
-    def _export(
-            self,
-            fileformat,
-            sections = {},
-            entries = [],
-            entry_sep = '',
-            item_sep = '',
-            template = '',
-            **keywords
-            ):
-        """
-        Export a wordlist to various file formats.
-        """
-        # check for sections
-        if not sections:
-            if fileformat == 'txt':
-                sections = dict(
-                        h1 = ('concept','\n# Concept: {0}\n'),
-                        h2 = ('cogid','## Cognate-ID: {0}\n'),
-                        )
-            elif fileformat == 'tex':
-                sections = dict(
-                        h1 = ('concept',r'\section{{Concept: ``{0}"}}'+'\n'),
-                        h2 = ('cogid',r'\subsection{{Cognate Set: ``{0}"}}'+'\n')
-                        )
-            elif fileformat == 'html':
-                
-                sections = dict(
-                        h1 = ('concept','<h1>Concept: {0}</h1>'),
-                        h2 = ('cogid','<h2>Cognate Set: {0}</h2>')
-                        )
-    
-        # check for entries
-        if not entries:
-            if fileformat == 'txt':
-                entries = [
-                        ('language','{0}'),
-                        ('ipa','{0}\n')
-                        ]
-            elif fileformat == 'tex':
-                entries = [
-                        ('language','{0}'),
-                        ('ipa','[{0}]'+'\n')
-                        ]
-            elif fileformat == 'html':
-                entries = [
-                        ('language','{0}'),
-                        ('ipa','[{0}]\n')
-                        ]
-        
-        # setup defaults
-        defaults = dict(
-                filename = 'outputfile'
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
-        # get the temporary dictionary
-        out = wl2dict(
-                self,
-                sections,
-                entries
-                )
-    
-        # assign the output string
-        out_string = ''
-    
-        # iterate over the dictionary and start to fill the string
-        for key in sorted(out):
-            
-            # write key to file
-            out_string += key[1]
-            
-            # reassign tmp
-            tmp = out[key]
-    
-            # set the pointer and the index
-            pointer = []
-            idx = 0
-    
-            while True:
-                
-                # dive deeper
-                break_loop = False
-                
-                # check for type of current point
-                if type(tmp) == dict:
-                    
-                    # set the pointer first val points to the current depth, second
-                    # to the keys which are successively popped
-                    pointer += [[tmp,sorted(tmp.keys())]]
-                    try:
-                        next_key = pointer[idx][1].pop(0)
-                        out_string += next_key[1]
-                        tmp = pointer[idx][0][next_key] 
-                        idx += 1
-                    except: 
-                        break_loop = True
-                else:
-                    tmp_strings = []
-                    for line in sorted(tmp):
-                        tmp_strings += [item_sep.join(line)]
-                    out_string += entry_sep.join(tmp_strings)
-                    idx -= 1
-                    tmp = pointer[idx][0]
-    
-                if break_loop:
-                    break
-        
-        # load the template
-        if template:
-            tmpl = open(template,'r').read()
-        else:
-            tmpl = '{0}'
-        
-        # open outfile
-        f = open(keywords['filename']+'.'+fileformat,'w')
-        if fileformat == 'tex':
-            f.write(tmpl.format(out_string.replace('_',r'\_')))
-        else:
-            f.write(tmpl.format(out_string))
-        f.close()
-        FileWriteMessage(keywords['filename'],fileformat).message('written')
-
-    def export(
-            self,
-            fileformat,
-            sections = {},
-            entries = [],
-            entry_sep = '',
-            item_sep = '',
-            template = '',
-            **keywords
-            ):
-        """
-        Export the wordlist to specific fileformats.
-
-        Notes
-        -----
-        The difference between export and output is that the latter mostly
-        serves for internal purposes and formats, while the former serves for
-        publication of data, using specific, nested statements to create, for
-        example, HTML or LaTeX files from the wordlist data.
-        """
-
-        self._export(
-                fileformat,
-                sections,
-                entries,
-                entry_sep,
-                item_sep,
-                template,
-                **keywords
-                )
 
     def tokenize(
             self,
