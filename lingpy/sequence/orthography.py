@@ -10,7 +10,7 @@ import unicodedata
 import regex
 import os
 
-class DuplicateExceptation(Exception): pass
+# class DuplicateExceptation(Exception): pass
 
 class GraphemeParser(object):
     """
@@ -332,7 +332,8 @@ class OrthographyParser(object):
             if not grapheme in self.grapheme_to_phoneme:
                 self.grapheme_to_phoneme[grapheme] = phoneme
             else:
-                raise DuplicateException("You have a duplicate in your orthography profile at: {0}".format(line_count))
+                # raise DuplicateException("You have a duplicate in your orthography profile at: {0}".format(line_count))
+                raise Exception("You have a duplicate in your orthography profile at: {0}".format(line_count))
         file.close()
 
         # uncomment this line if you want to see the orthography profile tree structure
