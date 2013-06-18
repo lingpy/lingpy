@@ -38,7 +38,7 @@ def main(argv):
     sources = csv.reader(codecs.open("sources.csv", "r", "utf-8"), delimiter="\t")
     witotoan_sources = list()
     for source in sources:
-        if source[5] == component and source[1] == "dictionary": 
+        if source[5] == component and source[1] == "dictionary": # and source[3] == "True"
             witotoan_sources.append(source[0])
 
     concepts = lingpy.spanish_swadesh_list()
@@ -52,7 +52,7 @@ def main(argv):
             di = lingpy.Dictionary(f)
             cg.add_dictionary(di)
 
-    cg.write_wordlist("{0}.csv".format(component))
+    cg.output_wordlist("{0}.csv".format(component))
 
 if __name__ == "__main__":
     main(sys.argv)

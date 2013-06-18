@@ -376,9 +376,9 @@ class ConceptGraph():
         """
 
         """
-        for head, translation, head_doculect, translation_doculect in \
+        for qlcid, head, translation, head_doculect, translation_doculect in \
                 dictionary.get_tuples(
-                    [ "head", "translation", "head_doculect",
+                    [ "qlcid", "head", "translation", "head_doculect",
                     "translation_doculect" ]):
             spa = ""; trans = ""
             if dictionary.doculect2iso[head_doculect] == self.pivot_lang_iso:
@@ -395,12 +395,12 @@ class ConceptGraph():
 
             for concept in self.graph:
                 if self.concept_matcher.compare_to_concept(pivot, concept):
-                    self.graph[concept].add((trans, doculect))
+                    self.graph[concept].add((qlcid, trans, doculect))
 
         for doculect, iso in dictionary.doculect2iso.items():
             self.doculects.add((doculect, iso))
 
-    def write_wordlist(self, filename):
+    def output_wordlist(self, filename):
         """
 
         """
@@ -415,12 +415,13 @@ class ConceptGraph():
         for doculect, iso in self.doculects:
             wordlist.write("@doculect: {0}, {1}\n".format(doculect, iso))
 
-        i = 0
+        wordlist.write(
+            "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\n")
+
         for concept in self.graph:
-            for counterpart, counterpart_doculect in self.graph[concept]:
+            for qlcid, counterpart, counterpart_doculect in self.graph[concept]:
                 wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
-                    i, concept.upper(), counterpart, counterpart_doculect))
-                i += 1
+                    qlcid, concept.upper(), counterpart, counterpart_doculect))
 
         wordlist.close()
 
