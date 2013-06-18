@@ -27,6 +27,7 @@ except:
 
 # import ortho-parser
 from ..sequence.orthography import OrthographyParser
+from ..sequence.orthography import GraphemeParser
 
 class Wordlist(object):
     """
@@ -1540,7 +1541,7 @@ class Wordlist(object):
         :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
         automatically tokenizes it.
         """
-        
+
         if os.path.exists(ortho_profile):
             ortho_path = ortho_profile
         else:
@@ -1553,7 +1554,8 @@ class Wordlist(object):
                     )[0] + '/data/orthography_profiles/' + ortho_profile
         
         # if the orthography profile does exist, carry out to tokenize the data
-        if os.path.exists(ortho_path):
+        if os.path.exists(ortho_path) and not ortho_profile == "":
+            print("here")
             op = OrthographyParser(ortho_path)
 
             # check for valid IPA parse
@@ -1572,4 +1574,16 @@ class Wordlist(object):
                         function
                         )
         
-            
+        else:
+            gp = GraphemeParser()
+
+            if target == 'tokens':
+                function = lambda x: gp.parse_graphemes(x).split(' ')[1:-1]
+            else:
+                function = lambda x: gp.parse_graphemes(x)
+
+            self.add_entries(
+                target,
+                source,
+                function
+                )            
