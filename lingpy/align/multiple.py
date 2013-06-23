@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-05-31 11:01
+# modified : 2013-06-16 12:47
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-31"
+__date__="2013-06-16"
 
 # lingpy imports
 from ..data import *
@@ -141,20 +141,44 @@ class Multiple(object):
         """
         Return specified values.
         """
-        try:
-            data = idx[1]
-            idx = idx[0]
-        except:
-            data = 'w'
-        
-        if data == 'w':
+        if type(idx) == tuple:
+            if type(idx[0]) == slice:
+                return [x[idx[1]] for x in self.alm_matrix[idx[0]]]
+            else:
+                try:
+                    return self.alm_matrix[idx[0]][idx[1]]
+                except:
+                    if idx[1] == 'w':
+                        return self.seqs[idx[0]]
+                    elif idx[1] == 'c':
+                        return self.classes[idx[0]]
+                    elif idx[1] == 't':
+                        return self.tokens[idx[0]]
+                    elif idx[1] == 'a':
+                        return self.alm_matrix[idx[0]]
+                    else:
+                        return self.alm_ma
+        else:
             return self.seqs[idx]
-        elif data == 'c':
-            return self.classes[idx]
-        elif data == 't':
-            return self.tokens[idx]
-        elif data == 'a':
-            return self.alm_matrix[idx]
+        #try:
+        #    data = idx[1]
+        #    idx = idx[0]
+        #except:
+        #    data = 'w'
+        #
+        #if data == 'w':
+        #    return self.seqs[idx]
+        #elif data == 'c':
+        #    return self.classes[idx]
+        #elif data == 't':
+        #    return self.tokens[idx]
+        #elif data == 'a':
+        #    return self.alm_matrix[idx]
+        #elif type(data) in (int,slice):
+        #    try:
+        #        return [x[data] for x in self.alm_matrix[idx]]
+        #    except:
+        #        raise IndexError
 
     def _get(
             self,
@@ -782,6 +806,28 @@ class Multiple(object):
 
         # create the matrix which stores all alignments
         self._alm_matrix = alm_lst
+
+        # calculate the sonority profile
+        if self._sonars:
+            tmp = misc.transpose(alm_lst)
+            sonars = [[self._get(
+                            char,
+                            value = '_sonars',
+                            error = ('X',0)
+                            ) for char in line] for line in tmp]
+            try:
+                consensus = [int(sum([k for k in col if k != 0]) / len([k for k in col
+                    if k != 0]) + 0.5) for col in sonars]
+            except:
+                try:
+                    consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
+                        if k >= 0]) + 0.5) for col in sonars]
+                    print("[!] Warning, there are empty segments in the consensus!")
+                except:
+                    consensus = []
+                    print("[!] Warning, sonority consensus could not be calculated!")
+            self._sonority_consensus = consensus
+
 
     def _update_alignments(self):
 

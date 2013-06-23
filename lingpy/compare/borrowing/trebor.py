@@ -3001,7 +3001,7 @@ class PhyBo(Wordlist):
 
         # add max weight to edge_weights
         if keywords['maxweight']:
-            edge_weights += [keywords['maxweight']]
+            edge_weights += range(keywords['maxweight'])
         
         # determine a colorfunction
         cfunc = np.array(np.linspace(10,256,len(set(edge_weights))),dtype='int')

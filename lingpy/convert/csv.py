@@ -73,8 +73,12 @@ def wl2csv(
         if type(v) in [str,int] or k == "tree":
             kvpairs[k] = v
         elif k == 'msa':
-            for a,b in v.items():
-                msapairs[a] = b
+            # go a level deeper, checking for keys
+            for ref in v:
+                if ref not in msapairs:
+                    msapairs[ref] = {}
+                for a,b in v[ref].items():
+                    msapairs[ref][a] = b
         elif k == 'distances':
             distances = matrix2dst(v,meta['taxa'])
         elif k == 'taxa':
@@ -93,10 +97,11 @@ def wl2csv(
         out += json.dumps(jsonpairs,indent=4)
         out += '\n</json>\n'
     if msapairs:
-        out += "\n# MSA\n"
-        for k,v in msapairs.items():
-            out += '#\n<msa id="{0}">\n'.format(k)
-            out += msa2str(v)
+        for ref in msapairs:
+            out += "\n# MSA reference: {0}\n".format(ref)
+            for k,v in msapairs[ref].items():
+                out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
+                out += msa2str(v)
             #out += v['seq_id']+'\n'
             #for t,alm in zip(v['taxa'],v['alignment']):
             #    out += t + '\t' + '\t'.join(alm)+'\n'

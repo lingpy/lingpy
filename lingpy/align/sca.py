@@ -308,6 +308,9 @@ class MSA(Multiple):
                 initdict['seqs'],
                 **keywords
                 )
+
+        if 'alignment' in initdict:
+            self.alm_matrix = initdict['alignment']
     
     def _init_msa(
             self,
@@ -874,16 +877,21 @@ class Alignments(Wordlist):
             row = 'concept',
             col = 'doculect',
             conf = '',
-            cognates = 'cogid',
+            ref = 'cogid', 
             loans = True,
             **keywords
             ):
         # initialize the wordlist
         Wordlist.__init__(self,infile,row,col,conf)
         
+        # check for reference / cognates
+        if 'cognates' in keywords:
+            print("[!] Warning, cognate attribute is replaced by 'ref'.")
+            ref = keywords['cognates']
+
         # check for cognate-id or alignment-id in header
         try:
-            self.etd = self.get_etymdict(ref=cognates,loans=loans)
+            self.etd = {ref:self.get_etymdict(ref=ref,loans=loans)}
         # else raise error
         except: 
             raise ValueError(
@@ -898,13 +906,21 @@ class Alignments(Wordlist):
         elif 'ipa' in self.header:
             stridx = self.header['ipa']
         else:
-            print("[i] No valid source for strings could be found")
-            return 
+            if 'strings' in keywords:
+                try:
+                    stridx = self.header[keywords['strings']]
+                except:
+                    print(
+                            "[i] No valid source for strings could be found."
+                            )
+            else:
+                print("[i] No valid source for strings could be found.")
+                return 
 
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
-            self._meta['msa'] = {}
-            for key,value in self.etd.items():
+            self._meta['msa'] = {ref:{}}
+            for key,value in self.etd[ref].items():
                 tmp = [x for x in value if x != 0]
                 seqids = []
                 for t in tmp:
@@ -929,7 +945,7 @@ class Alignments(Wordlist):
                         
                         d['taxa'] += [self[seq,'taxa']]
                         d['seqs'] += [self[seq][stridx]]
-                    self._meta['msa'][key] = d
+                    self._meta['msa'][ref][key] = d
 
     def align(
             self,
@@ -954,6 +970,7 @@ class Alignments(Wordlist):
             scorer = {},
             verbose = True,
             plot = False,
+            ref = 'cogid',
             **keywords
             ):
         """
@@ -1034,10 +1051,13 @@ class Alignments(Wordlist):
         plot : bool (default=False)
             Determine whether MSA should be plotted in HTML.
         """
-        for key,value in sorted(self.msa.items(),key=lambda x:x[0]):
+        for key,value in sorted(self.msa[ref].items(),key=lambda x:x[0]):
             if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
 
-            m = SCA(value)
+            m = SCA(
+                    value,
+                    **keywords
+                    )
             if method == 'progressive':
                 m.prog_align(
                         model,
@@ -1095,7 +1115,8 @@ class Alignments(Wordlist):
                                 key
                                 )
                             )
-            self._meta['msa'][key]['alignment'] = m.alm_matrix
+            self._meta['msa'][ref][key]['alignment'] = m.alm_matrix
+            self._meta['msa'][ref][key]['_sonority_consensus'] = m._sonority_consensus
                     
     def __len__(self):
         return len(self.msa)
@@ -1134,7 +1155,15 @@ class Alignments(Wordlist):
             converted to sound-class strings.
 
         """
-        
+        # determine defaults
+        defaults = dict(
+                model = sca,
+                gap_scale = 1.0
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
         # check for existing alignments
         test = list(self.msa.keys())[0]
         if 'alignment' not in self.msa[test]:
@@ -1147,15 +1176,42 @@ class Alignments(Wordlist):
         for cog in self.etd:
             if cog in self.msa:
                 if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                
+                # temporary solution for sound-class integration
+                if classes == True:
+                    classes = []
+                    weights = prosodic_weights(
+                            prosodic_string(
+                                self.msa[cog]['_sonority_consensus']
+                                )
+                            )
+                    for alm in self.msa[cog]['alignment']:
+                        cls = [c for c in tokens2class(
+                                alm,
+                                keywords['model']
+                                ) if c != '0']
+                        cls = class2tokens(cls,alm)
+                        classes += [cls]
 
-                cons = get_consensus(
-                        self.msa[cog]['alignment'],
-                        classes = classes,
-                        tree = tree,
-                        gaps = gaps,
-                        taxa = taxa,
-                        **keywords
-                        )
+                    cons = get_consensus(
+                            self.msa[cog]['alignment'],
+                            classes = misc.transpose(classes),
+                            tree = tree,
+                            gaps = gaps,
+                            taxa = taxa,
+                            weights = weights,
+                            **keywords
+                            )
+                    classes = True
+                else:
+                    cons = get_consensus(
+                            self.msa[cog]['alignment'],
+                            classes = classes,
+                            tree = tree,
+                            gaps = gaps,
+                            taxa = taxa,
+                            **keywords
+                            )
             # if there's no msa for a given cognate set, this set is a
             # singleton
             else:
@@ -1295,7 +1351,7 @@ def SCA(
         **keywords
         ):
     """
-    Method returns alignment objects depending on input file.
+    Method returns alignment objects depending on input file or input data.
 
     Notes
     -----
@@ -1369,6 +1425,10 @@ def get_consensus(
     # set defaults
     defaults = dict(
             model = sca,
+            gap_scale = 1.0,
+            mode = 'majority',
+            gap_score = -10,
+            weights = [1 for i in range(len(msa[0]))]
             )
     for k in defaults:
         if k not in keywords:
@@ -1407,6 +1467,10 @@ def get_consensus(
                     else:
                         tmp[c] = 1
 
+                # half the weight of gaps
+                if '-' in tmp:
+                    tmp['-'] = tmp['-'] * keywords['gap_scale']
+
                 # get maximum
                 chars = [c for c,n in sorted(
                     tmp.items(),
@@ -1433,12 +1497,43 @@ def get_consensus(
                     else:
                         tmpB[matrix[i][j]] = 1
 
+                # half the weight of gaps
+                if '-' in tmpA:
+                    tmpA['-'] = tmpA['-'] * keywords['gap_scale']
+                    #print(tmp['-'],keywords['gap_scale'])               
+
                 # get max
                 chars = [(c,n) for c,n in sorted(
                     tmpA.items(),
                     key=lambda x:x[1],
                     reverse=True
                     )]
+
+                # if mode is set to 'maximize', calculate the score 
+                if keywords['mode'] == 'maximize':
+                    tmpC = {}
+                    for j,c in enumerate(col):
+                        if c in tmpC:
+                            pass
+                        else:
+                            score = 0
+                            for k,c2 in enumerate(col):
+                                if '-' not in (c,c2):
+                                    score += keywords['model'](c,c2)
+                                else:
+                                    if (c,c2) == ('-','-'):
+                                        score += 0
+                                    else:
+                                        score += keywords['gap_score'] * keywords['weights'][i]
+
+                            score = score / len(col)
+                            tmpC[c] = score
+
+                    chars = [(c,n) for c,n in sorted(
+                        tmpC.items(),
+                        key=lambda x:(x[1],tmpA[x[0]]),
+                        reverse=True
+                        )]
 
                 # check for identical classes
                 maxV = chars.pop(0)

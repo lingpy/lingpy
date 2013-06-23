@@ -363,6 +363,17 @@ def read_qlc(infile):
                 tmp = tmp.split('\n')
                 if 'msa' not in meta:
                     meta['msa'] = {}
+
+                # check for additional reference attribute
+                if 'ref' in keys:
+                    ref = keys['ref']
+                else:
+                    ref = 'cogid' # XXX check this later for flexibility
+
+                # check for msa.ref:
+                if ref not in meta['msa']:
+                    meta['msa'][ref] = {}
+
                 tmp_msa = {}
                 try:
                     tmp_msa['dataset'] =  meta['dataset']
@@ -378,9 +389,9 @@ def read_qlc(infile):
                     tmp_msa['seqs'] += [' '.join(this_line[1:])]
                     tmp_msa['alignment'] += [this_line[1:]]
                 try:
-                    meta['msa'][int(keys['id'])] = tmp_msa   
+                    meta['msa'][ref][int(keys['id'])] = tmp_msa   
                 except:
-                    meta['msa'][keys['id']] = tmp_msa
+                    meta['msa'][ref][keys['id']] = tmp_msa
             
             elif dtype == 'dst':
                 taxa,matrix = read_dst(tmp)

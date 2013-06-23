@@ -66,6 +66,8 @@ def wl2dict(
                 # get the final list of entries
                 tmp_list = []
                 for entry,format_string in entries:
+                    if type(entry) in (list,tuple):
+                        entry = ' '.join(entry)
                     tmp_list += [
                             format_string.format(
                                 wordlist[key,entry]
