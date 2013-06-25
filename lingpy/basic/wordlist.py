@@ -1181,7 +1181,7 @@ class Wordlist(object):
             data,
             taxa = 'taxa',
             concepts = 'concepts',
-            cognates = 'cogid',
+            ref = 'cogid',
             threshold = 0.6,
             verbose = False,
             **keywords
@@ -1195,12 +1195,16 @@ class Wordlist(object):
             The type of data that shall be calculated.
 
         """
+        if 'cognates' in keywords:
+            print("[!] Warning, using the 'cognates' keyword is deprecated, use 'ref' instead.")
+            ref = keywords['cognates']
+
         # XXX take care of keywords XXX
         if data in ['distances','dst']:
-            self._meta['distances'] = wl2dst(self,taxa,concepts,cognates)
+            self._meta['distances'] = wl2dst(self,taxa,concepts,ref)
         elif data in ['tre','nwk','tree']:
             if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,cognates)
+                self.calculate('distances',taxa,concepts,ref)
             if 'distances' not in keywords:
                 keywords['distances'] = False
             if 'tree_calc' not in keywords:
@@ -1215,7 +1219,7 @@ class Wordlist(object):
 
         elif data in ['groups','cluster']:
             if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,cognates)
+                self.calculate('distances',taxa,concepts,ref)
             self._meta['groups'] = matrix2groups(
                     threshold,
                     self.distances,

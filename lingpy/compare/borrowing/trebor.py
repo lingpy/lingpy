@@ -87,7 +87,7 @@ class PhyBo(Wordlist):
             dataset,
             tree = None,
             paps = 'pap',
-            cognates = 'cogid',
+            ref = 'cogid',
             verbose = False,
             tree_calc = 'neighbor',
             **keywords
@@ -103,6 +103,11 @@ class PhyBo(Wordlist):
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
+
+        # check for cognates
+        if 'cognates' in keywords:
+            print('[!] Warning, "cognates" is deprecated, use "ref" instead.')
+            ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
         if dataset.endswith('.csv'):
@@ -144,7 +149,7 @@ class PhyBo(Wordlist):
             f = lambda x,y: "{0}:{1}".format(x[y[0]],x[y[1]])
             self.add_entries(
                     paps,
-                    cognates+',glid',
+                    ref+',glid',
                     f
                     )
 
@@ -198,7 +203,7 @@ class PhyBo(Wordlist):
                 # create it otherwise
                 self.calculate(
                         'tree',
-                        cognates=cognates,
+                        ref=ref,
                         tree_calc=tree_calc,
                         verbose=verbose
                         )
@@ -4627,6 +4632,7 @@ class PhyBo(Wordlist):
                 outer_radius   = 0.5,
                 inner_radius   = 0.25,
                 cognates       = '',
+                ref = '',
                 usetex         = False,
                 latex_preamble = False,
                 textsize       = 8,

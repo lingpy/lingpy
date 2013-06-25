@@ -105,7 +105,7 @@ def wl2csv(
             #out += v['seq_id']+'\n'
             #for t,alm in zip(v['taxa'],v['alignment']):
             #    out += t + '\t' + '\t'.join(alm)+'\n'
-            out += "</msa>\n"
+                out += "</msa>\n"
     if distances:
         out += '\n# DISTANCES\n<dst>\n'
         out += distances+'</dst>\n'

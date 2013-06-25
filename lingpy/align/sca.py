@@ -1128,7 +1128,7 @@ class Alignments(Wordlist):
             taxa = False,
             classes = False,
             verbose = False,
-            cognates = 'cogid',
+            ref = 'cogid',
             consensus = 'consensus',
             counterpart = 'ipa',
             **keywords
@@ -1164,17 +1164,22 @@ class Alignments(Wordlist):
             if k not in keywords:
                 keywords[k] = defaults[k]
 
+        # check for deprecated "cognates"
+        if 'cognates' in keywords:
+            print("[!] Use of 'cognates' is deprecated, use 'ref' instead.")
+            ref = keywords['cognates']
+
         # check for existing alignments
-        test = list(self.msa.keys())[0]
-        if 'alignment' not in self.msa[test]:
+        test = list(self.msa[ref].keys())[0]
+        if 'alignment' not in self.msa[ref][test]:
             print("[!] No alignments could be found, You should carry out"
                     " an alignment analysis first!")
             return
         
         # go on with the analysis
         cons_dict = {}
-        for cog in self.etd:
-            if cog in self.msa:
+        for cog in self.etd[ref]:
+            if cog in self.msa[ref]:
                 if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
                 
                 # temporary solution for sound-class integration
@@ -1182,10 +1187,10 @@ class Alignments(Wordlist):
                     classes = []
                     weights = prosodic_weights(
                             prosodic_string(
-                                self.msa[cog]['_sonority_consensus']
+                                self.msa[ref][cog]['_sonority_consensus']
                                 )
                             )
-                    for alm in self.msa[cog]['alignment']:
+                    for alm in self.msa[ref][cog]['alignment']:
                         cls = [c for c in tokens2class(
                                 alm,
                                 keywords['model']
@@ -1194,7 +1199,7 @@ class Alignments(Wordlist):
                         classes += [cls]
 
                     cons = get_consensus(
-                            self.msa[cog]['alignment'],
+                            self.msa[ref][cog]['alignment'],
                             classes = misc.transpose(classes),
                             tree = tree,
                             gaps = gaps,
@@ -1205,7 +1210,7 @@ class Alignments(Wordlist):
                     classes = True
                 else:
                     cons = get_consensus(
-                            self.msa[cog]['alignment'],
+                            self.msa[ref][cog]['alignment'],
                             classes = classes,
                             tree = tree,
                             gaps = gaps,
@@ -1215,7 +1220,7 @@ class Alignments(Wordlist):
             # if there's no msa for a given cognate set, this set is a
             # singleton
             else:
-                cons = self[[k[0] for k in self.etd[cog] if k != 0][0],counterpart]
+                cons = self[[k[0] for k in self.etd[ref][cog] if k != 0][0],counterpart]
             
             # add consensus to dictionary
             cons_dict[cog] = cons
@@ -1224,7 +1229,7 @@ class Alignments(Wordlist):
         # add the entries
         self.add_entries(
                 consensus,
-                cognates,
+                ref,
                 lambda x:cons_dict[x] 
                 )
 
@@ -1232,6 +1237,7 @@ class Alignments(Wordlist):
     def output(
             self,
             fileformat,
+            ref = 'cogid',
             **keywords
             ):
         """
@@ -1276,17 +1282,14 @@ class Alignments(Wordlist):
             'groups' or 'cluster' is chosen as output format.
         
         """
-        
+        if 'cognates' in keywords:
+            print('[!] The "cognates" attribute is deprecated, use "ref" instead.')
+            ref = keywords['cognates']
+
         if fileformat not in ['alm']:
             return self._output(fileformat,**keywords)
         
         if fileformat == 'alm':
-            # check for "cognates"-keywords
-            if "cognates" not in keywords:
-                cognates = 'cogid'
-            else:
-                cognates = keywords['cognates']
-
             # check for filename
             if 'filename' not in keywords:
                 filename = 'dummy'
@@ -1310,13 +1313,13 @@ class Alignments(Wordlist):
                         row=concept,
                         flat=True
                         )
-                cogids = [self[i,cognates] for i in indices]
+                cogids = [self[i,ref] for i in indices]
                 cogids = sorted(set(cogids))
                 for cogid in cogids:
-                    if cogid in self.msa:
-                        for i,alm in enumerate(self.msa[cogid]['alignment']):
-                            taxon = self.msa[cogid]['taxa'][i]
-                            seq = self.msa[cogid]['seqs'][i]
+                    if cogid in self.msa[ref]:
+                        for i,alm in enumerate(self.msa[ref][cogid]['alignment']):
+                            taxon = self.msa[ref][cogid]['taxa'][i]
+                            seq = self.msa[ref][cogid]['seqs'][i]
                             cid = concept2id[concept]
                             out += '\t'.join(
                                 [
@@ -1328,7 +1331,7 @@ class Alignments(Wordlist):
                                     ]
                                 )+'\n'
                     else:
-                        this_idx = [x for x in self.etd[cogid] if x != 0][0][0]
+                        this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx,'taxon']
                         seq = self[this_idx,'tokens']
                         cid = concept2id[concept]
