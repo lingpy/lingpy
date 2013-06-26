@@ -11,10 +11,8 @@ import unicodedata
 from time import gmtime, strftime
 from datetime import date,datetime
 
-# don't use direct imports !!!
 from ..sequence.ngram import *
 from ..read.csv import *
-
 
 class Spreadsheet:
     """
@@ -38,6 +36,16 @@ class Spreadsheet:
     x. then add tokenization / orthographic parsing
 
     # add stats to harry potter output
+    
+    NAME_LNG : language name, NAME is the doculect-identifier
+    CONCEPT : header for concepts
+
+    Note that case is not important, you should "lower" each string before
+    parsing in order to prevent confusion (that's what I do for Wordlist)
+
+    Standard-Separator for Language-Columns: ";"
+
+    well, that's for the moment, there will be surely more later on...
 
     """
     def __init__(self, 
@@ -263,27 +271,3 @@ class Spreadsheet:
             for j in range(1, len(self.matrix[i])):
                 output.write(self.matrix[i][0]+"\t"+self.matrix[i][j]+"\t"+self.matrix[self.header][j]+"\n")
             output.write("#\n")
-
-
-if __name__=="__main__":
-    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/dogon/Moran_Dogon.comp.vocab.UNICODE.csv")
-    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv", concepts=2, languages=[3,5,6])
-    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/spreadsheet_complex.tsv")
-    # s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/test/Dogon_test.csv", concepts=7, languages=[17,18,19,20,22,23])
-
-
-    s = Spreadsheet("/Users/stiv/Dropbox/Projects/lingpy/scripts/Dogon_100_DH.csv", concepts=2, languages=[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22])
-    s.output()
-
-    # print(s.get_matrix_full_rows()) # bug with "0"
-
-    # s.print_doculect_character_counts()
-
-    # s.print_matrix_stats()
-    # s.print_qlc_format()
-
-    # frm = s.get_matrix_full_rows()
-    # s.pprint(frm)
-    # print(len(frm))
-    # s.print_qlc_format(frm)
-
