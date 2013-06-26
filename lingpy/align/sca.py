@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-07 20:07
-# modified : 2013-05-26 11:39
+# modified : 2013-06-26 17:40
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -121,7 +121,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-26"
+__date__="2013-06-26"
 
 import numpy as np
 import re
@@ -311,6 +311,10 @@ class MSA(Multiple):
 
         if 'alignment' in initdict:
             self.alm_matrix = initdict['alignment']
+        if 'local' in initdict:
+            self.local = initdict['local']
+        if 'swaps' in initdict:
+            self.swaps = initdict['swaps']
     
     def _init_msa(
             self,
@@ -932,17 +936,18 @@ class Alignments(Wordlist):
                     d['taxa'] = []
                     d['seqs'] = []
                     d['dataset'] = self.filename
+                    d['ID'] = []
                     if 'concept' in self.header:
                         concept = self[seqids[0],'concept']
-                        d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
+                        d['seq_id'] = 'Cognate Set: {0} ("{1}")'.format(key,concept)
                     else:
-                        d['seq_id'] = 'CogId:{0}'.format(key)
+                        d['seq_id'] = 'Cognate Set: {0}'.format(key)
                     
                     # set up the data
                     for seq in seqids:
                         taxon = self[seq,'taxa']
                         string = self[seq][stridx]
-                        
+                        d['ID'] += [seq]
                         d['taxa'] += [self[seq,'taxa']]
                         d['seqs'] += [self[seq][stridx]]
                     self._meta['msa'][ref][key] = d

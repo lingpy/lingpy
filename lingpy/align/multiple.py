@@ -1,13 +1,16 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-06-16 12:47
+# modified : 2013-06-26 17:40
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-06-16"
+__date__="2013-06-26"
+
+# thirdparty imports
+import numpy as np
 
 # lingpy imports
 from ..data import *
@@ -1726,7 +1729,7 @@ class Multiple(object):
         peaks = []
         for i in range(len(self._alm_matrix[0])):
             peaks.append(
-                    _calign._score_profile(
+                    calign.score_profile(
                         [k[i] for k in self._alm_matrix],
                         [k[i] for k in self._alm_matrix],
                         self.scorer,
@@ -1736,17 +1739,16 @@ class Multiple(object):
 
         return peaks
 
-    def _make_peak_idx(
+    def get_local_peaks(
             self,
-            t_scale = 0.5,
+            threshold = 2,
             gap_weight = 0.0
             ):
 
-        peaks = np.array(self.peaks(gap_weight = gap_weight))
+        peaks = self.get_peaks(gap_weight = gap_weight)
         
-        threshold = peaks.mean() + t_scale * peaks.std()
 
-        self.peak_idx = [i for i in range(len(peaks)) if peaks[i] > threshold]
+        self.local = [i for i in range(len(peaks)) if peaks[i] > threshold]
 
     def get_pairwise_alignments(
             self,
@@ -2236,6 +2238,7 @@ class Multiple(object):
                     swp.append(i)
             
             self.swap_index = [(i,i+1,i+2) for i in swp]
+            self.swaps = self.swap_index
             
             return True
 

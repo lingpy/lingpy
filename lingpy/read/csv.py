@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-03-05 08:37
+# modified : 2013-06-26 18:08
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-05"
+__date__="2013-06-26"
 
 import json
 
@@ -230,7 +230,10 @@ def read_qlcOld(
     """
     return qlc2dict(infile)
 
-def read_qlc(infile):
+def read_qlc(
+        infile,
+        comment = '#'
+        ):
     """
     Simple function that loads qlc-format into a dictionary.
 
@@ -267,7 +270,7 @@ def read_qlc(infile):
         line = lines.pop(0)
 
         # line is empty or starts with hash
-        if line.startswith('#') or not line.strip():
+        if line.startswith(comment) or not line.strip():
             pass
         
         # line starts with key-value @
@@ -319,15 +322,16 @@ def read_qlc(infile):
             
             # tree
             elif dtype in ['tre','nwk']:
+                
                 # check for "tree" in meta
-                if "tree" not in meta:
-                    meta["tree"] = {}
+                if "trees" not in meta:
+                    meta["trees"] = {}
                 
                 # add the data
                 if not keys:
-                    keys["id"] = "t1"
+                    keys["id"] = "1"
 
-                meta['tree'][keys["id"]] = cg.LoadTree(treestring=tmp)
+                meta['trees'][keys["id"]] = cg.LoadTree(treestring=tmp)
 
             # csv
             elif dtype in ['csv']:
@@ -357,6 +361,7 @@ def read_qlc(infile):
                         a = l[0]
                         b = [transf(b) for b in l[1:]]
                     meta[keys["id"]][a] = b
+
             elif dtype == 'msa':
                 
                 # check for dtype
@@ -379,15 +384,47 @@ def read_qlc(infile):
                     tmp_msa['dataset'] =  meta['dataset']
                 except:
                     tmp_msa['dataset'] = infile.replace('.csv','')
+
                 tmp_msa['seq_id'] = keys['id']
                 tmp_msa['seqs'] = []
                 tmp_msa['alignment'] = []
                 tmp_msa['taxa'] = []
-                for l in tmp[2:]:
-                    this_line = l.split('\t')
-                    tmp_msa['taxa'] += [this_line[0]]
-                    tmp_msa['seqs'] += [' '.join(this_line[1:])]
-                    tmp_msa['alignment'] += [this_line[1:]]
+                tmp_msa['ID'] = []
+                for l in tmp:
+                    if not l.startswith(comment):
+
+                        this_line = l.split('\t')
+                    
+                        # check for specific id
+                        if this_line[0] == '0':
+                            if this_line[1].strip().upper() == 'LOCAL':
+                                tmp_msa['local'] = []
+                                for i,x in enumerate(this_line[2:]):
+                                    if x == '*':
+                                        tmp_msa['local'] += [i]
+                            elif this_line[1].strip().upper() == 'SWAPS':
+                                tmp_msa['swaps'] = []
+                                swapline = [x for x in this_line[2:]]
+                                i=0
+                                while swapline:
+                                    x = swapline.pop(0)
+                                    if x == '+':
+                                        tmp_msa['swaps'] += [(i,i+1,i+2)]
+                                        swapline.pop(0)
+                                        swapline.pop(0)
+                                        i += 2
+                                    else:
+                                        pass
+                                    i += 1
+                                    
+                        else:
+                            try:
+                                tmp_msa['ID'] += [int(this_line[0])]
+                            except:
+                                tmp_msa['ID'] += [this_line[0]]
+                            tmp_msa['taxa'] += [this_line[1].strip()]
+                            tmp_msa['seqs'] += [' '.join(this_line[2:])]
+                            tmp_msa['alignment'] += [this_line[2:]]
                 try:
                     meta['msa'][ref][int(keys['id'])] = tmp_msa   
                 except:
@@ -441,6 +478,14 @@ def read_qlc(infile):
     
     for m in meta:
         d[m] = meta[m]
+    
+    # check for tree-attributes
+    if 'trees' in d and not 'tree' in d:
+        d['tree'] = sorted(
+                d['trees'].items(),
+                key = lambda x: x[0],
+                )[0][1]
+                
 
     return d
 
