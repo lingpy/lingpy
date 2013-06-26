@@ -50,15 +50,20 @@ class Spreadsheet:
     """
     def __init__(self, 
                  filename,
-                 fileformat = None,
-                 dtype = None, 
+                 #fileformat = None, # ? what do you need this for?
+                 dtype = None, # flag for different datatypes  
                  comment = '#',
-                 sep = '\t',
+                 sep = '\t', # column separator
                  header = 0, # row of the header
                  concepts = 0, # column for the concepts
-                 languages = [], # columns with language data -- TODO: must be ints
-                 blacklist = "", # location of blacklist
-                 conf = "" # spreadsheet .rc file
+                 language_string = ">LNG<", # think about this variable name
+                 meanings = "CONCEPT", # explicit name of column containing concepts
+                 exclude_string = "!", #
+                 #languages = [], # columns with language data -- TODO: must be ints
+                 blacklist = "", # location of blacklist, think about start and end characters, etc. 
+                 conf = "", # spreadsheet .rc file
+                 cellsep = ';', # cell separator, separates forms in the same cell
+                 verbose = False,
                  ):
 
         self.filename = filename
@@ -71,7 +76,13 @@ class Spreadsheet:
         self.languages = languages
 
         # create a 2D array and Unicode normalize its contents
-        self.spreadsheet = csv2list(self.filename, self.fileformat, self.dtype, self.comment, self.sep)
+        self.spreadsheet = csv2list(
+            self.filename, 
+            self.fileformat, 
+            self.dtype, 
+            self.comment, 
+            self.sep
+            )
         self._normalize()
 
         # given the header, concepts, and languages extract the data for processing
