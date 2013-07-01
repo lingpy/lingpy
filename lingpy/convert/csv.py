@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 06:55
-# modified : 2013-04-02 06:55
+# modified : 2013-07-01 16:50
 """
 Module provides functions and methods for the creation of csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-02"
+__date__="2013-07-01"
 
 # imports
 import re
@@ -15,7 +15,7 @@ import json
 
 from ..check.messages import FileWriteMessage
 from .phylip import matrix2dst
-from .misc import msa2str
+from .misc import msa2str,scorer2str
 
 def pap2csv(
         taxa,
@@ -68,6 +68,7 @@ def wl2csv(
     trees = {}
     distances = ''
     taxa = ''
+    scorer = ''
 
     for k,v in meta.items():
         # simple key-value-pairs
@@ -90,6 +91,13 @@ def wl2csv(
                 trees += '<tre id="{0}">\n{1}\n</tre>\n'.format(
                         key,
                         value
+                        )
+        elif k == 'scorer':
+            for key,value in v.items():
+                scorer += '<{2} id="{0}">\n{1}</{2}>\n\n'.format(
+                        key,
+                        scorer2str(value),
+                        k
                         )
         else:
             jsonpairs[k] = v
@@ -117,6 +125,9 @@ def wl2csv(
 
     if trees:
         out += '\n# TREES\n'+trees
+
+    if scorer:
+        out += '\n# SORER\n'+scorer
 
     out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     

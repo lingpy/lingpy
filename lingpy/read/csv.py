@@ -10,10 +10,11 @@ __author__="Johann-Mattis List"
 __date__="2013-06-26"
 
 import json
+import os
 
 # lingpy-internal imports
 from ..thirdparty import cogent as cg
-from .phylip import read_dst
+from .phylip import read_dst,read_scorer
 
 def csv2list(
         filename,
@@ -47,14 +48,19 @@ def csv2list(
         A list-representation of the CSV file.
 
     """
+    # check for correct fileformat
+    if fileformat:
+        infile = filename+'.'+fileformat
+    if not os.path.isfile(infile):
+        raise ValueError(
+                "[i] File {0} could not be found.".format(infile)
+                )
 
     l = []
     
-    if fileformat:
-        infile = open(filename+'.'+fileformat)
-    else:
-        infile = open(filename)
-    
+    # open the file
+    infile = open(infile)
+
     for line in infile:
         if line.strip() and not line.startswith(comment):
             cells = [c.strip() for c in line.strip().split(sep)]
@@ -248,12 +254,13 @@ def read_qlc(
         A dictionary with integer keys corresponding to the order of the lines
         of the input file. The header is given 0 as a specific key.
     """
-    
-    # open the file
-    try:
-        inf = open(infile)
-    except:
-        raise ValueError("[i] Infile could not be opened.")
+    # check whether path exists
+    if not os.path.isfile(infile):
+        raise ValueError(
+                "[!] File {0} does not exist.".format(infile)
+                )
+
+    inf = open(infile)
     
     # create data array
     data = []
@@ -442,6 +449,14 @@ def read_qlc(
                             distances[i][j] = cell
                             distances[j][i] = cell
                 meta['distances'] = distances
+            elif dtype == 'scorer':
+                scorer = read_scorer(tmp)
+                if not 'scorer' in meta:
+                    meta['scorer'] = {}
+                if 'id' not in keys:
+                    keys['id'] = 'basic'
+                meta['scorer'][keys['id']] = scorer
+
             elif dtype == 'taxa':
                 meta['taxa'] = [t.strip() for t in tmp.split('\n')]          
         else:
@@ -493,5 +508,19 @@ def qlc2dict(infile):
 
     return read_qlc(infile)
 
-
+#def read_scorer(infile):
+#    """
+#    Read a scoring function in a file into a ScoreDict object.
+#    """
+#    
+#    # read data
+#    data = csv2list(infile)
+#
+#    # get the chars
+#    chars = [l[0] for l in data]
+#    
+#    # get the matrix
+#    matrix = [[float(x) for x in l[1:]] for l in data]
+#
+#    return misc.ScoreDict(chars,matrix)
 

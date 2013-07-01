@@ -10,6 +10,11 @@ __author__="Johann-Mattis List"
 __date__="2013-03-05"
 
 import regex as re
+import os
+try:
+    from algorithm.cython import misc
+except ImportError:
+    from ..algorithm.cython import _misc as misc
 
 def read_dst(
         filename
@@ -28,10 +33,10 @@ def read_dst(
         A tuple consisting of a list of taxa and a matrix.
 
     """
-    
-    try:
+    if os.path.isfile(filename):
         f = open(filename)
-    except:
+        f = open(filename)
+    else:
         f = filename.split('\n') # XXX temporary solution
         #print("[!] Could not find the file {0}!".format(filename))
 
@@ -45,4 +50,23 @@ def read_dst(
                 re.split('\s+',line[11:].strip())])
 
     return taxa,matrix
+
+def read_scorer(infile):
+    """
+    Read a scoring function in a file into a ScoreDict object.
+    """
+    if os.path.isfile(infile):
+        # read data
+        data = csv2list(infile)
+    else:
+        data = [x.split('\t') for x in infile.split('\n') if x]
+
+
+    # get the chars
+    chars = [l[0] for l in data]
+    
+    # get the matrix
+    matrix = [[float(x) for x in l[1:]] for l in data if l]
+
+    return misc.ScoreDict(chars,matrix)
 

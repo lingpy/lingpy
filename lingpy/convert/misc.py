@@ -162,4 +162,29 @@ def matrix2groups(
 
     return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
 
+def scorer2str(
+        scorer
+        ):
+    """
+    Convert a scoring function to a string.
+    """
+    
+    # get sorted representation of characters
+    chars = sorted(
+            scorer.chars2int
+            )
 
+    # get the matrix
+    matrix = scorer.matrix
+    
+    out = ''
+
+    # write stuff to string
+    for i,charA in enumerate(chars):
+        out += charA
+        for j,charB in enumerate(chars):
+            out += '\t{0:.2f}'.format(scorer[charA,charB])
+        out += '\n'
+
+    return out
+            
