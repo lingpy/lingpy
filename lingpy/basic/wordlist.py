@@ -115,6 +115,7 @@ class Wordlist(object):
             ):
 
         # try to load the data
+        internal_import = False
         try:
             input_data = read_qlc(filename)
             self.filename = filename.replace('.csv','')
@@ -122,13 +123,24 @@ class Wordlist(object):
             if type(filename) == dict:
                 input_data = filename
                 self.filename = 'lingpy-{0}'.format(str(date.today()))
+            # if it's a wordlist object, add its basic parameters
+            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+                input_data = dict(filename._data.items())
+                input_data.update(filename._meta.items())
+                input_data[0] = [a for a,b in sorted(
+                    filename.header.items(),
+                    key = lambda x:x[1],
+                    reverse = False
+                    )]
+                internal_import = True
+                self.filename = 'lingpy-{0}'.format(str(date.today()))
             else:
-                
-            #if not input_data:
-                raise ValueError('[i] Input data is not specified.')
-            #else:
-            #    input_data = filename
-            #    self.filename = 'lingpy-{0}'.format(str(date.today()))
+                if not os.path.isfile(filename):
+                    raise IOError(
+                            "[i] Input file does not exist."
+                            )
+                else:
+                    raise ValueError('[i] Could not parse the input file.')
 
         # load the configuration file
         if not conf:
@@ -193,7 +205,7 @@ class Wordlist(object):
                     self._alias[input_data[0][i]] == col][0]
         except:
             raise ValueError("[!] Could not find row and col in configuration or input file!")
-
+        
         basic_rows = sorted(
                 set(
                     [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
@@ -297,14 +309,15 @@ class Wordlist(object):
         self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
 
         # iterate over self._data and change the values according to the
-        # functions
-        heads = sorted(self._header.items(),key=lambda x:x[1])
-        for key in self._data:
-            check = []
-            for head,i in heads:
-                if i not in check:
-                    self._data[key][i] = self._class[head](self._data[key][i])
-                    check.append(i)
+        # functions (only needed when reading from file)
+        if not internal_import:
+            heads = sorted(self._header.items(),key=lambda x:x[1])
+            for key in self._data:
+                check = []
+                for head,i in heads:
+                    if i not in check:
+                        self._data[key][i] = self._class[head](self._data[key][i])
+                        check.append(i)
 
         # define a cache dictionary for stored data for quick access
         self._cache = {}
