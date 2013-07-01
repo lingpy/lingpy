@@ -12,6 +12,7 @@ __date__="2013-04-02"
 # imports
 import re
 import json
+import codecs
 
 from ..check.messages import FileWriteMessage
 from .phylip import matrix2dst
@@ -144,7 +145,7 @@ def wl2csv(
                 out += '\t'+value
         out += '\n'
 
-    f = open(filename + '.csv','w')
+    f = codecs.open(filename + '.csv','w', 'utf-8')
     f.write(out)
     if "stamp" in keywords:
         f.write(keywords['stamp'])

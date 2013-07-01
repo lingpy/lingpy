@@ -23,5 +23,6 @@ _abs_path = os.path.split(
 
 # add imorts for basic classes
 from .wordlist import Wordlist
+from .dictionary import Dictionary, ConceptGraph, spanish_swadesh_list, ConceptComparerSpanishStem
 from .spreadsheet import Spreadsheet
 from .qlcwordlist import QLCWordlist

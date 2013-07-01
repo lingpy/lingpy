@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-03-05"
 
 import json
+import codecs
 
 # lingpy-internal imports
 from ..thirdparty import cogent as cg
@@ -248,7 +249,7 @@ def read_qlc(infile):
     
     # open the file
     try:
-        inf = open(infile)
+        inf = codecs.open(infile, "r", "utf-8")
     except:
         raise ValueError("[i] Infile could not be opened.")
     
@@ -275,7 +276,13 @@ def read_qlc(infile):
             key = line[1:line.index(':')]
             value = line[line.index(':')+1:].strip()
             if key not in ['tree']:
-                meta[key] = value
+                if key in meta:
+                    if type(meta[key]) is not list:
+                        meta[key] = [meta[key], value]
+                    else:
+                        meta[key].append(value)
+                else:
+                    meta[key] = value
             else:
                 if key == 'tree':
                     meta["tree"] = cg.LoadTree(treestring=value)
