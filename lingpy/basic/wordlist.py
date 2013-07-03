@@ -1614,7 +1614,6 @@ class Wordlist(object):
 
             break_loop = False
 
-            print(key[0],len(out[key]))
             while True:
                 
                 if break_loop:
@@ -1647,42 +1646,6 @@ class Wordlist(object):
                     tmp = pointer[idx-1][0]
                     del pointer[idx]
     
-
-                    
-#                    # set the pointer 
-#                    # first val points to the current depth, second
-#                    # to the keys which are successively popped
-#                    pointer += [[tmp,sorted(tmp.keys())]]
-#                    
-#                    if pointer[idx][1]:
-#                        next_key = pointer[idx][1].pop(0)
-#                        out_string += next_key[1]
-#                        tmp = pointer[idx][0][next_key] 
-#                        idx += 1
-#                    else:
-#                        if idx > 0:
-#                            pass
-#                            #idx -= 1
-#                            #tmp = pointer[idx][0]
-#                        else:
-#                            break_loop = True
-#                else:
-#                    tmp_strings = []
-#                    for line in sorted(tmp):
-#                        tmp_strings += [item_sep.join(line)]
-#                    out_string += entry_sep.join(tmp_strings)
-#                    if pointer:
-#                        pointer.pop(-1)
-#                    if len(pointer) > idx-1:
-#                        idx -= 1
-#                        tmp = pointer[idx][0]
-#                        break_loop = False
-#                    else:
-#                        break_loop = False
-#    
-#                #if break_loop:
-#                #    break
-        
         # load the template
         if template:
             tmpl = open(template,'r').read()
