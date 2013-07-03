@@ -100,7 +100,13 @@ def wl2csv(
                         k
                         )
         else:
-            jsonpairs[k] = v
+            # check whether serialization works
+            try:
+                json.dumps(v)
+                jsonpairs[k] = v
+            except TypeError:
+                pass
+
     if kvpairs:
         out += '\n# META\n'
         for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
