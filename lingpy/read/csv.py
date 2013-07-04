@@ -51,6 +51,8 @@ def csv2list(
     # check for correct fileformat
     if fileformat:
         infile = filename+'.'+fileformat
+    else:
+        infile = filename
     if not os.path.isfile(infile):
         raise ValueError(
                 "[i] File {0} could not be found.".format(infile)
