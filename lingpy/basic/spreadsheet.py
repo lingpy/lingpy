@@ -50,12 +50,12 @@ class Spreadsheet:
     """
     def __init__(self, 
                  filename,
-                 #fileformat = None, # ? what do you need this for?
-                 dtype = None, # flag for different datatypes  
+                 fileformat = None, # ? what do you need this for? req'd in read.csv
+                 dtype = None, # flag for different datatypes; required in read.csv 
                  comment = '#',
                  sep = '\t', # column separator
                  header = 0, # row of the header
-                 concepts = 0, # column for the concepts
+                 # concepts = 0, # column for the concepts
                  language_string = ">LNG<", # think about this variable name
                  meanings = "CONCEPT", # explicit name of column containing concepts
                  exclude_string = "!", #
@@ -72,8 +72,9 @@ class Spreadsheet:
         self.comment = comment
         self.sep = sep
         self.header = header
-        self.concepts = concepts
-        self.languages = languages
+        self.verbose = verbose
+        # self.concepts = concepts
+        # self.languages = languages
 
         # create a 2D array and Unicode normalize its contents
         self.spreadsheet = csv2list(
@@ -85,33 +86,38 @@ class Spreadsheet:
             )
         self._normalize()
 
-        # given the header, concepts, and languages extract the data for processing
-        # return a new matrix
-        self.matrix = self._process_data()
+        print(self.spreadsheet)
+        sys.exit(1)
 
-
-    def _process_data(self):
-        """
-        Take spreadsheet input data and create matrix data given concept and language constraints.
-        """
-        
-        # if no parameters, assume simple spreadsheet format
-        if self.concepts == 0 and len(self.languages) == 0:
-            print("[i] No concepts or languages specified. Assuming concepts in column 1 and all other cols language data.\n")
-            return self.spreadsheet
-
-        # else create a matrix given user-specified input
-        matrix = []
-        spreadsheet_header = self.spreadsheet[self.header] # get original header
+        # identify the concepts and languages and put that data into a 2D matrix
+        self.matrix = []
+        header = self.spreadsheet[0] # first row must be the header
 
         # create new header
-        matrix_header = []
-        matrix_header.append(spreadsheet_header[self.concepts])
+        # matrix_header = []
+        # matrix_header.append(header)
+        
+        languages = []
+
+        for i in range(0, len(header)):
+            header[i] = header[i].lower().strip()
+            if header[i] == "concept":
+                self.concepts = i
+            if header[i].startswith("name"):
+                languages.append(i)
+        
+
+        print(self.matrix)
+
+        sys.exit(1)
+
+
 
         # TODO: this self.languages input must be int values
-        for language in self.languages:
-            matrix_header.append(spreadsheet_header[language])
-        matrix.append(matrix_header)
+
+#        for language in self.languages:
+#            matrix_header.append(spreadsheet_header[language])
+#        matrix.append(matrix_header)
 
         # append the concepts and words in languages and append the rows
         n = self.header+1
@@ -142,7 +148,8 @@ class Spreadsheet:
             for j in range(0, len(self.spreadsheet[i])):
                 normalized_cell = unicodedata.normalize("NFD", self.spreadsheet[i][j])
                 if not normalized_cell == self.spreadsheet[i][j]:
-                    print("[i] Cell at <"+self.spreadsheet[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
+                    if self.verbose:
+                        print("[i] Cell at <"+self.spreadsheet[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
                     self.spreadsheet[i][j] = normalized_cell
 
 
@@ -282,3 +289,4 @@ class Spreadsheet:
             for j in range(1, len(self.matrix[i])):
                 output.write(self.matrix[i][0]+"\t"+self.matrix[i][j]+"\t"+self.matrix[self.header][j]+"\n")
             output.write("#\n")
+
