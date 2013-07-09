@@ -204,8 +204,10 @@ class Spreadsheet:
 
                 # append stuff to dictionary
                 for counterpart in counterparts:
-                    d[idx] = [concept,language,counterpart]
-                    idx += 1
+                    if counterpart:
+                        d[idx] = [concept,language,counterpart]
+                        idx += 1
+
         # add the header to the dictionary
         d[0] = ["concept","doculect","counterpart"]
 
