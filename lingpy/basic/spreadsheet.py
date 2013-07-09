@@ -54,12 +54,12 @@ class Spreadsheet:
                  dtype = None, # flag for different datatypes; required in read.csv 
                  comment = '#',
                  sep = '\t', # column separator
-                 header = 0, # row of the header
+                 # header = 0, # row of the header
                  # concepts = 0, # column for the concepts
-                 language_string = ">LNG<", # think about this variable name
+                 language_id = "NAME", # think about this variable name
                  meanings = "CONCEPT", # explicit name of column containing concepts
                  exclude_string = "!", #
-                 #languages = [], # columns with language data -- TODO: must be ints
+                 # languages = [], # columns with language data -- TODO: must be ints
                  blacklist = "", # location of blacklist, think about start and end characters, etc. 
                  conf = "", # spreadsheet .rc file
                  cellsep = ';', # cell separator, separates forms in the same cell
@@ -71,55 +71,70 @@ class Spreadsheet:
         self.dtype = dtype
         self.comment = comment
         self.sep = sep
-        self.header = header
-        self.verbose = verbose
+        # self.header = header
         # self.concepts = concepts
+        self.language_id = language_id
+        self.meanings = meanings
         # self.languages = languages
+        self.blacklist = blacklist
+        self.conf = conf
+        self.cellsep = cellsep
+        self.verbose = verbose
 
-        # create a 2D array and Unicode normalize its contents
-        self.spreadsheet = csv2list(
+        self.matrix = []
+        self._init_matrix()
+        # Unicode NFD normalize the cell contents
+        self._normalize()
+
+        #for row in self.matrix:
+        #    print(row)
+
+    def _init_matrix(self):
+        """
+        Create a 2D array from the CSV input and Unicode normalize its contents
+        """
+
+        # TODO: check if spreadsheet is empty and throw error
+        spreadsheet = csv2list(
             self.filename, 
             self.fileformat, 
             self.dtype, 
             self.comment, 
             self.sep
             )
-        self._normalize()
 
-        print(self.spreadsheet)
-        sys.exit(1)
+        # columns that have language data
+        language_indices = []
 
-        # identify the concepts and languages and put that data into a 2D matrix
-        self.matrix = []
-        header = self.spreadsheet[0] # first row must be the header
-
-        # create new header
-        # matrix_header = []
-        # matrix_header.append(header)
-        
-        languages = []
-
+        # first row must be the header in the input; TODO: add more functionality
+        header = spreadsheet[0] 
         for i in range(0, len(header)):
             header[i] = header[i].lower().strip()
             if header[i] == "concept":
                 self.concepts = i
-            if header[i].startswith("name"):
-                languages.append(i)
-        
+            if header[i].startswith(self.language_id.lower()):
+                language_indices.append(i)
 
-        print(self.matrix)
-
-        sys.exit(1)
-
-
-
-        # TODO: this self.languages input must be int values
-
-#        for language in self.languages:
-#            matrix_header.append(spreadsheet_header[language])
-#        matrix.append(matrix_header)
+        matrix_header = []
+        matrix_header.append(header[self.concepts])        
+        for i in language_indices:
+            matrix_header.append(header[i].replace("name", "").strip())
+        self.matrix.append(matrix_header)
 
         # append the concepts and words in languages and append the rows
+        for i in range(1, len(spreadsheet)): # skip the header row
+            matrix_row = [] # collect concepts and languages to add to matrix
+            temp = []
+            for j in range(0, len(spreadsheet[i])):
+                if j == self.concepts:
+                    matrix_row.append(spreadsheet[i][j])
+                if j in language_indices:
+                    temp.append(spreadsheet[i][j])
+            for item in temp:
+                matrix_row.append(item)
+            self.matrix.append(matrix_row)
+
+        """
         n = self.header+1
         for i in range(self.header+1, len(self.spreadsheet)):
             # check for concept; if missing skip row
@@ -136,29 +151,26 @@ class Spreadsheet:
                 # print("row", str(len(self.spreadsheet[i])), self.spreadsheet[i])                
                 row.append(self.spreadsheet[i][language])
             matrix.append(row)
-
-        return matrix
-
+            """
 
     def _normalize(self):
-        """
+        """ 
         Function to Unicode normalize (NFD) cells in the matrix.
         """
-        for i in range(0, len(self.spreadsheet)):
-            for j in range(0, len(self.spreadsheet[i])):
-                normalized_cell = unicodedata.normalize("NFD", self.spreadsheet[i][j])
-                if not normalized_cell == self.spreadsheet[i][j]:
+        for i in range(0, len(self.matrix)):
+            for j in range(0, len(self.matrix[i])):
+                normalized_cell = unicodedata.normalize("NFD", self.matrix[i][j])
+                if not normalized_cell == self.matrix[i][j]:
                     if self.verbose:
-                        print("[i] Cell at <"+self.spreadsheet[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
-                    self.spreadsheet[i][j] = normalized_cell
+                        print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
+                    self.matrix[i][j] = normalized_cell
 
 
-    def get_matrix_full_rows(self):
+    def get_full_rows(self):
         """
         Create a 2D matrix from only the full rows in the spreadsheet.
         """
         full_row_matrix = []
-        full_row_matrix.append(self.header)
 
         for row in self.matrix:
             is_full = 1
@@ -180,15 +192,16 @@ class Spreadsheet:
                     print(self.matrix[i][j])
                     
 
-    def print_matrix_stats(self):
+    def stats(self):
         """
         Convenience function to get some stats data about the spreadsheet
         """
         total_entries = 0
         entries = []
-        total_cells = len(self.matrix)*len(self.header)
+        header = self.matrix[0]
+        total_cells = len(self.matrix)*len(header)
 
-        for header in self.header:
+        for item in header:
             entries.append(0)
 
         for row in self.matrix:
@@ -196,29 +209,28 @@ class Spreadsheet:
                 if not row[i] == "":
                     total_entries += 1
                     entries[i] = entries[i] + 1
-                
+        print()
+        print("Simple matrix stats...")
+        print()
         print("total rows in matrix:", len(self.matrix))
-        print("total cols in matrix:", len(self.header))
+        print("total cols in matrix:", len(header))
         print("total possible cells:", total_cells)
         print("total filled cells  :", str(total_entries), "("+str((total_entries*1.0)/total_cells*100)[:4]+"%)")
         print()
         print("total cells per column:")
-        for i in range(0, len(self.header)):
-            print(self.header[i], "\t", entries[i])
-
+        for i in range(0, len(header)):
+            print(header[i]+"\t"+str(entries[i]-1)) # do not include the header in count
+        print()
     
-    def pprint(self):
-        self.print_matrix(self.matrix)
-
-    def print_matrix(self, matrix):
+    def pprint(self, delim="\t"):
         """
-        Print a matrix in tab delimited format
+        Pretty print the matrix
         """
-        for i in range(0, len(matrix)):
+        for i in range(0, len(self.matrix)):
             row = ""
-            for j in range(0, len(matrix[i])):
-                row += matrix[i][j]+"\t"
-            row = row.rstrip("\t")
+            for j in range(0, len(self.matrix[i])):
+                row += self.matrix[i][j]+delim
+            row = row.rstrip(delim)
             print(row)
 
     def print_qlc_format(self):
@@ -250,7 +262,7 @@ class Spreadsheet:
 
     def output(self, **keywords):
         """
-        Method to output the spreadsheet data into other formats.
+        Output the matrix into Harry Potter format.
         """
 
         """
@@ -282,11 +294,60 @@ class Spreadsheet:
             if key not in keywords:
                 keywords[key] = defaults[key]
         """
+
         filename = "lingpy-{0}".format(str(date.today()))
         output = open(filename+".csv", "w")
-        output.write("CONCEPT"+"\t"+"COUNTERPART"+"\t"+"COUNTERPART_DOCULECT"+"\n")
-        for i in range(self.header+1, len(self.matrix)):
-            for j in range(1, len(self.matrix[i])):
-                output.write(self.matrix[i][0]+"\t"+self.matrix[i][j]+"\t"+self.matrix[self.header][j]+"\n")
-            output.write("#\n")
+        output.write("ID"+"\t"+"CONCEPT"+"\t"+"COUNTERPART"+"\t"+"DOCULECT"+"\t"+"COGID"+"\n")
+        header = self.matrix[0]
+        id = 0
+        for i in range(1, len(self.matrix)): # skip header row
+            result = []
+            cogid = i
+            concept = ""
+            counterpart = ""
+            doculect = ""
 
+            for j in range(0, len(self.matrix[i])):
+                cell = self.matrix[i][j]
+
+                """
+                if cell == "":
+                    print("cell: #"+cell+"#")
+                    if self.verbose:
+                        print("[i] No data in cell for concept ("+concept+") in language ("+doculect+"). Skipping row:", self.matrix[i])
+                    continue
+                    """
+
+                # identify the concept or counterpart
+                if j == 0:
+                    concept = cell
+
+                else:
+                    counterpart = cell
+                    doculect = header[j]
+
+                if cell.__contains__(self.cellsep):
+                    tokens = cell.split(self.cellsep)
+                    for token in tokens:
+                        token = token.strip()
+                        id += 1
+                        result.append(str(id))
+                        result.append(concept)
+                        result.append(token)
+                        result.append(doculect)
+                        result.append(str(cogid))
+                        output.write("\t".join(result)+"\n")
+                        result = []
+                else:
+                    if counterpart == "":
+                        continue
+                    id += 1
+                    result.append(str(id))
+                    result.append(concept)
+                    result.append(counterpart)
+                    result.append(doculect)
+                    result.append(str(cogid))
+                    output.write("\t".join(result)+"\n") 
+                    result = []
+        print()
+        print("[i] Writing matrix output to disk, filename:", filename)
