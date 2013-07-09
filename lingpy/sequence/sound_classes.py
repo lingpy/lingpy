@@ -224,7 +224,11 @@ def tokens2class(
                     try:
                         out.append(model[token[1:]])
                     except:
-                        out.append(model[token[1]])
+                        try:
+                            out.append(model[token[1]])
+                        except:
+                            # new character for missing data and spurious items
+                            out.append('0')
                 else:
                     # new character for missing data and spurious items
                     out.append('0')

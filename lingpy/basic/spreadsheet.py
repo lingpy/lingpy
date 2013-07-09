@@ -13,6 +13,7 @@ from datetime import date,datetime
 
 from ..sequence.ngram import *
 from ..read.csv import *
+from ..convert.csv import wl2csv
 
 class Spreadsheet:
     """
@@ -85,6 +86,8 @@ class Spreadsheet:
         self._init_matrix()
         # Unicode NFD normalize the cell contents
         self._normalize()
+
+        self._prepare()
 
         #for row in self.matrix:
         #    print(row)
@@ -164,7 +167,60 @@ class Spreadsheet:
                     if self.verbose:
                         print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
                     self.matrix[i][j] = normalized_cell
+    
+    def _prepare(self,full_rows = False):
+        """
+        Prepare the spreadsheet for automatic pass-on to Wordlist.
+        """
+        # we now assume that the matrix is 'normalized',i.e. that it only
+        # contains concepts and counterparts, in later versions, we should make
+        # this more flexible by adding, for example, also proto-forms, or
+        # cognate ids
 
+        # define a temporary matrix with full rows
+        if not full_rows:
+            matrix = self.matrix
+        else:
+            matrix = self.get_full_rows()
+
+        # create the dictionary that stores all the data
+        d = {}
+
+        # iterate over the matrix
+        idx = 1
+        for i,line in enumerate(matrix[1:]):
+
+            # get the concept
+            concept = line[0]
+
+            # get the rest
+            for j,cell in enumerate(line[1:]):
+
+                # get the language
+                language = matrix[0][j+1]
+
+                # get the counterparts
+                counterparts = [x.strip() for x in cell.split(self.cellsep)]
+
+                # append stuff to dictionary
+                for counterpart in counterparts:
+                    if counterpart:
+                        d[idx] = [concept,language,counterpart]
+                        idx += 1
+
+        # add the header to the dictionary
+        d[0] = ["concept","doculect","counterpart"]
+
+        # make the dictionary an attribute of spreadsheet
+        self._data = dict([(k,v) for k,v in d.items() if k > 0])
+
+        # make empty meta-attribute
+        self._meta = dict(
+                filename = self.filename
+                )
+
+        # make a simple header for wordlist import
+        self.header = dict([(a,b) for a,b in zip(d[0],range(len(d[0])))])
 
     def get_full_rows(self):
         """
@@ -252,102 +308,83 @@ class Spreadsheet:
                     row = str(id)+"\t"+self.header[j]+"\t"+self.matrix[i][0]+"\t"+self.matrix[i][j]
                 print(row)        
 
-    def _output(self):
-        filename = "lingpy-{0}".format(str(date.today()))
-        output = open(filename, "w")
-        for row in self.matrix:
-            results = "\t".join(row)
-            output.write(results+"\n")
-
-
-    def output(self, **keywords):
+    def _output(self, fileformat, **keywords):
         """
         Output the matrix into Harry Potter format.
         """
 
+        defaults = dict(
+                filename = "lingpy-{0}".format(str(date.today())),
+                meta = self._meta
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+        
+        # use wl2csv to convert if fileformat is 'qlc'
+        if fileformat in ['qlc','csv']:
+            wl2csv(
+                    self.header,
+                    self._data,
+                    **keywords
+                    )
+
+    def output(
+            self,
+            fileformat,
+            **keywords
+            ):
         """
-        default:
-        commas (",") == alternative transcriptions
-        -- end of word comma == mistake
-        backslash ("\") == two different words for the same thing
-        periods (".") == identify affixes or units of meaning
-
-        brackets ("[", "]") == 
-        1a. after the word, e.g. mba [?] -- means "is it correct?"
-        1b. after the word -- when an informant gives two different words
-        2. within a word -- transcriber thinks segment is phonetic only
-        3. after a word but not with "?" -- optional compounded word
-        4. next to a word -- also optional compounded word
-
-        # first do the data checks
-
-        defaults = {
-            "filename"  : "lingpy-{0}".format(str(date.today())),
-            "subset"    : False,
-            "blacklist" : None, # filename path
-            "rows"      : 200, # minimum number of concepts
-            "cols"      : 15 # minimum number of taxa
-            }
-
-        # add info to keywords
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        Write Spreadsheet to different formats.
         """
 
-        filename = "lingpy-{0}".format(str(date.today()))
-        output = open(filename+".csv", "w")
-        output.write("ID"+"\t"+"CONCEPT"+"\t"+"COUNTERPART"+"\t"+"DOCULECT"+"\t"+"COGID"+"\n")
-        header = self.matrix[0]
-        id = 0
-        for i in range(1, len(self.matrix)): # skip header row
-            result = []
-            cogid = i
-            concept = ""
-            counterpart = ""
-            doculect = ""
+        return self._output(fileformat,**keywords)
 
-            for j in range(0, len(self.matrix[i])):
-                cell = self.matrix[i][j]
+        #output = open(keywords['filename']+fileformat, "w")
+        #output.write("ID"+"\t"+"CONCEPT"+"\t"+"COUNTERPART"+"\t"+"DOCULECT"+"\n")
+        #header = self.matrix[0]
+        #id = 0
+        #for i in range(1, len(self.matrix)): # skip header row
+        #    result = []
+        #    concept = ""
+        #    counterpart = ""
+        #    doculect = ""
 
-                """
-                if cell == "":
-                    print("cell: #"+cell+"#")
-                    if self.verbose:
-                        print("[i] No data in cell for concept ("+concept+") in language ("+doculect+"). Skipping row:", self.matrix[i])
-                    continue
-                    """
+        #    for j in range(0, len(self.matrix[i])):
+        #        cell = self.matrix[i][j]
 
-                # identify the concept or counterpart
-                if j == 0:
-                    concept = cell
+        #        # identify the concept or counterpart
+        #        if j == 0:
+        #            concept = cell
 
-                else:
-                    counterpart = cell
-                    doculect = header[j]
+        #        else:
+        #            counterpart = cell
+        #            doculect = header[j]
 
-                if cell.__contains__(self.cellsep):
-                    tokens = cell.split(self.cellsep)
-                    for token in tokens:
-                        token = token.strip()
-                        id += 1
-                        result.append(str(id))
-                        result.append(concept)
-                        result.append(token)
-                        result.append(doculect)
-                        result.append(str(cogid))
-                        output.write("\t".join(result)+"\n")
-                        result = []
-                else:
-                    if counterpart == "":
-                        continue
-                    id += 1
-                    result.append(str(id))
-                    result.append(concept)
-                    result.append(counterpart)
-                    result.append(doculect)
-                    result.append(str(cogid))
-                    output.write("\t".join(result)+"\n") 
-                    result = []
-        print()
-        print("[i] Writing matrix output to disk, filename:", filename)
+        #        if cell.__contains__(self.cellsep):
+        #            tokens = cell.split(self.cellsep)
+        #            for token in tokens:
+        #                token = token.strip()
+        #                id += 1
+        #                result.append(str(id))
+        #                result.append(concept)
+        #                result.append(token)
+        #                result.append(doculect)
+        #                result.append(str(cogid))
+        #                output.write("\t".join(result)+"\n")
+        #                result = []
+        #        else:
+        #            if counterpart == "":
+        #                continue
+        #            id += 1
+        #            result.append(str(id))
+        #            result.append(concept)
+        #            result.append(counterpart)
+        #            result.append(doculect)
+        #            result.append(str(cogid))
+        #            output.write("\t".join(result)+"\n") 
+        #            result = []
+        #print()
+        #print("[i] Writing matrix output to disk, filename:", filename)
+
+

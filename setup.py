@@ -20,7 +20,7 @@ if sys.version_info >= (3,):
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
     answer = input("[i] Do you want to install with C-modules (requires Cython)? (Y/N) ")
     if answer.lower() in ['y','j','yes']:
-        this_version = '2.0.dev'
+        this_version = '2.0.a.dev'
         extension_modules = [
                     Extension(
                         'lingpy.algorithm.cython/calign',
@@ -44,10 +44,10 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv:
                         ),
                     ]
     else:
-        this_version = '2.0.dev'
+        this_version = '2.0.a.dev'
         extension_modules = []
 else:
-    this_version = '2.0.dev'
+    this_version = '2.0.a.dev'
     extension_modules = []
 
 

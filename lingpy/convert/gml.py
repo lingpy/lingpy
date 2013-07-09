@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-09 08:39
-# modified : 2013-04-09 08:39
+# modified : 2013-06-02 01:32
 """
 Conversion routines for the GML format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-09"
+__date__="2013-06-02"
 
 from ..check.exceptions import ThirdPartyModuleError
 import numpy as np
@@ -37,7 +37,10 @@ def gls2gml(
     tree : cogent.tree.PhyloNode
         A tree object. 
     """
-    
+    # check for tree-formatting
+    if type(tree) == str:
+        tree = cg.LoadTree(treestring=tree)
+
     # create a mapper for the ids and the string-names
     mapper = {}
     for node,data in graph.nodes(data=True):
@@ -150,10 +153,13 @@ def nwk2gml(
     graph = nx.DiGraph()
     
     # load the tree
-    try:
-        tree = cg.LoadTree(treefile)
-    except:
-        tree = cg.LoadTree(treestring=treefile)
+    if type(treefile) == str:
+        try:
+            tree = cg.LoadTree(treefile)
+        except:
+            tree = cg.LoadTree(treestring=treefile)
+    else:
+        tree = treefile
 
     # get the node names of the tree
     nodes = tree.getNodeNames()
@@ -188,14 +194,12 @@ def nwk2gml(
     else:
         return graph
 
-
-
-
 def radial_layout(
         treestring,
         change = lambda x:x**1.75,
         degree = 100,
-        filename = ''
+        filename = '',
+        start = 0
         ):
     """
     Function calculates a simple radial tree layout.
@@ -227,13 +231,16 @@ def radial_layout(
     # calculate the factor for projection from the degree
     pfactor = degree / 360
 
+    # get starting factor
+    startf = start * np.pi / 180
+
     # calculate the projection (should be centered)
-    if degree < 180:
-        pstart = (180 - degree) / 360 * np.pi
+    if degree <= 180:
+        pstart = startf + (180 - degree) / 360 * np.pi
         pend = pstart + 2 * np.pi * pfactor
     else:
-        pstart = 0
-        pend = 2 * np.pi * pfactor
+        pstart = startf + 0
+        pend = startf + 2 * np.pi * pfactor
 
     # define private function for centering of nodes
     def get_center(nodes):
@@ -253,10 +260,13 @@ def radial_layout(
         return x,y
 
     # get the tree
-    try:
-        tree = cg.LoadTree(treestring)
-    except:
-        tree = cg.LoadTree(treestring=treestring)
+    if type(treestring) == str:
+        try:
+            tree = cg.LoadTree(treestring)
+        except:
+            tree = cg.LoadTree(treestring=treestring)
+    else:
+        tree = treestring
 
     # get the leaves
     leaves = tree.getTipNames()
@@ -277,7 +287,7 @@ def radial_layout(
     # get the initial coordinates
     coords = {}
 
-    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves)+1)):
+    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves))):
         coords[node] = (x,maxL,0)
 
     # assign leaves to queue

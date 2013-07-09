@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-05-08 23:22
+# modified : 2013-07-09 18:34
 """
 This module provides a basic class for the handling of word lists.
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-05-08"
+__author__="Johann-Mattis List, Steven Moran"
+__date__="2013-07-09"
 
 import os
 from datetime import date,datetime
@@ -116,6 +116,7 @@ class Wordlist(object):
             ):
 
         # try to load the data
+        internal_import = False
         try:
             input_data = read_qlc(filename)
             self.filename = filename.replace('.csv','')
@@ -123,13 +124,24 @@ class Wordlist(object):
             if type(filename) == dict:
                 input_data = filename
                 self.filename = 'lingpy-{0}'.format(str(date.today()))
+            # if it's a wordlist object, add its basic parameters
+            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+                input_data = dict(filename._data.items())
+                input_data.update(filename._meta.items())
+                input_data[0] = [a for a,b in sorted(
+                    filename.header.items(),
+                    key = lambda x:x[1],
+                    reverse = False
+                    )]
+                internal_import = True
+                self.filename = 'lingpy-{0}'.format(str(date.today()))
             else:
-                
-            #if not input_data:
-                raise ValueError('[i] Input data is not specified.')
-            #else:
-            #    input_data = filename
-            #    self.filename = 'lingpy-{0}'.format(str(date.today()))
+                if not os.path.isfile(filename):
+                    raise IOError(
+                            "[i] Input file does not exist."
+                            )
+                else:
+                    raise ValueError('[i] Could not parse the input file.')
 
         # load the configuration file
         if not conf:
@@ -194,16 +206,18 @@ class Wordlist(object):
                     self._alias[input_data[0][i]] == col][0]
         except:
             raise ValueError("[!] Could not find row and col in configuration or input file!")
-
+        
         basic_rows = sorted(
                 set(
                     [input_data[k][rowIdx] for k in input_data if k != 0 and type(k) == int]
-                    )
+                    ),
+                key = lambda x: x.lower()
                 )
         basic_cols = sorted(
                 set(
                     [input_data[k][colIdx] for k in input_data if k != 0 and type(k) == int]
-                    )
+                    ),
+                key = lambda x: x.lower()
                 )
         
         # define rows and cols as attributes of the word list
@@ -296,14 +310,15 @@ class Wordlist(object):
         self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
 
         # iterate over self._data and change the values according to the
-        # functions
-        heads = sorted(self._header.items(),key=lambda x:x[1])
-        for key in self._data:
-            check = []
-            for head,i in heads:
-                if i not in check:
-                    self._data[key][i] = self._class[head](self._data[key][i])
-                    check.append(i)
+        # functions (only needed when reading from file)
+        if not internal_import:
+            heads = sorted(self._header.items(),key=lambda x:x[1])
+            for key in self._data:
+                check = []
+                for head,i in heads:
+                    if i not in check:
+                        self._data[key][i] = self._class[head](self._data[key][i])
+                        check.append(i)
 
         # define a cache dictionary for stored data for quick access
         self._cache = {}
@@ -724,6 +739,7 @@ class Wordlist(object):
 
             if col not in self.cols:
                 print("[!] The column you selected is not available!")
+                return
             else:
                 data = self._array[:,self.cols.index(col)]
                 
@@ -1179,7 +1195,7 @@ class Wordlist(object):
             data,
             taxa = 'taxa',
             concepts = 'concepts',
-            cognates = 'cogid',
+            ref = 'cogid',
             threshold = 0.6,
             verbose = False,
             **keywords
@@ -1193,12 +1209,16 @@ class Wordlist(object):
             The type of data that shall be calculated.
 
         """
+        if 'cognates' in keywords:
+            print("[!] Warning, using the 'cognates' keyword is deprecated, use 'ref' instead.")
+            ref = keywords['cognates']
+
         # XXX take care of keywords XXX
         if data in ['distances','dst']:
-            self._meta['distances'] = wl2dst(self,taxa,concepts,cognates)
+            self._meta['distances'] = wl2dst(self,taxa,concepts,ref)
         elif data in ['tre','nwk','tree']:
             if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,cognates)
+                self.calculate('distances',taxa,concepts,ref)
             if 'distances' not in keywords:
                 keywords['distances'] = False
             if 'tree_calc' not in keywords:
@@ -1213,7 +1233,7 @@ class Wordlist(object):
 
         elif data in ['groups','cluster']:
             if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,cognates)
+                self.calculate('distances',taxa,concepts,ref)
             self._meta['groups'] = matrix2groups(
                     threshold,
                     self.distances,
@@ -1511,6 +1531,167 @@ class Wordlist(object):
 
         """
         return self._output(fileformat,**keywords)
+    
+    def _export(
+            self,
+            fileformat,
+            sections = {},
+            entries = [],
+            entry_sep = '',
+            item_sep = '',
+            template = '',
+            **keywords
+            ):
+        """
+        Export a wordlist to various file formats.
+        """
+        # check for sections
+        if not sections:
+            if fileformat == 'txt':
+                sections = dict(
+                        h1 = ('concept','\n# Concept: {0}\n'),
+                        h2 = ('cogid','## Cognate-ID: {0}\n'),
+                        )
+            elif fileformat == 'tex':
+                sections = dict(
+                        h1 = ('concept',r'\section{{Concept: ``{0}"}}'+'\n'),
+                        h2 = ('cogid',r'\subsection{{Cognate Set: ``{0}"}}'+'\n')
+                        )
+            elif fileformat == 'html':
+                
+                sections = dict(
+                        h1 = ('concept','<h1>Concept: {0}</h1>'),
+                        h2 = ('cogid','<h2>Cognate Set: {0}</h2>')
+                        )
+    
+        # check for entries
+        if not entries:
+            if fileformat == 'txt':
+                entries = [
+                        ('language','{0}'),
+                        ('ipa','{0}\n')
+                        ]
+            elif fileformat == 'tex':
+                entries = [
+                        ('language','{0}'),
+                        ('ipa','[{0}]'+'\n')
+                        ]
+            elif fileformat == 'html':
+                entries = [
+                        ('language','{0}'),
+                        ('ipa','[{0}]\n')
+                        ]
+        
+        # setup defaults
+        defaults = dict(
+                filename = 'outputfile'
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        # get the temporary dictionary
+        out = wl2dict(
+                self,
+                sections,
+                entries
+                )
+    
+        # assign the output string
+        out_string = ''
+    
+        # iterate over the dictionary and start to fill the string
+        for key in sorted(out):
+            
+            # write key to file
+            out_string += key[1]
+            
+            # reassign tmp
+            tmp = out[key]
+    
+            # set the pointer and the index
+            pointer = {0:[tmp,sorted(tmp.keys())]}
+            
+
+            break_loop = False
+
+            while True:
+                
+                if break_loop:
+                    break
+
+                idx = max(pointer.keys())
+
+                # check for type of current point
+                if type(tmp) == dict:
+                    
+                    if pointer[idx][1]:
+                        next_key = pointer[idx][1].pop()
+                        out_string += next_key[1]
+                        tmp = pointer[idx][0][next_key]
+                        if type(tmp) == dict:
+                            pointer[idx+1] = [tmp,sorted(tmp.keys())]
+                        else:
+                            pointer[idx+1] = [tmp,tmp]
+                    else:
+                        del pointer[idx]
+                        if idx == 0:
+                            break_loop = True
+
+                else:
+                    tmp_strings = []
+                    for line in sorted(tmp):
+                        tmp_strings += [item_sep.join(line)]
+                    out_string += entry_sep.join(tmp_strings)
+
+                    tmp = pointer[idx-1][0]
+                    del pointer[idx]
+    
+        # load the template
+        if template:
+            tmpl = open(template,'r').read()
+        else:
+            tmpl = '{0}'
+        
+        # open outfile
+        f = open(keywords['filename']+'.'+fileformat,'w')
+        if fileformat == 'tex':
+            f.write(tmpl.format(out_string.replace('_',r'\_')))
+        else:
+            f.write(tmpl.format(out_string))
+        f.close()
+        FileWriteMessage(keywords['filename'],fileformat).message('written')
+
+    def export(
+            self,
+            fileformat,
+            sections = {},
+            entries = [],
+            entry_sep = '',
+            item_sep = '',
+            template = '',
+            **keywords
+            ):
+        """
+        Export the wordlist to specific fileformats.
+
+        Notes
+        -----
+        The difference between export and output is that the latter mostly
+        serves for internal purposes and formats, while the former serves for
+        publication of data, using specific, nested statements to create, for
+        example, HTML or LaTeX files from the wordlist data.
+        """
+
+        self._export(
+                fileformat,
+                sections,
+                entries,
+                entry_sep,
+                item_sep,
+                template,
+                **keywords
+                )
 
     def tokenize(
             self,
@@ -1521,20 +1702,19 @@ class Wordlist(object):
             ):
         """
         Tokenize the data with help of orthography profiles.
-
+        
         Parameters
         ----------
         ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the
-            input data into IPA tokens. If not specified, a simple Unicode
-            grapheme parsing is carried out.
-
-        source : str (default="counterpart")
-            The source data that shall be used for the tokenization procedures.
-
-        target : str (default="tokens")
-            The name of the target column that will be added to the wordlist.
+        Path to the orthographic profile used to convert and tokenize the
+        input data into IPA tokens. If not specified, a simple Unicode
+        grapheme parsing is carried out.
         
+        source : str (default="counterpart")
+        The source data that shall be used for the tokenization procedures.
+        
+        target : str (default="tokens")
+        The name of the target column that will be added to the wordlist.
         Notes
         -----
         This is a shortcut to the extended
@@ -1586,4 +1766,5 @@ class Wordlist(object):
                 target,
                 source,
                 function
-                )            
+                ) 
+

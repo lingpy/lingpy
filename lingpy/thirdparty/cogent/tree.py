@@ -623,10 +623,18 @@ class TreeNode(object):
             # increase black count, multiple children lead to here
             if curr:
                 curr.black.append(prev)
+                
 
         curr = self
         while len(curr.black) == 1:
             curr = curr.black[0]
+
+        # clear all black attributes from the tree, added by JML
+        for n,t in self.getNodesDict().items():
+            try:
+                delattr(t,'black')
+            except:
+                pass
 
         return curr
 

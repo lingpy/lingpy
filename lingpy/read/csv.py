@@ -1,19 +1,20 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-03-05 08:37
+# modified : 2013-06-26 18:08
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-05"
+__date__="2013-06-26"
 
 import json
+import os
 
 # lingpy-internal imports
 from ..thirdparty import cogent as cg
-from .phylip import read_dst
+from .phylip import read_dst,read_scorer
 
 def csv2list(
         filename,
@@ -47,14 +48,21 @@ def csv2list(
         A list-representation of the CSV file.
 
     """
+    # check for correct fileformat
+    if fileformat:
+        infile = filename+'.'+fileformat
+    else:
+        infile = filename
+    if not os.path.isfile(infile):
+        raise ValueError(
+                "[i] File {0} could not be found.".format(infile)
+                )
 
     l = []
     
-    if fileformat:
-        infile = open(filename+'.'+fileformat)
-    else:
-        infile = open(filename)
-    
+    # open the file
+    infile = open(infile)
+
     for line in infile:
         if line.strip() and not line.startswith(comment):
             cells = [c.strip() for c in line.strip().split(sep)]
@@ -230,7 +238,10 @@ def read_qlcOld(
     """
     return qlc2dict(infile)
 
-def read_qlc(infile):
+def read_qlc(
+        infile,
+        comment = '#'
+        ):
     """
     Simple function that loads qlc-format into a dictionary.
 
@@ -245,12 +256,13 @@ def read_qlc(infile):
         A dictionary with integer keys corresponding to the order of the lines
         of the input file. The header is given 0 as a specific key.
     """
-    
-    # open the file
-    try:
-        inf = open(infile)
-    except:
-        raise ValueError("[i] Infile could not be opened.")
+    # check whether path exists
+    if not os.path.isfile(infile):
+        raise ValueError(
+                "[!] File {0} does not exist.".format(infile)
+                )
+
+    inf = open(infile)
     
     # create data array
     data = []
@@ -267,7 +279,7 @@ def read_qlc(infile):
         line = lines.pop(0)
 
         # line is empty or starts with hash
-        if line.startswith('#') or not line.strip():
+        if line.startswith(comment) or not line.strip():
             pass
         
         # line starts with key-value @
@@ -319,15 +331,16 @@ def read_qlc(infile):
             
             # tree
             elif dtype in ['tre','nwk']:
+                
                 # check for "tree" in meta
-                if "tree" not in meta:
-                    meta["tree"] = {}
+                if "trees" not in meta:
+                    meta["trees"] = {}
                 
                 # add the data
                 if not keys:
-                    keys["id"] = "t1"
+                    keys["id"] = "1"
 
-                meta['tree'][keys["id"]] = cg.LoadTree(treestring=tmp)
+                meta['trees'][keys["id"]] = cg.LoadTree(treestring=tmp)
 
             # csv
             elif dtype in ['csv']:
@@ -357,30 +370,74 @@ def read_qlc(infile):
                         a = l[0]
                         b = [transf(b) for b in l[1:]]
                     meta[keys["id"]][a] = b
+
             elif dtype == 'msa':
                 
                 # check for dtype
                 tmp = tmp.split('\n')
                 if 'msa' not in meta:
                     meta['msa'] = {}
+
+                # check for additional reference attribute
+                if 'ref' in keys:
+                    ref = keys['ref']
+                else:
+                    ref = 'cogid' # XXX check this later for flexibility
+
+                # check for msa.ref:
+                if ref not in meta['msa']:
+                    meta['msa'][ref] = {}
+
                 tmp_msa = {}
                 try:
                     tmp_msa['dataset'] =  meta['dataset']
                 except:
                     tmp_msa['dataset'] = infile.replace('.csv','')
+
                 tmp_msa['seq_id'] = keys['id']
                 tmp_msa['seqs'] = []
                 tmp_msa['alignment'] = []
                 tmp_msa['taxa'] = []
-                for l in tmp[2:]:
-                    this_line = l.split('\t')
-                    tmp_msa['taxa'] += [this_line[0]]
-                    tmp_msa['seqs'] += [' '.join(this_line[1:])]
-                    tmp_msa['alignment'] += [this_line[1:]]
+                tmp_msa['ID'] = []
+                for l in tmp:
+                    if not l.startswith(comment):
+
+                        this_line = l.split('\t')
+                    
+                        # check for specific id
+                        if this_line[0] == '0':
+                            if this_line[1].strip().upper() == 'LOCAL':
+                                tmp_msa['local'] = []
+                                for i,x in enumerate(this_line[2:]):
+                                    if x == '*':
+                                        tmp_msa['local'] += [i]
+                            elif this_line[1].strip().upper() == 'SWAPS':
+                                tmp_msa['swaps'] = []
+                                swapline = [x for x in this_line[2:]]
+                                i=0
+                                while swapline:
+                                    x = swapline.pop(0)
+                                    if x == '+':
+                                        tmp_msa['swaps'] += [(i,i+1,i+2)]
+                                        swapline.pop(0)
+                                        swapline.pop(0)
+                                        i += 2
+                                    else:
+                                        pass
+                                    i += 1
+                                    
+                        else:
+                            try:
+                                tmp_msa['ID'] += [int(this_line[0])]
+                            except:
+                                tmp_msa['ID'] += [this_line[0]]
+                            tmp_msa['taxa'] += [this_line[1].strip()]
+                            tmp_msa['seqs'] += [' '.join(this_line[2:])]
+                            tmp_msa['alignment'] += [this_line[2:]]
                 try:
-                    meta['msa'][int(keys['id'])] = tmp_msa   
+                    meta['msa'][ref][int(keys['id'])] = tmp_msa   
                 except:
-                    meta['msa'][keys['id']] = tmp_msa
+                    meta['msa'][ref][keys['id']] = tmp_msa
             
             elif dtype == 'dst':
                 taxa,matrix = read_dst(tmp)
@@ -394,6 +451,14 @@ def read_qlc(infile):
                             distances[i][j] = cell
                             distances[j][i] = cell
                 meta['distances'] = distances
+            elif dtype == 'scorer':
+                scorer = read_scorer(tmp)
+                if not 'scorer' in meta:
+                    meta['scorer'] = {}
+                if 'id' not in keys:
+                    keys['id'] = 'basic'
+                meta['scorer'][keys['id']] = scorer
+
             elif dtype == 'taxa':
                 meta['taxa'] = [t.strip() for t in tmp.split('\n')]          
         else:
@@ -430,6 +495,14 @@ def read_qlc(infile):
     
     for m in meta:
         d[m] = meta[m]
+    
+    # check for tree-attributes
+    if 'trees' in d and not 'tree' in d:
+        d['tree'] = sorted(
+                d['trees'].items(),
+                key = lambda x: x[0],
+                )[0][1]
+                
 
     return d
 
@@ -437,5 +510,19 @@ def qlc2dict(infile):
 
     return read_qlc(infile)
 
-
+#def read_scorer(infile):
+#    """
+#    Read a scoring function in a file into a ScoreDict object.
+#    """
+#    
+#    # read data
+#    data = csv2list(infile)
+#
+#    # get the chars
+#    chars = [l[0] for l in data]
+#    
+#    # get the matrix
+#    matrix = [[float(x) for x in l[1:]] for l in data]
+#
+#    return misc.ScoreDict(chars,matrix)
 
