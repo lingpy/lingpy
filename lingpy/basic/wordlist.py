@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-07-03 19:24
+# modified : 2013-07-09 18:34
 """
 This module provides a basic class for the handling of word lists.
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-07-03"
+__author__="Johann-Mattis List, Steven Moran"
+__date__="2013-07-09"
 
 import os
 from datetime import date,datetime
@@ -27,6 +27,7 @@ except:
 
 # import ortho-parser
 from ..sequence.orthography import OrthographyParser
+from ..sequence.orthography import GraphemeParser
 
 class Wordlist(object):
     """
@@ -1701,27 +1702,26 @@ class Wordlist(object):
             ):
         """
         Tokenize the data with help of orthography profiles.
-
+        
         Parameters
         ----------
         ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the
-            input data into IPA tokens. If not specified, a simple Unicode
-            grapheme parsing is carried out.
-
-        source : str (default="counterpart")
-            The source data that shall be used for the tokenization procedures.
-
-        target : str (default="tokens")
-            The name of the target column that will be added to the wordlist.
+        Path to the orthographic profile used to convert and tokenize the
+        input data into IPA tokens. If not specified, a simple Unicode
+        grapheme parsing is carried out.
         
+        source : str (default="counterpart")
+        The source data that shall be used for the tokenization procedures.
+        
+        target : str (default="tokens")
+        The name of the target column that will be added to the wordlist.
         Notes
         -----
         This is a shortcut to the extended
         :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
         automatically tokenizes it.
         """
-        
+
         if os.path.exists(ortho_profile):
             ortho_path = ortho_profile
         else:
@@ -1734,7 +1734,8 @@ class Wordlist(object):
                     )[0] + '/data/orthography_profiles/' + ortho_profile
         
         # if the orthography profile does exist, carry out to tokenize the data
-        if os.path.exists(ortho_path):
+        if os.path.exists(ortho_path) and not ortho_profile == "":
+            print("here")
             op = OrthographyParser(ortho_path)
 
             # check for valid IPA parse
@@ -1753,4 +1754,16 @@ class Wordlist(object):
                         function
                         )
         
-            
+        else:
+            gp = GraphemeParser()
+
+            if target == 'tokens':
+                function = lambda x: gp.parse_graphemes(x).split(' ')[1:-1]
+            else:
+                function = lambda x: gp.parse_graphemes(x)
+
+            self.add_entries(
+                target,
+                source,
+                function
+                ) 
