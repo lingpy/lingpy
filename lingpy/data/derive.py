@@ -47,7 +47,7 @@ def _import_score_tree(filename):
     Function imports score trees for a given range of sound classes and
     converts them into a graph.
     """
-    infile = codes.open(filename,'r','utf-8')
+    infile = codecs.open(filename,'r','utf-8')
     graph = nx.DiGraph()
     data = []
     for line in infile:
@@ -478,7 +478,7 @@ def compile_model(
     print("... successfully created the converter.")
 
     # try to load the score tree
-    try:
+    if os.path.isfile(path+'scorer'):
         score_tree = _import_score_tree(path+'scorer')
     
         # calculate the scoring dictionary
@@ -489,7 +489,7 @@ def compile_model(
         dump(score_dict,outfile)
         outfile.close()
         print("... successfully created the scorer.")
-    except:
+    else:
         print("... no scoring dictionary defined.")
 
     print("[i] Model <"+model+"> was compiled successfully.")

@@ -1,6 +1,7 @@
 import sys
 import os
 import regex as re
+import codecs
 
 # data for sampa2ipa (Peter Kleiwegs implementation)
 path = os.path.split(    
@@ -9,7 +10,7 @@ path = os.path.split(
             )        
         )[0]
 
-f = open(path + '/sampa.csv')
+f = codecs.open(path + '/sampa.csv','r','utf-8')
 xsdata = []
 _xsKeys = [' ']
 xs = {' ': ' '}

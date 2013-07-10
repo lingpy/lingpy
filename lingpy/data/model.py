@@ -126,6 +126,7 @@ class Model(object):
             try:
                 self.scorer = load(open(new_path+'scorer.bin','rb'))
             except:
+                print(new_path)
                 pass
         except:
             compile_model(model,path)
