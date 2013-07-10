@@ -11,6 +11,7 @@ __date__="2013-07-01"
 
 # builtin
 import random
+import codecs
 
 # thirdparty
 import numpy as np
@@ -157,7 +158,7 @@ class LexStat(Wordlist):
                             ' '.join(line)
                             )]
             if errors:
-                out = open("errors.log","w")
+                out = codecs.open("errors.log","w",'utf-8')
                 out.write("ID\tTokens\tError-Type\n")
                 for a,b,c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
@@ -1381,7 +1382,7 @@ class LexStat(Wordlist):
         if fileformat == 'scorer':
 
             out = scorer2str(keywords['scorer'])
-            f = open(keywords['filename']+'.'+fileformat,'w')
+            f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
             f.write(out)
             f.close()
             FileWriteMessage(

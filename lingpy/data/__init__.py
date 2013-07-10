@@ -37,31 +37,98 @@ applications:
 """
 
 from .model import *
+try:
+    from .derive import *
+except ImportError:
+    print("[!] Not all modules could be loaded. Some functions might not work.")
 
 # try to import the precompiled models
 # XXX split this up into several parts in order to avoid messing around with
 # abundant compilations of stuff that has already been compiled
-try:
-    ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
-    sca = Model('sca')
-    asjp = Model('asjp')
-    dolgo = Model('dolgo')
-    art = Model('art')
-    _color = Model('color')
-# compile the models if they are not precompiled
-except:
-    from .derive import *
-    compile_dvt()
-    compile_model('sca')
-    compile_model('dolgo')
-    compile_model('art')
-    compile_model('color')
-    ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
-    sca = Model('sca')
-    asjp = Model('asjp')
-    dolgo = Model('dolgo')
-    art = Model('art')
-    _color = Model('color')
+#try:
+#    ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
+#    sca = Model('sca')
+#    asjp = Model('asjp')
+#    dolgo = Model('dolgo')
+#    art = Model('art')
+#    _color = Model('color')
+## compile the models if they are not precompiled
+#except:
+#    from .derive import *
+#    compile_dvt()
+#    compile_model('sca')
+#    compile_model('dolgo')
+#    compile_model('art')
+#    compile_model('color')
+#    ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
+#    sca = Model('sca')
+#    asjp = Model('asjp')
+#    dolgo = Model('dolgo')
+#    art = Model('art')
+#    _color = Model('color')
 
 
+def set_global_model(model):
+    """
+    Define the global sound-class models used for the current LingPy session.
 
+    Parameters
+    ----------
+    model : string {'qlc','evolamp'}
+        Select between 'qlc' as the standard model of the QLC group and
+        'evolamp' as the standard model of the EvoLamp group.
+        
+    """
+    global ipa_diacritics
+    global ipa_vowels
+    global ipa_tones
+    global sca
+    global asjp
+    global dolgo
+    global art
+    global _color
+
+    if model in ['default','standard','qlc']:
+        try:
+            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp')
+            dolgo = Model('dolgo')
+            art = Model('art')
+            _color = Model('color')
+        # compile the models if they are not precompiled
+        except:
+            compile_dvt()
+            compile_model('sca')
+            compile_model('dolgo')
+            compile_model('art')
+            compile_model('color')
+            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp')
+            dolgo = Model('dolgo')
+            art = Model('art')
+            _color = Model('color')
+    elif model in ['evolamp']:
+        try:
+            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp_internal')
+            dolgo = Model('dolgo_internal')
+            art = Model('art')
+            _color = Model('color')
+        # compile the models if they are not precompiled
+        except:
+            compile_dvt()
+            compile_model('sca')
+            compile_model('dolgo')
+            compile_model('art')
+            compile_model('color')
+            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp')
+            dolgo = Model('dolgo')
+            art = Model('art')
+            _color = Model('color')
+
+set_global_model('default')

@@ -9,23 +9,29 @@ Module provides functions and methods for the creation of csv-files.
 __author__="Johann-Mattis List"
 __date__="2013-07-01"
 
-# imports
+# external imports
 import re
 import json
+import codecs
 
+# internal imports
 from ..check.messages import FileWriteMessage
 from .phylip import matrix2dst
 from .misc import msa2str,scorer2str
+from ..check import _timestamp
 
 def pap2csv(
         taxa,
         paps,
-        filename='csv'
+        filename='',
+        verbose = True
         ):
     """
     Write paps created by the Wordlist class to a csv-file.
     """
-    
+    if not filename:
+        filename = _today()
+
     out = "ID\t"+'\t'.join(taxa)+'\n'
     for key in sorted(paps,key=lambda x: int(re.sub(r'[^0-9]+','',str(x)))):
         out += '{0}\t{1}\n'.format(
@@ -33,25 +39,36 @@ def pap2csv(
             '\t'.join(str(i) for i in paps[key])
             )
 
-    f = open(filename+'.csv','w')
+    f = codecs.open(filename+'.csv','w',"utf-8")
     f.write(out)
     f.close()
 
-    FileWriteMessage(filename,'csv').message('written')
+    if verbose: print(FileWriteMessage(filename,'csv'))
     
     return
 
 def wl2csv(
         header,
         data,
-        filename = 'csv',
+        filename = '',
         formatter = 'concept',
+        verbose = True,
         **keywords
         ):
     """
     Write the basic data of a wordlist to file.
     """
     formatter = formatter.upper()
+
+    defaults = dict(
+            fileformat = 'qlc'
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
+    if not filename:
+        filename = _timestamp()
 
     # create output string
     out = '# Wordlist\n'
@@ -174,11 +191,11 @@ def wl2csv(
                 out += '\t'+value
         out += '\n'
 
-    f = open(filename + '.csv','w')
+    f = codecs.open(filename +'.'+ keywords['fileformat'],'w','utf-8')
     f.write(out)
     if "stamp" in keywords:
         f.write(keywords['stamp'])
     f.close()
-    FileWriteMessage(filename,'csv').message('written')
+    if verbose: print(FileWriteMessage(filename,keywords['fileformat']))
 
     return 

@@ -1,12 +1,12 @@
 # QLC-LingPy
 
-Authors: Johann-Mattis List and Steven Moran, Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg.
+Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)).
 
-QLC-LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3.
+QLC-LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also try to provide basic functionality for Python 2.
 
 Available at: (https://github.com/lingpy/lingpy)
 
-For a brief overview, see slides from Euroscipy 2012 ("best talk award"): (http://hprints.org/hprints-00758536)
+For a brief overview, see slides from Euroscipy 2012: (http://hprints.org/hprints-00758536)
 
 Other relevant work related to the development of the library and research using it, include:
 

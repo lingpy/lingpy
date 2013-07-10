@@ -1,16 +1,17 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 06:55
-# modified : 2013-04-02 06:55
+# modified : 2013-07-10 12:17
 """
 Basic routines or creating Phylip output (distance matrices).
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-02"
+__date__="2013-07-10"
 
 
-
+# external
+import codecs
 
 try:
     from ..algorithm.cython import misc
@@ -19,8 +20,10 @@ except:
 
 def matrix2dst(
         matrix,
-        taxa = False,
-        stamp = False
+        taxa = [],
+        stamp = '',
+        filename = '',
+        verbose = True
         ):
     """
     Convert matrix to dst-format.
@@ -36,46 +39,11 @@ def matrix2dst(
         out += '\n'
     if stamp:
         out += '# {0}'.format(stamp)
-    return out
+    if not filename:
+        return out
+    else:
+        f = codecs.open(filename+'.dst','w','utf-8')
+        f.write(out)
+        f.close()
+        if verbose: print(FileWriteMessage(filename,'dst'))
 
-#def wl2dst(
-#        wl, # wordlist object
-#        taxa = "taxa",
-#        concepts = "concepts",
-#        cognates = "cogid",
-#        ):
-#    """
-#    Function converts wordlist to distance matrix.
-#    """
-#    # check for taxon attribute
-#    taxa = getattr(wl,taxa)
-#
-#    # check for concepts
-#    concepts = getattr(wl,concepts)
-#
-#    distances = []
-#
-#    for i,taxA in enumerate(taxa):
-#        for j,taxB in enumerate(taxa):
-#            if i < j:
-#                
-#                # get the two dictionaries
-#                dictA = wl.get_dict(col=taxA,entry=cognates)
-#                dictB = wl.get_dict(col=taxB,entry=cognates)
-#    
-#                # count amount of shared concepts
-#                shared = 0
-#                missing = 0
-#                for concept in concepts:
-#                    try:
-#                        if [k for k in dictA[concept] if k in dictB[concept]]:
-#                            shared += 1
-#                        else:
-#                            pass
-#                    except KeyError:
-#                        missing += 1
-#    
-#                # append to distances
-#                distances += [ 1 - shared / (wl.height-missing)]
-#    distances = misc.squareform(distances)
-#    return distances

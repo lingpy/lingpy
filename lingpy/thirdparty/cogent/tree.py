@@ -27,6 +27,7 @@ Definition of relevant terms or abbreviations:
 from numpy import zeros, argsort
 from copy import deepcopy
 import re
+import codecs
 from .newick import parse_string as newick_parse_string
 #from cogent.util.transform import comb
 #from cogent.maths.stats.test import correlation
@@ -1334,7 +1335,7 @@ class TreeNode(object):
             data = self.getXML()
         else:
             data = self.getNewick(with_distances=with_distances)
-        outf = open(filename, "w")
+        outf = codecs.open(filename, "w",'utf-8')
         outf.writelines(data)
         outf.close()
 
@@ -2151,7 +2152,7 @@ def LoadTree(filename=None, treestring=None, tip_names=None, format=None, \
 
     if filename:
         assert not (treestring or tip_names)
-        treestring = open(filename).read()
+        treestring = codecs.open(filename,'r','utf-8').read()
         if format is None and filename.endswith('.xml'):
             format = "xml"
     if treestring:

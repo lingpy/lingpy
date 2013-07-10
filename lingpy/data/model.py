@@ -13,6 +13,7 @@ __date__="2013-03-06"
 from re import findall
 from pickle import load
 import os
+import codecs
 
 from ..check.exceptions import *
 
@@ -138,7 +139,7 @@ class Model(object):
         # read information from the info-file
         self.info = {}
         
-        info = open(new_path+'INFO').read()
+        info = codecs.open(new_path+'INFO','r','utf-8').read()
         
         data = ['description','compiler','source','date']
         

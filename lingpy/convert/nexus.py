@@ -4,13 +4,26 @@ Basic module for creating nexus output of linguistic data.
 __author__="Johann-Mattis List"
 __date__="2012-12-05"
 
-from ..check.messages import FileWriteMessage
+# external
+import codecs
 
-def pap2nex(taxa,paps,missing=0,filename='nexus'):
+# internal
+from ..check.messages import FileWriteMessage
+from ..check import _timestamp
+
+def pap2nex(
+        taxa,
+        paps,
+        missing=0,
+        filename='',
+        verbose=True
+        ):
     """
     Function converts a list of paps into nexus file format.
 
     """
+    if not filename:
+        filename = 'lingpy-{0}'.format(_timestamp())
 
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
     out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
@@ -38,7 +51,7 @@ def pap2nex(taxa,paps,missing=0,filename='nexus'):
         matrix += ''.join([str(line[i]) for line in new_paps])
         matrix += '\n'
 
-    f = open(filename+'.nex','w')
+    f = codecs.open(filename+'.nex','w')
     f.write(
             out.format(
                 len(taxa),
@@ -47,8 +60,9 @@ def pap2nex(taxa,paps,missing=0,filename='nexus'):
                 matrix
                 )
             )
+    f.close()
     
-    FileWriteMessage(filename,'nex').message('written')
+    if verbose: print(FileWriteMessage(filename,'nex'))
     
     return
 

@@ -187,4 +187,11 @@ def scorer2str(
         out += '\n'
 
     return out
+
+def newick2matrix(newick,labels):
+    """
+    Function converts a newick-representation of a string into a tree-matrix.
+    """
+
+    pass
             

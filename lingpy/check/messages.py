@@ -23,6 +23,9 @@ class FileWriteMessage(object):
         
         return
 
+    def __str__(self):
+        return "[i] Data has been written to file <{0}>.".format(self.value)
+
 class LoadDataMessage(object):
 
     def __init__(self,*args):
@@ -41,3 +44,20 @@ class LoadDataMessage(object):
 
         print(out)
         return
+
+class LingPyDeprecationWarning(DeprecationWarning):
+    """
+    Class serves as a basis for deprecation warnings.
+    """
+
+    def __init__(self,*args):
+
+        self.args = args
+
+    def __str__(self):
+
+        if len(self.args) == 2:
+            return "[WARNING] Use of '{0[0]}' is deprecated. Use '{0[1]}' instead.".format(self.args)
+        else:
+            return str(self.args)
+

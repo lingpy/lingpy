@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-28 11:47
-# modified : 2013-05-29 11:00
+# modified : 2013-07-10 12:37
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -21,23 +21,24 @@ given alignment analysis.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-29"
+__date__="2013-07-10"
 
 import os
 import colorsys
+import codecs
 
 from ..check.exceptions import ThirdPartyModuleError
 
 try:
     import networkx as nx
 except ImportError:
-    ThirdPartyModuleError('networkx').warning
+    print(ThirdPartyModuleError('networkx').warning)
 
 try:
     import matplotlib.pyplot as plt
     import matplotlib as mpl
 except:
-    ThirdPartyModuleError('pyplot').warning
+    print(ThirdPartyModuleError('pyplot').warning)
  
 from ..data import *
 from ..data import _color
@@ -45,6 +46,7 @@ from ..align.sca import SCA
 from ..check.messages import *
 from ..thirdparty import cogent as cg
 from .gml import *
+from ..check import _timestamp
 
 def colorRange(
         number,
@@ -76,10 +78,11 @@ def colorRange(
 
 def alm2html(
         infile,
-        title = None,
-        shorttitle = None,
-        filename=None,
-        colored=True
+        title = '',
+        shorttitle = '',
+        filename='',
+        colored=True,
+        verbose = True
         ):
     """
     Convert files in ``alm``-format into colored ``html``-format.
@@ -123,16 +126,11 @@ def alm2html(
 
     # create the outfile
     if not filename:
-        outfile = infile.strip('.alm')+'.html'
-    else:
-        if filename.endswith('.html'):
-            outfile = filename
-        else:
-            outfile = filename+'.html'
+        filename = 'lingpy-{0}'.format(_timestamp())
     
     # read in the templates
-    html = open(path+'alm2html.html').read()
-    table = open(path+'alm2html.table.html').read()
+    html = codecs.open(path+'alm2html.html','r','utf-8').read()
+    table = codecs.open(path+'alm2html.table.html','r','utf-8').read()
 
     # split the data into blocks
     blocks = data.split('\n\n')
@@ -234,20 +232,20 @@ def alm2html(
             dataset = dataset
             )
 
-    out = open(outfile,'w')
+    out = codecs.open(filename+'.html','w','utf-8')
     out.write(html)
     out.close()
 
-    FileWriteMessage(filename,'html').message('written')
+    if verbose: print(FileWriteMessage(filename,'html'))
     return
-
 
 def patchy_alm2html(
         infile,
         title = None,
         shorttitle = None,
         filename=None,
-        colored=True
+        colored=True,
+        verbose = False
         ):
     """
     Convert files in ``alm``-format into colored ``html``-format.
@@ -255,7 +253,7 @@ def patchy_alm2html(
     # get the path to the templates
     path = os.path.split(os.path.abspath(__file__))[0] + '/templates/'
     
-    print("[i] {0}".format(infile))
+    if verbose: print("[i] {0}".format(infile))
     # open the infile
     try:
         data = open(infile).read()[:-1]
@@ -264,19 +262,13 @@ def patchy_alm2html(
 
     # create the outfile
     if not filename:
-        outfile = infile.replace('.alm.patchy','')+'_patchy.html'
-    else:
-        if filename.endswith('_patchy.html'):
-            outfile = filename
-        else:
-            outfile = filename+'_patchy.html'
+        filename = 'lingpy-{0}_patchy'.format(_timestamp())
 
-    print("[i] "+outfile)
-
+    if verbose: print("[i] "+filename)
     
     # read in the templates
-    html = open(path+'alm2html.html').read()
-    table = open(path+'alm2html.table.html').read()
+    html = codecs.open(path+'alm2html.html','r','utf-8').read()
+    table = codecs.open(path+'alm2html.table.html','utf-8').read()
 
     # split the data into blocks
     blocks = data.split('\n\n')
@@ -364,8 +356,6 @@ def patchy_alm2html(
                 alm = '<td bgcolor="white">{0}'.format('--')
 
             tmp = tmp.format(alm)
-            # add the origin-key
-            #tmp += '<td>{0}</td>'.format(l[-1])
 
             tmp += '<tr><td></td></tr>\n'
             tmp_str += bas.format(
@@ -383,15 +373,17 @@ def patchy_alm2html(
             dataset = dataset
             )
 
-    out = open(outfile,'w')
+    out = codecs.open(filename+'.patchy.html','w','utf-8')
     out.write(html)
     out.close()
+    print(FileWriteMessage(filename,'patchy.html'))
 
 def msa2tex(
         infile,
-        template = None,
-        path = None,
-        filename = None
+        template = '',
+        path = '',
+        filename = '',
+        verbose = True
         ):
     """
     Convert an MSA to a tabular representation which can easily be used in
@@ -415,9 +407,9 @@ def msa2tex(
 
     ## load templates
     if not template:
-        tex = open(path+'msa.tex').read()
+        tex = codecs.open(path+'msa.tex','r','utf-8').read()
     else:
-        tex = open(template).read()
+        tex = codecs.open(template,'r','utf-8').read()
 
     # load dataset, etc.
 
@@ -483,13 +475,12 @@ def msa2tex(
 
     # write to file
     if not filename:
-        outfile = msa.infile + '.tex'
-    else:
-        outfile = filename + '.tex'
+        filename = 'lingpy-{0}'
 
-    out = open(outfile,'w')
+    out = codecs.open(filename+'.tex','w','utf-8')
     out.write(tex)
     out.close()
+    if verbose: print(FileWriteMessage(filename,'tex'))
 
 
 def string2html(
@@ -497,8 +488,8 @@ def string2html(
         string,
         swaps = [],
         tax_len = None,
-        path = None,
-        template = None
+        path = '',
+        template = ''
         ):
     """
     Function converts an (aligned) string into colored html-format.
@@ -551,10 +542,11 @@ def string2html(
 
 def msa2html(
         infile,
-        shorttitle = None,
-        filename = None,
-        path = None,
-        template = None
+        shorttitle = '',
+        filename = '',
+        path = '',
+        template = '',
+        verbose = True
         ):
     """
     Convert files in ``msa``-format into colored ``html``-format.
@@ -627,9 +619,9 @@ def msa2html(
 
     # load templates
     if not template:
-        html = open(path+'msa2html.html').read()
+        html = codecs.open(path+'msa2html.html','r','utf-8').read()
     else:
-        html = open(template).read()
+        html = codecs.open(template,'r','utf-8').read()
 
     # load dataset, etc.
     dataset = msa.dataset
@@ -694,21 +686,20 @@ def msa2html(
     
     
     if not filename:
-        outfile = msa.infile + '.html'
-    else:
-        outfile = filename + '.html'
+        filename = 'lingpy-{0}'.format(_timestamp())
 
     # check, whether the outfile already exists
-    out = open(outfile,'w')
+    out = codecs.open(outfile,'w','utf-8')
     out.write(html)
     out.close()
+    if verbose: print(FileWriteMessage(filename,'html'))
 
 def plot_gls(
         gls,
         treestring,
         degree = 90,
         fileformat = 'pdf',
-        filename = 'output',
+        verbose = True,
         **keywords
         ):
     """
@@ -734,12 +725,16 @@ def plot_gls(
             loss_color = 'black',
             gain_linestyle = 'dotted',
             loss_linestyle = 'solid',
-            ax_linewidth = 0
+            ax_linewidth = 0,
+            filename = 'lingpy-{0}'.format(_timestamp)
             )
 
     for k in defaults: 
         if k not in keywords:
             keywords[k] = defaults[k]
+
+    # set filename as variabel for convenience
+    filename = keywords['filename']
     
     try:
         tree = cg.LoadTree(treestring=treestring)
@@ -871,12 +866,13 @@ def plot_gls(
             filename + '.'+fileformat
             )
     plt.clf()
+    if verbose: print(FileWriteMessage(filename,fileformat))
 
 def plot_tree(
         treestring,
         degree = 90,
         fileformat = 'pdf',
-        filename = 'output',
+        verbose = True,
         **keywords
         ):
     """
@@ -912,11 +908,15 @@ def plot_tree(
             edge_list = [],
             ax_linewidth = 0,
             start = 0,
-            usetex = False
+            usetex = False,
+            filename = 'lingpy-{0}'.format(_timestamp())
             )
     for k in default:
         if k not in keywords:
             keywords[k] = default[k]
+
+    # set filename as variable for convenience
+    filename = keywords['filename']
 
     # switch backend, depending on whether tex is used or not
     backend = mpl.get_backend()
@@ -1049,13 +1049,14 @@ def plot_tree(
 
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
+    if verbose: print(FileWriteMessage(filename,fileformat))
 
 def plot_concept_evolution(
         scenarios,
         tree,
         fileformat = 'pdf',
         degree = 90,
-        filename = 'output',
+        verbose = True,
         **keywords
         ):
     """
@@ -1100,12 +1101,16 @@ def plot_concept_evolution(
             _prefix = '-   ',
             _suffix = '   -',
             colors = {},
-            start = 0
+            start = 0,
+            filename = 'lingpy-{0}'.format(_timestamp())
             )
 
     for k in defaults:
         if k not in keywords:
             keywords[k] = defaults[k]
+    
+    # set filename as variable for convenience
+    filename = keywords['filename']
 
     # XXX customize later XXX
     colormap = keywords['colormap']
@@ -1482,3 +1487,4 @@ def plot_concept_evolution(
 
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
+    if verbose: print(FileWriteMessage(filename,fileformat))

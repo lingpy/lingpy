@@ -125,7 +125,7 @@ __date__="2013-06-26"
 
 import numpy as np
 import re
-from datetime import datetime
+import codecs
 
 from ..data import *
 from ..basic.wordlist import Wordlist
@@ -136,6 +136,8 @@ try:
     from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _misc as misc
+from ..check import _timestamp
+
 
 class MSA(Multiple):
     """
@@ -235,9 +237,9 @@ class MSA(Multiple):
 
         # catch the data from the input file
         try:
-            raw_data = open(infile+'.msq','r')
+            raw_data = codecs.open(infile+'.msq','r','utf-8')
         except IOError:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
         
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -329,9 +331,9 @@ class MSA(Multiple):
         self.infile = infile.split('/')[-1].replace('.msa','')
         data = []
         try:
-            raw_data = open(infile+'.msa','r')
+            raw_data = codecs.open(infile+'.msa','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -500,7 +502,7 @@ class MSA(Multiple):
         mtax = max([len(t) for t in self.taxa])
         txf = '{0:.<'+str(mtax)+'}'
 
-        out = open(outfile,'w')
+        out = codecs.open(outfile,'w','utf-8')
 
         # start writing data to file
         out.write(self.dataset+'\n')
@@ -580,7 +582,7 @@ class MSA(Multiple):
         try:
             out.write('# Created using LingPy-2.0\n')
             out.write('# Parameters: '+self.params+'\n')
-            out.write('# Created: {0}\n'.format(datetime.today()))
+            out.write('# Created: {0}\n'.forma(_timestamp('now')))
         except:
             pass
         out.close()
@@ -664,9 +666,9 @@ class PSA(Pairwise):
 
         data = []
         try:
-            raw_data = open(infile+'.psa','r')
+            raw_data = codecs.open(infile+'.psa','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -737,9 +739,9 @@ class PSA(Pairwise):
 
         data = []
         try:
-            raw_data = open(infile+'.psq','r')
+            raw_data = codecs.open(infile+'.psq','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -804,14 +806,14 @@ class PSA(Pairwise):
         outfile = filename + '.' + fileformat
         # check whether outfile already exists
         try:
-            tmp = open(outfile)
+            tmp = codecs.open(outfile,'r','utf-8')
             tmp.close()
             outfile = filename + '_out.' + fileformat
         except:
             pass
 
         # open output file
-        out = open(outfile,'w')
+        out = codecs.open(outfile,'w','utf-8')
 
         # if data is simple, just write simple data to file
         if fileformat == 'psq':
@@ -1171,7 +1173,7 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print("[!] Use of 'cognates' is deprecated, use 'ref' instead.")
+            print(LingPyDeprecationWarning('cognates','ref'))
             ref = keywords['cognates']
 
         # check for existing alignments
@@ -1288,7 +1290,7 @@ class Alignments(Wordlist):
         
         """
         if 'cognates' in keywords:
-            print('[!] The "cognates" attribute is deprecated, use "ref" instead.')
+            print(LingPyDeprecationWarning('cognates','ref'))
             ref = keywords['cognates']
 
         if fileformat not in ['alm']:
@@ -1350,7 +1352,7 @@ class Alignments(Wordlist):
                                     ]
                                 )+'\n'
 
-            f = open(filename + '.' + fileformat,'w')
+            f = codecs.open(filename + '.' + fileformat,'w','utf-8')
             f.write(out)
             f.close()
 

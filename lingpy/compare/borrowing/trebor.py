@@ -14,6 +14,7 @@ __date__="2013-06-06"
 import os
 import json
 import itertools
+import codecs
 
 # thirdparty imports
 import numpy as np
@@ -106,22 +107,27 @@ class PhyBo(Wordlist):
 
         # check for cognates
         if 'cognates' in keywords:
-            print('[!] Warning, "cognates" is deprecated, use "ref" instead.')
+            print(LingPyDeprecationWarning('cognates','ref'))
             ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
-        if dataset.endswith('.csv'):
-            self.dataset = dataset.replace('.csv','')
+        if dataset[-4:] in ['.qlc','.csv']:
+            self.dataset = dataset[:-4]
         else:
             self.dataset = dataset
+
         self._pap_string = paps
 
         # open csv-file of the data and store it as a word list attribute
-        Wordlist.__init__(self,self.dataset+'.csv',row='concept',col='doculect')
+        if os.path.isfile(self.dataset+'.qlc'):
+            infile = self.dataset+'.qlc'
+        elif os.path.isfile(self.dataset+'.csv'):
+            print(LingPyDeprecationWarning('csv','qlc'))
+            infile = self.dataset+'.csv'
+        else:
+            raise FileNotFoundError("The input file could not be found.")
+        Wordlist.__init__(self,infile,row='concept',col='doculect')
         
-        #self.Wordlist = Wordlist(dataset+'.csv')
-        self = self
-
         if verbose: print("[i] Loaded the wordlist file.")
 
         # check for glossid
@@ -1055,7 +1061,7 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Writing GLS data to file... ",end="")
         
         # write gls-data to folder
-        f = open(folder+'/gls/{0}-{1}.gls'.format(self.dataset,glm),'w')
+        f = codecs.open(folder+'/gls/{0}-{1}.gls'.format(self.dataset,glm),'w','utf-8')
         f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
         for cog in sorted(self.gls[glm]):
             gls,noo = self.gls[glm][cog]
@@ -1077,7 +1083,7 @@ class PhyBo(Wordlist):
         except:
             pass
 
-        f = open(folder+'/stats/{0}-{1}'.format(self.dataset,glm),'w')
+        f = codecs.open(folder+'/stats/{0}-{1}'.format(self.dataset,glm),'w','utf-8')
         f.write('Number of PAPs (total): {0}\n'.format(len(self.paps)))
         f.write('Number of PAPs (non-singletons): {0}\n'.format(len(self.gls[glm])))
         f.write('Number of Singletons: {0}\n'.format(len(self.singletons)))
@@ -1691,7 +1697,11 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Writing GLS data to file... ",end="")
         
         # write gls-data to folder
-        f = open(folder+'/gls/{0}-{1}.gls'.format(self.dataset,"mixed"),'w')
+        f = codecs.open(
+                folder+'/gls/{0}-{1}.gls'.format(self.dataset,"mixed"),
+                'w',
+                'utf-8'
+                )
         f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
         for cog in sorted(self.gls["mixed"]):
             gls,noo = self.gls["mixed"][cog]
@@ -1731,7 +1741,11 @@ class PhyBo(Wordlist):
         elif force:
             self.get_AVSD(glm,**keywords)
         
-        f = open(keywords['filename']+'.'+keywords['fileformat'],'w')
+        f = codecs.open(
+                keywords['filename']+'.'+keywords['fileformat'],
+                'w',
+                'utf-8'
+                )
         for key in sorted(self.acs[glm].keys(),key=lambda x:len(x)):
             for c,m,p in sorted(self.acs[glm][key],key=lambda x:x[1]):
                 f.write('{0}\t{1}\t{2}\t{3}\n'.format(key,c,m,p))
@@ -2013,7 +2027,11 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Writing graph to file...")
 
         # write the graph to file
-        f = open(self.dataset+'_trebor/mln-'+glm+'.gml','w')
+        f = codecs.open(
+                self.dataset+'_trebor/mln-'+glm+'.gml',
+                'w',
+                'utf-8'
+                )
         for line in nx.generate_gml(gOut):
             f.write(line+'\n')
         f.close()
@@ -2023,7 +2041,11 @@ class PhyBo(Wordlist):
         # verbose output
         if verbose: print("[i] Writing Inferred Lateral Events to file...")
 
-        f = open(self.dataset+'_trebor/ile-'+glm+'.csv','w')
+        f = codecs.open(
+                self.dataset+'_trebor/ile-'+glm+'.csv',
+                'w',
+                'utf-8'
+                )
         for cog,events in ile.items():
             if events:
                 f.write(
@@ -2034,7 +2056,11 @@ class PhyBo(Wordlist):
         f.close()
 
         # create file name for node labels (cytoscape output)
-        f = open(self.dataset+'_trebor/node.label.NA','w')
+        f = codecs.open(
+                self.dataset+'_trebor/node.label.NA',
+                'w',
+                'utf-8'
+                )
         f.write("node.label (class=java.lang.String)\n")
         for taxon in taxa:
             f.write('{0} = {1}\n'.format(taxon,taxon))
@@ -2044,7 +2070,11 @@ class PhyBo(Wordlist):
         self.graph[glm] = gOut
 
         # write stats to file
-        f = open(self.dataset+'_trebor/taxa-'+glm+'.stats','w')
+        f = codecs.open(
+                self.dataset+'_trebor/taxa-'+glm+'.stats',
+                'w',
+                'utf-8'
+                )
         
         # get the degree
         nodes = tree.getNodeNames()
@@ -2076,7 +2106,11 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Wrote node degree distributions to file.")
 
         # write edge distributions
-        f = open(self.dataset+'_trebor/edge-'+glm+'.stats','w')
+        f = codecs.open(
+                self.dataset+'_trebor/edge-'+glm+'.stats',
+                'w',
+                'utf-8'
+                )
         edges = []
         edges = [g for g in gOut.edges(data=True) if 'weight' in g[2]]
 
@@ -2105,7 +2139,11 @@ class PhyBo(Wordlist):
             pass
 
         for taxon in self.taxa:
-            f = open(self.dataset+'_trebor/taxa-'+glm+'/'+taxon+'.csv','w')
+            f = codecs.open(
+                    self.dataset+'_trebor/taxa-'+glm+'/'+taxon+'.csv',
+                    'w',
+                    'utf-8'
+                    )
             keys = [n for n in gOut[taxon] if gOut[taxon][n]['label'] == 'horizontal']
             for key in sorted(keys,key=lambda x:gOut[taxon][x]['weight']):
                 for cog in sorted(gOut[taxon][key]['cogs'].split(',')):
@@ -2250,7 +2288,11 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
-        f = open(self.dataset + '_trebor/paps-'+glm+'.stats','w')
+        f = codecs.open(
+                self.dataset + '_trebor/paps-'+glm+'.stats',
+                'w',
+                'utf-8'
+                )
         if 'proto' in self.entries:
             f.write('COGID\tGLID\tCONCEPT\tORIGINS\tPROTO\tREFLEXES\n')
         else:
@@ -2279,7 +2321,11 @@ class PhyBo(Wordlist):
         if verbose: print("[i] Wrote stats on paps to file.")
 
         # write stats on concepts
-        f = open(self.dataset+'_trebor/concepts-'+glm+'.stats','w')
+        f = codecs.open(
+                self.dataset+'_trebor/concepts-'+glm+'.stats',
+                'w',
+                'utf-8'
+                )
         for key in concepts:
             concepts[key] = sum(concepts[key])/len(concepts[key])
 
@@ -2316,7 +2362,11 @@ class PhyBo(Wordlist):
                     tmp[concept][pap][patchy] = [(taxon,word)]
 
         # write stuff to alm-file
-        f = open(self.dataset+'_trebor/'+self.dataset+'-'+glm+'.alm.patchy','w')
+        f = codecs.open(
+                self.dataset+'_trebor/'+self.dataset+'-'+glm+'.alm.patchy',
+                'w',
+                'utf-8'
+                )
         for concept in sorted(tmp.keys()):
             
             f.write('# Basic Concept: "{0}"\n\n'.format(concept))
@@ -2698,7 +2748,7 @@ class PhyBo(Wordlist):
 
         # write results to file
         if verbose: print("[i] Writing stats to file.")
-        f = open(self.dataset+'_trebor/'+self.dataset+'.stats','w')
+        f = codecs.open(self.dataset+'_trebor/'+self.dataset+'.stats','w','utf-8')
         f.write("Mode\tANO\tMNO\tVSD_z\tVSD_p\n")
         for i in range(len(zp_vsd)):
             f.write(
@@ -2956,7 +3006,7 @@ class PhyBo(Wordlist):
 
         # try to load the configuration file
         try:
-            conf = json.load(open(self.dataset+'.json'))
+            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
         except:
             conf = {}
         
@@ -3339,7 +3389,7 @@ class PhyBo(Wordlist):
 
         # try to load the configuration file
         try:
-            conf = json.load(open(self.dataset+'.json'))
+            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
         except:
             conf = {}
         
@@ -3745,8 +3795,7 @@ class PhyBo(Wordlist):
                                 geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
         
         # write stats to file
-        f = open(self.dataset+'_trebor/taxa-msn-'+glm+'.stats','w')       
-        
+        f = codecs.open(self.dataset+'_trebor/taxa-msn-'+glm+'.stats','w','utf-8')
         # get the degree
         nodes = tree.getTipNames()
 
@@ -3775,7 +3824,7 @@ class PhyBo(Wordlist):
         f.close()
         
         # write edge distributions
-        f = open(self.dataset+'_trebor/edge-msn-'+glm+'.stats','w')
+        f = codecs.open(self.dataset+'_trebor/edge-msn-'+glm+'.stats','w','utf-8')
         edges = []
         edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
 
@@ -3867,7 +3916,7 @@ class PhyBo(Wordlist):
 
         # load the rc-file XXX add internal loading later
         try:
-            conf = json.load(open(self.dataset+'.json'))
+            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
         except:
             try:
                 conf = self._meta['conf']
@@ -4262,7 +4311,7 @@ class PhyBo(Wordlist):
         
         # load the rc-file XXX add internal loading later
         try:
-            conf = json.load(open(self.dataset+'.json'))
+            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
         except:
             pass # XXX add fallback later
         

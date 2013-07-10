@@ -1,23 +1,24 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-07-09 18:34
+# modified : 2013-07-10 11:35
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List, Steven Moran"
-__date__="2013-07-09"
+__date__="2013-07-10"
 
 import os
-from datetime import date,datetime
 import numpy as np
 import pickle
+import codecs
 
 # basic lingpy imports
 from ..read.csv import read_qlc
 from ..convert import *
-from ..check.messages import FileWriteMessage
+from ..check.messages import *
+from ..check import _timestamp
 try:
     from ..algorithm.cython import cluster
     from ..algorithm.cython import misc
@@ -81,29 +82,33 @@ class Wordlist(object):
         loaded = False
 
         # check for existing cache-directory
-        if os.path.isdir('__lingpy__'):
-            path = '__lingpy__/'+filename.replace('.csv','.bin')
-            if os.path.isfile(path):
-                # open the infile
-                infile = open(path,'rb')
+        if type(filename) == str:
+            if os.path.isdir('__lingpy__'):
+                if filename[-4:] in ['qlc','csv']:
+                    path = '__lingpy__/'+filename[:-3]+'bin'
+                else:
+                    path = ''
+                if os.path.isfile(path):
+                    # open the infile
+                    infile = open(path,'rb')
 
-                # load the dictionary
-                d = pickle.load(infile)
+                    # load the dictionary
+                    d = pickle.load(infile)
 
-                # close the infile
-                infile.close()
+                    # close the infile
+                    infile.close()
 
-                # set the attributes
-                for key,val in d.items():
-                    setattr(self,key,val)
-                
-                # reset the class attribute
-                self._class = dict([(key,eval(value)) for key,value in
-                    self._class_string.items()])
-                
-                loaded = True
-            else:
-                loaded = False
+                    # set the attributes
+                    for key,val in d.items():
+                        setattr(self,key,val)
+                    
+                    # reset the class attribute
+                    self._class = dict([(key,eval(value)) for key,value in
+                        self._class_string.items()])
+                    
+                    loaded = True
+                else:
+                    loaded = False
         if not loaded:
             self._init_first(filename,row,col,conf)
 
@@ -123,7 +128,7 @@ class Wordlist(object):
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = 'lingpy-{0}'.format(str(date.today()))
+                self.filename = 'lingpy-{0}'.format(_timestamp())
             # if it's a wordlist object, add its basic parameters
             elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
                 input_data = dict(filename._data.items())
@@ -134,7 +139,7 @@ class Wordlist(object):
                     reverse = False
                     )]
                 internal_import = True
-                self.filename = 'lingpy-{0}'.format(str(date.today()))
+                self.filename = 'lingpy-{0}'.format(_timestamp())
             else:
                 if not os.path.isfile(filename):
                     raise IOError(
@@ -154,7 +159,7 @@ class Wordlist(object):
                     )[0] + '/data/conf/wordlist.rc'
 
         # read the file defined by its path in conf
-        tmp = [line.strip('\n\r').split('\t') for line in open(conf) if not
+        tmp = [line.strip('\n\r').split('\t') for line in codecs.open(conf,'r','utf-8') if not
                 line.startswith('#') and line.strip('\n\r')]
         
         # define two attributes, _alias, and _class which store the aliases and
@@ -423,7 +428,7 @@ class Wordlist(object):
                     '_class',
                     ]:
                 d[key] = value
-        d['__date__'] = str(datetime.today())
+        d['__date__'] = str(_timestamp("now"))
         pickle.dump(d,out)
         out.close()
 
@@ -1247,6 +1252,7 @@ class Wordlist(object):
     def _output(
             self,
             fileformat,
+            verbose = True,
             **keywords
             ):
         """
@@ -1264,7 +1270,7 @@ class Wordlist(object):
                 'ref'       : 'cogid',
                 'entry'     : 'concept',
                 'missing'   : 0,
-                'filename'  : 'lingpy-{0}'.format(str(date.today())),
+                'filename'  : 'lingpy-{0}'.format(_timestamp()),
                 'formatter' : 'concept',
                 'tree_calc' : 'neighbor',
                 'distances' : False,
@@ -1275,7 +1281,8 @@ class Wordlist(object):
                 'rows'      : False,
                 'meta'      : self._meta,
                 'entry'     : 'word',
-                'taxa'      : False
+                'taxa'      : False,
+                'fileformat': fileformat
                 }
             
         # compare with keywords and add missing ones
@@ -1294,13 +1301,15 @@ class Wordlist(object):
                         self.cols,
                         paps,
                         missing=keywords['missing'],
-                        filename=keywords['filename']+'.paps'
+                        filename=keywords['filename']+'.paps',
+                        verbose = verbose
                         )
             elif fileformat == 'paps.csv':
                 pap2csv(
                         self.cols,
                         paps,
-                        filename=keywords['filename']+'.paps'
+                        filename=keywords['filename']+'.paps',
+                        verbose = verbose
                         )
         
         # simple printing of taxa
@@ -1309,7 +1318,7 @@ class Wordlist(object):
                 out = ''
                 for taxon in self.taxa:
                     out += taxon + '\n'
-                f = open(keywords['filename'] + '.taxa','w')
+                f = codecs.open(keywords['filename'] + '.taxa','w','utf-8')
                 f.write(out)
                 f.close()
             else:
@@ -1318,7 +1327,9 @@ class Wordlist(object):
                         )
         
         # csv-output
-        if fileformat == 'csv':
+        if fileformat in ['csv','qlc']:
+            if fileformat == 'csv':
+                print(LingPyDeprecationWarning('csv','qlc'))
             
             # get the header line
             header = sorted(
@@ -1389,7 +1400,7 @@ class Wordlist(object):
             
             # write data to file
             filename = keywords['filename']
-            f = open(filename+'.'+fileformat,'w')
+            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
             out = matrix2dst(
                     self._meta['distances'],
                     self.taxa,
@@ -1428,11 +1439,11 @@ class Wordlist(object):
             else:
                 tree = self._meta['tree']
 
-            f = open(filename+'.'+fileformat,'w')
+            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
             f.write('{0}'.format(tree))
             f.close()
 
-            FileWriteMessage(filename,fileformat).message('written')
+            if verbose: print(FileWriteMessage(filename,fileformat))
 
         if fileformat in ['cluster','groups']:
 
@@ -1449,12 +1460,12 @@ class Wordlist(object):
                         self.taxa
                         )
 
-            f = open(filename+'.'+fileformat,'w')
+            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
             for taxon,group in sorted(self._meta['groups'].items(),key=lambda x:x[0]):
                 f.write('{0}\t{1}\n'.format(taxon,group))
             f.close()
 
-            FileWriteMessage(filename,fileformat).message('written')
+            if verbose: print(FileWriteMessage(filename,fileformat))
 
         if fileformat in ['starling','star.csv']:
 
@@ -1463,7 +1474,7 @@ class Wordlist(object):
 
             fileformat = 'starling_'+keywords['entry']+'.csv'
 
-            f = open(keywords['filename']+'.'+fileformat,'w')
+            f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
             if 'cognates' not in keywords:
                 f.write('ID\tConcept\t'+'\t'.join(self.taxa)+'\n')
                 for i,concept in enumerate(self.concepts):
@@ -1481,7 +1492,7 @@ class Wordlist(object):
                         f.write('\t'.join('{0}\t{1}'.format(l(a),b) for a,b in
                             zip(line,cogs[j]))+'\n')
             f.close()
-            FileWriteMessage(keywords['filename'],fileformat).message('written')
+            if verbose: print(FileWriteMessage(keywords['filename'],fileformat))
 
     def output(
             self,
@@ -1584,7 +1595,7 @@ class Wordlist(object):
         
         # setup defaults
         defaults = dict(
-                filename = 'outputfile'
+                filename = 'lingpy-{0}'.format(_timestamp())
                 )
         for k in defaults:
             if k not in keywords:
@@ -1649,12 +1660,12 @@ class Wordlist(object):
     
         # load the template
         if template:
-            tmpl = open(template,'r').read()
+            tmpl = codecs.open(template,'r','utf-8').read()
         else:
             tmpl = '{0}'
         
         # open outfile
-        f = open(keywords['filename']+'.'+fileformat,'w')
+        f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
         if fileformat == 'tex':
             f.write(tmpl.format(out_string.replace('_',r'\_')))
         else:
@@ -1698,6 +1709,7 @@ class Wordlist(object):
             ortho_profile = '',
             source = "counterpart",
             target = "tokens",
+            verbose = False,
             ** keywords
             ):
         """
@@ -1735,7 +1747,7 @@ class Wordlist(object):
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":
-            print("here")
+            if verbose: print("[i] Found the orthography profile.")
             op = OrthographyParser(ortho_path)
 
             # check for valid IPA parse

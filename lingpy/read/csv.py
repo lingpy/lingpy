@@ -11,6 +11,7 @@ __date__="2013-06-26"
 
 import json
 import os
+import codecs
 
 # lingpy-internal imports
 from ..thirdparty import cogent as cg
@@ -18,8 +19,8 @@ from .phylip import read_dst,read_scorer
 
 def csv2list(
         filename,
-        fileformat = None,
-        dtype = None,
+        fileformat = '',
+        dtype = [],
         comment = '#',
         sep = '\t'
         ):
@@ -33,7 +34,7 @@ def csv2list(
     fileformat : {None str}
         If not specified the file <filename> will be loaded. Otherwise, the
         fileformat is interpreted as the specific extension of the input file.
-    dtype : {None list}
+    dtype : {list}
         If not specified, all data will be loaded as strings. Otherwise, a
         list specifying the data for each line should be provided.
     comment : string (default="#")
@@ -54,14 +55,14 @@ def csv2list(
     else:
         infile = filename
     if not os.path.isfile(infile):
-        raise ValueError(
+        raise FileNotFoundError(
                 "[i] File {0} could not be found.".format(infile)
                 )
 
     l = []
     
     # open the file
-    infile = open(infile)
+    infile = codecs.open(infile,'r','utf-8')
 
     for line in infile:
         if line.strip() and not line.startswith(comment):
@@ -70,6 +71,7 @@ def csv2list(
                 l += [cells]
             else:
                 l += [[f(c) for f,c in zip(dtype,cells)]]
+    infile.close()
 
     return l
 
@@ -115,72 +117,11 @@ def csv2dict(
 
     return d               
 
-def qlc2dict_deprecated(infile):
-    """
-    Simple function that loads qlc-format into a dictionary.
-
-    Parameters
-    ----------
-    infile : str
-        Name of the input file.
-
-    Returns
-    -------
-    d : dict
-        A dictionary with integer keys corresponding to the order of the lines
-        of the input file. The header is given 0 as a specific key.
-    """
-
-    # read the data into a list
-    data = []
-
-    # open the file
-    f = open(infile)
-
-    for line in f:
-        # ignore hashed lines
-        if not line.startswith('#') and not line.startswith('@'):
-
-            # mind to strip newlines
-            data.append(line.strip('\n\r').split('\t'))
-    
-    # create the dictionary in which the data will be stored
-    d = {}
-
-    # check for first line, if a local ID is given in the header (or simply
-    # "ID"), take this line as the ID, otherwise create it
-    if data[0][0].lower() in ['id','local_id','localid']:
-        local_id = True
-    else:
-        local_id = False
-
-    # iterate over data and fill the dictionary (a bit inefficient, but enough
-    # for the moment)
-    try:
-        i = 1
-        for line in data[1:]:
-            if local_id:
-                d[int(line[0])] = line[1:]
-            else:
-                d[i] = line
-                i += 1
-    except:
-        print("[!] Something is wrong with your input file. If it contains an ID column, make sure it consists only of integers.")
-
-    # assign the header to d[0]
-    if local_id:
-        d[0] = [x.lower() for x in data[0][1:]]
-    else:
-        d[0] = [x.lower() for x in data[0]]
-
-    # return the stuff
-    return d
-
 # define some aliases
 def read_csv(
         filename,
-        fileformat = None,
-        dtype = None,
+        fileformat = '',
+        dtype = [],
         comment = '#',
         sep = '\t'
         ):
@@ -215,29 +156,6 @@ def read_csv(
     """
     return csv2dict(filename,fileformat,dtype,comment,sep)
 
-def read_qlcOld(
-        infile
-        ):
-    """
-    Simple function that loads qlc-format into a dictionary.
-
-    Parameters
-    ----------
-    infile : str
-        Name of the input file.
-
-    Returns
-    -------
-    d : dict
-        A dictionary with integer keys corresponding to the order of the lines
-        of the input file. The header is given 0 as a specific key.
-    
-    Notes
-    -----
-    This is but an alias for the qlc2dict function.
-    """
-    return qlc2dict(infile)
-
 def read_qlc(
         infile,
         comment = '#'
@@ -258,11 +176,11 @@ def read_qlc(
     """
     # check whether path exists
     if not os.path.isfile(infile):
-        raise ValueError(
+        raise FileNotFoundError(
                 "[!] File {0} does not exist.".format(infile)
                 )
 
-    inf = open(infile)
+    inf = codecs.open(infile,'r','utf-8')
     
     # create data array
     data = []
@@ -485,7 +403,7 @@ def read_qlc(
                 d[i] = line
                 i += 1
     except:
-        print("[!] Something is wrong with your input file. If it contains an ID column, make sure it consists only of integers.")
+        raise InputFileError(infile)
 
     # assign the header to d[0]
     if local_id:
@@ -509,20 +427,3 @@ def read_qlc(
 def qlc2dict(infile):
 
     return read_qlc(infile)
-
-#def read_scorer(infile):
-#    """
-#    Read a scoring function in a file into a ScoreDict object.
-#    """
-#    
-#    # read data
-#    data = csv2list(infile)
-#
-#    # get the chars
-#    chars = [l[0] for l in data]
-#    
-#    # get the matrix
-#    matrix = [[float(x) for x in l[1:]] for l in data]
-#
-#    return misc.ScoreDict(chars,matrix)
-
