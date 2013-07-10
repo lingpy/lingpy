@@ -14,7 +14,8 @@ import sys
 extra = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = False
-
+else:
+    input = raw_input
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
