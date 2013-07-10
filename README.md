@@ -4,7 +4,7 @@ Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantita
 
 QLC-LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also try to provide basic functionality for Python 2.
 
-Available at: (https://github.com/lingpy/lingpy)
+Available at: https://github.com/lingpy/lingpy
 
 For a brief overview, see slides from Euroscipy 2012: (http://hprints.org/hprints-00758536)
 
@@ -15,8 +15,26 @@ Other relevant work related to the development of the library and research using
 * List, J. M. 2012b. SCA: Phonetic alignment based on sound classes. In New Directions in logic, language, and computation. Slavkovik, M. and D Lassiter (Eds.). Springer.
 * Prokic, J. and S. Moran. 2012. Black box approaches to genealogical classication and their shortcomings. To appear in Comparing Approaches to Measuring Linguistic Dierences, Lars Borin and Anju Saxena (eds). Mouton De Gruyter. 
 
+## Setup for Python 2 and Python 3
 
-## Setup
+If you want to regularly install LingPy on your system, open a terminal and type in the following:
+```bash
+$ git clone https://github.com/lingpy/lingpy/
+$ cd lingpy
+$ python setup.py install
+```
+
+Depending on which version of Python you have, these commands will either install the regular Python3 version of LingPy, or a Python2 version will be compiled automatically. In order to use the Python3 version, start Python3 in your terminal and import LingPy as follows:
+```python
+>>> from lingpy import *
+```
+For the use of the Python2 version, start Python2 in your terminal and import LingPy by typing
+```python
+>>> from lingy2 import *
+```
+Note that depending on your writing rights on the install path of LingPy, it is possible that you have to run Python with super user rights the first time you use LingPy. During this first install, LingPy automatically compiles a couple of important data structures that can be globally accessed during a LingPy session. Afterwards, it usually works without super user rights.
+
+## Setup for Development Version (Python3)
 
 To use the library in its pre-setup.py stage, git clone the library and put the library's "lingpy/lingpy" folder in your path (or Python path).
 
