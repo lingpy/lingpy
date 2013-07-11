@@ -101,9 +101,7 @@ import regex as re # this is useful, since it is then equivalent with the re-mod
 Builtin-modules should be imported "as is", without using aliases.
 
 ### Template for Scripts
-The scripts in which we write the modules should follow the following style-suggestions.
-
-#### Begin of the File
+The first lines of the scripts in which we write the modules should more or less confirm to the following template:
 
 ```python
 # author   : Max Mustermann
