@@ -1,4 +1,4 @@
-# QLC-LingPy
+# LingPy
 
 Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen).
 
@@ -75,7 +75,7 @@ In order to keep the code transparent even for multiple contributors, we opt for
 
 ### Importing Modules
 
-When importing Python modules, try to avoid 
+When importing external Python modules, try to avoid 
 
 ```python
 from module import *
@@ -99,6 +99,33 @@ import regex as re # this is useful, since it is then equivalent with the re-mod
 ```
 
 Builtin-modules should be imported "as is", without using aliases.
+
+### Template for Scripts
+The scripts in which we write the modules should follow the following style-suggestions.
+
+#### Begin of the File
+
+```python
+# author   : Max Mustermann
+# email    : max.mustermann@uni-muster.com
+# created  : 2013-03-14 00:21
+# modified : 2013-07-10 11:35
+"""
+This module provides a basic class for the handling of Mustermanns.
+
+More explicit description with examples can follow here...
+"""
+
+__author__="Max Mustermann"
+__date__="2013-07-10"
+
+"""
+```
+
+- Note that the first not commented line of a scripts should be a short sentence which does not exceed two lines, since sphinx will take this string as a teaser in previews. The following lines can contain a closer description of the respective module.
+- Note also that the coding specification which is common in Python2 is not needed in Python3. We add it automatically when converting to Python2.
+- The commented line of author, email, etc. is not necessarily required, yet it may turn out usefull to keep a tracker on creation and modification of scripts, and text editors, such as VIM, modify such parts automatically.
+- Nevertheless, we should always provide author and date in Python style, just for being able to track down who has done what, and to help people using the library and running into bugs knowing whom to contact.
 
 ## Dependencies
 
