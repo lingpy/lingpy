@@ -77,7 +77,7 @@ class Spreadsheet:
         header = spreadsheet[0] 
         for i in range(0, len(header)):
             header[i] = header[i].lower().strip()
-            if header[i] == "concept":
+            if header[i] == self.meanings:
                 self.concepts = i
             if header[i].startswith(self.language_id.lower()):
                 language_indices.append(i)
@@ -277,7 +277,7 @@ class Spreadsheet:
         """
 
         defaults = dict(
-                filename = "lingpy-{0}".format(_today()),
+                filename = "lingpy-{0}".format(_timestamp()),
                 meta = self._meta
                 )
         for k in defaults:
