@@ -9,6 +9,7 @@ __date__="2013-04"
 import sys 
 import unicodedata
 from time import gmtime, strftime
+import re
 
 # internal imports
 from ..sequence.ngram import *
@@ -31,10 +32,14 @@ class Spreadsheet:
                  meanings = "CONCEPT", # explicit name of column containing concepts
                  exclude_string = "!", #
                  # languages = [], # columns with language data -- TODO: must be ints
-                 blacklist = "", # location of blacklist, think about start and end characters, etc. 
+                 blacklist = dict(
+                     starting_delimiters = "([",
+                     ending_delimiters = ")]"
+                     ), # we should add more here, but this is a start
                  conf = "", # spreadsheet .rc file
                  cellsep = ';', # cell separator, separates forms in the same cell
                  verbose = False,
+                 **keywords
                  ):
 
         self.filename = filename
@@ -50,24 +55,26 @@ class Spreadsheet:
         self.verbose = verbose
 
         self.matrix = []
-        self._init_matrix()
+        self._init_matrix(blacklist,verbose)
+
         # Unicode NFD normalize the cell contents
         self._normalize()
 
         self._prepare()
 
-    def _init_matrix(self):
+    def _init_matrix(self,blacklist,verbose=False):
         """
         Create a 2D array from the CSV input and Unicode normalize its contents
         """
-
+        
         # TODO: check if spreadsheet is empty and throw error
         spreadsheet = csv2list(
             self.filename, 
             self.fileformat, 
             self.dtype, 
             self.comment, 
-            self.sep
+            self.sep,
+            strip_lines = False
             )
 
         # columns that have language data
@@ -75,11 +82,14 @@ class Spreadsheet:
 
         # first row must be the header in the input; TODO: add more functionality
         header = spreadsheet[0] 
-        for i in range(0, len(header)):
-            header[i] = header[i].lower().strip()
-            if header[i] == self.meanings:
+        if verbose: print(header[0:10])
+        
+        for i,cell in enumerate(header):
+            head = cell.strip()
+            if verbose: print(head)
+            if head == self.meanings:
                 self.concepts = i
-            if header[i].startswith(self.language_id.lower()):
+            if self.language_id in head:
                 language_indices.append(i)
 
         matrix_header = []
@@ -101,24 +111,18 @@ class Spreadsheet:
                 matrix_row.append(item)
             self.matrix.append(matrix_row)
 
-        #"""
-        #n = self.header+1
-        #for i in range(self.header+1, len(self.spreadsheet)):
-        #    # check for concept; if missing skip row
-        #    if self.spreadsheet[i][self.concepts] == "":
-        #        print("[i] Missing concept in row "+str(i)+". Skipping the row.")
-        #        continue
+        
+        # clean the matrix according to the separators passed by the user
+        if blacklist:
+            if 'starting_delimiters' in blacklist and 'ending_delimiters' in  blacklist:
+                for i,line in enumerate(self.matrix):
+                    for j,cell in enumerate(line):
+                        for d in blacklist['starting_delimiters']:
+                            cell = cell.replace(d,'<')
+                        for d in blacklist['ending_delimiters']:
+                            cell = cell.replace(d,'>')
+                        self.matrix[i][j] = re.sub(r'<.*?>','',cell).strip()
 
-        #    # print(str(n), len(self.spreadsheet[i]))
-        #    # n += 1
-
-        #    row = []
-        #    row.append(self.spreadsheet[i][self.concepts])
-        #    for language in self.languages:
-        #        # print("row", str(len(self.spreadsheet[i])), self.spreadsheet[i])                
-        #        row.append(self.spreadsheet[i][language])
-        #    matrix.append(row)
-        #    """
 
     def _normalize(self):
         """ 
@@ -153,24 +157,27 @@ class Spreadsheet:
         # iterate over the matrix
         idx = 1
         for i,line in enumerate(matrix[1:]):
+            # only append lines that really work!
+            if line:
+                # get the concept
+                concept = line[0].strip()
 
-            # get the concept
-            concept = line[0]
+                if concept:
 
-            # get the rest
-            for j,cell in enumerate(line[1:]):
+                    # get the rest
+                    for j,cell in enumerate(line[1:]):
 
-                # get the language
-                language = matrix[0][j+1]
+                        # get the language
+                        language = matrix[0][j+1].replace(self.language_id,'').strip()
 
-                # get the counterparts
-                counterparts = [x.strip() for x in cell.split(self.cellsep)]
+                        # get the counterparts
+                        counterparts = [x.strip() for x in cell.split(self.cellsep)]
 
-                # append stuff to dictionary
-                for counterpart in counterparts:
-                    if counterpart:
-                        d[idx] = [concept,language,counterpart]
-                        idx += 1
+                        # append stuff to dictionary
+                        for counterpart in counterparts:
+                            if counterpart:
+                                d[idx] = [concept,language,counterpart]
+                                idx += 1
 
         # add the header to the dictionary
         d[0] = ["concept","doculect","counterpart"]
