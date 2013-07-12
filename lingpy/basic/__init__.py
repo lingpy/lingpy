@@ -24,3 +24,7 @@ _abs_path = os.path.split(
 # add imorts for basic classes
 from .wordlist import Wordlist
 from .spreadsheet import Spreadsheet
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5d6f6045489fb4ba29fdc4964f469952242c3476

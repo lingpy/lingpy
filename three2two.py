@@ -13,31 +13,7 @@ from glob import glob
 import os
 from os import path as osp
 import codecs
-#from sys import argv
-#import sys
-
-#if len(argv) <= 1:
-#    print("Usage: python 3to2.py path_to_package [new_package]")
-#
-## get path2package
-#if argv[1].endswith('/'):
-#    path2package = argv[1][:-1]
-#else:
-#    path2package = argv[1]
-#
-## get new package path
-#if len(argv) == 3:
-#    new_package = argv[2]
-#else:
-#    new_package = path_to_package + '_3to2'
-#
-## check if new path exists
-#if not osp.isdir(new_package):
-#    raise ValueError(
-#            "The folder for the new package does not exist!"
-#            )
-#    sys.exit()
-
+import re
 
 def run3to2():
     files = []
@@ -76,7 +52,7 @@ from __future__ import unicode_literals
 
     # pyxlist
     pyx_list = [
-            (' str ',' ')
+            (' str ',' unicode ')
             ]
     
     # iterate over each file and write a new version to the output
@@ -88,6 +64,8 @@ from __future__ import unicode_literals
             if f.endswith('pyx'):
                 for source,target in pyx_list:
                     stuff = stuff.replace(source,target)
+                stuff = re.sub("('.*?')",r"u\1",stuff)
+                stuff = re.sub('(".*?")',r"u\1",stuff)
     
             nf = f.replace('lingpy','lingpy2') #f.replace(path2package,'lingpy2')
     

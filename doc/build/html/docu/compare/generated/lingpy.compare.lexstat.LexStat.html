@@ -39,6 +39,9 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
@@ -71,8 +74,44 @@ LingPy
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
-<blockquote class="last">
+<blockquote>
 <div><p>The name of the file that shall be loaded.</p>
+</div></blockquote>
+<p><strong>model</strong> : <a class="reference internal" href="../generated/lingpy.data.model.Model.html#lingpy.data.model.Model" title="lingpy.data.model.Model"><tt class="xref py py-class docutils literal"><span class="pre">Model</span></tt></a></p>
+<blockquote>
+<div><p>The sound-class model that shall be used for the analysis. Defaults to
+the SCA sound-class model.</p>
+</div></blockquote>
+<p><strong>merge_vowels</strong> : bool (default=True)</p>
+<blockquote>
+<div><p>Indicate whether consecutive vowels should be merged into single tokens or kept
+apart as separate tokens.</p>
+</div></blockquote>
+<p><strong>transform</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary that indicates how prosodic strings should be simplified
+(or generally transformed), using a simple key-value structure with the
+key referring to the original prosodic context and the value to the new
+value.
+Currently, prosodic strings (see
+<a class="reference internal" href="../generated/lingpy.sequence.sound_classes.prosodic_string.html#lingpy.sequence.sound_classes.prosodic_string" title="lingpy.sequence.sound_classes.prosodic_string"><tt class="xref py py-meth docutils literal"><span class="pre">prosodic_string()</span></tt></a>) offer 11
+different prosodic contexts. Since not all these are helpful in
+preliminary analyses for cognate detection, it is useful to merge some
+of these contexts into one. The default settings distinguish only 5
+instead of 11 available contexts, namely:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">C</span></tt> for all consonants in prosodically ascending position,</li>
+<li><tt class="docutils literal"><span class="pre">c</span></tt> for all consonants in prosodically descending position,</li>
+<li><tt class="docutils literal"><span class="pre">V</span></tt> for all vowels,</li>
+<li><tt class="docutils literal"><span class="pre">T</span></tt> for all tones, and</li>
+<li><tt class="docutils literal"><span class="pre">_</span></tt> for word-breaks.</li>
+</ul>
+</div></blockquote>
+<p><strong>check</strong> : bool (default=False)</p>
+<blockquote class="last">
+<div><p>If set to c{True}, the input file will first be checked for errors
+before the calculation is carried out. Errors will be written to the
+file <tt class="docutils literal"><span class="pre">errors.log</span></tt>.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -171,6 +210,9 @@ input file.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
@@ -183,7 +225,7 @@ input file.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Apr 11, 2013.
+      Last updated on Apr 21, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
