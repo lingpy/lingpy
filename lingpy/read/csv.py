@@ -22,7 +22,8 @@ def csv2list(
         fileformat = '',
         dtype = [],
         comment = '#',
-        sep = '\t'
+        sep = '\t',
+        strip_lines = True
         ):
     """
     Very simple function to get quick access to CSV-files.
@@ -66,7 +67,10 @@ def csv2list(
 
     for line in infile:
         if line.strip() and not line.startswith(comment):
-            cells = [c.strip() for c in line.strip().split(sep)]
+            if strip_lines:
+                cells = [c.strip() for c in line.strip().split(sep)]
+            else:
+                cells = [c for c in line.split(sep)]
             if not dtype:
                 l += [cells]
             else:
