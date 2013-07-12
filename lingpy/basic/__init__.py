@@ -24,4 +24,4 @@ _abs_path = os.path.split(
 # add imorts for basic classes
 from .wordlist import Wordlist
 from .spreadsheet import Spreadsheet
-from .qlcwordlist import QLCWordlist
+
