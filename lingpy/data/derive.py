@@ -494,7 +494,7 @@ def compile_model(
 
     print("[i] Model <"+model+"> was compiled successfully.")
 
-def compile_dvt():
+def compile_dvt(path=''):
     """
     Function compiles diacritics, vowels, and tones.
 
@@ -521,7 +521,12 @@ def compile_dvt():
     print("[i] Compiling diacritics and vowels...")
 
     # get the path to the models
-    path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+    if not path:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+    elif path in ['evolaemp','el']:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/'
+    else:
+        pass
 
     diacritics = codecs.open(
             path+'diacritics',
@@ -545,6 +550,7 @@ def compile_dvt():
     outfile = open(path+'dvt.bin','wb')
     dump(dvt,outfile)
     outfile.close()
+    print(path)
 
     print("[i] Diacritics and sound classes were successfully compiled.")
 

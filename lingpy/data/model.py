@@ -193,13 +193,82 @@ class Model(object):
         """
         return self.scorer[x,y]
 
-def load_dvt():
+def load_dvt(path=''):
     """
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
-    
-    path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/dvt.bin'
+    if not path:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/dvt.bin'
+    elif path in ['el','evolaemp']:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/dvt.bin'
+    else:
+        pass
 
     dvt = load(open(path,'rb'))
 
     return dvt
+
+def set_global_model2(model='qlc'):
+    """
+    Define the global sound-class models used for the current LingPy session.
+
+    Parameters
+    ----------
+    model : string {'qlc','evolamp'}
+        Select between 'qlc' as the standard model of the QLC group and
+        'evolamp' as the standard model of the EvoLamp group.
+        
+    """
+    global ipa_diacritics
+    global ipa_vowels
+    global ipa_tones
+    global sca
+    global asjp
+    global dolgo
+    global art
+    global _color
+
+    if model in ['default','standard','qlc']:
+        try:
+            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp')
+            dolgo = Model('dolgo')
+            art = Model('art')
+            _color = Model('color')
+        # compile the models if they are not precompiled
+        except:
+            compile_dvt()
+            compile_model('sca')
+            compile_model('dolgo')
+            compile_model('art')
+            compile_model('color')
+            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
+            sca = Model('sca')
+            asjp = Model('asjp')
+            dolgo = Model('dolgo')
+            art = Model('art')
+            _color = Model('color')
+    elif model in ['evolamp', 'el']:
+        try:
+            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt(path='el')
+            sca = Model('sca_el')
+            asjp = Model('asjp_el')
+            dolgo = Model('dolgo_el')
+            art = Model('art_el')
+            _color = Model('color_el')
+        # compile the models if they are not precompiled
+        except:
+            compile_dvt(path='el')
+            compile_model('sca_el')
+            compile_model('dolgo_el')
+            compile_model('art_el')
+            compile_model('color_el')
+            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt(path='el')
+            sca = Model('sca_el')
+            asjp = Model('asjp_el')
+            dolgo = Model('dolgo_el')
+            art = Model('art_el')
+            _color = Model('color_el')
+
+
