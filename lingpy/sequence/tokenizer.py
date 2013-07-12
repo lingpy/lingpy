@@ -14,6 +14,7 @@ import os
 import sys
 import unicodedata
 import collections
+import codecs
 
 from qlc.corpusreader import CorpusReaderWordlist
 from qlc.orthography import OrthographyParser
@@ -34,7 +35,7 @@ class SpreadsheetParser:
     pass
 
     def __init__(self): 
-        input_file = open("data/dogon/heath2012_spreadsheet_format.csv", "r")
+        input_file = codecs.open("data/dogon/heath2012_spreadsheet_format.csv","r",'utf-8')
         # default read header - 1st row is 
 
     # size of spreadsheet (x*y)
@@ -97,7 +98,7 @@ class Tokenizer:
         orthography_profile = cfg.get("Paths", "orthography_profile")
 
         # set variables, e.g. source, orthography parser, etc.
-        self.data = open(data, "r")
+        self.data = codecs.open(data, "r",'utf-8')
 
         self.o = OrthographyParser(orthography_profile)        
         # self.o = GraphemeParser()        
@@ -156,7 +157,7 @@ class Tokenizer:
 
 
     def get_qlc_tokenized_words(self):
-        unparasables = open("unparsables.txt", "w")
+        unparasables = codecs.open("unparsables.txt", "w", 'utf-8')
         tokenized_words = []
         for counterpart, concept, language in self._wordlist_iterator:
             counterpart = unicodedata.normalize("NFD", counterpart)
