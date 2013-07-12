@@ -7,7 +7,7 @@ __date__ = "2010-12-01"
 
 import sys
 import unicodedata
-import regex
+import regex as re
 import os
 
 # class DuplicateExceptation(Exception): pass
@@ -47,7 +47,7 @@ class GraphemeParser(object):
         """
         Create the Unicode grapheme pattern match object.
         """
-        self.grapheme_pattern = regex.compile("\X", regex.UNICODE)
+        self.grapheme_pattern = re.compile("\X", re.UNICODE)
 
     def combine_modifiers(self, string):
         """
@@ -212,7 +212,7 @@ class OrthographyRulesParser(object):
             rule, replacement = line.split(",")
             rule = rule.strip() # just in case there's trailing whitespace
             replacement = replacement.strip() # because there's probably trailing whitespace!
-            self.rules.append(regex.compile(rule))
+            self.rules.append(re.compile(rule))
             self.replacements.append(replacement)
         rules_file.close()
 
@@ -240,7 +240,7 @@ class OrthographyRulesParser(object):
         for i in range(0, len(self.rules)):
             match = self.rules[i].search(result)
             if not match == None:
-                result = regex.sub(self.rules[i], self.replacements[i], result)
+                result = re.sub(self.rules[i], self.replacements[i], result)
         # this is incase someone introduces a non-NFD ordered sequence of characters
         # in the orthography profile
         result = unicodedata.normalize("NFD", result)
@@ -287,11 +287,14 @@ class OrthographyParser(object):
     .. todo:: update the processes so we don't just assume col 2 is IPA
     """
 
-    def __init__(self, orthography_profile):
+    def __init__(self, orthography_profile, debug=0):
         try:
             open(orthography_profile)
         except IOError as e:
             print("\nWARNING: There is no file at the path you've specified.\n\n")
+
+        # debugging flag
+        self.debug = debug
 
         # path and filename of orthography profile
         self.orthography_profile = orthography_profile
@@ -385,14 +388,21 @@ class OrthographyParser(object):
         string = unicodedata.normalize("NFD", string)
         for word in string.split():
             parse = getParse(self.root, word)
-            if len(parse) == 0:
-                print("[i] The string <"+string+"> does not parse given the specified orthography profile.\n")
-                parse = " <no-valid-parse> "
+            if self.debug:
+                if len(parse) == 0:
+                    print("[i] The string <"+string+"> does not parse given the specified orthography profile.\n")
+                    parse = " <no-valid-parse> "
             parses.append(parse)
         # Use "#" as a word boundary token (a special 'grapheme').
         result = "".join(parses).replace("##", "#")  # Ugly. Oh well.
         return result
 
+    def remove_spaces(self, string):
+        string = string.lstrip("# ")
+        string = string.rstrip(" #")
+        string = re.sub("\s+", "", string)
+        string = string.replace("#", " ")
+        return string
 
     # updated for LINGPY - deal with error handling in THIS class
     # TODO -- write unparsables to disk!
