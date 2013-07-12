@@ -9,6 +9,7 @@ import sys
 import unicodedata
 import regex as re
 import os
+import codecs
 
 # class DuplicateExceptation(Exception): pass
 
@@ -192,14 +193,14 @@ class OrthographyRulesParser(object):
 
     def __init__(self, orthography_profile_rules):
         try:
-            open(orthography_profile_rules)
+            codecs.open(orthography_profile_rules,'r','utf-8')
         except IOError as e:
             print("\nWARNING: There is no file at the path you've specified.\n\n")
 
         self.rules = []
         self.replacements = []
 
-        rules_file = open(orthography_profile_rules, "r", encoding="utf-8")
+        rules_file = codecs.open(orthography_profile_rules, "r", 'utf-8')
 
         # loop through the orthography fules and compile them
         for line in rules_file:
@@ -289,9 +290,9 @@ class OrthographyParser(object):
 
     def __init__(self, orthography_profile, debug=0):
         try:
-            open(orthography_profile)
+            codecs.open(orthography_profile,'r','utf-8')
         except IOError as e:
-            print("\nWARNING: There is no file at the path you've specified.\n\n")
+            print("\n[WARNING:] There is no file at the path you've specified.\n\n")
 
         # debugging flag
         self.debug = debug
@@ -306,7 +307,7 @@ class OrthographyParser(object):
         self.grapheme_to_phoneme = {}
 
         # create look up table of grapheme to IPA from orthography profile
-        file = open(orthography_profile, "r", encoding="utf-8")
+        file = codecs.open(orthography_profile, "r", "utf-8")
 
         # an orthography profile may have one or more comma delimited columns
         # the first column is graphemes, the second IPA, etc.
@@ -593,7 +594,7 @@ def createTree(file_name):
     root.makeSentinel()
 
     #file = codecs.open(file_name, "r", "utf-8")
-    file = open(file_name, "r", encoding="utf-8")
+    file = codecs.open(file_name, "r", "utf-8")
 
     for line in file:
         #print(line.encode("utf-8"))

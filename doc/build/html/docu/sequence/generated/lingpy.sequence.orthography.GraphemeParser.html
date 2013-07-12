@@ -39,6 +39,9 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
@@ -65,7 +68,24 @@ LingPy
 <dl class="class">
 <dt id="lingpy.sequence.orthography.GraphemeParser">
 <em class="property">class </em><tt class="descclassname">lingpy.sequence.orthography.</tt><tt class="descname">GraphemeParser</tt><a class="headerlink" href="#lingpy.sequence.orthography.GraphemeParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class for graphemic parsing of Unicode strings.</p>
+<dd><p>Class for Unicode graphemic parsing of Unicode strings.</p>
+<p class="rubric">Notes</p>
+<p>This class handles (just) Unicode grapheme parsing, i.e. it uses the Unicode
+standard grapheme parsing rules, as implemented in the Python regex package 
+by Matthew Barnett, to do basic parsing with the &#8220;X&#8221; grapheme regular 
+expression match. This grapheme match combines one or more Combining Diacritical 
+Marks to their base character. These are called &#8220;Grapheme clusters&#8221; in 
+Unicode parlance.</p>
+<p>This class is meant to do basic rudimentary parsing for things like getting 
+an additional unigram model (segments and their counts) in an input data source.</p>
+<p>For more elaborate orthographic parsing, see the OrthographyParser and the 
+OrthographyRulesParser.</p>
+<p>An additional method (in its infancy) called combine_modifiers handles the 
+case where there are Unicode Spacing Modifier Letters, which are not explicitly 
+combined to their base character in the Unicode Standard. These graphemes 
+are called &#8220;Tailored grapheme clusters&#8221; in Unicode. For more information 
+see the Unicode Standard Annex #29: Unicode Text Segmentation:</p>
+<p><a class="reference external" href="http://www.unicode.org/reports/tr29/">http://www.unicode.org/reports/tr29/</a></p>
 <p class="rubric">Methods</p>
 <table border="1" class="longtable docutils">
 <colgroup>
@@ -73,20 +93,20 @@ LingPy
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.combine_modifiers.html#lingpy.sequence.orthography.GraphemeParser.combine_modifiers" title="lingpy.sequence.orthography.GraphemeParser.combine_modifiers"><tt class="xref py py-obj docutils literal"><span class="pre">combine_modifiers</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.combine_modifiers.html#lingpy.sequence.orthography.GraphemeParser.combine_modifiers" title="lingpy.sequence.orthography.GraphemeParser.combine_modifiers"><tt class="xref py py-obj docutils literal"><span class="pre">combine_modifiers</span></tt></a>(string)</td>
+<td>Given a string that is space-delimited on Unicode graphemes, group Unicode modifier letters with their preceeding base characters.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_characters.html#lingpy.sequence.orthography.GraphemeParser.parse_characters" title="lingpy.sequence.orthography.GraphemeParser.parse_characters"><tt class="xref py py-obj docutils literal"><span class="pre">parse_characters</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_characters.html#lingpy.sequence.orthography.GraphemeParser.parse_characters" title="lingpy.sequence.orthography.GraphemeParser.parse_characters"><tt class="xref py py-obj docutils literal"><span class="pre">parse_characters</span></tt></a>(string)</td>
+<td>Given a string as input, return a space-delimited string of Unicode characters.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_graphemes.html#lingpy.sequence.orthography.GraphemeParser.parse_graphemes" title="lingpy.sequence.orthography.GraphemeParser.parse_graphemes"><tt class="xref py py-obj docutils literal"><span class="pre">parse_graphemes</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_graphemes.html#lingpy.sequence.orthography.GraphemeParser.parse_graphemes" title="lingpy.sequence.orthography.GraphemeParser.parse_graphemes"><tt class="xref py py-obj docutils literal"><span class="pre">parse_graphemes</span></tt></a>(string)</td>
+<td>Given a string as input, return a space-delimited string of Unicode graphemes using the &#8220;X&#8221; regular expression.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes.html#lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes" title="lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes"><tt class="xref py py-obj docutils literal"><span class="pre">parse_string_to_graphemes</span></tt></a></td>
-<td></td>
+<tr class="row-even"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes.html#lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes" title="lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes"><tt class="xref py py-obj docutils literal"><span class="pre">parse_string_to_graphemes</span></tt></a>(string)</td>
+<td>Deprecated function to parse graphemes and return a tuple of (T/F success, tupled parse).</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string.html#lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string" title="lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string"><tt class="xref py py-obj docutils literal"><span class="pre">parse_string_to_graphemes_string</span></tt></a></td>
-<td></td>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string.html#lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string" title="lingpy.sequence.orthography.GraphemeParser.parse_string_to_graphemes_string"><tt class="xref py py-obj docutils literal"><span class="pre">parse_string_to_graphemes_string</span></tt></a>(string)</td>
+<td>Deprecated function to parse graphemes and return a tuple of (T/F success, parse).</td>
 </tr>
 </tbody>
 </table>
@@ -128,6 +148,9 @@ LingPy
         <li class="right" style="margin-right: 10px">
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
 	<li><a href="../../../index.html">Home</a> |&nbsp;</li>
 	<li><a href="../../../intro.html">Introduction</a> |&nbsp;</li>
 	<li><a href="../../../examples.html">Examples</a> |&nbsp;</li>
@@ -140,7 +163,7 @@ LingPy
     </div>
     <div class="footer">
         &copy; Copyright 2013, QLC Research Group, Philipps-University Marburg.
-      Last updated on Apr 11, 2013.
+      Last updated on Apr 21, 2013.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>

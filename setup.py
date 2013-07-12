@@ -42,14 +42,11 @@ else:
         out.write(f.replace('lingpy2','lingpy'))
         out.close()
 
-   
-
-# make global name of this version
-this_version = "2.0.b.dev"
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
     if this_version == "3":
+        print('huhu')
         answer = input("[i] Do you want to install with C-modules (requires Cython)? (Y/N) ")
 
         if answer.lower() in ['y','j','yes']:
@@ -112,10 +109,11 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv:
 else:
     extension_modules = []
 
-
+# make global name of this version
+thisversion = "2.0.b.dev"
 setup(
         name = pkgname,
-        version = this_version,
+        version = thisversion,
         packages = find_packages(),
         include_package_data = True,
         install_requires = ['numpy','networkx','regex'],
@@ -134,4 +132,7 @@ setup(
         **extra
         )
 
-
+if this_version == '2':
+    from lingpy2 import *
+else:
+    from lingpy import *
