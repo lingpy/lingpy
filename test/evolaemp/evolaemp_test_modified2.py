@@ -1,5 +1,9 @@
 from numpy import *
 from lingpy2 import *
+
+# switch namespace to evolaemp
+from lingpy2.data.names.evolaemp import *
+
 import math
 
 #READING IN THE ASJP DATA
@@ -25,10 +29,6 @@ names = array([x.strip() for x in rl])
 
 asjpMatrix = array([x for x in asjpMatrix if x[0] in names])
 
-#INITIALZING LINGPY
-
-internal_asjp = Model("internal_asjp")
-
 #TEST 1: LINGPY-BASED LANGUAGE DISTANCE MEASURE
 print("\nTest 1: language distance measure based on pairwise alignment")
 print("----------------------------------------------------------")
@@ -48,7 +48,7 @@ def ldistLingpy(l1,l2,mtx=asjpMatrix):
     wordOffsets.append(len(pairs))
     #align all word pairs in parallel
     pair = Pairwise(pairs,merge_vowels=False)
-    pair.align(distance=True,model=internal_asjp)
+    pair.align(distance=True,model=asjp)
     #collect the lowest distance values for each wordID (i.e. concept)
     distValues = [min(alignment[2] for alignment in pair.alignments[wordOffsets[i]:wordOffsets[i+1]]) for i in range(0,len(wordOffsets)-1)]
     #simply compute the average distance value
@@ -84,7 +84,7 @@ for langID in langs:
     ID += 1
 
 #cluster words into cognate sets
-lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
+lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
 lexstat.get_scorer()
 lexstat.cluster(method='lexstat',threshold=0.9,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)

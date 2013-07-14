@@ -27,7 +27,7 @@ asjpMatrix = array([x for x in asjpMatrix if x[0] in names])
 
 #INITIALZING LINGPY
 
-internal_asjp = Model("internal_asjp")
+internal_asjp = Model("internal_asjp",path="models")
 
 #TEST 1: LINGPY-BASED LANGUAGE DISTANCE MEASURE
 print("\nTest 1: language distance measure based on pairwise alignment")
