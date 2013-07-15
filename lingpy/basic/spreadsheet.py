@@ -6,10 +6,11 @@ __author__="Steven Moran"
 __date__="2013-04"
 
 # external imports
+import regex as re
 import sys 
+import codecs
 import unicodedata
 from time import gmtime, strftime
-import re
 
 # internal imports
 from ..sequence.ngram import *
@@ -30,12 +31,7 @@ class Spreadsheet:
                  sep = '\t', # column separator
                  language_id = "NAME", # think about this variable name
                  meanings = "CONCEPT", # explicit name of column containing concepts
-                 exclude_string = "!", #
-                 # languages = [], # columns with language data -- TODO: must be ints
-                 blacklist = dict(
-                     starting_delimiters = "([",
-                     ending_delimiters = ")]"
-                     ), # we should add more here, but this is a start
+                 blacklist = "", # filename path to blacklist file
                  conf = "", # spreadsheet .rc file
                  cellsep = ';', # cell separator, separates forms in the same cell
                  verbose = False,
@@ -54,27 +50,62 @@ class Spreadsheet:
         self.cellsep = cellsep
         self.verbose = verbose
 
+        # set up matrix
         self.matrix = []
-        self._init_matrix(blacklist,verbose)
-
-        # Unicode NFD normalize the cell contents
+        self._init_matrix()
         self._normalize()
-
+        self._blacklist()
         self._prepare()
 
-    def _init_matrix(self,blacklist,verbose=False):
+    def _blacklist(self):
+        """
+        Remove anything in the spreadsheet that's specified in the blacklist file.
+        """
+        if not os.path.isfile(self.blacklist):
+            if self.verbose:
+                print("[i] There is no blacklist specified at the follow file path location. Proceeding without blacklist.")
+            return
+
+        blacklist_file = codecs.open(self.blacklist, "r")
+        # loop through the blacklist file and compile the regexes
+        rules = []
+        replacements = []
+        for line in blacklist_file:
+            line = line.strip()
+            # skip any comments
+            if line.startswith("#") or line == "":
+                continue
+            line = unicodedata.normalize("NFD", line)
+            rule, replacement = line.split(",") # black list regexes must be comma delimited
+            rule = rule.strip() # just in case there's trailing whitespace
+            replacement = replacement.strip() # because there's probably trailing whitespace!
+            rules.append(re.compile(rule))
+            replacements.append(replacement)
+        blacklist_file.close()
+
+        # blacklist the spreadsheet data - skip the header row
+        for i in range(1, len(self.matrix)):
+            for j in range(0, len(self.matrix[i])):
+                for k in range(0, len(rules)):
+                    match = rules[k].search(self.matrix[i][j])
+                    if not match == None:
+                        match = re.sub(rules[k], replacements[k], self.matrix[i][j])                
+                        if self.verbose:
+                            print("[i] Replacing <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] with <"+match+">.")
+                        self.matrix[i][j] = match.strip()
+
+    def _init_matrix(self):
         """
         Create a 2D array from the CSV input and Unicode normalize its contents
         """
-        
         # TODO: check if spreadsheet is empty and throw error
         spreadsheet = csv2list(
             self.filename, 
             self.fileformat, 
             self.dtype, 
             self.comment, 
-            self.sep,
-            strip_lines = False
+            self.sep
+            # strip_lines = False
             )
 
         # columns that have language data
@@ -82,11 +113,12 @@ class Spreadsheet:
 
         # first row must be the header in the input; TODO: add more functionality
         header = spreadsheet[0] 
-        if verbose: print(header[0:10])
+
+        if self.verbose: print(header[0:10])
         
         for i,cell in enumerate(header):
             head = cell.strip()
-            if verbose: print(head)
+            if self.verbose: print(head)
             if head == self.meanings:
                 self.concepts = i
             if self.language_id in head:
@@ -110,19 +142,6 @@ class Spreadsheet:
             for item in temp:
                 matrix_row.append(item)
             self.matrix.append(matrix_row)
-
-        
-        # clean the matrix according to the separators passed by the user
-        if blacklist:
-            if 'starting_delimiters' in blacklist and 'ending_delimiters' in  blacklist:
-                for i,line in enumerate(self.matrix):
-                    for j,cell in enumerate(line):
-                        for d in blacklist['starting_delimiters']:
-                            cell = cell.replace(d,'<')
-                        for d in blacklist['ending_delimiters']:
-                            cell = cell.replace(d,'>')
-                        self.matrix[i][j] = re.sub(r'<.*?>','',cell).strip()
-
 
     def _normalize(self):
         """ 
