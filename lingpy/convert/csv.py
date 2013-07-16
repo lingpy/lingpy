@@ -1,32 +1,37 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 06:55
-# modified : 2013-04-02 06:55
+# modified : 2013-07-01 16:50
 """
 Module provides functions and methods for the creation of csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-02"
+__date__="2013-07-01"
 
-# imports
+# external imports
 import re
 import json
 import codecs
 
+# internal imports
 from ..check.messages import FileWriteMessage
 from .phylip import matrix2dst
-from .misc import msa2str
+from .misc import msa2str,scorer2str
+from ..check import _timestamp
 
 def pap2csv(
         taxa,
         paps,
-        filename='csv'
+        filename='',
+        verbose = True
         ):
     """
     Write paps created by the Wordlist class to a csv-file.
     """
-    
+    if not filename:
+        filename = _today()
+
     out = "ID\t"+'\t'.join(taxa)+'\n'
     for key in sorted(paps,key=lambda x: int(re.sub(r'[^0-9]+','',str(x)))):
         out += '{0}\t{1}\n'.format(
@@ -34,25 +39,36 @@ def pap2csv(
             '\t'.join(str(i) for i in paps[key])
             )
 
-    f = open(filename+'.csv','w')
+    f = codecs.open(filename+'.csv','w',"utf-8")
     f.write(out)
     f.close()
 
-    FileWriteMessage(filename,'csv').message('written')
+    if verbose: print(FileWriteMessage(filename,'csv'))
     
     return
 
 def wl2csv(
         header,
         data,
-        filename = 'csv',
+        filename = '',
         formatter = 'concept',
+        verbose = True,
         **keywords
         ):
     """
     Write the basic data of a wordlist to file.
     """
     formatter = formatter.upper()
+
+    defaults = dict(
+            fileformat = 'qlc'
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
+    if not filename:
+        filename = _timestamp()
 
     # create output string
     out = '# Wordlist\n'
@@ -66,22 +82,48 @@ def wl2csv(
     kvpairs = {}
     jsonpairs = {}
     msapairs = {}
+    trees = {}
     distances = ''
     taxa = ''
+    scorer = ''
 
     for k,v in meta.items():
         # simple key-value-pairs
         if type(v) in [str,int] or k == "tree":
             kvpairs[k] = v
         elif k == 'msa':
-            for a,b in v.items():
-                msapairs[a] = b
+            # go a level deeper, checking for keys
+            for ref in v:
+                if ref not in msapairs:
+                    msapairs[ref] = {}
+                for a,b in v[ref].items():
+                    msapairs[ref][a] = b
         elif k == 'distances':
             distances = matrix2dst(v,meta['taxa'])
         elif k == 'taxa':
             taxa = '\n'.join(meta['taxa'])
+        elif k == 'trees':
+            trees = ''
+            for key,value in v.items():
+                trees += '<tre id="{0}">\n{1}\n</tre>\n'.format(
+                        key,
+                        value
+                        )
+        elif k == 'scorer':
+            for key,value in v.items():
+                scorer += '<{2} id="{0}">\n{1}</{2}>\n\n'.format(
+                        key,
+                        scorer2str(value),
+                        k
+                        )
         else:
-            jsonpairs[k] = v
+            # check whether serialization works
+            try:
+                json.dumps(v)
+                jsonpairs[k] = v
+            except TypeError:
+                pass
+
     if kvpairs:
         out += '\n# META\n'
         for k,v in sorted(kvpairs.items(),key=lambda x:x[0]):
@@ -94,17 +136,21 @@ def wl2csv(
         out += json.dumps(jsonpairs,indent=4)
         out += '\n</json>\n'
     if msapairs:
-        out += "\n# MSA\n"
-        for k,v in msapairs.items():
-            out += '#\n<msa id="{0}">\n'.format(k)
-            out += msa2str(v)
-            #out += v['seq_id']+'\n'
-            #for t,alm in zip(v['taxa'],v['alignment']):
-            #    out += t + '\t' + '\t'.join(alm)+'\n'
-            out += "</msa>\n"
+        for ref in msapairs:
+            out += "\n# MSA reference: {0}\n".format(ref)
+            for k,v in msapairs[ref].items():
+                out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
+                out += msa2str(v,wordlist=True)
+                out += "</msa>\n"
     if distances:
         out += '\n# DISTANCES\n<dst>\n'
         out += distances+'</dst>\n'
+
+    if trees:
+        out += '\n# TREES\n'+trees
+
+    if scorer:
+        out += '\n# SORER\n'+scorer
 
     out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     
@@ -145,11 +191,11 @@ def wl2csv(
                 out += '\t'+value
         out += '\n'
 
-    f = codecs.open(filename + '.csv','w', 'utf-8')
+    f = codecs.open(filename +'.'+ keywords['fileformat'],'w','utf-8')
     f.write(out)
     if "stamp" in keywords:
         f.write(keywords['stamp'])
     f.close()
-    FileWriteMessage(filename,'csv').message('written')
+    if verbose: print(FileWriteMessage(filename,keywords['fileformat']))
 
     return 

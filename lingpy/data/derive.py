@@ -16,6 +16,7 @@ __date__="2013-03-08"
 import networkx as nx
 from pickle import dump
 import os
+import codecs
 
 
 def _import_sound_classes(filename):
@@ -24,7 +25,7 @@ def _import_sound_classes(filename):
     creates a replacement dictionary from these sound classes.
     """
 
-    infile = open(filename,'r')
+    infile = codecs.open(filename,'r','utf-8')
     data = []
     for line in infile:
         data.append(line.strip().split(' : '))
@@ -46,7 +47,7 @@ def _import_score_tree(filename):
     Function imports score trees for a given range of sound classes and
     converts them into a graph.
     """
-    infile = open(filename,'r')
+    infile = codecs.open(filename,'r','utf-8')
     graph = nx.DiGraph()
     data = []
     for line in infile:
@@ -364,7 +365,7 @@ def _export_score_dict(score_dict):
     """
     
     letters = list(set([key[0] for key in score_dict.keys()]))
-    outfile = open('score_dict.csv','w')
+    outfile = codes.open('score_dict.csv','w','utf-8')
     outfile.write('\t'+'\t'.join(letters)+'\n')
     for letter1 in letters:
         outfile.write(letter1)
@@ -477,7 +478,7 @@ def compile_model(
     print("... successfully created the converter.")
 
     # try to load the score tree
-    try:
+    if os.path.isfile(path+'scorer'):
         score_tree = _import_score_tree(path+'scorer')
     
         # calculate the scoring dictionary
@@ -488,12 +489,12 @@ def compile_model(
         dump(score_dict,outfile)
         outfile.close()
         print("... successfully created the scorer.")
-    except:
+    else:
         print("... no scoring dictionary defined.")
 
     print("[i] Model <"+model+"> was compiled successfully.")
 
-def compile_dvt():
+def compile_dvt(path=''):
     """
     Function compiles diacritics, vowels, and tones.
 
@@ -520,20 +521,28 @@ def compile_dvt():
     print("[i] Compiling diacritics and vowels...")
 
     # get the path to the models
-    path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+    if not path:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+    elif path in ['evolaemp','el']:
+        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/'
+    else:
+        pass
 
-    diacritics = open(
+    diacritics = codecs.open(
             path+'diacritics',
-            'r'
+            'r',
+            'utf-8'
             ).read().replace('\n','').replace('-','')
-    vowels = open(
+    vowels = codecs.open(
             path+'vowels',
-            'r'
+            'r',
+            'utf-8'
             ).read().replace('\n','')
 
-    tones = open(
+    tones = codecs.open(
             path+'tones',
-            'r'
+            'r',
+            'utf-8'
             ).read().replace('\n','')
 
     dvt = (diacritics,vowels,tones)
@@ -541,6 +550,7 @@ def compile_dvt():
     outfile = open(path+'dvt.bin','wb')
     dump(dvt,outfile)
     outfile.close()
+    print(path)
 
     print("[i] Diacritics and sound classes were successfully compiled.")
 

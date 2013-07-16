@@ -22,5 +22,15 @@ class ThirdPartyModuleError(Exception):
 
     def warning(self):
         
-        print("[WARNING] "+self.value)
-        return
+        return "[WARNING] "+self.value
+
+class InputFileError(Exception):
+    """
+    Basic exception to be raised if the input file contains obvious errors.
+    """
+    def __init__(self,value):
+        self.value = "Erroneous coding of input file <{0}>. If it contains an ID column, make sure it consists only of integers.".format(value)
+
+    def warning(self):
+
+        return "[WARNING] "+self.value

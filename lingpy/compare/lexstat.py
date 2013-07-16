@@ -1,16 +1,17 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-04-06 16:03
+# modified : 2013-07-01 16:50
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-06"
+__date__="2013-07-01"
 
 # builtin
 import random
+import codecs
 
 # thirdparty
 import numpy as np
@@ -24,6 +25,9 @@ from ..sequence.sound_classes import *
 from ..sequence.generate import MCPhon
 from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
+from ..convert.misc import *
+from ..read.csv import read_scorer # for easy reading of scoring functions
+from ..check.messages import *
 
 try:
     from ..algorithm.cython import calign
@@ -154,7 +158,7 @@ class LexStat(Wordlist):
                             ' '.join(line)
                             )]
             if errors:
-                out = open("errors.log","w")
+                out = codecs.open("errors.log","w",'utf-8')
                 out.write("ID\tTokens\tError-Type\n")
                 for a,b,c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
@@ -223,19 +227,6 @@ class LexStat(Wordlist):
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
             self._transform =  keywords['transform']
-            #{
-            #        'A':'B', 
-            #        'B':'B',
-            #        'C':'B',
-            #        'L':'L',
-            #        'M':'L',
-            #        'N':'L',
-            #        'X':'X', #
-            #        'Y':'X', #
-            #        'Z':'X', #
-            #        'T':'T', #
-            #        '_':'_'
-            #        }
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
@@ -308,8 +299,12 @@ class LexStat(Wordlist):
             for i in range(self.width):
                 self.chars += [str(i+1)+'.X.-']
 
-        # create a scoring dictionary
+        # check for scorers
         if not hasattr(self,"scorer"):
+            self._meta['scorer'] = {}
+
+        # create a scoring dictionary
+        if not hasattr(self,"bscorer"):
             matrix = [[0.0 for i in range(len(self.chars))] for j in range(len(self.chars))]
             for i,charA in enumerate(self.chars):
                 for j,charB in enumerate(self.chars):
@@ -330,8 +325,13 @@ class LexStat(Wordlist):
                                 )
                         matrix[i][j] = score
         
-            self.scorer = misc.ScoreDict(self.chars,matrix)
+            self.bscorer = misc.ScoreDict(self.chars,matrix)
+            self._meta['scorer']['bscorer'] = self.bscorer
+        else:
+            self.bscorer = self._meta['scorer']['bscorer']
 
+        # check for rscorer
+        if not hasattr(self,"rscorer"):
             matrix = [[0.0 for i in range(len(self.rchars))] for j in
                     range(len(self.rchars))]
             for i,charA in enumerate(self.rchars):
@@ -354,7 +354,14 @@ class LexStat(Wordlist):
                         matrix[i][j] = score
         
             self.rscorer = misc.ScoreDict(self.rchars,matrix)
+            self._meta['scorer']['rscorer'] = self.rscorer
+        else:
+            self.rscorer = self._meta['scorer']['rscorer']
 
+        # check for cscorer
+        if 'scorer' in self._meta:
+            if 'cscorer' in self._meta['scorer']:
+                self.cscorer = self._meta['scorer']['cscorer']
 
         # make the language pairs
         if not hasattr(self,"pairs"):
@@ -473,7 +480,7 @@ class LexStat(Wordlist):
                                     gop,
                                     scale,
                                     factor,
-                                    self.scorer,
+                                    self.bscorer,
                                     mode,
                                     restricted_chars
                                     )
@@ -493,7 +500,7 @@ class LexStat(Wordlist):
                                     gop,
                                     scale,
                                     factor,
-                                    self.scorer,
+                                    self.bscorer,
                                     mode,
                                     restricted_chars
                                     )
@@ -688,7 +695,7 @@ class LexStat(Wordlist):
                                     gop,
                                     scale,
                                     factor,
-                                    self.scorer,
+                                    self.bscorer,
                                     mode,
                                     restricted_chars
                                     )
@@ -783,22 +790,45 @@ class LexStat(Wordlist):
         for a,b,c in modes:
             modestring += ['{0}-{1}-{2:.2f}'.format(a,abs(b),c)]
         modestring = ':'.join(modestring)
-
-        params = '{0[0]}:{0[1]}_{1:.2f}_{2}_{3:.2f}_{4}_{5:.2f}_{6}_{7}_{8}'.format(
-                ratio,
-                vscale,
-                runs,
-                threshold,
-                modestring,
-                factor,
-                restricted_chars,
-                method,
-                '{0}:{1}:{2}'.format(
-                    preprocessing,
-                    cluster_method,
-                    gop
-                    )
+        
+        params = dict(
+                ratio = ratio,
+                vscale = vscale,
+                runs = runs,
+                threshold = threshold,
+                modestring = modestring,
+                factor = factor,
+                restricted_chars = restricted_chars,
+                method = method,
+                preprocessing = '{0}:{1}:{2}'.format(preprocessing,cluster_method,gop)
                 )
+
+        parstring = '{ratio[0]}:{ratio[1]}_{vscale:.2f}_{runs}_{threshold:.2f}_{modestring}_{factor:.2f}_{restricted_chars}_{method}_{preprocessing}'.format(
+                **params
+                )
+                #ratio,
+                #vscale,
+                #runs,
+                #threshold,
+                #modestring,
+                #factor,
+                #restricted_chars,
+                #method,
+                #'{0}:{1}:{2}'.format(
+                #    preprocessing,
+                #    cluster_method,
+                #    gop
+                #    )
+                #)
+
+        # check for existing attributes
+        if hasattr(self,'cscorer') and not force:
+            print(
+                    "[i] An identical scoring function has already been calculated, ",
+                    end=""
+                    )
+            print("force recalculation by setting 'force' to 'True'.")
+            return 
 
         # check for attribute
         if hasattr(self,'params') and not force:
@@ -817,8 +847,9 @@ class LexStat(Wordlist):
                 print("overwriting previous settings.") 
 
         # store parameters
-        self.params = {'scorer':params }
-        self._stamp += "# Parameters: "+params+'\n'
+        self.params = {'cscorer':params }
+        self._meta['params'] = self.params
+        self._stamp += "# Parameters: "+parstring+'\n'
 
         # get the correspondence distribution
         corrdist = self._get_corrdist(
@@ -851,8 +882,8 @@ class LexStat(Wordlist):
         gop = sum([m[1] for m in modes]) / len(modes)
 
         # create the new scoring matrix
-        matrix = [[c for c in line] for line in self.scorer.matrix]
-        char_dict = self.scorer.chars2int
+        matrix = [[c for c in line] for line in self.bscorer.matrix]
+        char_dict = self.bscorer.chars2int
 
         # start the calculation
         for i,tA in enumerate(self.taxa):
@@ -885,7 +916,7 @@ class LexStat(Wordlist):
 
                             # combine the scores
                             if '-' not in charA+charB:
-                                sim = self.scorer[charA,charB]
+                                sim = self.bscorer[charA,charB]
                             else:
                                 sim = gop
 
@@ -907,6 +938,7 @@ class LexStat(Wordlist):
                                 pass
         
         self.cscorer = misc.ScoreDict(self.chars,matrix)
+        self._meta['scorer']['cscorer'] = self.cscorer
 
     def align_pairs(
             self,
@@ -1004,7 +1036,7 @@ class LexStat(Wordlist):
         else:
             weightsA = self[idxA,'weights']
             weightsB = self[idxB,'weights']
-            scorer = self.scorer
+            scorer = self.bscorer
 
         almA,almB,d = calign.align_pair(
                 self[idxA,'numbers'],
@@ -1165,7 +1197,7 @@ class LexStat(Wordlist):
                     gop,
                     scale,
                     factor,
-                    self.scorer,
+                    self.bscorer,
                     mode,
                     restricted_chars,
                     1
@@ -1328,6 +1360,38 @@ class LexStat(Wordlist):
                         D += [d]
 
         return sorted(D)
+    
+    def output(
+            self,
+            fileformat,
+            **keywords
+            ):
+        """
+        Write data for lexstat to file.
+        """
+
+        defaults = dict(
+                filename = self.filename,
+                scorer = self.rscorer
+                )
+        
+        for key in defaults:
+            if key not in keywords:
+                keywords[key] = defaults[key]
+
+        if fileformat == 'scorer':
+
+            out = scorer2str(keywords['scorer'])
+            f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
+            f.write(out)
+            f.close()
+            FileWriteMessage(
+                    keywords['filename'],
+                    fileformat
+                    ).message('written')
+
+        else:
+            self._output(fileformat,**keywords)
 
     #def output(
     #        fileformat,

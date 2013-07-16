@@ -1,17 +1,20 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 07:01
-# modified : 2013-04-02 07:01
+# modified : 2013-07-10 12:10
 """
 Functions for tree calculations and working with Newick files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-02"
+__date__="2013-07-10"
 
+# external
 import xml.dom.minidom as minidom
+import codecs
 
-#import networkx as nx
+# internal
+from ..check.messages import FileWriteMessage
 from ..thirdparty import cogent as cg
 try:
     from ..algorithm.cython import cluster
@@ -20,7 +23,8 @@ except:
 
 def xml2nwk(
         infile,
-        filename = None
+        filename = '',
+        verbose = True
         ):
     """
     Convert xml-based MultiTree format to Newick-format.
@@ -118,17 +122,19 @@ def xml2nwk(
     if not filename:
         return newick_string
     else:
-        f = open(filename+'.nwk','w')
+        f = codecs.open(filename+'.nwk','w','utf-8')
         f.write(newick_string)
         f.close()
-        print("[i] Data has been written to file <{0}.nwk>".format(filename))
+        if verbose: print(FileWriteMessage(filename,'nwk'))
         return
 
 def matrix2tree(
         matrix,
         taxa,
         tree_calc = "neighbor",
-        distances = True
+        distances = True,
+        filename = '',
+        verbose = True
         ):
     """
     Calculate a tree of a given distance matrix.
@@ -142,7 +148,13 @@ def matrix2tree(
     newick = algorithm(matrix,taxa,distances)
 
     tree = cg.LoadTree(treestring=newick)
-
-    return tree
+    
+    if not filename:
+        return tree
+    else:
+        out = codecs.open(filename+'.nwk','w','utf-8')
+        out.write(str(tree))
+        out.close()
+        print(FileWriteMessage(filename,'nwk'))
 
 

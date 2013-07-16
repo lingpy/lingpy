@@ -37,31 +37,4 @@ applications:
 """
 
 from .model import *
-
-# try to import the precompiled models
-# XXX split this up into several parts in order to avoid messing around with
-# abundant compilations of stuff that has already been compiled
-try:
-    ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
-    sca = Model('sca')
-    asjp = Model('asjp')
-    dolgo = Model('dolgo')
-    art = Model('art')
-    _color = Model('color')
-# compile the models if they are not precompiled
-except:
-    from .derive import *
-    compile_dvt()
-    compile_model('sca')
-    compile_model('dolgo')
-    compile_model('art')
-    compile_model('color')
-    ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
-    sca = Model('sca')
-    asjp = Model('asjp')
-    dolgo = Model('dolgo')
-    art = Model('art')
-    _color = Model('color')
-
-
-
+from .names.qlc import *

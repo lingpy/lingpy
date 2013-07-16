@@ -1,20 +1,24 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-09 08:39
-# modified : 2013-04-09 08:39
+# modified : 2013-07-10 12:00
 """
 Conversion routines for the GML format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-09"
+__date__="2013-07-10"
 
-from ..check.exceptions import ThirdPartyModuleError
-import numpy as np
+import codecs
 try:
     import networkx as nx
 except:
-    ThirdPartyModuleError('networkx').warning()
+    print(ThirdPartyModuleError('networkx').warning())
+
+
+from ..check.exceptions import ThirdPartyModuleError
+from ..check import _timestamp
+import numpy as np
 
 from ..thirdparty import cogent as cg
 from ..check.messages import FileWriteMessage
@@ -23,7 +27,8 @@ def gls2gml(
         gls,
         graph,
         tree,
-        filename = ''
+        filename = '',
+        verbose = True
         ):
     """
     Create GML-representation of a given gain-loss-scenario (GLS).
@@ -37,7 +42,10 @@ def gls2gml(
     tree : cogent.tree.PhyloNode
         A tree object. 
     """
-    
+    # check for tree-formatting
+    if type(tree) == str:
+        tree = cg.LoadTree(treestring=tree)
+
     # create a mapper for the ids and the string-names
     mapper = {}
     for node,data in graph.nodes(data=True):
@@ -118,17 +126,18 @@ def gls2gml(
         g.add_edge(edgeA,edgeB,**data)
     
     if filename:
-        f = open(filename+'.gml','w')
+        f = codecs.open(filename+'.gml','w','utf-8')
         for line in nx.generate_gml(g):
             f.write(line+'\n')
         f.close()
-        FileWriteMessage(filename,'gml').message('written')
+        if verbose: print(FileWriteMessage(filename,'gml'))
     
     return g
 
 def nwk2gml(
         treefile,
         filename = '',
+        verbose = True
         ):
     """
     Function converts a tree in newick format to a network in gml-format.
@@ -150,10 +159,13 @@ def nwk2gml(
     graph = nx.DiGraph()
     
     # load the tree
-    try:
-        tree = cg.LoadTree(treefile)
-    except:
-        tree = cg.LoadTree(treestring=treefile)
+    if type(treefile) == str:
+        try:
+            tree = cg.LoadTree(treefile)
+        except:
+            tree = cg.LoadTree(treestring=treefile)
+    else:
+        tree = treefile
 
     # get the node names of the tree
     nodes = tree.getNodeNames()
@@ -178,24 +190,23 @@ def nwk2gml(
             graph.add_edge(parent.Name,node)
 
     if filename:
-        f = open(filename+'.gml','w')
+        f = codecs.open(filename+'.gml','w','utf-8')
         for line in nx.generate_gml(graph):
             f.write(line+'\n')
         f.close()
 
-        FileWriteMessage(filename,'gml').message('written')
+        if verbose: print(FileWriteMessage(filename,'gml'))
         return
     else:
         return graph
-
-
-
 
 def radial_layout(
         treestring,
         change = lambda x:x**1.75,
         degree = 100,
-        filename = ''
+        filename = '',
+        start = 0,
+        verbose = True
         ):
     """
     Function calculates a simple radial tree layout.
@@ -227,13 +238,16 @@ def radial_layout(
     # calculate the factor for projection from the degree
     pfactor = degree / 360
 
+    # get starting factor
+    startf = start * np.pi / 180
+
     # calculate the projection (should be centered)
-    if degree < 180:
-        pstart = (180 - degree) / 360 * np.pi
+    if degree <= 180:
+        pstart = startf + (180 - degree) / 360 * np.pi
         pend = pstart + 2 * np.pi * pfactor
     else:
-        pstart = 0
-        pend = 2 * np.pi * pfactor
+        pstart = startf + 0
+        pend = startf + 2 * np.pi * pfactor
 
     # define private function for centering of nodes
     def get_center(nodes):
@@ -253,10 +267,13 @@ def radial_layout(
         return x,y
 
     # get the tree
-    try:
-        tree = cg.LoadTree(treestring)
-    except:
-        tree = cg.LoadTree(treestring=treestring)
+    if type(treestring) == str:
+        try:
+            tree = cg.LoadTree(treestring)
+        except:
+            tree = cg.LoadTree(treestring=treestring)
+    else:
+        tree = treestring
 
     # get the leaves
     leaves = tree.getTipNames()
@@ -277,7 +294,7 @@ def radial_layout(
     # get the initial coordinates
     coords = {}
 
-    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves)+1)):
+    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves))):
         coords[node] = (x,maxL,0)
 
     # assign leaves to queue
@@ -379,185 +396,11 @@ def radial_layout(
         d['label'] = n
         
     if filename:
-        f = open(filename+'.gml','w')
+        f = codecs.open(filename+'.gml','w','utf-8')
         for line in nx.generate_gml(graph):
             f.write(line+'\n')
         f.close()
-        FileWriteMessage(filename,'gml').message('written')
+        if verbose: print(FileWriteMessage(filename,'gml'))
 
     return graph
 
-
-#def _radial_layout(
-#        treestring,
-#        change = lambda x:x**1.75,
-#        degree = 100,
-#        filename = ''
-#        ):
-#    """
-#    Function calculates a simple radial tree layout.
-#
-#    Parameters
-#    ----------
-#    treefile : str
-#        Either a str defining the path to a file containing the tree in
-#        Newick-format, or the tree-string itself.
-#    filename : str (default=None)
-#        The name of the output file (GML-format). If set to c{None}, no output
-#        will be written to file.
-#    change : function (default = lambda x:2 * x**2)
-#        The function used to modify the radius in the polar projection of the
-#        tree.
-#
-#    Returns
-#    -------
-#    graph : networkx.Graph
-#        A graph representation of the tree with coordinates specified in the
-#        graphics-attribute of the nodes.
-#
-#    Note
-#    ----
-#    This function creates a radial tree-layout from a given tree specified in
-#    Newick format.
-#
-#    """
-#    # calculate the factor for projection from the degree
-#    pfactor = degree / 360
-#
-#    # calculate the projection (should be centered)
-#    if degree < 180:
-#        pstart = (180 - degree) / 360 * np.pi
-#        pend = pstart + 2 * np.pi * pfactor
-#    else:
-#        pstart = 0
-#        pend = 2 * np.pi * pfactor
-#
-#    # define private function for centering of nodes
-#    def get_center(nodes):
-#        
-#        # first sort all values since we need max and min of the theta values
-#        xvals = sorted([n[0] for n in nodes])
-#        
-#        # get minimum and maximum
-#        xA,xB = xvals[0],xvals[-1]
-#
-#        # calculate the new coordinates, the radius is simply decreased by 1
-#        y = min([n[1] for n in nodes]) - 1
-#        
-#        # the theta-value is calculated by the following formula
-#        x = ( xA + abs(xA - xB) / 2 )
-#
-#        return x,y
-#
-#    # get the tree
-#    try:
-#        tree = cg.LoadTree(treestring)
-#    except:
-#        tree = cg.LoadTree(treestring=treestring)
-#
-#    # get the leaves
-#    leaves = tree.getTipNames()
-#
-#    # get the paths in order to find out the radius of the tree
-#    paths = {}
-#    
-#    for l in leaves:
-#        path = tree.getConnectingEdges('root',l)
-#        try:
-#            paths[len(path)] += [l]
-#        except:
-#            paths[len(path)] = [l]
-#
-#    # get the max path
-#    maxL = max(paths)
-#
-#    # get the initial coordinates
-#    coords = {}
-#
-#    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves)+1)):
-#        coords[node] = (x,maxL)
-#
-#    # assign leaves to queue
-#    queue = [l for l in leaves]
-#
-#    # make the visited list
-#    visited = []
-#
-#    # start the loop
-#    while queue:
-#        
-#        # get the node
-#        node = queue.pop(0)
-#
-#        if node in visited:
-#            pass
-#        else:
-#
-#            # get the parent and all children
-#            children = [child.Name for child in
-#                    tree.getNodeMatchingName(node).Parent.Children]
-#
-#            # iterate over children
-#            goon = True
-#            for child in children:
-#                if child in coords:
-#                    pass
-#                else:
-#                    goon = False
-#                    break
-#
-#            # goon, if this is possible
-#            if not goon:
-#                queue += [node]
-#            else:
-#
-#                x,y = get_center(
-#                       [coords[child] for child in children]
-#                       )
-#                parent = tree.getNodeMatchingName(node).Parent.Name
-#                coords[parent] = (x,y)
-#
-#                visited += [child for child in children]
-#                
-#                if parent != 'root':
-#                    queue += [parent]
-#    
-#    # convert tree to graph
-#    graph = nwk2gml(treestring,filename=None)
-#    
-#    # iterate over the graph and assign the data
-#    for n,d in graph.nodes(data=True):
-#        x,y = coords[n]
-#
-#        # change coordinates
-#        xN = change(y) * np.cos(x)
-#        yN = change(y) * np.sin(x)
-#
-#        # get angle for text-rotation in degrees
-#        angle = x * 180 / np.pi
-#
-#        # check for specific parts where the angle has to be adapted
-#        if 270 >= angle > 180:
-#            angle -= 180
-#            s = 'right'
-#        elif 180 >= angle >= 90:
-#            angle += 180
-#            s = 'right'
-#        else:
-#            s = 'left'
-#
-#
-#        # assign the data to the graph
-#        d['graphics'] = {'x':xN,'y':yN,'angle':angle,'s':s}
-#
-#        # don't forget the label
-#        d['label'] = n
-#        
-#    if filename:
-#        f = open(filename+'.gml','w')
-#        for line in nx.generate_gml(graph):
-#            f.write(line+'\n')
-#        f.close()
-#        FileWriteMessage(filename,'gml').message('written')
-#
-#    return graph

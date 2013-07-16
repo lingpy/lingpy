@@ -1,13 +1,16 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-05-25 23:57
+# modified : 2013-06-26 17:40
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-05-25"
+__date__="2013-06-26"
+
+# thirdparty imports
+import numpy as np
 
 # lingpy imports
 from ..data import *
@@ -42,6 +45,7 @@ class Multiple(object):
     def __init__(
             self,
             seqs,
+            verbose = False,
             **keywords
             ):
         # store input sequences, check whether tokens or strings are passed
@@ -60,12 +64,16 @@ class Multiple(object):
                 "combiners":'\u0361\u035c',
                 "breaks":'.-',
                 "stress":"ˈˌ'",
-                "merge_vowels" : True
+                "merge_vowels" : True,
                 }
+
         for k in keywords:
             if k in defaults:
                 defaults[k] = keywords[k]
         
+        # set the verbose flag for the whole object
+        self.verbose = verbose
+
         if self.tokens:
             self.numbers = []
             for i,tokens in enumerate(self.tokens):
@@ -136,20 +144,44 @@ class Multiple(object):
         """
         Return specified values.
         """
-        try:
-            data = idx[1]
-            idx = idx[0]
-        except:
-            data = 'w'
-        
-        if data == 'w':
+        if type(idx) == tuple:
+            if type(idx[0]) == slice:
+                return [x[idx[1]] for x in self.alm_matrix[idx[0]]]
+            else:
+                try:
+                    return self.alm_matrix[idx[0]][idx[1]]
+                except:
+                    if idx[1] == 'w':
+                        return self.seqs[idx[0]]
+                    elif idx[1] == 'c':
+                        return self.classes[idx[0]]
+                    elif idx[1] == 't':
+                        return self.tokens[idx[0]]
+                    elif idx[1] == 'a':
+                        return self.alm_matrix[idx[0]]
+                    else:
+                        return self.alm_ma
+        else:
             return self.seqs[idx]
-        elif data == 'c':
-            return self.classes[idx]
-        elif data == 't':
-            return self.tokens[idx]
-        elif data == 'a':
-            return self.alm_matrix[idx]
+        #try:
+        #    data = idx[1]
+        #    idx = idx[0]
+        #except:
+        #    data = 'w'
+        #
+        #if data == 'w':
+        #    return self.seqs[idx]
+        #elif data == 'c':
+        #    return self.classes[idx]
+        #elif data == 't':
+        #    return self.tokens[idx]
+        #elif data == 'a':
+        #    return self.alm_matrix[idx]
+        #elif type(data) in (int,slice):
+        #    try:
+        #        return [x[data] for x in self.alm_matrix[idx]]
+        #    except:
+        #        raise IndexError
 
     def _get(
             self,
@@ -592,7 +624,8 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                print("[!] Warning, there are empty segments in the consensus.")
+                if self.verbose:
+                    print("[!] Warning, there are empty segments in the consensus.")
             except:
                 print("[!] Warning, sonority profiles could not be calculated")
                 print(sonarA)
@@ -776,6 +809,28 @@ class Multiple(object):
 
         # create the matrix which stores all alignments
         self._alm_matrix = alm_lst
+
+        # calculate the sonority profile
+        if self._sonars:
+            tmp = misc.transpose(alm_lst)
+            sonars = [[self._get(
+                            char,
+                            value = '_sonars',
+                            error = ('X',0)
+                            ) for char in line] for line in tmp]
+            try:
+                consensus = [int(sum([k for k in col if k != 0]) / len([k for k in col
+                    if k != 0]) + 0.5) for col in sonars]
+            except:
+                try:
+                    consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
+                        if k >= 0]) + 0.5) for col in sonars]
+                    print("[!] Warning, there are empty segments in the consensus!")
+                except:
+                    consensus = []
+                    print("[!] Warning, sonority consensus could not be calculated!")
+            self._sonority_consensus = consensus
+
 
     def _update_alignments(self):
 
@@ -1671,13 +1726,12 @@ class Multiple(object):
 
 
         """
-        
         peaks = []
-        for i in range(self._alm_matrix.shape[1]):
+        for i in range(len(self._alm_matrix[0])):
             peaks.append(
-                    _calign._score_profile(
-                        self._alm_matrix[:,i].tolist(),
-                        self._alm_matrix[:,i].tolist(),
+                    calign.score_profile(
+                        [k[i] for k in self._alm_matrix],
+                        [k[i] for k in self._alm_matrix],
                         self.scorer,
                         gap_weight = gap_weight
                         )
@@ -1685,17 +1739,16 @@ class Multiple(object):
 
         return peaks
 
-    def _make_peak_idx(
+    def get_local_peaks(
             self,
-            t_scale = 0.5,
+            threshold = 2,
             gap_weight = 0.0
             ):
 
-        peaks = np.array(self.peaks(gap_weight = gap_weight))
+        peaks = self.get_peaks(gap_weight = gap_weight)
         
-        threshold = peaks.mean() + t_scale * peaks.std()
 
-        self.peak_idx = [i for i in range(len(peaks)) if peaks[i] > threshold]
+        self.local = [i for i in range(len(peaks)) if peaks[i] > threshold]
 
     def get_pairwise_alignments(
             self,
@@ -2185,6 +2238,7 @@ class Multiple(object):
                     swp.append(i)
             
             self.swap_index = [(i,i+1,i+2) for i in swp]
+            self.swaps = self.swap_index
             
             return True
 

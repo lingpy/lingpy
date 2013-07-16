@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-08 09:33
-# modified : 2013-04-04 22:48
+# modified : 2013-07-12 11:28
 """
 This module provides basic classes for the handling of linguistic data.
 
@@ -11,7 +11,7 @@ linguistic datatypes (spreadsheets, wordlists) in a consistent way.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-04"
+__date__="2013-07-12"
 
 # set the general path to lingpy 
 import os
@@ -25,4 +25,3 @@ _abs_path = os.path.split(
 from .wordlist import Wordlist
 from .dictionary import Dictionary, ConceptGraph, spanish_swadesh_list, ConceptComparerSpanishStem
 from .spreadsheet import Spreadsheet
-from .qlcwordlist import QLCWordlist

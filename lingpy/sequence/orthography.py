@@ -7,10 +7,11 @@ __date__ = "2010-12-01"
 
 import sys
 import unicodedata
-import regex
+import regex as re
 import os
+import codecs
 
-class DuplicateExceptation(Exception): pass
+# class DuplicateExceptation(Exception): pass
 
 class GraphemeParser(object):
     """
@@ -47,7 +48,7 @@ class GraphemeParser(object):
         """
         Create the Unicode grapheme pattern match object.
         """
-        self.grapheme_pattern = regex.compile("\X", regex.UNICODE)
+        self.grapheme_pattern = re.compile("\X", re.UNICODE)
 
     def combine_modifiers(self, string):
         """
@@ -192,14 +193,14 @@ class OrthographyRulesParser(object):
 
     def __init__(self, orthography_profile_rules):
         try:
-            open(orthography_profile_rules)
+            codecs.open(orthography_profile_rules,'r','utf-8')
         except IOError as e:
             print("\nWARNING: There is no file at the path you've specified.\n\n")
 
         self.rules = []
         self.replacements = []
 
-        rules_file = open(orthography_profile_rules, "r", encoding="utf-8")
+        rules_file = codecs.open(orthography_profile_rules, "r", 'utf-8')
 
         # loop through the orthography fules and compile them
         for line in rules_file:
@@ -212,7 +213,7 @@ class OrthographyRulesParser(object):
             rule, replacement = line.split(",")
             rule = rule.strip() # just in case there's trailing whitespace
             replacement = replacement.strip() # because there's probably trailing whitespace!
-            self.rules.append(regex.compile(rule))
+            self.rules.append(re.compile(rule))
             self.replacements.append(replacement)
         rules_file.close()
 
@@ -240,7 +241,7 @@ class OrthographyRulesParser(object):
         for i in range(0, len(self.rules)):
             match = self.rules[i].search(result)
             if not match == None:
-                result = regex.sub(self.rules[i], self.replacements[i], result)
+                result = re.sub(self.rules[i], self.replacements[i], result)
         # this is incase someone introduces a non-NFD ordered sequence of characters
         # in the orthography profile
         result = unicodedata.normalize("NFD", result)
@@ -287,11 +288,14 @@ class OrthographyParser(object):
     .. todo:: update the processes so we don't just assume col 2 is IPA
     """
 
-    def __init__(self, orthography_profile):
+    def __init__(self, orthography_profile, debug=0):
         try:
-            open(orthography_profile)
+            codecs.open(orthography_profile,'r','utf-8')
         except IOError as e:
-            print("\nWARNING: There is no file at the path you've specified.\n\n")
+            print("\n[WARNING:] There is no file at the path you've specified.\n\n")
+
+        # debugging flag
+        self.debug = debug
 
         # path and filename of orthography profile
         self.orthography_profile = orthography_profile
@@ -303,7 +307,7 @@ class OrthographyParser(object):
         self.grapheme_to_phoneme = {}
 
         # create look up table of grapheme to IPA from orthography profile
-        file = open(orthography_profile, "r", encoding="utf-8")
+        file = codecs.open(orthography_profile, "r", "utf-8")
 
         # an orthography profile may have one or more comma delimited columns
         # the first column is graphemes, the second IPA, etc.
@@ -332,7 +336,8 @@ class OrthographyParser(object):
             if not grapheme in self.grapheme_to_phoneme:
                 self.grapheme_to_phoneme[grapheme] = phoneme
             else:
-                raise DuplicateException("You have a duplicate in your orthography profile at: {0}".format(line_count))
+                # raise DuplicateException("You have a duplicate in your orthography profile at: {0}".format(line_count))
+                raise Exception("You have a duplicate in your orthography profile at: {0}".format(line_count))
         file.close()
 
         # uncomment this line if you want to see the orthography profile tree structure
@@ -384,14 +389,21 @@ class OrthographyParser(object):
         string = unicodedata.normalize("NFD", string)
         for word in string.split():
             parse = getParse(self.root, word)
-            if len(parse) == 0:
-                print("[i] The string <"+string+"> does not parse given the specified orthography profile.\n")
-                parse = " <no-valid-parse> "
+            if self.debug:
+                if len(parse) == 0:
+                    print("[i] The string <"+string+"> does not parse given the specified orthography profile.\n")
+                    parse = " <no-valid-parse> "
             parses.append(parse)
         # Use "#" as a word boundary token (a special 'grapheme').
         result = "".join(parses).replace("##", "#")  # Ugly. Oh well.
         return result
 
+    def remove_spaces(self, string):
+        string = string.lstrip("# ")
+        string = string.rstrip(" #")
+        string = re.sub("\s+", "", string)
+        string = string.replace("#", " ")
+        return string
 
     # updated for LINGPY - deal with error handling in THIS class
     # TODO -- write unparsables to disk!
@@ -582,7 +594,7 @@ def createTree(file_name):
     root.makeSentinel()
 
     #file = codecs.open(file_name, "r", "utf-8")
-    file = open(file_name, "r", encoding="utf-8")
+    file = codecs.open(file_name, "r", "utf-8")
 
     for line in file:
         #print(line.encode("utf-8"))

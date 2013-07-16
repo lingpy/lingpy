@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-07 20:07
-# modified : 2013-03-07 21:23
+# modified : 2013-06-26 17:40
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -121,17 +121,23 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-07"
+__date__="2013-06-26"
 
 import numpy as np
 import re
-from datetime import datetime
+import codecs
 
 from ..data import *
 from ..basic.wordlist import Wordlist
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+try:
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _misc as misc
+from ..check import _timestamp
+
 
 class MSA(Multiple):
     """
@@ -231,9 +237,9 @@ class MSA(Multiple):
 
         # catch the data from the input file
         try:
-            raw_data = open(infile+'.msq','r')
+            raw_data = codecs.open(infile+'.msq','r','utf-8')
         except IOError:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
         
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -304,6 +310,13 @@ class MSA(Multiple):
                 initdict['seqs'],
                 **keywords
                 )
+
+        if 'alignment' in initdict:
+            self.alm_matrix = initdict['alignment']
+        if 'local' in initdict:
+            self.local = initdict['local']
+        if 'swaps' in initdict:
+            self.swaps = initdict['swaps']
     
     def _init_msa(
             self,
@@ -318,9 +331,9 @@ class MSA(Multiple):
         self.infile = infile.split('/')[-1].replace('.msa','')
         data = []
         try:
-            raw_data = open(infile+'.msa','r')
+            raw_data = codecs.open(infile+'.msa','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -489,7 +502,7 @@ class MSA(Multiple):
         mtax = max([len(t) for t in self.taxa])
         txf = '{0:.<'+str(mtax)+'}'
 
-        out = open(outfile,'w')
+        out = codecs.open(outfile,'w','utf-8')
 
         # start writing data to file
         out.write(self.dataset+'\n')
@@ -569,7 +582,7 @@ class MSA(Multiple):
         try:
             out.write('# Created using LingPy-2.0\n')
             out.write('# Parameters: '+self.params+'\n')
-            out.write('# Created: {0}\n'.format(datetime.today()))
+            out.write('# Created: {0}\n'.forma(_timestamp('now')))
         except:
             pass
         out.close()
@@ -653,9 +666,9 @@ class PSA(Pairwise):
 
         data = []
         try:
-            raw_data = open(infile+'.psa','r')
+            raw_data = codecs.open(infile+'.psa','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -726,9 +739,9 @@ class PSA(Pairwise):
 
         data = []
         try:
-            raw_data = open(infile+'.psq','r')
+            raw_data = codecs.open(infile+'.psq','r','utf-8')
         except:
-            raw_data = open(infile,'r')
+            raw_data = codecs.open(infile,'r','utf-8')
 
         for line in raw_data:
             if not line.startswith(self.comment):
@@ -793,14 +806,14 @@ class PSA(Pairwise):
         outfile = filename + '.' + fileformat
         # check whether outfile already exists
         try:
-            tmp = open(outfile)
+            tmp = codecs.open(outfile,'r','utf-8')
             tmp.close()
             outfile = filename + '_out.' + fileformat
         except:
             pass
 
         # open output file
-        out = open(outfile,'w')
+        out = codecs.open(outfile,'w','utf-8')
 
         # if data is simple, just write simple data to file
         if fileformat == 'psq':
@@ -870,16 +883,21 @@ class Alignments(Wordlist):
             row = 'concept',
             col = 'doculect',
             conf = '',
-            cognates = 'cogid',
+            ref = 'cogid', 
             loans = True,
             **keywords
             ):
         # initialize the wordlist
         Wordlist.__init__(self,infile,row,col,conf)
         
+        # check for reference / cognates
+        if 'cognates' in keywords:
+            print("[!] Warning, cognate attribute is replaced by 'ref'.")
+            ref = keywords['cognates']
+
         # check for cognate-id or alignment-id in header
         try:
-            self.etd = self.get_etymdict(ref=cognates,loans=loans)
+            self.etd = {ref:self.get_etymdict(ref=ref,loans=loans)}
         # else raise error
         except: 
             raise ValueError(
@@ -894,13 +912,21 @@ class Alignments(Wordlist):
         elif 'ipa' in self.header:
             stridx = self.header['ipa']
         else:
-            print("[i] No valid source for strings could be found")
-            return 
+            if 'strings' in keywords:
+                try:
+                    stridx = self.header[keywords['strings']]
+                except:
+                    print(
+                            "[i] No valid source for strings could be found."
+                            )
+            else:
+                print("[i] No valid source for strings could be found.")
+                return 
 
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
-            self._meta['msa'] = {}
-            for key,value in self.etd.items():
+            self._meta['msa'] = {ref:{}}
+            for key,value in self.etd[ref].items():
                 tmp = [x for x in value if x != 0]
                 seqids = []
                 for t in tmp:
@@ -912,20 +938,21 @@ class Alignments(Wordlist):
                     d['taxa'] = []
                     d['seqs'] = []
                     d['dataset'] = self.filename
+                    d['ID'] = []
                     if 'concept' in self.header:
                         concept = self[seqids[0],'concept']
-                        d['seq_id'] = 'CogId:{0} ({1})'.format(key,concept)
+                        d['seq_id'] = 'Cognate Set: {0} ("{1}")'.format(key,concept)
                     else:
-                        d['seq_id'] = 'CogId:{0}'.format(key)
+                        d['seq_id'] = 'Cognate Set: {0}'.format(key)
                     
                     # set up the data
                     for seq in seqids:
                         taxon = self[seq,'taxa']
                         string = self[seq][stridx]
-                        
+                        d['ID'] += [seq]
                         d['taxa'] += [self[seq,'taxa']]
                         d['seqs'] += [self[seq][stridx]]
-                    self._meta['msa'][key] = d
+                    self._meta['msa'][ref][key] = d
 
     def align(
             self,
@@ -949,7 +976,9 @@ class Alignments(Wordlist):
             sonar = True,
             scorer = {},
             verbose = True,
-            plot = False
+            plot = False,
+            ref = 'cogid',
+            **keywords
             ):
         """
         Carry out a multiple alignment analysis of the data.
@@ -1029,10 +1058,13 @@ class Alignments(Wordlist):
         plot : bool (default=False)
             Determine whether MSA should be plotted in HTML.
         """
-        for key,value in sorted(self.msa.items(),key=lambda x:x[0]):
+        for key,value in sorted(self.msa[ref].items(),key=lambda x:x[0]):
             if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
 
-            m = SCA(value)
+            m = SCA(
+                    value,
+                    **keywords
+                    )
             if method == 'progressive':
                 m.prog_align(
                         model,
@@ -1090,25 +1122,129 @@ class Alignments(Wordlist):
                                 key
                                 )
                             )
-                #self._meta['msa'][key] = {}
-            #print(m._alm_matrix)
-            self._meta['msa'][key]['alignment'] = m.alm_matrix
-                #if plot:
-                #    alm2html(
-                #            '{0}-msa/{1}-{2}'.format(
-                #                self.filename,
-                #                self.dataset,
-                #                key
-                #                )
-                #            )
-
+            self._meta['msa'][ref][key]['alignment'] = m.alm_matrix
+            self._meta['msa'][ref][key]['_sonority_consensus'] = m._sonority_consensus
                     
     def __len__(self):
         return len(self.msa)
 
+    def get_consensus(
+            self,
+            tree = False,
+            gaps = False,
+            taxa = False,
+            classes = False,
+            verbose = False,
+            ref = 'cogid',
+            consensus = 'consensus',
+            counterpart = 'ipa',
+            **keywords
+            ):
+        """
+        Calculate a consensus string of all MSAs in the wordlist.
+
+        Parameters
+        ----------
+        msa : {c{list} ~lingpy.align.multiple.Multiple}
+            Either an MSA object or an MSA matrix.
+        tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
+            A tree object or a Newick string along which the consensus shall be
+            calculated.
+        gaps : c{bool} (default=False)
+            If set to c{True}, return the gap positions in the consensus.
+        taxa : {c{list} bool} (default=False)
+            If *tree* is chosen as a parameter, specify the taxa in order of the aligned
+            strings.
+        classes : c{bool} (default=False)
+            Specify whether sound classes shall be used to calculate the consensus.
+        model : ~lingpy.data.model.Model
+            A sound class model according to which the IPA strings shall be
+            converted to sound-class strings.
+
+        """
+        # determine defaults
+        defaults = dict(
+                model = sca,
+                gap_scale = 1.0
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        # check for deprecated "cognates"
+        if 'cognates' in keywords:
+            print(LingPyDeprecationWarning('cognates','ref'))
+            ref = keywords['cognates']
+
+        # check for existing alignments
+        test = list(self.msa[ref].keys())[0]
+        if 'alignment' not in self.msa[ref][test]:
+            print("[!] No alignments could be found, You should carry out"
+                    " an alignment analysis first!")
+            return
+        
+        # go on with the analysis
+        cons_dict = {}
+        for cog in self.etd[ref]:
+            if cog in self.msa[ref]:
+                if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                
+                # temporary solution for sound-class integration
+                if classes == True:
+                    classes = []
+                    weights = prosodic_weights(
+                            prosodic_string(
+                                self.msa[ref][cog]['_sonority_consensus']
+                                )
+                            )
+                    for alm in self.msa[ref][cog]['alignment']:
+                        cls = [c for c in tokens2class(
+                                alm,
+                                keywords['model']
+                                ) if c != '0']
+                        cls = class2tokens(cls,alm)
+                        classes += [cls]
+
+                    cons = get_consensus(
+                            self.msa[ref][cog]['alignment'],
+                            classes = misc.transpose(classes),
+                            tree = tree,
+                            gaps = gaps,
+                            taxa = taxa,
+                            weights = weights,
+                            **keywords
+                            )
+                    classes = True
+                else:
+                    cons = get_consensus(
+                            self.msa[ref][cog]['alignment'],
+                            classes = classes,
+                            tree = tree,
+                            gaps = gaps,
+                            taxa = taxa,
+                            **keywords
+                            )
+            # if there's no msa for a given cognate set, this set is a
+            # singleton
+            else:
+                cons = self[[k[0] for k in self.etd[ref][cog] if k != 0][0],counterpart]
+            
+            # add consensus to dictionary
+            cons_dict[cog] = cons
+        
+        
+        # add the entries
+        self.add_entries(
+                consensus,
+                ref,
+                lambda x:cons_dict[x] 
+                )
+
+
     def output(
             self,
             fileformat,
+            ref = 'cogid',
             **keywords
             ):
         """
@@ -1153,17 +1289,14 @@ class Alignments(Wordlist):
             'groups' or 'cluster' is chosen as output format.
         
         """
-        
+        if 'cognates' in keywords:
+            print(LingPyDeprecationWarning('cognates','ref'))
+            ref = keywords['cognates']
+
         if fileformat not in ['alm']:
             return self._output(fileformat,**keywords)
         
         if fileformat == 'alm':
-            # check for "cognates"-keywords
-            if "cognates" not in keywords:
-                cognates = 'cogid'
-            else:
-                cognates = keywords['cognates']
-
             # check for filename
             if 'filename' not in keywords:
                 filename = 'dummy'
@@ -1187,13 +1320,13 @@ class Alignments(Wordlist):
                         row=concept,
                         flat=True
                         )
-                cogids = [self[i,cognates] for i in indices]
+                cogids = [self[i,ref] for i in indices]
                 cogids = sorted(set(cogids))
                 for cogid in cogids:
-                    if cogid in self.msa:
-                        for i,alm in enumerate(self.msa[cogid]['alignment']):
-                            taxon = self.msa[cogid]['taxa'][i]
-                            seq = self.msa[cogid]['seqs'][i]
+                    if cogid in self.msa[ref]:
+                        for i,alm in enumerate(self.msa[ref][cogid]['alignment']):
+                            taxon = self.msa[ref][cogid]['taxa'][i]
+                            seq = self.msa[ref][cogid]['seqs'][i]
                             cid = concept2id[concept]
                             out += '\t'.join(
                                 [
@@ -1205,7 +1338,7 @@ class Alignments(Wordlist):
                                     ]
                                 )+'\n'
                     else:
-                        this_idx = [x for x in self.etd[cogid] if x != 0][0][0]
+                        this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx,'taxon']
                         seq = self[this_idx,'tokens']
                         cid = concept2id[concept]
@@ -1219,7 +1352,7 @@ class Alignments(Wordlist):
                                     ]
                                 )+'\n'
 
-            f = open(filename + '.' + fileformat,'w')
+            f = codecs.open(filename + '.' + fileformat,'w','utf-8')
             f.write(out)
             f.close()
 
@@ -1228,7 +1361,7 @@ def SCA(
         **keywords
         ):
     """
-    Method returns alignment objects depending on input file.
+    Method returns alignment objects depending on input file or input data.
 
     Notes
     -----
@@ -1264,3 +1397,192 @@ def SCA(
             parent = Alignments(infile,**keywords)
 
     return parent
+
+def get_consensus(
+        msa,
+        tree = False,
+        gaps = False,
+        taxa = False,
+        classes = False,
+        **keywords
+        ):
+    """
+    Calculate a consensus string of a given MSA.
+
+    Parameters
+    ----------
+    msa : {c{list} ~lingpy.align.multiple.Multiple}
+        Either an MSA object or an MSA matrix.
+    tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
+        A tree object or a Newick string along which the consensus shall be
+        calculated.
+    gaps : c{bool} (default=False)
+        If set to c{True}, return the gap positions in the consensus.
+    taxa : {c{list} bool} (default=False)
+        If *tree* is chosen as a parameter, specify the taxa in order of the aligned
+        strings.
+    classes : c{bool} (default=False)
+        Specify whether sound classes shall be used to calculate the consensus.
+    model : ~lingpy.data.model.Model
+        A sound class model according to which the IPA strings shall be
+        converted to sound-class strings.
+
+    Returns
+    -------
+    cons : c{str}
+        A consensus string of the given MSA.
+    """
+    # set defaults
+    defaults = dict(
+            model = sca,
+            gap_scale = 1.0,
+            mode = 'majority',
+            gap_score = -10,
+            weights = [1 for i in range(len(msa[0]))]
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+    
+    # stores the consensus string
+    cons = ''
+
+    # transform the matrix
+    if hasattr(msa,'alm_matrix'):
+        matrix = misc.transpose(msa.alm_matrix)
+    else:
+        matrix = misc.transpose(msa)
+
+    # check for classes
+    if classes:
+        # if classes are passed as array, we use this array as is
+        if type(classes) == list:
+            pass
+        # if classes is a Model-object
+        elif hasattr(msa,'ipa2cls'):
+            msa.ipa2cls(model)
+            classes = misc.transpose(msa.classes)
+    
+    # if no tree is passed, it is a simple majority-rule principle that outputs
+    # the consensus string
+    if not tree:
+        if not classes:
+            for col in matrix:
+                tmp = {}
+
+                # count chars in columns
+                for j,c in enumerate(col):
+                    if c in tmp:
+                        tmp[c] += 1
+                    else:
+                        tmp[c] = 1
+
+                # half the weight of gaps
+                if '-' in tmp:
+                    tmp['-'] = tmp['-'] * keywords['gap_scale']
+
+                # get maximum
+                chars = [c for c,n in sorted(
+                    tmp.items(),
+                    key=lambda x:(x[1],len(x[0])),
+                    reverse=True
+                    )]
+                
+                # append highest-scoring char
+                cons += chars[0]
+        elif classes:
+            for i,col in enumerate(classes):
+                tmpA = {}
+                tmpB = {}
+
+                # count chars in columns
+                for j,c in enumerate(col):
+                    if c in tmpA:
+                        tmpA[c] += 1
+                    else:
+                        tmpA[c] = 1
+
+                    if matrix[i][j] in tmpB:
+                        tmpB[matrix[i][j]] += 1
+                    else:
+                        tmpB[matrix[i][j]] = 1
+
+                # half the weight of gaps
+                if '-' in tmpA:
+                    tmpA['-'] = tmpA['-'] * keywords['gap_scale']
+                    #print(tmp['-'],keywords['gap_scale'])               
+
+                # get max
+                chars = [(c,n) for c,n in sorted(
+                    tmpA.items(),
+                    key=lambda x:x[1],
+                    reverse=True
+                    )]
+
+                # if mode is set to 'maximize', calculate the score 
+                if keywords['mode'] == 'maximize':
+                    tmpC = {}
+                    for j,c in enumerate(col):
+                        if c in tmpC:
+                            pass
+                        else:
+                            score = 0
+                            for k,c2 in enumerate(col):
+                                if '-' not in (c,c2):
+                                    score += keywords['model'](c,c2)
+                                else:
+                                    if (c,c2) == ('-','-'):
+                                        score += 0
+                                    else:
+                                        score += keywords['gap_score'] * keywords['weights'][i]
+
+                            score = score / len(col)
+                            tmpC[c] = score
+
+                    chars = [(c,n) for c,n in sorted(
+                        tmpC.items(),
+                        key=lambda x:(x[1],tmpA[x[0]]),
+                        reverse=True
+                        )]
+
+                # check for identical classes
+                maxV = chars.pop(0)
+
+                clss = [maxV[0]]
+                while chars:
+                    newV = chars.pop(0)
+                    if newV[1] == maxV[1]:
+                        clss += [newV[0]]
+                    else:
+                        break
+                
+                tmp = {}
+                for j,c in enumerate(col):
+                    if c in clss:
+                        if matrix[i][j] in tmp:
+                            tmp[matrix[i][j]] += 1
+                        else:
+                            tmp[matrix[i][j]] = 1
+ 
+                # get max
+                chars = [c for c,n in sorted(
+                    tmp.items(),
+                    key=lambda x:(x[1],len(x[0])),
+                    reverse=True
+                    )] 
+
+                cons += chars[0]
+
+    # otherwise, we use a bottom-up parsimony approach to determine the best
+    # match
+    elif tree and not taxa:
+        raise ValueError(
+                "[!] Without a list of taxa, no consensus string can be calculated"
+                )
+    elif tree and taxa:
+        pass # XXX
+
+    if gaps:
+        return cons
+    else:
+        return cons.replace('-','')
