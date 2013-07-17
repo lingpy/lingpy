@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-07 20:07
-# modified : 2013-06-26 17:40
+# modified : 2013-07-17 23:17
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -121,7 +121,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-06-26"
+__date__="2013-07-17"
 
 import numpy as np
 import re
@@ -901,8 +901,12 @@ class Alignments(Wordlist):
         
         # check for reference / cognates
         if 'cognates' in keywords:
-            print("[!] Warning, cognate attribute is replaced by 'ref'.")
+            print(rcParams['deprecation_warning'].format('cognates','ref'))
             ref = keywords['cognates']
+        
+        # change ref to rcParams
+        if ref != rcParams['ref']:
+            rcParams['ref'] = ref
 
         # check for cognate-id or alignment-id in header
         try:
@@ -965,28 +969,6 @@ class Alignments(Wordlist):
 
     def align(
             self,
-            #method = 'progressive',
-            #iteration = False,
-            #swap_check = False,
-            #output = False,
-            #model = None,
-            #mode = 'global',
-            #modes = [
-            #    ('global',-2,0.5),
-            #    ('local',-1,0.5),
-            #    ],
-            #gop = -3,
-            #scale = 0.5,
-            #factor = 0.3,
-            #tree_calc = 'neighbor',
-            #gap_weight = 0.5,
-            #restricted_chars = 'T_',
-            #classes = True,
-            #sonar = True,
-            #scorer = {},
-            #verbose = True,
-            #plot = False,
-            #ref = 'cogid',
             **keywords
             ):
         """
@@ -1145,7 +1127,6 @@ class Alignments(Wordlist):
             gaps = False,
             taxa = False,
             classes = False,
-            ref = 'cogid',
             consensus = 'consensus',
             counterpart = 'ipa',
             **keywords
@@ -1175,7 +1156,8 @@ class Alignments(Wordlist):
         # determine defaults
         defaults = dict(
                 model = rcParams['sca'],
-                gap_scale = 1.0
+                gap_scale = 1.0,
+                ref = rcParams['ref']
                 )
         for k in defaults:
             if k not in keywords:
@@ -1183,8 +1165,12 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print(LingPyDeprecationWarning('cognates','ref'))
+            print(rcParams['deprecation_warning'].format('cognates','ref'))
             ref = keywords['cognates']
+
+        # switch ref
+        if keywords['ref'] != rcParams['ref']:
+            rcParams['ref'] = keywords['ref']
 
         # check for existing alignments
         test = list(self.msa[ref].keys())[0]
@@ -1298,7 +1284,7 @@ class Alignments(Wordlist):
         
         """
         kw = dict(
-                ref = 'cogid',
+                ref = rcParams['ref'],
                 filename = rcParams['filename']
                 )
         kw.update(keywords)
@@ -1310,6 +1296,9 @@ class Alignments(Wordlist):
         if 'cognates' in kw:
             print(rcParams['deprecation_warning'].format('cognates','ref'))
             ref = kw['cognates']
+
+        if ref != rcParams['ref']:
+            rcParams['ref'] = ref
 
         if fileformat not in ['alm']:
             return self._output(fileformat,**kw)
@@ -1384,14 +1373,14 @@ def SCA(
 
     # set the defaults
     defaults = {
-            'comment'      : '#',
-            "diacritics"   : None,
-            "vowels"       : None,
-            "tones"        : None,
-            "combiners"    : '\u0361\u035c',
-            "breaks"       : '.-',
-            "stress"       : "ˈˌ'",
-            "merge_vowels" : True
+            'comment'      : rcParams['comment'], #'#',
+            "diacritics"   : rcParams['diacritics'], #None,
+            "vowels"       : rcParams['vowels'], #None,
+            "tones"        : rcParams['tones'], #None,
+            "combiners"    : rcParams['combiners'], #'\u0361\u035c',
+            "breaks"       : rcParams['breaks'], #'.-',
+            "stress"       : rcParams['stress'], #"ˈˌ'",
+            "merge_vowels" : rcParams['merge_vowels'], #True
             }
     # check for keywords
     for k in defaults:
