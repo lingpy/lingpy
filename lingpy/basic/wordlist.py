@@ -124,7 +124,10 @@ class Wordlist(object):
         internal_import = False
         try:
             input_data = read_qlc(filename)
-            self.filename = filename.replace('.csv','').replace('qlc','')
+            if filename[-3:] in ['csv','qlc']:
+                self.filename = filename[:-4]
+            else:
+                self.filename = filename
         except:
             if type(filename) == dict:
                 input_data = filename

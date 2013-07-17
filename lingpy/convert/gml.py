@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-07-17"
 
 import codecs
-from .settings import rcParams
+from ..settings import rcParams
 try:
     import networkx as nx
 except:

@@ -153,13 +153,13 @@ class LexStat(Wordlist):
                 answer = input("[?] There were errors in the input data. Do you want to exclude the errors? (Y/N) ")
                 if answer in ['Y','y','yes','j','J']:
                     self.output(
-                            'csv',
+                            'qlc',
                             filename=self.filename+'_cleaned',
                             subset=True,
                             rows = {"ID":"not in "+str([i[0] for i in errors])}
                             )
                     # load the data in another wordlist and copy the stuff
-                    wl = Wordlist(self.filename+'_cleaned.csv')
+                    wl = Wordlist(self.filename+'_cleaned.qlc')
                     
                     # change the attributes
                     self._array = wl._array
