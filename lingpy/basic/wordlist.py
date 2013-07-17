@@ -17,7 +17,6 @@ import codecs
 # basic lingpy imports
 from ..read.qlc import read_qlc
 from ..convert import *
-from ..check.messages import *
 from ..settings import rcParams
 
 try:
@@ -1411,7 +1410,7 @@ class Wordlist(object):
             f.close()
 
             # display file-write-message
-            FileWriteMessage(filename,fileformat).message('written')
+            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
         
         # output tre-format (newick)
         if fileformat in ['tre','nwk']: #,'cluster','groups']:

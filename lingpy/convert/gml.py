@@ -1,27 +1,24 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-09 08:39
-# modified : 2013-07-10 12:00
+# modified : 2013-07-17 19:55
 """
 Conversion routines for the GML format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-10"
+__date__="2013-07-17"
 
 import codecs
+from .settings import rcParams
 try:
     import networkx as nx
 except:
-    print(ThirdPartyModuleError('networkx').warning())
+    print(rcParams['missing_module'].foramt("networkx"))
 
-
-from ..check.exceptions import ThirdPartyModuleError
-from ..check import _timestamp
 import numpy as np
 
 from ..thirdparty import cogent as cg
-from ..check.messages import FileWriteMessage
 
 def gls2gml(
         gls,
@@ -130,7 +127,7 @@ def gls2gml(
         for line in nx.generate_gml(g):
             f.write(line+'\n')
         f.close()
-        if verbose: print(FileWriteMessage(filename,'gml'))
+        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
     
     return g
 
@@ -195,7 +192,7 @@ def nwk2gml(
             f.write(line+'\n')
         f.close()
 
-        if verbose: print(FileWriteMessage(filename,'gml'))
+        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
         return
     else:
         return graph
@@ -400,7 +397,7 @@ def radial_layout(
         for line in nx.generate_gml(graph):
             f.write(line+'\n')
         f.close()
-        if verbose: print(FileWriteMessage(filename,'gml'))
+        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
 
     return graph
 

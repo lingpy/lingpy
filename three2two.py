@@ -23,7 +23,7 @@ def run3to2():
         for f in filenames:
             if f.endswith('.py') or f.endswith('.pyx'):
                 files.append(os.path.join(root, f))
-            elif len([x for x in ['.bin','.o','.so','.pyc','~'] if f.endswith(x)]) == 0:
+            elif len([x for x in ['.bin','.o','.so','.pyc','~','.swp'] if f.endswith(x)]) == 0:
                 files.append(os.path.join(root, f))
 
     # # read in all files
@@ -66,6 +66,7 @@ from __future__ import unicode_literals
     # iterate over each file and write a new version to the output
     for f in files:
         if not f.endswith('.bin'):
+            print("[i] Converting file {0}...".format(f))
             stuff = codecs.open(f,'r','utf-8').read()
             for source,target in st_list:
                 stuff = stuff.replace(source,target)

@@ -13,11 +13,10 @@ import unicodedata
 from time import gmtime, strftime
 
 # internal imports
+from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
 from ..convert.csv import wl2csv
-from ..check import _timestamp
-from ..check.messages import *
 
 class Spreadsheet:
     """
@@ -313,7 +312,7 @@ class Spreadsheet:
         # use wl2csv to convert if fileformat is 'qlc'
         if fileformat in ['qlc','csv']:
             if fileformat == 'csv':
-                print(LingPyDeprecationWarning('csv','qlc'))
+                print(rcParams['deprecation_warning'].format('csv','qlc'))
             wl2csv(
                     self.header,
                     self._data,

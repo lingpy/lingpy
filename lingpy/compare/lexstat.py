@@ -27,7 +27,6 @@ from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
 from ..convert.misc import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
-from ..check.messages import *
 
 try:
     from ..algorithm.cython import calign

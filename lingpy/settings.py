@@ -64,7 +64,7 @@ rcParamsUpd = dict(
         sonar                      = True,
         scorer                     = {},
         tree_calc                  = 'neighbor',
-        gop                        = -3,
+        gop                        = -2,
         ref                        = 'cogid',
         lexstat_transform =  {                    
                     'A':'C', 

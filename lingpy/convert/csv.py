@@ -15,10 +15,9 @@ import json
 import codecs
 
 # internal imports
-from ..check.messages import FileWriteMessage
+from ..settings import rcParams
 from .phylip import matrix2dst
 from .misc import msa2str,scorer2str
-from ..check import _timestamp
 
 def pap2csv(
         taxa,
@@ -43,7 +42,7 @@ def pap2csv(
     f.write(out)
     f.close()
 
-    if verbose: print(FileWriteMessage(filename,'csv'))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.csv'))
     
     return
 
@@ -68,7 +67,7 @@ def wl2csv(
             keywords[k] = defaults[k]
 
     if not filename:
-        filename = _timestamp()
+        filename = rcParams['filename']
 
     # create output string
     out = '# Wordlist\n'
@@ -196,6 +195,6 @@ def wl2csv(
     if "stamp" in keywords:
         f.write(keywords['stamp'])
     f.close()
-    if verbose: print(FileWriteMessage(filename,keywords['fileformat']))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+keywords['fileformat']))
 
     return 

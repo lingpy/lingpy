@@ -39,7 +39,6 @@ try:
 except:
     print(rcParams['missing_module'].format('matplotlib'))
 
-from ..settings import rcParams
 from ..align.sca import SCA
 from ..thirdparty import cogent as cg
 from .gml import *

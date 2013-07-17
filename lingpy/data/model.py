@@ -17,9 +17,9 @@ import codecs
 
 from .._settings import rcParams
 try:
-    from .derive import compile_model
+    from .derive import compile_model,compile_dvt
 except ImportError:
-    print(rcParams['missing_module_warning'].format("networkx"))
+    print(rcParams['missing_module'].format("networkx"))
 try:
     from ..algorithm.cython import misc
 except:

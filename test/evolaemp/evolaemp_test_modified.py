@@ -90,8 +90,7 @@ for langID in langs:
 lexstat = LexStat(lexdict,model=rcParams['asjp'])
 # this does not really work with only one entry, use the other sca-method
 # instead
-#lexstat.get_scorer()
-lexstat.cluster(method='sca',threshold=0.5)
+lexstat.cluster(method='sca',threshold=0.6)
 etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
@@ -105,7 +104,7 @@ for cognateID in etym_dict.keys():
     entry_msq_file.close()
     print("Aligning cognate " + str(cognateID) + ":\n")
     multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False)
-    multi.prog_align(model=rcParams['sca'],gop=-2,scale=0.7)
+    multi.prog_align(model=rcParams['asjp'],gop=-2,scale=0.7,factor=0.3)
     print(multi)
     #collect the sound replacements in this cognate set
     cognateSize = len(multi.seqs)
