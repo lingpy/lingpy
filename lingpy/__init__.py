@@ -24,7 +24,7 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 
 """
 
-__author__="Johann-Mattis List, Steven Moran"
+__author__="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert"
 __date__="2013-04-04"
 
 # import settings
@@ -56,3 +56,6 @@ from .compare.lexstat import *
 
 # import algorithm-stuff
 from .algorithm import *
+
+# import basic namespace
+from .data.names.qlc import *
