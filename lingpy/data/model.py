@@ -1,26 +1,31 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 23:14
-# modified : 2013-03-06 23:14
+# modified : 2013-07-17 14:51
 """
 Module for handling sequence models.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-06"
+__date__="2013-07-17"
 
 
-from re import findall
+import re
 from pickle import load
 import os
 import codecs
 
-from ..check.exceptions import *
-
+from .._settings import rcParams
 try:
     from .derive import compile_model
 except ImportError:
-    ThirdPartyModuleError('networkx').warning()    
+    print(rcParams['missing_module_warning'].format("networkx"))
+try:
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _misc as misc
+from ..read import *
+from ..convert import *
 
 class Model(object):
     """
@@ -113,7 +118,7 @@ class Model(object):
             ):
         
         if path == None:
-            new_path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
+            new_path = rcParams['_path']+'/data/models/'+model+'/'
         else:
             if path.endswith('/'):
                 new_path = path+model+'/'
@@ -121,33 +126,41 @@ class Model(object):
                 new_path = path + '/' + model + '/'
 
         self.name = model
-        try:
-            self.converter = load(open(new_path+'converter.bin','rb'))
-            try:
-                self.scorer = load(open(new_path+'scorer.bin','rb'))
-            except:
-                pass
-        except:
+        # check for converter
+        if not os.path.isfile(new_path+'converter.bin'):
             compile_model(model,path)
-            self.converter = load(open(new_path+'converter.bin','rb'))
-            try:
-                self.scorer = load(open(new_path+'scorer.bin','rb'))
-            except:
-                pass
+        
+        self.converter = load(open(new_path+'converter.bin','rb'))
 
+        # check for scorer
+        # give always preference to scorer bin files
+        if os.path.isfile(new_path+'scorer.bin'):
+            self.scorer = load(open(new_path+'scorer.bin','rb'))
+        # second preference is given to matrix files
+        elif os.path.isfile(new_path + 'matrix'):
+            self.scorer = read_scorer(new_path + 'matrix')
+        # if none of the above fits, leave it
+        else: 
+            pass
         
         # read information from the info-file
         self.info = {}
         
         info = codecs.open(new_path+'INFO','r','utf-8').read()
         
-        data = ['description','compiler','source','date']
+        data = ['description','compiler','source','date','vowels','tones']
         
         for line in data:
             try:
-                self.info[line] = findall('@'+line+': (.*)',info)[0]
+                self.info[line] = re.findall('@'+line+': (.*)',info)[0]
             except:
                 self.info[line] = 'unknown'
+
+        # check for vowels and tones
+        if "vowels" in self.info:
+            self.vowels = self.info['vowels']
+        if "tones" in self.info:
+            self.tones = self.info['tones']
 
     def __str__(self):
         
@@ -198,77 +211,12 @@ def load_dvt(path=''):
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
     if not path:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/dvt.bin'
+        path = rcParams['_path']+'/data/models/dvt/dvt.bin'
     elif path in ['el','evolaemp']:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/dvt.bin'
+        path = rcParams['_path']+'/data/models/dvt_el/dvt.bin'
     else:
         pass
 
     dvt = load(open(path,'rb'))
 
     return dvt
-
-def set_global_model2(model='qlc'):
-    """
-    Define the global sound-class models used for the current LingPy session.
-
-    Parameters
-    ----------
-    model : string {'qlc','evolamp'}
-        Select between 'qlc' as the standard model of the QLC group and
-        'evolamp' as the standard model of the EvoLamp group.
-        
-    """
-    global ipa_diacritics
-    global ipa_vowels
-    global ipa_tones
-    global sca
-    global asjp
-    global dolgo
-    global art
-    global _color
-
-    if model in ['default','standard','qlc']:
-        try:
-            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt()
-            sca = Model('sca')
-            asjp = Model('asjp')
-            dolgo = Model('dolgo')
-            art = Model('art')
-            _color = Model('color')
-        # compile the models if they are not precompiled
-        except:
-            compile_dvt()
-            compile_model('sca')
-            compile_model('dolgo')
-            compile_model('art')
-            compile_model('color')
-            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt()
-            sca = Model('sca')
-            asjp = Model('asjp')
-            dolgo = Model('dolgo')
-            art = Model('art')
-            _color = Model('color')
-    elif model in ['evolamp', 'el']:
-        try:
-            ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt(path='el')
-            sca = Model('sca_el')
-            asjp = Model('asjp_el')
-            dolgo = Model('dolgo_el')
-            art = Model('art_el')
-            _color = Model('color_el')
-        # compile the models if they are not precompiled
-        except:
-            compile_dvt(path='el')
-            compile_model('sca_el')
-            compile_model('dolgo_el')
-            compile_model('art_el')
-            compile_model('color_el')
-            ipa_diacritics,ipa_vowels,ipa_tones = load_dvt(path='el')
-            sca = Model('sca_el')
-            asjp = Model('asjp_el')
-            dolgo = Model('dolgo_el')
-            art = Model('art_el')
-            _color = Model('color_el')
-
-

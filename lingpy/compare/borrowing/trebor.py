@@ -18,13 +18,11 @@ import codecs
 
 # thirdparty imports
 import numpy as np
-import networkx as nx
-import scipy.stats as sps
+
 import numpy.linalg as linalg
 
 # import error classes
-from ...check.exceptions import *
-from ...check.messages import *
+from ._settings import rcParams
 from ...align.multiple import Multiple
 from ...convert.plot import plot_tree, plot_gls, plot_concept_evolution
 
@@ -33,19 +31,27 @@ try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 except ImportError:
-    ThirdPartyModuleError('matplotlib').warning()
+    print(rcParams['missing_module'].format('matplotlib'))
 
 # import 3d-stuff
 try:
     from mpl_toolkits.mplot3d import Axes3D
 except:
-    ThirdPartyModuleError('mplot3d').warning()
+    print(rcParams['missing_module'].format('mplot3d'))
 
 # import the geoplot module
 try:
     import mpl_toolkits.basemap as bmp
 except ImportError:
-    ThirdPartyModuleError('basemap').warning()
+    print(rcParams['missing_module'].format('basemap'))
+try:
+    import networkx as nx
+except:
+    print(rcParams['missing_module'].format('networkx'))
+try:
+    import scipy.stats as sps
+except:
+    print(rcParams['missing_module'].format('scipy'))
 
 from .polygon import getConvexHull
 
@@ -107,7 +113,7 @@ class PhyBo(Wordlist):
 
         # check for cognates
         if 'cognates' in keywords:
-            print(LingPyDeprecationWarning('cognates','ref'))
+            print(rcParams['deprecation_warning'].format('cognates','ref'))
             ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
@@ -122,13 +128,13 @@ class PhyBo(Wordlist):
         if os.path.isfile(self.dataset+'.qlc'):
             infile = self.dataset+'.qlc'
         elif os.path.isfile(self.dataset+'.csv'):
-            print(LingPyDeprecationWarning('csv','qlc'))
+            print(rcParams['deprecation_warning'].format('csv','qlc'))
             infile = self.dataset+'.csv'
         else:
             raise FileNotFoundError("The input file could not be found.")
         Wordlist.__init__(self,infile,row='concept',col='doculect')
         
-        if verbose: print("[i] Loaded the wordlist file.")
+        if rcParams["verbose"]: print("[i] Loaded the wordlist file.")
 
         # check for glossid
         if 'glid' not in self.entries:
@@ -159,14 +165,14 @@ class PhyBo(Wordlist):
                     f
                     )
 
-            if verbose: print("[i] Created entry PAP.")
+            if rcParams["verbose"]: print("[i] Created entry PAP.")
         
         # get the paps and the etymological dictionary
         if not hasattr(self,'paps'):
             self.paps = self.get_paps(ref=paps,missing=keywords['missing'])
             self.etd = self.get_etymdict(ref=paps)
 
-        if verbose: print("[i] Created the PAP matrix.")
+        if rcParams["verbose"]: print("[i] Created the PAP matrix.")
 
         # get a list of concepts corresponding to the cogs and get the
         # singletons to be excluded from the calculation
@@ -195,7 +201,7 @@ class PhyBo(Wordlist):
             # create a list of keys for faster access when iterating
             self.cogs = [k for k in self.pap2con if k not in self.singletons]
 
-            if verbose: print("[i] Excluded singletons.")
+            if rcParams["verbose"]: print("[i] Excluded singletons.")
 
         # summarize the cognate sets under their common concept
 
@@ -213,13 +219,13 @@ class PhyBo(Wordlist):
                         tree_calc=tree_calc,
                         verbose=verbose
                         )
-                if verbose: print("[i] Tree-file was not found, creating it now...")
+                if rcParams["verbose"]: print("[i] Tree-file was not found, creating it now...")
             # XXX TODO
         
         # if it is explicitly defined, try to load that file
         elif not hasattr(self,'tree'):
             self.tree = cg.LoadTree(tree)
-            if verbose: print("[i] Loaded the tree.")
+            if rcParams["verbose"]: print("[i] Loaded the tree.")
         else:
             pass
 
@@ -238,7 +244,7 @@ class PhyBo(Wordlist):
                     start = keywords['start']
                     )
             
-            if verbose: print("[i] Calculated radial layout for the tree. ")
+            if rcParams["verbose"]: print("[i] Calculated radial layout for the tree. ")
         
         self.tgraph = gTpl
         
@@ -283,12 +289,12 @@ class PhyBo(Wordlist):
                     ]
                 )
 
-        if verbose: print("[i] Subtree is {0}.".format(str(tree)))
+        if rcParams["verbose"]: print("[i] Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
 
-        if verbose: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        if rcParams["verbose"]: print("[i] Nodes are {0}.".format(','.join(nodes)))
         
         if mode == 1:
             return [(tree.Name,1)]
@@ -528,12 +534,12 @@ class PhyBo(Wordlist):
                     ]
                 )
 
-        if verbose: print("[i] Subtree is {0}.".format(str(tree)))
+        if rcParams["verbose"]: print("[i] Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
 
-        if verbose: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        if rcParams["verbose"]: print("[i] Nodes are {0}.".format(','.join(nodes)))
 
         # get the first state of all nodes and store the state in the
         # dictionary. note that we start from two distinct scenarios: one
@@ -570,7 +576,7 @@ class PhyBo(Wordlist):
 
         # join the nodes successively
         for i,node in enumerate(ordered_nodes):
-            if verbose: print(node.Name)
+            if rcParams["verbose"]: print(node.Name)
             
             # when dealing with multifurcating trees, we have to store all
             # possible scenarios, i.e. we need to store the crossproduct of all
@@ -676,7 +682,7 @@ class PhyBo(Wordlist):
                         newNodes += [newNodeB]
                         
                 d[node.Name] = newNodes
-                if verbose: print("Node length:",len(d[node.Name]))
+                if rcParams["verbose"]: print("Node length:",len(d[node.Name]))
         
         # try to find the best scenario by counting the ratio of gains and losses.
         # the key idea here is to reduce the number of possible scenarios according
@@ -688,7 +694,7 @@ class PhyBo(Wordlist):
         # differently. So in a second stage we choose only those scenarios where
         # there is a minimal amount of gains. 
         
-        if verbose: print(len(d[tree.Name]))
+        if rcParams["verbose"]: print(len(d[tree.Name]))
 
         # convert the specific format of the d[tree.Name] to simple format
         gls_list = []
@@ -826,7 +832,7 @@ class PhyBo(Wordlist):
         
         # check for previous analyses
         if glm in self.gls and not keywords['force']:
-            if verbose:
+            if rcParams["verbose"]:
                 print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
                         end = ""
                         )
@@ -855,14 +861,14 @@ class PhyBo(Wordlist):
             cogTuple = tuple(self.paps[cog])
             if cogTuple in cogDict:
                 skip += 1
-                if verbose: print(
+                if rcParams["verbose"]: print(
                     "[i] Skipping already calculated pattern for COG {0}...".format(cog),
                     end=""
                     )
                 self.gls[glm][cog] = cogDict[cogTuple]
             else:
                 nonskip += 1
-                if verbose: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
+                if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
                 
                 # check for singletons
                 if sum([x for x in self.paps[cog] if x == 1]) == 1:
@@ -899,8 +905,8 @@ class PhyBo(Wordlist):
                 cogDict[cogTuple] = (gls,noo)
 
             # attend scenario to gls
-            if verbose: print(" done.")
-        if verbose: print("[i] Successfully calculated Gain-Loss-Scenarios.")
+            if rcParams["verbose"]: print(" done.")
+        if rcParams["verbose"]: print("[i] Successfully calculated Gain-Loss-Scenarios.")
         
         # write the results to file
         # make the folder for the data to store the stats
@@ -1058,7 +1064,7 @@ class PhyBo(Wordlist):
         except:
             pass
         
-        if verbose: print("[i] Writing GLS data to file... ",end="")
+        if rcParams["verbose"]: print("[i] Writing GLS data to file... ",end="")
         
         # write gls-data to folder
         f = codecs.open(folder+'/gls/{0}-{1}.gls'.format(self.dataset,glm),'w','utf-8')
@@ -1071,11 +1077,11 @@ class PhyBo(Wordlist):
                         ) + '\t'+str(noo)+'\n'
                     )
         f.close()
-        if verbose: print("done.")
+        if rcParams["verbose"]: print("done.")
 
         
         # print out average number of origins
-        if verbose: print("[i] Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
+        if rcParams["verbose"]: print("[i] Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
 
         # write statistics to stats file
         try:
@@ -1126,7 +1132,7 @@ class PhyBo(Wordlist):
         # store the stuff as an attribute
         self.dists['contemporary'] = [x for x,y in zip(forms,meanings)] # XXX
 
-        if verbose: print("[i] Calculated the distributions for contemporary taxa.")
+        if rcParams["verbose"]: print("[i] Calculated the distributions for contemporary taxa.")
         
         return 
 
@@ -1151,7 +1157,7 @@ class PhyBo(Wordlist):
         # check for already calculated glm
         # check for previous analyses
         if glm in self.dists and not keywords['force'] and glm != 'mixed':
-            if verbose:
+            if rcParams["verbose"]:
                 print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
                         end = ""
                         )
@@ -1265,7 +1271,7 @@ class PhyBo(Wordlist):
                     except:
                         self.acs[glm][node] = [(c,m,p)]
 
-        if verbose: print("[i] Calculated the distributions for ancestral taxa.")
+        if rcParams["verbose"]: print("[i] Calculated the distributions for ancestral taxa.")
 
         return
 
@@ -1694,7 +1700,7 @@ class PhyBo(Wordlist):
         except:
             pass
         
-        if verbose: print("[i] Writing GLS data to file... ",end="")
+        if rcParams["verbose"]: print("[i] Writing GLS data to file... ",end="")
         
         # write gls-data to folder
         f = codecs.open(
@@ -1711,7 +1717,7 @@ class PhyBo(Wordlist):
                         ) + '\t'+str(noo)+'\n'
                     )
         f.close()
-        if verbose: print("done.")
+        if rcParams["verbose"]: print("done.")
 
         return 
 
@@ -1847,10 +1853,10 @@ class PhyBo(Wordlist):
                                     )
 
         # verbose output
-        if verbose: print("[i] Calculated primary graph.")
+        if rcParams["verbose"]: print("[i] Calculated primary graph.")
         
         # verbose output
-        if verbose: print("[i] Inferring lateral edges...")
+        if rcParams["verbose"]: print("[i] Inferring lateral edges...")
             
         # create MST graph
         gMST = nx.Graph()
@@ -2024,7 +2030,7 @@ class PhyBo(Wordlist):
         # transfer node data
 
         # verbose output
-        if verbose: print("[i] Writing graph to file...")
+        if rcParams["verbose"]: print("[i] Writing graph to file...")
 
         # write the graph to file
         f = codecs.open(
@@ -2039,7 +2045,7 @@ class PhyBo(Wordlist):
         # write the inferred borrowing events (ILS, inferred lateral event) 
         # between all taxa to file
         # verbose output
-        if verbose: print("[i] Writing Inferred Lateral Events to file...")
+        if rcParams["verbose"]: print("[i] Writing Inferred Lateral Events to file...")
 
         f = codecs.open(
                 self.dataset+'_trebor/ile-'+glm+'.csv',
@@ -2103,7 +2109,7 @@ class PhyBo(Wordlist):
                     )
         f.close()
 
-        if verbose: print("[i] Wrote node degree distributions to file.")
+        if rcParams["verbose"]: print("[i] Wrote node degree distributions to file.")
 
         # write edge distributions
         f = codecs.open(
@@ -2130,7 +2136,7 @@ class PhyBo(Wordlist):
                         )
                     )
         f.close()
-        if verbose: print("[i] Wrote edge-weight distributions to file.")
+        if rcParams["verbose"]: print("[i] Wrote edge-weight distributions to file.")
         
         # write specific links of taxa to file
         try:
@@ -2173,7 +2179,7 @@ class PhyBo(Wordlist):
                         concept
                         ))
             f.close()
-        if verbose: print("[i] Wrote list of edges per taxa to file.")
+        if rcParams["verbose"]: print("[i] Wrote list of edges per taxa to file.")
 
         return 
 
@@ -2252,7 +2258,7 @@ class PhyBo(Wordlist):
             
             paps.append((key,noo))
         
-        if verbose: print("[i] Retrieved patchy distributions.")
+        if rcParams["verbose"]: print("[i] Retrieved patchy distributions.")
 
         # get the index for the paps in the wordlist
         papIdx = self.header['pap']
@@ -2285,7 +2291,7 @@ class PhyBo(Wordlist):
         # self.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
         # XXX change later
 
-        if verbose: print("[i] Updated the wordlist.")
+        if rcParams["verbose"]: print("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
         f = codecs.open(
@@ -2318,7 +2324,7 @@ class PhyBo(Wordlist):
             else:
                 f.write('{0}\t{1}\t{2}\t{3}\n'.format(a1,a2,a3,b,len(l)))
         f.close()
-        if verbose: print("[i] Wrote stats on paps to file.")
+        if rcParams["verbose"]: print("[i] Wrote stats on paps to file.")
 
         # write stats on concepts
         f = codecs.open(
@@ -2332,7 +2338,7 @@ class PhyBo(Wordlist):
         for a,b in sorted(concepts.items(),key=lambda x:x[1],reverse=True):
             f.write('{0}\t{1:.2f}\n'.format(a,b))
         f.close()
-        if verbose: print("[i] Wrote stats on concepts to file.")
+        if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
         
         # write results to alm-file
         # get all patchy cognates
@@ -2441,7 +2447,7 @@ class PhyBo(Wordlist):
         try:
             edge = graph.edge[nodeA][nodeB]
         except:
-            if verbose: print(warning)
+            if rcParams["verbose"]: print(warning)
             return
 
         # check the edge
@@ -2641,7 +2647,7 @@ class PhyBo(Wordlist):
         # carry out the various analyses
         for mode,params in runs:
             if mode == 'weighted':
-                if verbose: print(
+                if rcParams["verbose"]: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and ratio {0[0]}:{0[1]}...".format(params)
                                 )
@@ -2657,7 +2663,7 @@ class PhyBo(Wordlist):
                         push_gains = keywords['push_gains']
                         )
             elif mode == 'restriction':
-                if verbose: print(
+                if rcParams["verbose"]: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -2673,7 +2679,7 @@ class PhyBo(Wordlist):
                         push_gains = keywords['push_gains']
                         )
             elif mode == 'topdown':
-                if verbose: print(
+                if rcParams["verbose"]: print(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -2688,18 +2694,18 @@ class PhyBo(Wordlist):
     
         # calculate the different distributions
         # start by calculating the contemporary distributions
-        if verbose: print("[i] Calculating the Contemporary Vocabulary Distributions...")
+        if rcParams["verbose"]: print("[i] Calculating the Contemporary Vocabulary Distributions...")
         self.get_CVSD(verbose=verbose)
         
     
         # now calculate the rest of the distributions
-        if verbose: print("[i] Calculating the Ancestral Vocabulary Distributions...")
+        if rcParams["verbose"]: print("[i] Calculating the Ancestral Vocabulary Distributions...")
         modes = list(self.gls.keys())
         for m in modes:
             self.get_AVSD(m,verbose=verbose,**keywords)
 
         # compare the distributions using mannwhitneyu
-        if verbose: print("[i] Comparing the distributions...")
+        if rcParams["verbose"]: print("[i] Comparing the distributions...")
         
         zp_vsd = []
         for m in modes:
@@ -2724,7 +2730,7 @@ class PhyBo(Wordlist):
 
         # calculate mixed model
         if mixed:
-            if verbose: print("[i] Calculating the mixed model...")
+            if rcParams["verbose"]: print("[i] Calculating the mixed model...")
             self.get_IVSD(
                     verbose=verbose,
                     output_plot=output_plot,
@@ -2747,7 +2753,7 @@ class PhyBo(Wordlist):
                 zp_vsd.append((vsd[0], vsd[1]))
 
         # write results to file
-        if verbose: print("[i] Writing stats to file.")
+        if rcParams["verbose"]: print("[i] Writing stats to file.")
         f = codecs.open(self.dataset+'_trebor/'+self.dataset+'.stats','w','utf-8')
         f.write("Mode\tANO\tMNO\tVSD_z\tVSD_p\n")
         for i in range(len(zp_vsd)):
@@ -2859,7 +2865,7 @@ class PhyBo(Wordlist):
             plt.savefig(self.dataset+'_trebor/vsd.pdf')
             plt.clf()
             
-            if verbose: print("[i] Plotted the distributions.")
+            if rcParams["verbose"]: print("[i] Plotted the distributions.")
         
 
         # carry out further analyses if this is specified
@@ -2952,39 +2958,39 @@ class PhyBo(Wordlist):
             plt.switch_backend('TkAgg')
 
         defaults = dict(
-                figsize          = (10,10),
+                figsize          = rcParams['phybo_figsize'], 
                 colormap         = mpl.cm.jet,
                 filename         = self.dataset,
-                linescale        = 1.0,
-                maxweight        = False,
-                xlim             = 5,
-                ylim             = 5,
-                xlimr            = False,
-                xliml            = False,
-                ylimt            = False,
-                ylimb            = False,
-                left             = 0.01,
-                right            = 0.99,
-                top              = 0.99,
-                bottom           = 0.01,
-                cbar_shrink      = 0.55,
-                cbar_fraction    = 0.1,
-                cbar_pad         = 0.1,
-                cbar_orientation = 'vertical',
-                cbar_label       = 'Inferred Links',
-                vedgestyle       = 'double',
-                vedgecolor       = 'black',
-                vedgelinewidth   = 5,
-                hedgescale       = 3,
-                nodestyle        = 'double',
-                nodesize         = 10,
-                nodecolor        = 'black',
-                labels           = {},
-                _prefix = '- ',
-                _suffix = ' -',
-                textsize = '10',
-                vsd_scale = 0.1,
-                latex_preamble = [],
+                linescale        = rcParams['phybo_linescale'], 
+                maxweight        = rcParams['phybo_maxweight'], 
+                xlim             = rcParams['phybo_xlim'], 
+                ylim             = rcParams['phybo_ylim'], 
+                xlimr            = rcParams['phybo_xlimr'], 
+                xliml            = rcParams['phybo_xliml'], 
+                ylimt            = rcParams['phybo_ylimt'], 
+                ylimb            = rcParams['phybo_ylimb'], 
+                left             = rcParams['phybo_left'], 
+                right            = rcParams['phybo_right'], 
+                top              = rcParams['phybo_top'], 
+                bottom           = rcParams['phybo_bottom'], 
+                cbar_shrink      = rcParams['phybo_cbar_shrink'], 
+                cbar_fraction    = rcParams['phybo_cbar_fraction'], 
+                cbar_pad         = rcParams['phybo_cbar_pad'], 
+                cbar_orientation = rcParams['phybo_cbar_orientation'], 
+                cbar_label       = rcParams['phybo_cbar_label'], 
+                vedgestyle       = rcParams['phybo_vedgestyle'], 
+                vedgecolor       = rcParams['phybo_vedgecolor'], 
+                vedgelinewidth   = rcParams['phybo_vedgelinewidth'], 
+                hedgescale       = rcParams['phybo_hedgescale'], 
+                nodestyle        = rcParams['phybo_nodestyle'], 
+                nodesize         = rcParams['phybo_nodesize'], 
+                nodecolor        = rcParams['phybo_nodecolor'], 
+                labels           = rcParams['phybo_labels'], 
+                _prefix          = rcParams['phybo_prefix'], 
+                _suffix          = rcParams['phybo_suffix'], 
+                textsize         = rcParams['phybo_textsize'], 
+                vsd_scale        = rcParams['phybo_vsd_scale'], 
+                latex_preamble   = rcParams['phybo_latex_preamble'], 
                 )
         for k in defaults:
             if k not in keywords:
@@ -3316,7 +3322,7 @@ class PhyBo(Wordlist):
         # save the figure
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if verbose: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
 
         return
 
@@ -3603,7 +3609,7 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if verbose: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
 
         return
 
@@ -3923,7 +3929,7 @@ class PhyBo(Wordlist):
             except:
                 raise ValueError('[!] Configuration is not specified!')
 
-        if verbose: LoadDataMessage('configuration')
+        if rcParams["verbose"]: LoadDataMessage('configuration')
 
         # overwrite configuration from keywords
         for k in keywords:
@@ -4237,7 +4243,7 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if verbose: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
     
     def plot_concepts(
             self,
@@ -4307,7 +4313,7 @@ class PhyBo(Wordlist):
         #else:
         #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
-        if verbose: LoadDataMessage('coordinates','groups','colors').message('loaded')
+        if rcParams["verbose"]: LoadDataMessage('coordinates','groups','colors').message('loaded')
         
         # load the rc-file XXX add internal loading later
         try:
@@ -4315,7 +4321,7 @@ class PhyBo(Wordlist):
         except:
             pass # XXX add fallback later
         
-        if verbose: LoadDataMessage('configuration')
+        if rcParams["verbose"]: LoadDataMessage('configuration')
                 
         # get the paps
         these_taxa = {}
@@ -4459,7 +4465,7 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if verbose: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
         return
     
     def plot_GLS(
@@ -4651,7 +4657,7 @@ class PhyBo(Wordlist):
         
         ppc = sum([1 for g in gains if g > 1]) / len(gains)
         
-        if verbose:
+        if rcParams["verbose"]:
             print('Number of Origins: {0:.2f}'.format(noo))
             print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
 
@@ -4723,7 +4729,7 @@ class PhyBo(Wordlist):
         
         # start with the analysis
         for concept in concepts:
-            if verbose: print("Plotting concept '{0}'...".format(concept))
+            if rcParams["verbose"]: print("Plotting concept '{0}'...".format(concept))
             
             # switch backend, depending on whether tex is used or not
             backend = mpl.get_backend()

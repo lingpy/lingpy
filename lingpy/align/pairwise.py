@@ -10,7 +10,8 @@ __author__="Johann-Mattis List"
 __date__="2013-03-05"
 
 # modules
-from ..data import *
+#from ..data import *
+from ..settings import rcParams
 from ..sequence.sound_classes import *
 try:
     from ..algorithm.cython import malign
@@ -58,19 +59,19 @@ class Pairwise(object):
 
         # define a tokenizer function for convenience
         defaults = {
-                "diacritics" : None,
-                "vowels":None,
-                "tones":None,
-                "combiners":'\u0361\u035c',
-                "breaks":'.-',
-                "stress":"ˈˌ'",
-                "merge_vowels" : True
+                "diacritics"   : rcParams['diacritics'],
+                "vowels"       : rcParams['vowels'],
+                "tones"        : rcParams['tones'],
+                "combiners"    : rcParams['combiners'],
+                "breaks"       : rcParams['breaks'],
+                "stress"       : rcParams['stress'],
+                "merge_vowels" : rcParams['merge_vowels']
                 }
-        for k in keywords:
-            if k in defaults:
-                defaults[k] = keywords[k]
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
-        tokenize = lambda x: ipa2tokens(x,**defaults)
+        tokenize = lambda x: ipa2tokens(x,**keywords)
 
         # start to loop over data and create the stuff
         for k,(seqA,seqB) in enumerate(self.seqs):
@@ -79,7 +80,7 @@ class Pairwise(object):
             tokA,tokB = tokenize(seqA),tokenize(seqB)
 
             # get the prostrings
-            proA,proB = prosodic_string(tokA),prosodic_string(tokB)
+            proA,proB = prosodic_string(tokA,**keywords),prosodic_string(tokB,**keywords)
 
             # append the stuff
             self.tokens += [[tokA,tokB]]
@@ -147,7 +148,7 @@ class Pairwise(object):
 
     def _set_model(
             self,
-            model = None
+            **keywords
             ):
         """
         Define the sequence model for the calculation.
@@ -158,15 +159,30 @@ class Pairwise(object):
             Specify the sound-class model to which the strings shall be
             converted.
         """
+        defaults = dict(
+                model = rcParams['sca'],
+                stress = rcParams['stress']
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
         
-        if not model:
-            self.model = sca
-        else:
-            self.model = model
+        self.model = keywords['model']
         
         self.classes = []
         for clA,clB in map(
-                lambda x:(tokens2class(x[0],self.model),tokens2class(x[1],self.model)),
+                lambda x:(
+                    tokens2class(
+                        x[0],
+                        self.model,
+                        stress = keywords['stress']
+                        ),
+                    tokens2class(
+                        x[1],
+                        self.model,
+                        stress = keywords['stress']
+                        )
+                    ),
                 self.tokens
                 ):
             self.classes += [(clA,clB)]
@@ -179,14 +195,15 @@ class Pairwise(object):
 
     def align(
             self,
-            gop = -1,
-            scale = 0.5,
-            mode = 'global',
-            factor = 0.3,
-            restricted_chars = 'T_',
-            distance = False,
-            model = None,
-            pprint = False
+            **keywords
+            #gop = -1,
+            #scale = 0.5,
+            #mode = 'global',
+            #factor = 0.3,
+            #restricted_chars = 'T_',
+            #distance = False,
+            #model = None,
+            #pprint = False
             ):
         """
         Align a pair of sequences or multiple sequence pairs.
@@ -219,50 +236,61 @@ class Pairwise(object):
             If set to *True*, the alignments are printed to the screen.
 
         """
+        defaults = dict(
+                gop = -1,
+                scale = 0.5,
+                mode = 'global',
+                factor = 0.3,
+                restricted_chars = 'T_',
+                distance = False,
+                model = rcParams['sca'],
+                pprint = False
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
         if hasattr(self,'model'):
-            if not model:
-                pass
-            elif model == self.model:
+            if keywords['model'] == self.model:
                 pass
             else:
-                self._set_model(model)
+                self._set_model(**keywords)
         else:
-            self._set_model(model)
+            self._set_model(**keywords)
         
         # create the alignments array
         self._alignments = []
         self.alignments = []
         
         # define local
-        if mode == 'local':
+        if keywords['mode'] == 'local':
             local = True
         else:
             local = False
         
-        if not distance:
+        if not keywords['distance']:
             self._alignments = calign.align_pairs(
                     self.classes,
                     self.weights,
                     self.prostrings,
-                    gop,
-                    scale,
-                    factor,
+                    keywords['gop'],
+                    keywords['scale'],
+                    keywords['factor'],
                     self.scoredict,
-                    mode,
-                    restricted_chars
+                    keywords['mode'],
+                    keywords['restricted_chars']
                     )
         else:
             self._alignments = calign.align_pairs(
                     self.classes,
                     self.weights,
                     self.prostrings,
-                    gop,
-                    scale,
-                    factor,
+                    keywords['gop'],
+                    keywords['scale'],
+                    keywords['factor'],
                     self.scoredict,
-                    mode,
-                    restricted_chars,
+                    keywords['mode'],
+                    keywords['restricted_chars'],
                     distance = 1
                     )
         
@@ -270,14 +298,16 @@ class Pairwise(object):
         self.alignments = []
         for i,(almA,almB,sim) in enumerate(self._alignments):
             
-            if mode != "local":
+            if keywords['mode'] != "local":
                 self.alignments.append(
                         (
                             class2tokens(
-                                self.tokens[i][0],almA
+                                self.tokens[i][0],
+                                almA
                                 ),
                             class2tokens(
-                                self.tokens[i][1],almB
+                                self.tokens[i][1],
+                                almB
                                 ),
                             sim
                             )
@@ -286,17 +316,21 @@ class Pairwise(object):
                 self.alignments.append(
                         (
                             class2tokens(
-                                self.tokens[i][0],almA,local=True
+                                self.tokens[i][0],
+                                almA,
+                                local=True
                                 ),
                             class2tokens(
-                                self.tokens[i][1],almB,local=True
+                                self.tokens[i][1],
+                                almB,
+                                local=True
                                 ),
                             sim
                             )
                         )
 
         # print the alignments, if this is chosen
-        if pprint:
+        if keywords['pprint']:
             print(self)
         else:
             pass
@@ -320,15 +354,14 @@ def pw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
-        raise ValueError(
-            "[!] Input sequences should be tuples, lists, or strings!"
-            )
+        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
+    
     if distance:
         distance = 1
     else:
         distance = 0
     
-    if not scorer:
+    if not scorer and distance == 0:
         scorer = {}
         for a in seqA:
             for b in seqB:
@@ -336,6 +369,17 @@ def pw_align(
                     scorer[a,b] = 1.0
                 else:
                     scorer[a,b] = -1.0
+    elif not scorer and distance == 1:
+        scorer = {}
+        for i,a in enumerate(sorted(set(seqA+seqB))):
+            for j,b in enumerate(sorted(set(seqA+seqB))):
+                if i <= j:
+                    if a == b:
+                        scorer[a,b] = 1.0
+                        scorer[b,a] = 1.0
+                    else:
+                        scorer[a,b] = -1.0
+                        scorer[b,a] = -1.0
 
     # start alignment
     return talign.align_pair(
@@ -362,9 +406,7 @@ def nw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
-        raise ValueError(
-            "[!] Input sequences should be tuples, lists, or strings!"
-            )
+        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     if not scorer:
         scorer = {}
         for a in seqA:
@@ -405,9 +447,7 @@ def edit_dist(
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
-        raise ValueError(
-            "[!] Input sequences should be tuples, lists, or strings!"
-            )
+        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     
     if restriction in ['cv','consonant-vowel']:
         
@@ -439,9 +479,7 @@ def sw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
-        raise ValueError(
-            "[!] Input sequences should be tuples, lists, or strings!"
-            )
+        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     if not scorer:
         scorer = {}
         for a in seqA:
@@ -469,9 +507,7 @@ def we_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
-        raise ValueError(
-            "[!] Input sequences should be tuples, lists, or strings!"
-            )
+        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
 
     if not scorer:
         scorer = {}
@@ -489,28 +525,32 @@ def structalign(
         seqB
         ):
     """
-    
+    Experimental function for testing structural alignment algorithms.
     """
     return malign.structalign(seqA,seqB)
 
 def turchin(
         seqA,
-        seqB
+        seqB,
+        **keywords
         ):
     """
     Return cognate judgment based on Turchin et al.'s (2010) method.
     """
+    if 'model' not in keywords:
+        model = rcParams['dolgo']
+
     if type(seqA) == str:
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
         
-    classA = tokens2class(seqA,dolgo)
-    classB = tokens2class(seqB,dolgo)
+    classA = tokens2class(seqA,model)
+    classB = tokens2class(seqB,model)
 
-    if classA[0] == 'V': classA[0] = 'H'
-    if classB[0] == 'V': classB[0] = 'H'
+    if classA[0] in model.vowels: classA[0] = 'H'
+    if classB[0] in model.vowels: classB[0] = 'H'
 
-    if ''.join(classA).replace('V','')[:2] == ''.join(classB).replace('V','')[:2]:
+    if ''.join([k for k in classA if k not in model.vowels])[:2] == ''.join([k for k in classB if k not in model.vowels])[:2]:
         return 0
     else:
         return 1

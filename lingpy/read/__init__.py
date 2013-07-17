@@ -1,3 +1,3 @@
 from .phylip import *
 from .csv import *
-from .phylip import *
+from .qlc import *

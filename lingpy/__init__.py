@@ -27,6 +27,9 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 __author__="Johann-Mattis List, Steven Moran"
 __date__="2013-04-04"
 
+# import settings
+from .settings import *
+
 # general imports
 from .basic import *
 

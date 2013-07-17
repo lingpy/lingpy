@@ -127,7 +127,7 @@ import numpy as np
 import re
 import codecs
 
-from ..data import *
+from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..sequence.sound_classes import *
 from .multiple import Multiple
@@ -136,8 +136,6 @@ try:
     from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _misc as misc
-from ..check import _timestamp
-
 
 class MSA(Multiple):
     """
@@ -195,14 +193,14 @@ class MSA(Multiple):
 
         # set the defaults
         defaults = {
-                'comment':'#',
-                "diacritics" : None,
-                "vowels":None,
-                "tones":None,
-                "combiners":'\u0361\u035c',
-                "breaks":'.-',
-                "stress":"ˈˌ'",
-                "merge_vowels" : True
+                'comment'      : rcParams['comment'],
+                "diacritics"   : rcParams['diacritics'],
+                "vowels"       : rcParams['vowels'],
+                "tones"        : rcParams['tones'],
+                "combiners"    : rcParams['combiners'],
+                "breaks"       : rcParams['breaks'],
+                "stress"       : rcParams['stress'],
+                "merge_vowels" : rcParams['merge_vowels'],
                 }
         for k in defaults:
             if k not in keywords:
@@ -418,7 +416,8 @@ class MSA(Multiple):
 
     def ipa2cls(
             self,
-            model = None
+            **keywords
+            #model = rcParams['sca']
             ):
         """
         Retrieve sound-class strings from aligned IPA sequences.
@@ -434,17 +433,27 @@ class MSA(Multiple):
         This function is only useful when an ``msa``-file with already
         conducted alignment analyses was loaded.
         """
+        defaults = dict(
+                model = rcParams['sca'],
+                stress = rcParams['stress']
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
         self.classes = []
         
-        if not model:
-            self.model = sca
-        else:
-            self.model = model
+        self.model = keywords['model']
+        #if not model:
+        #    self.model = sca
+        #else:
+        #    self.model = model
 
         # redefine the sequences of the Multiple class
-        class_strings = [tokens2class(seq.split('.'),self.model)
-                for seq in self.seqs]
+        class_strings = [tokens2class(
+            seq.split('.'),
+            self.model,
+            stress=keywords['stress']) for seq in self.seqs]
         
         # define the scoring dictionaries according to the methods
         aligned_seqs = [alm for alm in self.alm_matrix]
@@ -582,7 +591,7 @@ class MSA(Multiple):
         try:
             out.write('# Created using LingPy-2.0\n')
             out.write('# Parameters: '+self.params+'\n')
-            out.write('# Created: {0}\n'.forma(_timestamp('now')))
+            out.write('# Created: {0}\n'.format(rcParams['timestamp']))
         except:
             pass
         out.close()
@@ -956,28 +965,28 @@ class Alignments(Wordlist):
 
     def align(
             self,
-            method = 'progressive',
-            iteration = False,
-            swap_check = False,
-            output = False,
-            model = None,
-            mode = 'global',
-            modes = [
-                ('global',-2,0.5),
-                ('local',-1,0.5),
-                ],
-            gop = -3,
-            scale = 0.5,
-            factor = 0.3,
-            tree_calc = 'neighbor',
-            gap_weight = 0.5,
-            restricted_chars = 'T_',
-            classes = True,
-            sonar = True,
-            scorer = {},
-            verbose = True,
-            plot = False,
-            ref = 'cogid',
+            #method = 'progressive',
+            #iteration = False,
+            #swap_check = False,
+            #output = False,
+            #model = None,
+            #mode = 'global',
+            #modes = [
+            #    ('global',-2,0.5),
+            #    ('local',-1,0.5),
+            #    ],
+            #gop = -3,
+            #scale = 0.5,
+            #factor = 0.3,
+            #tree_calc = 'neighbor',
+            #gap_weight = 0.5,
+            #restricted_chars = 'T_',
+            #classes = True,
+            #sonar = True,
+            #scorer = {},
+            #verbose = True,
+            #plot = False,
+            #ref = 'cogid',
             **keywords
             ):
         """
@@ -1058,51 +1067,53 @@ class Alignments(Wordlist):
         plot : bool (default=False)
             Determine whether MSA should be plotted in HTML.
         """
-        for key,value in sorted(self.msa[ref].items(),key=lambda x:x[0]):
-            if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
+        kw = dict(
+                method = 'progressive',
+                iteration = False,
+                swap_check = False,
+                output = False,
+                model = rcParams['sca'],
+                mode = rcParams['align_mode'],
+                modes = rcParams['align_modes'],
+                gop = rcParams['gop'],
+                scale = rcParams['scale'],
+                factor = rcParams['factor'],
+                tree_calc = rcParams['tree_calc'],
+                gap_weight = rcParams['gap_weight'],
+                restricted_chars = rcParams['restricted_chars'],
+                classes = rcParams['classes'],
+                sonar = rcParams['sonar'],
+                scorer = rcParams['scorer'],
+                plot = False,
+                ref = rcParams['ref']
+                )
+        kw.update(keywords)
+
+        for key,value in sorted(
+                self.msa[kw['ref']].items(),
+                key=lambda x:x[0]
+                ):
+            if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
 
             m = SCA(
                     value,
-                    **keywords
+                    **kw
                     )
-            if method == 'progressive':
-                m.prog_align(
-                        model,
-                        mode,
-                        gop,
-                        scale,
-                        factor,
-                        tree_calc,
-                        gap_weight,
-                        restricted_chars,
-                        classes,
-                        sonar,
-                        scorer
-                        )
-            elif method == 'library':
-                m.lib_align(
-                        model,
-                        mode,
-                        modes,
-                        scale,
-                        factor,
-                        tree_calc,
-                        gap_weight,
-                        restricted_chars,
-                        classes,
-                        sonar,
-                        scorer
-                        )
+            if kw['method'] == 'progressive':
+                m.prog_align(**kw)
+                        
+            elif kw['method'] == 'library':
+                m.lib_align(**kw)
 
-            if iteration:
+            if kw['iteration']:
                 m.iterate_clusters(0.5)
                 m.iterate_orphans()
                 m.iterate_similar_gap_sites()
 
-            if swap_check:
+            if kw['swap_check']:
                 m.swap_check()
 
-            if output:
+            if kw['output']:
                 try:
                     m.output(
                             'msa',
@@ -1122,8 +1133,8 @@ class Alignments(Wordlist):
                                 key
                                 )
                             )
-            self._meta['msa'][ref][key]['alignment'] = m.alm_matrix
-            self._meta['msa'][ref][key]['_sonority_consensus'] = m._sonority_consensus
+            self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
+            self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
                     
     def __len__(self):
         return len(self.msa)
@@ -1134,7 +1145,6 @@ class Alignments(Wordlist):
             gaps = False,
             taxa = False,
             classes = False,
-            verbose = False,
             ref = 'cogid',
             consensus = 'consensus',
             counterpart = 'ipa',
@@ -1164,7 +1174,7 @@ class Alignments(Wordlist):
         """
         # determine defaults
         defaults = dict(
-                model = sca,
+                model = rcParams['sca'],
                 gap_scale = 1.0
                 )
         for k in defaults:
@@ -1187,7 +1197,7 @@ class Alignments(Wordlist):
         cons_dict = {}
         for cog in self.etd[ref]:
             if cog in self.msa[ref]:
-                if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
                 
                 # temporary solution for sound-class integration
                 if classes == True:
@@ -1240,11 +1250,9 @@ class Alignments(Wordlist):
                 lambda x:cons_dict[x] 
                 )
 
-
     def output(
             self,
             fileformat,
-            ref = 'cogid',
             **keywords
             ):
         """
@@ -1289,19 +1297,24 @@ class Alignments(Wordlist):
             'groups' or 'cluster' is chosen as output format.
         
         """
-        if 'cognates' in keywords:
-            print(LingPyDeprecationWarning('cognates','ref'))
-            ref = keywords['cognates']
+        kw = dict(
+                ref = 'cogid',
+                filename = rcParams['filename']
+                )
+        kw.update(keywords)
+
+        # define two vars for convenience
+        ref = kw['ref']
+        filename = kw['filename']
+
+        if 'cognates' in kw:
+            print(rcParams['deprecation_warning'].format('cognates','ref'))
+            ref = kw['cognates']
 
         if fileformat not in ['alm']:
-            return self._output(fileformat,**keywords)
+            return self._output(fileformat,**kw)
         
         if fileformat == 'alm':
-            # check for filename
-            if 'filename' not in keywords:
-                filename = 'dummy'
-            else:
-                filename = keywords['filename']
 
             # define the string to which the stuff is written
             out = self.filename+'\n'
@@ -1434,7 +1447,7 @@ def get_consensus(
     """
     # set defaults
     defaults = dict(
-            model = sca,
+            model = rcParams['sca'],
             gap_scale = 1.0,
             mode = 'majority',
             gap_score = -10,

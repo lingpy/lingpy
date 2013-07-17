@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-07-10 11:35
+# modified : 2013-07-17 11:02
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List, Steven Moran"
-__date__="2013-07-10"
+__date__="2013-07-17"
 
 import os
 import numpy as np
@@ -15,10 +15,11 @@ import pickle
 import codecs
 
 # basic lingpy imports
-from ..read.csv import read_qlc
+from ..read.qlc import read_qlc
 from ..convert import *
 from ..check.messages import *
-from ..check import _timestamp
+from ..settings import rcParams
+
 try:
     from ..algorithm.cython import cluster
     from ..algorithm.cython import misc
@@ -128,7 +129,7 @@ class Wordlist(object):
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = 'lingpy-{0}'.format(_timestamp())
+                self.filename = rcParams['filename'] #'lingpy-{0}'.format(_timestamp())
             # if it's a wordlist object, add its basic parameters
             elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
                 input_data = dict(filename._data.items())
@@ -139,7 +140,7 @@ class Wordlist(object):
                     reverse = False
                     )]
                 internal_import = True
-                self.filename = 'lingpy-{0}'.format(_timestamp())
+                self.filename = rcParams['filename'] 
             else:
                 if not os.path.isfile(filename):
                     raise IOError(
@@ -150,13 +151,14 @@ class Wordlist(object):
 
         # load the configuration file
         if not conf:
-            conf = os.path.split(
-                    os.path.dirname(
-                        os.path.abspath(
-                            __file__
-                            )
-                        )
-                    )[0] + '/data/conf/wordlist.rc'
+            conf = rcParams['_path'] + '/data/conf/wordlist.rc'
+            #conf = os.path.split(
+            #        os.path.dirname(
+            #            os.path.abspath(
+            #                __file__
+            #                )
+            #            )
+            #        )[0] + '/data/conf/wordlist.rc'
 
         # read the file defined by its path in conf
         tmp = [line.strip('\n\r').split('\t') for line in codecs.open(conf,'r','utf-8') if not
@@ -428,7 +430,7 @@ class Wordlist(object):
                     '_class',
                     ]:
                 d[key] = value
-        d['__date__'] = str(_timestamp("now"))
+        d['__date__'] = rcParams['timestamp'] #str(_timestamp("now"))
         pickle.dump(d,out)
         out.close()
 
@@ -1252,7 +1254,6 @@ class Wordlist(object):
     def _output(
             self,
             fileformat,
-            verbose = True,
             **keywords
             ):
         """
@@ -1270,7 +1271,7 @@ class Wordlist(object):
                 'ref'       : 'cogid',
                 'entry'     : 'concept',
                 'missing'   : 0,
-                'filename'  : 'lingpy-{0}'.format(_timestamp()),
+                'filename'  : rcParams['filename'],
                 'formatter' : 'concept',
                 'tree_calc' : 'neighbor',
                 'distances' : False,
@@ -1302,14 +1303,14 @@ class Wordlist(object):
                         paps,
                         missing=keywords['missing'],
                         filename=keywords['filename']+'.paps',
-                        verbose = verbose
+                        verbose = rcParams['verbose']
                         )
             elif fileformat == 'paps.csv':
                 pap2csv(
                         self.cols,
                         paps,
                         filename=keywords['filename']+'.paps',
-                        verbose = verbose
+                        verbose = rcParams['verbose']
                         )
         
         # simple printing of taxa
@@ -1443,7 +1444,7 @@ class Wordlist(object):
             f.write('{0}'.format(tree))
             f.close()
 
-            if verbose: print(FileWriteMessage(filename,fileformat))
+            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
 
         if fileformat in ['cluster','groups']:
 
@@ -1465,7 +1466,7 @@ class Wordlist(object):
                 f.write('{0}\t{1}\n'.format(taxon,group))
             f.close()
 
-            if verbose: print(FileWriteMessage(filename,fileformat))
+            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
 
         if fileformat in ['starling','star.csv']:
 
@@ -1492,7 +1493,7 @@ class Wordlist(object):
                         f.write('\t'.join('{0}\t{1}'.format(l(a),b) for a,b in
                             zip(line,cogs[j]))+'\n')
             f.close()
-            if verbose: print(FileWriteMessage(keywords['filename'],fileformat))
+            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
 
     def output(
             self,
@@ -1595,7 +1596,7 @@ class Wordlist(object):
         
         # setup defaults
         defaults = dict(
-                filename = 'lingpy-{0}'.format(_timestamp())
+                filename = rcParams['filename'] 
                 )
         for k in defaults:
             if k not in keywords:
@@ -1671,7 +1672,7 @@ class Wordlist(object):
         else:
             f.write(tmpl.format(out_string))
         f.close()
-        FileWriteMessage(keywords['filename'],fileformat).message('written')
+        if rcParams['verbose']: print(rcParams['fw'].format(keywords['filename']+'.'+fileformat))
 
     def export(
             self,
@@ -1737,13 +1738,7 @@ class Wordlist(object):
         if os.path.exists(ortho_profile):
             ortho_path = ortho_profile
         else:
-            ortho_path = os.path.split(
-                    os.path.dirname(
-                        os.path.abspath(
-                            __file__
-                            )
-                        )
-                    )[0] + '/data/orthography_profiles/' + ortho_profile
+            ortho_path = rcParams['_path']+ '/data/orthography_profiles/' + ortho_profile
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":

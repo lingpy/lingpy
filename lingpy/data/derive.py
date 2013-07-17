@@ -18,6 +18,14 @@ from pickle import dump
 import os
 import codecs
 
+# lingpy imports
+from ..settings import rcParams
+try:
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _misc as misc
+from ..convert import *
+from ..read import *
 
 def _import_sound_classes(filename):
     """
@@ -477,16 +485,45 @@ def compile_model(
     outfile.close()
     print("... successfully created the converter.")
 
-    # try to load the score tree
-    if os.path.isfile(path+'scorer'):
+    # try to load the scoring function or the score tree
+    scorer = False
+
+    if os.path.isfile(path+'matrix'):
+        scorer = read_scorer(path+'matrix')
+    elif os.path.isfile(path+'scorer'):
         score_tree = _import_score_tree(path+'scorer')
     
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
 
+        # make score_dict a ScoreDict instance
+
+        chars = sorted(set([s[0] for s in score_dict.keys()]))
+        matrix = [[0 for i in range(len(chars))] for j in
+                range(len(chars))]
+        for i,charA in enumerate(chars):
+            for j,charB in enumerate(chars):
+                if i < j:
+                    try:
+                        matrix[i][j] = score_dict[charA,charB]
+                        matrix[j][i] = score_dict[charB,charA]
+                    except KeyError:
+                        matrix[i][j] = -100
+                        matrix[j][i] = -100
+                elif i == j:
+                    matrix[i][j] = score_dict[charA,charB]        
+
+        scorer = misc.ScoreDict(chars,matrix)
+        
+        # create the matrix file
+        f = codecs.open(path+'matrix','w','utf-8')
+        f.write(scorer2str(scorer))
+        f.close()
+    
+    if scorer:
         # dump the data
         outfile = open(path+'scorer.bin','wb')
-        dump(score_dict,outfile)
+        dump(scorer,outfile)
         outfile.close()
         print("... successfully created the scorer.")
     else:

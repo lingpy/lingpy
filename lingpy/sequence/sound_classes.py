@@ -1,28 +1,23 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:27
-# modified : 2013-04-06 12:25
+# modified : 2013-07-13 10:41
 """
 Module provides various methods for the handling of sound classes.
 
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-06"
+__date__="2013-07-13"
 
 # lingpy imports
-from ..data import *
+from ..settings import rcParams
+#from ..data import *
 from ..data.ipa.sampa import reXS,xs
 
 def ipa2tokens(
         istring,
-        diacritics = None,
-        vowels = None,
-        tones = None,
-        combiners = '\u0361\u035c',
-        breaks = '.-',
-        stress = "ˈˌ'",
-        merge_vowels = True
+        **keywords
         ):
     """
     Tokenize IPA-encoded strings. 
@@ -81,6 +76,18 @@ def ipa2tokens(
     tokens2class
     class2tokens
     """
+    # go for defaults
+    kw = dict(
+            vowels = rcParams['vowels'],
+            diacritics = rcParams['diacritics'],
+            tones = rcParams['tones'],
+            combiners = rcParams['combiners'],
+            breaks = rcParams['breaks'],
+            stress = rcParams['stress'],
+            merge_vowels = rcParams['merge_vowels']
+            )
+    kw.update(keywords)
+
     # check for pre-tokenized strings
     if ' ' in istring:
         out = istring.split(' ')
@@ -88,14 +95,6 @@ def ipa2tokens(
             return out[1:-1]
         else:
             return out
-
-    # check for parameters
-    if not vowels:
-        vowels = ipa_vowels
-    if not tones:
-        tones = ipa_tones
-    if not diacritics:
-        diacritics = ipa_diacritics
     
     # create the list for the output
     out = []
@@ -108,19 +107,19 @@ def ipa2tokens(
 
     for char in istring:
         # check for breaks first, since they force us to start anew
-        if char in breaks:
+        if char in kw['breaks']:
             start = True
             vowel = False
             tone = False
             merge = False
         
         # check for combiners next
-        elif char in combiners:
+        elif char in kw['combiners']:
             out[-1] += char
             merge = True
 
         # check for stress
-        elif char in stress:
+        elif char in kw['stress']:
             out += [char]
             start = True
             merge = True
@@ -135,7 +134,7 @@ def ipa2tokens(
             merge = False
         
         # check for diacritics
-        elif char in diacritics:
+        elif char in kw['diacritics']:
             if not start:
                 out[-1] += char
             else:
@@ -144,8 +143,8 @@ def ipa2tokens(
                 merge = True
         
         # check for vowels
-        elif char in vowels:
-            if vowel and merge_vowels:
+        elif char in kw['vowels']:
+            if vowel and kw['merge_vowels']:
                 out[-1] += char
             else:
                 out += [char]
@@ -154,7 +153,7 @@ def ipa2tokens(
             tone = False
         
         # check for tones
-        elif char in tones:
+        elif char in kw['tones']:
             vowel = False
             if tone:
                 out[-1] += char
@@ -176,8 +175,7 @@ def ipa2tokens(
 def tokens2class(
         tstring,
         model,
-        stress = "ˈˌ'",
-
+        **keywords
         ):
     """
     Convert tokenized IPA strings into their respective class strings.
@@ -211,6 +209,11 @@ def tokens2class(
     class2tokens
 
     """
+    kw = dict(
+            stress = rcParams['stress']
+            )
+    kw.update(keywords)
+
     out = []
     for token in tstring:
         try:
@@ -220,24 +223,28 @@ def tokens2class(
                 out.append(model[token[0]])
             except:
                 # check for stressed syllables
-                if token[0] in stress:
-                    try:
-                        out.append(model[token[1:]])
-                    except:
+                if len(token) > 0:
+                    if token[0] in kw['stress']:
                         try:
-                            out.append(model[token[1]])
+                            out.append(model[token[1:]])
                         except:
-                            # new character for missing data and spurious items
-                            out.append('0')
+                            try:
+                                out.append(model[token[1]])
+                            except:
+                                # new character for missing data and spurious items
+                                out.append('0')
+                    else:
+                        # new character for missing data and spurious items
+                        out.append('0')
                 else:
-                    # new character for missing data and spurious items
-                    out.append('0')
+                    raise ValueError("[!] string '{0}' is erroneously coded!".format(tstring))
 
     return out
 
 def prosodic_string(
         string,
-        _output = True
+        _output = True,
+        **keywords
         ):
     """
     Create a prosodic string of the sonority profile of a sequence.
@@ -288,6 +295,13 @@ def prosodic_string(
     '#vC>'
 
     """
+    defaults = dict(
+            stress = rcParams['stress']
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
     # check for empty string passed
     if not string:
         return ''
@@ -296,7 +310,11 @@ def prosodic_string(
     if type(string[0]) != int:
         
         # get the sonority profile
-        sstring = [9] + [int(t) for t in tokens2class(string,art)] + [9]
+        sstring = [9] + [int(t) for t in tokens2class(
+            string,
+            rcParams['art'],
+            **keywords)
+            ] + [9]
     else:
         sstring = [9] + string + [9]
 
@@ -749,11 +767,17 @@ def pid(
         
         return idn_pos / len(almA)
 
-def check_tokens(tokens):
+def check_tokens(tokens,**keywords):
     """
     Function checks whether tokens are given in a consistent input format.
     """
-    
+    defaults = dict(
+            stress = rcParams['stress']
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
     errors = []
 
     for i,token in enumerate(tokens):
@@ -761,11 +785,17 @@ def check_tokens(tokens):
         # check for conversion within the articulation-model
         try:
             art.converter[token]
-        except:
+        except KeyError:
             try:
                 art.converter[token[0]]
-            except:
-                errors.append((i,token))
+            except KeyError:
+                if token[0] in keywords['stress']:
+                    try:
+                        art.converter[token[1]]
+                    except KeyError:
+                        errors.append((i,token))
+                else:
+                    errors.append((i,token))
     
     return errors
 

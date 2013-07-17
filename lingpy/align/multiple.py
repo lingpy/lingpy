@@ -13,7 +13,7 @@ __date__="2013-06-26"
 import numpy as np
 
 # lingpy imports
-from ..data import *
+#from ..data import *
 try:
     from ..algorithm.cython import calign
     from ..algorithm.cython import talign
@@ -26,6 +26,7 @@ except:
     from ..algorithm.cython import _misc as misc
 
 from ..sequence.sound_classes import *
+from ..settings import rcParams
 
 class Multiple(object):
     """
@@ -45,7 +46,6 @@ class Multiple(object):
     def __init__(
             self,
             seqs,
-            verbose = False,
             **keywords
             ):
         # store input sequences, check whether tokens or strings are passed
@@ -58,21 +58,18 @@ class Multiple(object):
 
         # define a tokenizer function for convenience
         defaults = {
-                "diacritics" : None,
-                "vowels":None,
-                "tones":None,
-                "combiners":'\u0361\u035c',
-                "breaks":'.-',
-                "stress":"ˈˌ'",
-                "merge_vowels" : True,
+                "diacritics"   : rcParams['diacritics'],
+                "vowels"       : rcParams['vowels'],
+                "tones"        : rcParams['tones'],
+                "combiners"    : rcParams['combiners'],
+                "breaks"       : rcParams['breaks'],
+                "stress"       : rcParams["stress"],
+                "merge_vowels" : rcParams["merge_vowels"],
                 }
 
         for k in keywords:
             if k in defaults:
                 defaults[k] = keywords[k]
-        
-        # set the verbose flag for the whole object
-        self.verbose = verbose
 
         if self.tokens:
             self.numbers = []
@@ -298,7 +295,11 @@ class Multiple(object):
         elif sonar:
             self._sonars = list(
                     map(
-                        lambda x: [int(t) for t in tokens2class(x,art)],
+                        lambda x: [int(t) for t in tokens2class(
+                            x,
+                            rcParams['art'],
+                            stress = rcParams['stress'] #XXX change this part
+                            )],
                         [self.tokens[key] for key in keys]
                         )
                     )
@@ -624,7 +625,7 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                if self.verbose:
+                if rcParams['verbose']:
                     print("[!] Warning, there are empty segments in the consensus.")
             except:
                 print("[!] Warning, sonority profiles could not be calculated")
@@ -849,17 +850,7 @@ class Multiple(object):
 
     def prog_align(
             self,
-            model = None,
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 0.3,
-            tree_calc = 'neighbor',
-            gap_weight = 0.5,
-            restricted_chars = 'T_',
-            classes = True,
-            sonar = True,
-            scorer = {}
+            **keywords
             ):
         """
         Carry out a progressive alignment analysis of the input sequences.
@@ -924,49 +915,74 @@ class Multiple(object):
             that represents tones in the prosodic strings of sequences.
 
         """
-        # check for model
-        if not model:
-            model = sca
+        # set up the defaults parameters stored in the kw dictionary
+        keys = [
+            ('model',''),
+            ('mode','align_mode'),
+            ('scale',''),
+            ('factor',''),
+            ('tree_calc',''),
+            ('gap_weight',''),
+            ('restricted_chars',''),
+            ('classes',''),
+            ('sonar',''),
+            ('scorer',''),
+            ('gop','')
+            ]
+        kw = {}
+        for k,d in keys:             
+            if k in keywords and not d:
+                kw[k] = keywords[k]
+            elif not d:
+                kw[k] = rcParams[k]
+            else:
+                kw[k] = rcParams[d]
+
+        model = kw['model']
 
         # create a string with the current parameters
         self.params = '_'.join(
                 [
                     'prog',
                     model.name,
-                    str(gop),
-                    '{0:.1f}'.format(scale),
-                    '{0:.1f}'.format(factor),
-                    tree_calc,
-                    '{0:.1f}'.format(gap_weight),
-                    restricted_chars
+                    str(kw['gop']),
+                    '{0:.1f}'.format(kw['scale']),
+                    '{0:.1f}'.format(kw['factor']),
+                    kw['tree_calc'],
+                    '{0:.1f}'.format(kw['gap_weight']),
+                    kw['restricted_chars']
                     ]
                 )
         
         # set the model
-        self._set_model(model,classes,sonar,scorer)
+        self._set_model(model,
+                kw['classes'],
+                kw['sonar'],
+                kw['scorer']
+                )
 
         # set the scorer
         self._set_scorer('classes')
 
         # get the pairwise alignments
         self._get_pairwise_alignments(
-                gop = gop,
-                scale = scale,
-                factor = factor,
-                restricted_chars=restricted_chars
+                gop = kw['gop'],
+                scale = kw['scale'],
+                factor = kw['factor'],
+                restricted_chars=kw['restricted_chars']
                 )
 
         # get the guide-tree 
-        self._make_guide_tree(tree_calc=tree_calc)
+        self._make_guide_tree(tree_calc=kw['tree_calc'])
 
         # merge the alignments
         self._merge_alignments(
-                mode = mode,
-                gop = gop,
-                scale = scale,
-                factor = factor,
-                restricted_chars = restricted_chars,
-                gap_weight = gap_weight,
+                mode = kw['mode'],
+                gop = kw['gop'],
+                scale = kw['scale'],
+                factor = kw['factor'],
+                restricted_chars = kw['restricted_chars'],
+                gap_weight = kw['gap_weight'],
                 )
 
         # update the alignments
@@ -974,20 +990,7 @@ class Multiple(object):
 
     def lib_align(
             self,
-            model = None,
-            mode = 'global',
-            modes = [
-                ('global',-2,0.5),
-                ('local',-1,0.5),
-                ],
-            scale = 0.5,
-            factor = 0.3,
-            tree_calc = 'neighbor',
-            gap_weight = 0.5,
-            restricted_chars = 'T_',
-            classes = True,
-            sonar = True,
-            scorer = {}
+            **keywords
             ):
         """
         Carry out a library-based progressive alignment analysis of the sequences.
@@ -1067,23 +1070,43 @@ class Multiple(object):
             strings of sequences.
 
         """
-        # set the model to sca if it is not defined
-        if not model: model = sca
+        # set up the defaults parameters stored in the kw dictionary
+        keys = [
+            ('model',''),
+            ('mode','align_mode'),
+            ('modes','align_modes'),
+            ('scale',''),
+            ('factor',''),
+            ('tree_calc',''),
+            ('gap_weight',''),
+            ('restricted_chars',''),
+            ('classes',''),
+            ('sonar',''),
+            ('scorer','')
+            ]
+        kw = {}
+        for k,d in keys:             
+            if k in keywords and not d:
+                kw[k] = keywords[k]
+            elif not d:
+                kw[k] = rcParams[k]
+            else:
+                kw[k] = rcParams[d]
 
         # create a string with the current parameters
         params = [
                     'lib',
-                    model.name,
-                    mode,
-                    '{0:.1f}'.format(factor),
-                    tree_calc,
-                    '{0:.1f}'.format(gap_weight),
-                    restricted_chars
+                    kw['model'].name,
+                    kw['mode'],
+                    '{0:.1f}'.format(kw['factor']),
+                    kw['tree_calc'],
+                    '{0:.1f}'.format(kw['gap_weight']),
+                    kw['restricted_chars']
                 ]
         
         # append parameters to the params-string
         mode_params = []
-        for m in modes:
+        for m in kw['modes']:
             mode_params.append('{0[0]}x{0[1]}x{0[2]:.2f}'.format(m))
 
         mode_params = 'y'.join(mode_params)
@@ -1093,7 +1116,7 @@ class Multiple(object):
         self.params = '_'.join(params)
         
         # set the model
-        self._set_model(model,classes,sonar,scorer)
+        self._set_model(kw['model'],kw['classes'],kw['sonar'],kw['scorer'])
         
         # set the score mode to 'classes'
         self._set_scorer('classes')
@@ -1104,13 +1127,13 @@ class Multiple(object):
         # which is why it is important to keep their influence low when
         # creating the library from pairwise alignments
         self._create_library()
-        for run in modes:
+        for run in kw['modes']:
             self._get_pairwise_alignments(
                     run[0],
                     run[1],
                     run[2],
-                    factor,
-                    restricted_chars
+                    kw['factor'],
+                    kw['restricted_chars']
                     )
             self._extend_library()
 
@@ -1119,27 +1142,27 @@ class Multiple(object):
 
         # calculate pairwise alignments and the respective scores
         self._get_pairwise_alignments(
-                mode,
+                kw['mode'],
                 0,
                 0.0,
-                factor,
-                restricted_chars
+                kw['factor'],
+                kw['restricted_chars']
                 )
 
         # reconstruct the tree
-        self._make_guide_tree(tree_calc)
+        self._make_guide_tree(kw['tree_calc'])
         
         # merge the alignments, not that the scale doesn't really influence any
         # of the results here, since gap scores are set to 0, gapping should be
         # the same in all positions, the factor, however, eventually influences
         # the score, since it changes character mappings as well
         self._merge_alignments(
-                mode,
+                kw['mode'],
                 0,
                 0.0,
                 0.0,
-                gap_weight,
-                restricted_chars
+                kw['gap_weight'],
+                kw['restricted_chars']
                 )
 
         # update the alignments
@@ -1752,16 +1775,17 @@ class Multiple(object):
 
     def get_pairwise_alignments(
             self,
-            new_calc = True,
-            model = sca,
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 1,
-            restricted_chars = 'T_',
-            classes = True,
-            sonar = True,
-            scorer = {}
+            **keywords
+            #new_calc = True,
+            #model = None,
+            #mode = 'global',
+            #gop = -3,
+            #scale = 0.5,
+            #factor = 1,
+            #restricted_chars = 'T_',
+            #classes = True,
+            #sonar = True,
+            #scorer = {}
             ):
         """
         Function creates a dictionary of all pairwise alignments  scores.
@@ -1831,21 +1855,42 @@ class Multiple(object):
             strings of sequences.
 
         """
-        
-        if new_calc:
+        defaults = dict(
+                new_calc = True,
+                model = rcParams['sca'],
+                mode = 'global',
+                gop = -3,
+                scale = 0.5,
+                factor = 1,
+                restricted_chars = 'T_',
+                classes = True,
+                sonar = True,
+                scorer = {}
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+
+        if keywords['new_calc']:
             # define the class model
-            self._set_model(model,classes,sonar,scorer)
+            self._set_model(
+                    keywords['model'],
+                    keywords['classes'],
+                    keywords['sonar'],
+                    keywords['scorer']
+                    )
 
             # reset the scorer to "classes"
             self._set_scorer('classes')
 
             # retrieve the alignments
             self._get_pairwise_alignments(
-                    mode,
-                    gop,
-                    scale,
-                    factor,
-                    restricted_chars
+                    keywords['mode'],
+                    keywords['gop'],
+                    keywords['scale'],
+                    keywords['factor'],
+                    keywords['restricted_chars']
                     )
 
             self.alignments = {}

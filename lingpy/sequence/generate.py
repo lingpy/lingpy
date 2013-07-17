@@ -13,7 +13,8 @@ __date__="2013-03-13"
 import random
 
 # internal
-from ..data import *
+#from ..data import *
+from ..settings import rcParams
 from .sound_classes import *
 
 class MCBasic(object):
@@ -95,7 +96,8 @@ class MCPhon(MCBasic):
             self,
             words,
             tokens=False,
-            prostrings=[]
+            prostrings=[],
+            **keywords
             ):
         
         self.words = words
@@ -107,7 +109,7 @@ class MCPhon(MCBasic):
             
             # check for tokenized string
             if not tokens:
-                tokens = ipa2tokens(w)
+                tokens = ipa2tokens(w,**keywords)
             else:
                 tokens = w[:]
             self.tokens += [tokens]
@@ -116,7 +118,14 @@ class MCPhon(MCBasic):
             if prostrings:
                 p = prostrings[i]
             else:
-                p = prosodic_string(tokens2class(tokens,model=art))
+                p = prosodic_string(
+                        tokens2class(
+                            tokens,
+                            model=rcParams['art'],
+                            **keywords
+                            ),
+                        **keywords
+                        )
 
             # zip the stuff
             bigrams = list(zip(p,tokens))
