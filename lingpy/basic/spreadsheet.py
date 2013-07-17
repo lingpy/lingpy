@@ -61,11 +61,11 @@ class Spreadsheet:
         Remove anything in the spreadsheet that's specified in the blacklist file.
         """
         if not os.path.isfile(self.blacklist):
-            if self.verbose:
+            if rcParams['verbose']:
                 print("[i] There is no blacklist specified at the follow file path location. Proceeding without blacklist.")
             return
 
-        blacklist_file = codecs.open(self.blacklist, "r")
+        blacklist_file = codecs.open(self.blacklist, "r",'utf-8')
         # loop through the blacklist file and compile the regexes
         rules = []
         replacements = []
@@ -82,8 +82,9 @@ class Spreadsheet:
             replacements.append(replacement)
         blacklist_file.close()
 
-        # blacklist the spreadsheet data - skip the header row
-        for i in range(1, len(self.matrix)):
+        # blacklist the spreadsheet data - don't skip the header row, since
+        # this may also contain blacklist information (as in Matthias' case)
+        for i in range(0, len(self.matrix)):
             for j in range(0, len(self.matrix[i])):
                 for k in range(0, len(rules)):
                     match = rules[k].search(self.matrix[i][j])
@@ -103,8 +104,8 @@ class Spreadsheet:
             self.fileformat, 
             self.dtype, 
             self.comment, 
-            self.sep
-            # strip_lines = False
+            self.sep,
+            strip_lines = False # this is of crucial importance, otherwise
             )
 
         # columns that have language data
@@ -113,11 +114,11 @@ class Spreadsheet:
         # first row must be the header in the input; TODO: add more functionality
         header = spreadsheet[0] 
 
-        if self.verbose: print(header[0:10])
+        if rcParams['verbose']: print(header[0:10])
         
         for i,cell in enumerate(header):
             head = cell.strip()
-            if self.verbose: print(head)
+            if rcParams['verbose']: print(head)
             if head == self.meanings:
                 self.concepts = i
             if self.language_id in head:
@@ -126,7 +127,7 @@ class Spreadsheet:
         matrix_header = []
         matrix_header.append(header[self.concepts])        
         for i in language_indices:
-            matrix_header.append(header[i].replace("name", "").strip())
+            matrix_header.append(header[i].replace(self.language_id, "").strip())
         self.matrix.append(matrix_header)
 
         # append the concepts and words in languages and append the rows

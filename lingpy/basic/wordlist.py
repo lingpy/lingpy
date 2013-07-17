@@ -124,11 +124,11 @@ class Wordlist(object):
         internal_import = False
         try:
             input_data = read_qlc(filename)
-            self.filename = filename.replace('.csv','')
+            self.filename = filename.replace('.csv','').replace('qlc','')
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = rcParams['filename'] #'lingpy-{0}'.format(_timestamp())
+                self.filename = rcParams['filename'] 
             # if it's a wordlist object, add its basic parameters
             elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
                 input_data = dict(filename._data.items())
@@ -151,13 +151,6 @@ class Wordlist(object):
         # load the configuration file
         if not conf:
             conf = rcParams['_path'] + '/data/conf/wordlist.rc'
-            #conf = os.path.split(
-            #        os.path.dirname(
-            #            os.path.abspath(
-            #                __file__
-            #                )
-            #            )
-            #        )[0] + '/data/conf/wordlist.rc'
 
         # read the file defined by its path in conf
         tmp = [line.strip('\n\r').split('\t') for line in codecs.open(conf,'r','utf-8') if not
@@ -1329,7 +1322,7 @@ class Wordlist(object):
         # csv-output
         if fileformat in ['csv','qlc']:
             if fileformat == 'csv':
-                print(LingPyDeprecationWarning('csv','qlc'))
+                print(rcParams['deprecation_warning'].format('csv','qlc'))
             
             # get the header line
             header = sorted(

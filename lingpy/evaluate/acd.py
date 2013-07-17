@@ -9,7 +9,8 @@ Evaluation methods for automatic cognate detection.
 __author__="Johann-Mattis List"
 __date__="2013-03-15"
 
-from ..check.messages import FileWriteMessage
+import codecs
+from ..settings import rcParams
 
 def bcubes(
         lex,
@@ -314,7 +315,7 @@ def diff(
 
     # open file
     if tofile:
-        f = open(filename+'.diff','w')
+        f = codecs.open(filename+'.diff','w','utf-8')
 
     # get a formatter for language names
     lform = '{0:'+str(max([len(l) for l in lex.cols]))+'}'
@@ -526,7 +527,7 @@ def diff(
         #f.write('F-Score:   {0:.4f}\n'.format(hf))
         #f.write('#\n')
         f.close()
-        FileWriteMessage(filename,'diff').message('written')
+        print(rcParams['fw'].format(filename+'.diff'))
 
     else:
         return ((bp,br,bf),(pp,pr,pf))

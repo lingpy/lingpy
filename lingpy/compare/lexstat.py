@@ -385,6 +385,10 @@ class LexStat(Wordlist):
                                 if dAB != 1:
                                     self.pairs[taxonA,taxonA] += [(idx,idx)]
 
+    def __repr__(self):
+
+        return "<lexstat-model {0}>".format(self.filename)
+
     def __getitem__(self,idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -833,26 +837,9 @@ class LexStat(Wordlist):
 
         # get the correspondence distribution
         corrdist = self._get_corrdist(**kw)
-                #threshold,
-                #modes,
-                #factor,
-                #restricted_chars,
-                #preprocessing,
-                #gop,
-                #cluster_method,
-                #verbose = verbose
-                #)
+
         # get the random distribution
         randist = self._get_randist(**kw)
-                #method,
-                #runs,
-                #modes,
-                #factor,
-                #restricted_chars,
-                #rands,
-                #limit,
-                #verbose = verbose
-                #)
         
         # store the distributions as attributes
         self._corrdist = corrdist
@@ -1069,7 +1056,6 @@ class LexStat(Wordlist):
             factor = 0.3,
             restricted_chars = '_T',
             mode = 'overlap',
-            verbose = False,
             gop = -2,
             restriction = '',
             **keywords
@@ -1114,7 +1100,7 @@ class LexStat(Wordlist):
             # use the 5 percentile of the random distribution of non-related
             # words (cross-semantic alignments) in order to determine a
             # suitable threshold for the analysis.
-            if verbose: print("[i] Calculating a threshold for the calculation.")
+            if rcParams['verbose']: print("[i] Calculating a threshold for the calculation.")
             d = self.get_random_distances(
                     method=method,
                     mode=mode
@@ -1211,7 +1197,7 @@ class LexStat(Wordlist):
         k = 0
 
         for concept in sorted(concepts):
-            if verbose: print("[i] Analyzing concept <{0}>.".format(concept))
+            if rcParams['verbose']: print("[i] Analyzing concept <{0}>.".format(concept))
 
             indices = self.get_list(
                     row=concept,

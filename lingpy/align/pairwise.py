@@ -539,6 +539,8 @@ def turchin(
     """
     if 'model' not in keywords:
         model = rcParams['dolgo']
+    else:
+        model = keywords['model']
 
     if type(seqA) == str:
         seqA = ipa2tokens(seqA)
