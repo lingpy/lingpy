@@ -211,12 +211,16 @@ def load_dvt(path=''):
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
     if not path:
-        path = rcParams['_path']+'/data/models/dvt/dvt.bin'
+        pathx = rcParams['_path']+'/data/models/dvt/dvt.bin'
     elif path in ['el','evolaemp']:
-        path = rcParams['_path']+'/data/models/dvt_el/dvt.bin'
+        pathx = rcParams['_path']+'/data/models/dvt_el/dvt.bin'
     else:
         pass
-
-    dvt = load(open(path,'rb'))
+    
+    try:
+        dvt = load(open(pathx,'rb'))
+    except:
+        compile_dvt(path)
+        dvt = load(open(pathx,'rb'))
 
     return dvt

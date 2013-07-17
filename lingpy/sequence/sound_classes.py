@@ -129,7 +129,7 @@ def ipa2tokens(
         # check for merge command 
         elif merge:
             out[-1] += char
-            if char in vowels:
+            if char in kw['vowels']:
                 vowel = True
             merge = False
         
