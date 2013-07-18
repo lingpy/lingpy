@@ -31,6 +31,7 @@ phybo = dict(
                 phybo_suffix = ' -',
                 phybo_textsize = '10',
                 phybo_vsd_scale = 0.1,
-                phybo_latex_preamble = []
+                phybo_latex_preamble = [],
+                phybo_fileformat = "pdf"
                 )
 rcParams.update(phybo)

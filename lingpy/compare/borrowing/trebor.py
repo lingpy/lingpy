@@ -1887,16 +1887,61 @@ class PhyBo(Wordlist):
                 for i,nodeA in enumerate(oris):
                     for j,nodeB in enumerate(oris):
                         if i < j:
-                            w = len(
-                                    self.tree.getConnectingEdges(
-                                        nodeA,
-                                        nodeB
+                            try:
+                                w = len(
+                                        self.tree.getConnectingEdges(
+                                            nodeA,
+                                            nodeB
+                                            )
                                         )
-                                    )
+                            except ValueError:
+                                if 'root' in (nodeA,nodeB):
+                                    w = len(
+                                            self.tree.getConnectingEdges(
+                                                nodeB,
+                                                nodeA
+                                                )
+                                            )
+                                else:
+                                    wA = len(
+                                            self.tree.getConnectingEdges(
+                                                'root',
+                                                nodeA
+                                                )
+                                            )
+                                    wB = len(
+                                            self.tree.getConnectingEdges(
+                                                'root',
+                                                nodeB
+                                                )
+                                            )
+                                    w = wA + wB
+
                             gWeights.add_edge(
                                     nodeA,
                                     nodeB,
                                     weight = w
+                                    )
+            elif method in ['betweenness_centrality','bc']:
+                bc = nx.edge_betweenness_centrality(
+                        gPrm,normalized=True,
+                        weight='weight'
+                        )
+                for i,nodeA in enumerate(oris):
+                    for j,nodeB in enumerate(oris):
+                        if i < j:
+                            try:
+                                w = bc[nodeA,nodeB]
+                            except KeyError:
+                                w = bc[nodeB,nodeA]
+                            # be careful with zero division
+                            #if w == 0:
+                            #    w = 0.1
+
+                            gWeights.add_edge(
+                                    nodeA,
+                                    nodeB,
+                                    weight = int(100 * (1 - w)) #int(1000 / w)
                                     )
 
             # if the graph is not empty
@@ -1954,7 +1999,7 @@ class PhyBo(Wordlist):
                     # change maximum weights to distance weights
                     for a,b,d in sorted(gWeights.edges(data=True),key=lambda x:x[2]['weight']):
                         w = d['weight']
-                        gWeights.edge[a][b]['weight'] = int(1000 / w)
+                        gWeights.edge[a][b]['weight'] = int(1000 / w) ** 2
                 
                 # calculate the MST
                 mst = nx.minimum_spanning_tree(gWeights,weight='weight')
@@ -2604,15 +2649,15 @@ class PhyBo(Wordlist):
         defaults = {
                 "colorbar" : None, #mpl.cm.jet,
                 'threshold':1,
-                'fileformat':'pdf',
+                'fileformat':rcParams['phybo_fileformat'],
                 'usetex':False,
                 'only':[],
                 'colormap': None, #mpl.cm.jet
                 'proto' : False,
                 'xticksize' : 6,
                 'method' : 'mr', # majority rule
-                'gpl' : 1,
-                "push_gains" : True
+                'gpl' : 2,
+                "push_gains" : True,
                 }
 
         for key in defaults:
@@ -2862,7 +2907,7 @@ class PhyBo(Wordlist):
                     )
 
             # save the figure
-            plt.savefig(self.dataset+'_trebor/vsd.pdf')
+            plt.savefig(self.dataset+'_trebor/vsd.'+keywords['fileformat'])
             plt.clf()
             
             if rcParams["verbose"]: print("[i] Plotted the distributions.")
@@ -2882,7 +2927,6 @@ class PhyBo(Wordlist):
             if plot_mln:
                 self.plot_MLN(
                         self.best_model,
-                        verbose=verbose,
                         filename=self.dataset+'_trebor/mln-'+glm,
                         threshold = keywords['threshold'],
                         fileformat = keywords['fileformat'],
@@ -2892,7 +2936,6 @@ class PhyBo(Wordlist):
             if plot_msn:
                 self.plot_MSN(
                         self.best_model,
-                        verbose=verbose,
                         filename=self.dataset+'_trebor/msn-'+glm,
                         fileformat=keywords['fileformat'],
                         threshold = keywords['threshold'],
@@ -4622,7 +4665,6 @@ class PhyBo(Wordlist):
                                     ),
                                 )
             
-            #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
             plt.savefig(folder+'/gml/{0}-{1}-figures/{2}-{3}.png'.format(
                 self.dataset,
                 glm,
@@ -4635,7 +4677,8 @@ class PhyBo(Wordlist):
             self,
             glm,
             subset = '',
-            verbose = True
+            verbose = True,
+            filename = ''
             ):
         """
         Calculate basic statistics for a given gain-loss model.
@@ -4660,9 +4703,13 @@ class PhyBo(Wordlist):
         if rcParams["verbose"]:
             print('Number of Origins: {0:.2f}'.format(noo))
             print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
+        if not filename:
+            return noo,ppc
+        else:
+            f = codecs.open(self.dataset+'_trebor/'+filename,'w','utf-8')
+            f.write('Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,ppc))
+            f.close()
 
-        return noo,ppc
-            
     def plot_concept_evolution(
             self,
             glm,

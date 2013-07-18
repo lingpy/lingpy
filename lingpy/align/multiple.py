@@ -625,10 +625,9 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                if rcParams['verbose']:
-                    print("[!] Warning, there are empty segments in the consensus.")
+                if rcParams['verbose']: print(rcParams['empty_consensus_warning'])
             except:
-                print("[!] Warning, sonority profiles could not be calculated")
+                print(rcParams['sonority_consensus_warning'])
                 print(sonarA)
                 print(sonarB)
                 print(almsA[0])
@@ -642,8 +641,9 @@ class Multiple(object):
         prosB = prosodic_string(consB)
 
         # debug
-        #print(prosA,consA)
-        #print(prosB,consB)
+        if rcParams['debug'] == 'multiple':
+            print(prosA,consA)
+            print(prosB,consB)
         
         # get the weights
         weightsA,weightsB = prosodic_weights(prosA),prosodic_weights(prosB)
@@ -826,10 +826,10 @@ class Multiple(object):
                 try:
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
-                    print("[!] Warning, there are empty segments in the consensus!")
+                    if rcParams['verbose']: print(rcParams['empty_consensus_warning']) 
                 except:
                     consensus = []
-                    print("[!] Warning, sonority consensus could not be calculated!")
+                    print(rcParams['sonority_consensus_warning'])
             self._sonority_consensus = consensus
 
 
