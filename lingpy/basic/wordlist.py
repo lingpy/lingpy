@@ -1212,7 +1212,7 @@ class Wordlist(object):
 
         """
         if 'cognates' in keywords:
-            print("[!] Warning, using the 'cognates' keyword is deprecated, use 'ref' instead.")
+            print(rcParams['warning_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
 
         # XXX take care of keywords XXX

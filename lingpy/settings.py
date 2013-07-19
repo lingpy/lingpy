@@ -35,6 +35,7 @@ warnings = dict(
         warning_missing_module = "[WARNING] Module '{0}' could not be loaded.  Some methods may not work properly.",
         warning_identical_scorer = "[WARNING] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
         warning_overwrite_scorer = "[WARNING] A different scoring function has already been calculated, overwriting previous settings.",
+        warning_zero_division = "[WARNING] Zero-division error encountered in '{0}' and '{1}'."
         )
 rcParams.update(warnings)
 

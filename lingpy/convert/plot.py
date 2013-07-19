@@ -231,7 +231,7 @@ def alm2html(
     out.write(html)
     out.close()
 
-    if rcParams['verbose']: print(FileWriteMessage(filename,'html'))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.html'))
     return
 
 def patchy_alm2html(
@@ -371,7 +371,7 @@ def patchy_alm2html(
     out = codecs.open(filename+'.patchy.html','w','utf-8')
     out.write(html)
     out.close()
-    print(FileWriteMessage(filename,'patchy.html'))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.patchy.html'))
 
 def msa2tex(
         infile,
@@ -475,7 +475,7 @@ def msa2tex(
     out = codecs.open(filename+'.tex','w','utf-8')
     out.write(tex)
     out.close()
-    if rcParams['verbose']: print(FileWriteMessage(filename,'tex'))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.tex'))
 
 
 def string2html(
@@ -861,7 +861,7 @@ def plot_gls(
             filename + '.'+fileformat
             )
     plt.clf()
-    if rcParams['verbose']: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
 
 def plot_tree(
         treestring,
@@ -1044,7 +1044,7 @@ def plot_tree(
 
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
-    if rcParams['verbose']: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
 
 def plot_concept_evolution(
         scenarios,
@@ -1482,4 +1482,4 @@ def plot_concept_evolution(
 
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
-    if rcParams['verbose']: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['fw'].foramt(filename+'.'+fileformat))

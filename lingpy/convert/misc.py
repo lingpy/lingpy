@@ -9,7 +9,7 @@ Miscellaneous routines for data conversion.
 __author__="Johann-Mattis List"
 __date__="2013-06-26"
 
-
+from ..settings import rcParams
 try:
     from ..algorithm.cython import cluster,misc
 except:
@@ -130,8 +130,12 @@ def wl2dst(
                     except KeyError:
                         missing += 1
     
-                # append to distances
-                distances += [ 1 - shared / (wl.height-missing)]
+                # append to distances, catch ZeroDivisionError
+                try:
+                    distances += [ 1 - shared / (wl.height-missing)]
+                except ZeroDivisionError:
+                    print(rcParams['warning_zero_division'].format(taxA,taxB))
+                    distances += [1.0]
     distances = misc.squareform(distances)
     return distances
 
