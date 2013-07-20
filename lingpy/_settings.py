@@ -25,7 +25,9 @@ rcParams = dict(
         _path = _abs_path,
         filename                   = 'lingpy-'+str(date.today()),
         timestamp                  = str(datetime.today()),
-        answer_yes = ['y','Y','j','J','yes']
+        answer_yes = ['y','Y','j','J','yes'],
+        verbose = False,
+        debug = False
         )
 
 # messages

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-06-06 12:16
+# modified : 2013-07-20 13:32
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-06-06"
+__date__="2013-07-20"
 
 
 # basic imports
@@ -289,12 +289,12 @@ class PhyBo(Wordlist):
                     ]
                 )
 
-        if rcParams["verbose"]: print("[i] Subtree is {0}.".format(str(tree)))
+        if rcParams['debug']: print("[i] Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
 
-        if rcParams["verbose"]: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        if rcParams['debug']: print("[i] Nodes are {0}.".format(','.join(nodes)))
         
         if mode == 1:
             return [(tree.Name,1)]
@@ -534,12 +534,12 @@ class PhyBo(Wordlist):
                     ]
                 )
 
-        if rcParams["verbose"]: print("[i] Subtree is {0}.".format(str(tree)))
+        if rcParams['debug']: print("[i] Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
 
-        if rcParams["verbose"]: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        if rcParams['debug']: print("[i] Nodes are {0}.".format(','.join(nodes)))
 
         # get the first state of all nodes and store the state in the
         # dictionary. note that we start from two distinct scenarios: one
@@ -576,7 +576,7 @@ class PhyBo(Wordlist):
 
         # join the nodes successively
         for i,node in enumerate(ordered_nodes):
-            if rcParams["verbose"]: print(node.Name)
+            if rcParams['debug']: print(node.Name)
             
             # when dealing with multifurcating trees, we have to store all
             # possible scenarios, i.e. we need to store the crossproduct of all
@@ -682,7 +682,7 @@ class PhyBo(Wordlist):
                         newNodes += [newNodeB]
                         
                 d[node.Name] = newNodes
-                if rcParams["verbose"]: print("Node length:",len(d[node.Name]))
+                if rcParams['debug']: print("Node length:",len(d[node.Name]))
         
         # try to find the best scenario by counting the ratio of gains and losses.
         # the key idea here is to reduce the number of possible scenarios according
@@ -694,7 +694,7 @@ class PhyBo(Wordlist):
         # differently. So in a second stage we choose only those scenarios where
         # there is a minimal amount of gains. 
         
-        if rcParams["verbose"]: print(len(d[tree.Name]))
+        if rcParams['debug']: print(len(d[tree.Name]))
 
         # convert the specific format of the d[tree.Name] to simple format
         gls_list = []
@@ -868,7 +868,7 @@ class PhyBo(Wordlist):
                 self.gls[glm][cog] = cogDict[cogTuple]
             else:
                 nonskip += 1
-                if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog),end="")
+                if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog))
                 
                 # check for singletons
                 if sum([x for x in self.paps[cog] if x == 1]) == 1:
@@ -905,12 +905,11 @@ class PhyBo(Wordlist):
                 cogDict[cogTuple] = (gls,noo)
 
             # attend scenario to gls
-            if rcParams["verbose"]: print(" done.")
         if rcParams["verbose"]: print("[i] Successfully calculated Gain-Loss-Scenarios.")
         
         # write the results to file
         # make the folder for the data to store the stats
-        folder = self.dataset+'_trebor'
+        folder = self.dataset+'_phybo'
         try:
             os.mkdir(folder)
         except:
@@ -921,30 +920,32 @@ class PhyBo(Wordlist):
 
             # make the directory for the files
             try:
-                os.mkdir(folder+'/gml')
-            except:
+                os.mkdir(os.path.join(folder,'gml'))
+            except FileExistsError:
                 pass
 
             # make next directory
             try:
                 os.mkdir(
-                        folder+'/gml/'+'{0}-{1}'.format(
-                            self.dataset,
-                            glm
+                        os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}'.format(self.dataset,glm)
                             )
                         )
-            except:
+            except FileExistsError:
                 pass
 
             # make the folder for png
             try:
                 os.mkdir(
-                        folder+'/gml/'+'{0}-{1}-figures'.format(
-                            self.dataset,
-                            glm
+                        os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}-figures'.format(self.dataset,glm),
                             )
                         )
-            except:
+            except FileExistsError:
                 pass
 
             # store the graph
@@ -954,11 +955,12 @@ class PhyBo(Wordlist):
                         gls,
                         self.tgraph,
                         self.tree,
-                        filename = folder+'/gml/{0}-{1}/{2}'.format(
-                            self.dataset,
-                            glm,
+                        filename = os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}'.format(self.dataset,glm),
                             cog
-                            ),
+                            )
                         )
 
                 # if plot of gml is chose
@@ -1030,23 +1032,27 @@ class PhyBo(Wordlist):
                                     size=8,fontweight='bold',color=c,backgroundcolor=f)
                     
                     #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
-                    plt.savefig(folder+'/gml/{0}-{1}-figures/{2}.png'.format(
-                        self.dataset,
-                        glm,
-                        cog
-                        ))
+                    plt.savefig(
+                            os.path.join(
+                                folder,
+                                'gml',
+                                '{0}-{1}-figures'.format(self.dataset,glm),
+                                cog,
+                                '.png'
+                                )
+                            )
                     plt.clf()
 
             # if tar is chosen, put it into a tarfile
             if tar:
                 os.system(
-                        'cd {0}_trebor/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
+                        'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
                             self.dataset,
                             glm
                             )
                         )
-                os.system('rm {0}_trebor/gml/{0}-{1}/*.gml'.format(self.dataset,glm))
-                os.system('rmdir {0}_trebor/gml/{0}-{1}'.format(self.dataset,glm))
+                os.system('rm {0}_phybo/gml/{0}-{1}/*.gml'.format(self.dataset,glm))
+                os.system('rmdir {0}_phybo/gml/{0}-{1}'.format(self.dataset,glm))
 
 
         # store some statistics as attributes
@@ -1060,14 +1066,22 @@ class PhyBo(Wordlist):
         # store statistics and gain-loss-scenarios in textfiles
         # create folder for gls-data
         try:
-            os.mkdir(folder+'/gls')
+            os.mkdir(os.path.join(folder,'gls'))
         except:
             pass
         
-        if rcParams["verbose"]: print("[i] Writing GLS data to file... ",end="")
+        if rcParams["verbose"]: print("[i] Writing GLS data to file... ")
         
         # write gls-data to folder
-        f = codecs.open(folder+'/gls/{0}-{1}.gls'.format(self.dataset,glm),'w','utf-8')
+        f = codecs.open(
+                os.path.join(
+                    folder,
+                    'gls',
+                    '{0}-{1}.gls'.format(self.dataset,glm)
+                    ),
+                'w',
+                'utf-8'
+                )
         f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
         for cog in sorted(self.gls[glm]):
             gls,noo = self.gls[glm][cog]
@@ -1085,11 +1099,19 @@ class PhyBo(Wordlist):
 
         # write statistics to stats file
         try:
-            os.mkdir(folder+'/stats')
+            os.mkdir(os.path.join(folder,'stats'))
         except:
             pass
 
-        f = codecs.open(folder+'/stats/{0}-{1}'.format(self.dataset,glm),'w','utf-8')
+        f = codecs.open(
+                os.path.join(
+                    folder,
+                    'stats',
+                    '{0}-{1}'.format(self.dataset,glm)
+                    ),
+                'w',
+                'utf-8'
+                )
         f.write('Number of PAPs (total): {0}\n'.format(len(self.paps)))
         f.write('Number of PAPs (non-singletons): {0}\n'.format(len(self.gls[glm])))
         f.write('Number of Singletons: {0}\n'.format(len(self.singletons)))
@@ -1351,7 +1373,7 @@ class PhyBo(Wordlist):
 
         # check for filename in keywords
         if not 'filename' in keywords:
-            keywords['filename'] = self.dataset+'_trebor/'+glm+'_acs'
+            keywords['filename'] = os.path.join(self.dataset+'_phybo',glm,'_acs')
 
         # plot the tree
         plot_tree(
@@ -1368,12 +1390,18 @@ class PhyBo(Wordlist):
             tar = True,
             leading_model = False,
             mixed_threshold = 0.0,
-            evaluation = 'average'
+            evaluation = 'average',
+            **keywords
             ):
         """
         Calculate VSD on the basis of each item.
 
         """
+        kw = dict(
+            fileformat = 'png'
+            )
+        kw.update(keywords)
+
         # assign concept dict
         mixed_concepts = {}
 
@@ -1542,7 +1570,7 @@ class PhyBo(Wordlist):
 
         # write the results to file
         # make the folder for the data to store the stats
-        folder = self.dataset+'_trebor'
+        folder = self.dataset+'_phybo'
         try:
             os.mkdir(folder)
         except:
@@ -1553,16 +1581,17 @@ class PhyBo(Wordlist):
 
             # make the directory for the files
             try:
-                os.mkdir(folder+'/gml')
+                os.mkdir(os.path.join(folder,'gml'))
             except:
                 pass
 
             # make next directory
             try:
                 os.mkdir(
-                        folder+'/gml/'+'{0}-{1}'.format(
-                            self.dataset,
-                            "mixed"
+                        os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}'.format(self.dataset,"mixed")
                             )
                         )
             except:
@@ -1571,9 +1600,10 @@ class PhyBo(Wordlist):
             # make the folder for png
             try:
                 os.mkdir(
-                        folder+'/gml/'+'{0}-{1}-figures'.format(
-                            self.dataset,
-                            "mixed"
+                        os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}-figures'.format(self.dataset,"mixed"),
                             )
                         )
             except:
@@ -1586,9 +1616,13 @@ class PhyBo(Wordlist):
                         gls,
                         self.tgraph,
                         self.tree,
-                        filename = folder+'/gml/{0}-{1}/{2}'.format(
-                            self.dataset,
-                            "mixed",
+                        filename = os.path.join(
+                            folder,
+                            'gml',
+                            '{0}-{1}'.format(
+                                self.dataset,
+                                "mixed"
+                                ),
                             cog
                             ),
                         )
@@ -1662,23 +1696,26 @@ class PhyBo(Wordlist):
                                     size=8,fontweight='bold',color=c,backgroundcolor=f)
                     
                     #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
-                    plt.savefig(folder+'/gml/{0}-{1}-figures/{2}.png'.format(
-                        self.dataset,
-                        "mixed",
-                        cog
-                        ))
+                    plt.savefig(
+                            os.path.join(
+                                folder,
+                                'gml',
+                                '{0}-{1}-figures'.format(self.dataset,'mixed'),
+                                cog+'.'+kw['fileformat']
+                                )
+                            )
                     plt.clf()
 
             # if tar is chosen, put it into a tarfile
             if tar:
                 os.system(
-                        'cd {0}_trebor/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
+                        'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
                             self.dataset,
                             "mixed"
                             )
                         )
-                os.system('rm {0}_trebor/gml/{0}-{1}/*.gml'.format(self.dataset,"mixed"))
-                os.system('rmdir {0}_trebor/gml/{0}-{1}'.format(self.dataset,"mixed"))
+                os.system('rm {0}_phybo/gml/{0}-{1}/*.gml'.format(self.dataset,"mixed"))
+                os.system('rmdir {0}_phybo/gml/{0}-{1}'.format(self.dataset,"mixed"))
 
 
 
@@ -1696,7 +1733,7 @@ class PhyBo(Wordlist):
         # store statistics and gain-loss-scenarios in textfiles
         # create folder for gls-data
         try:
-            os.mkdir(folder+'/gls')
+            os.mkdir(os.path.join(folder,'gls'))
         except:
             pass
         
@@ -1704,7 +1741,11 @@ class PhyBo(Wordlist):
         
         # write gls-data to folder
         f = codecs.open(
-                folder+'/gls/{0}-{1}.gls'.format(self.dataset,"mixed"),
+                os.path.join(
+                    folder,
+                    'gls',
+                    '{0}-{1}.gls'.format(self.dataset,"mixed")
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -1735,7 +1776,7 @@ class PhyBo(Wordlist):
         defaults = dict(
                 proto = proto,
                 force = force,
-                filename = self.dataset+'_trebor/acs-'+glm,
+                filename = os.path.join(self.dataset+'_phybo','acs-'+glm),
                 fileformat = 'csv'
                 )
         for k in defaults:
@@ -2079,7 +2120,10 @@ class PhyBo(Wordlist):
 
         # write the graph to file
         f = codecs.open(
-                self.dataset+'_trebor/mln-'+glm+'.gml',
+                os.path.join(
+                    self.dataset+'_phybo',
+                    'mln-'+glm+'.gml'
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -2093,7 +2137,10 @@ class PhyBo(Wordlist):
         if rcParams["verbose"]: print("[i] Writing Inferred Lateral Events to file...")
 
         f = codecs.open(
-                self.dataset+'_trebor/ile-'+glm+'.csv',
+                os.path.join(
+                    self.dataset+'_phybo',
+                    'ile-'+glm+'.csv'
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -2108,7 +2155,10 @@ class PhyBo(Wordlist):
 
         # create file name for node labels (cytoscape output)
         f = codecs.open(
-                self.dataset+'_trebor/node.label.NA',
+                os.path.join(
+                    self.dataset+'_phybo',
+                    'node.label.NA'
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -2122,7 +2172,10 @@ class PhyBo(Wordlist):
 
         # write stats to file
         f = codecs.open(
-                self.dataset+'_trebor/taxa-'+glm+'.stats',
+                os.path.join(
+                    self.dataset+'_phybo',
+                    'taxa-'+glm+'.stats'
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -2158,7 +2211,10 @@ class PhyBo(Wordlist):
 
         # write edge distributions
         f = codecs.open(
-                self.dataset+'_trebor/edge-'+glm+'.stats',
+                os.path.join(
+                    self.dataset+'_phybo',
+                    'edge-'+glm+'.stats'
+                    ),
                 'w',
                 'utf-8'
                 )
@@ -2185,13 +2241,13 @@ class PhyBo(Wordlist):
         
         # write specific links of taxa to file
         try:
-            os.mkdir(self.dataset+'_trebor/taxa-'+glm)
+            os.mkdir(os.path.join(self.dataset+'_phybo','taxa-'+glm))
         except:
             pass
 
         for taxon in self.taxa:
             f = codecs.open(
-                    self.dataset+'_trebor/taxa-'+glm+'/'+taxon+'.csv',
+                    os.path.join(self.dataset+'_phybo','taxa-'+glm,taxon+'.csv'),
                     'w',
                     'utf-8'
                     )
@@ -2333,14 +2389,14 @@ class PhyBo(Wordlist):
                 )
 
         # write data to file
-        # self.output('csv',filename=self.dataset+'_trebor/wl-'+glm)
+        # self.output('csv',filename=self.dataset+'_phybo/wl-'+glm)
         # XXX change later
 
         if rcParams["verbose"]: print("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
         f = codecs.open(
-                self.dataset + '_trebor/paps-'+glm+'.stats',
+                os.path.join(self.dataset + '_phybo','paps-'+glm+'.stats'),
                 'w',
                 'utf-8'
                 )
@@ -2373,7 +2429,7 @@ class PhyBo(Wordlist):
 
         # write stats on concepts
         f = codecs.open(
-                self.dataset+'_trebor/concepts-'+glm+'.stats',
+                os.path.join(self.dataset+'_phybo','concepts-'+glm+'.stats'),
                 'w',
                 'utf-8'
                 )
@@ -2414,7 +2470,7 @@ class PhyBo(Wordlist):
 
         # write stuff to alm-file
         f = codecs.open(
-                self.dataset+'_trebor/'+self.dataset+'-'+glm+'.alm.patchy',
+                os.path.join(self.dataset+'_phybo',self.dataset+'-'+glm+'.alm.patchy'),
                 'w',
                 'utf-8'
                 )
@@ -2799,7 +2855,11 @@ class PhyBo(Wordlist):
 
         # write results to file
         if rcParams["verbose"]: print("[i] Writing stats to file.")
-        f = codecs.open(self.dataset+'_trebor/'+self.dataset+'.stats','w','utf-8')
+        f = codecs.open(
+                os.path.join(self.dataset+'_phybo',self.dataset+'.stats'),
+                'w',
+                'utf-8'
+                )
         f.write("Mode\tANO\tMNO\tVSD_z\tVSD_p\n")
         for i in range(len(zp_vsd)):
             f.write(
@@ -2907,7 +2967,12 @@ class PhyBo(Wordlist):
                     )
 
             # save the figure
-            plt.savefig(self.dataset+'_trebor/vsd.'+keywords['fileformat'])
+            plt.savefig(
+                    os.path.join(
+                        self.dataset+'_phybo',
+                        'vsd.'+keywords['fileformat']
+                        )
+                    )
             plt.clf()
             
             if rcParams["verbose"]: print("[i] Plotted the distributions.")
@@ -2927,7 +2992,7 @@ class PhyBo(Wordlist):
             if plot_mln:
                 self.plot_MLN(
                         self.best_model,
-                        filename=self.dataset+'_trebor/mln-'+glm,
+                        filename=os.path.join(self.dataset+'_phybo','mln-'+glm),
                         threshold = keywords['threshold'],
                         fileformat = keywords['fileformat'],
                         usetex = keywords['usetex'],
@@ -2936,7 +3001,7 @@ class PhyBo(Wordlist):
             if plot_msn:
                 self.plot_MSN(
                         self.best_model,
-                        filename=self.dataset+'_trebor/msn-'+glm,
+                        filename=os.path.join(self.dataset+'_phybo','msn-'+glm),
                         fileformat=keywords['fileformat'],
                         threshold = keywords['threshold'],
                         only = keywords['only'],
@@ -3365,7 +3430,7 @@ class PhyBo(Wordlist):
         # save the figure
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
         return
 
@@ -3844,7 +3909,11 @@ class PhyBo(Wordlist):
                                 geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
         
         # write stats to file
-        f = codecs.open(self.dataset+'_trebor/taxa-msn-'+glm+'.stats','w','utf-8')
+        f = codecs.open(
+                os.path.join(self.dataset+'_phybo','taxa-msn-'+glm+'.stats'),
+                'w',
+                'utf-8'
+                )
         # get the degree
         nodes = tree.getTipNames()
 
@@ -3873,7 +3942,11 @@ class PhyBo(Wordlist):
         f.close()
         
         # write edge distributions
-        f = codecs.open(self.dataset+'_trebor/edge-msn-'+glm+'.stats','w','utf-8')
+        f = codecs.open(
+                os.path.join(self.dataset+'_phybo','edge-msn-'+glm+'.stats'),
+                'w',
+                'utf-8'
+                )
         edges = []
         edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
 
@@ -4513,27 +4586,36 @@ class PhyBo(Wordlist):
     
     def plot_GLS(
             self,
-            glm
+            glm,
+            **keywords
             ):
         """
         Plot the inferred scenarios for a given model.
         """
+        kw = dict(
+                fileformat = 'png'
+                )
+        kw.update(keywords)
         
         # make folder variable
-        folder = self.dataset+'_trebor'
+        folder = self.dataset+'_phybo'
 
         # make the directory for the files
         try:
-            os.mkdir(folder+'/gml')
+            os.mkdir(os.path.join(folder,'gml'))
         except:
             pass
 
         # make next directory
         try:
             os.mkdir(
-                    folder+'/gml/'+'{0}-{1}'.format(
-                        self.dataset,
-                        glm
+                    os.path.join(
+                        folder,
+                        'glm',
+                        '{0}-{1}'.format(
+                            self.dataset,
+                            glm
+                            )
                         )
                     )
         except:
@@ -4542,9 +4624,13 @@ class PhyBo(Wordlist):
         # make the folder for png
         try:
             os.mkdir(
-                    folder+'/gml/'+'{0}-{1}-figures'.format(
-                        self.dataset,
-                        glm
+                    os.path.join(
+                        folder,
+                        'glm',
+                        '{0}-{1}-figures'.format(
+                            self.dataset,
+                            glm
+                            )
                         )
                     )
         except:
@@ -4557,9 +4643,13 @@ class PhyBo(Wordlist):
                     gls,
                     self.tgraph,
                     self.tree,
-                    filename = folder+'/gml/{0}-{1}/{2}'.format(
-                        self.dataset,
-                        glm,
+                    filename = os.path.join(
+                        folder,
+                        'gml',
+                        '{0}-{1}'.format(
+                            self.dataset,
+                            glm
+                            ),
                         cog
                         ),
                     )
@@ -4665,12 +4755,14 @@ class PhyBo(Wordlist):
                                     ),
                                 )
             
-            plt.savefig(folder+'/gml/{0}-{1}-figures/{2}-{3}.png'.format(
-                self.dataset,
-                glm,
-                self.pap2con[cog],
-                cog
-                ))
+            plt.savefig(
+                    os.path.join(
+                        folder,
+                        'gml',
+                        '{0}-{1}-figures'.format(self.dataset,glm),
+                        '{0}-{1}.'.format(self.pap2con[cog],cog)+kw['fileformat']
+                        )
+                    )
             plt.clf()
     
     def get_stats(
@@ -4706,7 +4798,11 @@ class PhyBo(Wordlist):
         if not filename:
             return noo,ppc
         else:
-            f = codecs.open(self.dataset+'_trebor/'+filename,'w','utf-8')
+            f = codecs.open(
+                    os.path.join(self.dataset+'_phybo',filename),
+                    'w',
+                    'utf-8'
+                    )
             f.write('Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,ppc))
             f.close()
 
@@ -4752,20 +4848,21 @@ class PhyBo(Wordlist):
             concepts = [i for i in self.concepts if i == concept]
 
         # make folder variable
-        folder = self.dataset+'_trebor'
+        folder = self.dataset+'_phybo'
 
         # make the directory for the files
         try:
-            os.mkdir(folder+'/items')
+            os.mkdir(os.path.join(folder,'items'))
         except:
             pass
 
         # make next directory
         try:
             os.mkdir(
-                    folder+'/items/'+'{0}-{1}'.format(
-                        self.dataset,
-                        glm
+                    os.path.join(
+                        folder,
+                        'items',
+                        '{0}-{1}'.format(self.dataset,glm)
                         )
                     )
         except:
@@ -4776,7 +4873,7 @@ class PhyBo(Wordlist):
         
         # start with the analysis
         for concept in concepts:
-            if rcParams["verbose"]: print("Plotting concept '{0}'...".format(concept))
+            if rcParams["verbose"]: print("[i] Plotting concept '{0}'...".format(concept))
             
             # switch backend, depending on whether tex is used or not
             backend = mpl.get_backend()
@@ -5076,11 +5173,13 @@ class PhyBo(Wordlist):
 
 
             plt.savefig(
-                folder + '/items/{0}-{1}/{2}.'.format(
-                    self.dataset,
-                    glm,
-                    concept
-                    )+fileformat)
+                os.path.join(
+                    folder,
+                    'items',
+                    '{0}-{1}'.format(self.dataset,glm),
+                    concept.replace('/','_')+'.'+fileformat
+                    )
+                )
             plt.clf()
 
         # return the graph

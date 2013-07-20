@@ -469,18 +469,20 @@ def compile_model(
     print("[i] Compiling model <"+model+">...")
     # get the path to the models
     if path == None:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
+        path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                model
+                )
     else:
-        if path.endswith('/'):
-            path = path+model+'/'
-        else:
-            path = path + '/' + model + '/'
+        path = os.path.join(path,model)
     
     # load the sound classes
-    sound_classes = _import_sound_classes(path+'converter')
+    sound_classes = _import_sound_classes(os.path.join(path,'converter'))
     
     # dump the data
-    outfile = open(path+'converter.bin','wb')
+    outfile = open(os.path.join(path,'converter.bin'),'wb')
     dump(sound_classes,outfile)
     outfile.close()
     print("... successfully created the converter.")
@@ -488,10 +490,10 @@ def compile_model(
     # try to load the scoring function or the score tree
     scorer = False
 
-    if os.path.isfile(path+'matrix'):
-        scorer = read_scorer(path+'matrix')
-    elif os.path.isfile(path+'scorer'):
-        score_tree = _import_score_tree(path+'scorer')
+    if os.path.isfile(os.path.join(path,'matrix')):
+        scorer = read_scorer(os.path.join(path,'matrix'))
+    elif os.path.isfile(os.path.join(path,'scorer')):
+        score_tree = _import_score_tree(os.path.join(path,'scorer'))
     
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
@@ -516,13 +518,13 @@ def compile_model(
         scorer = misc.ScoreDict(chars,matrix)
         
         # create the matrix file
-        f = codecs.open(path+'matrix','w','utf-8')
+        f = codecs.open(os.path.join(path,'matrix'),'w','utf-8')
         f.write(scorer2str(scorer))
         f.close()
     
     if scorer:
         # dump the data
-        outfile = open(path+'scorer.bin','wb')
+        outfile = open(os.path.join(path,'scorer.bin'),'wb')
         dump(scorer,outfile)
         outfile.close()
         print("... successfully created the scorer.")
@@ -559,35 +561,44 @@ def compile_dvt(path=''):
 
     # get the path to the models
     if not path:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+        path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt'
+                )
     elif path in ['evolaemp','el']:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/'
+        path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt_el'
+                )
     else:
         pass
 
     diacritics = codecs.open(
-            path+'diacritics',
+            os.path.join(path,'diacritics'),
             'r',
             'utf-8'
             ).read().replace('\n','').replace('-','')
     vowels = codecs.open(
-            path+'vowels',
+            os.path.join(path,'vowels'),
             'r',
             'utf-8'
             ).read().replace('\n','')
 
     tones = codecs.open(
-            path+'tones',
+            os.path.join(path,'tones'),
             'r',
             'utf-8'
             ).read().replace('\n','')
 
     dvt = (diacritics,vowels,tones)
 
-    outfile = open(path+'dvt.bin','wb')
+    outfile = open(os.path.join(path,'dvt.bin'),'wb')
     dump(dvt,outfile)
     outfile.close()
-    print(path)
 
-    print("[i] Diacritics and sound classes were successfully compiled.")
+    if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
 

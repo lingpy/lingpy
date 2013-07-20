@@ -114,31 +114,35 @@ class Model(object):
     def __init__(
             self,
             model,
-            path = None
+            path = ""
             ):
         
-        if path == None:
-            new_path = rcParams['_path']+'/data/models/'+model+'/'
+        if not path:
+            new_path = os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'models',
+                    model
+                    )
         else:
             if path.endswith('/'):
                 new_path = path+model+'/'
             else:
                 new_path = path + '/' + model + '/'
-
         self.name = model
         # check for converter
-        if not os.path.isfile(new_path+'converter.bin'):
+        if not os.path.isfile(os.path.join(new_path,'converter.bin')):
             compile_model(model,path)
         
-        self.converter = load(open(new_path+'converter.bin','rb'))
+        self.converter = load(open(os.path.join(new_path,'converter.bin'),'rb'))
 
         # check for scorer
         # give always preference to scorer bin files
-        if os.path.isfile(new_path+'scorer.bin'):
-            self.scorer = load(open(new_path+'scorer.bin','rb'))
+        if os.path.isfile(os.path.join(new_path,'scorer.bin')):
+            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
         # second preference is given to matrix files
-        elif os.path.isfile(new_path + 'matrix'):
-            self.scorer = read_scorer(new_path + 'matrix')
+        elif os.path.isfile(os.path.join(new_path,'matrix')):
+            self.scorer = read_scorer(os.path.join(new_path,'matrix'))
         # if none of the above fits, leave it
         else: 
             pass
@@ -146,7 +150,7 @@ class Model(object):
         # read information from the info-file
         self.info = {}
         
-        info = codecs.open(new_path+'INFO','r','utf-8').read()
+        info = codecs.open(os.path.join(new_path,'INFO'),'r','utf-8').read()
         
         data = ['description','compiler','source','date','vowels','tones']
         
@@ -211,9 +215,21 @@ def load_dvt(path=''):
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
     if not path:
-        pathx = rcParams['_path']+'/data/models/dvt/dvt.bin'
+        pathx = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt',
+                'dvt.bin'
+                )
     elif path in ['el','evolaemp']:
-        pathx = rcParams['_path']+'/data/models/dvt_el/dvt.bin'
+        pathx = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt_el',
+                'dvt.bin'
+                )
     else:
         pass
     

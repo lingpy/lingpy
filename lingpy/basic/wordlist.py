@@ -85,7 +85,7 @@ class Wordlist(object):
         if type(filename) == str:
             if os.path.isdir('__lingpy__'):
                 if filename[-4:] in ['qlc','csv']:
-                    path = '__lingpy__/'+filename[:-3]+'bin'
+                    path = os.path.join('__lingpy__',filename[:-3]+'bin')
                 else:
                     path = ''
                 if os.path.isfile(path):
@@ -153,7 +153,7 @@ class Wordlist(object):
 
         # load the configuration file
         if not conf:
-            conf = rcParams['_path'] + '/data/conf/wordlist.rc'
+            conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
 
         # read the file defined by its path in conf
         tmp = [line.strip('\n\r').split('\t') for line in codecs.open(conf,'r','utf-8') if not
@@ -1733,7 +1733,12 @@ class Wordlist(object):
         if os.path.exists(ortho_profile):
             ortho_path = ortho_profile
         else:
-            ortho_path = rcParams['_path']+ '/data/orthography_profiles/' + ortho_profile
+            ortho_path = os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'orthography_profiles',
+                    ortho_profile
+                    )
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":
