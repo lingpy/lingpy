@@ -43,13 +43,13 @@ rcParams.update(messages)
 
 # these are general warnings, all prefixed by "warning" in rcParams
 warnings = dict(
-        warning_empty_cons       = "There are emtpy segments in the consensus.",
-        warning_failed_cons      = "Failed to compute the consensus string.",
-        warning_deprecation      = "Use of '{0}' is deprecated, use '{1}' instead.",
-        warning_missing_module   = "Module '{0}' could not be loaded. Some methods may not work properly.",
-        warning_identical_scorer = "An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
-        warning_overwrite_scorer = "A different scoring function has already been calculated, overwriting previous settings.",
-        warning_zero_division    = "Zero-division error encountered in '{0}' and '{1}'."
+        W_empty_cons       = "There are emtpy segments in the consensus.",
+        W_failed_cons      = "Failed to compute the consensus string.",
+        W_deprecation      = "Use of '{0}' is deprecated, use '{1}' instead.",
+        W_missing_module   = "Module '{0}' could not be loaded. Some methods may not work properly.",
+        W_identical_scorer = "An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
+        W_overwrite_scorer = "A different scoring function has already been calculated, overwriting previous settings.",
+        W_zero_division    = "Zero-division error encountered in '{0}' and '{1}'."
         )
 # adjust the prefix for the warning message
 for k,v in warnings.items():
