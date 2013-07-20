@@ -625,9 +625,9 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                if rcParams['verbose']: print(rcParams['empty_consensus_warning'])
+                if rcParams['verbose']: print(rcParams['W_empty_cons'])
             except:
-                print(rcParams['sonority_consensus_warning'])
+                print(rcParams['E_failed_cons'])
                 print(sonarA)
                 print(sonarB)
                 print(almsA[0])
@@ -826,10 +826,10 @@ class Multiple(object):
                 try:
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
-                    if rcParams['verbose']: print(rcParams['empty_consensus_warning']) 
+                    if rcParams['verbose']: print(rcParams['W_empty_cons']) 
                 except:
                     consensus = []
-                    print(rcParams['sonority_consensus_warning'])
+                    print(rcParams['E_failed_cons'])
             self._sonority_consensus = consensus
 
 
@@ -916,28 +916,22 @@ class Multiple(object):
 
         """
         # set up the defaults parameters stored in the kw dictionary
-        keys = [
-            ('model',''),
-            ('mode','align_mode'),
-            ('scale',''),
-            ('factor',''),
-            ('tree_calc',''),
-            ('gap_weight',''),
-            ('restricted_chars',''),
-            ('classes',''),
-            ('sonar',''),
-            ('scorer',''),
-            ('gop','')
-            ]
-        kw = {}
-        for k,d in keys:             
-            if k in keywords and not d:
-                kw[k] = keywords[k]
-            elif not d:
-                kw[k] = rcParams[k]
-            else:
-                kw[k] = rcParams[d]
-
+        kw = dict(
+                model            = rcParams['model'],
+                mode             = rcParams['align_mode'],
+                scale            = rcParams['align_scale'],
+                factor           = rcParams['align_factor'],
+                tree_calc        = rcParams['align_tree_calc'],
+                restricted_chars = rcParams['restricted_chars'],
+                classes          = rcParams['align_classes'],
+                sonar            = rcParams['align_sonar'],
+                scorer           = rcParams['align_scorer'],
+                gop              = rcParams['align_gop'],
+                gap_weight       = rcParams['align_gap_weight']
+                )
+        kw.update(keywords)
+        
+        # define the model for convenience
         model = kw['model']
 
         # create a string with the current parameters
@@ -1071,27 +1065,21 @@ class Multiple(object):
 
         """
         # set up the defaults parameters stored in the kw dictionary
-        keys = [
-            ('model',''),
-            ('mode','align_mode'),
-            ('modes','align_modes'),
-            ('scale',''),
-            ('factor',''),
-            ('tree_calc',''),
-            ('gap_weight',''),
-            ('restricted_chars',''),
-            ('classes',''),
-            ('sonar',''),
-            ('scorer','')
-            ]
-        kw = {}
-        for k,d in keys:             
-            if k in keywords and not d:
-                kw[k] = keywords[k]
-            elif not d:
-                kw[k] = rcParams[k]
-            else:
-                kw[k] = rcParams[d]
+        kw = dict(
+                model            = rcParams['model'],
+                mode             = rcParams['align_mode'],
+                modes            = rcParams['align_modes'],
+                scale            = rcParams['align_scale'],
+                factor           = rcParams['align_factor'],
+                tree_calc        = rcParams['align_tree_calc'],
+                restricted_chars = rcParams['restricted_chars'],
+                classes          = rcParams['align_classes'],
+                sonar            = rcParams['align_sonar'],
+                scorer           = rcParams['align_scorer'],
+                gop              = rcParams['align_gop'],
+                gap_weight       = rcParams['align_gap_weight']
+                )
+        kw.update(keywords)
 
         # create a string with the current parameters
         params = [

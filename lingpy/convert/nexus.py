@@ -60,7 +60,7 @@ def pap2nex(
             )
     f.close()
     
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.nex'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.nex'))
     return
 
         

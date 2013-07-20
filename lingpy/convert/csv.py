@@ -42,7 +42,7 @@ def pap2csv(
     f.write(out)
     f.close()
 
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.csv'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.csv'))
     
     return
 
@@ -195,6 +195,6 @@ def wl2csv(
     if "stamp" in keywords:
         f.write(keywords['stamp'])
     f.close()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+keywords['fileformat']))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+keywords['fileformat']))
 
     return 

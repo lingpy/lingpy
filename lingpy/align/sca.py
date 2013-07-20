@@ -794,7 +794,7 @@ class Alignments(Wordlist):
         
         # check for reference / cognates
         if 'cognates' in keywords:
-            print(rcParams['deprecation_warning'].format('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
         
         # change ref to rcParams
@@ -950,10 +950,10 @@ class Alignments(Wordlist):
                 model = rcParams['sca'],
                 mode = rcParams['align_mode'],
                 modes = rcParams['align_modes'],
-                gop = rcParams['gop'],
-                scale = rcParams['scale'],
-                factor = rcParams['factor'],
-                tree_calc = rcParams['tree_calc'],
+                gop = rcParams['align_gop'],
+                scale = rcParams['align_scale'],
+                factor = rcParams['align_factor'],
+                tree_calc = rcParams['align_tree_calc'],
                 gap_weight = rcParams['gap_weight'],
                 restricted_chars = rcParams['restricted_chars'],
                 classes = rcParams['classes'],
@@ -1058,7 +1058,7 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print(rcParams['deprecation_warning'].format('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
 
         # switch ref
@@ -1190,7 +1190,7 @@ class Alignments(Wordlist):
         filename = kw['filename']
 
         if 'cognates' in kw:
-            print(rcParams['deprecation_warning'].format('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = kw['cognates']
 
         if ref != rcParams['ref']:

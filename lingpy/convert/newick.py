@@ -124,7 +124,7 @@ def xml2nwk(
         f = codecs.open(filename+'.nwk','w','utf-8')
         f.write(newick_string)
         f.close()
-        if rcParams['verbose']: print(rcParams['fw'].format(filename,'nwk'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
         return
 
 def matrix2tree(
@@ -153,6 +153,6 @@ def matrix2tree(
         out = codecs.open(filename+'.nwk','w','utf-8')
         out.write(str(tree))
         out.close()
-        if rcParams['verbose']: print(rcParams['fw'].format(filename,'nwk'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
 
 

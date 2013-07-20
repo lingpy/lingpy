@@ -527,7 +527,7 @@ def diff(
         #f.write('F-Score:   {0:.4f}\n'.format(hf))
         #f.write('#\n')
         f.close()
-        print(rcParams['fw'].format(filename+'.diff'))
+        print(rcParams['M_file_written'].format(filename+'.diff'))
 
     else:
         return ((bp,br,bf),(pp,pr,pf))

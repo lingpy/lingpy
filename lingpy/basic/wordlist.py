@@ -1212,7 +1212,7 @@ class Wordlist(object):
 
         """
         if 'cognates' in keywords:
-            print(rcParams['warning_deprecation'].format('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
 
         # XXX take care of keywords XXX
@@ -1325,7 +1325,7 @@ class Wordlist(object):
         # csv-output
         if fileformat in ['csv','qlc']:
             if fileformat == 'csv':
-                print(rcParams['deprecation_warning'].format('csv','qlc'))
+                print(rcParams['W_deprecation'].format('csv','qlc'))
             
             # get the header line
             header = sorted(
@@ -1406,7 +1406,7 @@ class Wordlist(object):
             f.close()
 
             # display file-write-message
-            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
         
         # output tre-format (newick)
         if fileformat in ['tre','nwk']: #,'cluster','groups']:
@@ -1439,7 +1439,7 @@ class Wordlist(object):
             f.write('{0}'.format(tree))
             f.close()
 
-            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
         if fileformat in ['cluster','groups']:
 
@@ -1461,7 +1461,7 @@ class Wordlist(object):
                 f.write('{0}\t{1}\n'.format(taxon,group))
             f.close()
 
-            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
         if fileformat in ['starling','star.csv']:
 
@@ -1488,7 +1488,7 @@ class Wordlist(object):
                         f.write('\t'.join('{0}\t{1}'.format(l(a),b) for a,b in
                             zip(line,cogs[j]))+'\n')
             f.close()
-            if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
     def output(
             self,
@@ -1667,7 +1667,7 @@ class Wordlist(object):
         else:
             f.write(tmpl.format(out_string))
         f.close()
-        if rcParams['verbose']: print(rcParams['fw'].format(keywords['filename']+'.'+fileformat))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
 
     def export(
             self,

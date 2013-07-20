@@ -313,7 +313,7 @@ class Spreadsheet:
         # use wl2csv to convert if fileformat is 'qlc'
         if fileformat in ['qlc','csv']:
             if fileformat == 'csv':
-                print(rcParams['deprecation_warning'].format('csv','qlc'))
+                print(rcParams['W_deprecation'].format('csv','qlc'))
             wl2csv(
                     self.header,
                     self._data,

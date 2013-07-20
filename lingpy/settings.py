@@ -11,7 +11,7 @@ __date__="2013-07-18"
 
 # builtin imports
 from datetime import datetime,date
-import os
+#import os
 
 # internal imports
 from ._settings import rcParams
@@ -20,34 +20,10 @@ from .data.model import Model,load_dvt
 # load diacritics, vowels, tones
 diacritics, vowels, tones = load_dvt()
 
-# set the absolute path to lingpy
-_abs_path = os.path.split(
-        os.path.abspath(
-            __file__
-            )
-        )[0]
-
-# these are general warnings, all prefixed by "warning" in rcParams
-warnings = dict(
-        warning_empty_cons = "[WARNING] There are emtpy segments in the consensus.",
-        warning_failed_cons = "[WARNING] Failed to compute the consensus string.",
-        warning_deprecation = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
-        warning_missing_module = "[WARNING] Module '{0}' could not be loaded.  Some methods may not work properly.",
-        warning_identical_scorer = "[WARNING] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
-        warning_overwrite_scorer = "[WARNING] A different scoring function has already been calculated, overwriting previous settings.",
-        warning_zero_division = "[WARNING] Zero-division error encountered in '{0}' and '{1}'."
-        )
-rcParams.update(warnings)
-
-# these are questions which need to be answered by the user
-questions = dict(
-        )
-rcParams.update(questions)
-
 # these are lexstat-specific parameters, all prefixed by "lexstat"
 lexstat = dict(
-        lexstat_transform =  {                    
-                    'A':'C', 
+        lexstat_transform      = {
+                    'A':'C',
                     'B':'C',
                     'C':'C',
                     'L':'c',
@@ -59,14 +35,14 @@ lexstat = dict(
                     'T':'T', #
                     '_':'_'
                     },
-        lexstat_runs = 1000,
-        lexstat_modes = [("global",-2,0.5),("local",-1,0.5)],        
-        lexstat_rands = 1000,
-        lexstat_limit = 10000,
-        lexstat_method = 'markov',
-        lexstat_ratio = (2,1),
-        lexstat_vscale = 0.5,
-        lexstat_threshold = 0.7,
+        lexstat_runs           = 1000,
+        lexstat_modes          = [("global",-2,0.5),("local",-1,0.5)],
+        lexstat_rands          = 1000,
+        lexstat_limit          = 10000,
+        lexstat_method         = 'markov',
+        lexstat_ratio          = (2,1),
+        lexstat_vscale         = 0.5,
+        lexstat_threshold      = 0.7,
         lexstat_cluster_method = 'upgma',
         )
 rcParams.update(lexstat)
@@ -85,12 +61,14 @@ alignments = dict(
         align_sonar                      = True,
         align_scorer                     = {},
         align_tree_calc                  = 'neighbor',
+        align_gop = -2
         )
 rcParams.update(alignments)
 
 # dictionary stores basic parameters that are used during a LingPy session
 rcParamsUpd = dict(
         verbose                    = False,
+        debug                      = False,
         schema                     = 'qlc',
         asjp                       = Model('asjp'),
         sca                        = Model('sca'),
@@ -101,23 +79,12 @@ rcParamsUpd = dict(
         vowels                     = vowels,
         tones                      = tones,
         figsize                    = (10,10),
-        file_written               = "[i] Data has been written to file <{0}>.",
-        missing_module             = "[WARNING] Module '{0}' could not be loaded. Some methods may not work properly.",
-        filename                   = 'lingpy-'+str(date.today()),
-        deprecation_warning        = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
-        timestamp                  = str(datetime.today()),
         combiners                  = '\u0361\u035c',
         breaks                     = '.-',
         stress                     = "ˈˌ'",
         merge_vowels               = True,
-        _path                      = _abs_path,
         comment                    = '#',
         restricted_chars           = '_T',
-        align_mode                       = 'global',
-        align_modes                      = [
-                ('global',-2,0.5),
-                ('local',-1,0.5),
-                ],
         scale                      = 0.5,
         factor                     = 0.3,
         gap_weight                 = 0.5,
@@ -127,41 +94,19 @@ rcParamsUpd = dict(
         tree_calc                  = 'neighbor',
         gop                        = -2,
         ref                        = 'cogid',
-        #lexstat_transform =  {                    
-        #            'A':'C', 
-        #            'B':'C',
-        #            'C':'C',
-        #            'L':'c',
-        #            'M':'c',
-        #            'N':'c',
-        #            'X':'V', #
-        #            'Y':'V', #
-        #            'Z':'V', #
-        #            'T':'T', #
-        #            '_':'_'
-        #            },
-        #lexstat_runs = 1000,
-        #lexstat_modes = [("global",-2,0.5),("local",-1,0.5)],        
-        #lexstat_rands = 1000,
-        #lexstat_limit = 10000,
-        #lexstat_method = 'markov',
-        #lexstat_ratio = (2,1),
-        #lexstat_vscale = 0.5,
-        #lexstat_threshold = 0.7,
-        #lexstat_cluster_method = 'upgma',
-        identical_scorer_warning = "[i] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
+        identical_scorer_warning   = "[i] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
         overwrite_scoring_function = "[i] A different scoring function has already been calculated, overwriting previous settings.",
-        empty_consensus_warning = '[WARNING] There are empty segments in the consensus!',
+        empty_consensus_warning    = '[WARNING] There are empty segments in the consensus!',
         sonority_consensus_warning = '[WARNING] Sonority profile consensus could not be calculated!',
-        debug = False
+        deprecation_warning        = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
+        missing_module             = "[WARNING] Module '{0}' could not be loaded. Some methods may not work properly.",
         )
-
 rcParams.update(rcParamsUpd)
 
 # define aliases for parameters
 kw_base = dict(
     filename = ('filename','fn'),
-    file_written = ('filewritten','fw','file_written'),
+    M_file_written = ('M_fw'),
     merge_vowels = ('mv','merge_vowels'),
     sca = ("sca","model")
     )
@@ -179,11 +124,6 @@ for key in kw_base:
 for key in list(alias.keys()):
     if key not in rcParams:
         rcParams[key] = rcParams[alias[key]]
-
-
-# add specific parameters for phybo
-
-
 
 # function changes parameters
 def rc(**keywords):

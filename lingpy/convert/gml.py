@@ -14,7 +14,7 @@ from ..settings import rcParams
 try:
     import networkx as nx
 except:
-    print(rcParams['missing_module'].foramt("networkx"))
+    print(rcParams['W_missing_module'].foramt("networkx"))
 
 import numpy as np
 
@@ -127,7 +127,7 @@ def gls2gml(
         for line in nx.generate_gml(g):
             f.write(line+'\n')
         f.close()
-        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
     
     return g
 
@@ -192,7 +192,7 @@ def nwk2gml(
             f.write(line+'\n')
         f.close()
 
-        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
         return
     else:
         return graph
@@ -397,7 +397,7 @@ def radial_layout(
         for line in nx.generate_gml(graph):
             f.write(line+'\n')
         f.close()
-        if rcParams['verbose']: print(rcParams['fw'].format(filename+'.gml'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
 
     return graph
 

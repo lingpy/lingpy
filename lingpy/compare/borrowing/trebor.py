@@ -31,27 +31,27 @@ try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 except ImportError:
-    print(rcParams['missing_module'].format('matplotlib'))
+    print(rcParams['W_missing_module'].format('matplotlib'))
 
 # import 3d-stuff
 try:
     from mpl_toolkits.mplot3d import Axes3D
 except:
-    print(rcParams['missing_module'].format('mplot3d'))
+    print(rcParams['W_missing_module'].format('mplot3d'))
 
 # import the geoplot module
 try:
     import mpl_toolkits.basemap as bmp
 except ImportError:
-    print(rcParams['missing_module'].format('basemap'))
+    print(rcParams['W_missing_module'].format('basemap'))
 try:
     import networkx as nx
 except:
-    print(rcParams['missing_module'].format('networkx'))
+    print(rcParams['W_missing_module'].format('networkx'))
 try:
     import scipy.stats as sps
 except:
-    print(rcParams['missing_module'].format('scipy'))
+    print(rcParams['W_missing_module'].format('scipy'))
 
 from .polygon import getConvexHull
 
@@ -113,7 +113,7 @@ class PhyBo(Wordlist):
 
         # check for cognates
         if 'cognates' in keywords:
-            print(rcParams['deprecation_warning'].format('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
@@ -128,7 +128,7 @@ class PhyBo(Wordlist):
         if os.path.isfile(self.dataset+'.qlc'):
             infile = self.dataset+'.qlc'
         elif os.path.isfile(self.dataset+'.csv'):
-            print(rcParams['deprecation_warning'].format('csv','qlc'))
+            print(rcParams['W_deprecation'].format('csv','qlc'))
             infile = self.dataset+'.csv'
         else:
             raise FileNotFoundError("The input file could not be found.")

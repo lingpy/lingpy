@@ -20,15 +20,57 @@ _abs_path = os.path.split(
             )
         )[0]
 
-# dictionary stores basic parameters that are used during a LingPy session
+# initialize rcParams with filename and timestamp
 rcParams = dict(
-        verbose = False,
-        file_written               = "[i] Data has been written to file <{0}>.",
-        missing_module             = "[WARNING] Module {0} could not be loaded. Some methods may not work properly.",
+        _path = _abs_path,
         filename                   = 'lingpy-'+str(date.today()),
         timestamp                  = str(datetime.today()),
-        _path = _abs_path,
-        input_error = "[!] Wrong input format, make sure the input format is of type {0}."
+        answer_yes = ['y','Y','j','J','yes']
         )
 
+# messages
+messages = dict(
+        M_file_written = "Data has been written to file <{0}>.",
+        M_no_errors_in_data = "No obvious errors found in the data.",
+        M_random_alignments = "Calculating random alignments for pair {0} / {1}.",
+        M_alignments = "Calculating alignments for pair {0} / {1}.",
+        )
+# adjust the prefix for general-purpose messages
+for k,v in messages.items():
+    messages[k] = "[i] "+v
+# update rcParams
+rcParams.update(messages)
+
+# these are general warnings, all prefixed by "warning" in rcParams
+warnings = dict(
+        warning_empty_cons       = "There are emtpy segments in the consensus.",
+        warning_failed_cons      = "Failed to compute the consensus string.",
+        warning_deprecation      = "Use of '{0}' is deprecated, use '{1}' instead.",
+        warning_missing_module   = "Module '{0}' could not be loaded. Some methods may not work properly.",
+        warning_identical_scorer = "An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
+        warning_overwrite_scorer = "A different scoring function has already been calculated, overwriting previous settings.",
+        warning_zero_division    = "Zero-division error encountered in '{0}' and '{1}'."
+        )
+# adjust the prefix for the warning message
+for k,v in warnings.items():
+    warnings[k] = "[WARNING] "+v
+# add stuff to rcParams
+rcParams.update(warnings)
+
+# add error-messages
+errors = dict(
+        E_failed_cons = "Failed to compute the consensus string.",
+        E_zero_division = "Zero-division error encountered in '{0}' and '{1}'."
+        )
+for k,v in errors.items():
+    errors[k] = "[ERROR] "+v
+rcParams.update(errors)
+
+# these are questions which need to be answered by the user
+questions = dict(
+        Q_errors_in_data = "There were errors in the input data. Do you want to exclude them?",
+        )
+for k,v in questions.items():
+    questions[k] = "[?] "+v+" (y/n) "
+rcParams.update(questions)
 

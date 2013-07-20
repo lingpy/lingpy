@@ -134,7 +134,7 @@ def wl2dst(
                 try:
                     distances += [ 1 - shared / (wl.height-missing)]
                 except ZeroDivisionError:
-                    print(rcParams['warning_zero_division'].format(taxA,taxB))
+                    print(rcParams['E_zero_division'].format(taxA,taxB))
                     distances += [1.0]
     distances = misc.squareform(distances)
     return distances

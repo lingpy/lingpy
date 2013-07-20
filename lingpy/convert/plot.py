@@ -32,12 +32,12 @@ from ..settings import rcParams
 try:
     import networkx as nx
 except ImportError:
-    print(rcParams['missing_module'].format('networkx'))
+    print(rcParams['W_missing_module'].format('networkx'))
 try:
     import matplotlib.pyplot as plt
     import matplotlib as mpl
 except:
-    print(rcParams['missing_module'].format('matplotlib'))
+    print(rcParams['W_missing_module'].format('matplotlib'))
 
 from ..align.sca import SCA
 from ..thirdparty import cogent as cg
@@ -231,7 +231,7 @@ def alm2html(
     out.write(html)
     out.close()
 
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
     return
 
 def patchy_alm2html(
@@ -371,7 +371,7 @@ def patchy_alm2html(
     out = codecs.open(filename+'.patchy.html','w','utf-8')
     out.write(html)
     out.close()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.patchy.html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.patchy.html'))
 
 def msa2tex(
         infile,
@@ -475,7 +475,7 @@ def msa2tex(
     out = codecs.open(filename+'.tex','w','utf-8')
     out.write(tex)
     out.close()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.tex'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.tex'))
 
 
 def string2html(
@@ -687,7 +687,7 @@ def msa2html(
     out = codecs.open(outfile,'w','utf-8')
     out.write(html)
     out.close()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
 
 def plot_gls(
         gls,
@@ -861,7 +861,7 @@ def plot_gls(
             filename + '.'+fileformat
             )
     plt.clf()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
 def plot_tree(
         treestring,
@@ -1044,7 +1044,7 @@ def plot_tree(
 
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
-    if rcParams['verbose']: print(rcParams['fw'].format(filename+'.'+fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
 def plot_concept_evolution(
         scenarios,
@@ -1482,4 +1482,4 @@ def plot_concept_evolution(
 
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
-    if rcParams['verbose']: print(rcParams['fw'].foramt(filename+'.'+fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].foramt(filename+'.'+fileformat))

@@ -150,8 +150,8 @@ class LexStat(Wordlist):
                 for a,b,c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
                 out.close()
-                answer = input("[?] There were errors in the input data. Do you want to exclude the errors? (Y/N) ")
-                if answer in ['Y','y','yes','j','J']:
+                answer = input(rcParams['Q_errors_in_data'])
+                if answer in rcParams['answer_yes']:
                     self.output(
                             'qlc',
                             filename=self.filename+'_cleaned',
@@ -173,7 +173,7 @@ class LexStat(Wordlist):
                 else:
                     return
             else:
-                print("[i] No obvious errors found in dataset.")
+                print(rcParams['M_no_errors_in_data'])
             
         # sonority profiles
         if not "sonars" in self.header:
@@ -432,10 +432,10 @@ class LexStat(Wordlist):
         kw = dict(
                 threshold = rcParams['lexstat_threshold'],
                 modes = rcParams['lexstat_modes'],
-                factor = rcParams['factor'],
+                factor = rcParams['align_factor'],
                 restricted_chars = rcParams['restricted_chars'],
                 preprocessing = False,
-                gop = rcParams['gop'],
+                gop = rcParams['align_gop'],
                 cluster_method='upgma',
                 )
         kw.update(keywords)
@@ -457,10 +457,7 @@ class LexStat(Wordlist):
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
                 if i <= j:
-                    if rcParams['verbose']: print("[i] Calculating alignments for pair {0} / {1}.".format(
-                        tA,
-                        tB
-                        ))
+                    if rcParams['verbose']: print(rcParams["M_alignments"].format(tA,tB))
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in kw['modes']:
                         if kw['preprocessing']: 
@@ -529,7 +526,7 @@ class LexStat(Wordlist):
         """
         kw = dict(
                 modes = rcParams['lexstat_modes'],
-                factor = rcParams['factor'],
+                factor = rcParams['align_factor'],
                 restricted_chars = rcParams['restricted_chars'],
                 runs = rcParams['lexstat_runs'],
                 rands = rcParams['lexstat_rands'],
@@ -603,10 +600,7 @@ class LexStat(Wordlist):
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
-                        if rcParams['verbose']: print("[i] Calculating random alignments for pair {0} / {1}.".format(
-                            tA,
-                            tB
-                            ))
+                        if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
                         corrdist[tA,tB] = {}
                         for mode,gop,scale in kw['modes']:
                             numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
@@ -653,10 +647,8 @@ class LexStat(Wordlist):
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
-                        if rcParams['verbose']: print("[i] Calculating random alignments for pair {0} / {1}.".format(
-                            tA,
-                            tB
-                            ))
+                        if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
+
                         corrdist[tA,tB] = {}
 
                         # get the number pairs etc.
@@ -780,14 +772,14 @@ class LexStat(Wordlist):
             runs = rcParams['lexstat_runs'],
             threshold = rcParams['lexstat_threshold'],
             modes = rcParams['lexstat_modes'], #[("global",-2,0.5),("local",-1,0.5)],
-            factor = rcParams['factor'], #0.3,
+            factor = rcParams['align_factor'], #0.3,
             restricted_chars = rcParams['restricted_chars'],
             force = False,
             preprocessing = True,
             rands = rcParams['lexstat_rands'],
             limit = rcParams['lexstat_limit'],
             cluster_method = rcParams['lexstat_cluster_method'],
-            gop = rcParams['gop']
+            gop = rcParams['align_gop']
             )
         kw.update(keywords)
 
@@ -819,16 +811,16 @@ class LexStat(Wordlist):
 
         # check for existing attributes
         if hasattr(self,'cscorer') and not force:
-            print(rcParams['identical_scorer_warning'])
+            print(rcParams['W_identical_scorer'])
             return 
 
         # check for attribute
         if hasattr(self,'params') and not force:
             if self.params['scorer'] == params:
-                print(rcParams['identical_scorer_warning'])
+                print(rcParams['W_identical_scorer'])
                 return
             else:
-                print(rcParams['overwrite_scoring_function'])
+                print(rcParams['W_overwrite_scorer'])
 
         # store parameters
         self.params = {'cscorer':params }
@@ -1351,7 +1343,7 @@ class LexStat(Wordlist):
             f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
             f.write(out)
             f.close()
-            print(rcParams['fw'].format(keywords['filename']+'.'+fileformat))
+            print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
 
         else:
             self._output(fileformat,**keywords)
