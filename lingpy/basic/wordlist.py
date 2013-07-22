@@ -156,8 +156,10 @@ class Wordlist(object):
             conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
 
         # read the file defined by its path in conf
-        tmp = [line.strip('\n\r').split('\t') for line in codecs.open(conf,'r','utf-8') if not
+        rcf = codecs.open(conf,'r','utf-8')
+        tmp = [line.strip('\n\r').split('\t') for line in rcf if not
                 line.startswith('#') and line.strip('\n\r')]
+        rcf.close()
         
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries

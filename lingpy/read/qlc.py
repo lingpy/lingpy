@@ -38,6 +38,8 @@ def read_qlc(
     # read lines from infile
     lines = inf.readlines()
 
+    inf.close()
+
     # set dtype to false
     dtype = False
 
