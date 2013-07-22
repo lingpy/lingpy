@@ -16,7 +16,7 @@ import os
 # import unittest
 import unittest
 
-class Alignments(unittest.TestCase):
+class TestAlignments(unittest.TestCase):
 
     def setUp(self):
 
@@ -25,7 +25,7 @@ class Alignments(unittest.TestCase):
                 loans = False
                 )
     
-    def ipa2tokens(self):
+    def test_ipa2tokens(self):
         
         # iterate over the keys
         for key in self.alm: #.get_list(language="Turkish",flat=True):
@@ -39,7 +39,7 @@ class Alignments(unittest.TestCase):
             self.assertEqual(tokensA,new_tokensA)
             self.assertEqual(tokensB,new_tokensB)
 
-    def align(self):
+    def test_align(self):
         
         # align all sequences using standard params
         self.alm.align()
@@ -60,7 +60,9 @@ class Alignments(unittest.TestCase):
             msaB.lib_align()
             self.assertEqual(msaA,msaB)
 
-    def get_consensus(self):
+
+    def test_get_consensus(self):
+
         
         # align all sequences using standard params
         self.alm.align()
@@ -68,9 +70,58 @@ class Alignments(unittest.TestCase):
 
         # check whether Turkish strings are identical
         self.assertEqual(
-                self.alm.get_list(language="Turkish",entry="consensus",flat=True),
-                [''.join(x) for x in self.alm.get_list(language="Turkish",entry="tokens",flat=True)]
+                self.alm.get_list(
+                    language="Turkish",
+                    entry="consensus",
+                    flat=True
+                    ),
+                [''.join(x) for x in self.alm.get_list(
+                    language="Turkish",
+                    entry="tokens",
+                    flat=True
+                    )
+                    ]
                 )
+        
+
+
+# )
+
+
+class TestLexStat(unittest.TestCase):
+    
+    def setUp(self):
+
+        self.lex = lp.LexStat(
+                os.path.join(
+                    "data",
+                    "kessler.qlc"
+                    )
+                )
+
+    def test_get_scorer(self):
+            
+        self.lex.get_scorer()
+        self.assertEqual(
+                hasattr(self.lex,"cscorer"),
+                True
+                )
+
+    def test_cluster(self):
+        
+        self.lex.get_scorer()
+        self.lex.cluster(method="lexstat",threshold=0.7)
+        self.lex.cluster(method="edit-dist",threshold=0.7)
+        self.lex.cluster(method="turchin",threshold=0.7)
+
+        self.assertEqual(
+                ('scaid' in self.lex.header and
+                    'lexstatid' in self.lex.header and
+                    'editid' in self.lex.header and
+                    'turchinid' in self.lex.header),
+                True
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

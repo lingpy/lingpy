@@ -810,12 +810,12 @@ class LexStat(Wordlist):
                 )
 
         # check for existing attributes
-        if hasattr(self,'cscorer') and not force:
+        if hasattr(self,'cscorer') and not kw['force']:
             print(rcParams['W_identical_scorer'])
             return 
 
         # check for attribute
-        if hasattr(self,'params') and not force:
+        if hasattr(self,'params') and not kw['force']:
             if self.params['scorer'] == params:
                 print(rcParams['W_identical_scorer'])
                 return
