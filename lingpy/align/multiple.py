@@ -57,7 +57,7 @@ class Multiple(object):
             self.tokens = []
 
         # define a tokenizer function for convenience
-        defaults = {
+        kw = {
                 "diacritics"   : rcParams['diacritics'],
                 "vowels"       : rcParams['vowels'],
                 "tones"        : rcParams['tones'],
@@ -66,10 +66,7 @@ class Multiple(object):
                 "stress"       : rcParams["stress"],
                 "merge_vowels" : rcParams["merge_vowels"],
                 }
-
-        for k in keywords:
-            if k in defaults:
-                defaults[k] = keywords[k]
+        kw.update(keywords)
 
         if self.tokens:
             self.numbers = []
@@ -78,7 +75,7 @@ class Multiple(object):
                         [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
                         )
         else:
-            tokenize = lambda x: ipa2tokens(x,**defaults)
+            tokenize = lambda x: ipa2tokens(x,**kw)
 
             # create a numerical representation of all sequences which reflects the
             # order of both their position and the position of their tokens. Before
