@@ -125,10 +125,7 @@ class Model(object):
                     model
                     )
         else:
-            if path.endswith('/'):
-                new_path = path+model+'/'
-            else:
-                new_path = path + '/' + model + '/'
+            new_path = os.path.join(path,model)
         self.name = model
         # check for converter
         if not os.path.isfile(os.path.join(new_path,'converter.bin')):

@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-04-15"
 
 from .distance import *
+from ..settings import rcParams
 
 cmod = {}
 # check for c-modules
@@ -44,4 +45,6 @@ except:
     cmod['misc'] = 1
 
 if cmod:
-    print("[i] Import of C-Modules failed, using pure Python implementation instead.")
+    rcParams['cmodules'] = False
+else:
+    rcParams['cmodules'] = True
