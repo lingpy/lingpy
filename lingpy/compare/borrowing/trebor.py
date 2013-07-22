@@ -833,10 +833,8 @@ class PhyBo(Wordlist):
         # check for previous analyses
         if glm in self.gls and not keywords['force']:
             if rcParams["verbose"]:
-                print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
-                        end = ""
-                        )
-                print("For recalculation, set 'force' to True.")
+                print("[i] Gain-loss scenario {0} has already been calculated.  For recalculation, set 'force' to 'True'.".format(glm))
+                        
             return
         
         # create statistics for this run
@@ -861,10 +859,7 @@ class PhyBo(Wordlist):
             cogTuple = tuple(self.paps[cog])
             if cogTuple in cogDict:
                 skip += 1
-                if rcParams["verbose"]: print(
-                    "[i] Skipping already calculated pattern for COG {0}...".format(cog),
-                    end=""
-                    )
+                if rcParams["verbose"]: print("[i] Skipping already calculated pattern for COG {0}...".format(cog))
                 self.gls[glm][cog] = cogDict[cogTuple]
             else:
                 nonskip += 1
@@ -1180,9 +1175,7 @@ class PhyBo(Wordlist):
         # check for previous analyses
         if glm in self.dists and not keywords['force'] and glm != 'mixed':
             if rcParams["verbose"]:
-                print("[i] Gain-loss scenario {0} has already been calculated. ".format(glm),
-                        end = ""
-                        )
+                print("[i] Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
                 print("For recalculation, set 'force' to True.")
                 return
 
@@ -1737,7 +1730,7 @@ class PhyBo(Wordlist):
         except:
             pass
         
-        if rcParams["verbose"]: print("[i] Writing GLS data to file... ",end="")
+        if rcParams["verbose"]: print("[i] Writing GLS data to file... ")
         
         # write gls-data to folder
         f = codecs.open(
@@ -1758,7 +1751,6 @@ class PhyBo(Wordlist):
                         ) + '\t'+str(noo)+'\n'
                     )
         f.close()
-        if rcParams["verbose"]: print("done.")
 
         return 
 

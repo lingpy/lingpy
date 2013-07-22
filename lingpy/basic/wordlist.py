@@ -883,10 +883,7 @@ class Wordlist(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            print(
-                    "[?] Datatype <{entry}> has already been produced, ".format(entry=entry),
-                    end = ''
-                    )
+            answer = input("[?] Datatype <{entry}> has already been produced, do you want to override? (y/n) ".format(entry=entry))
             answer = input("do you want to override? (y/n) ")
             if answer.lower() in ['y','yes','j']:
                 keywords['override'] = True
