@@ -8,22 +8,20 @@ __date__="2012-12-05"
 import codecs
 
 # internal
-from ..check.messages import FileWriteMessage
-from ..check import _timestamp
+from ..settings import rcParams
 
 def pap2nex(
         taxa,
         paps,
         missing=0,
-        filename='',
-        verbose=True
+        filename=''
         ):
     """
     Function converts a list of paps into nexus file format.
 
     """
     if not filename:
-        filename = 'lingpy-{0}'.format(_timestamp())
+        filename = rcParams['filename']
 
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
     out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
@@ -62,8 +60,7 @@ def pap2nex(
             )
     f.close()
     
-    if verbose: print(FileWriteMessage(filename,'nex'))
-    
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.nex'))
     return
 
         

@@ -14,7 +14,7 @@ import xml.dom.minidom as minidom
 import codecs
 
 # internal
-from ..check.messages import FileWriteMessage
+from ..settings import rcParams
 from ..thirdparty import cogent as cg
 try:
     from ..algorithm.cython import cluster
@@ -23,8 +23,7 @@ except:
 
 def xml2nwk(
         infile,
-        filename = '',
-        verbose = True
+        filename = ''
         ):
     """
     Convert xml-based MultiTree format to Newick-format.
@@ -125,7 +124,7 @@ def xml2nwk(
         f = codecs.open(filename+'.nwk','w','utf-8')
         f.write(newick_string)
         f.close()
-        if verbose: print(FileWriteMessage(filename,'nwk'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
         return
 
 def matrix2tree(
@@ -133,8 +132,7 @@ def matrix2tree(
         taxa,
         tree_calc = "neighbor",
         distances = True,
-        filename = '',
-        verbose = True
+        filename = ''
         ):
     """
     Calculate a tree of a given distance matrix.
@@ -155,6 +153,6 @@ def matrix2tree(
         out = codecs.open(filename+'.nwk','w','utf-8')
         out.write(str(tree))
         out.close()
-        print(FileWriteMessage(filename,'nwk'))
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
 
 

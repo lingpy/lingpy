@@ -13,10 +13,13 @@ import lingpy
 def main(argv):
 
     if len(argv) < 2:
-        print("call: extract_componentas_wordlist.py component")
+        print("call: extract_componentas_wordlist.py component [use_profiles]")
         sys.exit(1)
 
     component = argv[1]
+    use_profiles = False
+    if len(argv) > 2 and argv[2] == "use_profiles":
+        use_profiles = True
 
     if not os.path.exists("sources.csv"):
         try:
@@ -50,7 +53,24 @@ def main(argv):
                 ("." in f and f[:f.index(".")] in witotoan_sources):
             print("Adding {0}...".format(f))
             di = lingpy.Dictionary(f)
-            cg.add_dictionary(di)
+            if use_profiles:
+                ortho_path = os.path.split(
+                    os.path.dirname(
+                        os.path.abspath(
+                            __file__
+                            )
+                        )
+                    )[0] + "../../lingpy/data/orthography_profiles/{0}.txt".format(f[:f.index("-")])
+                if os.path.exists(ortho_path):
+                    if "spa" in di.head_iso:
+                        di.tokenize(ortho_path, source="translation")
+                    else:
+                        di.tokenize(ortho_path)
+                    cg.add_dictionary(di)
+                else:
+                    print("  Orthography profile not found, skipping dictionary.")
+            else:
+                cg.add_dictionary(di)
 
     cg.output_wordlist("{0}.csv".format(component))
 

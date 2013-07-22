@@ -13,14 +13,6 @@ linguistic datatypes (spreadsheets, wordlists) in a consistent way.
 __author__="Johann-Mattis List"
 __date__="2013-07-12"
 
-# set the general path to lingpy 
-import os
-_abs_path = os.path.split(
-        os.path.abspath(
-            __file__
-            )
-        )[0].replace('basic','')
-
 # add imorts for basic classes
 from .wordlist import Wordlist
 from .dictionary import Dictionary, ConceptGraph, spanish_swadesh_list, ConceptComparerSpanishStem
