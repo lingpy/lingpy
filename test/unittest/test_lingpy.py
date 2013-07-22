@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-07-21"
 
 # import lingpy library
-import lingpyd as lp
+import lingpy as lp
 import os
 
 # import unittest
