@@ -10,7 +10,7 @@ TODO:
 """
 
 __author__="Peter Bouda"
-__date__="2013-06-06"
+__date__="2013-07-22"
 
 import os
 import sys
@@ -21,12 +21,12 @@ import codecs
 import re
 from operator import itemgetter
 import abc
-import pdb
 
 from nltk.stem.snowball import SpanishStemmer
 
 # basic lingpy imports
 from ..read.qlc import read_qlc
+from ..settings import rcParams
 
 # import ortho-parser
 from ..sequence.orthography import OrthographyParser
@@ -99,36 +99,45 @@ class Dictionary():
             conf
             ):
 
-        # try to load the data
         try:
             input_data = read_qlc(filename)
-            self.filename = filename.replace('.csv','')
+            if filename[-3:] in ['csv','qlc']:
+                self.filename = filename[:-4]
+            else:
+                self.filename = filename
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = 'lingpy-{0}'.format(str(date.today()))
+                self.filename = rcParams['filename'] 
+            # if it's a wordlist object, add its basic parameters
+            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+                input_data = dict(filename._data.items())
+                input_data.update(filename._meta.items())
+                input_data[0] = [a for a,b in sorted(
+                    filename.header.items(),
+                    key = lambda x:x[1],
+                    reverse = False
+                    )]
+                internal_import = True
+                self.filename = rcParams['filename'] 
             else:
-                
-            #if not input_data:
-                raise ValueError('[i] Input data is not specified. Exception: {0}).'.format(sys.exc_info()))
-            #else:
-            #    input_data = filename
-            #    self.filename = 'lingpy-{0}'.format(str(date.today()))
+                if not os.path.isfile(filename):
+                    raise IOError(
+                            "[i] Input file does not exist."
+                            )
+                else:
+                    raise ValueError('[i] Could not parse the input file.')
 
         # load the configuration file
         if not conf:
-            conf = os.path.split(
-                    os.path.dirname(
-                        os.path.abspath(
-                            __file__
-                            )
-                        )
-                    )[0] + '/data/conf/dictionary.rc'
+            conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
 
         # read the file defined by its path in conf
-        tmp = [line.strip('\n\r').split('\t') for line in open(conf) if not
+        rcf = codecs.open(conf,'r','utf-8')
+        tmp = [line.strip('\n\r').split('\t') for line in rcf if not
                 line.startswith('#') and line.strip('\n\r')]
-        
+        rcf.close()
+                
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
         self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
@@ -707,7 +716,8 @@ class ConceptGraph():
                 for qlcid, counterpart, _, counterpart_doculect \
                         in self.graph[concept]:
                     wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
-                        qlcid, concept.upper(), counterpart, counterpart_doculect))
+                        qlcid, concept.upper(), counterpart,
+                        counterpart_doculect))
 
         wordlist.close()
 

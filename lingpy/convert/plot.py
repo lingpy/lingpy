@@ -111,21 +111,30 @@ def alm2html(
 
     """
     # get the path to the templates
-    path = os.path.split(os.path.abspath(__file__))[0] + '/templates/'
+    #path = os.path.join(os.path.split(os.path.abspath(__file__))[0], '/templates/')
     
     # open the infile
     try:
-        data = open(infile).read()[:-1]
+        data = codecs.open(infile, "r", "utf-8").read()[:-1]
     except:
-        data = open(infile+'.alm').read()[:-1]
+        data = codecs.open(infile+'.alm', "r", "utf-8").read()[:-1]
 
     # create the outfile
     if not filename:
         filename = 'lingpy-{0}'.format(_timestamp())
     
     # read in the templates
-    html = codecs.open(path+'alm2html.html','r','utf-8').read()
-    table = codecs.open(path+'alm2html.table.html','r','utf-8').read()
+    path = os.path.split(
+        os.path.dirname(
+            os.path.abspath(
+                __file__
+                )
+            )
+        )[0]
+    html_path = os.path.join(path, 'templates', 'alm2html.html')
+    table_path = os.path.join(path, 'templates', 'alm2html.table.html')
+    html = codecs.open(html_path,'r','utf-8').read()
+    table = codecs.open(table_path,'r','utf-8').read()
 
     # split the data into blocks
     blocks = data.split('\n\n')
