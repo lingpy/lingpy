@@ -25,7 +25,7 @@ def read_qlc(
     """
     # check whether path exists
     if not os.path.isfile(infile):
-        raise FileNotFoundError(
+        raise NameError(
                 "[!] File {0} could not be found.".format(infile)
                 )
 
