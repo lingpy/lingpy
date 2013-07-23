@@ -18,6 +18,14 @@ from pickle import dump
 import os
 import codecs
 
+# lingpy imports
+from ..settings import rcParams
+try:
+    from ..algorithm.cython import misc
+except:
+    from ..algorithm.cython import _misc as misc
+from ..convert import *
+from ..read import *
 
 def _import_sound_classes(filename):
     """
@@ -460,33 +468,66 @@ def compile_model(
      
     print("[i] Compiling model <"+model+">...")
     # get the path to the models
-    if path == None:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/'+model+'/'
+    if not path:
+        new_path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                model
+                )
     else:
-        if path.endswith('/'):
-            path = path+model+'/'
-        else:
-            path = path + '/' + model + '/'
+        new_path = os.path.join(path,model)
     
+    if rcParams['debug']: print("Model-Path:",new_path)
+
     # load the sound classes
-    sound_classes = _import_sound_classes(path+'converter')
+    sound_classes = _import_sound_classes(os.path.join(new_path,'converter'))
     
     # dump the data
-    outfile = open(path+'converter.bin','wb')
+    outfile = open(os.path.join(new_path,'converter.bin'),'wb')
     dump(sound_classes,outfile)
     outfile.close()
     print("... successfully created the converter.")
 
-    # try to load the score tree
-    if os.path.isfile(path+'scorer'):
-        score_tree = _import_score_tree(path+'scorer')
+    # try to load the scoring function or the score tree
+    scorer = False
+
+    if os.path.isfile(os.path.join(new_path,'matrix')):
+        scorer = read_scorer(os.path.join(new_path,'matrix'))
+    elif os.path.isfile(os.path.join(new_path,'scorer')):
+        score_tree = _import_score_tree(os.path.join(new_path,'scorer'))
     
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
 
+        # make score_dict a ScoreDict instance
+
+        chars = sorted(set([s[0] for s in score_dict.keys()]))
+        matrix = [[0 for i in range(len(chars))] for j in
+                range(len(chars))]
+        for i,charA in enumerate(chars):
+            for j,charB in enumerate(chars):
+                if i < j:
+                    try:
+                        matrix[i][j] = score_dict[charA,charB]
+                        matrix[j][i] = score_dict[charB,charA]
+                    except KeyError:
+                        matrix[i][j] = -100
+                        matrix[j][i] = -100
+                elif i == j:
+                    matrix[i][j] = score_dict[charA,charB]        
+
+        scorer = misc.ScoreDict(chars,matrix)
+        
+        # create the matrix file
+        f = codecs.open(os.path.join(new_path,'matrix'),'w','utf-8')
+        f.write(scorer2str(scorer))
+        f.close()
+    
+    if scorer:
         # dump the data
-        outfile = open(path+'scorer.bin','wb')
-        dump(score_dict,outfile)
+        outfile = open(os.path.join(path,'scorer.bin'),'wb')
+        dump(scorer,outfile)
         outfile.close()
         print("... successfully created the scorer.")
     else:
@@ -522,35 +563,44 @@ def compile_dvt(path=''):
 
     # get the path to the models
     if not path:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt/'
+        path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt'
+                )
     elif path in ['evolaemp','el']:
-        path = os.path.split(os.path.abspath(__file__))[0]+'/models/dvt_el/'
+        path = os.path.join(
+                rcParams['_path'],
+                'data',
+                'models',
+                'dvt_el'
+                )
     else:
         pass
 
     diacritics = codecs.open(
-            path+'diacritics',
+            os.path.join(path,'diacritics'),
             'r',
             'utf-8'
             ).read().replace('\n','').replace('-','')
     vowels = codecs.open(
-            path+'vowels',
+            os.path.join(path,'vowels'),
             'r',
             'utf-8'
             ).read().replace('\n','')
 
     tones = codecs.open(
-            path+'tones',
+            os.path.join(path,'tones'),
             'r',
             'utf-8'
             ).read().replace('\n','')
 
     dvt = (diacritics,vowels,tones)
 
-    outfile = open(path+'dvt.bin','wb')
+    outfile = open(os.path.join(path,'dvt.bin'),'wb')
     dump(dvt,outfile)
     outfile.close()
-    print(path)
 
-    print("[i] Diacritics and sound classes were successfully compiled.")
+    if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
 

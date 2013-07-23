@@ -27,26 +27,21 @@ import os
 import colorsys
 import codecs
 
-from ..check.exceptions import ThirdPartyModuleError
+from ..settings import rcParams
 
 try:
     import networkx as nx
 except ImportError:
-    print(ThirdPartyModuleError('networkx').warning)
-
+    print(rcParams['W_missing_module'].format('networkx'))
 try:
     import matplotlib.pyplot as plt
     import matplotlib as mpl
 except:
-    print(ThirdPartyModuleError('pyplot').warning)
- 
-from ..data import *
-from ..data import _color
+    print(rcParams['W_missing_module'].format('matplotlib'))
+
 from ..align.sca import SCA
-from ..check.messages import *
 from ..thirdparty import cogent as cg
 from .gml import *
-from ..check import _timestamp
 
 def colorRange(
         number,
@@ -199,10 +194,10 @@ def alm2html(
                     char = char
                     error = False
                     try:
-                        c = _color[char]
+                        c = rcParams['_color'][char]
                     except:
                         try:
-                            c = _color[char[0]]
+                            c = rcParams['_color'][char[0]]
                         except:
                             c = 'white'
                             error = True
@@ -236,7 +231,7 @@ def alm2html(
     out.write(html)
     out.close()
 
-    if verbose: print(FileWriteMessage(filename,'html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
     return
 
 def patchy_alm2html(
@@ -253,7 +248,7 @@ def patchy_alm2html(
     # get the path to the templates
     path = os.path.split(os.path.abspath(__file__))[0] + '/templates/'
     
-    if verbose: print("[i] {0}".format(infile))
+    if rcParams['verbose']: print("[i] {0}".format(infile))
     # open the infile
     try:
         data = open(infile).read()[:-1]
@@ -264,7 +259,7 @@ def patchy_alm2html(
     if not filename:
         filename = 'lingpy-{0}_patchy'.format(_timestamp())
 
-    if verbose: print("[i] "+filename)
+    if rcParams['verbose']: print("[i] "+filename)
     
     # read in the templates
     html = codecs.open(path+'alm2html.html','r','utf-8').read()
@@ -339,10 +334,10 @@ def patchy_alm2html(
                     char = char
                     error = False
                     try:
-                        c = _color[char]
+                        c = rcParams['_color'][char]
                     except:
                         try:
-                            c = _color[char[0]]
+                            c = rcParams['_color'][char[0]]
                         except:
                             c = 'white'
                             error = True
@@ -376,7 +371,7 @@ def patchy_alm2html(
     out = codecs.open(filename+'.patchy.html','w','utf-8')
     out.write(html)
     out.close()
-    print(FileWriteMessage(filename,'patchy.html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.patchy.html'))
 
 def msa2tex(
         infile,
@@ -480,7 +475,7 @@ def msa2tex(
     out = codecs.open(filename+'.tex','w','utf-8')
     out.write(tex)
     out.close()
-    if verbose: print(FileWriteMessage(filename,'tex'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.tex'))
 
 
 def string2html(
@@ -522,11 +517,11 @@ def string2html(
     # go on with the colors
     for i,char in enumerate(string):
         try:
-            c = _color[char]
+            c = rcParams['_color'][char]
             fg = '#000000'
         except:
             try:
-                c = _color[char[0]]
+                c = rcParams['_color'][char[0]]
                 fg = '#000000'
             except:
                 input("Unknown character '"+char+"', press ANY key to continue. " )
@@ -659,10 +654,10 @@ def msa2html(
         tmp += td_taxon.format(taxon)
         for j,char in enumerate(msa.alm_matrix[i]):
             try:
-                c = _color[char]
+                c = rcParams['_color'][char]
             except:
                 try:
-                    c = _color[char[0]]
+                    c = rcParams['_color'][char[0]]
                 except:
                     print(char)
                     #input()            
@@ -686,13 +681,13 @@ def msa2html(
     
     
     if not filename:
-        filename = 'lingpy-{0}'.format(_timestamp())
+        filename = rcParams['filename']
 
     # check, whether the outfile already exists
     out = codecs.open(outfile,'w','utf-8')
     out.write(html)
     out.close()
-    if verbose: print(FileWriteMessage(filename,'html'))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
 
 def plot_gls(
         gls,
@@ -866,7 +861,7 @@ def plot_gls(
             filename + '.'+fileformat
             )
     plt.clf()
-    if verbose: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
 def plot_tree(
         treestring,
@@ -1049,7 +1044,7 @@ def plot_tree(
 
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
-    if verbose: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
 
 def plot_concept_evolution(
         scenarios,
@@ -1487,4 +1482,4 @@ def plot_concept_evolution(
 
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
-    if verbose: print(FileWriteMessage(filename,fileformat))
+    if rcParams['verbose']: print(rcParams['M_file_written'].foramt(filename+'.'+fileformat))

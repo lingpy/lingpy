@@ -37,4 +37,3 @@ applications:
 """
 
 from .model import *
-from .names.qlc import *

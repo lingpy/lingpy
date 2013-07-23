@@ -9,7 +9,6 @@ Module provides various functions for specific conversion tasks.
 __author__="Johann-Mattis List"
 __date__="2013-06-11"
 
-
 def wl2dict(
         wordlist,
         sections,

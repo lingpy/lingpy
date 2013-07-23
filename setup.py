@@ -46,7 +46,6 @@ else:
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
     if this_version == "3":
-        print('huhu')
         answer = input("[i] Do you want to install with C-modules (requires Cython)? (Y/N) ")
 
         if answer.lower() in ['y','j','yes']:
@@ -76,33 +75,7 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv:
             extension_modules = []
 
     else:
-        # cmodules won't work for the moment, so we ignore them in py2
-        #answer = raw_input("[i] Do you want to install with C-modules (requires Cython)? (Y/N) ")
-        #if answer.lower() in ['y','j','yes']:
-        #    this_version = '2.0.b.dev'
-        #    extension_modules = [
-        #                Extension(
-        #                    'lingpy2.algorithm.cython/calign',
-        #                    ['lingpy2/algorithm/cython/calign.c'],
-        #                    ),
-        #                Extension(
-        #                    'lingpy2.algorithm.cython/malign',
-        #                    ['lingpy2/algorithm/cython/malign.c'],
-        #                    ),
-        #                Extension(
-        #                    'lingpy2.algorithm.cython/talign',
-        #                    ['lingpy2/algorithm/cython/talign.c'],
-        #                    ),
-        #                Extension(
-        #                    'lingpy2.algorithm.cython/cluster',
-        #                    ['lingpy2/algorithm/cython/cluster.c'],
-        #                    ),
-        #                Extension(
-        #                    'lingpy2.algorithm.cython/misc',
-        #                    ['lingpy2/algorithm/cython/misc.c'],
-        #                    ),
-        #                ]
-        #else:
+
         extension_modules = []
 
 

@@ -1,0 +1,1625 @@
+@date: 2013-07-16
+@source_title: Automatically created wordlist, by lingpy.
+@doculect: Ocaina, oca
+@doculect: Bora, boa
+@doculect: Huitoto Murui, huu
+@doculect: Castellano, spa
+@doculect: Huitoto Muinane, hto
+QLCID	CONCEPT	COUNTERPART	COUNTERPART_DOCULECT	TOKENS
+thiesen1998/239/12	CERC	pí̵hí̵	Bora	pʰ i̵ ʔ i̵
+thiesen1998/183/18	CERC	míhlleta	Bora	m i ʔ tʰʃ e tʰ a
+burtch1983/159/17	CERC	llaì̵gabaìro	Huitoto Murui	dʑ aɯ̀ g a b ai ɾ ɔ
+thiesen1998/186/15	CERC	mí̵jcomu	Bora	m i̵ x kʰ o m u
+minor1971/11/15	CERC	coráì̵ca	Huitoto Muinane	k o ɾ a ɯ̀ k a
+thiesen1998/315/8	CERC	wahájchota	Bora	kʷ a ʔ a x kʰʔ o tʰ a
+thiesen1998/185/23	CERC	mí̵caave	Bora	m i̵ kʰ a: β e
+leach1969/159/34	CERC	xooa	Ocaina	x o o a
+thiesen1998/239/12	CERC	pi̵i̵hí̵re	Bora	pʰ i̵: ʔ i̵ r e
+burtch1983/103/22	CERC	ianori	Huitoto Murui	i a n ɔ ɾ i
+minor1971/67/36	CERC	tdi̵gi̵ca	Huitoto Muinane	ɗ ɯ g ɯ k a
+burtch1983/240/2	CERC	ti̵gi̵caco	Huitoto Murui	t ɯ g ɯ k a k ɔ
+burtch1983/104/8	CERC	iaì̵re	Huitoto Murui	i aɯ̀ ɾ ɛ
+thiesen1998/239/11	CERC	pi̵í̵hi̵	Bora	pʰ i̵ i̵ ʔ i̵
+minor1971/52/36	CERC	ñuègi̵ca	Huitoto Muinane	nʲ u ɛ g ɯ k a
+burtch1983/159/18	CERC	llaì̵gafo	Huitoto Murui	dʑ aɯ̀ g a ɸ ɔ
+leach1969/86/45	CERC	dyahoonu	Ocaina	dʑ a ʔ o õ ɯ
+burtch1983/190/10	CERC	naì̵ruìco	Huitoto Murui	n aɯ̀ ɾ ui k ɔ
+burtch1983/103/22	CERC	ianore	Huitoto Murui	i a n ɔ ɾ ɛ
+thiesen1998/186/17	CERC	mi̵jcónu	Bora	m i̵ x kʰ o n u
+minor1971/22/21	CERC	iánori	Huitoto Muinane	i a n o ɾ i
+burtch1983/104/8	CERC	iaì̵reì	Huitoto Murui	i aɯ̀ ɾ ɛi
+thiesen1998/183/17	CERC	mihlle	Bora	m i ʔ tʰʃ e
+thiesen1998/239/12	CERC	pí̵hí̵ré	Bora	pʰ i̵ ʔ i̵ r e
+thiesen1998/183/19	CERC	mihlléwa	Bora	m i ʔ tʰʃ e kʷ a
+thiesen1998/186/15	CERC	mí̵jcohóóne	Bora	m i̵ x kʰ o ʔ oo n e
+burtch1983/160/1	CERC	llaì̵te	Huitoto Murui	dʑ aɯ̀ t ɛ
+minor1971/11/16	CERC	coráì̵de	Huitoto Muinane	k o ɾ a ɯ̀ d ɛ
+minor1971/54/4	CERC	oni bá	Huitoto Muinane	o n i # b a
+thiesen1998/186/15	CERC	mí̵jcoho	Bora	m i̵ x kʰ o ʔ o
+burtch1983/240/4	CERC	ti̵gi̵de	Huitoto Murui	t ɯ g ɯ d ɛ
+minor1971/48/15	CERC	nagápenerie	Huitoto Muinane	n a g a p ɛ n ɛ ɾ i ɛ
+minor1971/6/15	CERC	aí̵nomo	Huitoto Muinane	a ɯ́ n o m o
+minor1971/13/35	CERC	ci̵ri̵de	Huitoto Muinane	k ɯ ɾ ɯ d ɛ
+leach1969/159/36	CERC	xoáhonu	Ocaina	x o a ʔ õ ɯ
+minor1971/3/1	CERC	abi̵	Huitoto Muinane	a b ɯ
+leach1969/69/14	CERC	áán̈urah	Ocaina	a a n̥ ɯ r a ʔ
+burtch1983/103/18	CERC	iaìro	Huitoto Murui	i ai ɾ ɔ
+burtch1983/116/10	DAR	ite	Huitoto Murui	i t ɛ
+thiesen1998/33/16	DAR	ajcu	Bora	a x kʰ u
+minor1971/72/19	DAR	i̵éde	Huitoto Muinane	ɯ ɛ d ɛ
+leach1969/115/22	DAR	juuh	Ocaina	ʔ ɯ ɯ ʔ
+burtch1983/216/14	DAR	ruinaìtate	Huitoto Murui	ɾ u i n ai t a t ɛ
+burtch1983/216/14	DAR	ruiretate	Huitoto Murui	ɾ u i ɾ ɛ t a t ɛ
+minor1971/25/40	DAR	itde	Huitoto Muinane	i ɗ ɛ
+burtch1983/86/14	DAR	fecade	Huitoto Murui	ɸ ɛ k a d ɛ
+minor1971/39/10	GIR	ji̵rede	Huitoto Muinane	ʔ ɯ ɾ ɛ d ɛ
+burtch1983/118/3	GIR	jabi̵de	Huitoto Murui	h a b ɯ d ɛ
+thiesen1998/116/33	GIR	dóhllíyiba	Bora	tʰ o ʔ tʰʃ i ʝ i pʰ a
+thiesen1998/116/32	GIR	dólliyíívye	Bora	tʰ o tʰʃ i ʝ i: βʝ e
+thiesen1998/172/14	GIR	lliyíívye	Bora	tʰʃ i ʝ i: βʝ e
+thiesen1998/254/24	GIR	tállíyiáco	Bora	tʰ a tʰʃ i ʝ i a kʰ o
+burtch1983/102/15	GIR	gi̵reride	Huitoto Murui	g ɯ ɾ ɛ ɾ i d ɛ
+thiesen1998/305/22	GIR	vihyo	Bora	β i ʔʝ o
+thiesen1998/305/23	GIR	vihyo	Bora	β i ʔʝ o
+thiesen1998/116/32	GIR	dóhlliyíba	Bora	tʰ o ʔ tʰʃ i ʝ i pʰ a
+thiesen1998/59/16	GIR	bóllíyiivye	Bora	pʰ o tʰʃ i ʝ i: βʝ e
+burtch1983/243/9	GIR	uàì̵te	Huitoto Murui	uaɯ̀ t ɛ
+thiesen1998/254/24	GIR	tállíyijcyo	Bora	tʰ a tʰʃ i ʝ i x kʰʝ o
+thiesen1998/254/26	GIR	tállíyiivye	Bora	tʰ a tʰʃ i ʝ i: βʝ e
+burtch1983/105/14	GIR	icaìfona iide	Huitoto Murui	i k ai ɸ ɔ n a # i i d ɛ
+thiesen1998/59/15	GIR	bóhlliyíba	Bora	pʰ o ʔ tʰʃ i ʝ i pʰ a
+burtch1983/102/14	GIR	gi̵renote	Huitoto Murui	g ɯ ɾ ɛ n ɔ t ɛ
+burtch1983/253/2	GIR	virudote	Huitoto Murui	β i ɾ u d ɔ t ɛ
+thiesen1998/116/33	GIR	dóllíyiivye	Bora	tʰ o tʰʃ i ʝ i: βʝ e
+burtch1983/102/13	GIR	gi̵redote	Huitoto Murui	g ɯ ɾ ɛ d ɔ t ɛ
+thiesen1998/59/16	GIR	bóhllíyiba	Bora	pʰ o ʔ tʰʃ i ʝ i pʰ a
+burtch1983/118/3	GIR	jabi̵ride	Huitoto Murui	h a b ɯ ɾ i d ɛ
+thiesen1998/172/15	GIR	llíyiivye	Bora	tʰʃ i ʝ i: βʝ e
+thiesen1998/254/25	GIR	tálliyíívye	Bora	tʰ a tʰʃ i ʝ i: βʝ e
+thiesen1998/59/15	GIR	bólliyíívye	Bora	pʰ o tʰʃ i ʝ i: βʝ e
+burtch1983/249/11	OJO	ui	Huitoto Murui	u i
+leach1969/133/11	OJO	ojúú	Ocaina	o ʔ ɯ́ ɯ́
+thiesen1998/134/11	OJO	hálluu	Bora	ʔ a tʰʃ u:
+leach1969/133/11	OJO	ojúúdsa	Ocaina	o ʔ ɯ́ ɯ́ dz a
+burtch1983/249/11	OJO	uisi̵	Huitoto Murui	u i s ɯ
+thiesen1998/212/17	PERR	oohííbye	Bora	o: ʔ i: pʰʝ e
+thiesen1998/212/17	PERR	oohííbyemútsi	Bora	o: ʔ i: pʰʝ e m u tʰs i
+leach1969/110/2	PERR	jonhxo	Ocaina	ʔ õ ʔ x o
+burtch1983/219/7	PERR	ri̵ñoco	Huitoto Murui	ɾ ɯ nʲ ɔ k ɔ
+minor1971/38/2	PERR	ji̵co	Huitoto Muinane	ʔ ɯ k o
+burtch1983/149/7	PERR	ji̵coni̵aì̵	Huitoto Murui	h ɯ k ɔ n ɯ aɯ̀
+burtch1983/149/6	PERR	ji̵co	Huitoto Murui	h ɯ k ɔ
+thiesen1998/212/17	PERR	oohímye	Bora	o: ʔ i mʝ e
+minor1971/9/31	RODILL	caìñí̵chiru	Huitoto Muinane	k a i nʲ ɯ́ kʔ i ɾ u
+leach1969/109/24	RODILL	jojóónhxo	Ocaina	ʔ o ʔ o on ʔ x o
+burtch1983/43/11	RODILL	caìñi̵ci̵ i̵fogi̵	Huitoto Murui	k ai nʲ ɯ k ɯ # ɯ ɸ ɔ g ɯ
+minor1971/9/30	RODILL	caìñí̵ci̵	Huitoto Muinane	k a i nʲ ɯ́ k ɯ
+thiesen1998/186/26	RODILL	mí̵moúhco	Bora	m i̵ m o u ʔ kʰ o
+burtch1983/43/11	RODILL	caìñi̵ci̵ i̵fo	Huitoto Murui	k ai nʲ ɯ k ɯ # ɯ ɸ ɔ
+minor1971/67/31	RODILL	tdi̵copo	Huitoto Muinane	ɗ ɯ k o p o
+thiesen1998/186/23	RODILL	mí̵moco	Bora	m i̵ m o kʰ o
+thiesen1998/186/26	RODILL	mí̵móuhjáco	Bora	m i̵ m o u ʔ x a kʰ o
+minor1971/9/28	RODILL	caìñi̵	Huitoto Muinane	k a i nʲ ɯ
+thiesen1998/120/17	PART	dótséuhjáco	Bora	tʰ o tʰs e u ʔ x a kʰ o
+thiesen1998/242/9	PART	pí̵wajcáro	Bora	pʰ i̵ kʷ a x kʰ a r o
+thiesen1998/336/8	PART	wáhvájaba	Bora	kʷ a ʔ β a x a pʰ a
+thiesen1998/312/20	PART	wáchérejco	Bora	kʷ a kʰʔ e r e x kʰ o
+burtch1983/69/20	PART	di̵beji	Huitoto Murui	d ɯ b ɛ h i
+thiesen1998/82/21	PART	cátséuhjáco	Bora	kʰ a tʰs e u ʔ x a kʰ o
+thiesen1998/121/6	PART	dótsúriivye	Bora	tʰ o tʰs u r i: βʝ e
+thiesen1998/165/24	PART	kítséuhjáco	Bora	kʰ i tʰs e u ʔ x a kʰ o
+minor1971/64/13	PART	teríbicaì(de)	Huitoto Muinane	
+thiesen1998/82/21	PART	cátséuhcu	Bora	kʰ a tʰs e u ʔ kʰ u
+thiesen1998/110/25	PART	dí̵tsúriáco	Bora	tʰ i̵ tʰs u r i a kʰ o
+thiesen1998/260/16	PART	táhwaba	Bora	tʰ a ʔ kʷ a pʰ a
+burtch1983/234/4	PART	taì̵node	Huitoto Murui	t aɯ̀ n ɔ d ɛ
+thiesen1998/165/24	PART	kítséuhcu	Bora	kʰ i tʰs e u ʔ kʰ u
+burtch1983/233/16	PART	taì̵llude	Huitoto Murui	t aɯ̀ dʑ u d ɛ
+thiesen1998/312/20	PART	wáchéreáco	Bora	kʷ a kʰʔ e r e a kʰ o
+thiesen1998/242/9	PART	pí̵wajco	Bora	pʰ i̵ kʷ a x kʰ o
+thiesen1998/284/26	PART	tsi̵i̵máva	Bora	tʰs i̵: m a β a
+thiesen1998/120/17	PART	dótséuhcu	Bora	tʰ o tʰs e u ʔ kʰ u
+thiesen1998/238/22	PART	pí̵dijcyo	Bora	pʰ i̵ tʰ i x kʰʝ o
+thiesen1998/336/8	PART	wávájaave	Bora	kʷ a β a x a: β e
+thiesen1998/337/26	PART	wáwajcáro	Bora	kʷ a kʷ a x kʰ a r o
+thiesen1998/110/25	PART	dí̵tsúrijco	Bora	tʰ i̵ tʰs u r i x kʰ o
+burtch1983/234/5	PART	taì̵rudaìte	Huitoto Murui	t aɯ̀ ɾ u d ai t ɛ
+burtch1983/233/10	PART	taì̵de	Huitoto Murui	t aɯ̀ d ɛ
+burtch1983/64/11	PART	dete	Huitoto Murui	d ɛ t ɛ
+thiesen1998/163/33	PART	kíchéreáco	Bora	kʰ i kʰʔ e r e a kʰ o
+thiesen1998/238/22	PART	pí̵diáco	Bora	pʰ i̵ tʰ i a kʰ o
+burtch1983/26/7	PART	anafebeji	Huitoto Murui	a n a ɸ ɛ b ɛ h i
+minor1971/64/13	PART	teríbicaì	Huitoto Muinane	t ɛ ɾ i b i k a i
+thiesen1998/163/33	PART	kíchérejco	Bora	kʰ i kʰʔ e r e x kʰ o
+thiesen1998/260/16	PART	táwaave	Bora	tʰ a kʷ a: β e
+thiesen1998/337/26	PART	wáwajco	Bora	kʷ a kʷ a x kʰ o
+thiesen1998/241/26	PECH	pí̵uji̵	Bora	pʰ i̵ u x i̵
+minor1971/35/5	PECH	jogóbe	Huitoto Muinane	ʔ o g o b ɛ
+thiesen1998/190/11	PECH	mújpañe	Bora	m u x pʰ a nʲ e
+leach1969/75/28	PECH	bagóóhya	Ocaina	b a g o o ʔ ʑ a
+leach1969/121/15	PECH	monn̈o	Ocaina	m õ n̥ o
+burtch1983/180/10	PECH	monoì̵	Huitoto Murui	m ɔ n ɔ ɯ̀
+minor1971/46/29	PECH	monoì̵	Huitoto Muinane	m o n o ɯ̀
+burtch1983/142/12	PECH	jogobe	Huitoto Murui	h ɔ g ɔ b ɛ
+burtch1983/210/11	CORRECT	raìse	Huitoto Murui	ɾ ai s ɛ
+thiesen1998/218/6	LIMPI	páácyúme̱i	Bora	pʰ a: kʰʝ u m e i
+leach1969/149/35	LIMPI	tyoon	Ocaina	tʑ o õ
+thiesen1998/91/15	LIMPI	córí̵	Bora	kʰ o r i̵
+burtch1983/173/9	LIMPI	mare	Huitoto Murui	m a ɾ ɛ
+thiesen1998/222/26	LIMPI	paacyu	Bora	pʰ a: kʰʝ u
+thiesen1998/91/15	LIMPI	córí̵h	Bora	kʰ o r i̵ ʔ
+thiesen1998/290/8	LIMPI	tsúmi̵jtso	Bora	tʰs u m i̵ x tʰs o
+thiesen1998/91/17	LIMPI	córi̵jtso	Bora	kʰ o r i̵ x tʰs o
+leach1969/96/21	LIMPI	fónjun	Ocaina	ɸ on ʔ ɯn
+minor1971/60/1	LIMPI	rapóde	Huitoto Muinane	ɾ a p o d ɛ
+thiesen1998/218/11	LIMPI	páhcyuba	Bora	pʰ a ʔ kʰʝ u pʰ a
+leach1969/112/14	LIMPI	joraavi	Ocaina	ʔ o r a a β i
+minor1971/17/9	LIMPI	dotde	Huitoto Muinane	d o ɗ ɛ
+thiesen1998/202/2	LIMPI	nítyaave	Bora	n i tʰʝ a: β e
+burtch1983/103/4	LIMPI	gi̵te	Huitoto Murui	g ɯ t ɛ
+thiesen1998/222/26	LIMPI	paajyúcu	Bora	pʰ a: xʝ u kʰ u
+thiesen1998/218/11	LIMPI	pácyuuve	Bora	pʰ a kʰʝ u: β e
+leach1969/151/26	ESTE	uhyoohxomó	Ocaina	ɯ ʔ ʑ o o ʔ x o m o
+thiesen1998/206/36	ESTE	nuhba tsánejcu	Bora	n u ʔ pʰ a # tʰs a n e x kʰ u
+leach1969/79/11	ESTE	bu	Ocaina	b ɯ
+thiesen1998/38/11	ESTE	ááméjú icyánéjcu	Bora	a: m e x u # i kʰʝ a n e x kʰ u
+leach1969/76/1	ESTE	bahí	Ocaina	b a ʔ i
+burtch1983/35/12	ESTE	bie	Huitoto Murui	b i ɛ
+minor1971/7/12	ESTE	bedá	Huitoto Muinane	b ɛ d a
+leach1969/153/32	ELLOS	uuhya	Ocaina	ɯ ɯ ʔ ʑ a
+minor1971/16/11	ELLOS	daì̵oì̵	Huitoto Muinane	d a ɯ̀ o ɯ̀
+minor1971/5/27	ELLOS	apémaì̵lli̵noì̵	Huitoto Muinane	a p ɛ m a ɯ̀ dʑ ɯ n o ɯ̀
+minor1971/5/26	ELLOS	apémaci̵	Huitoto Muinane	a p ɛ m a k ɯ
+leach1969/154/43	ELLOS	úúsa	Ocaina	ɯ́ ɯ́ s a
+leach1969/153/42	ELLOS	um̈á	Ocaina	ɯ m̥ a
+leach1969/153/42	ELLOS	uum̈a	Ocaina	ɯ ɯ m̥ a
+leach1969/154/43	ELLOS	jáá	Ocaina	ʔ a a
+leach1969/154/43	ELLOS	jari	Ocaina	ʔ a r i
+leach1969/153/42	ELLOS	uum̈ája	Ocaina	ɯ ɯ m̥ a ʔ a
+burtch1983/112/3	ELLOS	imaci̵	Huitoto Murui	i m a k ɯ
+minor1971/16/7	ELLOS	dai̵lli̵noì̵	Huitoto Muinane	d a ɯ dʑ ɯ n o ɯ̀
+burtch1983/108/3	ELLOS	ie	Huitoto Murui	i ɛ
+thiesen1998/107/17	ELLOS	di̱í̱tye	Bora	tʰ i i tʰʝ e
+thiesen1998/107/17	ELLOS	di̱tye	Bora	tʰ i tʰʝ e
+thiesen1998/258/22	CAZ	tááva	Bora	tʰ a: β a
+minor1971/59/38	CAZ	raóde	Huitoto Muinane	ɾ a o d ɛ
+thiesen1998/258/23	CAZ	taava	Bora	tʰ a: β a
+leach1969/116/6	CAZ	juunno	Ocaina	ʔ ɯ ɯn n o
+thiesen1998/258/22	CAZ	taáva	Bora	tʰ a a β a
+thiesen1998/296/35	CAZ	ulle	Bora	u tʰʃ e
+thiesen1998/170/22	CAZ	lliiñája	Bora	tʰʃ i: nʲ a x a
+thiesen1998/170/23	CAZ	llííñajaa	Bora	tʰʃ i: nʲ a x a:
+burtch1983/211/15	CAZ	(raote)	Huitoto Murui	
+thiesen1998/194/12	RECT	námehéju	Bora	n a m e ʔ e x u
+thiesen1998/280/3	RECT	tsatújkeve	Bora	tʰs a tʰ u x kʰ e β e
+thiesen1998/270/15	RECT	tújkévéh	Bora	tʰ u x kʰ e β e ʔ
+burtch1983/28/17	RECT	atona	Huitoto Murui	a t ɔ n a
+thiesen1998/155/5	RECT	í̵mi̵̱á	Bora	i̵ m i̵ a
+thiesen1998/276/32	RECT	tsaí̵í̵buwáre	Bora	tʰs a i̵i̵ pʰ u kʷ a r e
+leach1969/97/21	RECT	fóóhtya	Ocaina	ɸ o o ʔ tʑ a
+thiesen1998/276/32	RECT	tsaí̵í̵buwa	Bora	tʰs a i̵i̵ pʰ u kʷ a
+thiesen1998/270/15	RECT	tújkévé	Bora	tʰ u x kʰ e β e
+burtch1983/256/11	CARN	i̵esi̵	Huitoto Murui	ɯ ɛ s ɯ
+thiesen1998/134/27	CARN	héécoó	Bora	ʔ e: kʰ o o
+burtch1983/168/16	CARN	lli̵ci̵si	Huitoto Murui	dʑ ɯ k ɯ s i
+minor1971/63/16	CARN	ri̵i̵ri̵ga	Huitoto Muinane	ɾ ɯ ɯ ɾ ɯ g a
+burtch1983/114/5	CARN	isi	Huitoto Murui	i s i
+thiesen1998/111/17	CARN	doó	Bora	tʰ o o
+minor1971/68/35	CARN	uàti̵	Huitoto Muinane	u a t ɯ
+leach1969/133/36	CARN	onhaanjin	Ocaina	õ ʔ a ã ʔ ĩ
+thiesen1998/253/13	CARN	tájuta	Bora	tʰ a x u tʰ a
+thiesen1998/134/27	CARN	hééco	Bora	ʔ e: kʰ o
+burtch1983/54/18	VOMIT	ci̵cuède	Huitoto Murui	k ɯ k uɛ̀ d ɛ
+thiesen1998/141/28	VOMIT	íllímútuhcu	Bora	i tʰʃ i m u tʰ u ʔ kʰ u
+thiesen1998/141/28	VOMIT	íllímútuhjáco	Bora	i tʰʃ i m u tʰ u ʔ x a kʰ o
+minor1971/12/30	VOMIT	ci̵cúède	Huitoto Muinane	k ɯ k u ɛ d ɛ
+burtch1983/55/2	VOMIT	ci̵cuìa	Huitoto Murui	k ɯ k ui a
+leach1969/160/9	VOMIT	xoohxu	Ocaina	x o o ʔ x ɯ
+leach1969/147/44	FUEG	tyaaro	Ocaina	tʑ a a r o
+burtch1983/113/11	FUEG	iraì	Huitoto Murui	i ɾ ai
+thiesen1998/94/2	FUEG	cújuwááñe	Bora	kʰ u x u kʷ a: nʲ e
+thiesen1998/94/2	FUEG	cúújuwa	Bora	kʰ u: x u kʷ a
+thiesen1998/94/2	FUEG	cuujúwa	Bora	kʰ u: x u kʷ a
+minor1971/24/38	FUEG	iráìci̵	Huitoto Muinane	i ɾ a i k ɯ
+thiesen1998/285/22	BLANC	tsí̵tsí̵	Bora	tʰs i̵ tʰs i̵
+thiesen1998/285/22	BLANC	tsí̵tsí̵h	Bora	tʰs i̵ tʰs i̵ ʔ
+leach1969/98/35	BLANC	furáánñ̈a	Ocaina	ɸ ɯ r a ã nʲ̈ a
+burtch1983/213/4	CAV	raì̵te	Huitoto Murui	ɾ aɯ̀ t ɛ
+thiesen1998/280/31	CAV	tsehdi	Bora	tʰs e ʔ tʰ i
+thiesen1998/326/28	CAV	wánoáco	Bora	kʷ a n o a kʰ o
+thiesen1998/73/33	CAV	cánojco	Bora	kʰ a n o x kʰ o
+thiesen1998/326/28	CAV	wánojco	Bora	kʷ a n o x kʰ o
+leach1969/99/18	CAV	fuuso	Ocaina	ɸ ɯ ɯ s o
+burtch1983/234/11	CAV	taì̵te	Huitoto Murui	t aɯ̀ t ɛ
+minor1971/60/33	CAV	raì̵tde	Huitoto Muinane	ɾ a ɯ̀ ɗ ɛ
+burtch1983/126/1	CAV	jaì̵bede	Huitoto Murui	h aɯ̀ b ɛ d ɛ
+thiesen1998/73/33	CAV	cánoáco	Bora	kʰ a n o a kʰ o
+thiesen1998/280/31	CAV	tsehdícyu	Bora	tʰs e ʔ tʰ i kʰʝ u
+thiesen1998/314/28	CAV	wágoáco	Bora	kʷ a k o a kʰ o
+thiesen1998/130/15	CAV	ejúva	Bora	e x u β a
+thiesen1998/314/28	CAV	wágojco	Bora	kʷ a k o x kʰ o
+burtch1983/231/8	DERECH	si̵ide	Huitoto Murui	s ɯ i d ɛ
+thiesen1998/280/3	DERECH	tsatújkeve	Bora	tʰs a tʰ u x kʰ e β e
+thiesen1998/270/15	DERECH	tújkévéh	Bora	tʰ u x kʰ e β e ʔ
+thiesen1998/270/16	DERECH	tújkévé	Bora	tʰ u x kʰ e β e
+burtch1983/28/17	DERECH	atona	Huitoto Murui	a t ɔ n a
+thiesen1998/155/5	DERECH	í̵mi̵̱á	Bora	i̵ m i̵ a
+burtch1983/184/7	DERECH	nabeji	Huitoto Murui	n a b ɛ h i
+thiesen1998/270/15	DERECH	tújkévé	Bora	tʰ u x kʰ e β e
+thiesen1998/270/16	DERECH	tújkévéh	Bora	tʰ u x kʰ e β e ʔ
+minor1971/29/3	DERECH	jaí̵ci̵na	Huitoto Muinane	ʔ a ɯ́ k ɯ n a
+leach1969/97/21	DERECH	fóóhtya	Ocaina	ɸ o o ʔ tʑ a
+minor1971/49/9	ATAR	naì̵tdáde	Huitoto Muinane	n a ɯ̀ ɗ a d ɛ
+minor1971/38/29	ATAR	ji̵llíde	Huitoto Muinane	ʔ ɯ dʑ i d ɛ
+leach1969/100/5	ATAR	gaan	Ocaina	g a ã
+burtch1983/174/15	ATAR	maì̵te	Huitoto Murui	m aɯ̀ t ɛ
+thiesen1998/115/5	ATAR	dohjí̵nu	Bora	tʰ o ʔ x i̵ n u
+thiesen1998/100/15	ATAR	chíaco	Bora	kʰʔ i a kʰ o
+thiesen1998/100/15	ATAR	chijchu	Bora	kʰʔ i x kʰʔ u
+minor1971/12/8	ATAR	cuìnáde	Huitoto Muinane	k u i n a d ɛ
+burtch1983/53/12	ATAR	cuìnade	Huitoto Murui	k ui n a d ɛ
+leach1969/131/32	ATAR	ocááfu	Ocaina	o k a a ɸ ɯ
+burtch1983/65/6	NARIZ	dofo	Huitoto Murui	d ɔ ɸ ɔ
+leach1969/149/24	NARIZ	tyoofo	Ocaina	tʑ o o ɸ o
+minor1971/17/2	NARIZ	dopo	Huitoto Muinane	d o p o
+thiesen1998/271/6	NARIZ	tújuho	Bora	tʰ u x u ʔ o
+burtch1983/29/9	GUSAN	aì̵ci̵	Huitoto Murui	aɯ̀ k ɯ
+minor1971/55/42	GUSAN	pecocongo	Huitoto Muinane	p ɛ k o k o ŋ o
+leach1969/113/22	GUSAN	judsaaco	Ocaina	ʔ ɯ dz a a k o
+leach1969/70/34	GUSAN	aguuma	Ocaina	a g ɯ ɯ m a
+burtch1983/30/6	GUSAN	aì̵gi̵ro	Huitoto Murui	aɯ̀ g ɯ ɾ ɔ
+minor1971/62/9	MOJ	ri̵aìtde	Huitoto Muinane	ɾ ɯ a i ɗ ɛ
+thiesen1998/175/15	MOJ	májaúcu	Bora	m a x a u kʰ u
+thiesen1998/191/26	MOJ	múriúcu	Bora	m u r i u kʰ u
+thiesen1998/175/14	MOJ	majájtso	Bora	m a x a x tʰs o
+thiesen1998/191/25	MOJ	múriúcu	Bora	m u r i u kʰ u
+leach1969/104/42	MOJ	jaavu	Ocaina	ʔ a a β ɯ
+leach1969/103/24	MOJ	jááji	Ocaina	ʔ a a ʔ i
+thiesen1998/175/15	MOJ	májajtso	Bora	m a x a x tʰs o
+thiesen1998/191/28	MOJ	múhriba	Bora	m u ʔ r i pʰ a
+thiesen1998/175/14	MOJ	májaúcu	Bora	m a x a u kʰ u
+thiesen1998/240/23	MOJ	pi̵pájcho	Bora	pʰ i̵ pʰ a x kʰʔ o
+thiesen1998/240/24	MOJ	pí̵pajcho	Bora	pʰ i̵ pʰ a x kʰʔ o
+thiesen1998/240/24	MOJ	pí̵paahícyu	Bora	pʰ i̵ pʰ a: ʔ i kʰʝ u
+thiesen1998/191/28	MOJ	múriivye	Bora	m u r i: βʝ e
+thiesen1998/175/17	MOJ	májaave	Bora	m a x a: β e
+thiesen1998/191/25	MOJ	muríjcho	Bora	m u r i x kʰʔ o
+burtch1983/217/11	MOJ	ri̵aìde	Huitoto Murui	ɾ ɯ ai d ɛ
+thiesen1998/191/23	MOJ	múríjchóme̱i	Bora	m u r i x kʰʔ o m e i
+burtch1983/182/26	MOJ	mutade	Huitoto Murui	m u t a d ɛ
+thiesen1998/240/20	MOJ	pí̵páh	Bora	pʰ i̵ pʰ a ʔ
+thiesen1998/240/23	MOJ	pí̵paahícyu	Bora	pʰ i̵ pʰ a: ʔ i kʰʝ u
+thiesen1998/240/26	MOJ	pí̵pájchóme̱i	Bora	pʰ i̵ pʰ a x kʰʔ o m e i
+thiesen1998/240/20	MOJ	pí̵pá	Bora	pʰ i̵ pʰ a
+leach1969/75/5	MOJ	baaga	Ocaina	b a a g a
+burtch1983/193/3	TIR	nitade	Huitoto Murui	n i t a d ɛ
+minor1971/18/44	TIR	di̵i̵di̵de	Huitoto Muinane	d ɯ ɯ d ɯ d ɛ
+thiesen1998/114/25	TIR	dohji̵	Bora	tʰ o ʔ x i̵
+thiesen1998/332/12	TIR	wátíiivye	Bora	kʷ a tʰ i i: βʝ e
+thiesen1998/39/15	TIR	ahmu	Bora	a ʔ m u
+thiesen1998/327/25	TIR	wájojco	Bora	kʷ a x o x kʰ o
+thiesen1998/39/16	TIR	aamu	Bora	a: m u
+thiesen1998/323/10	TIR	wákyéehco	Bora	kʷ a kʰʝ e e ʔ kʰ o
+thiesen1998/39/15	TIR	aámu	Bora	a a m u
+burtch1983/192/3	TIR	niji̵de	Huitoto Murui	n i h ɯ d ɛ
+thiesen1998/323/10	TIR	wákyéehjáco	Bora	kʷ a kʰʝ e e ʔ x a kʰ o
+leach1969/128/15	TIR	ñiih	Ocaina	nʲ i i ʔ
+thiesen1998/327/25	TIR	waao	Bora	kʷ a: o
+minor1971/55/36	TIR	paì̵tde	Huitoto Muinane	p a ɯ̀ ɗ ɛ
+burtch1983/113/22	TIR	irofe	Huitoto Murui	i ɾ ɔ ɸ ɛ
+minor1971/65/21	TIR	totde	Huitoto Muinane	t o ɗ ɛ
+thiesen1998/114/25	TIR	dóhjí̵hañe	Bora	tʰ o ʔ x i̵ ʔ a nʲ e
+thiesen1998/41/16	TIR	añu	Bora	a nʲ u
+thiesen1998/114/25	TIR	dóhji̵í̵	Bora	tʰ o ʔ x i̵ i̵
+thiesen1998/36/23	RESPIR	állijchu	Bora	a tʰʃ i x kʰʔ u
+minor1971/56/32	RESPIR	popóride	Huitoto Muinane	p o p o ɾ i d ɛ
+minor1971/27/27	RESPIR	jajade	Huitoto Muinane	ʔ a ʔ a d ɛ
+leach1969/104/48	RESPIR	jaayo	Ocaina	ʔ a a ʑ o
+burtch1983/255/5	PIERN	i̵dacaìro	Huitoto Murui	ɯ d a k ai ɾ ɔ
+thiesen1998/253/1	PIERN	tájkiííñe	Bora	tʰ a x kʰ i i: nʲ e
+minor1971/72/7	PIERN	i̵dácaìro	Huitoto Muinane	ɯ d a k a i ɾ o
+leach1969/131/35	PIERN	odsácona	Ocaina	o dz a k õ a
+thiesen1998/253/1	PIERN	tájkii	Bora	tʰ a x kʰ i:
+thiesen1998/296/22	DELG	újtsíh	Bora	u x tʰs i ʔ
+thiesen1998/296/22	DELG	ujtsíwu	Bora	u x tʰs i kʷ u
+burtch1983/168/4	DELG	lli̵bibi̵ci̵	Huitoto Murui	dʑ ɯ b i b ɯ k ɯ
+thiesen1998/40/21	DELG	áníh	Bora	a n i ʔ
+thiesen1998/40/21	DELG	ání	Bora	a n i
+burtch1983/168/7	DELG	lli̵birede	Huitoto Murui	dʑ ɯ b i ɾ ɛ d ɛ
+thiesen1998/296/22	DELG	újtsí	Bora	u x tʰs i
+burtch1983/124/6	DELG	janore	Huitoto Murui	h a n ɔ ɾ ɛ
+leach1969/78/18	DELG	boojo	Ocaina	b o o ʔ o
+burtch1983/168/6	DELG	lli̵bire	Huitoto Murui	dʑ ɯ b i ɾ ɛ
+burtch1983/123/21	DELG	janogaìda	Huitoto Murui	h a n ɔ g ai d a
+burtch1983/124/9	DELG	janorede	Huitoto Murui	h a n ɔ ɾ ɛ d ɛ
+burtch1983/168/3	DELG	lli̵bibecode	Huitoto Murui	dʑ ɯ b i b ɛ k ɔ d ɛ
+leach1969/73/20	TIERR	añ̈oonhun	Ocaina	a nʲ̈ o õ ʔ ɯn
+leach1969/73/16	TIERR	añ̈iirán̈oh	Ocaina	a nʲ̈ i i r a n̥ o ʔ
+thiesen1998/146/24	TIERR	iíñu	Bora	i i nʲ u
+burtch1983/78/16	TIERR	eni̵rue	Huitoto Murui	ɛ n ɯ ɾ u ɛ
+leach1969/158/49	PENS	xomuxohyálli	Ocaina	x o m ɯ x o ʔ ʑ a dʑ i
+thiesen1998/154/21	PENS	í̵jtsáme̱ícho	Bora	i̵ x tʰs a m e i kʰʔ o
+thiesen1998/154/26	PENS	i̵jtsúcu̱nu	Bora	i̵ x tʰs u kʰ u n u
+minor1971/17/27	PENS	duénaìtde	Huitoto Muinane	d u ɛ n a i ɗ ɛ
+burtch1983/81/20	PENS	facade	Huitoto Murui	ɸ a k a d ɛ
+minor1971/45/31	PENS	merí̵daìtdi̵de	Huitoto Muinane	m ɛ ɾ ɯ́ d a i ɗ ɯ d ɛ
+thiesen1998/154/19	PENS	í̵jtsáme̱i	Bora	i̵ x tʰs a m e i
+leach1969/103/46	SEC	jáánhta	Ocaina	ʔ a ã ʔ t a
+thiesen1998/105/5	SEC	dáárɨ̱te	Bora	tʰ a: r i̵ tʰ e
+thiesen1998/244/2	SEC	ráyuuve	Bora	r a ʝ u: β e
+thiesen1998/104/34	SEC	dárí̵	Bora	tʰ a r i̵
+thiesen1998/218/6	SEC	páácyúme̱i	Bora	pʰ a: kʰʝ u m e i
+leach1969/124/2	SEC	naain	Ocaina	n a a ĩ
+thiesen1998/99/22	SEC	cheme	Bora	kʰʔ e m e
+thiesen1998/154/16	SEC	i̵jto	Bora	i̵ x tʰ o
+thiesen1998/43/11	SEC	áhraba	Bora	a ʔ r a pʰ a
+thiesen1998/99/24	SEC	chéméh	Bora	kʰʔ e m e ʔ
+burtch1983/220/11	SEC	safenaìte	Huitoto Murui	s a ɸ ɛ n ai t ɛ
+thiesen1998/104/34	SEC	dárí̵h	Bora	tʰ a r i̵ ʔ
+thiesen1998/105/7	SEC	dáári̵tétso	Bora	tʰ a: r i̵ tʰ e tʰs o
+thiesen1998/43/11	SEC	áraave	Bora	a r a: β e
+thiesen1998/99/24	SEC	chémé	Bora	kʰʔ e m e
+thiesen1998/146/22	SERPIENT	ííñimye	Bora	i: nʲ i mʝ e
+thiesen1998/212/13	NEGR	ohcháimútsi	Bora	o ʔ kʰʔ a i m u tʰs i
+burtch1983/140/12	NEGR	jiti̵re	Huitoto Murui	h i t ɯ ɾ ɛ
+burtch1983/132/9	NEGR	jidiride	Huitoto Murui	h i d i ɾ i d ɛ
+thiesen1998/91/34	NEGR	cóhróváuba	Bora	kʰ o ʔ r o β a u pʰ a
+thiesen1998/96/19	NEGR	cúúveébe	Bora	kʰ u: β e e pʰ e
+thiesen1998/212/13	NEGR	ohchámu	Bora	o ʔ kʰʔ a m u
+minor1971/34/13	NEGR	jitdi̵rede	Huitoto Muinane	ʔ i ɗ ɯ ɾ ɛ d ɛ
+thiesen1998/91/34	NEGR	córóváuuve	Bora	kʰ o r o β a u: β e
+thiesen1998/96/17	NEGR	cúvéh	Bora	kʰ u β e ʔ
+thiesen1998/212/13	NEGR	ohchái	Bora	o ʔ kʰʔ a i
+thiesen1998/51/16	NEGR	bajtu	Bora	pʰ a x tʰ u
+thiesen1998/96/17	NEGR	cúvé	Bora	kʰ u β e
+leach1969/113/44	NEGR	juhtóóhfu	Ocaina	ʔ ɯ ʔ t o o ʔ ɸ ɯ
+thiesen1998/28/4	Y	ácooca	Bora	a kʰ o: kʰ a
+leach1969/151/39	Y	unatyojún	Ocaina	ɯn a tʑ o ʔ ɯ́n
+minor1971/18/22	Y	di̵ga	Huitoto Muinane	d ɯ g a
+thiesen1998/35/9	VERD	ájtyúváh	Bora	a x tʰʝ u β a ʔ
+burtch1983/241/5	VERD	uafue	Huitoto Murui	u a ɸ u ɛ
+thiesen1998/35/7	VERD	ajtyúva	Bora	a x tʰʝ u β a
+minor1971/48/4	VERD	nabépue	Huitoto Muinane	n a b ɛ p u ɛ
+minor1971/68/31	VERD	uápue	Huitoto Muinane	u a p u ɛ
+thiesen1998/215/29	VERD	óvátúh	Bora	o β a tʰ u ʔ
+leach1969/103/43	VERD	jaanchonó	Ocaina	ʔ a ã kʔ õ o
+burtch1983/242/16	VERD	uanaì	Huitoto Murui	u a n ai
+thiesen1998/35/9	VERD	ájtyúvá	Bora	a x tʰʝ u β a
+thiesen1998/155/3	VERD	í̵mi̵̱a	Bora	i̵ m i̵ a
+leach1969/122/20	VERD	moxóóso	Ocaina	m o x o o s o
+leach1969/107/17	VERD	jiááho	Ocaina	ʔ i a a ʔ o
+thiesen1998/215/29	VERD	óvátú	Bora	o β a tʰ u
+thiesen1998/284/17	MADR	tsi̵í̵ju	Bora	tʰs i̵ i̵ x u
+leach1969/153/13	MADR	úúdsah	Ocaina	ɯ́ ɯ́ dz a ʔ
+minor1971/5/19	MADR	año	Huitoto Muinane	a nʲ o
+burtch1983/75/18	MADR	ei	Huitoto Murui	ɛ i
+leach1969/135/17	CABELL	ohfotohóófe	Ocaina	o ʔ ɸ o t o ʔ o o ɸ ɛ
+thiesen1998/202/17	CABELL	nííwaco	Bora	n i: kʷ a kʰ o
+burtch1983/257/17	CABELL	i̵foti̵raì̵	Huitoto Murui	ɯ ɸ ɔ t ɯ ɾ aɯ̀
+leach1969/154/2	VIV	uun	Ocaina	ɯ ɯn
+burtch1983/116/10	VIV	ite	Huitoto Murui	i t ɛ
+leach1969/159/37	VIV	xooba	Ocaina	x o o b a
+thiesen1998/277/17	VIV	tsájpí̵	Bora	tʰs a x pʰ i̵
+leach1969/68/18	VIV	uun	Ocaina	ɯ ɯn
+thiesen1998/277/17	VIV	tsájpí̵h	Bora	tʰs a x pʰ i̵ ʔ
+leach1969/154/2	VIV	aan	Ocaina	a ã
+leach1969/124/16	VIV	naavi	Ocaina	n a a β i
+thiesen1998/57/15	VIV	bóhí̵	Bora	pʰ o ʔ i̵
+burtch1983/44/9	VIV	caje	Huitoto Murui	k a h ɛ
+minor1971/25/39	VIV	itde	Huitoto Muinane	i ɗ ɛ
+thiesen1998/184/17	VIV	mítyáhcó	Bora	m i tʰʝ a ʔ kʰ o
+leach1969/68/18	VIV	aan	Ocaina	a ã
+thiesen1998/184/17	VIV	mítyáhcóh	Bora	m i tʰʝ a ʔ kʰ o ʔ
+thiesen1998/138/32	VIV	ijcya	Bora	i x kʰʝ a
+thiesen1998/57/15	VIV	bóhí̵h	Bora	pʰ o ʔ i̵ ʔ
+leach1969/108/5	VIV	jiityóra	Ocaina	ʔ i i tʑ o r a
+thiesen1998/138/12	HUEV	ííhyune	Bora	i: ʔʝ u n e
+minor1971/38/19	HUEV	ji̵gi̵	Huitoto Muinane	ʔ ɯ g ɯ
+thiesen1998/138/12	HUEV	ííhyúneé	Bora	i: ʔʝ u n e e
+thiesen1998/138/12	HUEV	ííhyuu	Bora	i: ʔʝ u:
+leach1969/111/15	HUEV	jóón	Ocaina	ʔ o on
+thiesen1998/138/12	HUEV	ííhyúuú	Bora	i: ʔʝ u u u
+leach1969/111/15	HUEV	jóónjun	Ocaina	ʔ o on ʔ ɯn
+burtch1983/151/18	HUEV	ji̵gi̵	Huitoto Murui	h ɯ g ɯ
+burtch1983/51/11	YO	cue	Huitoto Murui	k u ɛ
+thiesen1998/210/19	YO	oó	Bora	o o
+thiesen1998/210/19	YO	o	Bora	o
+leach1969/159/1	YO	xon	Ocaina	x õ
+burtch1983/51/11	YO	cuè	Huitoto Murui	k uɛ̀
+leach1969/159/1	YO	xoun	Ocaina	x o ɯn
+minor1971/11/39	YO	cuè	Huitoto Muinane	k u ɛ
+leach1969/161/7	YO	xooun	Ocaina	x o o ɯn
+leach1969/161/7	YO	xon	Ocaina	x õ
+leach1969/68/55	NO	aán	Ocaina	a ã
+burtch1983/62/14	NO	dama ite	Huitoto Murui	d a m a # i t ɛ
+leach1969/68/26	NO	aanñi	Ocaina	a ã nʲ i
+leach1969/68/55	NO	aanñi	Ocaina	a ã nʲ i
+thiesen1998/275/9	NO	tsáhaá	Bora	tʰs a ʔ a a
+burtch1983/62/12	NO	dama	Huitoto Murui	d a m a
+thiesen1998/275/9	NO	tsáha	Bora	tʰs a ʔ a
+thiesen1998/275/9	NO	tsáh	Bora	tʰs a ʔ
+leach1969/68/26	NO	aán	Ocaina	a ã
+thiesen1998/275/13	NO	tsáháuba	Bora	tʰs a ʔ a u pʰ a
+thiesen1998/275/9	NO	tsá	Bora	tʰs a
+thiesen1998/51/5	HUES	bájcu	Bora	pʰ a x kʰ u
+burtch1983/247/13	HUES	uìllaì̵	Huitoto Murui	ui dʑ aɯ̀
+leach1969/129/23	HUES	ñonhóónhcovo	Ocaina	nʲ õ ʔ o on ʔ k o β o
+thiesen1998/51/5	HUES	bájcuú	Bora	pʰ a x kʰ u u
+burtch1983/110/20	HUES	illaìci̵	Huitoto Murui	i dʑ ai k ɯ
+minor1971/22/36	HUES	icuru	Huitoto Muinane	i k u ɾ u
+burtch1983/259/5	MAR	i̵ni	Huitoto Murui	ɯ n i
+leach1969/136/23	MAR	oonna	Ocaina	o õ n a
+thiesen1998/183/8	MAR	míéécuve	Bora	m i e: kʰ u β e
+thiesen1998/96/33	MAR	cúúve̱te	Bora	kʰ u: β e tʰ e
+thiesen1998/187/9	MAR	moóa	Bora	m o o a
+thiesen1998/187/9	MAR	móañe	Bora	m o a nʲ e
+leach1969/118/23	MAR	maan̈u	Ocaina	m a a n̥ ɯ
+burtch1983/179/16	MAR	monaìllai	Huitoto Murui	m ɔ n ai dʑ a i
+minor1971/46/19	MAR	monáìllai	Huitoto Muinane	m o n a i dʑ a i
+thiesen1998/252/13	MAR	taji̵	Bora	tʰ a x i̵
+burtch1983/259/11	MAR	i̵nirede	Huitoto Murui	ɯ n i ɾ ɛ d ɛ
+thiesen1998/172/9	MAR	lliyíícyave	Bora	tʰʃ i ʝ i: kʰʝ a β e
+thiesen1998/201/23	MAR	níóocave	Bora	n i o o kʰ a β e
+burtch1983/112/6	POLV	imuìci̵	Huitoto Murui	i m ui k ɯ
+leach1969/71/37	POLV	ajóóhu	Ocaina	a ʔ o o ʔ ɯ
+thiesen1998/52/5	POLV	bálliíjyu	Bora	pʰ a tʰʃ i i xʝ u
+thiesen1998/175/31	COM	majcho	Bora	m a x kʰʔ o
+thiesen1998/175/32	COM	majcho	Bora	m a x kʰʔ o
+burtch1983/101/10	COM	guìte	Huitoto Murui	g ui t ɛ
+minor1971/53/19	COM	ocólle	Huitoto Muinane	o k o dʑ ɛ
+leach1969/137/43	COM	oxóóxa	Ocaina	o x o o x a
+burtch1983/100/15	COM	guìlle	Huitoto Murui	g ui dʑ ɛ
+burtch1983/100/10	COM	guìga	Huitoto Murui	g ui g a
+thiesen1998/61/13	COL	bówa	Bora	pʰ o kʷ a
+burtch1983/204/6	COL	omacaì̵	Huitoto Murui	ɔ m a k aɯ̀
+burtch1983/50/4	COL	corebi̵	Huitoto Murui	k ɔ ɾ ɛ b ɯ
+thiesen1998/305/27	COL	vihyu	Bora	β i ʔʝ u
+minor1971/53/33	COL	oda	Huitoto Muinane	o d a
+thiesen1998/61/13	COL	bówaá	Bora	pʰ o kʷ a a
+thiesen1998/64/11	COL	cáchórohjáco	Bora	kʰ a kʰʔ o r o ʔ x a kʰ o
+thiesen1998/64/13	COL	cáchóroove	Bora	kʰ a kʰʔ o r o: β e
+leach1969/132/23	COL	ohoo	Ocaina	o ʔ o o
+thiesen1998/64/11	COL	cáchórohco	Bora	kʰ a kʰʔ o r o ʔ kʰ o
+thiesen1998/148/29	COL	í̵í̵catétso	Bora	i̵i̵ kʰ a tʰ e tʰs o
+leach1969/83/25	QUE	dsoh	Ocaina	dz o ʔ
+leach1969/106/15	DOS	jan̈aa	Ocaina	ʔ a n̥ a a
+minor1971/5/27	DOS	apémaì̵lli̵noì̵	Huitoto Muinane	a p ɛ m a ɯ̀ dʑ ɯ n o ɯ̀
+minor1971/6/35	DOS	ba imálli̵no	Huitoto Muinane	b a # i m a dʑ ɯ n o
+minor1971/28/40	DOS	jaí̵ci̵doi̵nguaì̵	Huitoto Muinane	ʔ a ɯ́ k ɯ d o ɯ ŋ u a ɯ̀
+minor1971/45/17	DOS	mena	Huitoto Muinane	m ɛ n a
+burtch1983/176/6	DOS	mena	Huitoto Murui	m ɛ n a
+minor1971/38/38	JUG	ji̵pánotde	Huitoto Muinane	ʔ ɯ p a n o ɗ ɛ
+leach1969/136/25	JUG	ooralli	Ocaina	o o r a dʑ i
+burtch1983/103/7	JUG	i	Huitoto Murui	i
+minor1971/60/24	JUG	raì̵péde	Huitoto Muinane	ɾ a ɯ̀ p ɛ d ɛ
+burtch1983/150/16	JUG	ji̵fanote	Huitoto Murui	h ɯ ɸ a n ɔ t ɛ
+thiesen1998/148/32	JUG	i̵i̵cu	Bora	i̵: kʰ u
+burtch1983/240/1	COS	ti̵forite	Huitoto Murui	t ɯ ɸ ɔ ɾ i t ɛ
+thiesen1998/126/3	COS	dsi̵jco	Bora	tʰs i̵ x kʰ o
+minor1971/56/44	COS	puènide	Huitoto Muinane	p u ɛ n i d ɛ
+leach1969/84/7	COS	dsonnóójañi	Ocaina	dz õ n o o ʔ a nʲ i
+minor1971/38/29	COS	ji̵llíde	Huitoto Muinane	ʔ ɯ dʑ i d ɛ
+thiesen1998/228/16	COS	páwaji̵	Bora	pʰ a kʷ a x i̵
+minor1971/58/34	COS	raa	Huitoto Muinane	ɾ a a
+burtch1983/239/16	COS	ti̵fode	Huitoto Murui	t ɯ ɸ ɔ d ɛ
+minor1971/66/4	COS	ti̵póde	Huitoto Muinane	t ɯ p o d ɛ
+burtch1983/208/6	COS	ra	Huitoto Murui	ɾ a
+leach1969/114/35	COS	junhdyáánjañi	Ocaina	ʔ ɯn ʔ dʑ a ã ʔ a nʲ i
+leach1969/122/3	COS	moontyo	Ocaina	m o õ tʑ o
+thiesen1998/126/3	COS	dsi̵áco	Bora	tʰs i̵ a kʰ o
+burtch1983/148/2	OTRO	ji̵aì̵	Huitoto Murui	h ɯ aɯ̀
+burtch1983/148/3	OTRO	ji̵aì̵	Huitoto Murui	h ɯ aɯ̀
+leach1969/73/9	OTRO	añ̈ii	Ocaina	a nʲ̈ i i
+burtch1983/38/15	GOLP	bucoì̵de	Huitoto Murui	b u k ɔ ɯ̀ d ɛ
+thiesen1998/328/3	GOLP	wápáajcáro	Bora	kʷ a pʰ a a x kʰ a r o
+thiesen1998/332/5	GOLP	wátyétyehjúcu	Bora	kʷ a tʰʝ e tʰʝ e ʔ x u kʰ u
+minor1971/55/23	GOLP	patde	Huitoto Muinane	p a ɗ ɛ
+thiesen1998/141/16	GOLP	íllaáyo	Bora	i tʰʃ a a ʝ o
+thiesen1998/310/2	GOLP	wábóbohjáco	Bora	kʷ a pʰ o pʰ o ʔ x a kʰ o
+burtch1983/238/11	GOLP	tute	Huitoto Murui	t u t ɛ
+thiesen1998/141/16	GOLP	íhllaáyo	Bora	i ʔ tʰʃ a a ʝ o
+thiesen1998/39/27	GOLP	áámúme̱i	Bora	a: m u m e i
+thiesen1998/332/5	GOLP	wátyetyéhcu	Bora	kʷ a tʰʝ e tʰʝ e ʔ kʰ u
+thiesen1998/181/9	GOLP	meenu	Bora	m e: n u
+leach1969/67/14	GOLP	aadsi	Ocaina	a a dz i
+burtch1983/220/19	GOLP	saìgode	Huitoto Murui	s ai g ɔ d ɛ
+thiesen1998/62/31	GOLP	cábohco	Bora	kʰ a pʰ o ʔ kʰ o
+thiesen1998/328/3	GOLP	wápáajco	Bora	kʷ a pʰ a a x kʰ o
+thiesen1998/310/2	GOLP	wábóbohco	Bora	kʷ a pʰ o pʰ o ʔ kʰ o
+leach1969/70/24	GOLP	adsiityójo	Ocaina	a dz i i tʑ o ʔ o
+burtch1983/69/4	GOLP	dutade	Huitoto Murui	d u t a d ɛ
+burtch1983/84/13	GOLP	fatade	Huitoto Murui	ɸ a t a d ɛ
+leach1969/84/14	ALGUNOS	dsóóhbama	Ocaina	dz o o ʔ b a m a
+thiesen1998/281/17	ALGUNOS	tsíeméjte	Bora	tʰs i e m e x tʰ e
+leach1969/147/48	ALGUNOS	tyaasah	Ocaina	tʑ a a s a ʔ
+minor1971/15/10	ALGUNOS	daarie	Huitoto Muinane	d a a ɾ i ɛ
+burtch1983/61/1	ALGUNOS	daforie	Huitoto Murui	d a ɸ ɔ ɾ i ɛ
+burtch1983/62/7	ALGUNOS	dajerie	Huitoto Murui	d a h ɛ ɾ i ɛ
+thiesen1998/207/23	HIEL	nújpácyó arááve	Bora	n u x pʰ a kʰʝ o # a r a: β e
+minor1971/16/18	HIEL	deri̵	Huitoto Muinane	d ɛ ɾ ɯ
+leach1969/130/16	HIEL	ñoon arááhsaxa	Ocaina	nʲ o õ # a r a a ʔ s a x a
+burtch1983/91/2	HIEL	filli̵i	Huitoto Murui	ɸ i dʑ ɯ i
+burtch1983/91/2	HIEL	filli̵ji	Huitoto Murui	ɸ i dʑ ɯ h i
+leach1969/71/24	ANCHO	ajáára	Ocaina	a ʔ a a r a
+burtch1983/69/16	ANCHO	di̵arose	Huitoto Murui	d ɯ a ɾ ɔ s ɛ
+burtch1983/23/20	ANCHO	aìllue	Huitoto Murui	ai dʑ u ɛ
+burtch1983/130/13	ANCHO	jerie	Huitoto Murui	h ɛ ɾ i ɛ
+thiesen1998/35/2	QUEM	ajtye	Bora	a x tʰʝ e
+minor1971/8/10	QUEM	boode	Huitoto Muinane	b o o d ɛ
+thiesen1998/32/14	QUEM	áiúcu	Bora	a i u kʰ u
+leach1969/97/16	QUEM	tyáfoohto	Ocaina	tʑ a ɸ o o ʔ t o
+burtch1983/133/15	QUEM	jifide	Huitoto Murui	h i ɸ i d ɛ
+minor1971/70/31	QUEM	utíde	Huitoto Muinane	u t i d ɛ
+leach1969/97/15	QUEM	foohto	Ocaina	ɸ o o ʔ t o
+minor1971/8/2	QUEM	bobicaìde	Huitoto Muinane	b o b i k a i d ɛ
+thiesen1998/41/16	QUEM	añu	Bora	a nʲ u
+burtch1983/141/4	QUEM	jobaìde	Huitoto Murui	h ɔ b ai d ɛ
+thiesen1998/32/18	QUEM	áiivye	Bora	a i: βʝ e
+minor1971/34/31	QUEM	jobáìde	Huitoto Muinane	ʔ o b a i d ɛ
+leach1969/76/48	QUEM	biih	Ocaina	b i i ʔ
+minor1971/11/5	QUEM	conaìtde	Huitoto Muinane	k o n a i ɗ ɛ
+burtch1983/252/2	QUEM	uside	Huitoto Murui	u s i d ɛ
+thiesen1998/32/14	QUEM	áijcho	Bora	a i x kʰʔ o
+thiesen1998/32/18	QUEM	ááiba	Bora	a: i pʰ a
+minor1971/6/41	HIERB	barie	Huitoto Muinane	b a ɾ i ɛ
+leach1969/149/6	HIERB	tyojáánjan	Ocaina	tʑ o ʔ a ã ʔ ã
+leach1969/149/6	HIERB	tyojáán	Ocaina	tʑ o ʔ a ã
+burtch1983/211/2	HIERB	raìti̵ci̵ño	Huitoto Murui	ɾ ai t ɯ k ɯ nʲ ɔ
+minor1971/59/29	HIERB	raìtdi̵aì̵	Huitoto Muinane	ɾ a i ɗ ɯ a ɯ̀
+burtch1983/211/3	HIERB	raìti̵e	Huitoto Murui	ɾ ai t ɯ ɛ
+leach1969/149/7	HIERB	tyojáányina	Ocaina	tʑ o ʔ a ã ʑ ĩ a
+thiesen1998/199/17	AREN	néwayúúha	Bora	n e kʷ a ʝ u: ʔ a
+leach1969/117/10	AREN	llíoonhin	Ocaina	dʑ i o õ ʔ ĩ
+burtch1983/49/9	AREN	conilli̵e	Huitoto Murui	k ɔ n i dʑ ɯ ɛ
+burtch1983/99/23	AREN	guàmaì̵	Huitoto Murui	g ua m aɯ̀
+minor1971/11/6	AREN	conilli̵e	Huitoto Muinane	k o n i dʑ ɯ ɛ
+leach1969/117/11	AREN	llíoonjin	Ocaina	dʑ i o õ ʔ ĩ
+burtch1983/143/7	LAG	joraì	Huitoto Murui	h ɔ ɾ ai
+minor1971/35/30	LAG	joraì	Huitoto Muinane	ʔ o ɾ a i
+burtch1983/28/8	LAG	taì̵nomo ari	Huitoto Murui	t aɯ̀ n ɔ m ɔ # a ɾ i
+leach1969/109/32	LAG	jonháánjin	Ocaina	ʔ õ ʔ a ã ʔ ĩ
+thiesen1998/299/25	LAG	únemu	Bora	u n e m u
+thiesen1998/299/25	LAG	úneu	Bora	u n e u
+leach1969/135/13	CABEZ	oohfo	Ocaina	o o ʔ ɸ o
+minor1971/73/16	CABEZ	i̵po	Huitoto Muinane	ɯ p o
+burtch1983/257/2	CABEZ	ɨfo	Huitoto Murui	ɯ ɸ ɔ
+burtch1983/257/7	CABEZ	i̵fogi̵	Huitoto Murui	ɯ ɸ ɔ g ɯ
+leach1969/135/15	CABEZ	ohfóóruna	Ocaina	o ʔ ɸ o o r ɯn a
+thiesen1998/202/22	CABEZ	nííwau	Bora	n i: kʷ a u
+thiesen1998/171/12	JAL	llíúcúme̱i	Bora	tʰʃ i u kʰ u m e i
+leach1969/146/13	JAL	tsoonhmu	Ocaina	ts o õ ʔ m ɯ
+thiesen1998/171/10	JAL	llícyuhco	Bora	tʰʃ i kʰʝ u ʔ kʰ o
+thiesen1998/171/10	JAL	lliúcu	Bora	tʰʃ i u kʰ u
+burtch1983/48/7	NUEV	comue	Huitoto Murui	k ɔ m u ɛ
+minor1971/10/37	NUEV	como	Huitoto Muinane	k o m o
+leach1969/113/35	NUEV	juhto	Ocaina	ʔ ɯ ʔ t o
+burtch1983/48/7	NUEV	comoì̵e	Huitoto Murui	k ɔ m ɔ ɯ̀ ɛ
+minor1971/10/39	NUEV	comue	Huitoto Muinane	k o m u ɛ
+burtch1983/31/11	ESE	baìe	Huitoto Murui	b ai ɛ
+leach1969/147/4	ESE	tya	Ocaina	tʑ a
+burtch1983/31/9	ESE	baì	Huitoto Murui	b ai
+burtch1983/217/24	PODR	ri̵faìde	Huitoto Murui	ɾ ɯ ɸ ai d ɛ
+thiesen1998/265/4	PODR	tócúh	Bora	tʰ o kʰ u ʔ
+burtch1983/220/5	PODR	sabide	Huitoto Murui	s a b i d ɛ
+minor1971/63/8	PODR	ri̵paìde	Huitoto Muinane	ɾ ɯ p a i d ɛ
+thiesen1998/98/22	PODR	chahjába	Bora	kʰʔ a ʔ x a pʰ a
+minor1971/30/3	PODR	jeellonaìde	Huitoto Muinane	ʔ ɛ ɛ dʑ o n a i d ɛ
+thiesen1998/98/23	PODR	cháhjaba	Bora	kʰʔ a ʔ x a pʰ a
+thiesen1998/265/4	PODR	tócú	Bora	tʰ o kʰ u
+thiesen1998/243/19	PODR	raaráve	Bora	r a: r a β e
+thiesen1998/98/23	PODR	chájaave	Bora	kʰʔ a x a: β e
+thiesen1998/205/9	PODR	nójcanu	Bora	n o x kʰ a n u
+minor1971/65/16	PODR	toode	Huitoto Muinane	t o o d ɛ
+thiesen1998/98/22	PODR	chajááve	Bora	kʰʔ a x a: β e
+minor1971/15/5	TRES	daámani	Huitoto Muinane	d a a m a n i
+burtch1983/61/9	TRES	dae amani	Huitoto Murui	d a ɛ # a m a n i
+burtch1983/61/9	TRES	daje amani	Huitoto Murui	d a h ɛ # a m a n i
+thiesen1998/149/12	PES	í̵dáátso	Bora	i̵ tʰ a: tʰs o
+thiesen1998/219/9	PES	pádúúcu	Bora	pʰ a tʰ u: kʰ u
+leach1969/92/32	PES	faahxa	Ocaina	ɸ a a ʔ x a
+thiesen1998/219/11	PES	pádúcúh	Bora	pʰ a tʰ u kʰ u ʔ
+thiesen1998/165/10	PES	kimóóve	Bora	kʰ i m oo β e
+thiesen1998/39/12	PES	aámu	Bora	a a m u
+thiesen1998/39/13	PES	aamu	Bora	a: m u
+thiesen1998/149/12	PES	í̵dáátsoó	Bora	i̵ tʰ a: tʰs o o
+minor1971/45/4	PES	mee	Huitoto Muinane	m ɛ ɛ
+leach1969/118/47	PES	mááyi	Ocaina	m a a ʑ i
+thiesen1998/219/9	PES	pádúúcuú	Bora	pʰ a tʰ u: kʰ u u
+burtch1983/175/3	PES	meere	Huitoto Murui	m ɛ ɛ ɾ ɛ
+thiesen1998/131/23	PES	eevécu̱nu	Bora	e: β e kʰ u n u
+burtch1983/175/2	PES	meenaìte	Huitoto Murui	m ɛ ɛ n ai t ɛ
+thiesen1998/219/11	PES	pádúcú	Bora	pʰ a tʰ u kʰ u
+thiesen1998/165/5	PES	kimóhcoó	Bora	kʰ i m o ʔ kʰ o o
+thiesen1998/165/5	PES	kimóhco	Bora	kʰ i m o ʔ kʰ o
+leach1969/113/11	LAV	joxootu	Ocaina	ʔ o x o o t ɯ
+thiesen1998/200/36	LAV	nijtyúcu	Bora	n i x tʰʝ u kʰ u
+thiesen1998/200/36	LAV	nijtyu	Bora	n i x tʰʝ u
+thiesen1998/200/37	LAV	nijtyúcu	Bora	n i x tʰʝ u kʰ u
+thiesen1998/200/34	LAV	níjtyúme̱i	Bora	n i x tʰʝ u m e i
+burtch1983/250/7	LAV	ullide	Huitoto Murui	u dʑ i d ɛ
+minor1971/34/37	LAV	jocode	Huitoto Muinane	ʔ o k o d ɛ
+thiesen1998/200/34	LAV	níjtyáme̱i	Bora	n i x tʰʝ a m e i
+thiesen1998/312/8	LAV	wácháchahco	Bora	kʷ a kʰʔ a kʰʔ a ʔ kʰ o
+thiesen1998/312/8	LAV	wácháchahjáco	Bora	kʷ a kʰʔ a kʰʔ a ʔ x a kʰ o
+thiesen1998/200/37	LAV	nijtyu	Bora	n i x tʰʝ u
+leach1969/67/44	CIEL	aam̈i	Ocaina	a a m̥ i
+burtch1983/179/5	CIEL	mona	Huitoto Murui	m ɔ n a
+thiesen1998/136/23	CIEL	íévehóówa	Bora	i e β e ʔ oo kʷ a
+leach1969/67/45	CIEL	aam̈ijón	Ocaina	a a m̥ i ʔ on
+leach1969/79/43	CIEL	bum̈onñ̈á	Ocaina	b ɯ m̥ õ nʲ̈ a
+minor1971/46/18	CIEL	mona	Huitoto Muinane	m o n a
+minor1971/7/27	CIEL	bico	Huitoto Muinane	b i k o
+leach1969/115/40	SOPL	juuhxa	Ocaina	ʔ ɯ ɯ ʔ x a
+thiesen1998/148/5	SOPL	í̵bajtso	Bora	i̵ pʰ a x tʰs o
+thiesen1998/148/6	SOPL	í̵bátsuhjáco	Bora	i̵ pʰ a tʰs u ʔ x a kʰ o
+thiesen1998/148/6	SOPL	í̵batsúhcu	Bora	i̵ pʰ a tʰs u ʔ kʰ u
+thiesen1998/170/8	SOPL	llijchúcu	Bora	tʰʃ i x kʰʔ u kʰ u
+burtch1983/91/15	SOPL	fitade	Huitoto Murui	ɸ i t a d ɛ
+thiesen1998/148/4	SOPL	i̵bájtso	Bora	i̵ pʰ a x tʰs o
+minor1971/70/42	SOPL	vatde	Huitoto Muinane	β a ɗ ɛ
+thiesen1998/307/12	SOPL	vóihjyáco	Bora	β o i ʔ xʝ a kʰ o
+thiesen1998/148/7	SOPL	í̵bátsuhcu	Bora	i̵ pʰ a tʰs u ʔ kʰ u
+thiesen1998/170/7	SOPL	llijchúcu	Bora	tʰʃ i x kʰʔ u kʰ u
+thiesen1998/307/12	SOPL	vóijcyu	Bora	β o i x kʰʝ u
+minor1971/57/14	SOPL	puunotde	Huitoto Muinane	p u u n o ɗ ɛ
+thiesen1998/170/7	SOPL	llijchu	Bora	tʰʃ i x kʰʔ u
+burtch1983/34/21	SOPL	betade	Huitoto Murui	b ɛ t a d ɛ
+thiesen1998/148/7	SOPL	í̵bátsuhjáco	Bora	i̵ pʰ a tʰs u ʔ x a kʰ o
+leach1969/97/6	SOPL	foofo	Ocaina	ɸ o o ɸ o
+thiesen1998/170/8	SOPL	llijchu	Bora	tʰʃ i x kʰʔ u
+thiesen1998/34/23	LEVANT	ajkye	Bora	a x kʰʝ e
+thiesen1998/332/27	LEVANT	wátyohí̵í̵ve	Bora	kʷ a tʰʝ o ʔ i̵i̵ β e
+minor1971/59/21	LEVANT	raìñóde	Huitoto Muinane	ɾ a i nʲ o d ɛ
+thiesen1998/136/34	LEVANT	ihbúcu	Bora	i ʔ pʰ u kʰ u
+leach1969/69/45	LEVANT	aava	Ocaina	a a β a
+thiesen1998/332/24	LEVANT	wátyoohí̵cu	Bora	kʷ a tʰʝ o: ʔ i̵ kʰ u
+thiesen1998/339/8	LEVANT	wáyuhtsí̵cu	Bora	kʷ a ʝ u ʔ tʰs i̵ kʰ u
+thiesen1998/140/19	LEVANT	íjyócuuve	Bora	i xʝ o kʰ u: β e
+thiesen1998/35/27	LEVANT	ákyejtso	Bora	a kʰʝ e x tʰs o
+minor1971/46/41	LEVANT	motíde	Huitoto Muinane	m o t i d ɛ
+burtch1983/145/12	LEVANT	juìcoride	Huitoto Murui	h ui k ɔ ɾ i d ɛ
+thiesen1998/136/35	LEVANT	ihbu	Bora	i ʔ pʰ u
+thiesen1998/332/27	LEVANT	wáhtyohí̵ba	Bora	kʷ a ʔ tʰʝ o ʔ i̵ pʰ a
+thiesen1998/140/19	LEVANT	íhjyócuba	Bora	i ʔ xʝ o kʰ u pʰ a
+thiesen1998/339/8	LEVANT	wáyúhtsi̵nu	Bora	kʷ a ʝ u ʔ tʰs i̵ n u
+thiesen1998/140/14	LEVANT	íjyócujco	Bora	i xʝ o kʰ u x kʰ o
+thiesen1998/332/24	LEVANT	wátyóóhi̵nu	Bora	kʷ a tʰʝ oo ʔ i̵ n u
+thiesen1998/136/35	LEVANT	ihbúcu	Bora	i ʔ pʰ u kʰ u
+thiesen1998/140/14	LEVANT	íjyócujcáro	Bora	i xʝ o kʰ u x kʰ a r o
+thiesen1998/325/11	LEVANT	wáámene	Bora	kʷ a: m e n e
+thiesen1998/136/34	LEVANT	ihbu	Bora	i ʔ pʰ u
+burtch1983/145/11	LEVANT	juìconote	Huitoto Murui	h ui k ɔ n ɔ t ɛ
+burtch1983/210/4	LEVANT	raìconote	Huitoto Murui	ɾ ai k ɔ n ɔ t ɛ
+thiesen1998/155/6	BUEN	í̵mi̵̱áá-	Bora	i̵ m i̵ a:
+thiesen1998/316/1	BUEN	wahde	Bora	kʷ a ʔ tʰ e
+burtch1983/173/9	BUEN	mare	Huitoto Murui	m a ɾ ɛ
+burtch1983/129/2	BUEN	jee	Huitoto Murui	h ɛ ɛ
+thiesen1998/155/5	BUEN	í̵mi̵̱á	Bora	i̵ m i̵ a
+thiesen1998/142/31	BUEN	imíwu	Bora	i m i kʷ u
+thiesen1998/142/31	BUEN	ímíh	Bora	i m i ʔ
+leach1969/96/21	BUEN	fónjun	Ocaina	ɸ on ʔ ɯn
+burtch1983/173/14	BUEN	maremi̵e	Huitoto Murui	m a ɾ ɛ m ɯ ɛ
+thiesen1998/142/31	BUEN	ímí	Bora	i m i
+burtch1983/173/16	BUEN	mareñaìño	Huitoto Murui	m a ɾ ɛ nʲ ai nʲ ɔ
+thiesen1998/276/32	BUEN	tsaí̵í̵buwáre	Bora	tʰs a i̵i̵ pʰ u kʷ a r e
+minor1971/53/2	BUEN	ñuera	Huitoto Muinane	nʲ u ɛ ɾ a
+thiesen1998/276/32	BUEN	tsaí̵í̵buwa	Bora	tʰs a i̵i̵ pʰ u kʷ a
+burtch1983/220/13	PAL	saferedi̵na	Huitoto Murui	s a ɸ ɛ ɾ ɛ d ɯ n a
+burtch1983/209/14	PAL	rada	Huitoto Murui	ɾ a d a
+thiesen1998/225/36	PAL	pááraji̵	Bora	pʰ a: r a x i̵
+minor1971/14/22	PAL	chovéco	Huitoto Muinane	kʔ o β ɛ k o
+burtch1983/209/14	PAL	radosi	Huitoto Murui	ɾ a d ɔ s i
+thiesen1998/289/10	PAL	tsúúho	Bora	tʰs u: ʔ o
+thiesen1998/289/10	PAL	tsúúhoó	Bora	tʰs u: ʔ o o
+burtch1983/25/6	PAL	amena	Huitoto Murui	a m ɛ n a
+leach1969/85/17	PAL	dyaa	Ocaina	dʑ a a
+burtch1983/211/6	PAL	raìti̵faì̵raco	Huitoto Murui	ɾ ai t ɯ ɸ aɯ̀ ɾ a k ɔ
+minor1971/18/3	PAL	duíraì̵	Huitoto Muinane	d u i ɾ a ɯ̀
+thiesen1998/289/10	PAL	tsúúhone	Bora	tʰs u: ʔ o n e
+thiesen1998/70/24	PAL	cállorí̵hcuji̵	Bora	kʰ a tʰʃ o r i̵ ʔ kʰ u x i̵
+minor1971/7/43	PAL	biúgaì̵	Huitoto Muinane	b i u g a ɯ̀
+minor1971/8/38	PAL	bi̵gi̵	Huitoto Muinane	b ɯ g ɯ
+thiesen1998/294/15	GORD	újcává	Bora	u x kʰ a β a
+leach1969/92/42	GORD	fáájin	Ocaina	ɸ a a ʔ ĩ
+burtch1983/23/18	GORD	aìllomi̵e	Huitoto Murui	ai dʑ ɔ m ɯ ɛ
+thiesen1998/125/2	GORD	dúrúvá	Bora	tʰ u r u β a
+thiesen1998/125/2	GORD	dúrúváh	Bora	tʰ u r u β a ʔ
+thiesen1998/294/15	GORD	újcáváh	Bora	u x kʰ a β a ʔ
+thiesen1998/72/5	LARG	cámé	Bora	kʰ a m e
+thiesen1998/72/5	LARG	caaméwu	Bora	kʰ a: m e kʷ u
+thiesen1998/299/1	LARG	úmi̵va	Bora	u m i̵ β a
+leach1969/69/16	LARG	ááñi	Ocaina	a a nʲ i
+leach1969/136/6	LARG	iii intr	Ocaina	i i i # ĩ t r
+minor1971/5/33	LARG	are	Huitoto Muinane	a ɾ ɛ
+burtch1983/27/15	LARG	are	Huitoto Murui	a ɾ ɛ
+thiesen1998/72/5	LARG	cáméh	Bora	kʰ a m e ʔ
+thiesen1998/151/17	PLUM	í̵hjí̵ji̵	Bora	i̵ ʔ x i̵ x i̵
+burtch1983/203/11	PLUM	ofoma ibe	Huitoto Murui	ɔ ɸ ɔ m a # i b ɛ
+thiesen1998/151/17	PLUM	í̵hjí̵ne	Bora	i̵ ʔ x i̵ n e
+burtch1983/104/14	PLUM	ibe	Huitoto Murui	i b ɛ
+leach1969/148/5	PLUM	tyafóóro	Ocaina	tʑ a ɸ o o r o
+burtch1983/104/15	PLUM	ibeni̵aì̵	Huitoto Murui	i b ɛ n ɯ aɯ̀
+burtch1983/203/11	PLUM	ofoma ibero	Huitoto Murui	ɔ ɸ ɔ m a # i b ɛ ɾ ɔ
+thiesen1998/151/17	PLUM	í̵hjí̵neé	Bora	i̵ ʔ x i̵ n e e
+burtch1983/203/11	PLUM	ofoma iforo	Huitoto Murui	ɔ ɸ ɔ m a # i ɸ ɔ ɾ ɔ
+thiesen1998/151/17	PLUM	í̵hjí̵ji̵í̵	Bora	i̵ ʔ x i̵ x i̵ i̵
+leach1969/152/26	IZQUIERD	uroohfatí	Ocaina	ɯ r o o ʔ ɸ a t i
+burtch1983/124/18	IZQUIERD	jari̵febeji	Huitoto Murui	h a ɾ ɯ ɸ ɛ b ɛ h i
+leach1969/135/6	CAER	ooha	Ocaina	o o ʔ a
+burtch1983/242/5	CAER	uaìde	Huitoto Murui	u ai d ɛ
+minor1971/7/5	CAER	baí̵ìde	Huitoto Muinane	b a ɯ́ i d ɛ
+thiesen1998/76/17	CAER	cáhpíyuba	Bora	kʰ a ʔ pʰ i ʝ u pʰ a
+thiesen1998/76/17	CAER	cápíyuuve	Bora	kʰ a pʰ i ʝ u: β e
+minor1971/10/31	CAER	cocí̵de	Huitoto Muinane	k o k ɯ́ d ɛ
+burtch1983/43/1	CAER	caìde	Huitoto Murui	k ai d ɛ
+thiesen1998/112/29	CAER	dócóri̵i̵ve	Bora	tʰ o kʰ o r i̵: β e
+thiesen1998/35/31	CAER	ááki̱tye	Bora	a: kʰ i tʰʝ e
+minor1971/8/40	CAER	bi̵íde	Huitoto Muinane	b ɯ i d ɛ
+burtch1983/235/18	SANGR	toide	Huitoto Murui	t ɔ i d ɛ
+burtch1983/70/7	SANGR	di̵e	Huitoto Murui	d ɯ ɛ
+minor1971/49/2	SANGR	naì̵bi	Huitoto Muinane	n a ɯ̀ b i
+thiesen1998/273/26	SANGR	tuuva	Bora	tʰ u: β a
+burtch1983/69/14	SANGR	di̵aìde	Huitoto Murui	d ɯ ai d ɛ
+leach1969/145/25	SANGR	tsijíínjin	Ocaina	ts i ʔ i ĩ ʔ ĩ
+leach1969/145/25	SANGR	tsijíín	Ocaina	ts i ʔ i ĩ
+burtch1983/72/12	SANGR	di̵rue	Huitoto Murui	d ɯ ɾ u ɛ
+thiesen1998/274/10	SANGR	túúvatso	Bora	tʰ u: β a tʰs o
+leach1969/144/49	SANGR	tsiijin	Ocaina	ts i i ʔ ĩ
+thiesen1998/270/26	SANGR	tújpacyo	Bora	tʰ u x pʰ a kʰʝ o
+minor1971/18/18	SANGR	di̵e	Huitoto Muinane	d ɯ ɛ
+thiesen1998/138/17	DIENT	íhwáne	Bora	i ʔ kʷ a n e
+thiesen1998/138/17	DIENT	íhwáñeé	Bora	i ʔ kʷ a nʲ e e
+burtch1983/114/14	DIENT	isido	Huitoto Murui	i s i d ɔ
+minor1971/25/19	DIENT	itido	Huitoto Muinane	i t i d o
+burtch1983/107/16	DIENT	idoni̵aì̵	Huitoto Murui	i d ɔ n ɯ aɯ̀
+thiesen1998/138/17	DIENT	íhwají̵í̵cu	Bora	i ʔ kʷ a x i̵i̵ kʰ u
+burtch1983/114/15	DIENT	isie	Huitoto Murui	i s i ɛ
+thiesen1998/138/17	DIENT	íhwaji̵	Bora	i ʔ kʷ a x i̵
+leach1969/71/13	DIENT	ahtiihtyo	Ocaina	a ʔ t i i ʔ tʑ o
+burtch1983/147/22	SEMILL	ji̵	Huitoto Murui	h ɯ
+leach1969/125/15	SEMILL	naviiñ̈i	Ocaina	n a β i i nʲ̈ i
+minor1971/23/9	SEMILL	ido	Huitoto Muinane	i d o
+burtch1983/107/15	SEMILL	ido	Huitoto Murui	i d ɔ
+burtch1983/64/13	SEMILL	do	Huitoto Murui	d ɔ
+thiesen1998/299/27	ESCUP	úníchihcyu	Bora	u n i kʰʔ i ʔ kʰʝ u
+minor1971/67/10	ESCUP	tduánode	Huitoto Muinane	ɗ u a n o d ɛ
+leach1969/156/25	ESCUP	xaca cááu	Ocaina	x a k a # k a a ɯ
+leach1969/80/42	ESCUP	caau	Ocaina	k a a ɯ
+thiesen1998/299/27	ESCUP	únítyojco	Bora	u n i tʰʝ o x kʰ o
+thiesen1998/299/27	ESCUP	uni	Bora	u n i
+burtch1983/236/18	ESCUP	tuade	Huitoto Murui	t u a d ɛ
+leach1969/144/15	ESCUP	játsaafu	Ocaina	ʔ a ts a a ɸ ɯ
+thiesen1998/309/1	CUERD	wábyaúúcu	Bora	kʷ a pʰʝ a u: kʰ u
+thiesen1998/309/1	CUERD	wábyaúúne	Bora	kʷ a pʰʝ a u: n e
+minor1971/23/13	CUERD	igaì̵	Huitoto Muinane	i g a ɯ̀
+thiesen1998/309/1	CUERD	wáábyau	Bora	kʷ a: pʰʝ a u
+thiesen1998/219/4	CUERD	pádohji̵	Bora	pʰ a tʰ o ʔ x i̵
+burtch1983/82/3	CONT	facadote	Huitoto Murui	ɸ a k a d ɔ t ɛ
+leach1969/93/45	CONT	fahxaajo	Ocaina	ɸ a ʔ x a a ʔ o
+thiesen1998/131/19	CONT	eeve	Bora	e: β e
+burtch1983/167/2	CONT	llote	Huitoto Murui	dʑ ɔ t ɛ
+leach1969/79/30	CONT	bucoohfílli	Ocaina	b ɯ k o o ʔ ɸ i dʑ i
+thiesen1998/291/10	CONT	úúballe	Bora	u: pʰ a tʰʃ e
+minor1971/54/43	CONT	pacádotde	Huitoto Muinane	p a k a d o ɗ ɛ
+burtch1983/59/16	CINC	dabecuìro	Huitoto Murui	d a b ɛ k ui ɾ ɔ
+leach1969/148/11	CINC	tyahfúúforoh	Ocaina	tʑ a ʔ ɸ ɯ́ ɯ́ ɸ o r o ʔ
+burtch1983/218/18	LIS	ri̵ji̵re	Huitoto Murui	ɾ ɯ h ɯ ɾ ɛ
+thiesen1998/240/34	LIS	pí̵rúcú	Bora	pʰ i̵ r u kʰ u
+minor1971/63/14	LIS	ri̵i̵re	Huitoto Muinane	ɾ ɯ ɯ ɾ ɛ
+leach1969/95/3	LIS	fííyi	Ocaina	ɸ i i ʑ i
+minor1971/63/13	LIS	ri̵i̵gaìrode	Huitoto Muinane	ɾ ɯ ɯ g a i ɾ o d ɛ
+thiesen1998/240/34	LIS	pí̵rúcúh	Bora	pʰ i̵ r u kʰ u ʔ
+thiesen1998/147/36	CUERN	iyáábej to	Bora	i ʝ a: pʰ e x # tʰ o
+burtch1983/225/2	CUERN	sicaì̵	Huitoto Murui	s i k aɯ̀
+burtch1983/225/7	CUERN	sigaì̵ni̵aì̵	Huitoto Murui	s i g aɯ̀ n ɯ aɯ̀
+thiesen1998/268/12	PIE	jtúha	Bora	x tʰ u ʔ a
+minor1971/72/11	PIE	i̵daì̵	Huitoto Muinane	ɯ d a ɯ̀
+thiesen1998/268/12	PIE	túhaá	Bora	tʰ u ʔ a a
+burtch1983/81/14	PIE	ei̵lli̵	Huitoto Murui	ɛ ɯ dʑ ɯ
+leach1969/151/19	PIE	uhyóó	Ocaina	ɯ ʔ ʑ o o
+minor1971/33/29	CENIZ	jitue	Huitoto Muinane	ʔ i t u ɛ
+thiesen1998/52/5	CENIZ	bálliíjyu	Bora	pʰ a tʰʃ i i xʝ u
+burtch1983/147/9	CENIZ	jusefo	Huitoto Murui	h u s ɛ ɸ ɔ
+leach1969/132/32	CENIZ	ohtiihi	Ocaina	o ʔ t i i ʔ i
+minor1971/8/39	ECHARS	bi̵ide	Huitoto Muinane	b ɯ i d ɛ
+burtch1983/95/13	ECHARS	fi̵ide	Huitoto Murui	ɸ ɯ i d ɛ
+thiesen1998/82/29	ECHARS	cáhtsíñiba	Bora	kʰ a ʔ tʰs i nʲ i pʰ a
+thiesen1998/265/20	ECHARS	tódsi̵i̵ve	Bora	tʰ o tʰs i̵: β e
+thiesen1998/82/29	ECHARS	cátsíñiivye	Bora	kʰ a tʰs i nʲ i: βʝ e
+thiesen1998/265/20	ECHARS	tóhdsi̵ba	Bora	tʰ o ʔ tʰs i̵ pʰ a
+leach1969/84/38	FLU	tyádsooro	Ocaina	tʑ a dz o o r o
+burtch1983/236/8	FLU	tote	Huitoto Murui	t ɔ t ɛ
+thiesen1998/202/12	FLU	niiva	Bora	n i: β a
+burtch1983/82/4	CUANDO	facaìse	Huitoto Murui	ɸ a k ai s ɛ
+burtch1983/19/3	CUANDO	nia	Huitoto Murui	n i a
+leach1969/104/55	CUANDO	jadya	Ocaina	ʔ a dʑ a
+burtch1983/82/4	CUANDO	facaìseconi	Huitoto Murui	ɸ a k ai s ɛ k ɔ n i
+leach1969/114/11	CUANDO	juhxon	Ocaina	ʔ ɯ ʔ x õ
+burtch1983/19/3	CUANDO	jia	Huitoto Murui	h i a
+burtch1983/19/3	CUANDO	ia	Huitoto Murui	i a
+burtch1983/73/18	CUANDO	ecɨ	Huitoto Murui	ɛ k ɯ
+burtch1983/73/18	CUANDO	ecɨmo	Huitoto Murui	ɛ k ɯ m ɔ
+burtch1983/178/4	CUANDO	mo	Huitoto Murui	m ɔ
+burtch1983/19/3	CUANDO	a	Huitoto Murui	a
+burtch1983/82/4	CUANDO	facaì	Huitoto Murui	ɸ a k ai
+leach1969/144/41	ROJ	tsíího	Ocaina	ts i i ʔ o
+thiesen1998/270/31	ROJ	tújpañe	Bora	tʰ u x pʰ a nʲ e
+thiesen1998/270/25	ROJ	tújpá	Bora	tʰ u x pʰ a
+thiesen1998/270/25	ROJ	tújpáh	Bora	tʰ u x pʰ a ʔ
+leach1969/68/14	DEC	uun	Ocaina	ɯ ɯn
+leach1969/153/48	DEC	uun	Ocaina	ɯ ɯn
+thiesen1998/149/22	DEC	í̵dáátso̱nu	Bora	i̵ tʰ a: tʰs o n u
+thiesen1998/152/14	DEC	í̵htsu̱nu	Bora	i̵ ʔ tʰs u n u
+leach1969/68/14	DEC	aan	Ocaina	a ã
+minor1971/15/40	DEC	daì̵de	Huitoto Muinane	d a ɯ̀ d ɛ
+burtch1983/210/12	DEC	raìte	Huitoto Murui	ɾ ai t ɛ
+minor1971/30/3	DEC	jeellonaìde	Huitoto Muinane	ʔ ɛ ɛ dʑ o n a i d ɛ
+burtch1983/167/2	DEC	llote	Huitoto Murui	dʑ ɔ t ɛ
+thiesen1998/107/5	DEC	dillo	Bora	tʰ i tʰʃ o
+thiesen1998/190/14	DEC	mujtá	Bora	m u x tʰ a
+thiesen1998/196/12	DEC	nee	Bora	n e:
+thiesen1998/123/30	DEC	duhcúva̱te	Bora	tʰ u ʔ kʰ u β a tʰ e
+burtch1983/65/3	DEC	dode dmɨ	Huitoto Murui	d ɔ d ɛ # d m ɯ
+leach1969/153/48	DEC	aan	Ocaina	a ã
+minor1971/8/40	DEC	bi̵íde	Huitoto Muinane	b ɯ i d ɛ
+thiesen1998/296/36	CAMIN	ulle	Bora	u tʰʃ e
+thiesen1998/160/17	CAMIN	juváñe	Bora	x u β a nʲ e
+leach1969/118/40	CAMIN	maaxa	Ocaina	m a a x a
+burtch1983/189/8	CAMIN	nai̵	Huitoto Murui	n a ɯ
+thiesen1998/297/6	CAMIN	ulléjí̵jto	Bora	u tʰʃ e x i̵ x tʰ o
+leach1969/124/10	CAMIN	jo	Ocaina	ʔ o
+minor1971/24/20	CAMIN	io	Huitoto Muinane	i o
+minor1971/27/17	CAMIN	jaílledi̵	Huitoto Muinane	ʔ a i dʑ ɛ d ɯ
+burtch1983/190/12	CAMIN	nai̵so	Huitoto Murui	n a ɯ s ɔ
+thiesen1998/160/17	CAMIN	juúva	Bora	x u u β a
+burtch1983/189/8	CAMIN	nai̵so	Huitoto Murui	n a ɯ s ɔ
+burtch1983/190/12	CAMIN	nai̵	Huitoto Murui	n a ɯ
+leach1969/124/10	CAMIN	hto	Ocaina	ʔ t o
+leach1969/124/8	CAMIN	naajon	Ocaina	n a a ʔ õ
+leach1969/125/3	CUATR	najunhxan̈ó	Ocaina	n a ʔ ɯn ʔ x a n̥ o
+burtch1983/184/16	CUATR	nagaamaga	Huitoto Murui	n a g a a m a g a
+minor1971/57/35	CUATR	pi̵goménarie	Huitoto Muinane	p ɯ g o m ɛ n a ɾ i ɛ
+leach1969/130/6	CANT	ñoomun	Ocaina	nʲ o o m ɯn
+burtch1983/92/2	CANT	fue	Huitoto Murui	ɸ u ɛ
+burtch1983/215/17	CANT	rote	Huitoto Murui	ɾ ɔ t ɛ
+thiesen1998/176/10	CANT	majtsi	Bora	m a x tʰs i
+burtch1983/125/7	CANT	jasici̵ beici̵	Huitoto Murui	h a s i k ɯ # b ɛ i k ɯ
+burtch1983/65/7	CANT	dofoni̵aì̵	Huitoto Murui	d ɔ ɸ ɔ n ɯ aɯ̀
+leach1969/130/7	CANT	jáñoomun	Ocaina	ʔ a nʲ o o m ɯn
+burtch1983/34/8	CANT	abi̵ beici̵	Huitoto Murui	a b ɯ # b ɛ i k ɯ
+burtch1983/42/9	CANT	cacagi̵	Huitoto Murui	k a k a g ɯ
+thiesen1998/300/9	CANT	úniu	Bora	u n i u
+burtch1983/50/12	CANT	cote	Huitoto Murui	k ɔ t ɛ
+thiesen1998/300/9	CANT	úniúúcu	Bora	u n i u: kʰ u
+thiesen1998/300/9	CANT	úniúúne	Bora	u n i u: n e
+burtch1983/92/13	CANT	fueda	Huitoto Murui	ɸ u ɛ d a
+burtch1983/125/7	CANT	jasici̵ fue	Huitoto Murui	h a s i k ɯ # ɸ u ɛ
+minor1971/61/37	CANT	rotde	Huitoto Muinane	ɾ o ɗ ɛ
+minor1971/15/24	A	danomo	Huitoto Muinane	d a n o m o
+minor1971/18/29	A	di̵néna	Huitoto Muinane	d ɯ n ɛ n a
+leach1969/154/10	A	uunnah	Ocaina	ɯ ɯn n a ʔ
+burtch1983/49/7	A	coni	Huitoto Murui	k ɔ n i
+leach1969/137/38	GRAND	oxííja	Ocaina	o x i i ʔ a
+burtch1983/23/20	GRAND	aìllue	Huitoto Murui	ai dʑ u ɛ
+minor1971/30/6	GRAND	jeerie	Huitoto Muinane	ʔ ɛ ɛ ɾ i ɛ
+thiesen1998/184/11	GRAND	mítyá	Bora	m i tʰʝ a
+burtch1983/130/13	GRAND	jerie	Huitoto Murui	h ɛ ɾ i ɛ
+burtch1983/44/18	GRAND	canarema	Huitoto Murui	k a n a ɾ ɛ m a
+minor1971/4/24	GRAND	aìllue	Huitoto Muinane	a i dʑ u ɛ
+leach1969/136/53	GRAND	óóxu	Ocaina	o o x ɯ
+thiesen1998/171/20	GRAND	llíyá	Bora	tʰʃ i ʝ a
+thiesen1998/171/20	GRAND	llíyáh	Bora	tʰʃ i ʝ a ʔ
+burtch1983/128/13	GRAND	jecorie	Huitoto Murui	h ɛ k ɔ ɾ i ɛ
+thiesen1998/184/11	GRAND	mítyáh	Bora	m i tʰʝ a ʔ
+burtch1983/147/22	FRUT	ji̵	Huitoto Murui	h ɯ
+leach1969/86/6	FRUT	dyanjunm̈ájañi	Ocaina	dʑ ã ʔ ɯn m̥ a ʔ a nʲ i
+minor1971/60/43	FRUT	ria	Huitoto Muinane	ɾ i a
+leach1969/155/29	FRUT	xaana	Ocaina	x a ã a
+burtch1983/64/13	FRUT	do	Huitoto Murui	d ɔ
+minor1971/13/10	FRUT	ci̵néci̵	Huitoto Muinane	k ɯ n ɛ k ɯ
+leach1969/155/29	FRUT	am̈uunñ̈a xanaa	Ocaina	a m̥ ɯ ɯn nʲ̈ a # x ã a a
+minor1971/5/17	FRUT	añálli̵	Huitoto Muinane	a nʲ a dʑ ɯ
+thiesen1998/199/9	FRUT	neeváu	Bora	n e: β a u
+thiesen1998/199/6	FRUT	neéva	Bora	n e e β a
+leach1969/116/33	FRUT	juxaan	Ocaina	ʔ ɯ x a ã
+burtch1983/214/6	FRUT	riara	Huitoto Murui	ɾ i a ɾ a
+leach1969/116/33	FRUT	juxaanjun	Ocaina	ʔ ɯ x a ã ʔ ɯn
+minor1971/62/15	FRUT	ri̵éri̵ega	Huitoto Muinane	ɾ ɯ ɛ ɾ ɯ ɛ g a
+thiesen1998/39/19	USTED	ámuúha	Bora	a m u u ʔ a
+thiesen1998/290/28	USTED	u	Bora	u
+thiesen1998/290/28	USTED	uú	Bora	u u
+thiesen1998/39/19	USTED	ámuha	Bora	a m u ʔ a
+leach1969/78/24	AMARILL	bóóra	Ocaina	b o o r a
+thiesen1998/170/2	AMARILL	llijcya	Bora	tʰʃ i x kʰʝ a
+thiesen1998/170/4	AMARILL	llíjcyá	Bora	tʰʃ i x kʰʝ a
+thiesen1998/170/4	AMARILL	llíjcyáh	Bora	tʰʃ i x kʰʝ a ʔ
+burtch1983/37/17	AMARILL	borare	Huitoto Murui	b ɔ ɾ a ɾ ɛ
+leach1969/130/50	BEB	ñoxóóhxaju	Ocaina	nʲ o x o o ʔ x a ʔ ɯ
+minor1971/33/12	BEB	jiróde	Huitoto Muinane	ʔ i ɾ o d ɛ
+thiesen1998/29/16	BEB	adójpácyo	Bora	a tʰ o x pʰ a kʰʝ o
+thiesen1998/29/10	BEB	ado	Bora	a tʰ o
+leach1969/130/48	BEB	ñooxo	Ocaina	nʲ o o x o
+burtch1983/138/9	BEB	jirode	Huitoto Murui	h i ɾ ɔ d ɛ
+leach1969/130/50	BEB	ñoxóóhxa	Ocaina	nʲ o x o o ʔ x a
+thiesen1998/29/11	BEB	ado	Bora	a tʰ o
+leach1969/92/8	HOMBR	dyuxáávu	Ocaina	dʑ ɯ x a a β ɯ
+burtch1983/214/13	HOMBR	rocafaì	Huitoto Murui	ɾ ɔ k a ɸ ai
+minor1971/55/40	HOMBR	pecállaìdoì̵	Huitoto Muinane	p ɛ k a dʑ a i d o ɯ̀
+burtch1983/112/7	HOMBR	imi̵e	Huitoto Murui	i m ɯ ɛ
+thiesen1998/205/32	HOMBR	nohríwa	Bora	n o ʔ r i kʷ a
+thiesen1998/328/6	HOMBR	wápaavye	Bora	kʷ a pʰ a: βʝ e
+thiesen1998/185/16	HOMBR	mí̵amúnáajpi	Bora	m i̵ a m u n a a x pʰ i
+thiesen1998/296/6	HOMBR	úji̵ba	Bora	u x i̵ pʰ a
+leach1969/135/25	HOMBR	oohu	Ocaina	o o ʔ ɯ
+burtch1983/86/16	HOMBR	fecanico	Huitoto Murui	ɸ ɛ k a n i k ɔ
+burtch1983/112/8	HOMBR	imi̵iaì̵	Huitoto Murui	i m ɯ i aɯ̀
+minor1971/30/30	HOMBR	jeráì̵llaìdoì̵	Huitoto Muinane	ʔ ɛ ɾ a ɯ̀ dʑ a i d o ɯ̀
+thiesen1998/328/6	HOMBR	wáhpabya	Bora	kʷ a ʔ pʰ a pʰʝ a
+burtch1983/258/5	HOMBR	i̵ima	Huitoto Murui	ɯ i m a
+minor1971/61/17	HOMBR	rocánotde	Huitoto Muinane	ɾ o k a n o ɗ ɛ
+burtch1983/258/6	HOMBR	i̵iñi̵aì̵	Huitoto Murui	ɯ i nʲ ɯ aɯ̀
+burtch1983/86/12	HOMBR	fecabe bora	Huitoto Murui	ɸ ɛ k a b ɛ # b ɔ ɾ a
+minor1971/22/18	ALA	iáìco	Huitoto Muinane	i a i k o
+burtch1983/103/16	ALA	iaìco	Huitoto Murui	i ai k ɔ
+leach1969/96/47	ALA	fonn̈óónvuca	Ocaina	ɸ õ n̥ o on β ɯ k a
+minor1971/49/27	BARRIG	nemúìgi̵	Huitoto Muinane	n ɛ m u i g ɯ
+burtch1983/88/17	BARRIG	fenaì̵gi̵	Huitoto Murui	ɸ ɛ n aɯ̀ g ɯ
+burtch1983/128/3	BARRIG	jebe	Huitoto Murui	h ɛ b ɛ
+minor1971/29/27	BARRIG	jebe	Huitoto Muinane	ʔ ɛ b ɛ
+burtch1983/128/8	BARRIG	jebegi̵	Huitoto Murui	h ɛ b ɛ g ɯ
+burtch1983/88/17	BARRIG	fenaì̵lli̵	Huitoto Murui	ɸ ɛ n aɯ̀ dʑ ɯ
+thiesen1998/136/30	BARRIG	ihbáu	Bora	i ʔ pʰ a u
+burtch1983/88/17	BARRIG	fenaì̵	Huitoto Murui	ɸ ɛ n aɯ̀
+thiesen1998/136/30	BARRIG	ihbáuú	Bora	i ʔ pʰ a u u
+leach1969/100/1	BARRIG	gáájo	Ocaina	g a a ʔ o
+minor1971/23/16	CORTEZ	igóraì̵	Huitoto Muinane	i g o ɾ a ɯ̀
+leach1969/159/19	CORTEZ	xon̈úúhca	Ocaina	x o n̥ ɯ́ ɯ́ ʔ k a
+minor1971/22/36	CORTEZ	icuru	Huitoto Muinane	i k u ɾ u
+thiesen1998/298/7	CORTEZ	úméhemí̵í̵ho	Bora	u m e ʔ e m i̵i̵ ʔ o
+minor1971/55/16	GRAS	pare	Huitoto Muinane	p a ɾ ɛ
+burtch1983/84/3	GRAS	fare	Huitoto Murui	ɸ a ɾ ɛ
+thiesen1998/124/18	GRAS	dúúruú	Bora	tʰ u: r u u
+thiesen1998/124/18	GRAS	dúúru	Bora	tʰ u: r u
+burtch1983/84/9	GRAS	farede	Huitoto Murui	ɸ a ɾ ɛ d ɛ
+thiesen1998/124/19	GRAS	dúúruba	Bora	tʰ u: r u pʰ a
+leach1969/93/55	GRAS	fajiin	Ocaina	ɸ a ʔ i ĩ
+leach1969/137/8	HOJ	opaavi	Ocaina	o p a a β i
+thiesen1998/155/20	HOJ	í̵naháámi̵	Bora	i̵ n a ʔ a: m i̵
+burtch1983/104/14	HOJ	ibe	Huitoto Murui	i b ɛ
+burtch1983/109/11	HOJ	iforo	Huitoto Murui	i ɸ ɔ ɾ ɔ
+burtch1983/104/15	HOJ	ibeni̵aì̵	Huitoto Murui	i b ɛ n ɯ aɯ̀
+minor1971/59/4	HOJ	rabe	Huitoto Muinane	ɾ a b ɛ
+thiesen1998/188/23	QUIEN	múha	Bora	m u ʔ a
+thiesen1998/188/23	QUIEN	mu-	Bora	m u
+leach1969/105/7	NUB	jahfíího	Ocaina	ʔ a ʔ ɸ i i ʔ o
+thiesen1998/213/18	NUB	ojtso	Bora	o x tʰs o
+thiesen1998/275/29	UNO	tsáheéco	Bora	tʰs a ʔ e e kʰ o
+leach1969/147/22	UNO	tyaam̈ámah	Ocaina	tʑ a a m̥ a m a ʔ
+thiesen1998/280/16	UNO	tsava	Bora	tʰs a β a
+burtch1983/61/8	UNO	dae	Huitoto Murui	d a ɛ
+leach1969/147/23	UNO	tyaavúmah	Ocaina	tʑ a a β ɯ́ m a ʔ
+minor1971/15/1	UNO	da	Huitoto Muinane	d a
+thiesen1998/277/32	UNO	tsane	Bora	tʰs a n e
+thiesen1998/274/29	UNO	tsami̵	Bora	tʰs a m i̵
+thiesen1998/274/30	UNO	tsane	Bora	tʰs a n e
+thiesen1998/280/12	UNO	tsau	Bora	tʰs a u
+thiesen1998/276/35	UNO	tsaja	Bora	tʰs a x a
+thiesen1998/280/6	UNO	tsátsii	Bora	tʰs a tʰs i:
+thiesen1998/275/22	UNO	tsáhbahya	Bora	tʰs a ʔ pʰ a ʔʝ a
+leach1969/147/21	UNO	tyahiim̈ámah	Ocaina	tʑ a ʔ i i m̥ a m a ʔ
+leach1969/147/20	UNO	tya mah	Ocaina	tʑ a # m a ʔ
+thiesen1998/275/8	UNO	tsaha	Bora	tʰs a ʔ a
+thiesen1998/277/11	UNO	tsaji̵	Bora	tʰs a x i̵
+thiesen1998/276/27	UNO	tsáijyu	Bora	tʰs a i xʝ u
+burtch1983/61/8	UNO	daje	Huitoto Murui	d a h ɛ
+thiesen1998/278/21	UNO	tsaápi	Bora	tʰs a a pʰ i
+leach1969/147/24	UNO	tyatyoofómah	Ocaina	tʑ a tʑ o o ɸ o m a ʔ
+burtch1983/59/4	UNO	da	Huitoto Murui	d a
+thiesen1998/275/15	UNO	tsáhadsi̵	Bora	tʰs a ʔ a tʰs i̵
+thiesen1998/276/4	UNO	tsáhiíba	Bora	tʰs a ʔ i i pʰ a
+burtch1983/62/17	UNO	dami̵e	Huitoto Murui	d a m ɯ ɛ
+thiesen1998/216/22	FLAC	óyócú	Bora	o ʝ o kʰ u
+thiesen1998/296/22	FLAC	újtsíh	Bora	u x tʰs i ʔ
+thiesen1998/296/22	FLAC	ujtsíwu	Bora	u x tʰs i kʷ u
+thiesen1998/148/14	FLAC	í̵búcúh	Bora	i̵ pʰ u kʰ u ʔ
+thiesen1998/148/14	FLAC	í̵búcú	Bora	i̵ pʰ u kʰ u
+thiesen1998/296/22	FLAC	újtsí	Bora	u x tʰs i
+thiesen1998/216/22	FLAC	óyócúh	Bora	o ʝ o kʰ u ʔ
+leach1969/78/18	FLAC	boojo	Ocaina	b o o ʔ o
+thiesen1998/123/27	FLAC	dúhcúh	Bora	tʰ u ʔ kʰ u ʔ
+thiesen1998/123/27	FLAC	dúhcú	Bora	tʰ u ʔ kʰ u
+leach1969/115/40	HINCH	juuhxa	Ocaina	ʔ ɯ ɯ ʔ x a
+burtch1983/231/13	HINCH	si̵ride	Huitoto Murui	s ɯ ɾ i d ɛ
+thiesen1998/214/33	HINCH	óóricho	Bora	oo r i kʰʔ o
+thiesen1998/214/30	HINCH	oori	Bora	o: r i
+leach1969/114/10	HINCH	júhxaanjin	Ocaina	ʔ ɯ́ ʔ x a ã ʔ ĩ
+leach1969/115/44	HINCH	júhxaanjin	Ocaina	ʔ ɯ́ ʔ x a ã ʔ ĩ
+burtch1983/137/9	PORQUE	jira	Huitoto Murui	h i ɾ a
+minor1971/51/8	PORQUE	ni̵báì	Huitoto Muinane	n ɯ b a i
+minor1971/51/13	PORQUE	ni̵ci̵	Huitoto Muinane	n ɯ k ɯ
+minor1971/51/9	PORQUE	ni̵baì̵	Huitoto Muinane	n ɯ b a ɯ̀
+minor1971/51/38	PORQUE	ni̵i̵me	Huitoto Muinane	n ɯ ɯ m ɛ
+thiesen1998/146/34	SUCI	iiñúváwu	Bora	i: nʲ u β a kʷ u
+leach1969/68/43	SUCI	áánm̈a	Ocaina	a ã m̥ a
+leach1969/127/14	SUCI	ñááhun	Ocaina	nʲ a a ʔ ɯn
+burtch1983/127/18	SUCI	jeare	Huitoto Murui	h ɛ a ɾ ɛ
+thiesen1998/146/34	SUCI	íñúvá	Bora	i nʲ u β a
+thiesen1998/197/9	SUCI	nehníwu	Bora	n e ʔ n i kʷ u
+thiesen1998/197/9	SUCI	néhníh	Bora	n e ʔ n i ʔ
+thiesen1998/197/9	SUCI	néhní	Bora	n e ʔ n i
+leach1969/74/15	SUCI	avóóhxo	Ocaina	a β o o ʔ x o
+burtch1983/253/15	SUCI	i̵aì̵re	Huitoto Murui	ɯ aɯ̀ ɾ ɛ
+thiesen1998/205/32	MUJ	nohríwa	Bora	n o ʔ r i kʷ a
+burtch1983/219/3	MUJ	ri̵ño	Huitoto Murui	ɾ ɯ nʲ ɔ
+leach1969/118/7	MUJ	maami	Ocaina	m a a m i
+minor1971/34/15	MUJ	jii̵	Huitoto Muinane	ʔ i ɯ
+thiesen1998/185/17	MUJ	mí̵amúnáalle	Bora	m i̵ a m u n a a tʰʃ e
+minor1971/62/35	MUJ	ri̵ngo	Huitoto Muinane	ɾ ɯ ŋ o
+burtch1983/112/17	MUJ	iñaìño	Huitoto Murui	i nʲ ai nʲ ɔ
+minor1971/23/32	MUJ	illáì̵mango	Huitoto Muinane	i dʑ a ɯ̀ m a ŋ o
+burtch1983/71/1	CON	di̵ga	Huitoto Murui	d ɯ g a
+minor1971/18/22	CON	di̵ga	Huitoto Muinane	d ɯ g a
+leach1969/123/15	CON	muunhto	Ocaina	m ɯ ɯn ʔ t o
+burtch1983/48/8	ANIMAL	comuìcana jaìde	Huitoto Murui	k ɔ m ui k a n a # h ai d ɛ
+minor1971/50/30	ANIMAL	nonócuèño	Huitoto Muinane	n o n o k u ɛ nʲ o
+leach1969/88/48	ANIMAL	dyohxaan	Ocaina	dʑ o ʔ x a ã
+burtch1983/202/11	ANIMAL	ocaìnaì̵aì̵	Huitoto Murui	ɔ k ai n aɯ̀ aɯ̀
+thiesen1998/135/5	ANIMAL	iáábéiyáábe	Bora	i a: pʰ e i ʝ a: pʰ e
+minor1971/40/13	ANIMAL	llaíño	Huitoto Muinane	dʑ a i nʲ o
+burtch1983/202/10	ANIMAL	ocaìna	Huitoto Murui	ɔ k ai n a
+thiesen1998/135/5	ANIMAL	iáméiyáme	Bora	i a m e i ʝ a m e
+minor1971/70/39	ANIMAL	uullaiño	Huitoto Muinane	u u dʑ a i nʲ o
+minor1971/35/10	ANIMAL	jolláma	Huitoto Muinane	ʔ o dʑ a m a
+thiesen1998/147/35	ANIMAL	iyáábe	Bora	i ʝ a: pʰ e
+thiesen1998/137/23	LENGU	íhjyu	Bora	i ʔ xʝ u
+thiesen1998/204/4	LENGU	ní̵í̵ji̵wa	Bora	n i̵i̵ x i̵ kʷ a
+minor1971/26/4	LENGU	ií̵pe	Huitoto Muinane	i ɯ́ p ɛ
+burtch1983/117/10	LENGU	ii̵fe	Huitoto Murui	i ɯ ɸ ɛ
+thiesen1998/137/23	LENGU	íhjyuú	Bora	i ʔ xʝ u u
+leach1969/108/10	LENGU	jinñóónhfu	Ocaina	ʔ ĩ nʲ o on ʔ ɸ ɯ
+thiesen1998/253/32	FROT	tákíyóhcáme̱i	Bora	tʰ a kʰ i ʝ o ʔ kʰ a m e i
+leach1969/146/8	FROT	tsoofi	Ocaina	ts o o ɸ i
+minor1971/22/10	FROT	gi̵tde	Huitoto Muinane	g ɯ ɗ ɛ
+leach1969/146/19	FROT	tsoora	Ocaina	ts o o r a
+thiesen1998/248/26	FROT	tácájyunu	Bora	tʰ a kʰ a xʝ u n u
+thiesen1998/164/18	FROT	kíjíyijcyo	Bora	kʰ i x i ʝ i x kʰʝ o
+thiesen1998/164/18	FROT	kiiyi	Bora	kʰ i: ʝ i
+thiesen1998/164/18	FROT	kíjíyiáco	Bora	kʰ i x i ʝ i a kʰ o
+thiesen1998/232/8	FROT	píchíchihjyáco	Bora	pʰ i kʰʔ i kʰʔ i ʔ xʝ a kʰ o
+thiesen1998/232/8	FROT	píchíchihcyu	Bora	pʰ i kʰʔ i kʰʔ i ʔ kʰʝ u
+thiesen1998/248/26	FROT	tácajyáro	Bora	tʰ a kʰ a xʝ a r o
+leach1969/146/24	FROT	tsooun	Ocaina	ts o o ɯn
+leach1969/161/32	FROT	xuuru	Ocaina	x ɯ ɯ r ɯ
+burtch1983/149/15	REDOND	ji̵cueco	Huitoto Murui	h ɯ k u ɛ k ɔ
+burtch1983/105/4	REDOND	ibogi̵	Huitoto Murui	i b ɔ g ɯ
+minor1971/46/4	REDOND	mocotdochide	Huitoto Muinane	m o k o ɗ o kʔ i d ɛ
+burtch1983/42/8	SENT	llegi̵ cacad	Huitoto Murui	dʑ ɛ g ɯ # k a k a d
+thiesen1998/28/22	SENT	ácujco	Bora	a kʰ u x kʰ o
+thiesen1998/28/28	SENT	ácuuve	Bora	a kʰ u: β e
+thiesen1998/171/1	SENT	llíñémuúcu̱nu	Bora	tʰʃ i nʲ e m u u kʰ u n u
+burtch1983/212/14	SENT	raì̵nade	Huitoto Murui	ɾ aɯ̀ n a d ɛ
+thiesen1998/28/28	SENT	áhcuba	Bora	a ʔ kʰ u pʰ a
+minor1971/60/12	SENT	raì̵ide	Huitoto Muinane	ɾ a ɯ̀ i d ɛ
+thiesen1998/28/22	SENT	ácujcáro	Bora	a kʰ u x kʰ a r o
+burtch1983/234/10	SENT	taì̵taì̵rede	Huitoto Murui	t aɯ̀ t aɯ̀ ɾ ɛ d ɛ
+minor1971/9/12	SENT	cácade	Huitoto Muinane	k a k a d ɛ
+leach1969/77/5	SENT	biiñihi	Ocaina	b i i nʲ i ʔ i
+burtch1983/212/10	SENT	raì̵nadate	Huitoto Murui	ɾ aɯ̀ n a d a t ɛ
+thiesen1998/171/1	SENT	llíñémújca̱tye	Bora	tʰʃ i nʲ e m u x kʰ a tʰʝ e
+leach1969/157/34	SENT	xaxaru	Ocaina	x a x a r ɯ
+burtch1983/42/13	SENT	cacatate	Huitoto Murui	k a k a t a t ɛ
+burtch1983/212/6	SENT	raì̵de	Huitoto Murui	ɾ aɯ̀ d ɛ
+minor1971/35/12	SENT	joobitde	Huitoto Muinane	ʔ o o b i ɗ ɛ
+minor1971/9/2	SENT	bi̵ji̵tdi̵tde	Huitoto Muinane	b ɯ ʔ ɯ ɗ ɯ ɗ ɛ
+leach1969/95/15	LUN	fodyoome	Ocaina	ɸ o dʑ o o m ɛ
+minor1971/31/23	LUN	jicuebeti̵	Huitoto Muinane	ʔ i k u ɛ b ɛ t ɯ
+burtch1983/96/12	LUN	fi̵vuì	Huitoto Murui	ɸ ɯ β ui
+thiesen1998/206/35	LUN	nuhba péjcóejpi	Bora	n u ʔ pʰ a # pʰ e x kʰ o e x pʰ i
+thiesen1998/206/32	LUN	nuhba	Bora	n u ʔ pʰ a
+thiesen1998/229/27	LUN	péjcóejpi nuhba	Bora	pʰ e x kʰ o e x pʰ i # n u ʔ pʰ a
+minor1971/58/12	LUN	pi̵vi̵ì	Huitoto Muinane	p ɯ β ɯ i
+burtch1983/96/13	LUN	fi̵vuìni̵aì̵	Huitoto Murui	ɸ ɯ β ui n ɯ aɯ̀
+minor1971/61/4	ARBOL	rigana	Huitoto Muinane	ɾ i g a n a
+minor1971/4/40	ARBOL	aména	Huitoto Muinane	a m ɛ n a
+thiesen1998/36/15	LLUVI	alle	Bora	a tʰʃ e
+thiesen1998/200/5	LLUVI	nííjyaba	Bora	n i: xʝ a pʰ a
+leach1969/130/14	LLUVI	ñoon	Ocaina	nʲ o õ
+leach1969/130/14	LLUVI	ñoonjun	Ocaina	nʲ o õ ʔ ɯn
+burtch1983/194/1	LLUVI	noci̵	Huitoto Murui	n ɔ k ɯ
+minor1971/50/12	LLUVI	noci̵	Huitoto Muinane	n o k ɯ
+thiesen1998/36/15	LLUVI	állecúnu	Bora	a tʰʃ e kʰ u n u
+thiesen1998/274/21	VEN	tsaá	Bora	tʰs a a
+leach1969/145/26	VEN	tsiñ̈íínhonfe	Ocaina	ts i nʲ̈ i ĩ ʔ õ ɸ ɛ
+thiesen1998/51/12	VEN	bájkyemóóho	Bora	pʰ a x kʰʝ e m oo ʔ o
+thiesen1998/274/22	VEN	tsaa	Bora	tʰs a:
+minor1971/7/41	VEN	bitde	Huitoto Muinane	b i ɗ ɛ
+leach1969/154/47	VEN	uuxo	Ocaina	ɯ ɯ x o
+burtch1983/199/21	VEN	ñecuìo	Huitoto Murui	nʲ ɛ k ui ɔ
+burtch1983/57/16	VEN	ci̵toni̵aì̵	Huitoto Murui	k ɯ t ɔ n ɯ aɯ̀
+minor1971/52/11	VEN	ñecuìo	Huitoto Muinane	nʲ ɛ k u i o
+leach1969/153/3	VEN	aa	Ocaina	a a
+leach1969/67/1	VEN	aaji	Ocaina	a a ʔ i
+minor1971/13/40	VEN	ci̵tdo	Huitoto Muinane	k ɯ ɗ o
+leach1969/67/1	VEN	aa	Ocaina	a a
+leach1969/153/3	VEN	aaji	Ocaina	a a ʔ i
+leach1969/67/1	VEN	uu	Ocaina	ɯ ɯ
+burtch1983/36/11	VEN	bite	Huitoto Murui	b i t ɛ
+leach1969/153/3	VEN	uu	Ocaina	ɯ ɯ
+minor1971/70/9	HUM	uìlli̵e	Huitoto Muinane	u i dʑ ɯ ɛ
+thiesen1998/213/16	HUM	ojtso	Bora	o x tʰs o
+minor1971/70/8	HUM	uìllí̵de	Huitoto Muinane	u i dʑ ɯ́ d ɛ
+thiesen1998/213/15	HUM	ojtso	Bora	o x tʰs o
+burtch1983/248/9	HUM	uìlli̵e	Huitoto Murui	ui dʑ ɯ ɛ
+thiesen1998/39/8	HUM	ámópácyoove	Bora	a m o pʰ a kʰʝ o: β e
+leach1969/105/7	HUM	jahfíího	Ocaina	ʔ a ʔ ɸ i i ʔ o
+thiesen1998/185/26	ESTRELL	mí̵í̵curu	Bora	m i̵i̵ kʰ u r u
+leach1969/132/41	ESTRELL	ohxóóhtyo	Ocaina	o ʔ x o o ʔ tʑ o
+burtch1983/243/13	ESTRELL	ucudu	Huitoto Murui	u k u d u
+burtch1983/243/13	ESTRELL	ucudo	Huitoto Murui	u k u d ɔ
+minor1971/69/3	ESTRELL	ucúdo	Huitoto Muinane	u k u d o
+burtch1983/122/10	VIENT	jaìrifo	Huitoto Murui	h ai ɾ i ɸ ɔ
+leach1969/116/29	VIENT	juvóón	Ocaina	ʔ ɯ β o on
+thiesen1998/164/15	VIENT	kííjyeba	Bora	kʰ i: xʝ e pʰ a
+leach1969/116/28	VIENT	juvóódyo	Ocaina	ʔ ɯ β o o dʑ o
+burtch1983/30/3	VIENT	aì̵fi̵	Huitoto Murui	aɯ̀ ɸ ɯ
+burtch1983/30/4	VIENT	aì̵fi̵ni̵aì̵	Huitoto Murui	aɯ̀ ɸ ɯ n ɯ aɯ̀
+leach1969/116/28	VIENT	juvóón	Ocaina	ʔ ɯ β o on
+burtch1983/169/4	TEN	lli̵ide	Huitoto Murui	dʑ ɯ i d ɛ
+burtch1983/116/10	TEN	ite	Huitoto Murui	i t ɛ
+minor1971/43/31	TEN	lli̵ide	Huitoto Muinane	dʑ ɯ i d ɛ
+thiesen1998/73/5	SAL	cánáámaá	Bora	kʰ a n a: m a a
+thiesen1998/139/26	SAL	ijchívye	Bora	i x kʰʔ i βʝ e
+thiesen1998/61/31	SAL	búniivye	Bora	pʰ u n i: βʝ e
+burtch1983/52/13	SAL	cuere	Huitoto Murui	k u ɛ ɾ ɛ
+minor1971/28/16	SAL	jaréde	Huitoto Muinane	ʔ a ɾ ɛ d ɛ
+thiesen1998/73/5	SAL	cánaama	Bora	kʰ a n a: m a
+leach1969/146/16	SAL	tsonhmáávihxa	Ocaina	ts õ ʔ m a a β i ʔ x a
+leach1969/146/15	SAL	játsonhmaavi	Ocaina	ʔ a ts õ ʔ m a a β i
+thiesen1998/61/31	SAL	búhniba	Bora	pʰ u ʔ n i pʰ a
+thiesen1998/145/8	SAL	ímú	Bora	i m u
+leach1969/103/17	SAL	jaai	Ocaina	ʔ a a i
+thiesen1998/145/8	SAL	iimúwúímúhreé	Bora	i: m u kʷ u i m u ʔ r e e
+burtch1983/36/4	SAL	biñoìde	Huitoto Murui	b i nʲ ɔi d ɛ
+leach1969/103/22	SAL	jááidya	Ocaina	ʔ a a i dʑ a
+thiesen1998/145/8	SAL	ímúh	Bora	i m u ʔ
+thiesen1998/139/27	SAL	ijchívye	Bora	i x kʰʔ i βʝ e
+thiesen1998/73/8	SAL	cánaamánu	Bora	kʰ a n a: m a n u
+burtch1983/23/9	SAL	aìjide	Huitoto Murui	ai h i d ɛ
+burtch1983/23/8	SAL	aìjicaìde	Huitoto Murui	ai h i k ai d ɛ
+thiesen1998/82/15	SAL	cátuuve	Bora	kʰ a tʰ u: β e
+leach1969/146/13	SAL	tsoonhmu	Ocaina	ts o õ ʔ m ɯ
+burtch1983/121/4	SAL	jaìde	Huitoto Murui	h ai d ɛ
+burtch1983/36/4	SAL	bioìde	Huitoto Murui	b i ɔi d ɛ
+thiesen1998/73/5	SAL	cánááma	Bora	kʰ a n a: m a
+burtch1983/239/8	SAL	ti̵corite	Huitoto Murui	t ɯ k ɔ ɾ i t ɛ
+leach1969/140/12	SAL	tááu	Ocaina	t a a ɯ
+thiesen1998/73/5	SAL	cánaáma	Bora	kʰ a n a a m a
+minor1971/26/30	TEM	jací̵ruitde	Huitoto Muinane	ʔ a k ɯ́ ɾ u i ɗ ɛ
+thiesen1998/206/3	TEM	noúhcolle	Bora	n o u ʔ kʰ o tʰʃ e
+leach1969/144/3	TEM	tuuro	Ocaina	t ɯ ɯ r o
+burtch1983/119/8	TEM	jaci̵naìte	Huitoto Murui	h a k ɯ n ai t ɛ
+burtch1983/183/18	TODO	na	Huitoto Murui	n a
+minor1971/48/28	TODO	nana	Huitoto Muinane	n a n a
+leach1969/82/23	TODO	chíí	Ocaina	kʔ i i
+thiesen1998/216/26	TODO	paa-	Bora	pʰ a:
+burtch1983/187/12	TODO	nana	Huitoto Murui	n a n a
+thiesen1998/216/26	TODO	pa-	Bora	pʰ a
+leach1969/70/10	SAB	ááxa	Ocaina	a a x a
+leach1969/136/28	SAB	ooroja	Ocaina	o o r o ʔ a
+burtch1983/95/7	SAB	fi̵di̵de	Huitoto Murui	ɸ ɯ d ɯ d ɛ
+burtch1983/42/1	SAB	ca	Huitoto Murui	k a
+thiesen1998/319/7	SAB	waajácu	Bora	kʷ a: x a kʰ u
+minor1971/57/29	SAB	pi̵di̵de	Huitoto Muinane	p ɯ d ɯ d ɛ
+burtch1983/248/19	SAB	uiñote	Huitoto Murui	u i nʲ ɔ t ɛ
+minor1971/54/19	SAB	onóde	Huitoto Muinane	o n o d ɛ
+leach1969/155/17	VER	xaa	Ocaina	x a a
+thiesen1998/300/9	VER	úniu	Bora	u n i u
+thiesen1998/300/9	VER	úniúúcu	Bora	u n i u: kʰ u
+thiesen1998/300/9	VER	úniúúne	Bora	u n i u: n e
+burtch1983/32/9	VER	baìrede	Huitoto Murui	b ai ɾ ɛ d ɛ
+thiesen1998/35/4	VER	ájtyumi̵	Bora	a x tʰʝ u m i̵
+burtch1983/92/3	BOC	fue	Huitoto Murui	ɸ u ɛ
+leach1969/98/10	BOC	foou	Ocaina	ɸ o o ɯ
+thiesen1998/178/21	BOC	mehdúcu	Bora	m e ʔ tʰ u kʰ u
+thiesen1998/109/18	BOC	di̵máhba	Bora	tʰ i̵ m a ʔ pʰ a
+thiesen1998/137/23	BOC	íhjyu	Bora	i ʔ xʝ u
+minor1971/56/33	BOC	pue	Huitoto Muinane	p u ɛ
+thiesen1998/137/23	BOC	íhjyuú	Bora	i ʔ xʝ u u
+thiesen1998/178/21	BOC	mehdo	Bora	m e ʔ tʰ o
+minor1971/6/14	MORD	aì̵níde	Huitoto Muinane	a ɯ̀ n i d ɛ
+burtch1983/30/10	MORD	aì̵nirite	Huitoto Murui	aɯ̀ n i ɾ i t ɛ
+burtch1983/30/10	MORD	aì̵nide	Huitoto Murui	aɯ̀ n i d ɛ
+thiesen1998/151/9	MORD	i̵hdo	Bora	i̵ ʔ tʰ o
+leach1969/69/6	MORD	aanun	Ocaina	a ã ɯn
+burtch1983/30/10	MORD	aɨnide	Huitoto Murui	a ɯ n i d ɛ
+thiesen1998/134/14	ESPALD	hallúháñe	Bora	ʔ a tʰʃ u ʔ a nʲ e
+minor1971/19/39	ESPALD	emódo	Huitoto Muinane	ɛ m o d o
+thiesen1998/134/14	ESPALD	hallúcu	Bora	ʔ a tʰʃ u kʰ u
+burtch1983/76/15	ESPALD	emodo	Huitoto Murui	ɛ m ɔ d ɔ
+leach1969/115/51	ESPALD	juuhxomó	Ocaina	ʔ ɯ ɯ ʔ x o m o
+leach1969/115/48	ESPALD	juuhxo	Ocaina	ʔ ɯ ɯ ʔ x o
+leach1969/115/51	ESPALD	juuhxó	Ocaina	ʔ ɯ ɯ ʔ x o
+thiesen1998/134/14	ESPALD	hallu	Bora	ʔ a tʰʃ u
+leach1969/134/11	MAN	on̈óónpo	Ocaina	o n̥ o on p o
+thiesen1998/219/15	MAN	páhahji̵	Bora	pʰ a ʔ a ʔ x i̵
+thiesen1998/219/15	MAN	paha	Bora	pʰ a ʔ a
+leach1969/134/11	MAN	on̈oon	Ocaina	o n̥ o õ
+thiesen1998/225/11	MAN	páoha	Bora	pʰ a o ʔ a
+minor1971/54/23	MAN	onoì̵	Huitoto Muinane	o n o ɯ̀
+burtch1983/206/8	MAN	onolli̵	Huitoto Murui	ɔ n ɔ dʑ ɯ
+leach1969/94/2	FLOT	falliihi	Ocaina	ɸ a dʑ i i ʔ i
+burtch1983/85/13	FLOT	faì̵ridate	Huitoto Murui	ɸ aɯ̀ ɾ i d a t ɛ
+burtch1983/85/14	FLOT	faì̵ride	Huitoto Murui	ɸ aɯ̀ ɾ i d ɛ
+thiesen1998/246/15	FLOT	rootóhórí̵vaco	Bora	r o: tʰ o ʔ o r i̵ β a kʰ o
+leach1969/145/2	FLOR	tsíín	Ocaina	ts i ĩ
+thiesen1998/321/4	FLOR	wajco	Bora	kʷ a x kʰ o
+burtch1983/220/14	FLOR	safia	Huitoto Murui	s a ɸ i a
+thiesen1998/178/14	NOSOTROS	meé	Bora	m e e
+minor1971/10/18	NOSOTROS	cai̵	Huitoto Muinane	k a ɯ
+burtch1983/45/13	NOSOTROS	caì̵	Huitoto Murui	k aɯ̀
+leach1969/157/49	NOSOTROS	xo	Ocaina	x o
+leach1969/156/43	NOSOTROS	xa	Ocaina	x a
+leach1969/161/22	NOSOTROS	xoxo	Ocaina	x o x o
+leach1969/156/43	NOSOTROS	xajo	Ocaina	x a ʔ o
+leach1969/161/22	NOSOTROS	xo	Ocaina	x o
+thiesen1998/178/14	NOSOTROS	me	Bora	m e
+thiesen1998/178/14	NOSOTROS	me-	Bora	m e
+leach1969/161/22	NOSOTROS	xox	Ocaina	x o x
+burtch1983/128/6	TRIP	jebeo	Huitoto Murui	h ɛ b ɛ ɔ
+burtch1983/128/6	TRIP	jebego	Huitoto Murui	h ɛ b ɛ g ɔ
+leach1969/119/25	TRIP	mañííco	Ocaina	m a nʲ i i k o
+thiesen1998/207/22	AGU	nújpacyo	Bora	n u x pʰ a kʰʝ o
+burtch1983/153/8	AGU	ji̵nuì	Huitoto Murui	h ɯ n ui
+thiesen1998/207/21	AGU	nújpa	Bora	n u x pʰ a
+thiesen1998/207/21	AGU	nújpaá	Bora	n u x pʰ a a
+leach1969/130/14	AGU	ñoon	Ocaina	nʲ o õ
+leach1969/130/14	AGU	ñoonjun	Ocaina	nʲ o õ ʔ ɯn
+thiesen1998/126/24	AGU	dsí̵jí̵h	Bora	tʰs i̵ x i̵ ʔ
+minor1971/70/14	AGU	uìríricaìde	Huitoto Muinane	u i ɾ i ɾ i k a i d ɛ
+thiesen1998/126/26	AGU	dsí̵ji̵̱nu	Bora	tʰs i̵ x i̵ n u
+minor1971/29/13	AGU	jaì̵noì	Huitoto Muinane	ʔ a ɯ̀ n o i
+thiesen1998/126/24	AGU	dsí̵jí̵	Bora	tʰs i̵ x i̵
+leach1969/146/7	ESTRECH	tson̈ooxo	Ocaina	ts o n̥ o o x o
+thiesen1998/339/30	ESTRECH	yójkeé	Bora	ʝ o x kʰ e e
+minor1971/63/11	ESTRECH	ri̵titdatde	Huitoto Muinane	ɾ ɯ t i ɗ a ɗ ɛ
+leach1969/102/12	ESTRECH	iibi	Ocaina	i i b i
+burtch1983/148/19	LEJ	ji̵i̵ca	Huitoto Murui	h ɯ ɯ k a
+burtch1983/148/19	LEJ	ji̵ca	Huitoto Murui	h ɯ k a
+leach1969/69/9	LEJ	aan̈u	Ocaina	a a n̥ ɯ
+thiesen1998/281/33	LEJ	tsíhyulle	Bora	tʰs i ʔʝ u tʰʃ e
+burtch1983/27/15	LEJ	are	Huitoto Murui	a ɾ ɛ
+minor1971/5/33	LEJ	are	Huitoto Muinane	a ɾ ɛ
+burtch1983/172/7	NOMBR	mamede	Huitoto Murui	m a m ɛ d ɛ
+leach1969/118/10	NOMBR	maam̈u	Ocaina	m a a m̥ ɯ
+thiesen1998/180/24	NOMBR	méménúme̱i	Bora	m e m e n u m e i
+burtch1983/172/3	NOMBR	mameci̵	Huitoto Murui	m a m ɛ k ɯ
+minor1971/3/4	NOMBR	abi̵ci̵	Huitoto Muinane	a b ɯ k ɯ
+minor1971/44/21	NOMBR	mameci̵	Huitoto Muinane	m a m ɛ k ɯ
+minor1971/68/15	NOMBR	uaìdotde	Huitoto Muinane	u a i d o ɗ ɛ
+thiesen1998/180/22	NOMBR	meménu	Bora	m e m e n u
+thiesen1998/107/8	NOMBR	díllóme̱i	Bora	tʰ i tʰʃ o m e i
+burtch1983/155/4	NOMBR	ji̵tade	Huitoto Murui	h ɯ t a d ɛ
+burtch1983/107/3	NOMBR	ici̵	Huitoto Murui	i k ɯ
+thiesen1998/180/9	NOMBR	meme	Bora	m e m e
+minor1971/51/13	COMO	ni̵ci̵	Huitoto Muinane	n ɯ k ɯ
+burtch1983/121/15	CORT	jaillude	Huitoto Murui	h a i dʑ u d ɛ
+thiesen1998/315/23	CORT	wáhdahí̵ro	Bora	kʷ a ʔ tʰ a ʔ i̵ r o
+minor1971/53/4	CORT	ñuètdáde	Huitoto Muinane	nʲ u ɛ ɗ a d ɛ
+thiesen1998/315/26	CORT	wáhdáhí̵róme̱i	Bora	kʷ a ʔ tʰ a ʔ i̵ r o m e i
+thiesen1998/50/32	CORT	bahri	Bora	pʰ a ʔ r i
+minor1971/27/26	CORT	jaìtdáde	Huitoto Muinane	ʔ a i ɗ a d ɛ
+thiesen1998/315/26	CORT	wáhdáhí̵núme̱i	Bora	kʷ a ʔ tʰ a ʔ i̵ n u m e i
+minor1971/8/11	CORT	bopéde	Huitoto Muinane	b o p ɛ d ɛ
+minor1971/68/7	CORT	tdi̵tdá	Huitoto Muinane	ɗ ɯ ɗ a
+leach1969/102/43	CORT	injánjun	Ocaina	ĩ ʔ ã ʔ ɯn
+burtch1983/38/11	CORT	botade	Huitoto Murui	b ɔ t a d ɛ
+thiesen1998/315/24	CORT	wáhdahí̵ro	Bora	kʷ a ʔ tʰ a ʔ i̵ r o
+leach1969/156/20	CORT	xaayo	Ocaina	x a a ʑ o
+thiesen1998/78/19	CORT	caroo	Bora	kʰ a r o:
+minor1971/68/7	CORT	tdi̵tdá(de)	Huitoto Muinane	
+thiesen1998/238/22	CORT	pí̵dijcyo	Bora	pʰ i̵ tʰ i x kʰʝ o
+burtch1983/46/17	CORT	cofede	Huitoto Murui	k ɔ ɸ ɛ d ɛ
+burtch1983/103/22	CORT	ianore	Huitoto Murui	i a n ɔ ɾ ɛ
+minor1971/22/21	CORT	iánori	Huitoto Muinane	i a n o ɾ i
+thiesen1998/50/34	CORT	báhríh	Bora	pʰ a ʔ r i ʔ
+burtch1983/103/22	CORT	ianori	Huitoto Murui	i a n ɔ ɾ i
+burtch1983/64/11	CORT	dete	Huitoto Murui	d ɛ t ɛ
+thiesen1998/315/23	CORT	wáhdahí̵nu	Bora	kʷ a ʔ tʰ a ʔ i̵ n u
+thiesen1998/238/22	CORT	pí̵diáco	Bora	pʰ i̵ tʰ i a kʰ o
+leach1969/115/9	CORT	juubo	Ocaina	ʔ ɯ ɯ b o
+burtch1983/122/11	CORT	jairude	Huitoto Murui	h a i ɾ u d ɛ
+minor1971/11/18	CORT	cotdáde	Huitoto Muinane	k o ɗ a d ɛ
+thiesen1998/50/34	CORT	báhrí	Bora	pʰ a ʔ r i
+thiesen1998/78/19	CORT	cároojúro	Bora	kʰ a r o: x u r o
+thiesen1998/78/19	CORT	cáróójunu	Bora	kʰ a r oo x u n u
+thiesen1998/315/24	CORT	wáhdáhi̵nu	Bora	kʷ a ʔ tʰ a ʔ i̵ n u
+leach1969/75/8	CORT	baah	Ocaina	b a a ʔ
+burtch1983/129/8	OREJ	jefo	Huitoto Murui	h ɛ ɸ ɔ
+leach1969/159/24	OREJ	xoñoon	Ocaina	x o nʲ o õ
+thiesen1998/208/8	OREJ	núúmi̵ho	Bora	n u: m i̵ ʔ o
+minor1971/30/24	OREJ	jepo	Huitoto Muinane	ʔ ɛ p o
+burtch1983/129/9	OREJ	jefoni̵aì̵	Huitoto Murui	h ɛ ɸ ɔ n ɯ aɯ̀
+burtch1983/91/3	MOR	fiodaìte	Huitoto Murui	ɸ i ɔ d ai t ɛ
+leach1969/129/21	MOR	ñom̈oonbi	Ocaina	nʲ o m̥ o õ b i
+thiesen1998/126/28	MOR	dsí̵ji̵ve	Bora	tʰs i̵ x i̵ β e
+thiesen1998/338/22	MOR	wáyéeeve	Bora	kʷ a ʝ e e: β e
+thiesen1998/26/17	MOR	áába̱te	Bora	a: pʰ a tʰ e
+leach1969/124/16	MOR	naavi	Ocaina	n a a β i
+leach1969/152/11	MOR	urá nuu	Ocaina	ɯ r a # n ɯ ɯ
+thiesen1998/99/22	MOR	cheme	Bora	kʰʔ e m e
+minor1971/44/1	MOR	lli̵i̵de	Huitoto Muinane	dʑ ɯ ɯ d ɛ
+burtch1983/240/6	MOR	ti̵ide	Huitoto Murui	t ɯ i d ɛ
+minor1971/61/7	MOR	rijide	Huitoto Muinane	ɾ i ʔ i d ɛ
+minor1971/67/37	MOR	tdi̵íde	Huitoto Muinane	ɗ ɯ i d ɛ
+minor1971/46/38	MOR	moréna	Huitoto Muinane	m o ɾ ɛ n a
+thiesen1998/138/32	MOR	ijcya	Bora	i x kʰʝ a
+minor1971/60/13	MOR	raì̵íde	Huitoto Muinane	ɾ a ɯ̀ i d ɛ
+burtch1983/33/15	MOR	bai̵de	Huitoto Murui	b a ɯ d ɛ
+thiesen1998/338/22	MOR	wáhyéeba	Bora	kʷ a ʔʝ e e pʰ a
+minor1971/11/37	MOR	cudo	Huitoto Muinane	k u d o
+minor1971/43/41	MOR	lli̵i̵caìde	Huitoto Muinane	dʑ ɯ ɯ k a i d ɛ
+leach1969/129/35	CUELL	ñonmáánhon	Ocaina	nʲ õ m a ã ʔ õ
+minor1971/12/38	CUELL	ci̵mócaìro	Huitoto Muinane	k ɯ m o k a i ɾ o
+minor1971/12/40	CUELL	ci̵moji̵	Huitoto Muinane	k ɯ m o ʔ ɯ
+minor1971/30/29	CUELL	jeráì̵ci̵	Huitoto Muinane	ʔ ɛ ɾ a ɯ̀ k ɯ
+burtch1983/56/2	CUELL	ci̵maì̵goì̵	Huitoto Murui	k ɯ m aɯ̀ g ɔ ɯ̀
+thiesen1998/161/25	CUELL	kéjtuhi	Bora	kʰ e x tʰ u ʔ i
+burtch1983/56/2	CUELL	ci̵maì̵go	Huitoto Murui	k ɯ m aɯ̀ g ɔ
+thiesen1998/249/17	APRET	tácúruhco	Bora	tʰ a kʰ u r u ʔ kʰ o
+burtch1983/204/19	APRET	omi̵de	Huitoto Murui	ɔ m ɯ d ɛ
+burtch1983/55/20	APRET	ci̵maì̵de	Huitoto Murui	k ɯ m aɯ̀ d ɛ
+thiesen1998/110/9	APRET	dí̵táhji̵nu	Bora	tʰ i̵ tʰ a ʔ x i̵ n u
+thiesen1998/118/6	APRET	dómúmuhjáco	Bora	tʰ o m u m u ʔ x a kʰ o
+thiesen1998/118/6	APRET	dómúmuhcu	Bora	tʰ o m u m u ʔ kʰ u
+thiesen1998/110/9	APRET	dí̵tahjí̵ro	Bora	tʰ i̵ tʰ a ʔ x i̵ r o
+thiesen1998/250/6	APRET	tádí̵ri̵hjáco	Bora	tʰ a tʰ i̵ r i̵ ʔ x a kʰ o
+burtch1983/104/16	APRET	ibeco	Huitoto Murui	i b ɛ k ɔ
+burtch1983/198/12	APRET	ñaìjide	Huitoto Murui	nʲ ai h i d ɛ
+burtch1983/55/11	APRET	ci̵gi̵note	Huitoto Murui	k ɯ g ɯ n ɔ t ɛ
+leach1969/144/11	APRET	tsaaca	Ocaina	ts a a k a
+minor1971/42/14	APRET	llimí̵notde	Huitoto Muinane	dʑ i m ɯ́ n o ɗ ɛ
+thiesen1998/40/3	APRET	áámutso	Bora	a: m u tʰs o
+thiesen1998/218/23	APRET	páchíuhcú	Bora	pʰ a kʰʔ i u ʔ kʰ u
+burtch1983/162/8	APRET	lliguède	Huitoto Murui	dʑ i g uɛ̀ d ɛ
+thiesen1998/151/12	APRET	í̵hdotso	Bora	i̵ ʔ tʰ o tʰs o
+thiesen1998/250/6	APRET	tádí̵ri̵hco	Bora	tʰ a tʰ i̵ r i̵ ʔ kʰ o
+burtch1983/163/4	APRET	llimi̵note	Huitoto Murui	dʑ i m ɯ n ɔ t ɛ
+thiesen1998/249/17	APRET	tácúruhjáco	Bora	tʰ a kʰ u r u ʔ x a kʰ o
+thiesen1998/218/23	APRET	páchíuhjácó	Bora	pʰ a kʰʔ i u ʔ x a kʰ o
+minor1971/49/34	APRET	nici̵ritde	Huitoto Muinane	n i k ɯ ɾ i ɗ ɛ
+thiesen1998/104/9	HEL	dáí̵hcóh	Bora	tʰ a i̵ ʔ kʰ o ʔ
+thiesen1998/104/9	HEL	dáí̵hcó	Bora	tʰ a i̵ ʔ kʰ o
+leach1969/154/10	DONDE	uunnah	Ocaina	ɯ ɯn n a ʔ
+thiesen1998/199/16	PIEDR	néwayúúne	Bora	n e kʷ a ʝ u: n e
+thiesen1998/199/16	PIEDR	nééwayu	Bora	n e: kʷ a ʝ u
+leach1969/101/35	PIEDR	gotúúhxo	Ocaina	g o t ɯ́ ɯ́ ʔ x o
+burtch1983/194/7	PIEDR	nofi̵ci̵	Huitoto Murui	n ɔ ɸ ɯ k ɯ
+thiesen1998/199/16	PIEDR	nééwañe	Bora	n e: kʷ a nʲ e
+thiesen1998/109/35	PEL	dí̵póaúcu	Bora	tʰ i̵ pʰ o a u kʰ u
+thiesen1998/116/21	PEL	dóllárahjúcu	Bora	tʰ o tʰʃ a r a ʔ x u kʰ u
+thiesen1998/77/6	PEL	cápóaave	Bora	kʰ a pʰ o a: β e
+thiesen1998/69/2	PEL	cáhjí̵taba	Bora	kʰ a ʔ x i̵ tʰ a pʰ a
+thiesen1998/152/6	PEL	i̵htúcu	Bora	i̵ ʔ tʰ u kʰ u
+thiesen1998/69/2	PEL	cájí̵taave	Bora	kʰ a x i̵ tʰ a: β e
+leach1969/134/30	PEL	ooalli	Ocaina	o o a dʑ i
+burtch1983/257/8	PEL	i̵fogi̵ areti̵i	Huitoto Murui	ɯ ɸ ɔ g ɯ # a ɾ ɛ t ɯ i
+thiesen1998/173/15	PEL	llóhroba	Bora	tʰʃ o ʔ r o pʰ a
+thiesen1998/166/33	PEL	kí̵jí̵htanu	Bora	kʰ i̵ x i̵ ʔ tʰ a n u
+thiesen1998/109/35	PEL	dí̵póajco	Bora	tʰ i̵ pʰ o a x kʰ o
+thiesen1998/115/38	PEL	dóji̵htáro	Bora	tʰ o x i̵ ʔ tʰ a r o
+thiesen1998/112/3	PEL	dóbiáco	Bora	tʰ o pʰ i a kʰ o
+minor1971/57/11	PEL	puìríde	Huitoto Muinane	p u i ɾ i d ɛ
+burtch1983/224/11	PEL	seruìde	Huitoto Murui	s ɛ ɾ ui d ɛ
+burtch1983/238/5	PEL	tuìte	Huitoto Murui	t ui t ɛ
+thiesen1998/202/33	PEL	nííwáuji̵	Bora	n i: kʷ a u x i̵
+burtch1983/237/8	PEL	tuìcode	Huitoto Murui	t ui k ɔ d ɛ
+burtch1983/93/14	PEL	fuìride	Huitoto Murui	ɸ ui ɾ i d ɛ
+thiesen1998/68/30	PEL	cáji̵htáro	Bora	kʰ a x i̵ ʔ tʰ a r o
+thiesen1998/202/17	PEL	nííwaco	Bora	n i: kʷ a kʰ o
+minor1971/63/13	PEL	ri̵i̵gaìrode	Huitoto Muinane	ɾ ɯ ɯ g a i ɾ o d ɛ
+thiesen1998/68/30	PEL	cájí̵htanu	Bora	kʰ a x i̵ ʔ tʰ a n u
+thiesen1998/173/15	PEL	llóroove	Bora	tʰʃ o r o: β e
+thiesen1998/173/3	PEL	llóki̵i̵ve	Bora	tʰʃ o kʰ i̵: β e
+thiesen1998/116/21	PEL	dóllárahco	Bora	tʰ o tʰʃ a r a ʔ kʰ o
+thiesen1998/166/33	PEL	kí̵ji̵htáro	Bora	kʰ i̵ x i̵ ʔ tʰ a r o
+thiesen1998/152/6	PEL	i̵htu	Bora	i̵ ʔ tʰ u
+thiesen1998/112/3	PEL	dóbijcyu	Bora	tʰ o pʰ i x kʰʝ u
+thiesen1998/115/38	PEL	dójí̵htanu	Bora	tʰ o x i̵ ʔ tʰ a n u
+leach1969/160/16	PEL	xoonh	Ocaina	x o õ ʔ
+minor1971/18/1	PEL	duìníde	Huitoto Muinane	d u i n i d ɛ
+minor1971/73/43	NAD	i̵i̵de	Huitoto Muinane	ɯ ɯ d ɛ
+thiesen1998/139/23	NAD	ijchi	Bora	i x kʰʔ i
+burtch1983/261/11	NAD	i̵i̵de	Huitoto Murui	ɯ ɯ d ɛ
+leach1969/136/13	NAD	oonhon	Ocaina	o õ ʔ õ
+thiesen1998/186/5	PIEL	mí̵í̵heé	Bora	m i̵i̵ ʔ e e
+burtch1983/110/4	PIEL	abi̵ igoì̵	Huitoto Murui	a b ɯ # i g ɔ ɯ̀
+burtch1983/20/16	PIEL	abi̵ igoì̵	Huitoto Murui	a b ɯ # i g ɔ ɯ̀
+minor1971/24/18	PIEL	ini	Huitoto Muinane	i n i
+leach1969/159/19	PIEL	xon̈úúhca	Ocaina	x o n̥ ɯ́ ɯ́ ʔ k a
+thiesen1998/186/5	PIEL	mí̵í̵he	Bora	m i̵i̵ ʔ e
+burtch1983/176/2	MAT	meìnete	Huitoto Murui	m ɛi n ɛ t ɛ
+minor1971/55/23	MAT	patde	Huitoto Muinane	p a ɗ ɛ
+thiesen1998/127/5	MAT	dsí̵jí̵vetso	Bora	tʰs i̵ x i̵ β e tʰs o
+thiesen1998/169/15	MAT	lliihyánu	Bora	tʰʃ i: ʔʝ a n u
+thiesen1998/169/15	MAT	lliihánu	Bora	tʰʃ i: ʔ a n u
+thiesen1998/169/17	MAT	lliihyánúme̱i	Bora	tʰʃ i: ʔʝ a n u m e i
+minor1971/45/12	MAT	meínetde	Huitoto Muinane	m ɛ i n ɛ ɗ ɛ
+minor1971/68/7	MAT	tdi̵tdá	Huitoto Muinane	ɗ ɯ ɗ a
+burtch1983/34/2	MAT	baì̵node	Huitoto Murui	b aɯ̀ n ɔ d ɛ
+minor1971/68/7	MAT	tdi̵tdá(de)	Huitoto Muinane	
+burtch1983/72/10	MUCHOS	di̵rerisaì̵	Huitoto Murui	d ɯ ɾ ɛ ɾ i s aɯ̀
+minor1971/18/23	MUCHOS	di̵gána	Huitoto Muinane	d ɯ g a n a
+burtch1983/23/21	MUCHOS	aìlluena	Huitoto Murui	ai dʑ u ɛ n a
+burtch1983/79/3	MUCHOS	eo	Huitoto Murui	ɛ ɔ
+minor1971/5/26	MUCHOS	apémaci̵	Huitoto Muinane	a p ɛ m a k ɯ
+leach1969/132/13	PIOJ	ohfóóxaco	Ocaina	o ʔ ɸ o o x a k o
+minor1971/71/30	PIOJ	i̵boma	Huitoto Muinane	ɯ b o m a
+thiesen1998/326/15	PIOJ	waáni	Bora	kʷ a a n i
+burtch1983/254/13	PIOJ	i̵buaì̵	Huitoto Murui	ɯ b u aɯ̀
+burtch1983/254/12	PIOJ	i̵boma	Huitoto Murui	ɯ b ɔ m a
+thiesen1998/81/24	EMPUJ	cátújcaáyo	Bora	kʰ a tʰ u x kʰ a a ʝ o
+burtch1983/201/7	EMPUJ	ñuìtade	Huitoto Murui	nʲ ui t a d ɛ
+thiesen1998/321/29	EMPUJ	wájócójca̱tsi	Bora	kʷ a x o kʰ o x kʰ a tʰs i
+thiesen1998/81/24	EMPUJ	catújcu	Bora	kʰ a tʰ u x kʰ u
+thiesen1998/257/9	EMPUJ	tárííhyonu	Bora	tʰ a r i: ʔʝ o n u
+thiesen1998/81/25	EMPUJ	cátujcu	Bora	kʰ a tʰ u x kʰ u
+thiesen1998/81/25	EMPUJ	cátújcaáyo	Bora	kʰ a tʰ u x kʰ a a ʝ o
+thiesen1998/257/9	EMPUJ	táriihyóro	Bora	tʰ a r i: ʔʝ o r o
+leach1969/103/26	EMPUJ	jaalla	Ocaina	ʔ a a dʑ a
+leach1969/102/38	PESC	injaanm̈a	Ocaina	ĩ ʔ a ã m̥ a
+thiesen1998/39/1	PESC	amóme	Bora	a m o m e
+thiesen1998/39/1	PESC	amóóbe	Bora	a m oo pʰ e
+minor1971/22/20	PEZ	iáma	Huitoto Muinane	i a m a
+minor1971/53/42	PEZ	omíma	Huitoto Muinane	o m i m a
+leach1969/102/38	PEZ	injaanm̈a	Ocaina	ĩ ʔ a ã m̥ a
+minor1971/13/43	PEZ	chamu	Huitoto Muinane	kʔ a m u
+minor1971/14/3	PEZ	cheenicongo	Huitoto Muinane	kʔ ɛ ɛ n i k o ŋ o
+minor1971/73/1	PEZ	i̵mí̵ngo	Huitoto Muinane	ɯ m ɯ́ ŋ o
+thiesen1998/39/1	PEZ	amóme	Bora	a m o m e
+thiesen1998/39/1	PEZ	amóóbe	Bora	a m oo pʰ e
+minor1971/31/29	PEZ	jidí̵ma	Huitoto Muinane	ʔ i d ɯ́ m a
+thiesen1998/144/18	MAL	ímítyúh	Bora	i m i tʰʝ u ʔ
+burtch1983/218/8	MAL	ri̵imi̵e	Huitoto Murui	ɾ ɯ i m ɯ ɛ
+leach1969/154/24	MAL	úúra	Ocaina	ɯ́ ɯ́ r a
+burtch1983/127/18	MAL	jeare	Huitoto Murui	h ɛ a ɾ ɛ
+minor1971/4/31	MAL	aiñi̵ra	Huitoto Muinane	a i nʲ ɯ ɾ a
+thiesen1998/144/19	MAL	ímítyú	Bora	i m i tʰʝ u
+minor1971/17/38	MAL	duíco	Huitoto Muinane	d u i k o
+thiesen1998/144/19	MAL	ímítyúh	Bora	i m i tʰʝ u ʔ
+thiesen1998/198/2	MAL	néhni̵hí̵va-	Bora	n e ʔ n i̵ ʔ i̵ β a
+thiesen1998/144/18	MAL	ímítyú	Bora	i m i tʰʝ u
+thiesen1998/224/25	LLEN	pañénu	Bora	pʰ a nʲ e n u
+thiesen1998/317/19	LLEN	wáhpé	Bora	kʷ a ʔ pʰ e
+burtch1983/207/2	LLEN	oruìtate	Huitoto Murui	ɔ ɾ ui t a t ɛ
+leach1969/92/29	LLEN	faahtu	Ocaina	ɸ a a ʔ t ɯ
+minor1971/18/5	LLEN	dujude	Huitoto Muinane	d u ʔ u d ɛ
+minor1971/8/25	LLEN	buìtdáde	Huitoto Muinane	b u i ɗ a d ɛ
+leach1969/122/5	LLEN	moon̈un	Ocaina	m o o n̥ ɯn
+thiesen1998/317/19	LLEN	wáhpéh	Bora	kʷ a ʔ pʰ e ʔ
+minor1971/73/10	DORM	i̵ní̵de	Huitoto Muinane	ɯ n ɯ́ d ɛ
+burtch1983/260/4	DORM	i̵ni̵de	Huitoto Murui	ɯ n ɯ d ɛ
+thiesen1998/97/4	DORM	cuwa	Bora	kʰ u kʷ a
+leach1969/154/17	DORM	uunon	Ocaina	ɯ ɯn õ
+minor1971/22/17	SI	iadi̵	Huitoto Muinane	i a d ɯ
+burtch1983/19/3	SI	jia	Huitoto Murui	h i a
+burtch1983/19/3	SI	ia	Huitoto Murui	i a
+burtch1983/19/3	SI	a	Huitoto Murui	a
+burtch1983/19/3	SI	nia	Huitoto Murui	n i a
+burtch1983/139/11	SOL	jitoma	Huitoto Murui	h i t ɔ m a
+leach1969/119/10	SOL	mamú	Ocaina	m a m ɯ́
+burtch1983/62/12	SOL	dama	Huitoto Murui	d a m a
+burtch1983/70/11	SOL	di̵faì	Huitoto Murui	d ɯ ɸ ai
+thiesen1998/90/22	SOL	cóójí̵ejpi nuhba	Bora	kʰ oo x i̵ e x pʰ i # n u ʔ pʰ a
+thiesen1998/206/34	SOL	nuhba cóójí̵ejpi	Bora	n u ʔ pʰ a # kʰ oo x i̵ e x pʰ i
+leach1969/124/6	SOL	naajinh	Ocaina	n a a ʔ ĩ ʔ
+leach1969/126/40	SOL	nuuco	Ocaina	n ɯ ɯ k o
+minor1971/15/18	SOL	dama	Huitoto Muinane	d a m a
+leach1969/119/10	SOL	mamúxah	Ocaina	m a m ɯ́ x a ʔ
+thiesen1998/42/2	SOL	apáhdyúre	Bora	a pʰ a ʔ tʰʝ u r e
+leach1969/126/51	SOL	núúna	Ocaina	n ɯ́ ɯ́n a
+burtch1983/86/10	SOL	fea	Huitoto Murui	ɸ ɛ a
+leach1969/126/48	SOL	nuum̈a	Ocaina	n ɯ ɯ m̥ a
+burtch1983/63/9	SOL	daño	Huitoto Murui	d a nʲ ɔ
+thiesen1998/105/1	SOL	dári̵jtso	Bora	tʰ a r i̵ x tʰs o
+burtch1983/63/6	SOL	dani̵	Huitoto Murui	d a n ɯ
+minor1971/66/27	SOL	tdaí̵ngode	Huitoto Muinane	ɗ a ɯ́ ŋ o d ɛ
+leach1969/122/48	SOL	mutyah	Ocaina	m ɯ tʑ a ʔ
+leach1969/124/6	SOL	naajínmah	Ocaina	n a a ʔ ĩ m a ʔ
+thiesen1998/206/32	SOL	nuhba	Bora	n u ʔ pʰ a
+burtch1983/59/4	SOL	da	Huitoto Murui	d a
+burtch1983/189/20	NOCH	naì̵o	Huitoto Murui	n aɯ̀ ɔ
+thiesen1998/229/25	NOCH	pejco	Bora	pʰ e x kʰ o
+burtch1983/189/20	NOCH	naì̵ona	Huitoto Murui	n aɯ̀ ɔ n a
+minor1971/49/11	NOCH	naì̵i̵ò	Huitoto Muinane	n a ɯ̀ ɯ o
+leach1969/125/11	NOCH	natyón	Ocaina	n a tʑ on
+thiesen1998/182/13	ESPOS	méwamyu	Bora	m e kʷ a mʝ u
+burtch1983/219/3	ESPOS	ri̵ño	Huitoto Murui	ɾ ɯ nʲ ɔ
+thiesen1998/247/14	ESPOS	ta̱á̱ba	Bora	tʰ a a pʰ a
+burtch1983/259/5	ESPOS	i̵ni	Huitoto Murui	ɯ n i
+thiesen1998/247/14	ESPOS	taabámu	Bora	tʰ a: pʰ a m u
+minor1971/73/5	ESPOS	i̵ni	Huitoto Muinane	ɯ n i
+leach1969/136/23	ESPOS	oonna	Ocaina	o õ n a
+minor1971/34/15	ESPOS	jii̵	Huitoto Muinane	ʔ i ɯ
+thiesen1998/252/13	ESPOS	taji̵	Bora	tʰ a x i̵
+minor1971/6/5	ESPOS	ai̵	Huitoto Muinane	a ɯ
+thiesen1998/182/13	ESPOS	mewa	Bora	m e kʷ a
+leach1969/122/32	ESPOS	munhton	Ocaina	m ɯn ʔ t õ
+thiesen1998/51/27	BOSQU	báju	Bora	pʰ a x u
+thiesen1998/51/27	BOSQU	bájuú	Bora	pʰ a x u u
+leach1969/148/13	BOSQU	tyam̈áánhin	Ocaina	tʑ a m̥ a ã ʔ ĩ
+leach1969/147/54	BOSQU	tyaavoyíína	Ocaina	tʑ a a β o ʑ i ĩ a
+leach1969/148/42	BOSQU	tyavoyíína	Ocaina	tʑ a β o ʑ i ĩ a
+leach1969/147/53	BOSQU	tyáávo	Ocaina	tʑ a a β o
+burtch1983/243/1	VIEJ	uaì̵ci̵ño	Huitoto Murui	u aɯ̀ k ɯ nʲ ɔ
+leach1969/152/33	VIEJ	uroojun	Ocaina	ɯ r o o ʔ ɯn
+leach1969/105/20	VIEJ	jahíínm̈a	Ocaina	ʔ a ʔ i ĩ m̥ a
+leach1969/105/18	VIEJ	jahiin	Ocaina	ʔ a ʔ i ĩ
+thiesen1998/162/2	VIEJ	kéémelle	Bora	kʰ e: m e tʰʃ e
+burtch1983/242/19	VIEJ	uaì̵ci̵ma	Huitoto Murui	u aɯ̀ k ɯ m a
+thiesen1998/161/30	VIEJ	keéme	Bora	kʰ e e m e
+thiesen1998/161/29	VIEJ	kéméh	Bora	kʰ e m e ʔ
+thiesen1998/161/29	VIEJ	kémé	Bora	kʰ e m e
+thiesen1998/161/30	VIEJ	kééme	Bora	kʰ e: m e
+thiesen1998/73/14	PADR	cááni	Bora	kʰ a: n i
+leach1969/121/42	PADR	mónjonh	Ocaina	m on ʔ õ ʔ
+minor1971/47/3	PADR	moi̵lli̵noì̵	Huitoto Muinane	m o ɯ dʑ ɯ n o ɯ̀
+minor1971/46/31	PADR	moo	Huitoto Muinane	m o o
+minor1971/10/43	PADR	comúìtdadi̵mai̵lli̵noi̵	Huitoto Muinane	k o m u i ɗ a d ɯ m a ɯ dʑ ɯ n o ɯ
+thiesen1998/73/14	PADR	caáni	Bora	kʰ a a n i
+thiesen1998/73/14	PADR	cáánií	Bora	kʰ a: n i i
+burtch1983/180/13	PADR	moo	Huitoto Murui	m ɔ ɔ
+leach1969/103/1	EN	jaa	Ocaina	ʔ a a
+leach1969/104/55	EN	jadya	Ocaina	ʔ a dʑ a
+burtch1983/49/7	EN	coni	Huitoto Murui	k ɔ n i
+leach1969/141/53	POCO	tóógo	Ocaina	t o o g o
+burtch1983/66/20	POCO	due	Huitoto Murui	d u ɛ
+leach1969/139/15	POCO	sóógo	Ocaina	s o o g o
+leach1969/141/53	POCO	sóógo	Ocaina	s o o g o
+minor1971/34/21	POCO	jii̵re	Huitoto Muinane	ʔ i ɯ ɾ ɛ
+thiesen1998/293/17	POCO	úhjé	Bora	u ʔ x e
+thiesen1998/102/17	POCO	chohju	Bora	kʰʔ o ʔ x u
+thiesen1998/102/19	POCO	chóhjúh	Bora	kʰʔ o ʔ x u ʔ
+thiesen1998/102/19	POCO	chóhjú	Bora	kʰʔ o ʔ x u
+leach1969/139/15	POCO	tóógo	Ocaina	t o o g o
+burtch1983/124/6	POCO	janore	Huitoto Murui	h a n ɔ ɾ ɛ
+thiesen1998/48/16	POCO	áyá	Bora	a ʝ a
+thiesen1998/293/17	POCO	úhjéh	Bora	u ʔ x e ʔ
+leach1969/157/24	POCO	xavinh	Ocaina	x a β ĩ ʔ
+thiesen1998/48/16	POCO	áyáh	Bora	a ʝ a ʔ
+leach1969/139/8	POCO	síítih	Ocaina	s i i t i ʔ
+burtch1983/130/7	POCO	jenino	Huitoto Murui	h ɛ n i n ɔ
+thiesen1998/150/19	CHUP	í̵hátsujáco	Bora	i̵ ʔ a tʰs u x a kʰ o
+thiesen1998/210/4	CHUP	ñóihcyu	Bora	nʲ o i ʔ kʰʝ u
+leach1969/146/17	CHUP	tsoonhñ̈o	Ocaina	ts o õ ʔ nʲ̈ o
+thiesen1998/210/4	CHUP	ñóihjyúcu	Bora	nʲ o i ʔ xʝ u kʰ u
+minor1971/46/23	CHUP	moníde	Huitoto Muinane	m o n i d ɛ
+leach1969/127/25	CHUP	ñáánhto	Ocaina	nʲ a ã ʔ t o
+thiesen1998/150/18	CHUP	í̵hatsúhcu	Bora	i̵ ʔ a tʰs u ʔ kʰ u
+thiesen1998/150/19	CHUP	í̵hátsuhcu	Bora	i̵ ʔ a tʰs u ʔ kʰ u
+thiesen1998/150/18	CHUP	í̵hátsujáco	Bora	i̵ ʔ a tʰs u x a kʰ o
+thiesen1998/286/17	CHUP	tsóohjáco	Bora	tʰs o o ʔ x a kʰ o
+leach1969/116/3	CHUP	júmoonjin	Ocaina	ʔ ɯ́ m o õ ʔ ĩ
+minor1971/47/8	CHUP	mugúde	Huitoto Muinane	m u g u d ɛ
+thiesen1998/286/17	CHUP	tsóohco	Bora	tʰs o o ʔ kʰ o
+thiesen1998/288/36	AGUD	tsúhjí̵vá	Bora	tʰs u ʔ x i̵ β a
+thiesen1998/288/36	AGUD	tsúhjí̵váh	Bora	tʰs u ʔ x i̵ β a ʔ
+minor1971/56/4	VOL	peede	Huitoto Muinane	p ɛ ɛ d ɛ
+burtch1983/87/14	VOL	fede	Huitoto Murui	ɸ ɛ d ɛ
+burtch1983/87/14	VOL	feede	Huitoto Murui	ɸ ɛ ɛ d ɛ
+thiesen1998/325/11	VOL	wáámene	Bora	kʷ a: m e n e
+leach1969/85/34	VOL	dyaahi	Ocaina	dʑ a a ʔ i
+thiesen1998/317/21	VOL	wahpe	Bora	kʷ a ʔ pʰ e
+thiesen1998/289/4	AFIL	tsúhjí̵vajtso	Bora	tʰs u ʔ x i̵ β a x tʰs o
+thiesen1998/226/11	AFIL	pátáhji̵nu	Bora	pʰ a tʰ a ʔ x i̵ n u
+thiesen1998/288/36	AFIL	tsúhjí̵vá	Bora	tʰs u ʔ x i̵ β a
+thiesen1998/288/36	AFIL	tsúhjí̵váh	Bora	tʰs u ʔ x i̵ β a ʔ
+thiesen1998/289/6	AFIL	tsuhjí̵vanu	Bora	tʰs u ʔ x i̵ β a n u
+burtch1983/228/3	OLER	soride	Huitoto Murui	s ɔ ɾ i d ɛ
+thiesen1998/43/6	OLER	árahco	Bora	a r a ʔ kʰ o
+thiesen1998/96/10	OLER	cuvaa	Bora	kʰ u β a:
+burtch1983/122/18	OLER	jallede	Huitoto Murui	h a dʑ ɛ d ɛ
+burtch1983/228/4	OLER	sorirede	Huitoto Murui	s ɔ ɾ i ɾ ɛ d ɛ
+minor1971/64/37	OLER	tióruide	Huitoto Muinane	t i o ɾ u i d ɛ
+thiesen1998/43/6	OLER	árahjúcu	Bora	a r a ʔ x u kʰ u
+leach1969/89/49	OLER	dyooro	Ocaina	dʑ o o r o
+minor1971/27/29	OLER	jalléde	Huitoto Muinane	ʔ a dʑ ɛ d ɛ

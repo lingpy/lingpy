@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 from __future__ import division,print_function
-from lingpyd.data.derive import compile_model
+from lingpy.data.derive import compile_model
 from scipy.spatial.distance import squareform
 from time import sleep
 from pickle import dump

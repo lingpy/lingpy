@@ -9,46 +9,14 @@ Module provides namespaces and data for Evolaemp applications.
 __author__="Johann-Mattis List"
 __date__="2013-07-12"
 
+from ...settings import rcParams,rc
+rc(schema='evolaemp')
 
-from re import findall
-from pickle import load
-import os
-import codecs
-
-from ...check.exceptions import *
-from ...data.model import Model,load_dvt
-
-try:
-    from ...data.derive import compile_model,compile_dvt
-except ImportError:
-    print(ThirdPartyModuleError('networkx').warning())
-
-global ipa_diacritics
-global ipa_vowels
-global ipa_tones
-global sca
-global asjp
-global dolgo
-global art
-global _color
-
-try:
-    ipa_diacritics,ipa_vowels,ipa_tones, = load_dvt(path='el')
-    sca = Model('sca_el')
-    asjp = Model('asjp_el')
-    dolgo = Model('dolgo_el')
-    art = Model('art_el')
-    _color = Model('color_el')
-# compile the models if they are not precompiled
-except:
-    compile_dvt(path='el')
-    compile_model('sca_el')
-    compile_model('dolgo_el')
-    compile_model('art_el')
-    compile_model('color_el')
-    ipa_diacritics,ipa_vowels,ipa_tones = load_dvt(path='el')
-    sca = Model('sca_el')
-    asjp = Model('asjp_el')
-    dolgo = Model('dolgo_el')
-    art = Model('art_el')
-    _color = Model('color_el')
+ipa_diacritics = rcParams['diacritics']
+ipa_vowels = rcParams['vowels']
+ipa_tones = rcParams['tones']
+sca = rcParams['sca']
+asjp = rcParams['asjp']
+dolgo = rcParams['dolgo']
+art = rcParams['art']
+_color = rcParams['_color']
