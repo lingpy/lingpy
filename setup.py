@@ -83,7 +83,7 @@ else:
     extension_modules = []
 
 # make global name of this version
-thisversion = "2.0.b.dev"
+thisversion = "2.0"
 setup(
         name = pkgname,
         version = thisversion,
@@ -100,7 +100,7 @@ setup(
         url = "http://lingpy.org",
         description = "Python library for automatic tasks in historical linguistics",
         license = "gpl-3.0",
-        platforms = ["unix","linux"],
+        platforms = ["unix","linux","windows"],
         ext_modules=extension_modules,
         **extra
         )

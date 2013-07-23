@@ -19,6 +19,7 @@ __date__="2013-07-18"
 import numpy as np
 import re
 import codecs
+import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist

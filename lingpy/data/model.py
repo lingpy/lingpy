@@ -134,12 +134,13 @@ class Model(object):
         self.converter = load(open(os.path.join(new_path,'converter.bin'),'rb'))
 
         # check for scorer
-        # give always preference to scorer bin files
-        if os.path.isfile(os.path.join(new_path,'scorer.bin')):
-            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
-        # second preference is given to matrix files
-        elif os.path.isfile(os.path.join(new_path,'matrix')):
+        
+        # give always preference to scorer matrix files
+        if os.path.isfile(os.path.join(new_path,'matrix')):
             self.scorer = read_scorer(os.path.join(new_path,'matrix'))
+        elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
+            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
+
         # if none of the above fits, leave it
         else: 
             pass

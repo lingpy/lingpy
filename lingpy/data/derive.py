@@ -491,7 +491,7 @@ def compile_model(
 
     # try to load the scoring function or the score tree
     scorer = False
-
+    
     if os.path.isfile(os.path.join(new_path,'matrix')):
         scorer = read_scorer(os.path.join(new_path,'matrix'))
     elif os.path.isfile(os.path.join(new_path,'scorer')):
@@ -526,7 +526,7 @@ def compile_model(
     
     if scorer:
         # dump the data
-        outfile = open(os.path.join(path,'scorer.bin'),'wb')
+        outfile = open(os.path.join(new_path,'scorer.bin'),'wb')
         dump(scorer,outfile)
         outfile.close()
         print("... successfully created the scorer.")
