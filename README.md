@@ -14,7 +14,7 @@ Other relevant work related to the development of the library and research using
 * List, J. M. Forthcoming. Sequence comparison in historical linguistics. PhD dissertation, University of Düsseldorf.
 * List, J. M. 2012a. Multiple sequence alignment in historical linguistics: a sound class based approach. In Proceedings of Console IXX.
 * List, J. M. 2012b. SCA: Phonetic alignment based on sound classes. In New Directions in logic, language, and computation. Slavkovik, M. and D Lassiter (Eds.). Springer.
-* Prokic, J. and S. Moran. 2012. Black box approaches to genealogical classication and their shortcomings. To appear in Comparing Approaches to Measuring Linguistic Differences, Lars Borin and Anju Saxena (eds). Mouton De Gruyter. 
+* Prokic, J. and S. Moran. 2012. Black box approaches to genealogical classification and their shortcomings. To appear in Comparing Approaches to Measuring Linguistic Differences, Lars Borin and Anju Saxena (eds). Mouton De Gruyter. 
 
 ## Setup for Python 2 and Python 3
 
