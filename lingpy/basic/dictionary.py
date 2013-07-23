@@ -10,7 +10,7 @@ TODO:
 """
 
 __author__="Peter Bouda"
-__date__="2013-06-06"
+__date__="2013-07-22"
 
 import os
 import sys
@@ -21,12 +21,17 @@ import codecs
 import re
 from operator import itemgetter
 import abc
-import pdb
 
 from nltk.stem.snowball import SpanishStemmer
 
 # basic lingpy imports
-from ..read.csv import read_qlc
+from ..read.qlc import read_qlc
+from ..settings import rcParams
+
+# import ortho-parser
+from ..sequence.orthography import OrthographyParser
+from ..sequence.orthography import GraphemeParser
+
 
 class Dictionary():
     """
@@ -94,36 +99,45 @@ class Dictionary():
             conf
             ):
 
-        # try to load the data
         try:
             input_data = read_qlc(filename)
-            self.filename = filename.replace('.csv','')
+            if filename[-3:] in ['csv','qlc']:
+                self.filename = filename[:-4]
+            else:
+                self.filename = filename
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = 'lingpy-{0}'.format(str(date.today()))
+                self.filename = rcParams['filename'] 
+            # if it's a wordlist object, add its basic parameters
+            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+                input_data = dict(filename._data.items())
+                input_data.update(filename._meta.items())
+                input_data[0] = [a for a,b in sorted(
+                    filename.header.items(),
+                    key = lambda x:x[1],
+                    reverse = False
+                    )]
+                internal_import = True
+                self.filename = rcParams['filename'] 
             else:
-                
-            #if not input_data:
-                raise ValueError('[i] Input data is not specified. Exception: {0}).'.format(sys.exc_info()))
-            #else:
-            #    input_data = filename
-            #    self.filename = 'lingpy-{0}'.format(str(date.today()))
+                if not os.path.isfile(filename):
+                    raise IOError(
+                            "[i] Input file does not exist."
+                            )
+                else:
+                    raise ValueError('[i] Could not parse the input file.')
 
         # load the configuration file
         if not conf:
-            conf = os.path.split(
-                    os.path.dirname(
-                        os.path.abspath(
-                            __file__
-                            )
-                        )
-                    )[0] + '/data/conf/dictionary.rc'
+            conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
 
         # read the file defined by its path in conf
-        tmp = [line.strip('\n\r').split('\t') for line in open(conf) if not
+        rcf = codecs.open(conf,'r','utf-8')
+        tmp = [line.strip('\n\r').split('\t') for line in rcf if not
                 line.startswith('#') and line.strip('\n\r')]
-        
+        rcf.close()
+                
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
         self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
@@ -220,6 +234,20 @@ class Dictionary():
             doculect_entry = self._meta["doculect"]
             self.doculect2iso[doculect_entry[0]] = doculect_entry[1]
 
+        # save ISO for heads and translations in list
+        self.head_iso = []
+        if type(self._meta["head_iso"]) is list:
+            for iso in self._meta["head_iso"]:
+                self.head_iso.append(iso)
+        else:
+            self.head_iso.append(self._meta["head_iso"])
+
+        self.translation_iso = []
+        if type(self._meta["translation_iso"]) is list:
+            for iso in self._meta["translation_iso"]:
+                self.translation_iso.append(iso)
+        else:
+            self.translation_iso.append(self._meta["translation_iso"])
 
     def __getitem__(self,idx):
         """
@@ -354,6 +382,256 @@ class Dictionary():
 
         return entries
 
+    def add_entries(
+            self,
+            entry,
+            source,
+            function,
+            override = False,
+            **keywords
+            ):
+        """
+        Add new entry-types to the dictionary by modifying given ones.
+
+        Parameters
+        ----------
+        entry : string
+            A string specifying the name of the new entry-type to be added to the
+            dictionary.
+
+        source : string
+            A string specifying the basic entry-type that shall be modified. If
+            multiple entry-types shall be used to create a new entry, they
+            should be passed in a simple string separated by a comma.
+
+        function : function
+            A function which is used to convert the source into the target
+            value.
+
+        keywords : {dict}
+            A dictionary of keywords that are passed as parameters to the
+            function.
+
+        Notes
+        -----
+        This method can be used to add new entry-types to the data by
+        converting given ones. There are a lot of possibilities for adding new
+        entries, but the most basic procedure is to use an existing entry-type
+        and to modify it with help of a function.
+
+        """
+        # check for emtpy entries etc.
+        if not entry:
+            print("[i] Entry was not properly specified!")
+            return
+        
+        # check for override stuff, this causes otherwise an error message
+        if entry not in self.header and override:
+            return self.add_entries(entry,source,function,override=False)
+
+        # check whether the stuff is already there
+        if entry in self._header and not override:
+            print(
+                    "[?] Datatype <{entry}> has already been produced, ".format(entry=entry),
+                    end = ''
+                    )
+            answer = input("do you want to override? (y/n) ")
+            if answer.lower() in ['y','yes','j']:
+                keywords['override'] = True
+                self.add_entries(entry,source,function,**keywords)
+            else:
+                print("[i] ...aborting...")
+                return
+        elif not override:
+
+            # get the new index into the header
+            # add a new alias if this is not specified
+            if entry.lower() not in self._alias2:
+                self._alias2[entry.lower()] = [entry.lower(),entry.upper()]
+                self._alias[entry.lower()] = entry.lower()
+                self._alias[entry.upper()] = entry.lower()
+
+            # get the true value
+            name = self._alias[entry.lower()]
+
+            # get the new index
+            newIdx = max(self._header.values()) + 1
+            
+            # change the aliassed header for each entry in alias2
+            for a in self._alias2[name]:
+                self._header[a] = newIdx
+
+            self.header[name] = self._header[name]
+
+            # modify the entries attribute
+            self.entries = sorted(set(self.entries + [entry]))
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
+
+                # iterate over the data and create the new entry
+                for key in self:
+
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key].append(t)
+
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the dictionary
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key].append(t)
+            
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key].append(t)
+        
+        elif override:
+
+            # get the index that shall be replaced
+            rIdx = self._header[entry.lower()]
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
+
+                # iterate over the data and create the new entry
+                for key in self:
+
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key][rIdx] = t
+
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the wordlist
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key][rIdx] = t
+
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key][rIdx] = t
+
+    def tokenize(
+            self,
+            ortho_profile = '',
+            source = "head",
+            target = "tokens",
+            verbose = False,
+            ** keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
+        
+        Parameters
+        ----------
+        ortho_profile : str (default='')
+        Path to the orthographic profile used to convert and tokenize the
+        input data into IPA tokens. If not specified, a simple Unicode
+        grapheme parsing is carried out.
+        
+        source : str (default="translation")
+        The source data that shall be used for the tokenization procedures.
+        
+        target : str (default="tokens")
+        The name of the target column that will be added to the wordlist.
+        Notes
+        -----
+        This is a shortcut to the extended
+        :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
+        automatically tokenizes it.
+        """
+
+        if os.path.exists(ortho_profile):
+            ortho_path = ortho_profile
+        else:
+            ortho_path = os.path.split(
+                    os.path.dirname(
+                        os.path.abspath(
+                            __file__
+                            )
+                        )
+                    )[0] + '/data/orthography_profiles/' + ortho_profile
+        
+        # if the orthography profile does exist, carry out to tokenize the data
+        if os.path.exists(ortho_path) and not ortho_profile == "":
+            if verbose: print("[i] Found the orthography profile.")
+            op = OrthographyParser(ortho_path)
+
+            # check for valid IPA parse
+            if op.exists_multiple_columns():
+
+                # tokenize the data, define specific output if target == 'tokens'
+                # for direct lexstat input
+                if target == 'tokens':
+                    function = lambda x: op.graphemes_to_ipa(x).split(' ')[1:-1]
+                else:
+                    function = lambda x: op.graphemes_to_ipa(x)
+
+                self.add_entries(
+                        target,
+                        source,
+                        function
+                        )
+        
+        else:
+            if verbose: print("[i] Did not find the orthography profile. Using GraphemeParser.")
+            gp = GraphemeParser()
+
+            if target == 'tokens':
+                function = lambda x: gp.parse_graphemes(x).split(' ')[1:-1]
+            else:
+                function = lambda x: gp.parse_graphemes(x)
+
+            self.add_entries(
+                target,
+                source,
+                function
+                )
+
 
 class ConceptGraph():
     """
@@ -368,6 +646,7 @@ class ConceptGraph():
         self.pivot_lang_iso = pivot_lang_iso
         self.concept_matcher = concept_matcher
         self.graph = {}
+        self.use_tokens = False
         self.doculects = set()
         for concept in concepts:
             self.graph[concept] = set()
@@ -376,26 +655,31 @@ class ConceptGraph():
         """
 
         """
-        for qlcid, head, translation, head_doculect, translation_doculect in \
-                dictionary.get_tuples(
-                    [ "qlcid", "head", "translation", "head_doculect",
-                    "translation_doculect" ]):
-            spa = ""; trans = ""
-            if dictionary.doculect2iso[head_doculect] == self.pivot_lang_iso:
-                pivot = head
-                trans = translation
-                doculect = translation_doculect
-            elif dictionary.doculect2iso[translation_doculect] == \
-                    self.pivot_lang_iso:
-                pivot = translation
-                trans = head
-                doculect = head_doculect
+        columns = [ "qlcid", "head", "translation", "head_doculect",
+                    "translation_doculect" ]
+        if "tokens" in dictionary.header:
+            columns.append("tokens")
+            self.use_tokens = True
+        for entry in dictionary.get_tuples(columns):
+            pivot = ""; trans = ""; doculect = ""
+            if self.pivot_lang_iso in dictionary.head_iso:
+                pivot = entry[1]
+                trans = entry[2]
+                doculect = entry[4]
+            elif self.pivot_lang_iso in dictionary.translation_iso:
+                pivot = entry[2]
+                trans = entry[1]
+                doculect = entry[3]
             else:
                 continue
 
+            tokens = ""
+            if self.use_tokens:
+                tokens = ' '.join(entry[5])
+
             for concept in self.graph:
                 if self.concept_matcher.compare_to_concept(pivot, concept):
-                    self.graph[concept].add((qlcid, trans, doculect))
+                    self.graph[concept].add((entry[0], trans, tokens, doculect))
 
         for doculect, iso in dictionary.doculect2iso.items():
             self.doculects.add((doculect, iso))
@@ -415,13 +699,25 @@ class ConceptGraph():
         for doculect, iso in self.doculects:
             wordlist.write("@doculect: {0}, {1}\n".format(doculect, iso))
 
-        wordlist.write(
-            "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\n")
+        if self.use_tokens:
+            wordlist.write(
+                "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\tTOKENS\n")
+            for concept in self.graph:
+                    for qlcid, counterpart, tokens, counterpart_doculect \
+                            in self.graph[concept]:
+                        wordlist.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(
+                            qlcid, concept.upper(), counterpart,
+                            counterpart_doculect, tokens))
+        else:
+            wordlist.write(
+                "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\n")
 
-        for concept in self.graph:
-            for qlcid, counterpart, counterpart_doculect in self.graph[concept]:
-                wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
-                    qlcid, concept.upper(), counterpart, counterpart_doculect))
+            for concept in self.graph:
+                for qlcid, counterpart, _, counterpart_doculect \
+                        in self.graph[concept]:
+                    wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
+                        qlcid, concept.upper(), counterpart,
+                        counterpart_doculect))
 
         wordlist.close()
 

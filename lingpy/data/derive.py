@@ -468,21 +468,23 @@ def compile_model(
      
     print("[i] Compiling model <"+model+">...")
     # get the path to the models
-    if path == None:
-        path = os.path.join(
+    if not path:
+        new_path = os.path.join(
                 rcParams['_path'],
                 'data',
                 'models',
                 model
                 )
     else:
-        path = os.path.join(path,model)
+        new_path = os.path.join(path,model)
     
+    if rcParams['debug']: print("Model-Path:",new_path)
+
     # load the sound classes
-    sound_classes = _import_sound_classes(os.path.join(path,'converter'))
+    sound_classes = _import_sound_classes(os.path.join(new_path,'converter'))
     
     # dump the data
-    outfile = open(os.path.join(path,'converter.bin'),'wb')
+    outfile = open(os.path.join(new_path,'converter.bin'),'wb')
     dump(sound_classes,outfile)
     outfile.close()
     print("... successfully created the converter.")
@@ -490,10 +492,10 @@ def compile_model(
     # try to load the scoring function or the score tree
     scorer = False
 
-    if os.path.isfile(os.path.join(path,'matrix')):
-        scorer = read_scorer(os.path.join(path,'matrix'))
-    elif os.path.isfile(os.path.join(path,'scorer')):
-        score_tree = _import_score_tree(os.path.join(path,'scorer'))
+    if os.path.isfile(os.path.join(new_path,'matrix')):
+        scorer = read_scorer(os.path.join(new_path,'matrix'))
+    elif os.path.isfile(os.path.join(new_path,'scorer')):
+        score_tree = _import_score_tree(os.path.join(new_path,'scorer'))
     
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
@@ -518,7 +520,7 @@ def compile_model(
         scorer = misc.ScoreDict(chars,matrix)
         
         # create the matrix file
-        f = codecs.open(os.path.join(path,'matrix'),'w','utf-8')
+        f = codecs.open(os.path.join(new_path,'matrix'),'w','utf-8')
         f.write(scorer2str(scorer))
         f.close()
     
