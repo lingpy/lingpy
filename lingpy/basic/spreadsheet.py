@@ -25,7 +25,13 @@ class Spreadsheet:
     """
     Basic class for reading spreadsheet data.
 
+    Parameters
+    ----------
+
+    Notes
+    -----
     TODO: how about a "config file" variable where the parameters below can be specified?
+
     """
     def __init__(self, 
                  filename,
@@ -67,6 +73,9 @@ class Spreadsheet:
         """
         Remove anything in the spreadsheet that's specified in the blacklist file.
 
+        Notes
+        -----
+
         TODO: make parameter **kwargs
         """
         if not os.path.isfile(self.blacklist):
@@ -104,9 +113,12 @@ class Spreadsheet:
                         self.matrix[i][j] = match.strip()
 
     def analyze(self, *args):
-        """ The purpose of this method is to give a first pass unigram (at character and
+        """ 
+        The purpose of this method is to give a first pass unigram (at character and
         grapheme levels) across languages.
 
+        Notes
+        -----
         *args: 
 
         "words" = return a 2D matrix of words by counts in languages
@@ -182,7 +194,8 @@ class Spreadsheet:
                 return
                     
     def _orthographic_transform(self, **kwargs):
-        """ Take a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
+        """ 
+        Take a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
         This function lets a user specify different orthographic profiles per column in a spreadsheet that's 
         already been semantically aligned.
         """
