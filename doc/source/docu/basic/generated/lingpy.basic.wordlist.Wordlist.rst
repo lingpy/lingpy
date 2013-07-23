@@ -5,9 +5,9 @@ lingpy.basic.wordlist.Wordlist
 
 .. autoclass:: Wordlist
 
+   
 
-.. HACK::
-
+   
    .. rubric:: Methods
 
    .. autosummary::
@@ -15,6 +15,7 @@ lingpy.basic.wordlist.Wordlist
       ~Wordlist.__init__
       ~Wordlist.add_entries
       ~Wordlist.calculate
+      ~Wordlist.export
       ~Wordlist.get_dict
       ~Wordlist.get_entries
       ~Wordlist.get_etymdict

@@ -1,6 +1,6 @@
 lingpy.sequence.orthography.OrthographyParser.exists_multiple_columns
 =====================================================================
 
-.. currentmodule:: lingpy.sequence.orthography
+.. currentmodule:: lingpy.sequence.orthography.OrthographyParser
 
-.. automethod:: OrthographyParser.exists_multiple_columns
+.. autofunction:: exists_multiple_columns

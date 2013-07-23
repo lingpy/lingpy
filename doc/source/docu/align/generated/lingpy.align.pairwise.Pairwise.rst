@@ -5,17 +5,14 @@ lingpy.align.pairwise.Pairwise
 
 .. autoclass:: Pairwise
 
-.. HACK::   
-   .. automethod:: __init__
-
    
+
    .. rubric:: Methods
 
-   .. autosummary::
-   
+   .. autosummary:: 
+
       ~Pairwise.__init__
       ~Pairwise.align
-   
    
 
    

@@ -1,6 +1,6 @@
 lingpy.sequence.orthography.OrthographyParser.parse_string_to_ipa_phonemes
 ==========================================================================
 
-.. currentmodule:: lingpy.sequence.orthography
+.. currentmodule:: lingpy.sequence.orthography.OrthographyParser
 
-.. automethod:: OrthographyParser.parse_string_to_ipa_phonemes
+.. autofunction:: parse_string_to_ipa_phonemes

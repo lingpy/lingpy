@@ -1,6 +1,6 @@
 lingpy.sequence.orthography.OrthographyParser.graphemes_to_ipa
 ==============================================================
 
-.. currentmodule:: lingpy.sequence.orthography
+.. currentmodule:: lingpy.sequence.orthography.OrthographyParser
 
-.. automethod:: OrthographyParser.graphemes_to_ipa
+.. autofunction:: graphemes_to_ipa

@@ -1,6 +1,6 @@
 lingpy.sequence.orthography.GraphemeParser.parse_characters
 ===========================================================
 
-.. currentmodule:: lingpy.sequence.orthography
+.. currentmodule:: lingpy.sequence.orthography.GraphemeParser
 
-.. automethod:: GraphemeParser.parse_characters
+.. autofunction:: parse_characters

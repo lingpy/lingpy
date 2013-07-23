@@ -5,9 +5,7 @@ lingpy.compare.lexstat.LexStat
 
 .. autoclass:: LexStat
 
-.. HACK::
-
-   .. automethod:: __init__
+   
 
    
    .. rubric:: Methods
@@ -19,6 +17,7 @@ lingpy.compare.lexstat.LexStat
       ~LexStat.align_pairs
       ~LexStat.calculate
       ~LexStat.cluster
+      ~LexStat.export
       ~LexStat.get_dict
       ~LexStat.get_entries
       ~LexStat.get_etymdict

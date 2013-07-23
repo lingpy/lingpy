@@ -318,3 +318,4 @@ intersphinx_mapping = {
     'http://docs.scipy.org/doc/':None,
     'http://docs.numpy.org/doc/':None,
     }
+numpydoc_show_class_members=False

@@ -432,6 +432,18 @@ def compile_model(
             D : θ, ð, ŧ, þ, đ
             G : x, ɣ, χ
             ...    
+    
+    :file:`matrix`
+        A scoring matrix indicating the alignment scores of all sound-class
+        characters defined by the model. The scoring is structured as a simple
+        tab-delimited text file. The first cell contains the character names,
+        the following cells contain the scores in redundant form (with both
+        triangles being filled):: 
+
+            B  10.0 -10.0   5.0 ...
+            E -10.0   5.0 -10.0 ...
+            F   5.0 -10.0  10.0 ...
+            ...
 
     :file:`scorer` 
         The ``scorer`` file (which is optional) contains the graph of

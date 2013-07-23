@@ -5,8 +5,7 @@ lingpy.align.sca.PSA
 
 .. autoclass:: PSA
 
-.. HACK::   
-   .. automethod:: __init__
+   
 
    
    .. rubric:: Methods

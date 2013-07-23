@@ -38,6 +38,17 @@ directly in the Python interpreter or imported into Python scripts. See the Ling
 README_ file for instructions. For more information about Python, see 
 http://www.python.org for details.
 
+How to cite LingPy?
+-------------------
+
+If you are using LingPy in it's 2.0 version for non-commercial, scientific projects,
+please cite the following paper:
+
+List, J.-M. and S. Moran (2013): “An open source toolkit for quantitative historical linguistics”.
+In: Proceedings of the ACL 2013. System Demonstrations. (Sofia, Bulgaria, Aug. 4–9, 2013).
+Association for Computational Linguistics.
+
+
 What's next?
 -------------------------
 

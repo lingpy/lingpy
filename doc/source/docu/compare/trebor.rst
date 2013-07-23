@@ -9,5 +9,5 @@ Classes
 .. autosummary::
    :toctree: generated/
 
-   TreBor
+   PhyBo
 
