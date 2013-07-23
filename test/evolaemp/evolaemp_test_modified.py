@@ -27,7 +27,8 @@ asjpMatrix = array([x for x in asjpMatrix if x[0] in names])
 
 #INITIALZING LINGPY
 
-internal_asjp = Model("internal_asjp",path="models")
+# get the evolaemp schema
+rc(schmema='evolaemp')
 
 #TEST 1: LINGPY-BASED LANGUAGE DISTANCE MEASURE
 print("\nTest 1: language distance measure based on pairwise alignment")
@@ -48,7 +49,7 @@ def ldistLingpy(l1,l2,mtx=asjpMatrix):
     wordOffsets.append(len(pairs))
     #align all word pairs in parallel
     pair = Pairwise(pairs,merge_vowels=False)
-    pair.align(distance=True,model=internal_asjp)
+    pair.align(distance=True,model=rcParams['asjp'])
     #collect the lowest distance values for each wordID (i.e. concept)
     distValues = [min(alignment[2] for alignment in pair.alignments[wordOffsets[i]:wordOffsets[i+1]]) for i in range(0,len(wordOffsets)-1)]
     #simply compute the average distance value
@@ -84,10 +85,13 @@ for langID in langs:
     ID += 1
 
 #cluster words into cognate sets
-lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
-lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.9,verbose=True)
-etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
+# XXX note that merge_vowels is now automatically set when choosing evolaemp as
+# schema JML XXX
+lexstat = LexStat(lexdict,model=rcParams['asjp'])
+# this does not really work with only one entry, use the other sca-method
+# instead
+lexstat.cluster(method='sca',threshold=0.6)
+etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
     entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
@@ -100,7 +104,7 @@ for cognateID in etym_dict.keys():
     entry_msq_file.close()
     print("Aligning cognate " + str(cognateID) + ":\n")
     multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False)
-    multi.prog_align(sca,gop=-2,scale=0.7)
+    multi.prog_align(model=rcParams['asjp'],gop=-2,scale=0.7,factor=0.3)
     print(multi)
     #collect the sound replacements in this cognate set
     cognateSize = len(multi.seqs)

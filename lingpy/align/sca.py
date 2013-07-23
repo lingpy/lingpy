@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
+# email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-06-26 17:40
+# modified : 2013-07-18 10:41
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -11,123 +11,16 @@ sequence comparison from the *sequence* and the *alignment* perspective. The
 sequence perspective deals with unaligned sequences. The *alignment*
 perspective deals with aligned sequences.
 
-.. File Formats
-.. ------------
-.. 
-.. Pairwise as well as multiple sequence comparison is basically carried out by
-.. reading data from text files and writing the results of the analyses back to
-.. text files. For pairwise and multiple sequence analyses, specific file formats 
-.. are required. See the documentation for the respective classes for details.
-.. 
-.. ``psq``-format
-..     The ``psq``-format is a specific format for text files containing unaligned
-..     sequence pairs. Files in this format should have the extension ``psq``. 
-..     
-..     The first line of a ``psq``-file contains information regarding the dataset.
-..     The sequence pairs are given in triplets, with a sequence identifier in the
-..     first line of a triplet (containing the meaning, or orthographical
-..     information) and the two sequences in the second and third line, whereas
-..     the first column of each sequence line contains the name of the taxon and
-..     the second column the sequence in IPA format. All triplets are divided by
-..     one empty line. As an example, consider the file ``test.psq``::
-.. 
-..         Harry Potter Testset
-..         Woldemort in German and Russian
-..         German  waldemar
-..         Russian vladimir
-.. 
-..         Woldemort in English and Russian
-..         English woldemort
-..         Russian vladimir
-.. 
-..         Woldemort in English and German
-..         English woldemort
-..         German  waldemar
-.. 
-.. ``psa``-format
-..     The ``psa``-format is a specific format for text files containing unaligned
-..     sequence pairs. Files in this format should have the extension ``psq``. 
-..     
-..     The first line of a ``psa``-file contains information regarding the
-..     dataset.  The sequence pairs are given in quadruplets, with a sequence
-..     identifier in the first line of a quadruplet (containing the meaning, or
-..     orthographical information) and the aligned sequences in the second and
-..     third line, whith the name of the taxon in the first column and all aligned
-..     segments in the following columns, separated by tabstops. The fourth line
-..     contains a float indicating the similarity score of the sequences.  All
-..     quadruplets are divided by one empty line. As an example, consider the file
-..     ``test.psa``::
-.. 
-..         Harry Potter Testset
-..         Woldemort in German and Russian
-..         German.    w    a    l    -    d    e    m    a    r
-..         Russian    v    -    l    a    d    i    m    i    r
-..         41.0
-..         
-..         Woldemort in English and Russian
-..         English    w    o    l    -    d    e    m    o    r    t
-..         Russian    v    -    l    a    d    i    m    i    r    -
-..         34.0
-..         
-..         Woldemort in English and German
-..         English    w    o    l    d    e    m    o    r    t
-..         German.    w    a    l    d    e    m    a    r    -
-..         56.0
-.. 
-.. ``msq``-format
-..     The ``msq``-format is a specific format for text files containing unaligned
-..     sequences. Files in this format should have the extension ``msq``. The
-..     first line of an ``msq``-file contains information regarding the dataset.
-..     The second line contains information regarding the sequence (meaning,
-..     identifier), and the following lines contain the name of the taxa in the
-..     first column and the sequences in IPA format in the second column,
-..     separated by a tabstop. As an example, consider the file ``test.msq``::
-.. 
-..         Harry Potter Testset
-..         Woldemort (in different languages)
-..         German  waldemar
-..         English woldemort
-..         Russian vladimir
-.. 
-.. 
-.. ``msa``-format
-..     The ``msa``-format is a specific format for text files containing already
-..     aligned sequence pairs. Files in this format should have the extension
-..     ``msa``. 
-..     
-..     The first line of a ``msa``-file contains information regarding the
-..     dataset. The second line contains information regarding the sequence (its
-..     meaning, the protoform corresponding to the cognate set, etc.). The aligned
-..     sequences are given in the following lines, whereas the taxa are given in
-..     the first column and the aligned segments in the following columns.
-..     Additionally, there may be a specific line indicating the presence of swaps
-..     and a specific line indicating highly consistent sites (local peaks) in the
-..     MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
-..     character (``+``) marks the beginning of a swapped region, the dash
-..     character (``-``) its center and another plus character the end. All sites
-..     which are not affected by swaps contain a dot. The line for local peaks
-..     starts with the headword ``LOCAL``. All sites which are highly consistent
-..     are marked with an asterisk (``*``), all other sites are marked with a dot
-..     (``.``). As an example, consider the file ``test.msa``::
-.. 
-..         Harry Potter Testset
-..         Woldemort (in different languages)
-..         English     w    o    l    -    d    e    m    o    r    t
-..         German.     w    a    l    -    d    e    m    a    r    -
-..         Russian     v    -    l    a    d    i    m    i    r    -
-..         SWAPS..     .    +    -    +    .    .    .    .    .    .
-..         LOCAL..     *    *    *    .    *    *    *    *    *    .
-
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-06-26"
+__date__="2013-07-18"
 
 import numpy as np
 import re
 import codecs
 
-from ..data import *
+from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..sequence.sound_classes import *
 from .multiple import Multiple
@@ -136,8 +29,6 @@ try:
     from ..algorithm.cython import misc
 except:
     from ..algorithm.cython import _misc as misc
-from ..check import _timestamp
-
 
 class MSA(Multiple):
     """
@@ -195,14 +86,14 @@ class MSA(Multiple):
 
         # set the defaults
         defaults = {
-                'comment':'#',
-                "diacritics" : None,
-                "vowels":None,
-                "tones":None,
-                "combiners":'\u0361\u035c',
-                "breaks":'.-',
-                "stress":"ˈˌ'",
-                "merge_vowels" : True
+                'comment'      : rcParams['comment'],
+                "diacritics"   : rcParams['diacritics'],
+                "vowels"       : rcParams['vowels'],
+                "tones"        : rcParams['tones'],
+                "combiners"    : rcParams['combiners'],
+                "breaks"       : rcParams['breaks'],
+                "stress"       : rcParams['stress'],
+                "merge_vowels" : rcParams['merge_vowels'],
                 }
         for k in defaults:
             if k not in keywords:
@@ -418,7 +309,8 @@ class MSA(Multiple):
 
     def ipa2cls(
             self,
-            model = None
+            **keywords
+            #model = rcParams['sca']
             ):
         """
         Retrieve sound-class strings from aligned IPA sequences.
@@ -434,17 +326,27 @@ class MSA(Multiple):
         This function is only useful when an ``msa``-file with already
         conducted alignment analyses was loaded.
         """
+        defaults = dict(
+                model = rcParams['sca'],
+                stress = rcParams['stress']
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
 
         self.classes = []
         
-        if not model:
-            self.model = sca
-        else:
-            self.model = model
+        self.model = keywords['model']
+        #if not model:
+        #    self.model = sca
+        #else:
+        #    self.model = model
 
         # redefine the sequences of the Multiple class
-        class_strings = [tokens2class(seq.split('.'),self.model)
-                for seq in self.seqs]
+        class_strings = [tokens2class(
+            seq.split('.'),
+            self.model,
+            stress=keywords['stress']) for seq in self.seqs]
         
         # define the scoring dictionaries according to the methods
         aligned_seqs = [alm for alm in self.alm_matrix]
@@ -582,7 +484,7 @@ class MSA(Multiple):
         try:
             out.write('# Created using LingPy-2.0\n')
             out.write('# Parameters: '+self.params+'\n')
-            out.write('# Created: {0}\n'.forma(_timestamp('now')))
+            out.write('# Created: {0}\n'.format(rcParams['timestamp']))
         except:
             pass
         out.close()
@@ -892,8 +794,12 @@ class Alignments(Wordlist):
         
         # check for reference / cognates
         if 'cognates' in keywords:
-            print("[!] Warning, cognate attribute is replaced by 'ref'.")
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
+        
+        # change ref to rcParams
+        if ref != rcParams['ref']:
+            rcParams['ref'] = ref
 
         # check for cognate-id or alignment-id in header
         try:
@@ -956,28 +862,6 @@ class Alignments(Wordlist):
 
     def align(
             self,
-            method = 'progressive',
-            iteration = False,
-            swap_check = False,
-            output = False,
-            model = None,
-            mode = 'global',
-            modes = [
-                ('global',-2,0.5),
-                ('local',-1,0.5),
-                ],
-            gop = -3,
-            scale = 0.5,
-            factor = 0.3,
-            tree_calc = 'neighbor',
-            gap_weight = 0.5,
-            restricted_chars = 'T_',
-            classes = True,
-            sonar = True,
-            scorer = {},
-            verbose = True,
-            plot = False,
-            ref = 'cogid',
             **keywords
             ):
         """
@@ -1058,51 +942,53 @@ class Alignments(Wordlist):
         plot : bool (default=False)
             Determine whether MSA should be plotted in HTML.
         """
-        for key,value in sorted(self.msa[ref].items(),key=lambda x:x[0]):
-            if verbose: print("[i] Analyzing cognate set number {0}.".format(key))
+        kw = dict(
+                method = 'progressive',
+                iteration = False,
+                swap_check = False,
+                output = False,
+                model = rcParams['sca'],
+                mode = rcParams['align_mode'],
+                modes = rcParams['align_modes'],
+                gop = rcParams['align_gop'],
+                scale = rcParams['align_scale'],
+                factor = rcParams['align_factor'],
+                tree_calc = rcParams['align_tree_calc'],
+                gap_weight = rcParams['gap_weight'],
+                restricted_chars = rcParams['restricted_chars'],
+                classes = rcParams['classes'],
+                sonar = rcParams['sonar'],
+                scorer = rcParams['scorer'],
+                plot = False,
+                ref = rcParams['ref']
+                )
+        kw.update(keywords)
+
+        for key,value in sorted(
+                self.msa[kw['ref']].items(),
+                key=lambda x:x[0]
+                ):
+            if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
 
             m = SCA(
                     value,
-                    **keywords
+                    **kw
                     )
-            if method == 'progressive':
-                m.prog_align(
-                        model,
-                        mode,
-                        gop,
-                        scale,
-                        factor,
-                        tree_calc,
-                        gap_weight,
-                        restricted_chars,
-                        classes,
-                        sonar,
-                        scorer
-                        )
-            elif method == 'library':
-                m.lib_align(
-                        model,
-                        mode,
-                        modes,
-                        scale,
-                        factor,
-                        tree_calc,
-                        gap_weight,
-                        restricted_chars,
-                        classes,
-                        sonar,
-                        scorer
-                        )
+            if kw['method'] == 'progressive':
+                m.prog_align(**kw)
+                        
+            elif kw['method'] == 'library':
+                m.lib_align(**kw)
 
-            if iteration:
+            if kw['iteration']:
                 m.iterate_clusters(0.5)
                 m.iterate_orphans()
                 m.iterate_similar_gap_sites()
 
-            if swap_check:
+            if kw['swap_check']:
                 m.swap_check()
 
-            if output:
+            if kw['output']:
                 try:
                     m.output(
                             'msa',
@@ -1122,8 +1008,8 @@ class Alignments(Wordlist):
                                 key
                                 )
                             )
-            self._meta['msa'][ref][key]['alignment'] = m.alm_matrix
-            self._meta['msa'][ref][key]['_sonority_consensus'] = m._sonority_consensus
+            self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
+            self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
                     
     def __len__(self):
         return len(self.msa)
@@ -1134,8 +1020,6 @@ class Alignments(Wordlist):
             gaps = False,
             taxa = False,
             classes = False,
-            verbose = False,
-            ref = 'cogid',
             consensus = 'consensus',
             counterpart = 'ipa',
             **keywords
@@ -1164,8 +1048,9 @@ class Alignments(Wordlist):
         """
         # determine defaults
         defaults = dict(
-                model = sca,
-                gap_scale = 1.0
+                model = rcParams['sca'],
+                gap_scale = 1.0,
+                ref = rcParams['ref']
                 )
         for k in defaults:
             if k not in keywords:
@@ -1173,8 +1058,15 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print(LingPyDeprecationWarning('cognates','ref'))
+            print(rcParams['W_deprecation'].format('cognates','ref'))
             ref = keywords['cognates']
+
+        # switch ref
+        if keywords['ref'] != rcParams['ref']:
+            rcParams['ref'] = keywords['ref']
+
+        # reassing ref for convenience
+        ref = keywords['ref']
 
         # check for existing alignments
         test = list(self.msa[ref].keys())[0]
@@ -1187,7 +1079,7 @@ class Alignments(Wordlist):
         cons_dict = {}
         for cog in self.etd[ref]:
             if cog in self.msa[ref]:
-                if verbose: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
                 
                 # temporary solution for sound-class integration
                 if classes == True:
@@ -1240,11 +1132,9 @@ class Alignments(Wordlist):
                 lambda x:cons_dict[x] 
                 )
 
-
     def output(
             self,
             fileformat,
-            ref = 'cogid',
             **keywords
             ):
         """
@@ -1289,19 +1179,27 @@ class Alignments(Wordlist):
             'groups' or 'cluster' is chosen as output format.
         
         """
-        if 'cognates' in keywords:
-            print(LingPyDeprecationWarning('cognates','ref'))
-            ref = keywords['cognates']
+        kw = dict(
+                ref = rcParams['ref'],
+                filename = rcParams['filename']
+                )
+        kw.update(keywords)
+
+        # define two vars for convenience
+        ref = kw['ref']
+        filename = kw['filename']
+
+        if 'cognates' in kw:
+            print(rcParams['W_deprecation'].format('cognates','ref'))
+            ref = kw['cognates']
+
+        if ref != rcParams['ref']:
+            rcParams['ref'] = ref
 
         if fileformat not in ['alm']:
-            return self._output(fileformat,**keywords)
+            return self._output(fileformat,**kw)
         
         if fileformat == 'alm':
-            # check for filename
-            if 'filename' not in keywords:
-                filename = 'dummy'
-            else:
-                filename = keywords['filename']
 
             # define the string to which the stuff is written
             out = self.filename+'\n'
@@ -1371,14 +1269,14 @@ def SCA(
 
     # set the defaults
     defaults = {
-            'comment'      : '#',
-            "diacritics"   : None,
-            "vowels"       : None,
-            "tones"        : None,
-            "combiners"    : '\u0361\u035c',
-            "breaks"       : '.-',
-            "stress"       : "ˈˌ'",
-            "merge_vowels" : True
+            'comment'      : rcParams['comment'], #'#',
+            "diacritics"   : rcParams['diacritics'], #None,
+            "vowels"       : rcParams['vowels'], #None,
+            "tones"        : rcParams['tones'], #None,
+            "combiners"    : rcParams['combiners'], #'\u0361\u035c',
+            "breaks"       : rcParams['breaks'], #'.-',
+            "stress"       : rcParams['stress'], #"ˈˌ'",
+            "merge_vowels" : rcParams['merge_vowels'], #True
             }
     # check for keywords
     for k in defaults:
@@ -1434,7 +1332,7 @@ def get_consensus(
     """
     # set defaults
     defaults = dict(
-            model = sca,
+            model = rcParams['sca'],
             gap_scale = 1.0,
             mode = 'majority',
             gap_score = -10,
@@ -1586,3 +1484,115 @@ def get_consensus(
         return cons
     else:
         return cons.replace('-','')
+
+
+
+
+#.. File Formats
+#.. ------------
+#.. 
+#.. Pairwise as well as multiple sequence comparison is basically carried out by
+#.. reading data from text files and writing the results of the analyses back to
+#.. text files. For pairwise and multiple sequence analyses, specific file formats 
+#.. are required. See the documentation for the respective classes for details.
+#.. 
+#.. ``psq``-format
+#..     The ``psq``-format is a specific format for text files containing unaligned
+#..     sequence pairs. Files in this format should have the extension ``psq``. 
+#..     
+#..     The first line of a ``psq``-file contains information regarding the dataset.
+#..     The sequence pairs are given in triplets, with a sequence identifier in the
+#..     first line of a triplet (containing the meaning, or orthographical
+#..     information) and the two sequences in the second and third line, whereas
+#..     the first column of each sequence line contains the name of the taxon and
+#..     the second column the sequence in IPA format. All triplets are divided by
+#..     one empty line. As an example, consider the file ``test.psq``::
+#.. 
+#..         Harry Potter Testset
+#..         Woldemort in German and Russian
+#..         German  waldemar
+#..         Russian vladimir
+#.. 
+#..         Woldemort in English and Russian
+#..         English woldemort
+#..         Russian vladimir
+#.. 
+#..         Woldemort in English and German
+#..         English woldemort
+#..         German  waldemar
+#.. 
+#.. ``psa``-format
+#..     The ``psa``-format is a specific format for text files containing unaligned
+#..     sequence pairs. Files in this format should have the extension ``psq``. 
+#..     
+#..     The first line of a ``psa``-file contains information regarding the
+#..     dataset.  The sequence pairs are given in quadruplets, with a sequence
+#..     identifier in the first line of a quadruplet (containing the meaning, or
+#..     orthographical information) and the aligned sequences in the second and
+#..     third line, whith the name of the taxon in the first column and all aligned
+#..     segments in the following columns, separated by tabstops. The fourth line
+#..     contains a float indicating the similarity score of the sequences.  All
+#..     quadruplets are divided by one empty line. As an example, consider the file
+#..     ``test.psa``::
+#.. 
+#..         Harry Potter Testset
+#..         Woldemort in German and Russian
+#..         German.    w    a    l    -    d    e    m    a    r
+#..         Russian    v    -    l    a    d    i    m    i    r
+#..         41.0
+#..         
+#..         Woldemort in English and Russian
+#..         English    w    o    l    -    d    e    m    o    r    t
+#..         Russian    v    -    l    a    d    i    m    i    r    -
+#..         34.0
+#..         
+#..         Woldemort in English and German
+#..         English    w    o    l    d    e    m    o    r    t
+#..         German.    w    a    l    d    e    m    a    r    -
+#..         56.0
+#.. 
+#.. ``msq``-format
+#..     The ``msq``-format is a specific format for text files containing unaligned
+#..     sequences. Files in this format should have the extension ``msq``. The
+#..     first line of an ``msq``-file contains information regarding the dataset.
+#..     The second line contains information regarding the sequence (meaning,
+#..     identifier), and the following lines contain the name of the taxa in the
+#..     first column and the sequences in IPA format in the second column,
+#..     separated by a tabstop. As an example, consider the file ``test.msq``::
+#.. 
+#..         Harry Potter Testset
+#..         Woldemort (in different languages)
+#..         German  waldemar
+#..         English woldemort
+#..         Russian vladimir
+#.. 
+#.. 
+#.. ``msa``-format
+#..     The ``msa``-format is a specific format for text files containing already
+#..     aligned sequence pairs. Files in this format should have the extension
+#..     ``msa``. 
+#..     
+#..     The first line of a ``msa``-file contains information regarding the
+#..     dataset. The second line contains information regarding the sequence (its
+#..     meaning, the protoform corresponding to the cognate set, etc.). The aligned
+#..     sequences are given in the following lines, whereas the taxa are given in
+#..     the first column and the aligned segments in the following columns.
+#..     Additionally, there may be a specific line indicating the presence of swaps
+#..     and a specific line indicating highly consistent sites (local peaks) in the
+#..     MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
+#..     character (``+``) marks the beginning of a swapped region, the dash
+#..     character (``-``) its center and another plus character the end. All sites
+#..     which are not affected by swaps contain a dot. The line for local peaks
+#..     starts with the headword ``LOCAL``. All sites which are highly consistent
+#..     are marked with an asterisk (``*``), all other sites are marked with a dot
+#..     (``.``). As an example, consider the file ``test.msa``::
+#.. 
+#..         Harry Potter Testset
+#..         Woldemort (in different languages)
+#..         English     w    o    l    -    d    e    m    o    r    t
+#..         German.     w    a    l    -    d    e    m    a    r    -
+#..         Russian     v    -    l    a    d    i    m    i    r    -
+#..         SWAPS..     .    +    -    +    .    .    .    .    .    .
+#..         LOCAL..     *    *    *    .    *    *    *    *    *    .
+
+
