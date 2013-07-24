@@ -18,7 +18,6 @@ __date__="2013-07-18"
 
 import numpy as np
 import re
-import os
 import codecs
 import os
 

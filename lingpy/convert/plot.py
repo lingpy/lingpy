@@ -124,13 +124,7 @@ def alm2html(
         filename = 'lingpy-{0}'.format(_timestamp())
     
     # read in the templates
-    path = os.path.split(
-        os.path.dirname(
-            os.path.abspath(
-                __file__
-                )
-            )
-        )[0]
+    path = os.path.dirname(os.path.realpath(__file__))
     html_path = os.path.join(path, 'templates', 'alm2html.html')
     table_path = os.path.join(path, 'templates', 'alm2html.table.html')
     html = codecs.open(html_path,'r','utf-8').read()
