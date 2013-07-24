@@ -1,0 +1,7 @@
+# Basic namespaces
+head	str	head
+head_doculect	str	head_doculect
+head_iso	str	head_iso,head_isocode
+translation	str	translation
+translation_doculect	str	translation_doculect
+translation_iso	str	translation_iso,translation_isocode

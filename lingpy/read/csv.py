@@ -155,4 +155,3 @@ def read_csv(
     """
     return csv2dict(filename,fileformat,dtype,comment,sep)
 
-
