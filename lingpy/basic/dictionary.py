@@ -22,14 +22,15 @@ import re
 from operator import itemgetter
 import abc
 
+# basic lingpy imports
+from ..read.qlc import read_qlc
+from ..settings import rcParams
+
 try:
     from nltk.stem.snowball import SpanishStemmer
 except ImportError:
     print(rcParams['W_missing_module'].format("nltk"))
 
-# basic lingpy imports
-from ..read.qlc import read_qlc
-from ..settings import rcParams
 
 # import ortho-parser
 from ..sequence.orthography import OrthographyParser
