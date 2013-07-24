@@ -22,6 +22,7 @@ Dataset Handling
 .. toctree::
    :maxdepth: 1
    
+   basic/dictionary
    basic/spreadsheet
    basic/wordlist
 
