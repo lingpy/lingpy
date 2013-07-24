@@ -20,6 +20,7 @@ import numpy as np
 import re
 import os
 import codecs
+import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
@@ -767,7 +768,7 @@ class Alignments(Wordlist):
         basis for the tabular representation of the word list.
     conf : string (default='')
         A string defining the path to the configuration file.
-    cognates : string (default='cogid')
+    ref : string (default='cogid')
         The name of the column that stores the cognate IDs.
     loans : bool (default=True)
         Specify whether loans should be included in the cognate sets.

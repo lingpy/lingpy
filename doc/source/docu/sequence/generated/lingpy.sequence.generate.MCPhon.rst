@@ -6,7 +6,6 @@ lingpy.sequence.generate.MCPhon
 .. autoclass:: MCPhon
 
    
-   .. automethod:: __init__
 
    
    

@@ -95,7 +95,6 @@ class PhyBo(Wordlist):
             tree = None,
             paps = 'pap',
             ref = 'cogid',
-            verbose = False,
             tree_calc = 'neighbor',
             **keywords
             ):
@@ -217,7 +216,6 @@ class PhyBo(Wordlist):
                         'tree',
                         ref=ref,
                         tree_calc=tree_calc,
-                        verbose=verbose
                         )
                 if rcParams["verbose"]: print("[i] Tree-file was not found, creating it now...")
             # XXX TODO
@@ -257,7 +255,6 @@ class PhyBo(Wordlist):
             self,
             pap,
             mode = 1,
-            verbose = False
             ):
         """
         Infer gain-loss scenario using the method by Dagan & Martin (2007).
@@ -504,7 +501,6 @@ class PhyBo(Wordlist):
             pap,
             mode = 'w',
             r = (1,1),
-            verbose = False,
             gpl = 1,
             push_gains = True
             ):
@@ -777,7 +773,6 @@ class PhyBo(Wordlist):
             restriction = 3,
             output_gml = False,
             output_plot = False,
-            verbose = False,
             tar = False,
             **keywords
             ):
@@ -1124,7 +1119,6 @@ class PhyBo(Wordlist):
 
     def get_CVSD(
             self,
-            verbose = False
             ):
         """
         Calculate the Contemporary Vocabulary Size Distribution (CVSD).
@@ -1156,7 +1150,6 @@ class PhyBo(Wordlist):
     def get_AVSD(
             self,
             glm,
-            verbose = False,
             **keywords
             ):
         """
@@ -1377,7 +1370,6 @@ class PhyBo(Wordlist):
 
     def get_IVSD(
             self,
-            verbose = False,
             output_gml = False,
             output_plot = False,
             tar = True,
@@ -1794,7 +1786,6 @@ class PhyBo(Wordlist):
             self,
             glm,
             threshold = 1,
-            verbose = False,
             method = 'mr'
             ):
         """
@@ -2279,7 +2270,6 @@ class PhyBo(Wordlist):
     def get_PDC(
             self,
             glm,
-            verbose = False,
             **keywords
             ):
         """
@@ -2445,10 +2435,15 @@ class PhyBo(Wordlist):
                 pap = self[key,'pap']
                 
                 # XXX change this later for more flexibility XXX
-                try:
+                
+                if 'ipa' in self.header:
                     word = self[key,'ipa']
-                except:
+                else:
                     word = self[key,'counterpart']
+                if not word:
+                    raise NameError(
+                        "[ERROR] Neither 'ipa' nor 'counterpart' is defined."
+                        )
                 
                 if concept not in tmp:
                     tmp[concept] = {}
@@ -2515,7 +2510,6 @@ class PhyBo(Wordlist):
             nodeA,
             nodeB,
             entries = '',
-            verbose = True,
             mln = False
             ):
         """
@@ -2645,7 +2639,6 @@ class PhyBo(Wordlist):
             self,
             runs = "default",
             mixed = False,
-            verbose = False,
             output_gml = False,
             tar = False,
             usetex = False,
@@ -2748,7 +2741,6 @@ class PhyBo(Wordlist):
                 self.get_GLS(
                         mode = mode,
                         ratio = params,
-                        verbose = verbose,
                         output_gml = output_gml,
                         tar = tar,
                         output_plot=output_plot,
@@ -2764,7 +2756,6 @@ class PhyBo(Wordlist):
                 self.get_GLS(
                         mode = mode,
                         restriction = params,
-                        verbose = verbose,
                         output_gml = output_gml,
                         tar = tar,
                         output_plot=output_plot,
@@ -2779,7 +2770,6 @@ class PhyBo(Wordlist):
                 self.get_GLS(
                         mode = mode,
                         restriction = params,
-                        verbose = verbose,
                         output_gml = output_gml,
                         tar = tar,
                         output_plot = output_plot
@@ -2788,14 +2778,14 @@ class PhyBo(Wordlist):
         # calculate the different distributions
         # start by calculating the contemporary distributions
         if rcParams["verbose"]: print("[i] Calculating the Contemporary Vocabulary Distributions...")
-        self.get_CVSD(verbose=verbose)
+        self.get_CVSD()
         
     
         # now calculate the rest of the distributions
         if rcParams["verbose"]: print("[i] Calculating the Ancestral Vocabulary Distributions...")
         modes = list(self.gls.keys())
         for m in modes:
-            self.get_AVSD(m,verbose=verbose,**keywords)
+            self.get_AVSD(m,**keywords)
 
         # compare the distributions using mannwhitneyu
         if rcParams["verbose"]: print("[i] Comparing the distributions...")
@@ -2825,7 +2815,6 @@ class PhyBo(Wordlist):
         if mixed:
             if rcParams["verbose"]: print("[i] Calculating the mixed model...")
             self.get_IVSD(
-                    verbose=verbose,
                     output_plot=output_plot,
                     output_gml=output_gml,
                     tar=tar,
@@ -2975,7 +2964,6 @@ class PhyBo(Wordlist):
 
             self.get_MLN(
                 self.best_model,
-                verbose = verbose,
                 threshold = keywords['threshold'],
                 method = keywords['method']
                 )
@@ -3003,7 +2991,6 @@ class PhyBo(Wordlist):
 
             self.get_PDC(
                     self.best_model,
-                    verbose = verbose
                     )
 
     def plot_MLN(
@@ -3011,9 +2998,8 @@ class PhyBo(Wordlist):
             glm = '',
             fileformat = 'pdf',
             threshold = 1,
-            usetex = True,
+            usetex = False,
             taxon_labels = 'taxon_short_labels',
-            verbose = False,
             alphat = False,
             alpha = 0.75,
             **keywords
@@ -3435,7 +3421,6 @@ class PhyBo(Wordlist):
             usetex = True,
             colormap = None, #mpl.cm.jet,
             taxon_labels = 'taxon_short_labels',
-            verbose = False,
             alphat = False,
             alpha = 0.75,
             **keywords
@@ -3716,7 +3701,6 @@ class PhyBo(Wordlist):
     def get_MSN(
             self,
             glm = '',
-            verbose=False,
             fileformat='pdf',
             external_edges = False,
             deep_nodes = False,
@@ -3969,7 +3953,6 @@ class PhyBo(Wordlist):
     def plot_MSN(
             self,
             glm = '',
-            verbose=False,
             fileformat='pdf',
             threshold = 1,
             usetex = False,
@@ -4365,7 +4348,6 @@ class PhyBo(Wordlist):
                 3:'0.5',
                 4:'0.1'
                 },
-            verbose=False,
             filename='pdf',
             fileformat='pdf',
             threshold = 1,
@@ -4761,7 +4743,6 @@ class PhyBo(Wordlist):
             self,
             glm,
             subset = '',
-            verbose = True,
             filename = ''
             ):
         """
@@ -4803,7 +4784,6 @@ class PhyBo(Wordlist):
             glm,
             concept= '',
             fileformat = 'png',
-            verbose = True,
             **keywords
             ):
         """

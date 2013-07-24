@@ -34,7 +34,7 @@ class Model(object):
     Parameters
     ----------
 
-    model : { 'sca', 'dolgo', 'asjp', 'art', 'color' }
+    model : { 'sca', 'dolgo', 'asjp', 'art', '_color' }
         A string indicating the name of the model which shall be loaded.
         Select between:
         
@@ -45,7 +45,7 @@ class Model(object):
           :evobib:`Brown2008` and :evobib:`Brown2011`),
         * 'art - the sound-class model which is used for the calculation of
           sonority profiles and prosodic strings (see :evobib:`List2012`), and
-        * 'color" - the sound-class model which is used for the coloring of
+        * '_color" - the sound-class model which is used for the coloring of
           sound-tokens when creating html-output.  
     
     Notes
@@ -80,7 +80,8 @@ class Model(object):
     Examples
     --------
     When loading LingPy, the models ``sca``, ``asjp``, ``dolgo``, and ``art``
-    are automatically loaded:
+    are automatically loaded, and they are accessible as global variables via
+    their names:
 
     >>> from lingpy import *
 
@@ -134,12 +135,13 @@ class Model(object):
         self.converter = load(open(os.path.join(new_path,'converter.bin'),'rb'))
 
         # check for scorer
-        # give always preference to scorer bin files
-        if os.path.isfile(os.path.join(new_path,'scorer.bin')):
-            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
-        # second preference is given to matrix files
-        elif os.path.isfile(os.path.join(new_path,'matrix')):
+        
+        # give always preference to scorer matrix files
+        if os.path.isfile(os.path.join(new_path,'matrix')):
             self.scorer = read_scorer(os.path.join(new_path,'matrix'))
+        elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
+            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
+
         # if none of the above fits, leave it
         else: 
             pass

@@ -1,6 +1,6 @@
 lingpy.sequence.orthography.GraphemeParser.combine_modifiers
 ============================================================
 
-.. currentmodule:: lingpy.sequence.orthography
+.. currentmodule:: lingpy.sequence.orthography.GraphemeParser
 
-.. automethod:: GraphemeParser.combine_modifiers
+.. autofunction:: combine_modifiers

@@ -1,21 +1,31 @@
 .. autosummary::
    :toctree: generated/
 
-   lingpy.compare.lexstat.LexStat 
-   lingpy.compare.borrowing.trebor.Trebor
-   lingpy.compare.borrowing.trebor.TreBor
-   lingpy.compare.borrowing.trebor.TreBor.add_entries
-   lingpy.compare.borrowing.trebor.TreBor.get_GLS
-   lingpy.compare.borrowing.trebor.TreBor.get_CVSD
-   lingpy.compare.borrowing.trebor.TreBor.get_AVSD
-   lingpy.compare.borrowing.trebor.TreBor.get_IVSD
-   lingpy.compare.borrowing.trebor.TreBor.get_MLN
-   lingpy.compare.borrowing.trebor.TreBor.get_PDC
-   lingpy.compare.borrowing.trebor.TreBor.analyze
-   lingpy.compare.borrowing.trebor.TreBor.plot_MLN
-   lingpy.compare.borrowing.trebor.TreBor.plot_MSN
-   lingpy.compare.borrowing.trebor.TreBor.plot_concepts
-   lingpy.compare.lexstat.LexStat
+   lingpy.compare.borrowing.trebor.PhyBo.add_entries
+   lingpy.compare.borrowing.trebor.PhyBo.analyze
+   lingpy.compare.borrowing.trebor.PhyBo.get_AVSD
+   lingpy.compare.borrowing.trebor.PhyBo.get_CVSD
+   lingpy.compare.borrowing.trebor.PhyBo.get_GLS
+   lingpy.compare.borrowing.trebor.PhyBo.get_IVSD
+   lingpy.compare.borrowing.trebor.PhyBo.get_MLN
+   lingpy.compare.borrowing.trebor.PhyBo.get_MSN
+   lingpy.compare.borrowing.trebor.PhyBo.get_PDC
+   lingpy.compare.borrowing.trebor.PhyBo.plot_MLN
+   lingpy.compare.borrowing.trebor.PhyBo.plot_MSN
+   lingpy.compare.borrowing.trebor.PhyBo.plot_concepts
+   lingpy.compare.borrowing.trebor.PhyBo.plot_MSN
+   lingpy.compare.borrowing.trebor.PhyBo.plot_concepts
+   lingpy.compare.borrowing.trebor.PhyBo.plot_concept_evolution
+   lingpy.compare.borrowing.trebor.PhyBo.pickle
+   lingpy.compare.borrowing.trebor.PhyBo.output
+   lingpy.compare.borrowing.trebor.PhyBo.get_stats
+   lingpy.compare.borrowing.trebor.PhyBo.get_entries
+   lingpy.compare.borrowing.trebor.PhyBo.add_entries
+   lingpy.compare.borrowing.trebor.PhyBo.export
+   lingpy.compare.borrowing.trebor.PhyBo.calculate
+   lingpy.compare.borrowing.trebor.PhyBo.get_dict
+   lingpy.compare.borrowing.trebor.PhyBo.get_etymdict
+   lingpy.compare.borrowing.trebor.PhyBo.get_edge
    lingpy.compare.lexstat.LexStat.add_entries
    lingpy.compare.lexstat.LexStat.align_pairs
    lingpy.compare.lexstat.LexStat.calculate
@@ -30,3 +40,4 @@
    lingpy.compare.lexstat.LexStat.output
    lingpy.compare.lexstat.LexStat.pickle
    lingpy.compare.lexstat.LexStat.tokenize
+   lingpy.compare.lexstat.LexStat.export

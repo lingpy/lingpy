@@ -26,7 +26,7 @@ library::
 
 Then load the dataset into a :py:class:`~lingpy.basic.wordlist.Wordlist` object by typing::
   
-  >>> wl = Wordlist('DOGON.csv')
+  >>> wl = Wordlist('DOGON.qlc')
 
 This will load the wordlist. You can check for some specific characteristics, such as the number
 of languages (the 'width' of the Wordlist) or the number of concepts (its 'height')::
@@ -49,9 +49,9 @@ As a result, LingPy will iterate over all words in the dataset and convert them 
 in the orthography profile. We can now write the data to an output file so that we can use it in the next
 step of the workflow::
 
-  >>> wl.output('csv',filename='DOGON_tokens')
+  >>> wl.output('qlc',filename='DOGON_tokens')
 
-This function writes the data to the file DOGON_tokens.csv_
+This function writes the data to the file DOGON_tokens.qlc_
 
 .. _Automatic Cognate Detection:
 
@@ -62,7 +62,7 @@ Automatic cognate detection in LingPy is basically carried out with help of the
 :py:class:`~lingpy.compare.lexstat.LexStat` class. All classes that inherit from the :py:class:`~lingpy.basic.wordlist.Wordlist` 
 class take a filename as parameter::
 
-  >>> lex = LexStat('harry_potter.csv')
+  >>> lex = LexStat('DOGON_tokens.qlc')
 
 Once instantiated, a :py:class:`~lingpy.compare.lexstat.LexStat` object offers all methods and
 attributes that are also defined for a :py:class:`~lingpy.basic.wordlist.Wordlist` object::
@@ -89,10 +89,10 @@ Now, we can carry out the cognate detection. This is a cluster method that clust
 
 Having calculated the cognates, we can go on and calculate a tree. Here we use the
 :py:func:`lingpy.basic.wordlist.Wordlist.calculate` function. We've chosen 'neighbor' (see
-:evobib:`Saitou1981`) as the algorithm for the tree-calculation, and we must define 'lexstatid' as
+:evobib:`Saitou1987`) as the algorithm for the tree-calculation, and we must define 'lexstatid' as
 the column where the cognate IDs are stored::
 
-  >>> lex.calculate('tree',cognates='lexstatid',tree_calc='neighbor')
+  >>> lex.calculate('tree',ref='lexstatid',tree_calc='neighbor')
 
 As a result, the :py:class:`~lingpy.compare.lexstat.LexStat` object gets a **tree** attribute. This
 is again is a specific class taken from the PyCogent library (see http://pycogent.org/). It can be
@@ -142,9 +142,9 @@ setting the **subset** keyword to c{True} and pass the data that we want as a li
 In order to have a nice format with all words corresponding to the same concept in the same block,
 we specify the keyword **formatter** as 'concepts'::
 
-  >>> lex.output('csv',subset=True, filename='DOGON_lexstat',subset=True,formatter='concepts',cols=['concepts','taxa','counterpart','tokens','lexstatid'])
+  >>> lex.output('qlc',filename='DOGON_lexstat',subset=True,formatter='concepts',cols=['concepts','taxa','counterpart','tokens','lexstatid'])
 
-This produces the file DOGON_lexstat.csv_ in our folder.
+This produces the file DOGON_lexstat.qlc_ in our folder.
 
 Phonetic Alignment
 ==================
@@ -155,7 +155,7 @@ hint of whether the cognates that an algorithm detected are "good" ones, or not.
 multiple alignment analyses from a cognate set, we can load the data that we just wrote to an output file in
 the previous step into an :py:class:`~lingpy.align.sca.Alignments` object. Note that we should specify where the cognates are. In the case of a LexStat analysis, they are stored in the 'lexstatid' column::
 
-  >>> alm = Alignments('DOGON_lexstat.csv',cognates='lexstatid')
+  >>> alm = Alignments('DOGON_lexstat.qlc',ref='lexstatid')
 
 Carrying out a default alignment analysis is now very simple. We choose the default parameters, 
 the 'library'-method for multiple alignments (see :evobib:`List2012a`), and we also set the **output**
@@ -171,7 +171,7 @@ offers a specific colored HTML-output that is very helpful for inspecting the re
 create this output, we first have to write the aligned data to a specific format with the extension
 ``alm``::
 
-  >>> alm.output('alm',cognates='lexstatid',filename='DOGON')
+  >>> alm.output('alm',ref='lexstatid',filename='DOGON')
 
 Now, that we have created the file DOGON.alm_, we have to load the :py:func:`~lingpy.convert.plot.alm2html` from the
 :py:mod:`~lingpy.convert.plot`-module. This module is not automatically loaded when importing
@@ -201,14 +201,14 @@ automatically loaded when importing lingpy. So we first have to import it direct
 
 The method requires not only that the data be clustered into cognate sets, but also a reference tree
 of the languages under investigation. If this tree is not specified in the dataset, a tree will be
-calculated automatically, using either the UPGMA (:evobib:`Sokal1958`) or the Neighbor-joining (:evobib:`Saitou1981`)
+calculated automatically, using either the UPGMA (:evobib:`Sokal1958`) or the Neighbor-joining (:evobib:`Saitou1987`)
 method. In a previous
 step (see :ref:`Automatic Cognate Detection`), we already calculated a tree.
 When writing the results to file, the tree was also automatically stored. When loading the data into
 a :py:class:`~lingpy.compare.borrowing.trebor.Trebor` object, this tree will therefore be taken as
 reference tree::
 
-  >>> tre = TreBor('DOGON_lexstat.csv')
+  >>> tre = TreBor('DOGON_lexstat.qlc')
 
 For the analysis, we have to select a couple of **runs** (general analyses with varying parameters) of
 which the best model will then be selected. Here, we chose the 'weighted' approach which assigns
@@ -221,7 +221,7 @@ an item-basis, searching for the best solution for each individual concept in ou
 This calculation will also take some time. Once it is finished, we can plot the resulting Minimal
 Lateral Network. Note that this will only work if Matplotlib is installed on your system::
 
-  >>> tre.plot_MLN(filename="DOGON.csv",fileformat="SVG")
+  >>> tre.plot_MLN(filename="DOGON",fileformat="SVG")
 
 As a result, the following network plot of the data will appear in the working directory:
 
@@ -230,9 +230,9 @@ As a result, the following network plot of the data will appear in the working d
    :alt: mln-w-3-2.svg
 
 .. _Heath2013.prf: examples/Heath2013.prf
-.. _DOGON.csv: examples/DOGON.csv
-.. _DOGON_tokens.csv: examples/DOGON_tokens.csv
-.. _DOGON_lexstat.csv: examples/DOGON_lexstat.csv
+.. _DOGON.qlc: examples/DOGON.qlc
+.. _DOGON_tokens.qlc: examples/DOGON_tokens.qlc
+.. _DOGON_lexstat.qlc: examples/DOGON_lexstat.qlc
 .. _DOGON.alm: examples/DOGON.alm
 .. _DOGON.html: examples/DOGON.html
 

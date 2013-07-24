@@ -432,6 +432,18 @@ def compile_model(
             D : θ, ð, ŧ, þ, đ
             G : x, ɣ, χ
             ...    
+    
+    :file:`matrix`
+        A scoring matrix indicating the alignment scores of all sound-class
+        characters defined by the model. The scoring is structured as a simple
+        tab-delimited text file. The first cell contains the character names,
+        the following cells contain the scores in redundant form (with both
+        triangles being filled):: 
+
+            B  10.0 -10.0   5.0 ...
+            E -10.0   5.0 -10.0 ...
+            F   5.0 -10.0  10.0 ...
+            ...
 
     :file:`scorer` 
         The ``scorer`` file (which is optional) contains the graph of
@@ -491,7 +503,7 @@ def compile_model(
 
     # try to load the scoring function or the score tree
     scorer = False
-
+    
     if os.path.isfile(os.path.join(new_path,'matrix')):
         scorer = read_scorer(os.path.join(new_path,'matrix'))
     elif os.path.isfile(os.path.join(new_path,'scorer')):
@@ -526,7 +538,7 @@ def compile_model(
     
     if scorer:
         # dump the data
-        outfile = open(os.path.join(path,'scorer.bin'),'wb')
+        outfile = open(os.path.join(new_path,'scorer.bin'),'wb')
         dump(scorer,outfile)
         outfile.close()
         print("... successfully created the scorer.")

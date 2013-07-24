@@ -10,9 +10,12 @@ import regex as re
 import sys 
 import codecs
 import unicodedata
+import collections
+import operator
 from time import gmtime, strftime
 
 # internal imports
+from ..sequence.orthography import *
 from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
@@ -21,6 +24,14 @@ from ..convert.csv import wl2csv
 class Spreadsheet:
     """
     Basic class for reading spreadsheet data.
+
+    Parameters
+    ----------
+
+    Notes
+    -----
+    TODO: how about a "config file" variable where the parameters below can be specified?
+
     """
     def __init__(self, 
                  filename,
@@ -29,6 +40,7 @@ class Spreadsheet:
                  comment = '#',
                  sep = '\t', # column separator
                  language_id = "NAME", # think about this variable name
+                 lang_cols = [], # int specified columns for languages in a spreadsheet (index starts at 0)
                  meanings = "CONCEPT", # explicit name of column containing concepts
                  blacklist = "", # filename path to blacklist file
                  conf = "", # spreadsheet .rc file
@@ -43,6 +55,7 @@ class Spreadsheet:
         self.comment = comment
         self.sep = sep
         self.language_id = language_id
+        self.lang_cols = lang_cols
         self.meanings = meanings
         self.blacklist = blacklist
         self.conf = conf
@@ -59,6 +72,11 @@ class Spreadsheet:
     def _blacklist(self):
         """
         Remove anything in the spreadsheet that's specified in the blacklist file.
+
+        Notes
+        -----
+
+        TODO: make parameter **kwargs
         """
         if not os.path.isfile(self.blacklist):
             if rcParams['verbose']:
@@ -93,6 +111,103 @@ class Spreadsheet:
                         if self.verbose:
                             print("[i] Replacing <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] with <"+match+">.")
                         self.matrix[i][j] = match.strip()
+
+    def analyze(self, *args):
+        """ 
+        The purpose of this method is to give a first pass unigram (at character and
+        grapheme levels) across languages.
+
+        Notes
+        -----
+        *args: 
+
+        "words" = return a 2D matrix of words by counts in languages
+        "chars" = return a 2D matrix of chars (y) and counts in languages (x)
+        "graphemes" = return a 2D matrix of graphemes (y) by counts in languages (x)
+
+        """
+        g = GraphemeParser()
+
+        char_types = collections.defaultdict(int)
+        grapheme_types = collections.defaultdict(int)
+        word_types = collections.defaultdict(int)
+
+        chars_by_languages = collections.defaultdict(lambda : collections.defaultdict(int))
+        graphemes_by_languages = collections.defaultdict(lambda : collections.defaultdict(int))
+        words_by_languages = collections.defaultdict(lambda : collections.defaultdict(int))
+
+        # deal with header and get language names
+        header = self.matrix[0]
+        # TODO put into English all counts across languages?
+        # total_cells = len(self.matrix)*len(header)
+
+        for i in range(1, len(self.matrix)):
+            # skip empty rows
+            if len(self.matrix[i]) == 0:
+                continue
+            # make sure rows aren't longer than the header row
+            if len(self.matrix[i]) > len(header):
+                print("[i] You have a row (\#"+str(i)+") that is longer than your header. Exiting.")
+
+            for j in range(0, len(self.matrix[i])):
+                cell = self.matrix[i][j].strip()
+                if cell == "":
+                    # TODO: integrate global verbosity
+                    # if self.verbose:
+                        # print("[i] Missing cell")
+                    continue
+                # unicode characters
+                for char in cell:
+                    char_types[char] += 1
+                    chars_by_languages[header[j]][char] += 1
+                # unicode graphemes
+                graphemes = g.parse_graphemes(cell)
+                for grapheme in graphemes:
+                    grapheme_types[grapheme] += 1
+                    graphemes_by_languages[header[j]][grapheme] += 1
+                # word counts
+                word_types[cell] += 1
+                words_by_languages[header[j]][cell] += 1
+
+        words = sorted(word_types.items(), key=operator.itemgetter(1), reverse=True) 
+        chars = sorted(char_types.items(), key=operator.itemgetter(1), reverse=True) 
+        graphemes = sorted(grapheme_types.items(), key=operator.itemgetter(1), reverse=True) 
+
+        char_matrix = []
+        char_matrix.append(header)
+        for char in chars: # this shit is sorted, but is also a tuple
+            for item in header:
+                print(chars_by_languages[char])
+        sys.exit(1)
+
+        for arg in args:
+            if arg == "words":
+                word_matrix = []
+                word_matrix.append(header)
+                for item in words:
+                    print(item)
+            elif arg == "chars":
+                pass
+            elif arg == "graphemes":
+                pass
+            else:
+                return
+                    
+    def _orthographic_transform(self, **kwargs):
+        """ 
+        Take a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
+        This function lets a user specify different orthographic profiles per column in a spreadsheet that's 
+        already been semantically aligned.
+        """
+        for k, v in kwargs.items():
+            # check for the orthography profile
+            # get an orthography parser
+            # identify the column and orthographically parse it in the matrix
+            # apply tokenization?
+            print(k, v)
+
+        # return orthographicaly parsed (and tokenized?) matrix
+    
 
     def _init_matrix(self):
         """
@@ -255,16 +370,16 @@ class Spreadsheet:
                     total_entries += 1
                     entries[i] = entries[i] + 1
         print()
-        print("Simple matrix stats...")
+        print("### Simple matrix stats ###")
         print()
-        print("total rows in matrix:", len(self.matrix))
-        print("total cols in matrix:", len(header))
-        print("total possible cells:", total_cells)
-        print("total filled cells  :", str(total_entries), "("+str((total_entries*1.0)/total_cells*100)[:4]+"%)")
+        print("# total cols in matrix:", len(header))
+        print("# total rows in matrix:", len(self.matrix))
+        print("# total possible cells:", total_cells)
+        print("# total filled cells  :", str(total_entries), "("+str((total_entries*1.0)/total_cells*100)[:4]+"%)")
         print()
-        print("total cells per column:")
+        print("# total cells per column:\n")
         for i in range(0, len(header)):
-            print(header[i]+"\t"+str(entries[i]-1)) # do not include the header in count
+            print(str(entries[i]-1)+"\t"+str((entries[i]-1)/len(self.matrix)*100)+"\t"+header[i]) # do not include the header in count
         print()
     
     def pprint(self, delim="\t"):

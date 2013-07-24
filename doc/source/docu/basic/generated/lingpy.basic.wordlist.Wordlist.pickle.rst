@@ -1,6 +1,6 @@
 lingpy.basic.wordlist.Wordlist.pickle
 =====================================
 
-.. currentmodule:: lingpy.basic.wordlist.Wordlist
+.. currentmodule:: lingpy.basic.wordlist
 
-.. autofunction:: pickle
+.. automethod:: Wordlist.pickle

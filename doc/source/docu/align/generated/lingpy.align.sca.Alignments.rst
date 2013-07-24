@@ -5,26 +5,17 @@ lingpy.align.sca.Alignments
 
 .. autoclass:: Alignments
 
-.. HACK::   
-   .. automethod:: __init__
-
    
-   .. rubric:: Methods
+   
+   .. rubric:: Method
 
    .. autosummary::
-   
+      
       ~Alignments.__init__
-      ~Alignments.add_entries
       ~Alignments.align
-      ~Alignments.calculate
-      ~Alignments.get_dict
-      ~Alignments.get_entries
-      ~Alignments.get_etymdict
-      ~Alignments.get_list
-      ~Alignments.get_paps
+      ~Alignments.export
+      ~Alignments.get_consensus
       ~Alignments.output
-      ~Alignments.pickle
-      ~Alignments.tokenize
    
    
 
