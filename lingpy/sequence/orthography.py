@@ -7,9 +7,17 @@ __date__ = "2010-12-01"
 
 import sys
 import unicodedata
-import regex as re
 import os
 import codecs
+
+from ..settings import rcParams
+
+# import regex with a module warning
+try:
+    import regex as re
+except ImportError:
+    import re
+    print(rcParams['W_missing_module'].format('regex'))
 
 # class DuplicateExceptation(Exception): pass
 
