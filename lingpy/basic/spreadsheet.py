@@ -46,6 +46,7 @@ class Spreadsheet:
                  conf = "", # spreadsheet .rc file
                  cellsep = ';', # cell separator, separates forms in the same cell
                  verbose = False,
+                 skip_empty_concepts = True,
                  **keywords
                  ):
 
@@ -60,6 +61,7 @@ class Spreadsheet:
         self.blacklist = blacklist
         self.conf = conf
         self.cellsep = cellsep
+        self.skip_empty_concepts = skip_empty_concepts
         self.verbose = verbose
 
         # set up matrix
@@ -112,18 +114,28 @@ class Spreadsheet:
                             print("[i] Replacing <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] with <"+match+">.")
                         self.matrix[i][j] = match.strip()
 
+    def pprint(self, matrix, delimit="\t"):
+        """
+        Convenice method to pretty print a 2D array.
+        """
+        for row in matrix:
+            print("\t".join(str(x) for x in row))
+
+
     def analyze(self, *args):
         """ 
-        The purpose of this method is to give a first pass unigram (at character and
-        grapheme levels) across languages.
+        This method analyses the character types, grapheme types and word types, 
+        given a spreadsheet matrix.
+
+        It returns a 2D matrix type of the type requested below.
 
         Notes
         -----
         *args: 
 
-        "words" = return a 2D matrix of words by counts in languages
-        "chars" = return a 2D matrix of chars (y) and counts in languages (x)
+        "characters" = return a 2D matrix of chars (y) and counts in languages (x)
         "graphemes" = return a 2D matrix of graphemes (y) by counts in languages (x)
+        "words" = return a 2D matrix of words by counts in languages
 
         """
         g = GraphemeParser()
@@ -138,6 +150,7 @@ class Spreadsheet:
 
         # deal with header and get language names
         header = self.matrix[0]
+
         # TODO put into English all counts across languages?
         # total_cells = len(self.matrix)*len(header)
 
@@ -148,7 +161,9 @@ class Spreadsheet:
             # make sure rows aren't longer than the header row
             if len(self.matrix[i]) > len(header):
                 print("[i] You have a row (\#"+str(i)+") that is longer than your header. Exiting.")
+                sys.exit(1)
 
+            # process each cell for chars, graphemes, words and store the results
             for j in range(0, len(self.matrix[i])):
                 cell = self.matrix[i][j].strip()
                 if cell == "":
@@ -160,40 +175,59 @@ class Spreadsheet:
                 for char in cell:
                     char_types[char] += 1
                     chars_by_languages[header[j]][char] += 1
-                # unicode graphemes
-                graphemes = g.parse_graphemes(cell)
+                # unicode graphemes in qlc format
+                grapheme_string = g.parse_graphemes(cell)
+                graphemes = grapheme_string.split()
                 for grapheme in graphemes:
-                    grapheme_types[grapheme] += 1
-                    graphemes_by_languages[header[j]][grapheme] += 1
+                    if not grapheme == "#":
+                        grapheme_types[grapheme] += 1
+                        graphemes_by_languages[header[j]][grapheme] += 1
                 # word counts
                 word_types[cell] += 1
                 words_by_languages[header[j]][cell] += 1
 
-        words = sorted(word_types.items(), key=operator.itemgetter(1), reverse=True) 
-        chars = sorted(char_types.items(), key=operator.itemgetter(1), reverse=True) 
-        graphemes = sorted(grapheme_types.items(), key=operator.itemgetter(1), reverse=True) 
+        # sort the data types
+        chars = sorted(char_types.items(), key=operator.itemgetter(0), reverse=False) 
+        graphemes = sorted(grapheme_types.items(), key=operator.itemgetter(0), reverse=False) 
+        words = sorted(word_types.items(), key=operator.itemgetter(0), reverse=False) 
 
-        char_matrix = []
-        char_matrix.append(header)
-        for char in chars: # this shit is sorted, but is also a tuple
-            for item in header:
-                print(chars_by_languages[char])
-        sys.exit(1)
-
+        # deal with the user's request; if none, return tuple of 2D matrices
+        results = []
         for arg in args:
+            if arg == "characters":
+                results.append(self._get_analysis("characters", header, chars, chars_by_languages))
+            if arg == "graphemes":
+                results.append(self._get_analysis("graphemes", header, graphemes, graphemes_by_languages))
             if arg == "words":
-                word_matrix = []
-                word_matrix.append(header)
-                for item in words:
-                    print(item)
-            elif arg == "chars":
-                pass
-            elif arg == "graphemes":
-                pass
-            else:
-                return
-                    
-    def _orthographic_transform(self, **kwargs):
+                results.append(self._get_analysis("words", header, words, words_by_languages))
+        return results
+
+    def _get_analysis(self, type, header, sorted_types, types_by_languages):
+        """
+        Private function to calculate and create a 2D matrix of the given types, e.g. a 
+        languages by character types with x,y coordinates indicating character counts 
+        per language.
+
+        """
+        # create and populate the matrices
+        type_matrix = []
+        type_header = [type]
+        for item in header:
+            if not item == self.meanings:
+                type_header.append(item)
+        type_matrix.append(type_header)
+
+        # types are sort but the k,v are not in tuples
+        for pair in sorted_types:
+            result = []
+            result.append(pair[0])
+            for i in range(1, len(type_header)):
+                result.append(types_by_languages[type_header[i]][pair[0]])
+            type_matrix.append(result)
+        return type_matrix
+
+
+    def orthographic_transform(self, **kwargs):
         """ 
         Take a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
         This function lets a user specify different orthographic profiles per column in a spreadsheet that's 
@@ -225,20 +259,39 @@ class Spreadsheet:
 
         # columns that have language data
         language_indices = []
+        concept_id = 0
 
         # first row must be the header in the input; TODO: add more functionality
         header = spreadsheet[0] 
 
         if rcParams['verbose']: print(header[0:10])
         
-        for i,cell in enumerate(header):
-            head = cell.strip()
-            if rcParams['verbose']: print(head)
-            if head == self.meanings:
-                self.concepts = i
-            if self.language_id in head:
+        for i, cell in enumerate(header):
+            cell = cell.strip()
+            if rcParams['verbose']: print(cell)
+            if cell == self.meanings:
+                concept_id = i
+            if self.language_id in cell:
                 language_indices.append(i)
 
+        matrix_header = []
+        matrix_header.append(header[concept_id])        
+        for i in language_indices:
+            matrix_header.append(header[i].replace(self.language_id, "").strip())
+        self.matrix.append(matrix_header)
+
+        # append the concepts and words in languages and append the rows (skip header row)
+        for i in range(1, len(spreadsheet)):
+            matrix_row = []
+            # if the concept cell is empty skip if flagged
+            if spreadsheet[i][concept_id] == "" and self.skip_empty_concepts:
+                continue
+            for j in range(0, len(spreadsheet[i])):
+                if j == concept_id or j in language_indices:
+                    matrix_row.append(spreadsheet[i][j])
+            self.matrix.append(matrix_row)
+
+        """
         matrix_header = []
         matrix_header.append(header[self.concepts])        
         for i in language_indices:
@@ -255,8 +308,10 @@ class Spreadsheet:
                 if j in language_indices:
                     temp.append(spreadsheet[i][j])
             for item in temp:
+                print(item)
                 matrix_row.append(item)
             self.matrix.append(matrix_row)
+            """
 
     def _normalize(self):
         """ 
@@ -382,9 +437,9 @@ class Spreadsheet:
             print(str(entries[i]-1)+"\t"+str((entries[i]-1)/len(self.matrix)*100)+"\t"+header[i]) # do not include the header in count
         print()
     
-    def pprint(self, delim="\t"):
+    def pprint_matrix(self, delim="\t"):
         """
-        Pretty print the matrix
+        Pretty print the spreadsheet matrix
         """
         for i in range(0, len(self.matrix)):
             row = ""
