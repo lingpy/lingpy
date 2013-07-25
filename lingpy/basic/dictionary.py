@@ -26,10 +26,10 @@ import abc
 from ..read.qlc import read_qlc
 from ..settings import rcParams
 
-try:
-    from nltk.stem.snowball import SpanishStemmer
-except ImportError:
-    print(rcParams['W_missing_module'].format("nltk"))
+# try:
+#     from nltk.stem.snowball import SpanishStemmer
+# except ImportError:
+#    print(rcParams['W_missing_module'].format("nltk"))
 
 
 # import ortho-parser
