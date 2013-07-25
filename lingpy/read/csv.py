@@ -38,6 +38,12 @@ def csv2list(
         ignored.
     sep : string (default = "\t")
         Specify the separator for the CSV-file.
+    strip_lines : bool (default=True)
+        Specify whether empty "cells" in the input file should be preserved. If
+        set to c{False}, each line will be stripped first, and all whitespace
+        will be cleaned. Otherwise, each line will be separated using the
+        specified separator, and no stripping of whitespace will be carried
+        out.
 
     Returns
     -------
@@ -52,7 +58,7 @@ def csv2list(
         infile = filename
     if not os.path.isfile(infile):
         raise FileNotFoundError(
-                "[i] File {0} could not be found.".format(infile)
+                "[ERROR] File {0} could not be found.".format(infile)
                 )
 
     l = []
