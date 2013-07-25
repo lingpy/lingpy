@@ -12,6 +12,7 @@ __date__="2013-07-10"
 # external
 import xml.dom.minidom as minidom
 import codecs
+from collections import deque
 
 # internal
 from ..settings import rcParams
@@ -155,4 +156,30 @@ def matrix2tree(
         out.close()
         if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
 
-
+def nwk2guidetree(
+                  newick
+                  ):
+    #assumption: a binary tree with integer names starting with 0 at the leaves
+    tree = cg.LoadTree(treestring=newick)
+    nodeIndex = {}
+    nextIdx = len(tree.tips())
+    #generate virtual cluster IDs for the tree nodes, store them in nodeIndex
+    for node in tree.postorder():
+        if not node.isTip():
+            nodeIndex[node] = nextIdx
+            nextIdx += 1
+        else:
+            nodeIndex[node] = int(node.Name)
+    #construct tree matrix from behind by means of layered traversal
+    tree_matrix = []
+    queue = deque([tree])
+    while len(queue) > 0:
+        curNode = queue.popleft()
+        leftChild = curNode.Children[0]
+        rightChild = curNode.Children[1]
+        tree_matrix.insert(0, [nodeIndex[leftChild],nodeIndex[rightChild],0.5,0.5])
+        if not rightChild.isTip():
+            queue.append(rightChild)
+        if not leftChild.isTip():
+            queue.append(leftChild)
+    return tree_matrix
