@@ -1,3 +1,15 @@
+# author   : Johann-Mattis List
+# email    : mattis.list@uni-marburg.de
+# created  : 2013-07-25 13:10
+# modified : 2013-07-25 13:10
+"""
+Module provides basic functions for the reading of text files in QLC format.
+"""
+
+__author__="Johann-Mattis List"
+__date__="2013-07-25"
+
+
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
@@ -56,7 +68,16 @@ def read_qlc(
             key = line[1:line.index(':')]
             value = line[line.index(':')+1:].strip()
             if key not in ['tree']:
-                meta[key] = value
+                if key not in meta:
+                    meta[key] = value
+                else:
+                    if type(meta[key]) == list:
+                        meta[key] += [value]
+                    else:
+                        print("[WARNING] Key '{0}' in input file is not unique! Use JSON-format for these datatypes!".format(key))
+                        meta[key] = [meta[key]]
+                        meta[key] += [value]
+                        
             else:
                 if key == 'tree':
                     meta["tree"] = cg.LoadTree(treestring=value)
