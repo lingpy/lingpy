@@ -159,6 +159,10 @@ def matrix2tree(
 def nwk2guidetree(
                   newick
                   ):
+    """
+    Build a tree matrix for a guide tree given in Newick format.
+    Input is a binary tree with zero-based integer names at the leaves.
+    """
     #assumption: a binary tree with integer names starting with 0 at the leaves
     tree = cg.LoadTree(treestring=newick)
     nodeIndex = {}

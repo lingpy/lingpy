@@ -898,6 +898,11 @@ class Multiple(object):
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
+            
+        guide_tree : tree_matrix as produced by convert.newick.nwk2guidetree()
+            Use a custom guide tree instead of performing a cluster algorithm
+            for constructing one based on the input similarities. The use of this
+            option makes the tree_calc option irrelevant.
 
         gap_weight : float (default=0)
             The factor by which gaps in aligned columns contribute to the
@@ -963,8 +968,11 @@ class Multiple(object):
                 restricted_chars=kw['restricted_chars']
                 )
 
-        # get the guide-tree 
-        self._make_guide_tree(tree_calc=kw['tree_calc'])
+        # construct or set the guide-tree 
+        if 'guide_tree' in kw.keys():
+            self.tree_matrix = kw['guide_tree']
+        else:
+            self._make_guide_tree(tree_calc=kw['tree_calc'])
 
         # merge the alignments
         self._merge_alignments(
@@ -1046,6 +1054,11 @@ class Multiple(object):
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
+            
+        guide_tree : tree_matrix as produced by convert.newick.nwk2guidetree()
+            Use a custom guide tree instead of performing a cluster algorithm
+            for constructing one based on the input similarities. The use of this
+            option makes the tree_calc option irrelevant.
 
         gap_weight : float (default=0)
             The factor by which gaps in aligned columns contribute to the
@@ -1133,9 +1146,12 @@ class Multiple(object):
                 kw['factor'],
                 kw['restricted_chars']
                 )
-
-        # reconstruct the tree
-        self._make_guide_tree(kw['tree_calc'])
+        
+        # construct or set the guide-tree 
+        if 'guide_tree' in kw.keys():
+            self.tree_matrix = kw['guide_tree']
+        else:
+            self._make_guide_tree(tree_calc=kw['tree_calc'])
         
         # merge the alignments, not that the scale doesn't really influence any
         # of the results here, since gap scores are set to 0, gapping should be
