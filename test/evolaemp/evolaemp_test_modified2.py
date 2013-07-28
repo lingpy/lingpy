@@ -100,7 +100,7 @@ for cognateID in etym_dict.keys():
     entry_msq_file.close()
     print("Aligning cognate " + str(cognateID) + ":\n")
     multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False)
-    multi.prog_align(sca,gop=-2,scale=0.7)
+    multi.prog_align(model=sca,gop=-2,scale=0.7)
     print(multi)
     #collect the sound replacements in this cognate set
     cognateSize = len(multi.seqs)
@@ -128,3 +128,20 @@ for taxon1 in replacementOccurrenceTable.keys():
       for phon2 in entries.keys():
         print("  " + taxon1 + "->" + taxon2 + ", " + phon1 + "->" + phon2 + ": " + str(entries[phon2]) + "/" + str(entrySum))
         entries[phon2] = entries[phon2] / entrySum
+        
+
+#TEST 3: USER-DEFINED GUIDE TREES FOR MSA
+print("\nTest 3: User-Defined Guide Trees for MSA")
+print("----------------------------------------------------------")
+
+multi1 = MSA("data/asjp/test-alignment.msq",merge_vowels=False)
+print("\nAlignment with clustering-based guide tree:")
+multi1.prog_align(model=sca,gop=-2,scale=0.7)
+print("Inferred guide tree: " + str(multi1.tree_matrix))
+print(multi1)
+print("\nAlignment with custom guide tree:")
+multi2 = MSA("data/asjp/test-alignment.msq",merge_vowels=False)
+tree_mtx = convert.newick.nwk2guidetree("(((0,2),(1,3)),(5,4));")
+multi2.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
+print("User-defined guide tree: " + str(multi2.tree_matrix))
+print(multi2)
