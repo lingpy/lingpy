@@ -13,6 +13,10 @@
    lingpy.basic.wordlist.Wordlist.tokenize
    lingpy.basic.wordlist.Wordlist.export
    lingpy.basic.wordlist.Wordlist.pickle
+   lingpy.basic.dictionary.Dictionary.get_tuples   
+   lingpy.basic.dictionary.Dictionary.add_entries
+   lingpy.basic.dictionary.Dictionary.tokenize
+   lingpy.basic.dictionary.Dictionary.pickle
    lingpy.basic.spreadsheet.Spreadsheet.analyze
    lingpy.basic.spreadsheet.Spreadsheet.print_doculect_character_counts
    lingpy.basic.spreadsheet.Spreadsheet.print_qlc_format
