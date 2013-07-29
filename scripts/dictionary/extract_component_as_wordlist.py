@@ -9,6 +9,7 @@ import codecs
 import glob
 
 import lingpy
+import lingpy.meaning.concepts
 
 def main(argv):
 
@@ -44,9 +45,9 @@ def main(argv):
         if source[5] == component and source[1] == "dictionary": # and source[3] == "True"
             witotoan_sources.append(source[0])
 
-    concepts = lingpy.spanish_swadesh_list()
-    cm = lingpy.ConceptComparerSpanishStem()
-    cg = lingpy.ConceptGraph(concepts, "spa", cm)
+    concepts = lingpy.meaning.concepts.spanish_swadesh_list()
+    cm = lingpy.meaning.concepts.ConceptComparerSpanishStem()
+    cg = lingpy.meaning.concepts.ConceptGraph(concepts, "spa", cm)
 
     for f in glob.glob("*.csv"):
         if ("-" in f and f[:f.index("-")] in witotoan_sources) or \
