@@ -10,7 +10,7 @@ TODO:
 """
 
 __author__="Peter Bouda"
-__date__="2013-07-22"
+__date__="2013-07-29"
 
 import os
 import sys
@@ -32,16 +32,64 @@ except ImportError:
 
 class ConceptGraph():
     """
+    Basic class to represent concepts and lexical items in a network.
+
+    Parameters
+    ----------
+    concepts : list
+        A list of concepts to initialize the network. The type of the concecpts
+        is str, in the standard case, but concepts might be encoded by
+        any type that can be used as a dictionary key. In any case the user
+        has to make sure that the ConceptComparer class uses the same type for
+        semantic comparison.
+    pivot_lang_iso : str
+        The ISO 639-2 code of the pivot language. The code is used when the user
+        adds a new dictionary, to extract the correct entries for comparison
+        from the dictionary.
+    concept_comparer: ConceptComparerBase
+        A sub-class of ConceptComparerBase, that is used to compare lexical
+        items against the concepts.
+
+    Notes
+    -----
+    The ConceptGraph class is used to represent a network of concepts and
+    lexical items. At the moment it is used to connect a number of
+    :py:class:`~lingpy.lingpy.basic.dictionary.Dictionary`
+    via their translation. For example, if two or more dictionaries share one
+    language on the head or translation side (e.g. all have translations in
+    Spanish), the entries can be linked via this pivot language.
+
+    Initially the ConceptGraph consists only of nodes for the concepts (for
+    example the concept of a Swadesh list). Then, lexical items can be linked
+    to those concepts based on semantic comparison. To carry out the semantic
+    comparison you will use a sub-class of
+    :py:class:`~lingpy.meaning.concepts.ConceptComparerBase`. Lingpy currently
+    provides one implementation for semantic comparison based on the comparison
+    of Spanish word stems agains the stems of the Spanish Swadesh List. The
+    class :py:class:`~lingpy.meaning.concepts.ConceptComparerSpanishStem`
+    provides this implentation.
+
+    When all lexical items are linked against the concept the result can be
+    exported as a lingpy :py:class:`~lingpy.lingpy.basic.wordlist.Wordlist`.
+
+    Examples
+    --------
+    See script in `scripts/dictionary/extract_component_as_wordlist.py`, which
+    extracts a wordlist from several qlc dictionaries. This is a nice
+    demonstration of the whole workflow.
+
+    See also
+    --------
+    ConceptComparerBase
+    ConceptComparerSpanishStem
+    lingpy.basic.dictionary.Dictionary
+    lingpy.basic.wordlist.Wordlist
 
     """
 
-    def __init__(self, concepts, pivot_lang_iso, concept_matcher):
-        """
-
-        """
-        #self.concepts = concepts
+    def __init__(self, concepts, pivot_lang_iso, concept_comparer):
         self.pivot_lang_iso = pivot_lang_iso
-        self.concept_matcher = concept_matcher
+        self.concept_comparer = concept_comparer
         self.graph = {}
         self.use_tokens = False
         self.doculects = set()
@@ -50,6 +98,39 @@ class ConceptGraph():
 
     def add_dictionary(self, dictionary):
         """
+        Adds the lexical items of a dictionary to the concept graph.
+
+
+        Parameters
+        ----------
+        dictionary : lingpy.basic.dictionary.Dictionary
+            The dictionary to add to the concept graph.
+
+        Returns
+        -------
+        Nothing.
+
+        Notes
+        -----
+        Add the entries of a
+        :py:class:`~lingpy.lingpy.basic.dictionary.Dictionary` to the concept
+        graph. The methods checks which part of the dictionary matches
+        the pivot language. If none of the languages matches, then no
+        items are added to the concept graph.
+
+        If the dictionary was already tokenized with an orthography profile,
+        then those tokens will be added to the concept graph and linked to the
+        concepts. Otherwise plain strings are used, either the heads or
+        translations, depending on the pivot language.
+
+        To compare the lexical items to the concepts the concept comparer that
+        was used to initialize the class is called (a sub-class of
+        :py:class:`~lingpy.meaning.concepts.ConceptComparerBase`).
+
+        See also
+        --------
+        ConceptComparerBase
+        lingpy.basic.dictionary.Dictionary
 
         """
         columns = [ "qlcid", "head", "translation", "head_doculect",
@@ -75,7 +156,7 @@ class ConceptGraph():
                 tokens = ' '.join(entry[5])
 
             for concept in self.graph:
-                if self.concept_matcher.compare_to_concept(pivot, concept):
+                if self.concept_comparer.compare_to_concept(pivot, concept):
                     self.graph[concept].add((entry[0], trans, tokens, doculect))
 
         for doculect, iso in dictionary.doculect2iso.items():
@@ -83,6 +164,29 @@ class ConceptGraph():
 
     def output_wordlist(self, filename):
         """
+        Export a wordlist from the concept graph.
+
+        Parameters
+        ----------
+        filename : str
+            A path to the filename to write the wordlist. The wordlist is
+            written as an qlc wordlist.
+
+        Returns
+        -------
+        Nothing.
+
+        Notes
+        -----
+        The wordlist can be read in again with the class
+        :py:class:`~lingpy.lingpy.basic.wordlist.Wordlist`. If the dictionaries
+        that were added already contained tokenized string (for example with
+        support of an orthography profile), then the resulting wordlist will
+        also contain a column "tokes" with the tokenized data.
+
+        See also
+        --------
+        lingpy.basic.wordlist.Wordlist
 
         """
         wordlist = codecs.open(filename, "w", "utf-8")
@@ -120,7 +224,31 @@ class ConceptGraph():
 
 
 class ConceptComparerBase():
-    """
+    """ 
+    Base class for semantic comparison. 
+
+    Notes
+    ------
+    Create a sub-class of this if you want
+    to implement your own methods to compare lexical items against concepts.
+
+    The base class forces the implementation of one method
+    `compare_to_concept()`. This method is responsible to compare a given
+    lexical entry (for example as string) against a given concept (that might
+    be a string or any other type).
+
+    Lingpy currently implements one concept comparer that compares a given
+    lexical items against a given concept based on a spanish stemmer as
+    class :py:class:`~lingpy.meaning.concepts.ConceptComparerSpanishStem`.
+
+    The class is used for example by the class 
+    :py:class:`~lingpy.meaning.concepts.ConceptGraph` to link concept and
+    lexical items.
+
+    See also
+    --------
+    ConceptComparerSpanishStem
+    ConceptGraph
     """
 
     __metaclass__ = abc.ABCMeta
@@ -133,7 +261,8 @@ class ConceptComparerBase():
         Parameters
         ----------
         element : str
-            The string to compare to the concept.
+            The string (for example a lexical item: head or translation) to
+            compare to the concept.
         concept : str or object
             The conpect to compare to.
 
@@ -146,12 +275,56 @@ class ConceptComparerBase():
         raise NotImplementedError("Method must be implemented")
 
 class ConceptComparerSpanishStem(ConceptComparerBase):
+    """
+    Implementation of a concept comparer based on a stemmer for spanish.
+
+    Parameters
+    ----------
+    None.
+
+    Notes
+    -----
+    This is a sub-class of
+    :py:class:`~lingpy.meaning.concepts.ConceptComparerBase`. It uses a simple
+    match of the stem of a given (spanish) string against a given context
+    (that is supposed to be a stemmed spanish word stem).
+
+    See also
+    --------
+    ConceptComparerBase
+    ConceptGraph
+    """
 
     def __init__(self):
         self.stemmer = SpanishStemmer(True)
         self.re_brackets = re.compile(" ?\([^)]\)")
 
     def compare_to_concept(self, element, concept):
+        """Compares a given element to a concept.
+
+        Parameters
+        ----------
+        element : str
+            The string (for example a lexical item: head or translation) to
+            compare to the concept.
+        concept : str or object
+            The conpect to compare to.
+
+        Return
+        ------
+        match : bool
+            True if element matches the given concept, False otherwise.
+
+        Notes
+        -----
+        The `element` is supposed to be a spanish word, the concept a stemmed
+        entry of the spanish Swadesh List.
+
+        See also
+        --------
+        spanish_swadesh_list
+
+        """
         element = self.re_brackets.sub("", element)
         element = element.strip()
         if not " " in element:
@@ -161,6 +334,11 @@ class ConceptComparerSpanishStem(ConceptComparerBase):
         return False
 
 def spanish_swadesh_list():
+    """
+    Helper function that returns a list of strings with the stems of the
+    spanish Swadesh entries.
+
+    """
     stemmer = SpanishStemmer(True)
     # load swadesh list
     swadesh_file = os.path.split(
