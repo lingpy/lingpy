@@ -10,6 +10,8 @@ __author__="Johann-Mattis List, Steven Moran"
 __date__="2013-07-17"
 
 import os
+import sys
+import traceback
 import numpy as np
 import pickle
 import codecs
@@ -150,7 +152,11 @@ class Wordlist(object):
                             "[i] Input file does not exist."
                             )
                 else:
-                    raise ValueError('[i] Could not parse the input file.')
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    lines = traceback.format_exception(exc_type, exc_value,
+                        exc_traceback)
+                    raise ValueError(
+                        '[i] Could not parse the input file. {0}'.format(lines))
 
         # load the configuration file
         if not conf:

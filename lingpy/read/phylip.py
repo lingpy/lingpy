@@ -56,12 +56,11 @@ def read_scorer(infile):
     """
     Read a scoring function in a file into a ScoreDict object.
     """
-    if os.path.isfile(infile):
+    if "\t" or "\n" in infile:
+        data = [x.split('\t') for x in infile.split('\n') if x]
+    else:
         # read data
         data = csv2list(infile)
-    else:
-        data = [x.split('\t') for x in infile.split('\n') if x]
-
 
     # get the chars
     chars = [l[0] for l in data]
