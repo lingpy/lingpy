@@ -87,7 +87,7 @@ for langID in langs:
 #cluster words into cognate sets
 lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
 lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.9,verbose=True)
+lexstat.cluster(method='lexstat',threshold=0.90,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
@@ -130,6 +130,72 @@ for taxon1 in replacementOccurrenceTable.keys():
         print("  " + taxon1 + "->" + taxon2 + ", " + phon1 + "->" + phon2 + ": " + str(entries[phon2]) + "/" + str(entrySum))
         entries[phon2] = entries[phon2] / entrySum
         
+#TEST 3: EXTRACTION OF SUB-GUIDETREES WITH POINTERS TO THE ORIGINAL
+print("\nTest 3: Extraction of Sub-Guidetrees with Pointers to the Original")
+print("-------------------------------------------------------------------------")
+def selectNodes(tree, selIndices):
+    selNodes = []
+    for leaf in tree.tips():
+        if int(leaf.Name) in selIndices:
+            selNodes.append(leaf)
+    return selNodes
+
+def treePath(node):
+    path = [node]
+    while not node.isRoot():
+        node = node.Parent
+        path.insert(0,node)
+    return path
+
+def constructSubtree(paths,index,curNode,indexMap):
+    #create a map [node -> all paths containing that node at index position]
+    partition = {}
+    for node in {path[index] for path in paths}:
+        partition[node] = [path for path in paths if path[index] == node]
+    #partition = {(node,[path for path in paths if path[index] == node]) for node in {path[index] for path in paths}}
+    if len(partition) == 1:
+        #no split, we simply go on to the next index in paths
+        constructSubtree(paths,index + 1,node,indexMap)
+    else:
+        #split according to the partition, creating a new node where necessary
+        for node in partition.keys():
+            if (len(partition[node]) == 1):
+                #we have arrived at a leaf (or a unary branch above it), copy the leaf
+                newLeafName = str(indexMap[int(partition[node][0][-1].Name)]) 
+                newLeaf = cg.tree.TreeNode(Name=newLeafName)
+                newLeaf.orig = partition[node][0][-1]
+                curNode.Children.append(newLeaf)
+            else:               
+                newNode = cg.tree.TreeNode()
+                newNode.orig = node
+                curNode.Children.append(newNode)
+                constructSubtree(partition[node],index + 1,newNode,indexMap)         
+
+def subGuideTree(tree,selIndices):
+    selNodes = selectNodes(tree,selIndices)
+    indexMap = dict(zip(selIndices,range(0,len(selIndices))))
+    paths = [treePath(node) for node in selNodes]
+    #print str(paths)
+    subtree = cg.tree.TreeNode()
+    subtree.orig = tree.root()
+    constructSubtree(paths,1,subtree,indexMap)
+    return subtree
+
+def printTreeWithOrigPointers(node, depth):
+    name = node.Name
+    if name == None:
+        name = "no name"
+    print depth * "  " + name + " -> " + str(node.orig)
+    for child in node.Children:
+        printTreeWithOrigPointers(child, depth + 1)
+
+print "Original Tree: " + "(((0,1),(2,(3,4))),(5,6));"
+print "Selected subnodes: [0,2,3,5,6]"
+tree = cg.LoadTree(treestring="(((0,1),(2,(3,4))),(5,6));")
+subtree = subGuideTree(tree,[0,2,3,5,6])
+print "Subtree: " + str(subtree)
+print "With pointers:"
+printTreeWithOrigPointers(subtree,0)
 
 #TEST 3: USER-DEFINED GUIDE TREES FOR MSA
 print("\nTest 3: User-Defined Guide Trees for MSA")
@@ -193,4 +259,17 @@ for i in range (0,len(multi2.alm_matrix[0])):
             maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
             node.reconstructed.append(maxKey)
 for node in tree.postorder():
-    print node.Name + ": " + str(node.reconstructed)
+    print node.Name + ": " + "".join(node.reconstructed)
+print("\nDetermining and counting sound changes at the edges of the guide tree:")
+for node in tree.postorder():
+    node.recon_changes = {}
+    if not node.isRoot():
+        for i in range (0,len(node.reconstructed)):
+            if node.reconstructed[i] != node.Parent.reconstructed[i]:
+                change = (node.Parent.reconstructed[i], node.reconstructed[i])
+                if change not in node.recon_changes.keys():
+                    node.recon_changes[change] = 1
+                else:
+                    node.recon_changes[change] += 1
+for node in tree.postorder():
+    print node.Name + ": " + str(node.recon_changes)
