@@ -183,10 +183,25 @@ def subGuideTree(tree,selIndices):
     constructSubtree(paths,1,subtree,indexMap)
     return subtree
 
-def printTreeWithOrigPointers(node, depth):
+def printTree(node, depth, names=None):
     name = node.Name
     if name == None:
         name = "no name"
+    else:
+        if names != None:
+            name = name + ": " + names[int(name)]
+    name = depth * "  " + name;
+    print name;
+    for child in node.Children:
+        printTree(child, depth + 1, names)
+
+def printTreeWithOrigPointers(node, depth, names=None):
+    name = node.Name
+    if name == None:
+        name = "no name"
+    else:
+        if names != None:
+            name = names[int(name)]
     name = depth * "  " + name;
     orig = node
     while hasattr(orig, "orig"):
@@ -194,7 +209,7 @@ def printTreeWithOrigPointers(node, depth):
         orig = orig.orig
     print name;
     for child in node.Children:
-        printTreeWithOrigPointers(child, depth + 1)
+        printTreeWithOrigPointers(child, depth + 1, names)
 
 print "Original Tree: " + "(((0,1),(2,(3,4))),(5,6));"
 print "\nSelected subnodes: [0,2,3,5,6]"
@@ -209,8 +224,8 @@ print "Subsubtree: " + str(subsubtree)
 print "With pointers:"
 printTreeWithOrigPointers(subsubtree,0)
 
-#TEST 3: USER-DEFINED GUIDE TREES FOR MSA
-print("\nTest 3: User-Defined Guide Trees for MSA")
+#TEST 4: USER-DEFINED GUIDE TREES FOR MSA
+print("\nTest 4: User-Defined Guide Trees for MSA")
 print("----------------------------------------------------------")
 
 multi1 = MSA("data/asjp/test-alignment.msq",merge_vowels=False)
@@ -285,3 +300,62 @@ for node in tree.postorder():
                     node.recon_changes[change] += 1
 for node in tree.postorder():
     print node.Name + ": " + str(node.recon_changes)
+
+#TEST 5: COMBINING SUB-GUIDETREE SELECTION AND RECONSTRUCTION
+print("\nTest 5: Combining Sub-Guidetree Selection and Reconstruction")
+print("--------------------------------------------------------------------")
+
+#load long language names
+f = open('data/asjp/world_longnames.txt','r')
+rl = f.readlines()
+f.close()
+longnames = array([x.strip() for x in rl])
+nameToID = dict({(longnames[i],i) for i in range(0,len(longnames))})
+
+guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
+#convert guideTree node names to integers as expected by Lingpy MSA
+for leaf in guideTree.tips():
+    leaf.Name = str(nameToID[leaf.Name])
+    
+langs = range(1426,1460) #germanic languages
+germanicGuideTree = subGuideTree(guideTree,langs)
+germanicNameTable = [longnames[lang] for lang in langs]
+printTree(germanicGuideTree,0,names=germanicNameTable)
+
+#repeat the cognate detection process to generate cognate sets
+lexdict = {}
+lexdict[0] = ["ID", "concept", "ipa", "doculect"]
+ID = 1
+
+#create a dictionary for cognate detection
+for langID in langs:
+  entries = asjpMatrix[langID,39] #entry for "mountain"
+  for entry in entries.split('-'):
+    lexdict[ID] = [langID, "mountain", entry, asjpMatrix[langID,0]]
+    ID += 1
+
+#cluster words into cognate sets
+lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
+lexstat.get_scorer()
+lexstat.cluster(method='lexstat',threshold=0.90,verbose=True)
+etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
+
+for cognateID in etym_dict.keys():
+    entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
+    entry_msq_file.write("ASJP database\n")
+    entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
+    for IDList in etym_dict[cognateID]:
+      if (IDList != 0):
+        [langID, word, entry, langName] = lexdict[IDList[0]][:4]
+        entry_msq_file.write(langName + "\t" + entry + "\n")
+    entry_msq_file.close()
+    cognateLangs = [int(lexdict[IDList[0]][0]) - 1426 for IDList in etym_dict[cognateID] if IDList != 0]
+    if len(cognateLangs) > 1:  #cognate sets of size 1 are useless
+        cognateGuideTree = subGuideTree(germanicGuideTree,cognateLangs)       
+        print("\nAligning cognate " + str(cognateID) + ":")
+        print "  cognate langs = " + str(cognateLangs)
+        printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
+        multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False)
+        tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
+        multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
+        print(multi)
