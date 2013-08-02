@@ -155,20 +155,22 @@ def constructSubtree(paths,index,curNode,indexMap):
     #partition = {(node,[path for path in paths if path[index] == node]) for node in {path[index] for path in paths}}
     if len(partition) == 1:
         #no split, we simply go on to the next index in paths
-        constructSubtree(paths,index + 1,node,indexMap)
+        constructSubtree(paths,index + 1,curNode,indexMap)
     else:
         #split according to the partition, creating a new node where necessary
         for node in partition.keys():
-            if (len(partition[node]) == 1):
+            if len(partition[node]) == 1:
                 #we have arrived at a leaf (or a unary branch above it), copy the leaf
                 newLeafName = str(indexMap[int(partition[node][0][-1].Name)]) 
                 newLeaf = cg.tree.TreeNode(Name=newLeafName)
                 newLeaf.orig = partition[node][0][-1]
                 curNode.Children.append(newLeaf)
+                newLeaf.Parent = curNode
             else:               
                 newNode = cg.tree.TreeNode()
                 newNode.orig = node
                 curNode.Children.append(newNode)
+                newNode.Parent = curNode
                 constructSubtree(partition[node],index + 1,newNode,indexMap)         
 
 def subGuideTree(tree,selIndices):
@@ -185,17 +187,27 @@ def printTreeWithOrigPointers(node, depth):
     name = node.Name
     if name == None:
         name = "no name"
-    print depth * "  " + name + " -> " + str(node.orig)
+    name = depth * "  " + name;
+    orig = node
+    while hasattr(orig, "orig"):
+        name += " -> " + str(orig.orig)
+        orig = orig.orig
+    print name;
     for child in node.Children:
         printTreeWithOrigPointers(child, depth + 1)
 
 print "Original Tree: " + "(((0,1),(2,(3,4))),(5,6));"
-print "Selected subnodes: [0,2,3,5,6]"
+print "\nSelected subnodes: [0,2,3,5,6]"
 tree = cg.LoadTree(treestring="(((0,1),(2,(3,4))),(5,6));")
 subtree = subGuideTree(tree,[0,2,3,5,6])
 print "Subtree: " + str(subtree)
 print "With pointers:"
 printTreeWithOrigPointers(subtree,0)
+print "\nSubselected nodes: [1,2,3]"
+subsubtree = subGuideTree(subtree,[1,2,3])
+print "Subsubtree: " + str(subsubtree)
+print "With pointers:"
+printTreeWithOrigPointers(subsubtree,0)
 
 #TEST 3: USER-DEFINED GUIDE TREES FOR MSA
 print("\nTest 3: User-Defined Guide Trees for MSA")
