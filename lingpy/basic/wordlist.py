@@ -1719,20 +1719,22 @@ class Wordlist(object):
         Parameters
         ----------
         ortho_profile : str (default='')
-        Path to the orthographic profile used to convert and tokenize the
-        input data into IPA tokens. If not specified, a simple Unicode
-        grapheme parsing is carried out.
+            Path to the orthographic profile used to convert and tokenize the
+            input data into IPA tokens. If not specified, a simple Unicode
+            grapheme parsing is carried out.
         
         source : str (default="counterpart")
-        The source data that shall be used for the tokenization procedures.
+            The source data that shall be used for the tokenization procedures.
         
         target : str (default="tokens")
-        The name of the target column that will be added to the wordlist.
+            The name of the target column that will be added to the wordlist.
+
         Notes
         -----
         This is a shortcut to the extended
         :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
         automatically tokenizes it.
+        
         """
 
         if os.path.exists(ortho_profile):
