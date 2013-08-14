@@ -36,7 +36,7 @@ def main(argv):
         with open("data.zip", "wb") as f:
             f.write(r.content)
 
-        z = zipfile.ZipFile("barwiki.zip")
+        z = zipfile.ZipFile("data.zip")
         z.extractall()
 
     sources = csv.reader(codecs.open("sources.csv", "r", "utf-8"), delimiter="\t")
