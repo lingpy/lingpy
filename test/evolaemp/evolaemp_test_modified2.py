@@ -70,7 +70,7 @@ lexdict = {}
 lexdict[0] = ["ID", "concept", "ipa", "doculect"]
 ID = 1
 
-langs = range(1426,1460) #germanic languages
+langs = range(1426,1459) #germanic languages
 
 replacementOccurrenceTable = dict((asjpMatrix[taxon1,0],{}) for taxon1 in langs)
 for taxon1 in langs:
@@ -87,7 +87,7 @@ for langID in langs:
 #cluster words into cognate sets
 lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
 lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.90,verbose=True)
+lexstat.cluster(method='lexstat',threshold=0.8,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
@@ -317,7 +317,7 @@ guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
 for leaf in guideTree.tips():
     leaf.Name = str(nameToID[leaf.Name])
     
-langs = range(1426,1460) #germanic languages
+langs = range(1426,1459) #germanic languages
 germanicGuideTree = subGuideTree(guideTree,langs)
 germanicNameTable = [longnames[lang] for lang in langs]
 printTree(germanicGuideTree,0,names=germanicNameTable)
@@ -337,7 +337,7 @@ for langID in langs:
 #cluster words into cognate sets
 lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
 lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.90,verbose=True)
+lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
