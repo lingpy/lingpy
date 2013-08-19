@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-05 08:22
-# modified : 2013-03-05 08:22
+# modified : 2013-08-19 17:31
 """
 Module provides functions to read in various formats from the Phylip package.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-05"
+__date__="2013-08-19"
 
 import regex as re
 import os
@@ -56,7 +56,9 @@ def read_scorer(infile):
     """
     Read a scoring function in a file into a ScoreDict object.
     """
-    if "\t" or "\n" in infile:
+    # XXX note that we need a better check here, the previous version also
+    # caused a very hard-to-track bug in our system! XXX
+    if "\t" in infile and "\n" in infile:
         data = [x.split('\t') for x in infile.split('\n') if x]
     else:
         # read data

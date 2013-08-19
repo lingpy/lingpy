@@ -400,13 +400,14 @@ class LexStat(Wordlist):
             return self._cache[idx]
         except:
             pass
-
+        
         try:
             # return full data entry as list
             out = self._data[idx]
             self._cache[idx] = out
             return out
-        except:
+        except KeyError:
+            # check for dtype
             try:
                 out = (
                         self._data[idx[0][0]][self._header[self._alias[idx[1]]]],
@@ -419,7 +420,7 @@ class LexStat(Wordlist):
                     out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
                     self._cache[idx] = out
                     return out
-                except:
+                except KeyError:
                     pass
             
     def _get_corrdist(
@@ -805,7 +806,18 @@ class LexStat(Wordlist):
                     )
                 )
 
-        parstring = '{ratio[0]}:{ratio[1]}_{vscale:.2f}_{runs}_{threshold:.2f}_{modestring}_{factor:.2f}_{restricted_chars}_{method}_{preprocessing}'.format(
+        parstring = '_'.join(
+                [
+                    '{ratio[0]}:{ratio[1]}'
+                    '{vscale:.2f}',
+                    '{runs}',
+                    '{threshold:.2f}',
+                    '{modestring}',
+                    '{factor:.2f}',
+                    '{restricted_chars}',
+                    '{method}',
+                    '{preprocessing}'
+                    ]).format(
                 **params
                 )
 
