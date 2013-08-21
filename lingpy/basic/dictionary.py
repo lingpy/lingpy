@@ -4,9 +4,6 @@
 """
 This module provides a basic class for the handling of dictionaries.
 
-TODO:
-* How to handle concept comparison in ConceptGraph?
-
 """
 
 __author__="Peter Bouda"
