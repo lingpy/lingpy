@@ -126,6 +126,27 @@ __date__="2013-07-10"
 - The commented line of author, email, etc. is not necessarily required, yet it may turn out usefull to keep a tracker on creation and modification of scripts, and text editors, such as VIM, modify such parts automatically.
 - Nevertheless, we should always provide author and date in Python style, just for being able to track down who has done what, and to help people using the library and running into bugs knowing whom to contact.
 
+### Writing tests
+
+For our tests we use the [nose library](https://nose.readthedocs.org/en/latest/). To run the tests just enter the `lingpy` directory and call `nosetests` or `nosetests.exe` on the command line. *Please do not commit any changes without all tests running without failure or error.*
+
+All our tests are in a directory `tests` within the `lingpy` directory (the latter we will call "source directory" from now on). The `tests` directory mirrors the folder structure of the source directory, i.e. for each directory in the source directory there is a directory in the `tests` directory. For each Python source file in the source directory there is a test file with a prefix "test_". For example, the tests for the module `basic.dictionary`, which has its source in `basic/dictionary.py`, are located in `tests/basic/test_dictionary.py`. Within the test files there is a class defined for each class in the original source files, with a prefix `Test`. For example, there is a class `TestDictionary` defined in `test_dictionary.py`, as there is a class `Dictionary` in `dictionar.py`. For each method of the class the test class has a method with the prefix `test_`. For example, the method `tokenize()` of the `Dictionary` class is tested with the method `test_tokenize()` of the test class. You may implement a method `setup()` in the test class to initialize the class you want to test, to load data or do other things that are common for all tests. As an example here is one of the tests of the `Dictionary` class:
+
+```python
+
+class TestDictionary:
+
+    def setup(self):
+        self.dictionary = Dictionary(os.path.join(os.path.dirname( __file__ ),
+            '..', 'test_data', 'leach1969-67-161.csv'))
+
+    def test_tokenize(self):
+        self.dictionary.tokenize()
+        tuples = self.dictionary.get_tuples(['head', 'tokens'])
+        assert tuples[0] == ('aa', ['a', 'a'])
+
+If all the prefixes are used correctly, then nose will automatically find and execute all the tests.
+
 ## Dependencies
 
 Generally, we try to avoid too many dependencies for the creation of LingPy. Without certain modules, however, it 
