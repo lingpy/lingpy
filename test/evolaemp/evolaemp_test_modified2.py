@@ -30,6 +30,8 @@ names = array([x.strip() for x in rl])
 
 asjpMatrix = array([x for x in asjpMatrix if x[0] in names])
 
+internal_asjp = Model("asjp_el")
+
 #TEST 1: LINGPY-BASED LANGUAGE DISTANCE MEASURE
 print("\nTest 1: language distance measure based on pairwise alignment")
 print("----------------------------------------------------------")
@@ -85,9 +87,9 @@ for langID in langs:
     ID += 1
 
 #cluster words into cognate sets
-lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
+lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
 lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.8,verbose=True)
+lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
@@ -335,7 +337,7 @@ for langID in langs:
     ID += 1
 
 #cluster words into cognate sets
-lexstat = LexStat(lexdict,model=asjp,merge_vowels=False)
+lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
 lexstat.get_scorer()
 lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
 etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
@@ -355,7 +357,7 @@ for cognateID in etym_dict.keys():
         print("\nAligning cognate " + str(cognateID) + ":")
         print "  cognate langs = " + str(cognateLangs)
         printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
-        multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False)
+        multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False,unique_seqs=False)
         tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
         multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
         print(multi)
