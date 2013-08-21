@@ -65,6 +65,7 @@ class Multiple(object):
                 "breaks"       : rcParams['breaks'],
                 "stress"       : rcParams["stress"],
                 "merge_vowels" : rcParams["merge_vowels"],
+                "unique_seqs"  : rcParams["unique_sequences"]
                 }
         kw.update(keywords)
 
@@ -91,15 +92,21 @@ class Multiple(object):
                         [str(i+1)+'.'+str(j+1) for j in range(len(tokens))]
                         )
 
-        # create dictionary of all unique sequences, this is important, since
-        # identical sequences should only be counted once in an alignment,
-        # since they otherwise may disturb the analysis or slow it down
+
         self.uniseqs = {}
-        for i,seq in enumerate(self.seqs):
-            try:
-                self.uniseqs[seq] += [i]
-            except:
-                self.uniseqs[seq] = [i]
+        self.unique_seqs = kw["unique_seqs"]
+        if self.unique_seqs:
+            # create dictionary of all unique sequences, this is important, since
+            # identical sequences should only be counted once in an alignment,
+            # since they otherwise may disturb the analysis or slow it down
+            for i,seq in enumerate(self.seqs):
+                try:
+                    self.uniseqs[seq] += [i]
+                except:
+                    self.uniseqs[seq] = [i]
+        else:  
+            #no uniqueness filtering      
+            self.uniseqs = range(0,len(self.seqs))
 
         self._length = len(self.uniseqs)
         
@@ -273,10 +280,13 @@ class Multiple(object):
                 indices[tuple(seq)] += [i]
             except:
                 indices[tuple(seq)] = [i]
-
+                
         # create additional matrices for the internal representation of the
         # class sequences
-        keys = [val[0] for val in indices.values()]
+        if self.unique_seqs:
+            keys = [val[0] for val in indices.values()]
+        else:
+            keys = range(len(self.classes))  
         self.height = len(keys)
 
         # add the classes
@@ -307,10 +317,15 @@ class Multiple(object):
             self._prostrings = False
 
         # create an index which allows to quickly interchange between classes
-        # and given sequences
-        self.int2ext = dict(
-                [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]    
-                )
+        # and given sequences (trivial without sequence uniqueness
+        if self.unique_seqs:
+            self.int2ext = dict(
+                    [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]      
+                    )
+        else:
+            self.int2ext = dict(  
+                    [(i,[i]) for i in range(len(keys))]    
+                    )
         
         # create a scoredict for the calculation of alignment analyses
         # append the scorer if it is given with the model

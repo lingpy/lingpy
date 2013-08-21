@@ -83,6 +83,7 @@ rcParamsUpd = dict(
         breaks                     = '.-',
         stress                     = "ˈˌ'",
         merge_vowels               = True,
+        unique_sequences           = True,
         comment                    = '#',
         restricted_chars           = '_T',
         scale                      = 0.5,
