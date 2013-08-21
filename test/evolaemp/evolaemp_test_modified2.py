@@ -361,3 +361,63 @@ for cognateID in etym_dict.keys():
         tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
         multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
         print(multi)
+        print("\nWrite partial alignments and sizes into the tree:")
+        for node in cognateGuideTree.postorder():
+            if node.isTip():
+                node.alignment = [multi.alm_matrix[int(node.Name)]]
+                node.size = 1
+            else:
+                node.alignment = node.Children[0].alignment + node.Children[1].alignment
+                node.size = node.Children[0].size + node.Children[1].size
+        for node in cognateGuideTree.postorder():
+            print node.Name + ": (" + str(node.size) + ") " + str(node.alignment)
+        print("\nCompute phoneme distribution at each position of the alignment:")
+        for node in cognateGuideTree.postorder():
+            node.distribution = []
+        for i in range (0,len(multi.alm_matrix[0])):
+            for node in cognateGuideTree.postorder():
+                if node.isTip():
+                    node.distribution.append({multi.alm_matrix[int(node.Name)][i] : 1.0})
+                else:
+                    node.distribution.append({})
+                    child1 = node.Children[0]
+                    child2 = node.Children[1]
+                    for phoneme in set(child1.distribution[i].keys()) | set(child2.distribution[i].keys()):
+                        value = 0.0
+                        if phoneme in child1.distribution[i].keys():
+                            value += child1.size * child1.distribution[i][phoneme]
+                        if phoneme in child2.distribution[i].keys():
+                            value += child2.size * child2.distribution[i][phoneme]
+                        value /= node.size
+                        node.distribution[i][phoneme] = value
+        for node in cognateGuideTree.postorder():
+            print node.Name + ": " + str(node.distribution)
+        print("\nReconstruct word forms at inner nodes by simplistic criteria:")
+        for node in cognateGuideTree.postorder():
+            node.reconstructed = []
+        for i in range (0,len(multi.alm_matrix[0])):
+            for node in cognateGuideTree.postorder():
+                dist = node.distribution[i]
+                maxValue = max(dist.values())
+                maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                if len(maxKeys) == 1 or node.isRoot():
+                    node.reconstructed.append(maxKeys[0])
+                else:         
+                    parentDist = node.Parent.distribution[i]
+                    maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                    node.reconstructed.append(maxKey)
+        for node in cognateGuideTree.postorder():
+            print node.Name + ": " + "".join(node.reconstructed)
+        print("\nDetermining and counting sound changes at the edges of the guide tree:")
+        for node in cognateGuideTree.postorder():
+            node.recon_changes = {}
+            if not node.isRoot():
+                for i in range (0,len(node.reconstructed)):
+                    if node.reconstructed[i] != node.Parent.reconstructed[i]:
+                        change = (node.Parent.reconstructed[i], node.reconstructed[i])
+                        if change not in node.recon_changes.keys():
+                            node.recon_changes[change] = 1
+                        else:
+                            node.recon_changes[change] += 1
+        for node in cognateGuideTree.postorder():
+            print node.Name + ": " + str(node.recon_changes)
