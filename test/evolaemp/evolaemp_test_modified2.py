@@ -83,14 +83,15 @@ for taxon1 in langs:
 for langID in langs:
   entries = asjpMatrix[langID,39] #entry for "mountain"
   for entry in entries.split('-'):
-    lexdict[ID] = [langID, "mountain", entry, asjpMatrix[langID,0]]
-    ID += 1
+    if not entry == '0':
+      lexdict[ID] = [langID, "mountain", entry, asjpMatrix[langID,0]]
+      ID += 1
 
 #cluster words into cognate sets
 lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
 lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
-etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
+lexstat.cluster(method='sca',threshold=0.5,verbose=True)
+etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
 
 for cognateID in etym_dict.keys():
     entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
@@ -329,33 +330,34 @@ germanicGuideTree = subGuideTree(guideTree,langs)
 germanicNameTable = [longnames[lang] for lang in langs]
 printTree(germanicGuideTree,0,names=germanicNameTable)
 
-#repeat the cognate detection process to generate cognate sets
-lexdict = {}
-lexdict[0] = ["ID", "concept", "ipa", "doculect"]
-ID = 1
-
-for conceptID in [6]: #range(4,41) still has trouble in case of too many duplicates
+for conceptID in range(4,44):
+    #repeat the cognate detection process to generate cognate sets
+    lexdict = {}
+    lexdict[0] = ["ID", "concept", "ipa", "doculect"]
+    ID = 1
     #create a dictionary for cognate detection
     for langID in langs:
-      entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
-      for entry in entries.split('-'):
-        lexdict[ID] = [langID, "concept" + str(conceptID), entry, asjpMatrix[langID,0]]
-        ID += 1
+        entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
+        for entry in entries.split('-'):
+            if not entry == '0':
+                lexdict[ID] = [langID, "concept" + str(conceptID), entry, asjpMatrix[langID,0]]
+                ID += 1
     
     #cluster words into cognate sets
     lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
     lexstat.get_scorer()
-    lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
-    etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
+    lexstat.cluster(method='sca',threshold=0.5,verbose=True)
+    etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
     
+    print("etym_dict.keys() = " + str(etym_dict.keys()))
     for cognateID in etym_dict.keys():
         entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
         entry_msq_file.write("ASJP database\n")
         entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
         for IDList in etym_dict[cognateID]:
-          if (IDList != 0):
-            [langID, word, entry, langName] = lexdict[IDList[0]][:4]
-            entry_msq_file.write(langName + "\t" + entry + "\n")
+            if (IDList != 0):
+                [langID, word, entry, langName] = lexdict[IDList[0]][:4]
+                entry_msq_file.write(langName + "\t" + entry + "\n")
         entry_msq_file.close()
         cognateLangs = [int(lexdict[IDList[0]][0]) - 1426 for IDList in etym_dict[cognateID] if IDList != 0]
         if len(cognateLangs) > 1:  #cognate sets of size 1 are useless
@@ -375,8 +377,8 @@ for conceptID in [6]: #range(4,41) still has trouble in case of too many duplica
                 else:
                     node.alignment = node.Children[0].alignment + node.Children[1].alignment
                     node.size = node.Children[0].size + node.Children[1].size
-            for node in cognateGuideTree.postorder():
-                print str(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
+            #for node in cognateGuideTree.postorder():
+            #    print str(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
             print("\nCompute phoneme distribution at each position of the alignment:")
             for node in cognateGuideTree.postorder():
                 node.distribution = []
@@ -396,8 +398,8 @@ for conceptID in [6]: #range(4,41) still has trouble in case of too many duplica
                                 value += child2.size * child2.distribution[i][phoneme]
                             value /= node.size
                             node.distribution[i][phoneme] = value
-            for node in cognateGuideTree.postorder():
-                print str(node.Name) + ": " + str(node.distribution)
+            #for node in cognateGuideTree.postorder():
+            #    print str(node.Name) + ": " + str(node.distribution)
             print("\nReconstruct word forms at inner nodes by simplistic criteria:")
             for node in cognateGuideTree.postorder():
                 node.reconstructed = []
@@ -421,7 +423,7 @@ for conceptID in [6]: #range(4,41) still has trouble in case of too many duplica
                     node.recon_changes = {}
                 if not node.isRoot():
                     for i in range (0,len(node.reconstructed)):
-                        if node.reconstructed[i] != node.Parent.reconstructed[i]:
+                        #if node.reconstructed[i] != node.Parent.reconstructed[i]:
                             change = (node.Parent.reconstructed[i], node.reconstructed[i])
                             origNode = node
                             while origNode != None:
