@@ -185,17 +185,22 @@ def subGuideTree(tree,selIndices):
     constructSubtree(paths,1,subtree,indexMap)
     return subtree
 
-def printTree(node, depth, names=None):
+def printTree(node, depth, names=None, field=None, func=None):
     name = node.Name
     if name == None:
         name = "no name"
     else:
         if names != None:
             name = name + ": " + names[int(name)]
+    if field != None and hasattr(node,field):
+        if func != None:
+            name = name + " " + func(getattr(node,field))
+        else:
+            name = name + " " + str(getattr(node,field))
     name = depth * "  " + name;
     print name;
     for child in node.Children:
-        printTree(child, depth + 1, names)
+        printTree(child, depth + 1, names, field, func)
 
 def printTreeWithOrigPointers(node, depth, names=None):
     name = node.Name
@@ -329,95 +334,111 @@ lexdict = {}
 lexdict[0] = ["ID", "concept", "ipa", "doculect"]
 ID = 1
 
-#create a dictionary for cognate detection
-for langID in langs:
-  entries = asjpMatrix[langID,39] #entry for "mountain"
-  for entry in entries.split('-'):
-    lexdict[ID] = [langID, "mountain", entry, asjpMatrix[langID,0]]
-    ID += 1
-
-#cluster words into cognate sets
-lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
-lexstat.get_scorer()
-lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
-etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
-
-for cognateID in etym_dict.keys():
-    entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
-    entry_msq_file.write("ASJP database\n")
-    entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
-    for IDList in etym_dict[cognateID]:
-      if (IDList != 0):
-        [langID, word, entry, langName] = lexdict[IDList[0]][:4]
-        entry_msq_file.write(langName + "\t" + entry + "\n")
-    entry_msq_file.close()
-    cognateLangs = [int(lexdict[IDList[0]][0]) - 1426 for IDList in etym_dict[cognateID] if IDList != 0]
-    if len(cognateLangs) > 1:  #cognate sets of size 1 are useless
-        cognateGuideTree = subGuideTree(germanicGuideTree,cognateLangs)       
-        print("\nAligning cognate " + str(cognateID) + ":")
-        print "  cognate langs = " + str(cognateLangs)
-        printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
-        multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False,unique_seqs=False)
-        tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
-        multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
-        print(multi)
-        print("\nWrite partial alignments and sizes into the tree:")
-        for node in cognateGuideTree.postorder():
-            if node.isTip():
-                node.alignment = [multi.alm_matrix[int(node.Name)]]
-                node.size = 1
-            else:
-                node.alignment = node.Children[0].alignment + node.Children[1].alignment
-                node.size = node.Children[0].size + node.Children[1].size
-        for node in cognateGuideTree.postorder():
-            print node.Name + ": (" + str(node.size) + ") " + str(node.alignment)
-        print("\nCompute phoneme distribution at each position of the alignment:")
-        for node in cognateGuideTree.postorder():
-            node.distribution = []
-        for i in range (0,len(multi.alm_matrix[0])):
+for conceptID in [39]: #range(4,41) still has trouble in case of too many duplicates
+    #create a dictionary for cognate detection
+    for langID in langs:
+      entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
+      for entry in entries.split('-'):
+        lexdict[ID] = [langID, "concept" + str(conceptID), entry, asjpMatrix[langID,0]]
+        ID += 1
+    
+    #cluster words into cognate sets
+    lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
+    lexstat.get_scorer()
+    lexstat.cluster(method='lexstat',threshold=0.95,verbose=True)
+    etym_dict = lexstat.get_etymdict(ref='lexstatid', entry='', loans=False)
+    
+    for cognateID in etym_dict.keys():
+        entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
+        entry_msq_file.write("ASJP database\n")
+        entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
+        for IDList in etym_dict[cognateID]:
+          if (IDList != 0):
+            [langID, word, entry, langName] = lexdict[IDList[0]][:4]
+            entry_msq_file.write(langName + "\t" + entry + "\n")
+        entry_msq_file.close()
+        cognateLangs = [int(lexdict[IDList[0]][0]) - 1426 for IDList in etym_dict[cognateID] if IDList != 0]
+        if len(cognateLangs) > 1:  #cognate sets of size 1 are useless
+            cognateGuideTree = subGuideTree(germanicGuideTree,cognateLangs)       
+            print("\nAligning cognate " + str(cognateID) + ":")
+            print "  cognate langs = " + str(cognateLangs)
+            printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
+            multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False,unique_seqs=False)
+            tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
+            multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
+            print(multi)
+            print("\nWrite partial alignments and sizes into the tree:")
             for node in cognateGuideTree.postorder():
                 if node.isTip():
-                    node.distribution.append({multi.alm_matrix[int(node.Name)][i] : 1.0})
+                    node.alignment = [multi.alm_matrix[int(node.Name)]]
+                    node.size = 1
                 else:
-                    node.distribution.append({})
-                    child1 = node.Children[0]
-                    child2 = node.Children[1]
-                    for phoneme in set(child1.distribution[i].keys()) | set(child2.distribution[i].keys()):
-                        value = 0.0
-                        if phoneme in child1.distribution[i].keys():
-                            value += child1.size * child1.distribution[i][phoneme]
-                        if phoneme in child2.distribution[i].keys():
-                            value += child2.size * child2.distribution[i][phoneme]
-                        value /= node.size
-                        node.distribution[i][phoneme] = value
-        for node in cognateGuideTree.postorder():
-            print node.Name + ": " + str(node.distribution)
-        print("\nReconstruct word forms at inner nodes by simplistic criteria:")
-        for node in cognateGuideTree.postorder():
-            node.reconstructed = []
-        for i in range (0,len(multi.alm_matrix[0])):
+                    node.alignment = node.Children[0].alignment + node.Children[1].alignment
+                    node.size = node.Children[0].size + node.Children[1].size
             for node in cognateGuideTree.postorder():
-                dist = node.distribution[i]
-                maxValue = max(dist.values())
-                maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
-                if len(maxKeys) == 1 or node.isRoot():
-                    node.reconstructed.append(maxKeys[0])
-                else:         
-                    parentDist = node.Parent.distribution[i]
-                    maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                    node.reconstructed.append(maxKey)
-        for node in cognateGuideTree.postorder():
-            print node.Name + ": " + "".join(node.reconstructed)
-        print("\nDetermining and counting sound changes at the edges of the guide tree:")
-        for node in cognateGuideTree.postorder():
-            node.recon_changes = {}
-            if not node.isRoot():
-                for i in range (0,len(node.reconstructed)):
-                    if node.reconstructed[i] != node.Parent.reconstructed[i]:
-                        change = (node.Parent.reconstructed[i], node.reconstructed[i])
-                        if change not in node.recon_changes.keys():
-                            node.recon_changes[change] = 1
-                        else:
-                            node.recon_changes[change] += 1
-        for node in cognateGuideTree.postorder():
-            print node.Name + ": " + str(node.recon_changes)
+                print str(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
+            print("\nCompute phoneme distribution at each position of the alignment:")
+            for node in cognateGuideTree.postorder():
+                node.distribution = []
+            for i in range (0,len(multi.alm_matrix[0])):
+                for node in cognateGuideTree.postorder():
+                    if node.isTip():
+                        node.distribution.append({multi.alm_matrix[int(node.Name)][i] : 1.0})
+                    else:
+                        node.distribution.append({})
+                        child1 = node.Children[0]
+                        child2 = node.Children[1]
+                        for phoneme in set(child1.distribution[i].keys()) | set(child2.distribution[i].keys()):
+                            value = 0.0
+                            if phoneme in child1.distribution[i].keys():
+                                value += child1.size * child1.distribution[i][phoneme]
+                            if phoneme in child2.distribution[i].keys():
+                                value += child2.size * child2.distribution[i][phoneme]
+                            value /= node.size
+                            node.distribution[i][phoneme] = value
+            for node in cognateGuideTree.postorder():
+                print str(node.Name) + ": " + str(node.distribution)
+            print("\nReconstruct word forms at inner nodes by simplistic criteria:")
+            for node in cognateGuideTree.postorder():
+                node.reconstructed = []
+            for i in range (0,len(multi.alm_matrix[0])):
+                for node in cognateGuideTree.postorder():
+                    dist = node.distribution[i]
+                    maxValue = max(dist.values())
+                    maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                    if len(maxKeys) == 1 or node.isRoot():
+                        node.reconstructed.append(maxKeys[0])
+                    else:         
+                        parentDist = node.Parent.distribution[i]
+                        maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                        node.reconstructed.append(maxKey)
+            printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
+            #for node in cognateGuideTree.postorder():
+            #    print str(node.Name) + ": " + "".join(node.reconstructed)
+            print("\nDetermining and counting sound changes at the edges of the guide tree, and cascading them to the supertrees:")
+            for node in cognateGuideTree.postorder():
+                if not hasattr(node, "recon_changes"):
+                    node.recon_changes = {}
+                if not node.isRoot():
+                    for i in range (0,len(node.reconstructed)):
+                        if node.reconstructed[i] != node.Parent.reconstructed[i]:
+                            change = (node.Parent.reconstructed[i], node.reconstructed[i])
+                            origNode = node
+                            while origNode != None:
+                                if not hasattr(origNode, "recon_changes"):
+                                    origNode.recon_changes = {}
+                                if change not in origNode.recon_changes.keys():
+                                    origNode.recon_changes[change] = 1
+                                else:
+                                    origNode.recon_changes[change] += 1
+                                if hasattr(origNode, "orig"):
+                                    origNode = origNode.orig
+                                else:
+                                    origNode = None
+            #for node in cognateGuideTree.postorder():
+            #    print str(node.Name)
+            #    print str(node.Name) + ": " + str(node.recon_changes)
+            printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="recon_changes")
+
+print("\nSupertree with collected sound changes at the edges:")
+printTree(germanicGuideTree,0,names=germanicNameTable, field="recon_changes")
