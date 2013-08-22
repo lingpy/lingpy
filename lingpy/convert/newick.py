@@ -174,16 +174,13 @@ def nwk2guidetree(
             nextIdx += 1
         else:
             nodeIndex[node] = int(node.Name)
-    #construct tree matrix from behind by means of layered traversal
+    #construct tree matrix by another postorder traversal
     tree_matrix = []
-    queue = deque([tree])
+    queue = deque(tree.postorder())
     while len(queue) > 0:
         curNode = queue.popleft()
-        leftChild = curNode.Children[0]
-        rightChild = curNode.Children[1]
-        tree_matrix.insert(0, [nodeIndex[leftChild],nodeIndex[rightChild],0.5,0.5])
-        if not rightChild.isTip():
-            queue.append(rightChild)
-        if not leftChild.isTip():
-            queue.append(leftChild)
+        if not curNode.isTip():
+            leftChild = curNode.Children[0]
+            rightChild = curNode.Children[1]
+            tree_matrix.append([nodeIndex[leftChild],nodeIndex[rightChild],0.5,0.5])
     return tree_matrix

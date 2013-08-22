@@ -334,7 +334,7 @@ lexdict = {}
 lexdict[0] = ["ID", "concept", "ipa", "doculect"]
 ID = 1
 
-for conceptID in [39]: #range(4,41) still has trouble in case of too many duplicates
+for conceptID in [6]: #range(4,41) still has trouble in case of too many duplicates
     #create a dictionary for cognate detection
     for langID in langs:
       entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
