@@ -344,9 +344,9 @@ for conceptID in range(4,44):
                 ID += 1
     
     #cluster words into cognate sets
-    lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
+    lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=True)
     lexstat.get_scorer()
-    lexstat.cluster(method='sca',threshold=0.5,verbose=True)
+    lexstat.cluster(method='sca',threshold=0.6,verbose=True)
     etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
     
     print("etym_dict.keys() = " + str(etym_dict.keys()))
@@ -365,7 +365,7 @@ for conceptID in range(4,44):
             print("\nAligning cognate " + str(cognateID) + ":")
             print "  cognate langs = " + str(cognateLangs)
             printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
-            multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False,unique_seqs=False)
+            multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=True,unique_seqs=False)
             tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
             multi.prog_align(model=sca,gop=-2,scale=0.7,guide_tree=tree_mtx)
             print(multi)
@@ -429,9 +429,10 @@ for conceptID in range(4,44):
                             leftVariant = node.Children[0].reconstructed[i]
                             rightVariant = node.Children[1].reconstructed[i]
                             #if one of both is '-', take the other one (preference for segment loss)
-                            if leftVariant == '-':
+                            #BUT: epenthesis is allowed
+                            if leftVariant == '-' and rightVariant not in ['a','e','i','o','u','E','3']:
                                 node.reconstructed.append(rightVariant)
-                            elif rightVariant == '-':
+                            elif rightVariant == '-' and leftVariant not in ['a','e','i','o','u','E','3']:
                                 node.reconstructed.append(leftVariant)
                             else:
                                 #let the distribution decide otherwise
