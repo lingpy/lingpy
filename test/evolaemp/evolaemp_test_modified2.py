@@ -400,20 +400,52 @@ for conceptID in range(4,44):
                             node.distribution[i][phoneme] = value
             #for node in cognateGuideTree.postorder():
             #    print str(node.Name) + ": " + str(node.distribution)
+            recon_alg = "binary_decision"
             print("\nReconstruct word forms at inner nodes by simplistic criteria:")
             for node in cognateGuideTree.postorder():
                 node.reconstructed = []
-            for i in range (0,len(multi.alm_matrix[0])):
-                for node in cognateGuideTree.postorder():
-                    dist = node.distribution[i]
-                    maxValue = max(dist.values())
-                    maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
-                    if len(maxKeys) == 1 or node.isRoot():
-                        node.reconstructed.append(maxKeys[0])
-                    else:         
-                        parentDist = node.Parent.distribution[i]
-                        maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                        node.reconstructed.append(maxKey)
+            if recon_alg == "modified_consensus":
+                for i in range (0,len(multi.alm_matrix[0])):
+                    for node in cognateGuideTree.postorder():
+                        dist = node.distribution[i]
+                        maxValue = max(dist.values())
+                        maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                        if len(maxKeys) == 1 or node.isRoot():
+                            node.reconstructed.append(maxKeys[0])
+                        else:         
+                            parentDist = node.Parent.distribution[i]
+                            maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                            node.reconstructed.append(maxKey)
+            elif recon_alg == "binary_decision":
+                for i in range (0,len(multi.alm_matrix[0])):
+                    for node in cognateGuideTree.postorder():
+                        if node.isTip():
+                            #just retrieve the original at the leaves
+                            dist = node.distribution[i]
+                            maxValue = max(dist.values())
+                            maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                            node.reconstructed.append(maxKeys[0])
+                        else:
+                            leftVariant = node.Children[0].reconstructed[i]
+                            rightVariant = node.Children[1].reconstructed[i]
+                            #if one of both is '-', take the other one (preference for segment loss)
+                            if leftVariant == '-':
+                                node.reconstructed.append(rightVariant)
+                            elif rightVariant == '-':
+                                node.reconstructed.append(leftVariant)
+                            else:
+                                #let the distribution decide otherwise
+                                dist = node.distribution[i]
+                                maxValue = max(dist.values())
+                                maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                                if len(maxKeys) == 1 or node.isRoot():
+                                    node.reconstructed.append(maxKeys[0])
+                                else:         
+                                    parentDist = node.Parent.distribution[i]
+                                    maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                                    node.reconstructed.append(maxKey)
+            else:
+                print("ERROR: Unknown reconstruction method: " + recon_alg)
             printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
             #for node in cognateGuideTree.postorder():
             #    print str(node.Name) + ": " + "".join(node.reconstructed)
