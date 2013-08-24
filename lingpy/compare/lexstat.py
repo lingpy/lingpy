@@ -195,11 +195,6 @@ class LexStat(Wordlist):
                     lambda x:prosodic_string(x)
                     )
 
-        for row in self:
-
-            if 'm' in self[row,'prostrings']:
-                print(row,self[row])
-
         # get sound class strings
         if not "classes" in self.header:
             self.add_entries(
