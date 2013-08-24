@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 06:55
-# modified : 2013-07-01 16:50
+# modified : 2013-08-23 22:29
 """
 Module provides functions and methods for the creation of csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-01"
+__date__="2013-08-23"
 
 # external imports
 import re
@@ -60,7 +60,8 @@ def wl2csv(
     formatter = formatter.upper()
 
     defaults = dict(
-            fileformat = 'qlc'
+            fileformat = 'qlc',
+            ignore = []
             )
     for k in defaults:
         if k not in keywords:
@@ -141,15 +142,15 @@ def wl2csv(
                 out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
                 out += msa2str(v,wordlist=True)
                 out += "</msa>\n"
-    if distances:
+    if distances and 'distances' not in keywords['ignore']:
         out += '\n# DISTANCES\n<dst>\n'
         out += distances+'</dst>\n'
 
     if trees:
         out += '\n# TREES\n'+trees
 
-    if scorer:
-        out += '\n# SORER\n'+scorer
+    if scorer and 'scorer' not in keywords['ignore']:
+        out += '\n# SCORER\n'+scorer
 
     out += '\n# DATA\nID\t'+'\t'.join(header)+'\n'
     

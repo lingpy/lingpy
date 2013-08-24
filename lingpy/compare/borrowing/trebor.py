@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-07-20 13:32
+# modified : 2013-08-23 22:47
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-07-20"
+__date__="2013-08-23"
 
 
 # basic imports
@@ -152,7 +152,6 @@ class PhyBo(Wordlist):
                     'concept',
                     f
                     )
-
         # check for paps as attribute in the wordlist
         if paps not in self.entries:
             
@@ -2641,7 +2640,6 @@ class PhyBo(Wordlist):
             mixed = False,
             output_gml = False,
             tar = False,
-            usetex = False,
             full_analysis = True,
             plot_dists = False,
             output_plot=False,
@@ -2697,7 +2695,7 @@ class PhyBo(Wordlist):
                 'proto' : False,
                 'xticksize' : 6,
                 'method' : 'mr', # majority rule
-                'gpl' : 2,
+                'gpl' : 1,
                 "push_gains" : True,
                 }
 
@@ -2720,6 +2718,8 @@ class PhyBo(Wordlist):
                     ('topdown',3),
                     ('topdown',4),
                     ('topdown',5),
+                    ('topdown',6),
+                    ('topdown',7)
                     ]
 
         elif runs == 'restriction':
@@ -2728,6 +2728,11 @@ class PhyBo(Wordlist):
                     ('restriction',3),
                     ('restriction',4),
                     ('restriction',5),
+                    ('restriction',6),
+                    ('restriction',7),
+                    #('restriction',8),
+                    #('restriction',9),
+                    #('restriction',10),
                     ]
         
         # carry out the various analyses
@@ -2857,7 +2862,7 @@ class PhyBo(Wordlist):
         if plot_dists:
 
             # specify latex
-            mpl.rc('text',usetex=usetex)
+            mpl.rc('text',usetex=keywords['usetex'])
                         
             # store distributions in lists
             dists_vsd = [self.dists[m] for m in modes]
@@ -2883,7 +2888,7 @@ class PhyBo(Wordlist):
             zp_vsd = [zp_vsd[i] for i in sorter]
 
             # format the zp-values
-            if usetex:
+            if keywords['usetex']:
 
                 p_vsd = []
                 for i,(z,p) in enumerate(zp_vsd):
@@ -3077,6 +3082,7 @@ class PhyBo(Wordlist):
                 textsize         = rcParams['phybo_textsize'], 
                 vsd_scale        = rcParams['phybo_vsd_scale'], 
                 latex_preamble   = rcParams['phybo_latex_preamble'], 
+                alpha_threshold   = 0.2
                 )
         for k in defaults:
             if k not in keywords:
@@ -3220,7 +3226,7 @@ class PhyBo(Wordlist):
                 a = alpha
                 if d['weight'] < threshold:
                     if alphat:
-                        a = 0.2
+                        a = keywords['alpha_threshold']
                     else:
                         w = 0.0
 

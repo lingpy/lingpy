@@ -1359,7 +1359,7 @@ def get_consensus(
             pass
         # if classes is a Model-object
         elif hasattr(msa,'ipa2cls'):
-            msa.ipa2cls(model)
+            msa.ipa2cls(model=keywords['model'])
             classes = misc.transpose(msa.classes)
     
     # if no tree is passed, it is a simple majority-rule principle that outputs

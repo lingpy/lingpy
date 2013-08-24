@@ -134,7 +134,8 @@ class Wordlist(object):
         except:
             if type(filename) == dict:
                 input_data = filename
-                self.filename = rcParams['filename'] 
+                self.filename = rcParams['filename']
+                internal_import = True
             # if it's a wordlist object, add its basic parameters
             elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
                 input_data = dict(filename._data.items())
