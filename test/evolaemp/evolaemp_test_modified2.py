@@ -374,7 +374,8 @@ for conceptID in range(4,44):
             tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
             multi.prog_align(model=sca,gop=-4,scale=0.9,guide_tree=tree_mtx)
             print(multi)
-            cons = get_consensus(multi, cognateGuideTree, gaps=True, taxa=[str(i) for i in range(len(langs))], classes=False)
+            #old version of call had taxa=[str(i) for i in range(len(langs))]
+            cons = get_consensus(multi, cognateGuideTree, gaps=True, classes=False)
             print("Reconstructed proto word for concept " + str(conceptID - 3) + ":\t" + cons)   
             #print("\nDetermining and counting sound changes at the edges of the guide tree, and cascading them to the supertrees:")
             for node in cognateGuideTree.postorder():

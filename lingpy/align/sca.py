@@ -23,6 +23,7 @@ import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
+from ..convert.newick import subGuideTree
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
@@ -1474,15 +1475,33 @@ def get_consensus(
 
     # otherwise, we use a bottom-up parsimony approach to determine the best
     # match
-    elif tree and not taxa:
-        raise ValueError(
-                "[!] Without a list of taxa, no consensus string can be calculated"
-                )
-    elif tree and taxa:
+    elif tree:
+        #hack: this operates on the non-transposed alm_matrix
+        matrix = misc.transpose(matrix)
+        #if the taxa are defined, extract the sub-guidetree accordingly
+        if taxa:
+            all_taxa = [leaf.Name for leaf in tree.tips()]
+            taxon_to_id = dict({(unicode(all_taxa[i]),i) for i in range(0,len(all_taxa))})
+            print(taxon_to_id)
+            tree = tree.deepcopy()
+            for leaf in tree.tips():
+                leaf.Name = str(taxon_to_id[leaf.Name])
+            print(tree)
+            print(taxa)
+            newIndices = [taxon_to_id[unicode(taxon)] for taxon in taxa]
+            print(newIndices)
+            tree = subGuideTree(tree,newIndices)
+            print(tree)
+            #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
+            #print(indexMap)
+            #for leaf in tree.tips():
+            #    leaf.Name = str(indexMap[int(leaf.Name)])
+        #otherwise, the leaves of the guide trees are expected to have integer IDs
         #print("\nWrite partial alignments and sizes into the tree:")
         for node in tree.postorder():
             if node.isTip():
-                node.alignment = [msa.alm_matrix[int(node.Name)]]
+                print(node.Name)
+                node.alignment = [matrix[int(node.Name)]]
                 node.size = 1
             else:
                 node.alignment = node.Children[0].alignment + node.Children[1].alignment
@@ -1492,10 +1511,10 @@ def get_consensus(
         #print("\nCompute phoneme distribution at each position of the alignment:")
         for node in tree.postorder():
             node.distribution = []
-        for i in range (0,len(msa.alm_matrix[0])):
+        for i in range (0,len(matrix[0])):
             for node in tree.postorder():
                 if node.isTip():
-                    node.distribution.append({msa.alm_matrix[int(node.Name)][i] : 1.0})
+                    node.distribution.append({matrix[int(node.Name)][i] : 1.0})
                 else:
                     node.distribution.append({})
                     child1 = node.Children[0]
@@ -1515,7 +1534,7 @@ def get_consensus(
         for node in tree.postorder():
             node.reconstructed = []
         if recon_alg == "modified_consensus":
-            for i in range (0,len(msa.alm_matrix[0])):
+            for i in range (0,len(matrix[0])):
                 for node in tree.postorder():
                     dist = node.distribution[i]
                     maxValue = max(dist.values())
@@ -1527,7 +1546,7 @@ def get_consensus(
                         maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
                         node.reconstructed.append(maxKey)
         elif recon_alg == "binary_decision":
-            for i in range (0,len(msa.alm_matrix[0])):
+            for i in range (0,len(matrix[0])):
                 for node in tree.postorder():
                     if node.isTip():
                         #just retrieve the original at the leaves

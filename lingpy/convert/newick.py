@@ -184,3 +184,53 @@ def nwk2guidetree(
             rightChild = curNode.Children[1]
             tree_matrix.append([nodeIndex[leftChild],nodeIndex[rightChild],0.5,0.5])
     return tree_matrix
+
+def selectNodes(tree, selIndices):
+    selNodes = []
+    for leaf in tree.tips():
+        if int(leaf.Name) in selIndices:
+            selNodes.append(leaf)
+    return selNodes
+
+def treePath(node):
+    path = [node]
+    while not node.isRoot():
+        node = node.Parent
+        path.insert(0,node)
+    return path
+
+def constructSubtree(paths,index,curNode,indexMap):
+    #create a map [node -> all paths containing that node at index position]
+    partition = {}
+    for node in {path[index] for path in paths}:
+        partition[node] = [path for path in paths if path[index] == node]
+    #partition = {(node,[path for path in paths if path[index] == node]) for node in {path[index] for path in paths}}
+    if len(partition) == 1:
+        #no split, we simply go on to the next index in paths
+        constructSubtree(paths,index + 1,curNode,indexMap)
+    else:
+        #split according to the partition, creating a new node where necessary
+        for node in partition.keys():
+            if len(partition[node]) == 1:
+                #we have arrived at a leaf (or a unary branch above it), copy the leaf
+                newLeafName = str(indexMap[int(partition[node][0][-1].Name)]) 
+                newLeaf = cg.tree.TreeNode(Name=newLeafName)
+                newLeaf.orig = partition[node][0][-1]
+                curNode.Children.append(newLeaf)
+                newLeaf.Parent = curNode
+            else:               
+                newNode = cg.tree.TreeNode()
+                newNode.orig = node
+                curNode.Children.append(newNode)
+                newNode.Parent = curNode
+                constructSubtree(partition[node],index + 1,newNode,indexMap)         
+
+def subGuideTree(tree,selIndices):
+    selNodes = selectNodes(tree,selIndices)
+    indexMap = dict(zip(selIndices,range(0,len(selIndices))))
+    paths = [treePath(node) for node in selNodes]
+    #print str(paths)
+    subtree = cg.tree.TreeNode()
+    subtree.orig = tree.root()
+    constructSubtree(paths,1,subtree,indexMap)
+    return subtree
