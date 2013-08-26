@@ -162,13 +162,13 @@ class ConceptGraph():
         for doculect, iso in dictionary.doculect2iso.items():
             self.doculects.add((doculect, iso))
 
-    def output_wordlist(self, filename):
+    def output_wordlist(self, stream):
         """
         Export a wordlist from the concept graph.
 
         Parameters
         ----------
-        filename : str
+        filename : IO stream or str
             A path to the filename to write the wordlist. The wordlist is
             written as an qlc wordlist.
 
@@ -189,38 +189,39 @@ class ConceptGraph():
         lingpy.basic.wordlist.Wordlist
 
         """
-        wordlist = codecs.open(filename, "w", "utf-8")
+        if not hasattr(stream, 'read'):
+            stream = codecs.open(stream, "w", "utf-8")
 
         # write header
-        wordlist.write("@date: {0}\n".format(str(date.today())))
+        stream.write("@date: {0}\n".format(str(date.today())))
 
-        wordlist.write(
+        stream.write(
             "@source_title: Automatically created wordlist, by lingpy.\n")
 
         for doculect, iso in self.doculects:
-            wordlist.write("@doculect: {0}, {1}\n".format(doculect, iso))
+            stream.write("@doculect: {0}, {1}\n".format(doculect, iso))
 
         if self.use_tokens:
-            wordlist.write(
+            stream.write(
                 "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\tTOKENS\n")
             for concept in self.graph:
                     for qlcid, counterpart, tokens, counterpart_doculect \
                             in self.graph[concept]:
-                        wordlist.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(
+                        stream.write("{0}\t{1}\t{2}\t{3}\t{4}\n".format(
                             qlcid, concept.upper(), counterpart,
                             counterpart_doculect, tokens))
         else:
-            wordlist.write(
+            stream.write(
                 "QLCID\tCONCEPT\tCOUNTERPART\tCOUNTERPART_DOCULECT\n")
 
             for concept in self.graph:
                 for qlcid, counterpart, _, counterpart_doculect \
                         in self.graph[concept]:
-                    wordlist.write("{0}\t{1}\t{2}\t{3}\n".format(
+                    stream.write("{0}\t{1}\t{2}\t{3}\n".format(
                         qlcid, concept.upper(), counterpart,
                         counterpart_doculect))
 
-        wordlist.close()
+        stream.close()
 
 
 class ConceptComparerBase():
