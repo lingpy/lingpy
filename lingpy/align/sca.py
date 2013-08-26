@@ -1020,7 +1020,6 @@ class Alignments(Wordlist):
             self,
             tree = False,
             gaps = False,
-            taxa = False,
             classes = False,
             consensus = 'consensus',
             counterpart = 'ipa',
@@ -1038,9 +1037,6 @@ class Alignments(Wordlist):
             calculated.
         gaps : c{bool} (default=False)
             If set to c{True}, return the gap positions in the consensus.
-        taxa : {c{list} bool} (default=False)
-            If *tree* is chosen as a parameter, specify the taxa in order of the aligned
-            strings.
         classes : c{bool} (default=False)
             Specify whether sound classes shall be used to calculate the consensus.
         model : ~lingpy.data.model.Model
@@ -1104,7 +1100,8 @@ class Alignments(Wordlist):
                             classes = misc.transpose(classes),
                             tree = tree,
                             gaps = gaps,
-                            taxa = taxa,
+                            taxa = [unicode(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            #taxa = self.msa[ref][cog]['taxa'],
                             weights = weights,
                             **keywords
                             )
@@ -1115,7 +1112,8 @@ class Alignments(Wordlist):
                             classes = classes,
                             tree = tree,
                             gaps = gaps,
-                            taxa = taxa,
+                            taxa = [unicode(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
             # if there's no msa for a given cognate set, this set is a
@@ -1482,16 +1480,16 @@ def get_consensus(
         if taxa:
             all_taxa = [leaf.Name for leaf in tree.tips()]
             taxon_to_id = dict({(unicode(all_taxa[i]),i) for i in range(0,len(all_taxa))})
-            print(taxon_to_id)
+            #print(taxon_to_id)
             tree = tree.deepcopy()
             for leaf in tree.tips():
                 leaf.Name = str(taxon_to_id[leaf.Name])
-            print(tree)
-            print(taxa)
+            #print(tree)
+            #print(taxa)
             newIndices = [taxon_to_id[unicode(taxon)] for taxon in taxa]
-            print(newIndices)
+            #print(newIndices)
             tree = subGuideTree(tree,newIndices)
-            print(tree)
+            #print(tree)
             #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
             #print(indexMap)
             #for leaf in tree.tips():
@@ -1500,7 +1498,7 @@ def get_consensus(
         #print("\nWrite partial alignments and sizes into the tree:")
         for node in tree.postorder():
             if node.isTip():
-                print(node.Name)
+                #print(node.Name)
                 node.alignment = [matrix[int(node.Name)]]
                 node.size = 1
             else:
@@ -1559,9 +1557,19 @@ def get_consensus(
                         rightVariant = node.Children[1].reconstructed[i]
                         #if one of both is '-', take the other one (preference for segment loss)
                         #BUT: epenthesis is allowed
-                        if leftVariant == '-' and rightVariant not in ['a','e','i','o','u','E','3']:
+                        if leftVariant == '-' and rightVariant not in ['a','e','i','o','u','E','I',
+                                                                       '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ', 
+                                                                       'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã', 
+                                                                       'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
+                                                                       'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ', 
+                                                                       'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ']:
                             node.reconstructed.append(rightVariant)
-                        elif rightVariant == '-' and leftVariant not in ['a','e','i','o','u','E','3']:
+                        elif rightVariant == '-' and leftVariant not in ['a','e','i','o','u','E','I',
+                                                                       '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ', 
+                                                                       'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã', 
+                                                                       'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
+                                                                       'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ', 
+                                                                       'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ']:
                             node.reconstructed.append(leftVariant)
                         else:
                             #let the distribution decide otherwise
