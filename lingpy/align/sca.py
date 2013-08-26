@@ -1479,7 +1479,86 @@ def get_consensus(
                 "[!] Without a list of taxa, no consensus string can be calculated"
                 )
     elif tree and taxa:
-        pass # XXX
+        #print("\nWrite partial alignments and sizes into the tree:")
+        for node in tree.postorder():
+            if node.isTip():
+                node.alignment = [msa.alm_matrix[int(node.Name)]]
+                node.size = 1
+            else:
+                node.alignment = node.Children[0].alignment + node.Children[1].alignment
+                node.size = node.Children[0].size + node.Children[1].size
+        #for node in tree.postorder():
+        #    print str(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
+        #print("\nCompute phoneme distribution at each position of the alignment:")
+        for node in tree.postorder():
+            node.distribution = []
+        for i in range (0,len(msa.alm_matrix[0])):
+            for node in tree.postorder():
+                if node.isTip():
+                    node.distribution.append({msa.alm_matrix[int(node.Name)][i] : 1.0})
+                else:
+                    node.distribution.append({})
+                    child1 = node.Children[0]
+                    child2 = node.Children[1]
+                    for phoneme in set(child1.distribution[i].keys()) | set(child2.distribution[i].keys()):
+                        value = 0.0
+                        if phoneme in child1.distribution[i].keys():
+                            value += child1.size * child1.distribution[i][phoneme]
+                        if phoneme in child2.distribution[i].keys():
+                            value += child2.size * child2.distribution[i][phoneme]
+                        value /= node.size
+                        node.distribution[i][phoneme] = value
+        #for node in tree.postorder():
+        #    print str(node.Name) + ": " + str(node.distribution)
+        recon_alg = "binary_decision"
+        #print("\nReconstruct word forms at inner nodes by simplistic criteria:")
+        for node in tree.postorder():
+            node.reconstructed = []
+        if recon_alg == "modified_consensus":
+            for i in range (0,len(msa.alm_matrix[0])):
+                for node in tree.postorder():
+                    dist = node.distribution[i]
+                    maxValue = max(dist.values())
+                    maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                    if len(maxKeys) == 1 or node.isRoot():
+                        node.reconstructed.append(maxKeys[0])
+                    else:         
+                        parentDist = node.Parent.distribution[i]
+                        maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                        node.reconstructed.append(maxKey)
+        elif recon_alg == "binary_decision":
+            for i in range (0,len(msa.alm_matrix[0])):
+                for node in tree.postorder():
+                    if node.isTip():
+                        #just retrieve the original at the leaves
+                        dist = node.distribution[i]
+                        maxValue = max(dist.values())
+                        maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                        node.reconstructed.append(maxKeys[0])
+                    else:
+                        leftVariant = node.Children[0].reconstructed[i]
+                        rightVariant = node.Children[1].reconstructed[i]
+                        #if one of both is '-', take the other one (preference for segment loss)
+                        #BUT: epenthesis is allowed
+                        if leftVariant == '-' and rightVariant not in ['a','e','i','o','u','E','3']:
+                            node.reconstructed.append(rightVariant)
+                        elif rightVariant == '-' and leftVariant not in ['a','e','i','o','u','E','3']:
+                            node.reconstructed.append(leftVariant)
+                        else:
+                            #let the distribution decide otherwise
+                            dist = node.distribution[i]
+                            maxValue = max(dist.values())
+                            maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                            if len(maxKeys) == 1 or node.isRoot():
+                                node.reconstructed.append(maxKeys[0])
+                            else:         
+                                parentDist = node.Parent.distribution[i]
+                                maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
+                                node.reconstructed.append(maxKey)
+        else:
+            print("ERROR: Unknown reconstruction method: " + recon_alg)
+        #printTree(tree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
+        cons = "".join(tree.reconstructed)
 
     if gaps:
         return cons
