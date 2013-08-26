@@ -1,0 +1,857 @@
+@date: 2012-11-23
+@url: http://www.quanthistling.info/data/source/burtch1983/dictionary-19-262.html
+@source_title: Diccionario Huitoto Murui
+@source_author: Burtch, Shirley
+@source_year: 1983
+@doculect: Huitoto Murui, huu, Huitoto Murui, Witotoan
+@head_iso: huu
+@doculect: Castellano, spa, Castellano, Witotoan
+@translation_iso: spa
+QLCID	HEAD	HEAD_DOCULECT	TRANSLATION	TRANSLATION_DOCULECT	POS
+burtch1983/19/3	a	Huitoto Murui	cuando	Castellano	suf. v. desinencial
+burtch1983/19/3	a	Huitoto Murui	si	Castellano	suf. v. desinencial
+burtch1983/19/3	ia	Huitoto Murui	cuando	Castellano	suf. v. desinencial
+burtch1983/19/3	ia	Huitoto Murui	si	Castellano	suf. v. desinencial
+burtch1983/19/3	jia	Huitoto Murui	cuando	Castellano	suf. v. desinencial
+burtch1983/19/3	jia	Huitoto Murui	si	Castellano	suf. v. desinencial
+burtch1983/19/3	nia	Huitoto Murui	cuando	Castellano	suf. v. desinencial
+burtch1983/19/3	nia	Huitoto Murui	si	Castellano	suf. v. desinencial
+burtch1983/20/16	abi̵ igoì̵	Huitoto Murui	piel	Castellano	s
+burtch1983/20/16	abi̵ igoì̵	Huitoto Murui	cutis	Castellano	s
+burtch1983/23/8	aìjicaìde	Huitoto Murui	salirse	Castellano	vi3
+burtch1983/23/8	aìjicaìde	Huitoto Murui	estar destornillado	Castellano	vi3
+burtch1983/23/9	aìjide	Huitoto Murui	salir	Castellano	vi3
+burtch1983/23/9	aìjide	Huitoto Murui	retroceder	Castellano	vi3
+burtch1983/23/18	aìllomi̵e	Huitoto Murui	hombre grande	Castellano	s2A
+burtch1983/23/18	aìllomi̵e	Huitoto Murui	gordo	Castellano	s2A
+burtch1983/23/20	aìllue	Huitoto Murui	ancho	Castellano	adj2
+burtch1983/23/20	aìllue	Huitoto Murui	grande	Castellano	adj2
+burtch1983/23/21	aìlluena	Huitoto Murui	mucho	Castellano	adj2
+burtch1983/23/21	aìlluena	Huitoto Murui	muchos	Castellano	adj2
+burtch1983/23/21	aìlluena	Huitoto Murui	abundante	Castellano	adj2
+burtch1983/25/6	amena	Huitoto Murui	árbol	Castellano	s1A
+burtch1983/25/6	amena	Huitoto Murui	palo	Castellano	s1A
+burtch1983/25/6	amena	Huitoto Murui	madera	Castellano	s1A
+burtch1983/26/7	anafebeji	Huitoto Murui	parte	Castellano	s
+burtch1983/26/7	anafebeji	Huitoto Murui	lado	Castellano	s
+burtch1983/26/7	anafebeji	Huitoto Murui	lugar de abajo	Castellano	s
+burtch1983/27/15	are	Huitoto Murui	lejos	Castellano	adj2
+burtch1983/27/15	are	Huitoto Murui	largo	Castellano	adj2
+burtch1983/27/15	are	Huitoto Murui	alto	Castellano	adj2
+burtch1983/28/8	taì̵nomo ari	Huitoto Murui	arriba en la orilla del río	Castellano	
+burtch1983/28/8	taì̵nomo ari	Huitoto Murui	lago	Castellano	
+burtch1983/28/8	taì̵nomo ari	Huitoto Murui	etc	Castellano	
+burtch1983/28/17	atona	Huitoto Murui	recto	Castellano	adv4
+burtch1983/28/17	atona	Huitoto Murui	derecho	Castellano	adv4
+burtch1983/29/9	aì̵ci̵	Huitoto Murui	gusano	Castellano	s
+burtch1983/30/3	aì̵fi̵	Huitoto Murui	viento	Castellano	s
+burtch1983/30/3	aì̵fi̵	Huitoto Murui	aire	Castellano	s
+burtch1983/30/3	aì̵fi̵	Huitoto Murui	brisa	Castellano	s
+burtch1983/30/4	aì̵fi̵ni̵aì̵	Huitoto Murui	vientos	Castellano	pl
+burtch1983/30/6	aì̵gi̵ro	Huitoto Murui	gusano	Castellano	s1A
+burtch1983/30/6	aì̵gi̵ro	Huitoto Murui	larva que vive en las hojas o en el cuerpo de un animal muerto	Castellano	s1A
+burtch1983/30/10	aì̵nide	Huitoto Murui	morder	Castellano	vt1|vd
+burtch1983/30/10	aì̵nide	Huitoto Murui	no tener esposa	Castellano	vt1|vd
+burtch1983/30/10	aì̵nide	Huitoto Murui	ser soltero o viudo	Castellano	vt1|vd
+burtch1983/30/10	aì̵nirite	Huitoto Murui	morder	Castellano	vt1|vd
+burtch1983/30/10	aì̵nirite	Huitoto Murui	no tener esposa	Castellano	vt1|vd
+burtch1983/30/10	aì̵nirite	Huitoto Murui	ser soltero o viudo	Castellano	vt1|vd
+burtch1983/30/10	aɨnide	Huitoto Murui	morder	Castellano	vt1|vd
+burtch1983/30/10	aɨnide	Huitoto Murui	no tener esposa	Castellano	vt1|vd
+burtch1983/30/10	aɨnide	Huitoto Murui	ser soltero o viudo	Castellano	vt1|vd
+burtch1983/31/9	baì	Huitoto Murui	ese	Castellano	adj dem
+burtch1983/31/9	baì	Huitoto Murui	esa	Castellano	adj dem
+burtch1983/31/9	baì	Huitoto Murui	eso	Castellano	adj dem
+burtch1983/31/11	baìe	Huitoto Murui	ése	Castellano	pro dem neutro|adj dem-sg|dual o pl
+burtch1983/31/11	baìe	Huitoto Murui	ese	Castellano	pro dem neutro|adj dem-sg|dual o pl
+burtch1983/31/11	baìe	Huitoto Murui	eso	Castellano	pro dem neutro|adj dem-sg|dual o pl
+burtch1983/31/11	baìe	Huitoto Murui	ésa	Castellano	pro dem neutro|adj dem-sg|dual o pl
+burtch1983/31/11	baìe	Huitoto Murui	esa	Castellano	pro dem neutro|adj dem-sg|dual o pl
+burtch1983/32/9	baìrede	Huitoto Murui	aparecer	Castellano	vd
+burtch1983/32/9	baìrede	Huitoto Murui	brillar	Castellano	vd
+burtch1983/32/9	baìrede	Huitoto Murui	ser o estar brillante	Castellano	vd
+burtch1983/32/9	baìrede	Huitoto Murui	cuadrar	Castellano	vd
+burtch1983/32/9	baìrede	Huitoto Murui	caer bien	Castellano	vd
+burtch1983/32/9	baìrede	Huitoto Murui	ver	Castellano	vd
+burtch1983/33/15	bai̵de	Huitoto Murui	fallecer	Castellano	vi3
+burtch1983/33/15	bai̵de	Huitoto Murui	morir	Castellano	vi3
+burtch1983/34/2	baì̵node	Huitoto Murui	matar	Castellano	vt1
+burtch1983/34/8	abi̵ beici̵	Huitoto Murui	costado del cuerpo	Castellano	
+burtch1983/34/8	abi̵ beici̵	Huitoto Murui	canto	Castellano	
+burtch1983/34/8	abi̵ beici̵	Huitoto Murui	borde	Castellano	
+burtch1983/34/21	betade	Huitoto Murui	soplar	Castellano	vi
+burtch1983/35/12	bie	Huitoto Murui	este	Castellano	pro m.|adj dem sg|dual o pl
+burtch1983/35/12	bie	Huitoto Murui	esta	Castellano	pro m.|adj dem sg|dual o pl
+burtch1983/35/12	bie	Huitoto Murui	éste	Castellano	pro m.|adj dem sg|dual o pl
+burtch1983/35/12	bie	Huitoto Murui	ésta	Castellano	pro m.|adj dem sg|dual o pl
+burtch1983/35/12	bie	Huitoto Murui	esto	Castellano	pro m.|adj dem sg|dual o pl
+burtch1983/36/4	bioìde	Huitoto Murui	salir	Castellano	v
+burtch1983/36/4	bioìde	Huitoto Murui	venir continuamente	Castellano	v
+burtch1983/36/4	bioìde	Huitoto Murui	transpirar	Castellano	v
+burtch1983/36/4	bioìde	Huitoto Murui	sudar	Castellano	v
+burtch1983/36/4	bioìde	Huitoto Murui	gotear	Castellano	v
+burtch1983/36/4	biñoìde	Huitoto Murui	salir	Castellano	v
+burtch1983/36/4	biñoìde	Huitoto Murui	venir continuamente	Castellano	v
+burtch1983/36/4	biñoìde	Huitoto Murui	transpirar	Castellano	v
+burtch1983/36/4	biñoìde	Huitoto Murui	sudar	Castellano	v
+burtch1983/36/4	biñoìde	Huitoto Murui	gotear	Castellano	v
+burtch1983/36/11	bite	Huitoto Murui	venir	Castellano	vi3
+burtch1983/36/11	bite	Huitoto Murui	pasar adelante	Castellano	vi3
+burtch1983/37/17	borare	Huitoto Murui	amarillo	Castellano	adj
+burtch1983/38/11	botade	Huitoto Murui	cortar	Castellano	vt1
+burtch1983/38/11	botade	Huitoto Murui	dividir	Castellano	vt1
+burtch1983/38/15	bucoì̵de	Huitoto Murui	abofetear	Castellano	vt1
+burtch1983/38/15	bucoì̵de	Huitoto Murui	golpear	Castellano	vt1
+burtch1983/42/1	ca	Huitoto Murui	sabe	Castellano	suf.s
+burtch1983/42/8	llegi̵ cacad	Huitoto Murui	sentir	Castellano	Puede ser vt|pero no ocurre en voz pas.
+burtch1983/42/8	llegi̵ cacad	Huitoto Murui	oír. (puede ser vt, pero no ocurre en voz pas.) cacaìñedi̵cuè	Castellano	Puede ser vt|pero no ocurre en voz pas.
+burtch1983/42/8	llegi̵ cacad	Huitoto Murui	entender	Castellano	Puede ser vt|pero no ocurre en voz pas.
+burtch1983/42/9	cacagi̵	Huitoto Murui	canto	Castellano	s
+burtch1983/42/13	cacatate	Huitoto Murui	sentir	Castellano	vc
+burtch1983/42/13	cacatate	Huitoto Murui	hacer sentir	Castellano	vc
+burtch1983/43/1	caìde	Huitoto Murui	caer	Castellano	vi3.esp
+burtch1983/43/11	caìñi̵ci̵ i̵fo	Huitoto Murui	rodilla	Castellano	s1A
+burtch1983/43/11	caìñi̵ci̵ i̵fogi̵	Huitoto Murui	rodilla	Castellano	s1A
+burtch1983/44/9	caje	Huitoto Murui	vivo	Castellano	adj2
+burtch1983/44/9	caje	Huitoto Murui	despierto	Castellano	adj2
+burtch1983/44/18	canarema	Huitoto Murui	cucaracha macho	Castellano	s1A
+burtch1983/44/18	canarema	Huitoto Murui	grande	Castellano	s1A
+burtch1983/45/13	caì̵	Huitoto Murui	nosotros	Castellano	pro pl
+burtch1983/45/13	caì̵	Huitoto Murui	nosotras	Castellano	pro pl
+burtch1983/45/13	caì̵	Huitoto Murui	nuestro	Castellano	pro pl
+burtch1983/45/13	caì̵	Huitoto Murui	nuestra	Castellano	pro pl
+burtch1983/45/13	caì̵	Huitoto Murui	nuestros	Castellano	pro pl
+burtch1983/45/13	caì̵	Huitoto Murui	nuestras	Castellano	pro pl
+burtch1983/46/17	cofede	Huitoto Murui	cortar	Castellano	vt1
+burtch1983/46/17	cofede	Huitoto Murui	acuchillar cuando uno quiere sacar la resina de un árbol	Castellano	vt1
+burtch1983/48/7	comue	Huitoto Murui	nuevo	Castellano	adj2
+burtch1983/48/7	comoì̵e	Huitoto Murui	nuevo	Castellano	adj2
+burtch1983/48/8	comuìcana jaìde	Huitoto Murui	aumentar gente	Castellano	v
+burtch1983/48/8	comuìcana jaìde	Huitoto Murui	animales	Castellano	v
+burtch1983/49/7	coni	Huitoto Murui	a	Castellano	suf.s. locativo
+burtch1983/49/7	coni	Huitoto Murui	en	Castellano	suf.s. locativo
+burtch1983/49/7	coni	Huitoto Murui	al lado de	Castellano	suf.s. locativo
+burtch1983/49/9	conilli̵e	Huitoto Murui	arena	Castellano	s
+burtch1983/50/4	corebi̵	Huitoto Murui	colada	Castellano	s1B
+burtch1983/50/4	corebi̵	Huitoto Murui	cahuana pura sin jugo de frutas	Castellano	s1B
+burtch1983/50/12	cote	Huitoto Murui	poner en su lugar la cumbrera de una casa	Castellano	vt2
+burtch1983/50/12	cote	Huitoto Murui	armar trampa en forma de cerco en una quebrada grande para coger peces	Castellano	vt2
+burtch1983/50/12	cote	Huitoto Murui	cantar	Castellano	vt2
+burtch1983/50/12	cote	Huitoto Murui	hablar	Castellano	vt2
+burtch1983/50/12	cote	Huitoto Murui	gritar ciertos animales e insectos	Castellano	vt2
+burtch1983/51/11	cuè	Huitoto Murui	yo	Castellano	pro per|adj pos.
+burtch1983/51/11	cuè	Huitoto Murui	mi	Castellano	pro per|adj pos.
+burtch1983/51/11	cue	Huitoto Murui	yo	Castellano	pro per|adj pos.
+burtch1983/51/11	cue	Huitoto Murui	mi	Castellano	pro per|adj pos.
+burtch1983/52/13	cuere	Huitoto Murui	salado	Castellano	adj3
+burtch1983/52/13	cuere	Huitoto Murui	maloliente	Castellano	adj3
+burtch1983/52/13	cuere	Huitoto Murui	hediondo	Castellano	adj3
+burtch1983/53/12	cuìnade	Huitoto Murui	atar	Castellano	vt1
+burtch1983/54/18	ci̵cuède	Huitoto Murui	vomitar	Castellano	vt1
+burtch1983/55/2	ci̵cuìa	Huitoto Murui	vomitivo	Castellano	s3
+burtch1983/55/11	ci̵gi̵note	Huitoto Murui	enredar	Castellano	vt1
+burtch1983/55/11	ci̵gi̵note	Huitoto Murui	atar sogas	Castellano	vt1
+burtch1983/55/11	ci̵gi̵note	Huitoto Murui	estrangular	Castellano	vt1
+burtch1983/55/11	ci̵gi̵note	Huitoto Murui	apretar	Castellano	vt1
+burtch1983/55/20	ci̵maì̵de	Huitoto Murui	apretar	Castellano	vt1
+burtch1983/55/20	ci̵maì̵de	Huitoto Murui	exprimir algo con las manos con fuerza	Castellano	vt1
+burtch1983/56/2	ci̵maì̵goì̵	Huitoto Murui	cuello	Castellano	s
+burtch1983/56/2	ci̵maì̵go	Huitoto Murui	cuello	Castellano	s
+burtch1983/57/16	ci̵toni̵aì̵	Huitoto Murui	venados	Castellano	pl
+burtch1983/59/4	da	Huitoto Murui	uno	Castellano	adj1
+burtch1983/59/4	da	Huitoto Murui	solo	Castellano	adj1
+burtch1983/59/16	dabecuìro	Huitoto Murui	cinco	Castellano	adj1
+burtch1983/61/1	daforie	Huitoto Murui	alguno	Castellano	s1B
+burtch1983/61/1	daforie	Huitoto Murui	algunos	Castellano	s1B
+burtch1983/61/1	daforie	Huitoto Murui	alguna parte	Castellano	s1B
+burtch1983/61/8	daje	Huitoto Murui	uno	Castellano	adj1
+burtch1983/61/8	daje	Huitoto Murui	mismo	Castellano	adj1
+burtch1983/61/8	dae	Huitoto Murui	uno	Castellano	adj1
+burtch1983/61/8	dae	Huitoto Murui	mismo	Castellano	adj1
+burtch1983/61/9	daje amani	Huitoto Murui	tres	Castellano	adj1
+burtch1983/61/9	dae amani	Huitoto Murui	tres	Castellano	adj1
+burtch1983/62/7	dajerie	Huitoto Murui	algo	Castellano	pro. indefinido|adj2
+burtch1983/62/7	dajerie	Huitoto Murui	alguno	Castellano	pro. indefinido|adj2
+burtch1983/62/7	dajerie	Huitoto Murui	algunos	Castellano	pro. indefinido|adj2
+burtch1983/62/12	dama	Huitoto Murui	solo	Castellano	adj1.m|adj1.m
+burtch1983/62/12	dama	Huitoto Murui	sin compañía	Castellano	adj1.m|adj1.m
+burtch1983/62/12	dama	Huitoto Murui	no	Castellano	adj1.m|adj1.m
+burtch1983/62/12	dama	Huitoto Murui	no más	Castellano	adj1.m|adj1.m
+burtch1983/62/14	dama ite	Huitoto Murui	estar solo	Castellano	
+burtch1983/62/14	dama ite	Huitoto Murui	no	Castellano	
+burtch1983/62/14	dama ite	Huitoto Murui	quedarse así no más	Castellano	
+burtch1983/62/17	dami̵e	Huitoto Murui	un	Castellano	s2A.m
+burtch1983/62/17	dami̵e	Huitoto Murui	uno	Castellano	s2A.m
+burtch1983/62/17	dami̵e	Huitoto Murui	único (se refiere solamente a personas)	Castellano	s2A.m
+burtch1983/63/6	dani̵	Huitoto Murui	solos	Castellano	adj1.pl
+burtch1983/63/6	dani̵	Huitoto Murui	sin compañía (entre varios)	Castellano	adj1.pl
+burtch1983/63/6	dani̵	Huitoto Murui	sin orden ni permiso	Castellano	adj1.pl
+burtch1983/63/6	dani̵	Huitoto Murui	sin objeto	Castellano	adj1.pl
+burtch1983/63/9	daño	Huitoto Murui	sola	Castellano	adj1.f
+burtch1983/63/9	daño	Huitoto Murui	sin compañía	Castellano	adj1.f
+burtch1983/63/9	daño	Huitoto Murui	sin objeto	Castellano	adj1.f
+burtch1983/63/9	daño	Huitoto Murui	no más	Castellano	adj1.f
+burtch1983/64/11	dete	Huitoto Murui	serrar	Castellano	vt2
+burtch1983/64/11	dete	Huitoto Murui	cortar	Castellano	vt2
+burtch1983/64/11	dete	Huitoto Murui	partir	Castellano	vt2
+burtch1983/64/11	dete	Huitoto Murui	trinchar carne	Castellano	vt2
+burtch1983/64/13	do	Huitoto Murui	caso instrumental	Castellano	suf.s.) caso instrumental. 2. (suf.s.|
+burtch1983/64/13	do	Huitoto Murui	fruto	Castellano	suf.s.) caso instrumental. 2. (suf.s.|
+burtch1983/64/13	do	Huitoto Murui	semilla	Castellano	suf.s.) caso instrumental. 2. (suf.s.|
+burtch1983/65/3	dode dmɨ	Huitoto Murui	decir	Castellano	v
+burtch1983/65/3	dode dmɨ	Huitoto Murui	hablar	Castellano	v
+burtch1983/65/6	dofo	Huitoto Murui	nariz	Castellano	s1
+burtch1983/65/7	dofoni̵aì̵	Huitoto Murui	canto	Castellano	pl
+burtch1983/66/20	due	Huitoto Murui	poco	Castellano	
+burtch1983/69/4	dutade	Huitoto Murui	golpear	Castellano	vt1
+burtch1983/69/4	dutade	Huitoto Murui	apuñear	Castellano	vt1
+burtch1983/69/14	di̵aìde	Huitoto Murui	desangrar	Castellano	vi3
+burtch1983/69/14	di̵aìde	Huitoto Murui	sangrar	Castellano	vi3
+burtch1983/69/16	di̵arose	Huitoto Murui	ancho	Castellano	adj2
+burtch1983/69/20	di̵beji	Huitoto Murui	lado	Castellano	s
+burtch1983/69/20	di̵beji	Huitoto Murui	parte	Castellano	s
+burtch1983/70/7	di̵e	Huitoto Murui	sangre	Castellano	s
+burtch1983/70/11	di̵faì	Huitoto Murui	puro	Castellano	adj2
+burtch1983/70/11	di̵faì	Huitoto Murui	solo	Castellano	adj2
+burtch1983/70/11	di̵faì	Huitoto Murui	sin mezcla	Castellano	adj2
+burtch1983/70/11	di̵faì	Huitoto Murui	nada más que	Castellano	adj2
+burtch1983/71/1	di̵ga	Huitoto Murui	con	Castellano	adj2|adv5
+burtch1983/71/1	di̵ga	Huitoto Murui	acompañado de	Castellano	adj2|adv5
+burtch1983/71/1	di̵ga	Huitoto Murui	varios	Castellano	adj2|adv5
+burtch1983/71/1	di̵ga	Huitoto Murui	mucho	Castellano	adj2|adv5
+burtch1983/72/10	di̵rerisaì̵	Huitoto Murui	muchos	Castellano	adj
+burtch1983/72/10	di̵rerisaì̵	Huitoto Murui	bastante	Castellano	adj
+burtch1983/72/12	di̵rue	Huitoto Murui	sangre	Castellano	s1
+burtch1983/73/18	ecɨ	Huitoto Murui	lado	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	cuando	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	al mismo tiempo que	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	al lado de	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	lado	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	cuando	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	al mismo tiempo que	Castellano	s|adv3
+burtch1983/73/18	ecɨ	Huitoto Murui	al lado de	Castellano	s|adv3
+burtch1983/73/18	ecɨmo	Huitoto Murui	lado	Castellano	s|adv3
+burtch1983/73/18	ecɨmo	Huitoto Murui	cuando	Castellano	s|adv3
+burtch1983/73/18	ecɨmo	Huitoto Murui	al mismo tiempo que	Castellano	s|adv3
+burtch1983/73/18	ecɨmo	Huitoto Murui	al lado de	Castellano	s|adv3
+burtch1983/75/18	ei	Huitoto Murui	mamá	Castellano	s1|término de referencia
+burtch1983/75/18	ei	Huitoto Murui	madre	Castellano	s1|término de referencia
+burtch1983/76/15	emodo	Huitoto Murui	espalda	Castellano	|s1A) 1. espalda|espaldar. Naìe emoduaì̵. (Son) los espaldares (de varias sillas). 2. (s1A
+burtch1983/76/15	emodo	Huitoto Murui	espaldar	Castellano	|s1A) 1. espalda|espaldar. Naìe emoduaì̵. (Son) los espaldares (de varias sillas). 2. (s1A
+burtch1983/76/15	emodo	Huitoto Murui	tapa	Castellano	|s1A) 1. espalda|espaldar. Naìe emoduaì̵. (Son) los espaldares (de varias sillas). 2. (s1A
+burtch1983/76/15	emodo	Huitoto Murui	parte superior de una cosa	Castellano	|s1A) 1. espalda|espaldar. Naìe emoduaì̵. (Son) los espaldares (de varias sillas). 2. (s1A
+burtch1983/78/16	eni̵rue	Huitoto Murui	suelo	Castellano	s1
+burtch1983/78/16	eni̵rue	Huitoto Murui	tierra	Castellano	s1
+burtch1983/79/3	eo	Huitoto Murui	muchos	Castellano	adv6
+burtch1983/79/3	eo	Huitoto Murui	muy	Castellano	adv6
+burtch1983/81/14	ei̵lli̵	Huitoto Murui	pie	Castellano	s1B
+burtch1983/81/20	facade	Huitoto Murui	pensar	Castellano	vt1
+burtch1983/81/20	facade	Huitoto Murui	leer	Castellano	vt1
+burtch1983/81/20	facade	Huitoto Murui	estudiar	Castellano	vt1
+burtch1983/81/20	facade	Huitoto Murui	probar	Castellano	vt1
+burtch1983/82/3	facadote	Huitoto Murui	hacer pensar	Castellano	vc
+burtch1983/82/3	facadote	Huitoto Murui	contar	Castellano	vc
+burtch1983/82/3	facadote	Huitoto Murui	recordar	Castellano	vc
+burtch1983/82/4	facaì	Huitoto Murui	en ese tiempo	Castellano	adv2
+burtch1983/82/4	facaì	Huitoto Murui	al tiempo que	Castellano	adv2
+burtch1983/82/4	facaì	Huitoto Murui	cuando	Castellano	adv2
+burtch1983/82/4	facaìse	Huitoto Murui	en ese tiempo	Castellano	adv2
+burtch1983/82/4	facaìse	Huitoto Murui	al tiempo que	Castellano	adv2
+burtch1983/82/4	facaìse	Huitoto Murui	cuando	Castellano	adv2
+burtch1983/82/4	facaìseconi	Huitoto Murui	en ese tiempo	Castellano	adv2
+burtch1983/82/4	facaìseconi	Huitoto Murui	al tiempo que	Castellano	adv2
+burtch1983/82/4	facaìseconi	Huitoto Murui	cuando	Castellano	adv2
+burtch1983/84/3	fare	Huitoto Murui	manteca	Castellano	s1
+burtch1983/84/3	fare	Huitoto Murui	grasa	Castellano	s1
+burtch1983/84/9	farede	Huitoto Murui	ser gordo	Castellano	vd
+burtch1983/84/9	farede	Huitoto Murui	tener aceite	Castellano	vd
+burtch1983/84/9	farede	Huitoto Murui	grasa	Castellano	vd
+burtch1983/84/9	farede	Huitoto Murui	manteca	Castellano	vd
+burtch1983/84/13	fatade	Huitoto Murui	tocar tambor o manguaré	Castellano	vt1
+burtch1983/84/13	fatade	Huitoto Murui	golpear	Castellano	vt1
+burtch1983/85/13	faì̵ridate	Huitoto Murui	flotar	Castellano	vi3
+burtch1983/85/14	faì̵ride	Huitoto Murui	flotar	Castellano	vi3
+burtch1983/86/10	fea	Huitoto Murui	inútilmente	Castellano	adv
+burtch1983/86/10	fea	Huitoto Murui	en vano	Castellano	adv
+burtch1983/86/10	fea	Huitoto Murui	solamente	Castellano	adv
+burtch1983/86/10	fea	Huitoto Murui	por nada	Castellano	adv
+burtch1983/86/12	fecabe bora	Huitoto Murui	hombro	Castellano	s
+burtch1983/86/14	fecade	Huitoto Murui	ofrecer	Castellano	vt1
+burtch1983/86/14	fecade	Huitoto Murui	dar	Castellano	vt1
+burtch1983/86/14	fecade	Huitoto Murui	regalar	Castellano	vt1
+burtch1983/86/14	fecade	Huitoto Murui	vender. (vea fecarite	Castellano	vt1
+burtch1983/86/14	fecade	Huitoto Murui	ite.)	Castellano	vt1
+burtch1983/86/16	fecanico	Huitoto Murui	hombro	Castellano	s1
+burtch1983/87/14	feede	Huitoto Murui	volar	Castellano	vi3
+burtch1983/87/14	fede	Huitoto Murui	volar	Castellano	vi3
+burtch1983/88/17	fenaì̵	Huitoto Murui	abdomen	Castellano	s1A
+burtch1983/88/17	fenaì̵	Huitoto Murui	barriga	Castellano	s1A
+burtch1983/88/17	fenaì̵gi̵	Huitoto Murui	abdomen	Castellano	s1A
+burtch1983/88/17	fenaì̵gi̵	Huitoto Murui	barriga	Castellano	s1A
+burtch1983/88/17	fenaì̵lli̵	Huitoto Murui	abdomen	Castellano	s1A
+burtch1983/88/17	fenaì̵lli̵	Huitoto Murui	barriga	Castellano	s1A
+burtch1983/91/2	filli̵i	Huitoto Murui	hiel	Castellano	s1A
+burtch1983/91/2	filli̵i	Huitoto Murui	bilis	Castellano	s1A
+burtch1983/91/2	filli̵ji	Huitoto Murui	hiel	Castellano	s1A
+burtch1983/91/2	filli̵ji	Huitoto Murui	bilis	Castellano	s1A
+burtch1983/91/3	fiodaìte	Huitoto Murui	morir	Castellano	vi3
+burtch1983/91/3	fiodaìte	Huitoto Murui	estar muriendo	Castellano	vi3
+burtch1983/91/15	fitade	Huitoto Murui	soplar	Castellano	v
+burtch1983/92/2	fue	Huitoto Murui	canto	Castellano	s1A
+burtch1983/92/2	fue	Huitoto Murui	banda	Castellano	s1A
+burtch1983/92/2	fue	Huitoto Murui	orilla especialmente de un río o de una cocha	Castellano	s1A
+burtch1983/92/3	fue	Huitoto Murui	boca	Castellano	s1A
+burtch1983/92/3	fue	Huitoto Murui	abertura	Castellano	s1A
+burtch1983/92/13	fueda	Huitoto Murui	canto	Castellano	s
+burtch1983/92/13	fueda	Huitoto Murui	borde	Castellano	s
+burtch1983/93/14	fuìride	Huitoto Murui	pelear	Castellano	vi3
+burtch1983/93/14	fuìride	Huitoto Murui	eclipsar el sol o la luna	Castellano	vi3
+burtch1983/95/7	fi̵di̵de	Huitoto Murui	averiguar	Castellano	vi3
+burtch1983/95/7	fi̵di̵de	Huitoto Murui	saber	Castellano	vi3
+burtch1983/95/13	fi̵ide	Huitoto Murui	echarse	Castellano	vi3
+burtch1983/95/13	fi̵ide	Huitoto Murui	acostarse en hamaca	Castellano	vi3
+burtch1983/96/12	fi̵vuì	Huitoto Murui	luna	Castellano	s1A
+burtch1983/96/12	fi̵vuì	Huitoto Murui	mes	Castellano	s1A
+burtch1983/96/13	fi̵vuìni̵aì̵	Huitoto Murui	lunas	Castellano	pl
+burtch1983/96/13	fi̵vuìni̵aì̵	Huitoto Murui	meses	Castellano	pl
+burtch1983/99/23	guàmaì̵	Huitoto Murui	arena	Castellano	s
+burtch1983/100/10	guìga	Huitoto Murui	comida	Castellano	s3|v.pas
+burtch1983/100/10	guìga	Huitoto Murui	ser comido	Castellano	s3|v.pas
+burtch1983/100/15	guìlle	Huitoto Murui	comida	Castellano	s3
+burtch1983/100/15	guìlle	Huitoto Murui	víveres. (vea guìga	Castellano	s3
+burtch1983/100/15	guìlle	Huitoto Murui	guìte.)	Castellano	s3
+burtch1983/101/10	guìte	Huitoto Murui	comer	Castellano	vt2
+burtch1983/102/13	gi̵redote	Huitoto Murui	girar	Castellano	vt2
+burtch1983/102/13	gi̵redote	Huitoto Murui	dar vuelta a un columpio	Castellano	vt2
+burtch1983/102/13	gi̵redote	Huitoto Murui	columpiar	Castellano	vt2
+burtch1983/102/14	gi̵renote	Huitoto Murui	girar	Castellano	vt1
+burtch1983/102/14	gi̵renote	Huitoto Murui	dar vuelta como a una llave o tapa de botella	Castellano	vt1
+burtch1983/102/15	gi̵reride	Huitoto Murui	girar	Castellano	vi3
+burtch1983/103/4	gi̵te	Huitoto Murui	fregar	Castellano	vt2
+burtch1983/103/4	gi̵te	Huitoto Murui	limpiar	Castellano	vt2
+burtch1983/103/4	gi̵te	Huitoto Murui	planchar ropa	Castellano	vt2
+burtch1983/103/7	i	Huitoto Murui	jugo	Castellano	s
+burtch1983/103/7	i	Huitoto Murui	líquido	Castellano	s
+burtch1983/103/7	i	Huitoto Murui	savia	Castellano	s
+burtch1983/103/7	i	Huitoto Murui	caldo	Castellano	s
+burtch1983/103/16	iaìco	Huitoto Murui	ala	Castellano	s1A
+burtch1983/103/18	iaìro	Huitoto Murui	pared	Castellano	s1A
+burtch1983/103/18	iaìro	Huitoto Murui	cerco	Castellano	s1A
+burtch1983/103/22	ianore	Huitoto Murui	cerca	Castellano	adj2
+burtch1983/103/22	ianore	Huitoto Murui	corto	Castellano	adj2
+burtch1983/103/22	ianori	Huitoto Murui	cerca	Castellano	adj2
+burtch1983/103/22	ianori	Huitoto Murui	corto	Castellano	adj2
+burtch1983/104/8	iaì̵re	Huitoto Murui	cerca	Castellano	adj2
+burtch1983/104/8	iaì̵reì	Huitoto Murui	cerca	Castellano	adj2
+burtch1983/104/14	ibe	Huitoto Murui	pluma	Castellano	s1A
+burtch1983/104/14	ibe	Huitoto Murui	hoja	Castellano	s1A
+burtch1983/104/15	ibeni̵aì̵	Huitoto Murui	plumas	Castellano	pl.alt
+burtch1983/104/15	ibeni̵aì̵	Huitoto Murui	hojas	Castellano	pl.alt
+burtch1983/104/16	ibeco	Huitoto Murui	cosa achatada	Castellano	s
+burtch1983/104/16	ibeco	Huitoto Murui	llana	Castellano	s
+burtch1983/104/16	ibeco	Huitoto Murui	plana	Castellano	s
+burtch1983/104/16	ibeco	Huitoto Murui	allanada	Castellano	s
+burtch1983/104/16	ibeco	Huitoto Murui	aplastada	Castellano	s
+burtch1983/104/16	ibeco	Huitoto Murui	apretada	Castellano	s
+burtch1983/105/4	ibogi̵	Huitoto Murui	redondo	Castellano	adj1|s1A
+burtch1983/105/4	ibogi̵	Huitoto Murui	cosa redonda	Castellano	adj1|s1A
+burtch1983/105/4	ibogi̵	Huitoto Murui	vacía y suave	Castellano	adj1|s1A
+burtch1983/105/4	ibogi̵	Huitoto Murui	especie redonda de churo que es comestible	Castellano	adj1|s1A
+burtch1983/105/14	icaìfona iide	Huitoto Murui	rodar	Castellano	
+burtch1983/105/14	icaìfona iide	Huitoto Murui	girar	Castellano	
+burtch1983/105/14	icaìfona iide	Huitoto Murui	moverse alrededor de un eje	Castellano	
+burtch1983/107/3	ici̵	Huitoto Murui	nombre	Castellano	s1
+burtch1983/107/15	ido	Huitoto Murui	semilla	Castellano	s1A
+burtch1983/107/16	idoni̵aì̵	Huitoto Murui	diente	Castellano	pl
+burtch1983/108/3	ie	Huitoto Murui	él	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	ella	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	ello	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	ellas	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	ellos	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	lo	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	le	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	la	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	los	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	su	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	sus	Castellano	pro|adj1
+burtch1983/108/3	ie	Huitoto Murui	suyos o suyas (de tercera persona)	Castellano	pro|adj1
+burtch1983/109/11	iforo	Huitoto Murui	hoja	Castellano	s
+burtch1983/109/11	iforo	Huitoto Murui	pluma. (vea ibe	Castellano	s
+burtch1983/109/11	iforo	Huitoto Murui	jocomeforo	Castellano	s
+burtch1983/109/11	iforo	Huitoto Murui	rabe.)	Castellano	s
+burtch1983/110/4	abi̵ igoì̵	Huitoto Murui	piel	Castellano	s
+burtch1983/110/20	illaìci̵	Huitoto Murui	hueso	Castellano	s1A
+burtch1983/112/3	imaci̵	Huitoto Murui	ellos	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	su	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	sus	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	suyo	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	suyos	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	suya	Castellano	pro
+burtch1983/112/3	imaci̵	Huitoto Murui	suyas (de ellos)	Castellano	pro
+burtch1983/112/6	imuìci̵	Huitoto Murui	polvo	Castellano	s1
+burtch1983/112/6	imuìci̵	Huitoto Murui	harina	Castellano	s1
+burtch1983/112/7	imi̵e	Huitoto Murui	él (persona)	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	su	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	sus	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	suyo	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	suya	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	suyos	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	suyas (de él)	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/7	imi̵e	Huitoto Murui	hombre	Castellano	pro) él (persona); su|sus|suyo|suya|suyos|suyas (de él). Imi̵e comuìtaga bie eni̵ruedi̵. Esta Tierra fue creada por él. 2. (s1B|
+burtch1983/112/8	imi̵iaì̵	Huitoto Murui	hombres	Castellano	pl
+burtch1983/112/17	iñaìño	Huitoto Murui	ella (persona)	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	su	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	sus	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	suyo	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	suya	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	suyos	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	suyas (de ella)	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/112/17	iñaìño	Huitoto Murui	mujer	Castellano	|pro. per|adj pos.) ella (persona); su|sus|suyo|suya|suyos|suyas (de ella). 2. (s1B
+burtch1983/113/11	iraì	Huitoto Murui	candela	Castellano	s1
+burtch1983/113/11	iraì	Huitoto Murui	fuego	Castellano	s1
+burtch1983/113/22	irofe	Huitoto Murui	tira	Castellano	s1B
+burtch1983/113/22	irofe	Huitoto Murui	soga	Castellano	s1B
+burtch1983/113/22	irofe	Huitoto Murui	lazo de ropa para amarrar algo	Castellano	s1B
+burtch1983/114/5	isi	Huitoto Murui	carne	Castellano	s
+burtch1983/114/14	isido	Huitoto Murui	diente	Castellano	s1A
+burtch1983/114/15	isie	Huitoto Murui	dientes	Castellano	pl.alt
+burtch1983/114/15	isie	Huitoto Murui	dentadura	Castellano	pl.alt
+burtch1983/116/10	ite	Huitoto Murui	estar	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	vivir	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	haber	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	ser	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	quedar	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	dar	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	tener	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/116/10	ite	Huitoto Murui	poseer	Castellano	vi3) estar|vivir|haber|ser|quedar. Di̵no iti̵caì̵. Allí vivimos. Jasici̵mo ite ra mameci̵na uiñoti̵maci̵. Ellos sabían los nombres de las cosas que están en el monte (la selva). (Vea amarede|ana itemo|jitoma naìdaì ia|joide y Apéndice D.) 2. (vt2) dar. Cuèmo iti̵o. Me (lo) das. (Vea fecade|i|ine.||vt2
+burtch1983/117/10	ii̵fe	Huitoto Murui	lengua	Castellano	s1A
+burtch1983/118/3	jabi̵ride	Huitoto Murui	dar vuelta	Castellano	vi3
+burtch1983/118/3	jabi̵ride	Huitoto Murui	rodar	Castellano	vi3
+burtch1983/118/3	jabi̵ride	Huitoto Murui	girar	Castellano	vi3
+burtch1983/118/3	jabi̵de	Huitoto Murui	dar vuelta	Castellano	vi3
+burtch1983/118/3	jabi̵de	Huitoto Murui	rodar	Castellano	vi3
+burtch1983/118/3	jabi̵de	Huitoto Murui	girar	Castellano	vi3
+burtch1983/119/8	jaci̵naìte	Huitoto Murui	sorprender	Castellano	vd
+burtch1983/119/8	jaci̵naìte	Huitoto Murui	tener miedo	Castellano	vd
+burtch1983/119/8	jaci̵naìte	Huitoto Murui	temer	Castellano	vd
+burtch1983/121/4	jaìde	Huitoto Murui	ir	Castellano	vi3
+burtch1983/121/4	jaìde	Huitoto Murui	pasar	Castellano	vi3
+burtch1983/121/4	jaìde	Huitoto Murui	salir	Castellano	vi3
+burtch1983/121/4	jaìde	Huitoto Murui	viajar	Castellano	vi3
+burtch1983/121/15	jaillude	Huitoto Murui	cortar	Castellano	v
+burtch1983/121/15	jaillude	Huitoto Murui	acuchillar o picar finamente	Castellano	v
+burtch1983/122/10	jaìrifo	Huitoto Murui	viento	Castellano	s
+burtch1983/122/11	jairude	Huitoto Murui	cortar	Castellano	vt1
+burtch1983/122/18	jallede	Huitoto Murui	oler	Castellano	vi3
+burtch1983/122/18	jallede	Huitoto Murui	apestar	Castellano	vi3
+burtch1983/123/21	janogaìda	Huitoto Murui	delgado	Castellano	adj
+burtch1983/124/6	janore	Huitoto Murui	poco	Castellano	adj3
+burtch1983/124/6	janore	Huitoto Murui	chico	Castellano	adj3
+burtch1983/124/6	janore	Huitoto Murui	poquito	Castellano	adj3
+burtch1983/124/6	janore	Huitoto Murui	delgado	Castellano	adj3
+burtch1983/124/6	janore	Huitoto Murui	angosto. (vea lli̵aì̵	Castellano	adj3
+burtch1983/124/6	janore	Huitoto Murui	lli̵bire.)	Castellano	adj3
+burtch1983/124/9	janorede	Huitoto Murui	ser o estar chico	Castellano	vd
+burtch1983/124/9	janorede	Huitoto Murui	poquito	Castellano	vd
+burtch1983/124/9	janorede	Huitoto Murui	delgado	Castellano	vd
+burtch1983/124/9	janorede	Huitoto Murui	angosto	Castellano	vd
+burtch1983/124/18	jari̵febeji	Huitoto Murui	izquierda	Castellano	s
+burtch1983/124/18	jari̵febeji	Huitoto Murui	lado izquierdo	Castellano	s
+burtch1983/125/7	jasici̵ beici̵	Huitoto Murui	canto	Castellano	s1A
+burtch1983/125/7	jasici̵ beici̵	Huitoto Murui	borde del monte	Castellano	s1A
+burtch1983/125/7	jasici̵ fue	Huitoto Murui	canto	Castellano	s1A
+burtch1983/125/7	jasici̵ fue	Huitoto Murui	borde del monte	Castellano	s1A
+burtch1983/126/1	jaì̵bede	Huitoto Murui	cavar	Castellano	vt1
+burtch1983/126/1	jaì̵bede	Huitoto Murui	escarbar	Castellano	vt1
+burtch1983/127/18	jeare	Huitoto Murui	sucio	Castellano	adj3
+burtch1983/127/18	jeare	Huitoto Murui	malo	Castellano	adj3
+burtch1983/128/3	jebe	Huitoto Murui	barriga	Castellano	s1
+burtch1983/128/6	jebego	Huitoto Murui	tripa	Castellano	s1A
+burtch1983/128/6	jebego	Huitoto Murui	intestino. (vea jebe	Castellano	s1A
+burtch1983/128/6	jebego	Huitoto Murui	jebegi̵.)	Castellano	s1A
+burtch1983/128/6	jebeo	Huitoto Murui	tripa	Castellano	s1A
+burtch1983/128/6	jebeo	Huitoto Murui	intestino. (vea jebe	Castellano	s1A
+burtch1983/128/6	jebeo	Huitoto Murui	jebegi̵.)	Castellano	s1A
+burtch1983/128/8	jebegi̵	Huitoto Murui	estómago	Castellano	s1
+burtch1983/128/8	jebegi̵	Huitoto Murui	barriga	Castellano	s1
+burtch1983/128/13	jecorie	Huitoto Murui	grande	Castellano	adj
+burtch1983/129/2	jee	Huitoto Murui	sí	Castellano	adv
+burtch1983/129/2	jee	Huitoto Murui	bueno	Castellano	adv
+burtch1983/129/2	jee	Huitoto Murui	respuesta afirmativa	Castellano	adv
+burtch1983/129/8	jefo	Huitoto Murui	oreja	Castellano	s1
+burtch1983/129/9	jefoni̵aì̵	Huitoto Murui	orejas	Castellano	pl
+burtch1983/130/7	jenino	Huitoto Murui	menudo	Castellano	adv4) 1. menudo|fino|muy pequeño. Jenino jaìta. Córtalo en pedazos pequeños. 2. (adj|
+burtch1983/130/7	jenino	Huitoto Murui	fino	Castellano	adv4) 1. menudo|fino|muy pequeño. Jenino jaìta. Córtalo en pedazos pequeños. 2. (adj|
+burtch1983/130/7	jenino	Huitoto Murui	muy pequeño	Castellano	adv4) 1. menudo|fino|muy pequeño. Jenino jaìta. Córtalo en pedazos pequeños. 2. (adj|
+burtch1983/130/7	jenino	Huitoto Murui	poco	Castellano	adv4) 1. menudo|fino|muy pequeño. Jenino jaìta. Córtalo en pedazos pequeños. 2. (adj|
+burtch1983/130/13	jerie	Huitoto Murui	grande	Castellano	adj2
+burtch1983/130/13	jerie	Huitoto Murui	mucho	Castellano	adj2
+burtch1983/130/13	jerie	Huitoto Murui	ancho	Castellano	adj2
+burtch1983/132/9	jidiride	Huitoto Murui	estar magullado	Castellano	vi3
+burtch1983/132/9	jidiride	Huitoto Murui	ser de piel oscura	Castellano	vi3
+burtch1983/132/9	jidiride	Huitoto Murui	negra	Castellano	vi3
+burtch1983/133/15	jifide	Huitoto Murui	quemar	Castellano	vt1
+burtch1983/133/15	jifide	Huitoto Murui	irritar la boca	Castellano	vt1
+burtch1983/133/15	jifide	Huitoto Murui	hacer picante algo	Castellano	vt1
+burtch1983/137/9	jira	Huitoto Murui	porque	Castellano	adv1
+burtch1983/138/9	jirode	Huitoto Murui	beber	Castellano	vt1
+burtch1983/138/9	jirode	Huitoto Murui	tomar	Castellano	vt1
+burtch1983/138/9	jirode	Huitoto Murui	mamar	Castellano	vt1
+burtch1983/139/11	jitoma	Huitoto Murui	sol	Castellano	s1
+burtch1983/140/12	jiti̵re	Huitoto Murui	negro	Castellano	adj2
+burtch1983/140/12	jiti̵re	Huitoto Murui	oscuro	Castellano	adj2
+burtch1983/141/4	jobaìde	Huitoto Murui	quemar	Castellano	vt1
+burtch1983/141/4	jobaìde	Huitoto Murui	especialmente quemar una chacra	Castellano	vt1
+burtch1983/141/4	jobaìde	Huitoto Murui	guerrear	Castellano	vt1
+burtch1983/142/12	jogobe	Huitoto Murui	pecho	Castellano	s1
+burtch1983/142/12	jogobe	Huitoto Murui	tórax	Castellano	s1
+burtch1983/143/7	joraì	Huitoto Murui	lago	Castellano	s1
+burtch1983/143/7	joraì	Huitoto Murui	cocha	Castellano	s1
+burtch1983/145/11	juìconote	Huitoto Murui	atraer	Castellano	vt2
+burtch1983/145/11	juìconote	Huitoto Murui	jalar hacia arriba	Castellano	vt2
+burtch1983/145/11	juìconote	Huitoto Murui	levantar	Castellano	vt2
+burtch1983/145/11	juìconote	Huitoto Murui	saltar una rama o árbol cuando se cortan	Castellano	vt2
+burtch1983/145/12	juìcoride	Huitoto Murui	atraer	Castellano	vi3
+burtch1983/145/12	juìcoride	Huitoto Murui	levantar	Castellano	vi3
+burtch1983/145/12	juìcoride	Huitoto Murui	jalar hacia arriba	Castellano	vi3
+burtch1983/147/9	jusefo	Huitoto Murui	ceniza	Castellano	s1A
+burtch1983/147/22	ji̵	Huitoto Murui	fruto	Castellano	suf.s
+burtch1983/147/22	ji̵	Huitoto Murui	semilla	Castellano	suf.s
+burtch1983/147/22	ji̵	Huitoto Murui	tubérculo	Castellano	suf.s
+burtch1983/148/2	ji̵aì̵	Huitoto Murui	también	Castellano	adv4|adj2
+burtch1983/148/2	ji̵aì̵	Huitoto Murui	otro	Castellano	adv4|adj2
+burtch1983/148/3	ji̵aì̵	Huitoto Murui	otro	Castellano	
+burtch1983/148/3	ji̵aì̵	Huitoto Murui	otros	Castellano	
+burtch1983/148/19	ji̵ca	Huitoto Murui	lejos	Castellano	adv
+burtch1983/148/19	ji̵i̵ca	Huitoto Murui	lejos	Castellano	adv
+burtch1983/149/6	ji̵co	Huitoto Murui	perro	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	tigrillo	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	tigre mariposo dcp. (vea janallari	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	ji̵coni̵aì̵	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	ji̵cotiru	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	ri̵ñoco	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	i̵a	Castellano	s1
+burtch1983/149/6	ji̵co	Huitoto Murui	i̵ico.)	Castellano	s1
+burtch1983/149/7	ji̵coni̵aì̵	Huitoto Murui	perros	Castellano	pl
+burtch1983/149/15	ji̵cueco	Huitoto Murui	casa comunal grande	Castellano	s1
+burtch1983/149/15	ji̵cueco	Huitoto Murui	redonda	Castellano	s1
+burtch1983/149/15	ji̵cueco	Huitoto Murui	con hojas hasta el suelo	Castellano	s1
+burtch1983/149/15	ji̵cueco	Huitoto Murui	maloca dcp. (vea ananeco	Castellano	s1
+burtch1983/149/15	ji̵cueco	Huitoto Murui	jofo	Castellano	s1
+burtch1983/149/15	ji̵cueco	Huitoto Murui	namoco.)	Castellano	s1
+burtch1983/150/16	ji̵fanote	Huitoto Murui	jugar	Castellano	vt2
+burtch1983/150/16	ji̵fanote	Huitoto Murui	embromar	Castellano	vt2
+burtch1983/150/16	ji̵fanote	Huitoto Murui	mover	Castellano	vt2
+burtch1983/151/18	ji̵gi̵	Huitoto Murui	huevo	Castellano	s1
+burtch1983/153/8	ji̵nuì	Huitoto Murui	agua	Castellano	s1
+burtch1983/155/4	ji̵tade	Huitoto Murui	colgar	Castellano	vt1
+burtch1983/155/4	ji̵tade	Huitoto Murui	poner una cosa colgada	Castellano	vt1
+burtch1983/155/4	ji̵tade	Huitoto Murui	vestirse o ponerse la ropa	Castellano	vt1
+burtch1983/155/4	ji̵tade	Huitoto Murui	nombrar	Castellano	vt1
+burtch1983/155/4	ji̵tade	Huitoto Murui	poner nombre	Castellano	vt1
+burtch1983/159/17	llaì̵gabaìro	Huitoto Murui	cerco	Castellano	s1B
+burtch1983/159/18	llaì̵gafo	Huitoto Murui	cerco	Castellano	s1
+burtch1983/160/1	llaì̵te	Huitoto Murui	cercar	Castellano	vt2
+burtch1983/160/1	llaì̵te	Huitoto Murui	hacer trampa en forma de cerco de palitos	Castellano	vt2
+burtch1983/160/1	llaì̵te	Huitoto Murui	piedras o barro	Castellano	vt2
+burtch1983/162/8	lliguède	Huitoto Murui	exprimir	Castellano	vt
+burtch1983/162/8	lliguède	Huitoto Murui	apretar	Castellano	vt
+burtch1983/162/8	lliguède	Huitoto Murui	mezclar (con los dedos)	Castellano	vt
+burtch1983/162/8	lliguède	Huitoto Murui	amasar sin agua	Castellano	vt
+burtch1983/163/4	llimi̵note	Huitoto Murui	apretar	Castellano	vt2
+burtch1983/163/4	llimi̵note	Huitoto Murui	sacar apretando	Castellano	vt2
+burtch1983/167/2	llote	Huitoto Murui	avisar	Castellano	vt2
+burtch1983/167/2	llote	Huitoto Murui	decir	Castellano	vt2
+burtch1983/167/2	llote	Huitoto Murui	contar	Castellano	vt2
+burtch1983/168/3	lli̵bibecode	Huitoto Murui	ser o estar fino	Castellano	vi3
+burtch1983/168/3	lli̵bibecode	Huitoto Murui	delgado	Castellano	vi3
+burtch1983/168/4	lli̵bibi̵ci̵	Huitoto Murui	tabla no muy gruesa	Castellano	s1B
+burtch1983/168/4	lli̵bibi̵ci̵	Huitoto Murui	delgada	Castellano	s1B
+burtch1983/168/6	lli̵bire	Huitoto Murui	fino	Castellano	adj3
+burtch1983/168/6	lli̵bire	Huitoto Murui	membranoso	Castellano	adj3
+burtch1983/168/6	lli̵bire	Huitoto Murui	delgado	Castellano	adj3
+burtch1983/168/7	lli̵birede	Huitoto Murui	ser o estar fino	Castellano	vd
+burtch1983/168/7	lli̵birede	Huitoto Murui	delgado	Castellano	vd
+burtch1983/168/7	lli̵birede	Huitoto Murui	ser o estar transparente	Castellano	vd
+burtch1983/168/16	lli̵ci̵si	Huitoto Murui	carne	Castellano	s1
+burtch1983/169/4	lli̵ide	Huitoto Murui	agarrar	Castellano	vt1
+burtch1983/169/4	lli̵ide	Huitoto Murui	tener	Castellano	vt1
+burtch1983/172/3	mameci̵	Huitoto Murui	nombre	Castellano	s1A
+burtch1983/172/7	mamede	Huitoto Murui	llamar	Castellano	vt1
+burtch1983/172/7	mamede	Huitoto Murui	nombrar	Castellano	vt1
+burtch1983/172/7	mamede	Huitoto Murui	nombrar	Castellano	vt1
+burtch1983/172/7	mamede	Huitoto Murui	elegir	Castellano	vt1
+burtch1983/172/7	mamede	Huitoto Murui	hablar criticando	Castellano	vt1
+burtch1983/172/7	mamede	Huitoto Murui	quejarse	Castellano	vt1
+burtch1983/173/9	mare	Huitoto Murui	bueno	Castellano	adj2
+burtch1983/173/9	mare	Huitoto Murui	limpio	Castellano	adj2
+burtch1983/173/9	mare	Huitoto Murui	apropiado	Castellano	adj2
+burtch1983/173/9	mare	Huitoto Murui	propio	Castellano	adj2
+burtch1983/173/9	mare	Huitoto Murui	está bien	Castellano	adj2
+burtch1983/173/14	maremi̵e	Huitoto Murui	hombre bello	Castellano	s2B|s1B
+burtch1983/173/14	maremi̵e	Huitoto Murui	bueno	Castellano	s2B|s1B
+burtch1983/173/16	mareñaìño	Huitoto Murui	mare ri̵ño (s1a) mujer bella	Castellano	|s2B)|mare ri̵ño (s1A
+burtch1983/173/16	mareñaìño	Huitoto Murui	buena	Castellano	|s2B)|mare ri̵ño (s1A
+burtch1983/174/15	maì̵te	Huitoto Murui	amarrar	Castellano	vt2
+burtch1983/174/15	maì̵te	Huitoto Murui	atar	Castellano	vt2
+burtch1983/175/2	meenaìte	Huitoto Murui	pesar	Castellano	vd
+burtch1983/175/3	meere	Huitoto Murui	pesado	Castellano	adj
+burtch1983/176/2	meìnete	Huitoto Murui	matar	Castellano	vt2
+burtch1983/176/6	mena	Huitoto Murui	dos	Castellano	adj1
+burtch1983/178/4	mo	Huitoto Murui	cuando	Castellano	suf.v. desinencial
+burtch1983/179/5	mona	Huitoto Murui	cielo	Castellano	s1
+burtch1983/179/16	monaìllai	Huitoto Murui	mar	Castellano	s1
+burtch1983/179/16	monaìllai	Huitoto Murui	océano	Castellano	s1
+burtch1983/180/10	monoì̵	Huitoto Murui	pecho	Castellano	s1
+burtch1983/180/10	monoì̵	Huitoto Murui	teta	Castellano	s1
+burtch1983/180/13	moo	Huitoto Murui	papá	Castellano	s1
+burtch1983/180/13	moo	Huitoto Murui	padre	Castellano	s1
+burtch1983/182/26	mutade	Huitoto Murui	mojar	Castellano	vt1
+burtch1983/182/26	mutade	Huitoto Murui	sumergir	Castellano	vt1
+burtch1983/183/18	na	Huitoto Murui	todo	Castellano	adj2|s
+burtch1983/183/18	na	Huitoto Murui	todos	Castellano	adj2|s
+burtch1983/184/7	nabeji	Huitoto Murui	derecha	Castellano	s1
+burtch1983/184/7	nabeji	Huitoto Murui	lado derecho	Castellano	s1
+burtch1983/184/16	nagaamaga	Huitoto Murui	cuatro	Castellano	adj1
+burtch1983/187/12	nana	Huitoto Murui	todo	Castellano	adj2
+burtch1983/187/12	nana	Huitoto Murui	entero	Castellano	adj2
+burtch1983/187/12	nana	Huitoto Murui	todos	Castellano	adj2
+burtch1983/189/8	nai̵	Huitoto Murui	camino	Castellano	s1A
+burtch1983/189/8	nai̵	Huitoto Murui	trocha	Castellano	s1A
+burtch1983/189/8	nai̵so	Huitoto Murui	camino	Castellano	s1A
+burtch1983/189/8	nai̵so	Huitoto Murui	trocha	Castellano	s1A
+burtch1983/189/20	naì̵o	Huitoto Murui	noche	Castellano	s1
+burtch1983/189/20	naì̵ona	Huitoto Murui	noche	Castellano	s1
+burtch1983/190/10	naì̵ruìco	Huitoto Murui	cercado	Castellano	s1
+burtch1983/190/10	naì̵ruìco	Huitoto Murui	corral	Castellano	s1
+burtch1983/190/10	naì̵ruìco	Huitoto Murui	espacio descubierto alrededor de la casa	Castellano	s1
+burtch1983/190/12	nai̵so	Huitoto Murui	camino	Castellano	s1
+burtch1983/190/12	nai̵so	Huitoto Murui	trocha. (vea ari̵	Castellano	s1
+burtch1983/190/12	nai̵so	Huitoto Murui	di̵rofe.)	Castellano	s1
+burtch1983/190/12	nai̵	Huitoto Murui	camino	Castellano	s1
+burtch1983/190/12	nai̵	Huitoto Murui	trocha. (vea ari̵	Castellano	s1
+burtch1983/190/12	nai̵	Huitoto Murui	di̵rofe.)	Castellano	s1
+burtch1983/192/3	niji̵de	Huitoto Murui	tirar	Castellano	vt1
+burtch1983/192/3	niji̵de	Huitoto Murui	echar varias cosas una tras otra	Castellano	vt1
+burtch1983/192/3	niji̵de	Huitoto Murui	ahuyentar tirando cosas	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	echar	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	tirar	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	arrojar una vez	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	agarrar apretando	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	cerrar los ojos	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	tapar los oídos (con los dedos)	Castellano	vt1
+burtch1983/193/3	nitade	Huitoto Murui	apretar la boca	Castellano	vt1
+burtch1983/194/1	noci̵	Huitoto Murui	lluvia	Castellano	s1
+burtch1983/194/7	nofi̵ci̵	Huitoto Murui	piedra	Castellano	s1
+burtch1983/198/12	ñaìjide	Huitoto Murui	caer rápidamente	Castellano	v
+burtch1983/198/12	ñaìjide	Huitoto Murui	apretar	Castellano	v
+burtch1983/198/12	ñaìjide	Huitoto Murui	aplastar	Castellano	v
+burtch1983/198/12	ñaìjide	Huitoto Murui	apretujar las ramas de un árbol que cae	Castellano	v
+burtch1983/198/12	ñaìjide	Huitoto Murui	o una muchedumbre de gente	Castellano	v
+burtch1983/199/21	ñecuìo	Huitoto Murui	vena	Castellano	s1A
+burtch1983/201/7	ñuìtade	Huitoto Murui	empujar	Castellano	vt1
+burtch1983/201/7	ñuìtade	Huitoto Murui	alcanzar empujando	Castellano	vt1
+burtch1983/201/7	ñuìtade	Huitoto Murui	poner adentro empujando	Castellano	vt1
+burtch1983/202/10	ocaìna	Huitoto Murui	animal	Castellano	s1A
+burtch1983/202/10	ocaìna	Huitoto Murui	agutí	Castellano	s1A
+burtch1983/202/11	ocaìnaì̵aì̵	Huitoto Murui	animales	Castellano	pl
+burtch1983/202/11	ocaìnaì̵aì̵	Huitoto Murui	grupo ocaina	Castellano	pl
+burtch1983/202/11	ocaìnaì̵aì̵	Huitoto Murui	clan de los animales o del agutí	Castellano	pl
+burtch1983/203/11	ofoma ibe	Huitoto Murui	pluma	Castellano	s
+burtch1983/203/11	ofoma ibe	Huitoto Murui	plumas de ave o de perdiz	Castellano	s
+burtch1983/203/11	ofoma ibero	Huitoto Murui	pluma	Castellano	s
+burtch1983/203/11	ofoma ibero	Huitoto Murui	plumas de ave o de perdiz	Castellano	s
+burtch1983/203/11	ofoma iforo	Huitoto Murui	pluma	Castellano	s
+burtch1983/203/11	ofoma iforo	Huitoto Murui	plumas de ave o de perdiz	Castellano	s
+burtch1983/204/6	omacaì̵	Huitoto Murui	cola	Castellano	s1A
+burtch1983/204/6	omacaì̵	Huitoto Murui	rabo	Castellano	s1A
+burtch1983/204/19	omi̵de	Huitoto Murui	apretar	Castellano	v
+burtch1983/204/19	omi̵de	Huitoto Murui	exprimir fuertemente con las manos	Castellano	v
+burtch1983/206/8	onolli̵	Huitoto Murui	mano	Castellano	s1B
+burtch1983/207/2	oruìtate	Huitoto Murui	llenar	Castellano	vc
+burtch1983/208/6	ra	Huitoto Murui	cosa	Castellano	s1A
+burtch1983/208/6	ra	Huitoto Murui	objeto	Castellano	s1A
+burtch1983/209/14	rada	Huitoto Murui	palo	Castellano	s1
+burtch1983/209/14	rada	Huitoto Murui	palito	Castellano	s1
+burtch1983/209/14	rada	Huitoto Murui	especialmente los que se usan en las danzas	Castellano	s1
+burtch1983/209/14	radosi	Huitoto Murui	palo	Castellano	s1
+burtch1983/209/14	radosi	Huitoto Murui	palito	Castellano	s1
+burtch1983/209/14	radosi	Huitoto Murui	especialmente los que se usan en las danzas	Castellano	s1
+burtch1983/210/4	raìconote	Huitoto Murui	voltear empujando	Castellano	vt2
+burtch1983/210/4	raìconote	Huitoto Murui	trastornar	Castellano	vt2
+burtch1983/210/4	raìconote	Huitoto Murui	recoger lo que está abajo o se ha caído	Castellano	vt2
+burtch1983/210/4	raìconote	Huitoto Murui	levantar	Castellano	vt2
+burtch1983/210/11	raìse	Huitoto Murui	bien	Castellano	adv4
+burtch1983/210/11	raìse	Huitoto Murui	justo	Castellano	adv4
+burtch1983/210/11	raìse	Huitoto Murui	correcto	Castellano	adv4
+burtch1983/210/12	raìte	Huitoto Murui	decir	Castellano	vi3
+burtch1983/211/2	raìti̵ci̵ño	Huitoto Murui	hierba	Castellano	s1
+burtch1983/211/3	raìti̵e	Huitoto Murui	hierbas	Castellano	p1
+burtch1983/211/6	raìti̵faì̵raco	Huitoto Murui	pala	Castellano	s1B
+burtch1983/211/15	(raote)	Huitoto Murui	cazar	Castellano	vt2
+burtch1983/212/6	raì̵de	Huitoto Murui	sentarse	Castellano	vi3
+burtch1983/212/10	raì̵nadate	Huitoto Murui	sentarse	Castellano	vi3
+burtch1983/212/14	raì̵nade	Huitoto Murui	colocar	Castellano	vi3
+burtch1983/212/14	raì̵nade	Huitoto Murui	sentar	Castellano	vi3
+burtch1983/212/14	raì̵nade	Huitoto Murui	cambiar de sitio	Castellano	vi3
+burtch1983/213/4	raì̵te	Huitoto Murui	cavar	Castellano	vt2
+burtch1983/213/4	raì̵te	Huitoto Murui	desenterrar	Castellano	vt2
+burtch1983/214/6	riara	Huitoto Murui	planta fructífera	Castellano	s1
+burtch1983/214/6	riara	Huitoto Murui	fruto	Castellano	s1
+burtch1983/214/13	rocafaì	Huitoto Murui	hombro	Castellano	s1
+burtch1983/215/17	rote	Huitoto Murui	cantar	Castellano	vt2
+burtch1983/216/14	ruinaìtate	Huitoto Murui	dar	Castellano	vc2|vd5c
+burtch1983/216/14	ruinaìtate	Huitoto Murui	producir	Castellano	vc2|vd5c
+burtch1983/216/14	ruinaìtate	Huitoto Murui	causar comezón	Castellano	vc2|vd5c
+burtch1983/216/14	ruiretate	Huitoto Murui	dar	Castellano	vc2|vd5c
+burtch1983/216/14	ruiretate	Huitoto Murui	producir	Castellano	vc2|vd5c
+burtch1983/216/14	ruiretate	Huitoto Murui	causar comezón	Castellano	vc2|vd5c
+burtch1983/217/11	ri̵aìde	Huitoto Murui	mojar	Castellano	v
+burtch1983/217/24	ri̵faìde	Huitoto Murui	podrir	Castellano	vi3
+burtch1983/217/24	ri̵faìde	Huitoto Murui	podrirse	Castellano	vi3
+burtch1983/218/8	ri̵imi̵e	Huitoto Murui	ri̵iredi̵mi̵e (s2c) hombre severo	Castellano	s2A)|ri̵iredi̵mi̵e (s2C|
+burtch1983/218/8	ri̵imi̵e	Huitoto Murui	malo	Castellano	s2A)|ri̵iredi̵mi̵e (s2C|
+burtch1983/218/18	ri̵ji̵re	Huitoto Murui	liso	Castellano	adj3|adv4
+burtch1983/219/3	ri̵ño	Huitoto Murui	mujer	Castellano	s1|voc.
+burtch1983/219/3	ri̵ño	Huitoto Murui	hembra	Castellano	s1|voc.
+burtch1983/219/3	ri̵ño	Huitoto Murui	esposa	Castellano	s1|voc.
+burtch1983/219/7	ri̵ñoco	Huitoto Murui	perra	Castellano	s1B
+burtch1983/220/5	sabide	Huitoto Murui	podrirse	Castellano	vi3
+burtch1983/220/5	sabide	Huitoto Murui	estar gastado a fuerza de uso	Castellano	vi3
+burtch1983/220/11	safenaìte	Huitoto Murui	secarse	Castellano	v
+burtch1983/220/11	safenaìte	Huitoto Murui	morir secándose. (vea duide	Castellano	v
+burtch1983/220/11	safenaìte	Huitoto Murui	lliride.)	Castellano	v
+burtch1983/220/13	saferedi̵na	Huitoto Murui	palo	Castellano	s1B
+burtch1983/220/13	saferedi̵na	Huitoto Murui	árbol seco. (vea amena	Castellano	s1B
+burtch1983/220/13	saferedi̵na	Huitoto Murui	duiraì̵.)	Castellano	s1B
+burtch1983/220/14	safia	Huitoto Murui	flor	Castellano	s1B|s1A
+burtch1983/220/19	saìgode	Huitoto Murui	golpear	Castellano	vt1
+burtch1983/220/19	saìgode	Huitoto Murui	machacar barbasco	Castellano	vt1
+burtch1983/220/19	saìgode	Huitoto Murui	aplastar con palo o con la mano	Castellano	vt1
+burtch1983/220/19	saìgode	Huitoto Murui	enjuagar ropa golpeando	Castellano	vt1
+burtch1983/224/11	seruìde	Huitoto Murui	sacar hojas de algunas plantas	Castellano	vt1
+burtch1983/224/11	seruìde	Huitoto Murui	pelar	Castellano	vt1
+burtch1983/224/11	seruìde	Huitoto Murui	desvainar	Castellano	vt1
+burtch1983/224/11	seruìde	Huitoto Murui	mondar	Castellano	vt1
+burtch1983/225/2	sicaì̵	Huitoto Murui	cuerno	Castellano	
+burtch1983/225/7	sigaì̵ni̵aì̵	Huitoto Murui	cuernos	Castellano	pl
+burtch1983/228/3	soride	Huitoto Murui	oler	Castellano	vi3
+burtch1983/228/3	soride	Huitoto Murui	extender noticias	Castellano	vi3
+burtch1983/228/3	soride	Huitoto Murui	fama o reputación de alguien	Castellano	vi3
+burtch1983/228/4	sorirede	Huitoto Murui	tener olor	Castellano	vd
+burtch1983/228/4	sorirede	Huitoto Murui	oler	Castellano	vd
+burtch1983/228/4	sorirede	Huitoto Murui	ser oloroso	Castellano	vd
+burtch1983/231/8	si̵ide	Huitoto Murui	ser o estar recto	Castellano	vi3
+burtch1983/231/8	si̵ide	Huitoto Murui	derecho	Castellano	vi3
+burtch1983/231/8	si̵ide	Huitoto Murui	ir recto	Castellano	vi3
+burtch1983/231/8	si̵ide	Huitoto Murui	derecho	Castellano	vi3
+burtch1983/231/8	si̵ide	Huitoto Murui	estar atracado en un puerto	Castellano	vi3
+burtch1983/231/13	si̵ride	Huitoto Murui	hincharse alguna parte del cuerpo	Castellano	vi3
+burtch1983/231/13	si̵ride	Huitoto Murui	levantarse por acción de la levadura	Castellano	vi3
+burtch1983/231/13	si̵ride	Huitoto Murui	hincharse	Castellano	vi3
+burtch1983/233/10	taì̵de	Huitoto Murui	partirse	Castellano	vi
+burtch1983/233/10	taì̵de	Huitoto Murui	quebrarse	Castellano	vi
+burtch1983/233/16	taì̵llude	Huitoto Murui	migar	Castellano	vt1
+burtch1983/233/16	taì̵llude	Huitoto Murui	partir	Castellano	vt1
+burtch1983/233/16	taì̵llude	Huitoto Murui	quebrar	Castellano	vt1
+burtch1983/234/4	taì̵node	Huitoto Murui	quebrar	Castellano	vt1
+burtch1983/234/4	taì̵node	Huitoto Murui	partir	Castellano	vt1
+burtch1983/234/5	taì̵rudaìte	Huitoto Murui	migarse	Castellano	v
+burtch1983/234/5	taì̵rudaìte	Huitoto Murui	partirse	Castellano	v
+burtch1983/234/5	taì̵rudaìte	Huitoto Murui	quebrarse	Castellano	v
+burtch1983/234/5	taì̵rudaìte	Huitoto Murui	ser quebrajoso	Castellano	v
+burtch1983/234/10	taì̵taì̵rede	Huitoto Murui	sentir	Castellano	vd
+burtch1983/234/10	taì̵taì̵rede	Huitoto Murui	tener comezón	Castellano	vd
+burtch1983/234/10	taì̵taì̵rede	Huitoto Murui	ser o estar sarnoso	Castellano	vd
+burtch1983/234/11	taì̵te	Huitoto Murui	cavar	Castellano	vt2
+burtch1983/234/11	taì̵te	Huitoto Murui	ahuecar especialmente en madera	Castellano	vt2
+burtch1983/234/11	taì̵te	Huitoto Murui	juntar la tierra en un lugar para sembrar legumbres	Castellano	vt2
+burtch1983/235/18	toide	Huitoto Murui	derramar	Castellano	v
+burtch1983/235/18	toide	Huitoto Murui	verter	Castellano	v
+burtch1983/235/18	toide	Huitoto Murui	dejar caer (comida)	Castellano	v
+burtch1983/235/18	toide	Huitoto Murui	fluir sangre	Castellano	v
+burtch1983/235/18	toide	Huitoto Murui	sangrar	Castellano	v
+burtch1983/236/8	tote	Huitoto Murui	fluir	Castellano	vi4
+burtch1983/236/8	tote	Huitoto Murui	correr el río	Castellano	vi4
+burtch1983/236/8	tote	Huitoto Murui	pasar agua por un canal	Castellano	vi4
+burtch1983/236/18	tuade	Huitoto Murui	escupir	Castellano	vt1
+burtch1983/236/18	tuade	Huitoto Murui	salivar	Castellano	vt1
+burtch1983/237/8	tuìcode	Huitoto Murui	pelar	Castellano	vt1
+burtch1983/237/8	tuìcode	Huitoto Murui	descortezar	Castellano	vt1
+burtch1983/237/8	tuìcode	Huitoto Murui	desollar	Castellano	vt1
+burtch1983/238/5	tuìte	Huitoto Murui	descortezar	Castellano	v
+burtch1983/238/5	tuìte	Huitoto Murui	pelar	Castellano	v
+burtch1983/238/11	tute	Huitoto Murui	golpear	Castellano	vt2
+burtch1983/238/11	tute	Huitoto Murui	tocar	Castellano	vt2
+burtch1983/238/11	tute	Huitoto Murui	picotear	Castellano	vt2
+burtch1983/239/8	ti̵corite	Huitoto Murui	arrancarse	Castellano	vi3
+burtch1983/239/8	ti̵corite	Huitoto Murui	quitarse	Castellano	vi3
+burtch1983/239/8	ti̵corite	Huitoto Murui	salirse	Castellano	vi3
+burtch1983/239/8	ti̵corite	Huitoto Murui	quebrarse	Castellano	vi3
+burtch1983/239/8	ti̵corite	Huitoto Murui	romperse	Castellano	vi3
+burtch1983/239/16	ti̵fode	Huitoto Murui	coser	Castellano	vt1
+burtch1983/240/1	ti̵forite	Huitoto Murui	coser	Castellano	vi3
+burtch1983/240/1	ti̵forite	Huitoto Murui	coser a máquina	Castellano	vi3
+burtch1983/240/2	ti̵gi̵caco	Huitoto Murui	cerco	Castellano	s1B
+burtch1983/240/2	ti̵gi̵caco	Huitoto Murui	corral para gallinas	Castellano	s1B
+burtch1983/240/2	ti̵gi̵caco	Huitoto Murui	patos	Castellano	s1B
+burtch1983/240/4	ti̵gi̵de	Huitoto Murui	cercar	Castellano	vt1
+burtch1983/240/4	ti̵gi̵de	Huitoto Murui	avallar	Castellano	vt1
+burtch1983/240/6	ti̵ide	Huitoto Murui	morir	Castellano	vi3
+burtch1983/241/5	uafue	Huitoto Murui	historia	Castellano	s
+burtch1983/241/5	uafue	Huitoto Murui	cuento verdadero	Castellano	s
+burtch1983/241/5	uafue	Huitoto Murui	verdad	Castellano	s
+burtch1983/242/5	uaìde	Huitoto Murui	caer	Castellano	vi3
+burtch1983/242/5	uaìde	Huitoto Murui	caerse	Castellano	vi3
+burtch1983/242/5	uaìde	Huitoto Murui	ir a sacar	Castellano	vi3
+burtch1983/242/5	uaìde	Huitoto Murui	sacar y traer (derivado de ote)	Castellano	vi3
+burtch1983/242/16	uanaì	Huitoto Murui	verdad	Castellano	s1
+burtch1983/242/19	uaì̵ci̵ma	Huitoto Murui	viejo	Castellano	s1B
+burtch1983/243/1	uaì̵ci̵ño	Huitoto Murui	vieja	Castellano	s1B
+burtch1983/243/9	uàì̵te	Huitoto Murui	girar	Castellano	vt2
+burtch1983/243/9	uàì̵te	Huitoto Murui	rodar como el mango del moledor	Castellano	vt2
+burtch1983/243/13	ucudo	Huitoto Murui	estrella	Castellano	s1A
+burtch1983/243/13	ucudu	Huitoto Murui	estrella	Castellano	s1A
+burtch1983/247/13	uìllaì̵	Huitoto Murui	hueso	Castellano	s1
+burtch1983/248/9	uìlli̵e	Huitoto Murui	humo	Castellano	s1
+burtch1983/248/9	uìlli̵e	Huitoto Murui	vapor	Castellano	s1
+burtch1983/248/9	uìlli̵e	Huitoto Murui	neblina	Castellano	s1
+burtch1983/248/19	uiñote	Huitoto Murui	saber	Castellano	vt2
+burtch1983/248/19	uiñote	Huitoto Murui	conocer	Castellano	vt2
+burtch1983/249/11	uisi̵	Huitoto Murui	ojo	Castellano	s1
+burtch1983/249/11	ui	Huitoto Murui	ojo	Castellano	s1
+burtch1983/250/7	ullide	Huitoto Murui	lavar	Castellano	vt1
+burtch1983/250/7	ullide	Huitoto Murui	bañar con agua caliente	Castellano	vt1
+burtch1983/252/2	uside	Huitoto Murui	quemarse	Castellano	v
+burtch1983/253/2	virudote	Huitoto Murui	girar	Castellano	vt
+burtch1983/253/2	virudote	Huitoto Murui	dar vuelta a una soga	Castellano	vt
+burtch1983/253/15	i̵aì̵re	Huitoto Murui	desordenado	Castellano	adj3
+burtch1983/253/15	i̵aì̵re	Huitoto Murui	feo	Castellano	adj3
+burtch1983/253/15	i̵aì̵re	Huitoto Murui	sucio	Castellano	adj3
+burtch1983/253/15	i̵aì̵re	Huitoto Murui	por escardar	Castellano	adj3
+burtch1983/254/12	i̵boma	Huitoto Murui	piojo	Castellano	s1
+burtch1983/254/13	i̵buaì̵	Huitoto Murui	piojos	Castellano	pl
+burtch1983/255/5	i̵dacaìro	Huitoto Murui	pierna	Castellano	s1B
+burtch1983/256/11	i̵esi̵	Huitoto Murui	carne	Castellano	s1
+burtch1983/256/11	i̵esi̵	Huitoto Murui	parte más carnosa del cuerpo de un animal	Castellano	s1
+burtch1983/256/11	i̵esi̵	Huitoto Murui	pulpa	Castellano	s1
+burtch1983/256/11	i̵esi̵	Huitoto Murui	parte mollar de algunas frutas	Castellano	s1
+burtch1983/257/2	ɨfo	Huitoto Murui	cabeza	Castellano	s1A|imp de ɨfode
+burtch1983/257/2	ɨfo	Huitoto Murui	hueso redondo	Castellano	s1A|imp de ɨfode
+burtch1983/257/2	ɨfo	Huitoto Murui	cabeza	Castellano	s1A|imp de ɨfode
+burtch1983/257/2	ɨfo	Huitoto Murui	hueso redondo	Castellano	s1A|imp de ɨfode
+burtch1983/257/7	i̵fogi̵	Huitoto Murui	cabeza	Castellano	s1A
+burtch1983/257/8	i̵fogi̵ areti̵i	Huitoto Murui	pelo	Castellano	s
+burtch1983/257/8	i̵fogi̵ areti̵i	Huitoto Murui	cabello largo	Castellano	s
+burtch1983/257/17	i̵foti̵raì̵	Huitoto Murui	cabello	Castellano	s1B
+burtch1983/258/5	i̵ima	Huitoto Murui	hombre	Castellano	s1A
+burtch1983/258/5	i̵ima	Huitoto Murui	macho	Castellano	s1A
+burtch1983/258/6	i̵iñi̵aì̵	Huitoto Murui	hombres	Castellano	pl.alt
+burtch1983/259/5	i̵ni	Huitoto Murui	marido	Castellano	s1
+burtch1983/259/5	i̵ni	Huitoto Murui	esposo	Castellano	s1
+burtch1983/259/11	i̵nirede	Huitoto Murui	ser o estar casada una mujer	Castellano	vd
+burtch1983/259/11	i̵nirede	Huitoto Murui	tener esposo	Castellano	vd
+burtch1983/259/11	i̵nirede	Huitoto Murui	marido	Castellano	vd
+burtch1983/260/4	i̵ni̵de	Huitoto Murui	dormir	Castellano	vi3
+burtch1983/261/11	i̵i̵de	Huitoto Murui	nadar	Castellano	vt1|vi3
+burtch1983/261/11	i̵i̵de	Huitoto Murui	cerrar la quebrada con cerco	Castellano	vt1|vi3
