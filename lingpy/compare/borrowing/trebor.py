@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-08-23 22:47
+# modified : 2013-08-26 14:26
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-08-23"
+__date__="2013-08-26"
 
 
 # basic imports
@@ -534,7 +534,24 @@ class PhyBo(Wordlist):
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
 
-        if rcParams['debug']: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        if rcParams['debug']: print("[D] Nodes are {0}.".format(','.join(nodes)))
+
+        # calculate the initial restriction value (maximal weight). This is roughly
+        # spoken simply the minimal value of either all events being counted as
+        # origins (case 1) or assuming origin of the character at the root and
+        # counting all leaves that lost the character as single loss events (case
+        # 2). In case two, the first gain of the character has to be added
+        # additionally
+        if mode == 'w':
+            RST = min(paps.count(1) * r[0], paps.count(0) * r[1] + r[0])
+        elif mode == 'r':
+            RST = r
+
+        # get maximal number of gains and losses
+        maxG = sum([1 for x in nodes if paps[taxa.index(x)] >= 1])
+        maxL = sum([1 for x in nodes if paps[taxa.index(x)] < 1])
+
+        if rcParams['debug']: print("[D] Initial restriction threshold is {0}.".format(RST))
 
         # get the first state of all nodes and store the state in the
         # dictionary. note that we start from two distinct scenarios: one
@@ -547,7 +564,11 @@ class PhyBo(Wordlist):
                 state = 1
             else:
                 state = 0
-            d[node] = [(state,[])]
+
+            # we append the maximally remaining possible number of gains and
+            # losses to the queue dictionary and decrease it steadily once two
+            # branches are merged as either loss or gain
+            d[node] = [(state,[],maxG,maxL)]
 
         # return simple scenario, if the group is single-origin
         if sum([d[node][0][0] for node in nodes]) == len(nodes):
@@ -558,20 +579,11 @@ class PhyBo(Wordlist):
                 tree.nontips()+[tree],key=lambda x:len(x.tips())
                 )
 
-        # calculate the general restriction value (maximal weight). This is roughly
-        # spoken simply the minimal value of either all events being counted as
-        # origins (case 1) or assuming origin of the character at the root and
-        # counting all leaves that lost the character as single loss events (case
-        # 2). In case two, the first gain of the character has to be added
-        # additionally
-        if mode == 'w':
-            RST = min(paps.count(1) * r[0], paps.count(0) * r[1] + r[0])
-        elif mode == 'r':
-            RST = r
+        if rcParams['debug']: search_space = 0
 
         # join the nodes successively
         for i,node in enumerate(ordered_nodes):
-            if rcParams['debug']: print(node.Name)
+            if rcParams['debug']: print('[D] Node to be joined in this run:',node.Name)
             
             # when dealing with multifurcating trees, we have to store all
             # possible scenarios, i.e. we need to store the crossproduct of all
@@ -591,10 +603,31 @@ class PhyBo(Wordlist):
             # combine the histories of the items if all have the same value,
             # therefore, we first get the states in a simple list
             for cross in crossp:
+
+                if rcParams['debug']: search_space += 1
+
                 states = [x[0] for x in cross]
                 stories = [x[1] for x in cross]
+                
+                # get the restriction values
+                maxGains = [x[2] for x in cross]
+                maxLosses = [x[3] for x in cross]
+
                 states_sum = sum(states)
                 states_len = len(states)
+
+                # get the minimal gain and loss values
+                maxGain = max(maxGains)
+                maxLoss = max(maxLosses)
+
+                # calculate the restriction value
+                if mode == 'w':
+                    rst = min(maxGain * r[0], maxLoss * r[1] + r[0])
+                else:
+                    rst = RST
+
+                if rcParams['debug']: print("... MaxG / MaxL / rst: {0} / {1} / {2}.".format(maxGain,maxLoss,rst))
+                #if rcParams['debug']: print("... Stories:",stories)
                 
                 # combine the histories
                 new_stories = []
@@ -617,8 +650,16 @@ class PhyBo(Wordlist):
                     # the combination of new gains
                     gains_per_lineage = sum([1 for k in new_stories if k[1] == 1])
 
-                    if weight <= RST and gains_per_lineage < gpl:
-                        newNodes.append((1,new_stories))
+                    if weight <= rst and gains_per_lineage < gpl:
+
+                        # make sure to append a smaller restriction value,
+                        # since we could spare one event due to regular
+                        # calculation
+                        if mode == 'w':
+                            newNodes.append((1,new_stories,maxGain-1,maxLoss))
+                        else:
+                            #if gl.count(0) <= maxLoss:
+                            newNodes.append((1,new_stories,maxGain,maxLoss))
                 
                 # if states are identical and point to absence of chars
                 elif states_sum == 0:
@@ -629,8 +670,12 @@ class PhyBo(Wordlist):
                     else:
                         weight = gl.count(1)
                         
-                    if weight <= RST:
-                        newNodes.append((0,new_stories))
+                    if weight <= rst:
+                        if mode == 'w':
+                            newNodes.append((0,new_stories,maxGain,maxLoss-1))
+                        else:
+                            #if gl.count(0) <= maxLoss:
+                            newNodes.append((0,new_stories,maxGain,maxLoss-1))
 
                 # if the states are not identical, we check for both scenarios
                 else:
@@ -657,9 +702,14 @@ class PhyBo(Wordlist):
                     else:
                         weightA = glA.count(1)
                         weightB = glB.count(1)
-
-                    newNodeA = (0,tmpA)
-                    newNodeB = (1,tmpB)
+                    
+                    # create the new nodes. Note that we can only reduce the
+                    # number of losses here by one, but not the possible number
+                    # of gains, since the last gain will also score in our
+                    # calculation, but we cannot predict, whether a given gain
+                    # is indeed the last one (or can we?)
+                    newNodeA = (0,tmpA,maxGain,maxLoss)
+                    newNodeB = (1,tmpB,maxGain,maxLoss)
                     
                     # check for additional gains in the gain-scenario,
                     # according to the current model, we don't allow for one
@@ -671,13 +721,14 @@ class PhyBo(Wordlist):
                     else:
                         noB = False
 
-                    if weightA <= RST:
+                    if weightA <= rst:
                         newNodes += [newNodeA]
-                    if weightB <= RST and not noB:
+
+                    if weightB <= rst and not noB:
                         newNodes += [newNodeB]
                         
                 d[node.Name] = newNodes
-                if rcParams['debug']: print("Node length:",len(d[node.Name]))
+                if rcParams['debug']: print("... Possible scenarios for '{0}': {1}".format(node.Name,len(d[node.Name])))
         
         # try to find the best scenario by counting the ratio of gains and losses.
         # the key idea here is to reduce the number of possible scenarios according
@@ -688,16 +739,18 @@ class PhyBo(Wordlist):
         # scenarios can be further reduced by weighting gains and losses
         # differently. So in a second stage we choose only those scenarios where
         # there is a minimal amount of gains. 
-        
-        if rcParams['debug']: print(len(d[tree.Name]))
 
         # convert the specific format of the d[tree.Name] to simple format
         gls_list = []
-        for first,last in d[tree.Name]:
+        for first,last,mg,ml in d[tree.Name]:
+            if rcParams['debug']: print(first,last)
             if first == 1:
                 gls_list.append([(tree.Name,first)]+last)
             else:
                 gls_list.append(last)
+
+        if rcParams['debug']: print("[D] Number of inferred scenarios:",len(d[tree.Name]))
+        if rcParams['debug']: print("[D] Number of decisions:",search_space)
 
         # the tracer stores all scores
         tracer = []
@@ -2729,7 +2782,6 @@ class PhyBo(Wordlist):
                     ('restriction',4),
                     ('restriction',5),
                     ('restriction',6),
-                    ('restriction',7),
                     #('restriction',8),
                     #('restriction',9),
                     #('restriction',10),

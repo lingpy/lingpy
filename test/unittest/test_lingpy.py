@@ -9,8 +9,14 @@ Carry out test of the alignment module.
 __author__="Johann-Mattis List"
 __date__="2013-07-21"
 
-# import lingpy library
-import lingpy as lp
+# import lingpy library, check for python version first
+import sys
+
+if sys.version_info >= (3,):
+    import lingpy as lp
+else:
+    import lingpy2 as lp
+
 import os
 
 # import unittest

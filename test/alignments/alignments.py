@@ -1,6 +1,9 @@
 from lingpyd import *
 
-alm = Alignments('KSL.csv')
+lex = LexStat('KSL.csv')
+lex.cluster(method='turchin')
+
+alm = Alignments(lex,ref='turchinid')
 print("[i] Testing progressive alignments")
 alm.align(method='progressive')
 print("[i] Testing library alignments.")
@@ -10,6 +13,7 @@ input()
 rc(verbose=True)
 alm.align(method='library',iterate=True,swap_check=True)
 input()
+alm.output('qlc',filename='alignments_test')
 # check pairwise module
 p = Pairwise("toxta","tugatera")
 p.align(distance=True)

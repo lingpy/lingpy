@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@gmail.com
 # created  : 2013-07-10 14:22
-# modified : 2013-07-17 18:17
+# modified : 2013-08-26 16:36
 """
 Script converts Python3-version of LingPy into a (hopefully valid) Python2-version.
 """
 
 __author__="Johann-Mattis List, Peter Bouda"
-__date__="2013-07-17"
+__date__="2013-08-26"
 
 #from glob import glob
 import os
@@ -70,6 +70,10 @@ from __future__ import unicode_literals
             stuff = codecs.open(f,'r','utf-8').read()
             for source,target in st_list:
                 stuff = stuff.replace(source,target)
+
+            # new specific line for str -> unicode
+            stuff = re.sub(r'([\t ])str([\t \n\(])',r'\1unicode\2',stuff)
+
             if f.endswith('pyx'):
                 for source,target in pyx_list:
                     stuff = stuff.replace(source,target)
