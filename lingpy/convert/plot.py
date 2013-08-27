@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-28 11:47
-# modified : 2013-07-10 12:37
+# modified : 2013-08-27 19:05
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -21,7 +21,7 @@ given alignment analysis.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-10"
+__date__="2013-08-27"
 
 import os
 import colorsys
@@ -121,7 +121,7 @@ def alm2html(
 
     # create the outfile
     if not filename:
-        filename = 'lingpy-{0}'.format(_timestamp())
+        filename = rcParams['filename']
     
     # read in the templates
     path = os.path.dirname(os.path.realpath(__file__))
@@ -260,7 +260,7 @@ def patchy_alm2html(
 
     # create the outfile
     if not filename:
-        filename = 'lingpy-{0}_patchy'.format(_timestamp())
+        filename = rcParams['filename']
 
     if rcParams['verbose']: print("[i] "+filename)
     
@@ -724,7 +724,7 @@ def plot_gls(
             gain_linestyle = 'dotted',
             loss_linestyle = 'solid',
             ax_linewidth = 0,
-            filename = 'lingpy-{0}'.format(_timestamp)
+            filename = rcParams['filename'] 
             )
 
     for k in defaults: 
@@ -907,7 +907,8 @@ def plot_tree(
             ax_linewidth = 0,
             start = 0,
             usetex = False,
-            filename = 'lingpy-{0}'.format(_timestamp())
+            filename = rcParams['filename'],
+            labels = []
             )
     for k in default:
         if k not in keywords:
@@ -1003,10 +1004,15 @@ def plot_tree(
                     markeredgewidth = settings['linewidth']
                     )
         else:
+            try:
+                label = keywords['labels'][d['label']]
+            except:
+                label = d['label']
             plt.text(
                     x,
                     y,
-                    d['label'],
+                    label,
+                    #d['label'],
                     color = settings['textcolor'],
                     fontweight = settings['fontweight'],
                     va = settings['va'],
@@ -1100,7 +1106,7 @@ def plot_concept_evolution(
             _suffix = '   -',
             colors = {},
             start = 0,
-            filename = 'lingpy-{0}'.format(_timestamp())
+            filename = rcParams['filename'] 
             )
 
     for k in defaults:

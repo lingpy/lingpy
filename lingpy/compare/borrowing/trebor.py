@@ -513,11 +513,17 @@ class PhyBo(Wordlist):
         # get the list of nodes that are not missing
         taxa,paps,missing = [],[],[]
         for i,taxon in enumerate(self.taxa):
-            if pap[i] != -1:
-                taxa += [taxon]
-                paps += [pap[i]]
-            else:
-                missing += [taxon]
+            if pap[i] == -1:
+                pap[i] = 0
+            #if pap[i] != -1:
+            taxa += [taxon]
+            paps += [pap[i]]
+
+            #if pap[i] != -1:
+            #    taxa += [taxon]
+            #    paps += [pap[i]]
+            #else:
+            #    missing += [taxon]
 
         # get the subtree of all taxa
         tree = self.tree.getSubTree(taxa)
@@ -558,12 +564,14 @@ class PhyBo(Wordlist):
         # assuming single origin at the root where all present states in the
         # leave are treated as retentions, and one assuming multiple origins,
         # where all present states in the leaves are treated as origins
+        dbpaps = []
         for node in nodes:
             idx = taxa.index(node)
             if paps[idx] >= 1:
                 state = 1
             else:
                 state = 0
+            dbpaps += [node+ '/' +str(state)]
 
             # we append the maximally remaining possible number of gains and
             # losses to the queue dictionary and decrease it steadily once two
@@ -580,11 +588,13 @@ class PhyBo(Wordlist):
                 )
 
         if rcParams['debug']: search_space = 0
+        if rcParams['debug']: print('[D] The Pap to be analysed:',', '.join(dbpaps))
 
         # join the nodes successively
         for i,node in enumerate(ordered_nodes):
-            if rcParams['debug']: print('[D] Node to be joined in this run:',node.Name)
-            
+            if rcParams['debug']: print('[D] Node to be joined in this run:',str(node))
+           
+
             # when dealing with multifurcating trees, we have to store all
             # possible scenarios, i.e. we need to store the crossproduct of all
             # scenarios
@@ -622,9 +632,12 @@ class PhyBo(Wordlist):
 
                 # calculate the restriction value
                 if mode == 'w':
-                    rst = min(maxGain * r[0], maxLoss * r[1] + r[0])
+                    # the following line contains some serious bug
+                    # (DENKFEHLER), it works at the moment, but we should be
+                    # very DAMN careful with this!
+                    rst = min(maxGain * r[0] + r[1], maxLoss * r[1] + r[0])
                 else:
-                    rst = RST
+                    rst = abs(RST)
 
                 if rcParams['debug']: print("... MaxG / MaxL / rst: {0} / {1} / {2}.".format(maxGain,maxLoss,rst))
                 #if rcParams['debug']: print("... Stories:",stories)
@@ -636,15 +649,21 @@ class PhyBo(Wordlist):
                 
                 # if states are identical and point to gain / presence of chars
                 if states_sum == states_len: 
+
                     # add the histories to the queue only if their weight is
                     # less or equal to the maxWeight
                     gl = [k[1] for k in new_stories]+[1]
-                    
+              
+
                     if mode == 'w':
                         weight = gl.count(1) * r[0] + gl.count(0) * r[1]
                     else:
-                        weight = gl.count(1) + 1 # we need to add 1 here
+                        if RST < 0:
+                            weight = gl.count(0)
+                        else:
+                            weight = gl.count(1) + 1 # we need to add 1 here
                     
+                    if rcParams['debug']: print("... state,weight:",gl,weight)    
                     # when combining two gains, make sure that the allowed
                     # amount of gains per lineage will not be overwritten by
                     # the combination of new gains
@@ -664,11 +683,17 @@ class PhyBo(Wordlist):
                 # if states are identical and point to absence of chars
                 elif states_sum == 0:
                     gl = [k[1] for k in new_stories]
+                    if rcParams['debug']: print("... state is 1",gl)
                     
                     if mode == 'w':
                         weight = gl.count(1) * r[0] + gl.count(0) * r[1]
                     else:
-                        weight = gl.count(1)
+                        if RST < 0:
+                            weight = gl.count(0)
+                        else:
+                            weight = gl.count(1)
+
+                    if rcParams['debug']: print("... state,weight:",gl,weight)  
                         
                     if weight <= rst:
                         if mode == 'w':
@@ -679,6 +704,7 @@ class PhyBo(Wordlist):
 
                 # if the states are not identical, we check for both scenarios
                 else:
+                    if rcParams['debug']: print("... states are different.")
                     # first scenario (tmpA) assumes origin, that is, for each node
                     # that has a 1, we add an origin to new_stories, same is
                     # for loss scenario (tmpB)
@@ -700,8 +726,12 @@ class PhyBo(Wordlist):
                         weightA = glA.count(1) * r[0] + glA.count(0) * r[1]
                         weightB = glB.count(1) * r[0] + glB.count(0) * r[1]
                     else:
-                        weightA = glA.count(1)
-                        weightB = glB.count(1)
+                        if RST < 0:
+                            weightA = glA.count(0)
+                            weightB = glB.count(0)
+                        else:
+                            weightA = glA.count(1)
+                            weightB = glB.count(1)
                     
                     # create the new nodes. Note that we can only reduce the
                     # number of losses here by one, but not the possible number
@@ -1411,7 +1441,7 @@ class PhyBo(Wordlist):
 
         # check for filename in keywords
         if not 'filename' in keywords:
-            keywords['filename'] = os.path.join(self.dataset+'_phybo',glm,'_acs')
+            keywords['filename'] = os.path.join(self.dataset+'_phybo',glm+'_acs')
 
         # plot the tree
         plot_tree(
