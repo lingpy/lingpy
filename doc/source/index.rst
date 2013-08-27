@@ -39,7 +39,7 @@ Python Library for Historical Linguistics
     <tbody valign="top">
     <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.0</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">March 8, 2013</td>
+    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">July 24, 2013</td>
     </tr>
     <tr class="field-even field"><th class="field-name">Project:</th><td class="field-body">QLC Research Group, Philipps-University Marburg </td>
     </tr>
