@@ -1,7 +1,7 @@
-# author   : Johann-Mattis List
+# author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-07-18 10:41
+# modified : 2013-08-27 09:15
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -13,8 +13,8 @@ perspective deals with aligned sequences.
 
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-07-18"
+__author__="Johann-Mattis List, Johannes Dellert"
+__date__="2013-08-27"
 
 import numpy as np
 import re
@@ -1023,6 +1023,7 @@ class Alignments(Wordlist):
             classes = False,
             consensus = 'consensus',
             counterpart = 'ipa',
+            weights = [],
             **keywords
             ):
         """
@@ -1046,9 +1047,9 @@ class Alignments(Wordlist):
         """
         # determine defaults
         defaults = dict(
-                model = rcParams['sca'],
+                model     = rcParams['sca'],
                 gap_scale = 1.0,
-                ref = rcParams['ref']
+                ref       = rcParams['ref'],
                 )
         for k in defaults:
             if k not in keywords:
@@ -1082,11 +1083,15 @@ class Alignments(Wordlist):
                 # temporary solution for sound-class integration
                 if classes == True:
                     classes = []
-                    weights = prosodic_weights(
-                            prosodic_string(
-                                self.msa[ref][cog]['_sonority_consensus']
+                    if weights:
+                        keywords['weights'] = prosodic_weights(
+                                prosodic_string(
+                                    self.msa[ref][cog]['_sonority_consensus']
+                                    )
                                 )
-                            )
+                    else:
+                        keywords['weights'] = [1.0 for i in range(len(self.msa[ref][cog]['alignment']))]
+
                     for alm in self.msa[ref][cog]['alignment']:
                         cls = [c for c in tokens2class(
                                 alm,
@@ -1100,9 +1105,8 @@ class Alignments(Wordlist):
                             classes = misc.transpose(classes),
                             tree = tree,
                             gaps = gaps,
-                            taxa = [unicode(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            taxa = [str(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
                             #taxa = self.msa[ref][cog]['taxa'],
-                            weights = weights,
                             **keywords
                             )
                     classes = True
@@ -1112,7 +1116,7 @@ class Alignments(Wordlist):
                             classes = classes,
                             tree = tree,
                             gaps = gaps,
-                            taxa = [unicode(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            taxa = [str(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
@@ -1479,14 +1483,14 @@ def get_consensus(
         #if the taxa are defined, extract the sub-guidetree accordingly
         if taxa:
             all_taxa = [leaf.Name for leaf in tree.tips()]
-            taxon_to_id = dict({(unicode(all_taxa[i]),i) for i in range(0,len(all_taxa))})
+            taxon_to_id = dict({(str(all_taxa[i]),i) for i in range(0,len(all_taxa))})
             #print(taxon_to_id)
             tree = tree.deepcopy()
             for leaf in tree.tips():
                 leaf.Name = str(taxon_to_id[leaf.Name])
             #print(tree)
             #print(taxa)
-            newIndices = [taxon_to_id[unicode(taxon)] for taxon in taxa]
+            newIndices = [taxon_to_id[str(taxon)] for taxon in taxa]
             #print(newIndices)
             tree = subGuideTree(tree,newIndices)
             #print(tree)
