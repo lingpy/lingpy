@@ -72,7 +72,7 @@ from __future__ import unicode_literals
                 stuff = stuff.replace(source,target)
 
             # new specific line for str -> unicode
-            stuff = re.sub(r'([\t ])str([\t \n\(])',r'\1unicode\2',stuff)
+            stuff = re.sub(r'([\t \[])str([\t \n\(])',r'\1unicode\2',stuff)
 
             if f.endswith('pyx'):
                 for source,target in pyx_list:
