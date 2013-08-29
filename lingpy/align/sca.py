@@ -533,14 +533,14 @@ class PSA(Pairwise):
         
         # set the defaults
         defaults = {
-                'comment':'#',
-                "diacritics" : None,
-                "vowels":None,
-                "tones":None,
-                "combiners":'\u0361\u035c',
-                "breaks":'.-',
-                "stress":"ˈˌ'",
-                "merge_vowels" : True
+                'comment':rcParams['comment'],
+                "diacritics" : rcParams['diacritics'],
+                "vowels":rcParams['vowels'],
+                "tones":rcParams['tones'],
+                "combiners":rcParams['combiners'],
+                "breaks":rcParams['breaks'],
+                "stress":rcParams["stress"],
+                "merge_vowels" : rcParams['merge_vowels']
                 }
 
         # check for keywords
