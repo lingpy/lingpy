@@ -593,6 +593,7 @@ class PSA(Pairwise):
 
         i = 0
         while i <= len(data) - 3:
+            print(data[i])
             try:
                 self.seq_ids.append(data[i])
                 
@@ -613,8 +614,8 @@ class PSA(Pairwise):
                         )
                 self.alignments.append(
                         (
-                            [unicode(a) for a in almA],
-                            [unicode(b) for b in almB],
+                            [str(a) for a in almA],
+                            [str(b) for b in almB],
                             0)
                         )
                 i += 4
