@@ -9,7 +9,7 @@ from ete2 import Tree, TextFace
 
 import math
 
-graphicalOutput = False
+graphicalOutput = True
 
 def ensure_dir(f):
     try:
@@ -98,7 +98,7 @@ guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
 for leaf in guideTree.tips():
     leaf.Name = str(nameToID[leaf.Name])   
 
-for familyName in unique(asjpMatrix[0:20,2]):
+for familyName in unique(asjpMatrix[1426:1459,2]):
     langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
     phylName = str(asjpMatrix[langs[0],1])
     print phylName + "." + str(familyName)

@@ -1531,7 +1531,7 @@ def get_consensus(
                         node.distribution[i][phoneme] = value
         #for node in tree.postorder():
         #    print str(node.Name) + ": " + str(node.distribution)
-        recon_alg = "binary_decision"
+        recon_alg = "sankoff_parsimony"
         #print("\nReconstruct word forms at inner nodes by simplistic criteria:")
         for node in tree.postorder():
             node.reconstructed = []
@@ -1586,6 +1586,57 @@ def get_consensus(
                                 parentDist = node.Parent.distribution[i]
                                 maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
                                 node.reconstructed.append(maxKey)
+        elif recon_alg == "sankoff_parsimony":
+            for node in tree.postorder():
+                node.sankoffTable = []
+                node.sankoffPointers = []
+            for i in range (0,len(matrix[0])):
+                def sankoff_value(sankoffTable, char):
+                    if char in sankoffTable.keys():
+                        return sankoffTable[char]
+                    else:
+                        return 65535; #approximation to Integer.MAX_INT
+                def mtx(char1, char2):
+                    if char1 == char2:
+                        return 0
+                    else:
+                        return 1
+                #apply the Sankoff algorithm, store backpointers
+                for node in tree.postorder():
+                    node.sankoffTable.append(dict())
+                    if node.isTip():
+                        #just retrieve the original at the leaves (needs to be reconstructed from the differences)
+                        dist = node.distribution[i]
+                        maxValue = max(dist.values())
+                        maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
+                        node.sankoffTable[i][maxKeys[0]] = 0
+                    else:
+                        node.sankoffPointers.append(dict())
+                        sankoff1 = node.Children[0].sankoffTable[i]
+                        sankoff2 = node.Children[1].sankoffTable[i]
+                        for char in set(sankoff1.keys()) | set(sankoff2.keys()):
+                            minSankoffValue = 65536
+                            backPointers = ['-','-']
+                            for char1 in sankoff1.keys():
+                                for char2 in sankoff2.keys():
+                                    sankoffValue = mtx(char,char1) + sankoff1[char1] + mtx(char,char2) + sankoff2[char2]
+                                    if (sankoffValue < minSankoffValue):
+                                        minSankoffValue = sankoffValue
+                                        backPointers[0] = char1
+                                        backPointers[1] = char2
+                            node.sankoffTable[i][char] = minSankoffValue
+                            node.sankoffPointers[i][char] = backPointers
+                #read out the backpointers for an optimal reconstruction
+                print(str(tree.sankoffTable[i]))
+                minValue = min(tree.sankoffTable[i].values())
+                minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
+                reconChar = minKeys[0]
+                def reconstruct_by_sankoff(node, char):
+                    node.reconstructed.append(char)
+                    if not node.isTip():
+                        reconstruct_by_sankoff(node.Children[0], node.sankoffPointers[i][char][0])
+                        reconstruct_by_sankoff(node.Children[1], node.sankoffPointers[i][char][1])
+                reconstruct_by_sankoff(tree, reconChar)
         else:
             print("ERROR: Unknown reconstruction method: " + recon_alg)
         #printTree(tree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
