@@ -687,7 +687,7 @@ def msa2html(
         filename = rcParams['filename']
 
     # check, whether the outfile already exists
-    out = codecs.open(outfile,'w','utf-8')
+    out = codecs.open(filename,'w','utf-8')
     out.write(html)
     out.close()
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))

@@ -68,6 +68,7 @@ class LexStat(Wordlist):
         * ``V`` for all vowels,
         * ``T`` for all tones, and 
         * ``_`` for word-breaks.
+
     check : bool (default=False)
         If set to c{True}, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
@@ -91,7 +92,8 @@ class LexStat(Wordlist):
                 "model" : rcParams['sca'],
                 "merge_vowels" : rcParams['merge_vowels'],
                 'transform' : rcParams['lexstat_transform'],
-                "check" : False
+                "check" : False,
+                "apply_checks":False
                 }
         for k in defaults:
             if k not in keywords:
@@ -150,7 +152,11 @@ class LexStat(Wordlist):
                 for a,b,c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
                 out.close()
-                answer = input(rcParams['Q_errors_in_data'])
+                if not keywords["apply_checks"]:
+                    answer = input(rcParams['Q_errors_in_data'])
+                else:
+                    answer = "y"
+
                 if answer in rcParams['answer_yes']:
                     self.output(
                             'qlc',

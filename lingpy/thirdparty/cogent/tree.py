@@ -2152,7 +2152,12 @@ def LoadTree(filename=None, treestring=None, tip_names=None, format=None, \
 
     if filename:
         assert not (treestring or tip_names)
-        treestring = codecs.open(filename,'r','utf-8').read()
+        # slight modification for easy import of treestrings instead of
+        # file-reading by JML
+        if filename.endswith(';'):
+            treestring = filename
+        else:
+            treestring = codecs.open(filename,'r','utf-8').read()
         if format is None and filename.endswith('.xml'):
             format = "xml"
     if treestring:

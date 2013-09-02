@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-08-26 14:26
+# modified : 2013-09-01 17:08
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-08-26"
+__date__="2013-09-01"
 
 
 # basic imports
@@ -254,6 +254,7 @@ class PhyBo(Wordlist):
             self,
             pap,
             mode = 1,
+            missing_data = 0
             ):
         """
         Infer gain-loss scenario using the method by Dagan & Martin (2007).
@@ -268,18 +269,16 @@ class PhyBo(Wordlist):
         # get the list of nodes that are not missing
         taxa,paps = [],[]
         for i,taxon in enumerate(self.taxa):
-            if pap[i] != -1:
-                taxa += [taxon]
-                paps += [pap[i]]
-
-        # get the subtree of all taxa
-        tree = self.tree.getSubTree(taxa)
+            if pap[i] == -1:
+                pap[i] = missing_data
+            taxa += [taxon]
+            paps += [pap[i]]
 
         # get list of taxa where pap is 1
-        presents = [self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1]
+        presents = [self.taxa[i] for i in range(len(self.taxa)) if pap[i] in (1,-1)]
 
         # get the subtree containing all taxa that have positive paps
-        tree = tree.lowestCommonAncestor(
+        tree = self.tree.lowestCommonAncestor(
                 [
                     self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1
                     ]
@@ -501,10 +500,30 @@ class PhyBo(Wordlist):
             mode = 'w',
             r = (1,1),
             gpl = 1,
-            push_gains = True
+            push_gains = True,
+            missing_data = 0
             ):
         """
         Calculate a gain-loss scenario (GLS) for a given PAP.
+
+        Parameters
+        ----------
+        pap : list
+            The presence/absence pattern of a given cognate-set.
+        mode : str (default='w')
+            The mode of the analysis, select between "w" (weights) and "r"
+            (restrictio).
+        r : { tuple, int } (default=(1,1))
+            The weights (as binary tuple) or the restriction (an integer),
+            negative restrictions mark the maximal amount of losses.
+        gpl : int (default=1)
+            The maximal number of gains per lineage.
+        push_gains : bool (default=True)
+            Indicate whether gains should be pushed to the leaves or not.
+        missing_data : int (default=0)
+            Indicate, how missing values should be represented in the paps. If
+            set to 0, missing values will be treated as non-cognate words. If
+            set to 1, missing values will be treated as potential cognates.
 
         """
         # make a dictionary that stores the scenario
@@ -514,22 +533,12 @@ class PhyBo(Wordlist):
         taxa,paps,missing = [],[],[]
         for i,taxon in enumerate(self.taxa):
             if pap[i] == -1:
-                pap[i] = 0
-            #if pap[i] != -1:
+                pap[i] = missing_data
             taxa += [taxon]
             paps += [pap[i]]
 
-            #if pap[i] != -1:
-            #    taxa += [taxon]
-            #    paps += [pap[i]]
-            #else:
-            #    missing += [taxon]
-
-        # get the subtree of all taxa
-        tree = self.tree.getSubTree(taxa)
-
         # get the subtree containing all taxa that have positive paps
-        tree = tree.lowestCommonAncestor(
+        tree = self.tree.lowestCommonAncestor(
                 [
                     self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1
                     ]
@@ -553,9 +562,12 @@ class PhyBo(Wordlist):
         elif mode == 'r':
             RST = r
 
-        # get maximal number of gains and losses
-        maxG = sum([1 for x in nodes if paps[taxa.index(x)] >= 1])
-        maxL = sum([1 for x in nodes if paps[taxa.index(x)] < 1])
+        # get maximal number of gains and losses, note that we have to include
+        # missing data in a two-fold fashion here. this is probably
+        # computationally not the most feasible solution. however, it is the
+        # only way I can think of at the moment
+        maxG = sum([1 for x in nodes if paps[taxa.index(x)] in (1,-1)])
+        maxL = sum([1 for x in nodes if paps[taxa.index(x)] in (0,-1)])
 
         if rcParams['debug']: print("[D] Initial restriction threshold is {0}.".format(RST))
 
@@ -570,7 +582,7 @@ class PhyBo(Wordlist):
             if paps[idx] >= 1:
                 state = 1
             else:
-                state = 0
+                state = paps[idx]
             dbpaps += [node+ '/' +str(state)]
 
             # we append the maximally remaining possible number of gains and
@@ -623,7 +635,10 @@ class PhyBo(Wordlist):
                 maxGains = [x[2] for x in cross]
                 maxLosses = [x[3] for x in cross]
 
-                states_sum = sum(states)
+                states_1 = states.count(1)
+                states_0 = states.count(0)
+                states_m = states.count(-1) # missing states
+
                 states_len = len(states)
 
                 # get the minimal gain and loss values
@@ -647,8 +662,11 @@ class PhyBo(Wordlist):
                 for x in stories:
                     new_stories += x
                 
-                # if states are identical and point to gain / presence of chars
-                if states_sum == states_len: 
+                # if states are identical and point to gain / presence of
+                # chars, we add them directly. here we also include the number
+                # of missing states: if missing states turn up, we simply treat
+                # them as presence values
+                if states_1 + states_m== states_len: 
 
                     # add the histories to the queue only if their weight is
                     # less or equal to the maxWeight
@@ -680,8 +698,10 @@ class PhyBo(Wordlist):
                             #if gl.count(0) <= maxLoss:
                             newNodes.append((1,new_stories,maxGain,maxLoss))
                 
-                # if states are identical and point to absence of chars
-                elif states_sum == 0:
+                # if states are identical and point to absence of chars, we
+                # assign them directly to the higher node. here, missing chars
+                # are also included
+                elif states_0 + states_m == states_len:
                     gl = [k[1] for k in new_stories]
                     if rcParams['debug']: print("... state is 1",gl)
                     
@@ -702,18 +722,30 @@ class PhyBo(Wordlist):
                             #if gl.count(0) <= maxLoss:
                             newNodes.append((0,new_stories,maxGain,maxLoss-1))
 
+                # if states are both missing 
+                elif states_m == states_len:
+                    
+                    if rcParams['debug']: print("... all states are missing")
+                        
+                    if mode == 'w':
+                        newNodes.append((-1,new_stories,maxGain,maxLoss-1))
+                    else:
+                        #if gl.count(0) <= maxLoss:
+                        newNodes.append((-1,new_stories,maxGain,maxLoss-1))
+
                 # if the states are not identical, we check for both scenarios
                 else:
                     if rcParams['debug']: print("... states are different.")
+
                     # first scenario (tmpA) assumes origin, that is, for each node
                     # that has a 1, we add an origin to new_stories, same is
                     # for loss scenario (tmpB)
                     tmpA = [x for x in new_stories]
                     tmpB = [x for x in new_stories]
                     for c,state in enumerate(states):
-                        if state == 1:
+                        if state == 1 or state == -1:
                             tmpA += [(names[c],1)]
-                        else:
+                        if state == 0 or state == -1:
                             tmpB += [(names[c],0)]
 
                     # get the vectors to make it easier to retrieve the number
@@ -901,7 +933,8 @@ class PhyBo(Wordlist):
         defaults = {
                 "force" : False,
                 "gpl" : 1,
-                "push_gains" : True
+                "push_gains" : True,
+                "missing_data" : 0
                 }
         for key in defaults:
             if key not in keywords:
@@ -952,7 +985,8 @@ class PhyBo(Wordlist):
                                 r = ratio,
                                 mode = 'w',
                                 gpl = keywords['gpl'],
-                                push_gains = keywords['push_gains']
+                                push_gains = keywords['push_gains'],
+                                missing_data = keywords['missing_data']
                                 )
 
                     if mode == 'restriction':
@@ -961,13 +995,15 @@ class PhyBo(Wordlist):
                                 r = restriction,
                                 mode = 'r',
                                 gpl = keywords['gpl'],
-                                push_gains = keywords['push_gains']
+                                push_gains = keywords['push_gains'],
+                                missing_data = keywords['missing_data']
                                 )
 
                     if mode == 'topdown':
                         gls = self._get_GLS_top_down(
                                 self.paps[cog],
-                                mode = restriction
+                                mode = restriction,
+                                missing_data = keywords['missing_data']
                                 )
                 noo = sum([t[1] for t in gls])
                 
@@ -2465,29 +2501,40 @@ class PhyBo(Wordlist):
                 'utf-8'
                 )
         if 'proto' in self.entries:
-            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tPROTO\tREFLEXES\n')
+            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\tPROTO\n')
         else:
-            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\n')
+            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\n')
         concepts = {}
         for a,b in sorted(paps,key=lambda x:x[1],reverse=True):
             
             a1,a2 = a.split(':')
             a3 = self._id2gl[int(a2)]
-            
-            try:
-                concepts[a3] += [b]
-            except:
-                concepts[a3] = [b]
-            
+
             # check for number of occurrences
             l = [k for k in self.etd[a] if k != 0]
+            
+            # append three vals: number of origins, number of words, and the
+            # number of origins per number of words
+            try:
+                concepts[a3] += [(b,len(l),b/len(l))]
+            except:
+                concepts[a3] = [(b,len(l),b/len(l))]
+            
 
             # check for proto
             if 'proto' in self.entries:
                 proto = self[[k[0] for k in l][0],'proto']
-                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(a1,a2,a3,b,proto,len(l)))
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\t{6}\n'.format(
+                    a1,
+                    a2,
+                    a3,
+                    b,
+                    len(l),
+                    b / float(len(l)),
+                    proto,
+                    ))
             else:
-                f.write('{0}\t{1}\t{2}\t{3}\n'.format(a1,a2,a3,b,len(l)))
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1,a2,a3,b,len(l),float(b)/len(l)))
         f.close()
         if rcParams["verbose"]: print("[i] Wrote stats on paps to file.")
 
@@ -2497,14 +2544,86 @@ class PhyBo(Wordlist):
                 'w',
                 'utf-8'
                 )
+        f.write('CONCEPT\tORIGINS\tREFLEXES\tORI/REF\n')
+        
+        cstats = {}
         for key in concepts:
-            concepts[key] = sum(concepts[key])/len(concepts[key])
+            
+            # get origins per concept
+            oriperc = sum([c[0] for c in concepts[key]]) / len(concepts[key])
+            
+            # get patchy cognate sets per number of words
+            patchyperw = sum([c[2] for c in concepts[key]]) / len(concepts[key])
 
-        for a,b in sorted(concepts.items(),key=lambda x:x[1],reverse=True):
-            f.write('{0}\t{1:.2f}\n'.format(a,b))
+            # get the number of words per concept
+            numperc = sum([c[1] for c in concepts[key]]) / len(concepts[key])
+            
+            cstats[key] = (oriperc,numperc,patchyperw)
+            #concepts[key] = sum(concepts[key])/len(concepts[key])
+
+        for a,b in sorted(cstats.items(),key=lambda x:x[1][2],reverse=True):
+            f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\n'.format(a,b[0],b[1],b[2]))
+
+        # write average to file
+        f.write('TOTAL\t{0:.2f}\t{1:.2f}\t{2:.2f}\n'.format(
+            sum([cstats[c][0] for c in cstats]) / len(cstats),
+            sum([cstats[c][1] for c in cstats]) / len(cstats),
+            sum([cstats[c][2] for c in cstats]) / len(cstats)
+            ))
+        f.close()
+        if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
+       
+        # write alternative stats on concepts including information of
+        # singletons (excluding them may bias the results)
+        f = codecs.open(
+                os.path.join(self.dataset+'_phybo','concepts-alt-'+glm+'.stats'),
+                'w',
+                'utf-8'
+                )
+        f.write('CONCEPT\tORIGINS\tREFLEXES\tORI/REF\n')
+
+        concepts = {}
+        for pap in self.etd:
+
+            gloss = self.pap2con[pap]
+            idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
+            patchies = [self[idx,'patchy'] for idx in idxs]
+            reflexes = len(patchies)
+            patchies = len(set(patchies))
+            try:
+                concepts[gloss] += [(patchies,reflexes,patchies/float(reflexes))]
+            except:
+                concepts[gloss] = [(patchies,reflexes,patchies/float(reflexes))]
+
+        for key,value in concepts.items():
+            concepts[key] = (
+                    sum([v[0] for v in value]) / float(len(value)),
+                    sum([v[1] for v in value]) / float(len(value)),
+                    sum([v[2] for v in value]) / float(len(value))
+                    )
+        
+        for k,(p,r,s) in sorted(concepts.items(),key=lambda x:x[1][2],reverse=True): 
+            f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.4f}\n'.format(k,p,r,s)) 
+        # write mean
+        f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.4f}\n'.format(
+            "MEAN",
+            sum([x[0] for x in concepts.values()]) / len(concepts),
+            sum([x[1] for x in concepts.values()]) / len(concepts),
+            sum([x[2] for x in concepts.values()]) / len(concepts)
+            ))
         f.close()
         if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
         
+        # store params in attribute stats
+        self.stats["CONCEPTS"] = dict(
+                ano_s = sum([x[0] for x in concepts.values()]) / self.height,
+                rpc_s = sum([x[1] for x in concepts.values()]) / self.height,
+                ppr_s= sum([x[2] for x in concepts.values()]) / self.height,
+                ano_c = sum([x[0] for x in cstats.values()]) / self.height,
+                rpc_c = sum([x[1] for x in cstats.values()]) / self.height,
+                ppr_c= sum([x[2] for x in cstats.values()]) / self.height
+                )
+
         # write results to alm-file
         # get all patchy cognates
         tmp = {}
@@ -2780,6 +2899,7 @@ class PhyBo(Wordlist):
                 'method' : 'mr', # majority rule
                 'gpl' : 1,
                 "push_gains" : True,
+                "missing_data" : 0
                 }
 
         for key in defaults:
@@ -2802,7 +2922,10 @@ class PhyBo(Wordlist):
                     ('topdown',4),
                     ('topdown',5),
                     ('topdown',6),
-                    ('topdown',7)
+                    ('topdown',7),
+                    ('topdown',8),
+                    ('topdown',9),
+                    ('topdown',10),
                     ]
 
         elif runs == 'restriction':
@@ -2832,7 +2955,8 @@ class PhyBo(Wordlist):
                         tar = tar,
                         output_plot=output_plot,
                         gpl = keywords['gpl'],
-                        push_gains = keywords['push_gains']
+                        push_gains = keywords['push_gains'],
+                        missing_data = keywords["missing_data"],
                         )
             elif mode == 'restriction':
                 if rcParams["verbose"]: print(
@@ -2847,7 +2971,8 @@ class PhyBo(Wordlist):
                         tar = tar,
                         output_plot=output_plot,
                         gpl = keywords['gpl'],
-                        push_gains = keywords['push_gains']
+                        push_gains = keywords['push_gains'],
+                        missing_data = keywords["missing_data"]
                         )
             elif mode == 'topdown':
                 if rcParams["verbose"]: print(
@@ -2859,7 +2984,8 @@ class PhyBo(Wordlist):
                         restriction = params,
                         output_gml = output_gml,
                         tar = tar,
-                        output_plot = output_plot
+                        output_plot = output_plot,
+                        missing_data = keywords["missing_data"]
                         )
     
         # calculate the different distributions
