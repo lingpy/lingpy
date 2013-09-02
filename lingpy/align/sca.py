@@ -593,7 +593,6 @@ class PSA(Pairwise):
 
         i = 0
         while i <= len(data) - 3:
-            print(data[i])
             try:
                 self.seq_ids.append(data[i])
                 
