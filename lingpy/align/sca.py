@@ -1336,12 +1336,39 @@ def get_consensus(
         A consensus string of the given MSA.
     """
     # set defaults
+    def rep_weights(char1, char2):
+                    if char1 == char2:
+                        return 0
+                    else:
+                        if char1 == '-':
+                            if char2 in ['a','e','i','o','u','E','I',
+                                       '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ', 
+                                       'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã', 
+                                       'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
+                                       'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ', 
+                                       'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ']:
+                                return 0.1
+                            else:
+                                return 0.8
+                        elif char2 == "-":
+                            if char1 in ['a','e','i','o','u','E','I',
+                                       '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ', 
+                                       'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã', 
+                                       'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
+                                       'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ', 
+                                       'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ']:
+                                return 0.3
+                            else:
+                                return 0.1
+                        else:
+                            return 0.1
     defaults = dict(
             model = rcParams['sca'],
             gap_scale = 1.0,
             mode = 'majority',
             gap_score = -10,
-            weights = [1 for i in range(len(msa[0]))]
+            weights = [1 for i in range(len(msa[0]))],
+            rep_weights = rep_weights
             )
     for k in defaults:
         if k not in keywords:
@@ -1597,11 +1624,7 @@ def get_consensus(
                         return sankoffTable[char]
                     else:
                         return 65535; #approximation to Integer.MAX_INT
-                def mtx(char1, char2):
-                    if char1 == char2:
-                        return 0
-                    else:
-                        return 1
+                mtx = keywords["rep_weights"]
                 #apply the Sankoff algorithm, store backpointers
                 for node in tree.postorder():
                     node.sankoffTable.append(dict())
@@ -1628,7 +1651,7 @@ def get_consensus(
                             node.sankoffTable[i][char] = minSankoffValue
                             node.sankoffPointers[i][char] = backPointers
                 #read out the backpointers for an optimal reconstruction
-                print(str(tree.sankoffTable[i]))
+                #print(str(tree.sankoffTable[i]))
                 minValue = min(tree.sankoffTable[i].values())
                 minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
                 reconChar = minKeys[0]
