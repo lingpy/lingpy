@@ -9,7 +9,7 @@ from ete2 import Tree, TextFace
 
 import math
 
-graphicalOutput = True
+graphicalOutput = False
 
 def ensure_dir(f):
     try:
@@ -57,9 +57,9 @@ def printTreeWithOrigPointers(node, depth, names=None):
 
 #READING IN THE ASJP DATA
 
-f = open('data/asjp/sounds41.txt','r')
-sounds = array([x.strip() for x  in f.readlines()]).tolist()
-f.close()
+#f = open('data/asjp/sounds41.txt','r')
+#sounds = array([x.strip() for x  in f.readlines()]).tolist()
+#f.close()
 
 # reading in 'asjpMatrix.txt' into a numpy array
 mfile = open("data/asjp/asjpMatrix.txt","r")
@@ -93,12 +93,28 @@ rl = f.readlines()
 f.close()
 names = array([x.strip() for x in rl])
 
+#load replacement weights for reconstruction
+# reading in 'asjpMatrix.txt' into a numpy array
+mfile = open("data/asjp/replacement-weights.txt","r")
+sounds = array(mfile.readline().strip().split("\t"))
+repWeightsRaw = mfile.readlines()
+mfile.close()
+
+print(sounds)
+
+repWeights = array([x.strip().split('\t') for x in repWeightsRaw])
+symbolToSoundID = dict([(sounds[i],i) for i in range(len(sounds))])
+def rep_weights(phon1, phon2):
+    if len(phon1) == 1 and len(phon2) == 1:
+        return double(repWeights[symbolToSoundID[phon1],symbolToSoundID[phon2]])
+    return 10
+
 guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
 #convert guideTree node names to integers as expected by Lingpy MSA
 for leaf in guideTree.tips():
     leaf.Name = str(nameToID[leaf.Name])   
 
-for familyName in unique(asjpMatrix[1426:1459,2]):
+for familyName in unique(asjpMatrix[:,2]):
     langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
     phylName = str(asjpMatrix[langs[0],1])
     print phylName + "." + str(familyName)
@@ -161,8 +177,9 @@ for familyName in unique(asjpMatrix[1426:1459,2]):
                 tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
                 multi.prog_align(model=internal_asjp,gop=-4,scale=0.9,guide_tree=tree_mtx)
                 #print(multi)
+                
                 #old version of call had taxa=[str(i) for i in range(len(langs))]
-                cons = get_consensus(multi, cognateGuideTree, gaps=True, classes=False)
+                cons = get_consensus(multi, cognateGuideTree, gaps=True, classes=False, rep_weights = rep_weights)
                 print("Reconstructed proto-" + familyName + " word for concept " + str(conceptID - 3) + ":\t" + cons)  
                  
                 #PRINT OUT RECONSTRUCTION STEPS IN A TREE VISUALIZATION
@@ -210,10 +227,16 @@ for familyName in unique(asjpMatrix[1426:1459,2]):
                 #    print str(node.Name) + ": " + str(node.recon_changes)
                 #printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="recon_changes")
                 
-#guideTree = familyGuideTree
+guideTree = familyGuideTree
 
 print("\nSupertree with collected sound changes at the edges:")
 printTree(guideTree,0,names=None, field="recon_changes")
+
+global_replacements = dict()
+for phon1 in sounds:
+    global_replacements[phon1] = dict()
+    for phon2 in sounds:
+        global_replacements[phon1][phon2] = 0
 
 for node in guideTree.postorder():
   if hasattr(node, "recon_changes"):
@@ -221,8 +244,33 @@ for node in guideTree.postorder():
         entries = node.recon_changes[phon1]
         entrySum = sum(entries.values())
         for phon2 in entries.keys():
-          #print("  " + taxon1 + "->" + taxon2 + ", " + phon1 + "->" + phon2 + ": " + str(entries[phon2]) + "/" + str(entrySum))
-          entries[phon2] = entries[phon2] / entrySum
+          if len(phon1) == 1 and len(phon2) == 1: #avoid problems with "87" and the like
+            global_replacements[phon1][phon2] += entries[phon2]
+            #print("  " + taxon1 + "->" + taxon2 + ", " + phon1 + "->" + phon2 + ": " + str(entries[phon2]) + "/" + str(entrySum))
+            entries[phon2] = entries[phon2] / entrySum
+          
+global_replacement_probabilities = dict()
+for phon1 in sounds:
+    global_replacement_probabilities[phon1] = dict()
+    entrySum = sum(global_replacements[phon1].values())
+    for phon2 in sounds:
+        if entrySum == 0 or global_replacements[phon1][phon2] == 0:
+            global_replacement_probabilities[phon1][phon2] = 0.0001
+        else:
+            global_replacement_probabilities[phon1][phon2] = global_replacements[phon1][phon2] / entrySum
+
+for phon1 in sounds:
+    for phon2 in sounds:
+        if global_replacement_probabilities[phon1][phon2] != 0.0001:
+            print phon1 + phon2 + ": " + str(- log(global_replacement_probabilities[phon1][phon2]))
+    print
+    
+print("Storing the replacement weight matrix in replacement-weights.txt")
+replacementWeightsFile = open("replacement-weights.txt",'w')
+replacementWeightsFile.write("\t".join(sounds) + "\n")
+for phon1 in sounds:
+    replacementWeightsFile.write("\t".join([str(- log(global_replacement_probabilities[phon1][phon2])) for phon2 in sounds]) + "\n")
+replacementWeightsFile.close()
 
 #extract covariances and correlation coefficients for the phoneme replacements in a list
 #replacements = ["a-","ae","ai","ao","au","aE","a8","e-","ea","ei","eo","eu","eE","e8",\
@@ -242,7 +290,7 @@ def generate_replacements(symbList, threshold):
 #replacements = generate_replacements(["k","g","x"],1)
 #print(replacements)
 
-replacements = generate_replacements(sounds + ["-"], 1)
+replacements = generate_replacements(sounds, 1)
 
 covariances = {}
 correlations = {}
@@ -259,7 +307,7 @@ for node in guideTree.postorder():
     #  print node.Name + "has no recon_changes!"
 for pair1 in replacementsDict.keys():
   for pair2 in replacementsDict.keys():
-    print("measuring the covariance of " + pair1 + " and " + pair2 + ": ")
+    #print("measuring the covariance of " + pair1 + " and " + pair2 + ": ")
     sharedTaxonPairs = set(replacementsDict[pair1].keys()) & set(replacementsDict[pair2].keys())
     if (len(sharedTaxonPairs) > 0):
       pair1Values = []
@@ -274,8 +322,8 @@ for pair1 in replacementsDict.keys():
       #print("  pair2Values: " + str(pair2Values))    
       pair1E = sum(pair1Values) / len(pair1Values)
       pair2E = sum(pair2Values) / len(pair2Values)
-      print("  pair1E: " + str(pair1E))
-      print("  pair2E: " + str(pair2E))
+      #print("  pair1E: " + str(pair1E))
+      #print("  pair2E: " + str(pair2E))
       covarianceList = []
       variance1List = []
       variance2List = []
@@ -286,19 +334,19 @@ for pair1 in replacementsDict.keys():
       covariance = sum(covarianceList) / len(covarianceList)
       pair1Variance = sum(variance1List) / len(variance1List)
       pair2Variance = sum(variance2List) / len(variance2List)
-      print("  pair1Variance: " + str(pair1Variance))
-      print("  pair2Variance: " + str(pair2Variance))
-      print("  covariance: " + str(covariance))
+      #print("  pair1Variance: " + str(pair1Variance))
+      #print("  pair2Variance: " + str(pair2Variance))
+      #print("  covariance: " + str(covariance))
       covariances["(" + pair1 + "," + pair2 + ")"] = covariance
       if covariance == 0.0:
         correlations["(" + pair1 + "," + pair2 + ")"] = 0.0
       else:
         normalizer = math.sqrt(pair1Variance)*math.sqrt(pair2Variance)
         correlations["(" + pair1 + "," + pair2 + ")"] = covariance/normalizer
-      print("  correlation: " + str(correlations["(" + pair1 + "," + pair2 + ")"]))
+      #print("  correlation: " + str(correlations["(" + pair1 + "," + pair2 + ")"]))
 
-for key, value in sorted(correlations.iteritems(), key=lambda (k,v): (v,k)):
-    print "%s: %s" % (key, value)
+#for key, value in sorted(correlations.iteritems(), key=lambda (k,v): (v,k)):
+#    print "%s: %s" % (key, value)
     
 print("Storing the covariance matrix in replacement-covariances.txt")
 covarianceFile = open("replacement-covariances.txt",'w')
