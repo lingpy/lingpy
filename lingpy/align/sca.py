@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-08-27 09:15
+# modified : 2013-09-03 17:09
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-08-27"
+__date__="2013-09-03"
 
 import numpy as np
 import re
@@ -1328,6 +1328,12 @@ def get_consensus(
     model : ~lingpy.data.model.Model
         A sound class model according to which the IPA strings shall be
         converted to sound-class strings.
+    local : { c{bool}, "peaks", "gaps" }(default=False)
+        Specify whether local pre-processing should be applied to the data. If
+        set to c{peaks}, the average alignment score of each column is taken as
+        reference to remove low-scoring columns from the alignment. If set to
+        "gaps", the columns with the highest proportion of gaps will be
+        excluded.
 
     Returns
     -------
@@ -1367,7 +1373,8 @@ def get_consensus(
             mode = 'majority',
             gap_score = -10,
             weights = [1 for i in range(len(msa[0]))],
-            rep_weights = rep_weights
+            rep_weights = rep_weights,
+            local = False
             )
     for k in defaults:
         if k not in keywords:
@@ -1381,6 +1388,60 @@ def get_consensus(
         matrix = misc.transpose(msa.alm_matrix)
     else:
         matrix = misc.transpose(msa)
+
+    # check for local peaks
+    if keywords['local']:
+        
+        if keywords['local'] == 'peaks':
+            # calculate a local index
+            peaks = []
+            for line in matrix:
+                sim = []
+                for i,charA in enumerate(line):
+                    for j,charB in enumerate(line):
+                        if i < j:
+                            if charA not in '-' and charB not in '-':
+                                sim += [keywords['model'](
+                                        tokens2class([charA],keywords['model'])[0],
+                                        tokens2class([charB],keywords['model'])[0]
+                                        )]
+                                a = tokens2class([charA],keywords['model'])[0]
+                                b = tokens2class([charB],keywords['model'])[0]
+
+                            else:
+                                sim += [0.0]
+                peaks += [sum(sim) / len(sim)]
+
+            # get the average,min, and max of the peaks
+            pmean = sum(peaks) / len(peaks)
+            pmax = max(peaks)
+            pmin = min(peaks)
+
+            # exclude those lines from matrix whose average is smaller than pmean
+            i = len(matrix)-1
+            for peak in peaks[::-1]:
+                if peak <= pmax - pmean - pmean/3:
+                    del matrix[i]
+                i -= 1
+        
+        elif keywords['local'] == 'gaps':
+            # store the number of gaps in a simple array
+            gap_array = []
+
+            for line in matrix:
+                gap_array += [line.count('-') / len(line)]
+
+            # we now try to get the average number of lines
+            average = sum(gap_array) / len(gap_array)
+
+            # we discard all lines which are beyond the half of the average (stupid
+            # solution, but for testing it hopefully suffices...)
+            i = len(matrix) - 1
+            for score in gap_array[::-1]:
+                if score >= 1 - average + average/4:
+                    del matrix[i]
+                i -= 1
+
 
     # check for classes
     if classes:
