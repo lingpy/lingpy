@@ -1675,6 +1675,7 @@ def get_consensus(
                                 maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
                                 node.reconstructed.append(maxKey)
         elif recon_alg == "sankoff_parsimony":
+            systematizationBonus = True
             for node in tree.postorder():
                 node.sankoffTable = []
                 node.sankoffPointers = []
@@ -1688,12 +1689,14 @@ def get_consensus(
                 #apply the Sankoff algorithm, store backpointers
                 for node in tree.postorder():
                     node.sankoffTable.append(dict())
+                    dist = node.distribution[i]
                     if node.isTip():
                         #just retrieve the original at the leaves (needs to be reconstructed from the differences)
-                        dist = node.distribution[i]
                         maxValue = max(dist.values())
                         maxKeys = [key for key in dist.keys() if dist[key]==maxValue]
                         node.sankoffTable[i][maxKeys[0]] = 0
+                        if systematizationBonus:
+                            node.orig.best_replacements = {}
                     else:
                         node.sankoffPointers.append(dict())
                         sankoff1 = node.Children[0].sankoffTable[i]
@@ -1703,13 +1706,44 @@ def get_consensus(
                             backPointers = ['-','-']
                             for char1 in sankoff1.keys():
                                 for char2 in sankoff2.keys():
-                                    sankoffValue = mtx(char,char1) + sankoff1[char1] + mtx(char,char2) + sankoff2[char2]
+                                    bonusFactor1 = 1.0
+                                    bonusFactor2 = 1.0
+                                    if systematizationBonus:
+                                        if hasattr(node.Children[0].orig, "best_replacements") and char + char1 in node.Children[0].orig.best_replacements.keys():
+                                            bonusFactor1 /= 1 + node.Children[0].orig.best_replacements[char+char1] 
+                                            #print ("bonusFactor1: " + str(bonusFactor1))           
+                                        if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
+                                            bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char+char2]
+                                            #print ("bonusFactor2: " + str(bonusFactor2))   
+                                    sankoffValue = mtx(char,char1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2) * bonusFactor2 + sankoff2[char2]
                                     if (sankoffValue < minSankoffValue):
                                         minSankoffValue = sankoffValue
                                         backPointers[0] = char1
                                         backPointers[1] = char2
                             node.sankoffTable[i][char] = minSankoffValue
                             node.sankoffPointers[i][char] = backPointers
+                        if systematizationBonus:           
+                            if not hasattr(node.Children[0].orig, "best_replacements"):
+                               node.Children[0].orig.best_replacements = {}
+                            if not hasattr(node.Children[1].orig, "best_replacements"):
+                               node.Children[1].orig.best_replacements = {}
+                            minValue = min(node.sankoffTable[i].values())
+                            minKeys = [key for key in node.sankoffTable[i].keys() if node.sankoffTable[i][key]==minValue]
+                            for char in minKeys:
+                                minValue1 = min(node.Children[0].sankoffTable[i].values())
+                                for char1 in [key for key in node.Children[0].sankoffTable[i].keys() if node.Children[0].sankoffTable[i][key]==minValue1]:
+                                    if char + char1 not in node.Children[0].orig.best_replacements.keys():
+                                        node.Children[0].orig.best_replacements[char + char1] = 1
+                                    else:
+                                        node.Children[0].orig.best_replacements[char + char1] += 1
+                                    #print(node.Children[0].orig.best_replacements)
+                                minValue2 = min(node.Children[1].sankoffTable[i].values())
+                                for char2 in [key for key in node.Children[1].sankoffTable[i].keys() if node.Children[1].sankoffTable[i][key]==minValue2]:
+                                    if char + char2 not in node.Children[1].orig.best_replacements.keys():
+                                        node.Children[1].orig.best_replacements[char + char2] = 1
+                                    else:
+                                        node.Children[1].orig.best_replacements[char + char2] += 1
+                                    #print(node.Children[1].orig.best_replacements)
                 #read out the backpointers for an optimal reconstruction
                 #print(str(tree.sankoffTable[i]))
                 minValue = min(tree.sankoffTable[i].values())
