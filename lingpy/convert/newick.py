@@ -1,13 +1,13 @@
-# author   : Johann-Mattis List
+# author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 07:01
-# modified : 2013-07-10 12:10
+# modified : 2013-09-05 09:56
 """
 Functions for tree calculations and working with Newick files.
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-07-10"
+__author__="Johann-Mattis List, Johannes Dellert"
+__date__="2013-09-05"
 
 # external
 import xml.dom.minidom as minidom
@@ -22,14 +22,13 @@ try:
 except:
     from ..algorithm.cython import _cluster as cluster
 
-def xml2nwk(
+def xml2dict(
         infile,
-        filename = ''
         ):
     """
-    Convert xml-based MultiTree format to Newick-format.
+    Convert xml-based MultiTree format to Newick format.
     """
-    
+
     # parse the xml-file
     document = {}
 
@@ -56,9 +55,7 @@ def xml2nwk(
         
         max_idx = max([k for k in nwk if type(k) == int])
     
-        try:
-            nwk[idx]
-        except:
+        if idx not in nwk:
             nwk[idx] = []
     
         # get the children
@@ -73,9 +70,14 @@ def xml2nwk(
             # iterate over childs
             for i,child in enumerate(childs):
                 
-                queue += [(child,max_idx+i+1)]
-                nwk[idx] += [max_idx+i+1]
-                #print("\tAdded {1} to {0}.".format(idx,max_idx+i+1))
+                if idx < max_idx+i+1:
+                    queue += [(child,max_idx+i+1)]
+                    nwk[idx] += [max_idx+i+1]
+                else:
+                    name = [c for c in child.childNodes if c.nodeName=='pri-name']
+                    name = name[0].childNodes[0].data
+                    nwk[idx] = [name]
+                    taxa.append(name)
     
         else:
             name = [c for c in root.childNodes if c.nodeName == 'pri-name'][0]
@@ -84,16 +86,27 @@ def xml2nwk(
             nwk[idx] = [name]
             taxa.append(name)
     
-    # now that a dictionary representation of the tree has been created,
-    # convert everything to newick
+    return nwk,taxa
+
+def xml2nwk(
+        infile,
+        filename = ''
+        ):
+    """
+    Convert xml-based MultiTree format to Newick-format.
+    """
+    nwk,taxa = xml2dict(infile)
 
     # first, create a specific newick-dictionary
     newick = {}
 
+    # make a lambda function for conversion of internal nodes into names
+    makeChild = lambda x: '{{x_{0}}}'.format(x) if x not in taxa else x
+
     for i in range(len(nwk)):
         
         #create format-string for children
-        children = ['{{x_{0}}}'.format(c) for c in nwk[i]]
+        children = [makeChild(c) for c in nwk[i]]
     
         # create dictionary to replace previous format string
         if len(children) > 1:
@@ -104,6 +117,7 @@ def xml2nwk(
     # add the taxa
     for taxon in taxa:
         newick['x_'+str(taxon)] = taxon
+
     
     # create the newick-string
     newick_string = "{x_0};"
