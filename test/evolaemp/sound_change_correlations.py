@@ -1,5 +1,6 @@
 from numpy import *
 from lingpy2 import *
+import os
 
 # switch namespace to evolaemp
 from lingpy2.data.names.evolaemp import *
@@ -85,17 +86,18 @@ f = open('data/asjp/world_longnames.txt','r')
 rl = f.readlines()
 f.close()
 longnames = array([x.strip() for x in rl])
-nameToID = dict({(longnames[i],i) for i in range(0,len(longnames))})
+longNameToID = dict({(longnames[i],i) for i in range(0,len(longnames))})
 
 #load long language names
 f = open('data/asjp/world_names.txt','r')
 rl = f.readlines()
 f.close()
 names = array([x.strip() for x in rl])
+nameToID = dict({(names[i],i) for i in range(0,len(names))})
 
 #load replacement weights for reconstruction
 # reading in 'asjpMatrix.txt' into a numpy array
-mfile = open("data/asjp/replacement-weights.txt","r")
+mfile = open("data/asjp/replacement-weights-global-round1.txt","r")
 sounds = array(mfile.readline().strip().split("\t"))
 repWeightsRaw = mfile.readlines()
 mfile.close()
@@ -112,9 +114,9 @@ def rep_weights(phon1, phon2):
 guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
 #convert guideTree node names to integers as expected by Lingpy MSA
 for leaf in guideTree.tips():
-    leaf.Name = str(nameToID[leaf.Name])   
+    leaf.Name = str(longNameToID[leaf.Name])   
 
-for familyName in unique(asjpMatrix[:,2]):
+for familyName in unique(asjpMatrix[1461:1602,2]):
     langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
     phylName = str(asjpMatrix[langs[0],1])
     print phylName + "." + str(familyName)
@@ -122,13 +124,21 @@ for familyName in unique(asjpMatrix[:,2]):
         continue
         print "only one language, skipped"
 
+    familyParsimony = 0.0
+    
     ensure_dir("output/" + phylName + "/" + familyName)
+    ensure_dir("cognates/" + phylName + "/" + familyName)
 
 #langs = range(1603,1670) #iranian languages
 #langs = range(1426,1459) #germanic languages
 #langs = range(1461,1602) #indic languages
 #langs = range(1690,1707) #slavic languages
 #langs = range(1671,1690) #romance languages
+#langs = range(1707,1727) #finnic languages
+#langs = range(1734,1743) #mongolic languages
+#langs = range(1743,1765) #tungusic languages
+#langs = range(1765,1821) #turkic languages
+#langs = range(1291,1347) #semitic languages
 
 #phylName = "IE"
     print langs
@@ -137,35 +147,50 @@ for familyName in unique(asjpMatrix[:,2]):
     nameTable = [names[lang] for lang in langs]
     #printTree(familyGuideTree,0,names=familyNameTable)
     
+    cognateDetection = False
+    
     for conceptID in range(4,44):
-        #repeat the cognate detection process to generate cognate sets
-        lexdict = {}
-        lexdict[0] = ["ID", "concept", "ipa", "doculect"]
-        ID = 1
-        #create a dictionary for cognate detection
-        for langID in langs:
-            entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
-            for entry in entries.split('-'):
-                if not entry == '0':
-                    lexdict[ID] = [langID, "concept" + str(conceptID), entry, asjpMatrix[langID,0]]
-                    ID += 1
+        if cognateDetection:
+            #repeat the cognate detection process to generate cognate sets
+            lexdict = {}
+            lexdict[0] = ["ID", "concept", "ipa", "doculect"]
+            ID = 1
+            #create a dictionary for cognate detection
+            for langID in langs:
+                entries = asjpMatrix[langID,conceptID] #originally: 39 for "mountain"
+                for entry in entries.split('-'):
+                    if not entry == '0':
+                        lexdict[ID] = [langID, "concept" + str(conceptID), entry, asjpMatrix[langID,0]]
+                        ID += 1
+            
+            #cluster words into cognate sets
+            lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
+            lexstat.get_scorer()
+            lexstat.cluster(method='sca',threshold=0.55,verbose=True)
+            etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
+            
+            newCognateID = 1    
+            for cognateID in etym_dict.keys():
+                entry_msq_file = open("cognates/" + phylName + "/" + familyName + "/" + str(conceptID - 3) + "." + str(newCognateID) + ".msq", 'w')
+                entry_msq_file.write("ASJP database\n")
+                entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
+                for IDList in etym_dict[cognateID]:
+                    if (IDList != 0):
+                        [langID, word, entry, langName] = lexdict[IDList[0]][:4]
+                        entry_msq_file.write(langName + "\t" + entry + "\n")
+                entry_msq_file.close()
+                newCognateID += 1
         
-        #cluster words into cognate sets
-        lexstat = LexStat(lexdict,model=internal_asjp,merge_vowels=False)
-        lexstat.get_scorer()
-        lexstat.cluster(method='sca',threshold=0.55,verbose=True)
-        etym_dict = lexstat.get_etymdict(ref='scaid', entry='', loans=False)
+        numCognates = 0
+        path = "cognates/" + phylName + "/" + familyName      
+        for fname in os.listdir(path):
+            if fname.startswith(str(conceptID - 3) + "."):
+                numCognates += 1
         
-        for cognateID in etym_dict.keys():
-            entry_msq_file = open("cognate" + str(cognateID) + ".msq", 'w')
-            entry_msq_file.write("ASJP database\n")
-            entry_msq_file.write("Cognate " + str(cognateID) + " for Germanic languages\n")
-            for IDList in etym_dict[cognateID]:
-                if (IDList != 0):
-                    [langID, word, entry, langName] = lexdict[IDList[0]][:4]
-                    entry_msq_file.write(langName + "\t" + entry + "\n")
-            entry_msq_file.close()
-            cognateLangs = [int(lexdict[IDList[0]][0]) - langs[0] for IDList in etym_dict[cognateID] if IDList != 0]
+        for newCognateID in range(1,numCognates + 1):
+            multi = MSA("cognates/" + phylName + "/" + familyName + "/" + str(conceptID - 3) + "." + str(newCognateID) + ".msq",merge_vowels=False,unique_seqs=False)
+            cognateLangs = [nameToID[taxon] - langs[0] for taxon in multi.taxa]
+            #cognateLangs = [int(lexdict[IDList[0]][0]) - langs[0] for IDList in etym_dict[cognateID] if IDList != 0]
             #print "cognate set " + str(cognateID) + " - cognate langs: " + str(cognateLangs)
             if len(cognateLangs) > 1:  #cognate sets of size 1 are useless
                 cognateGuideTree = subGuideTree(familyGuideTree,cognateLangs)       
@@ -173,14 +198,21 @@ for familyName in unique(asjpMatrix[:,2]):
                 #print "  cognate langs = " + str(cognateLangs)
                 #printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs])
                 cognateNameTable = [nameTable[lang] for lang in cognateLangs]
-                multi = MSA("./cognate" + str(cognateID) + ".msq",merge_vowels=False,unique_seqs=False)
                 tree_mtx = convert.newick.nwk2guidetree(str(cognateGuideTree))
                 multi.prog_align(model=internal_asjp,gop=-4,scale=0.9,guide_tree=tree_mtx)
                 #print(multi)
                 
-                #old version of call had taxa=[str(i) for i in range(len(langs))]
-                cons = get_consensus(multi, cognateGuideTree, gaps=True, classes=False, rep_weights = rep_weights)
-                print("Reconstructed proto-" + familyName + " word for concept " + str(conceptID - 3) + ":\t" + cons)  
+                cons = get_consensus(multi, cognateGuideTree, recon_alg="sankoff_parsimony", gaps=True, classes=False, rep_weights = rep_weights, local = "gap")
+
+                cognateParsimony = 0.0
+                
+                #aggregate the parsimony value
+                for i in range(len(cognateGuideTree.reconstructed)):
+                    cognateParsimony += min(cognateGuideTree.sankoffTable[i].values())
+                    
+                familyParsimony += cognateParsimony
+                    
+                print("Reconstructed proto-" + familyName + " word for concept " + str(conceptID - 3) + ":\t" + cons + "\twith average parsimony " + str(cognateParsimony / len(cognateLangs)))
                  
                 #PRINT OUT RECONSTRUCTION STEPS IN A TREE VISUALIZATION
                 if graphicalOutput:
@@ -226,7 +258,8 @@ for familyName in unique(asjpMatrix[:,2]):
                 #    print str(node.Name)
                 #    print str(node.Name) + ": " + str(node.recon_changes)
                 #printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="recon_changes")
-                
+    print("Total parsimony while deriving proto-" + familyName + ": " + str(familyParsimony))    
+             
 guideTree = familyGuideTree
 
 print("\nSupertree with collected sound changes at the edges:")
