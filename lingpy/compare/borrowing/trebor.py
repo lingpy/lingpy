@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-09-01 17:08
+# modified : 2013-09-05 18:15
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-09-01"
+__date__="2013-09-05"
 
 
 # basic imports
@@ -60,6 +60,249 @@ from ...thirdparty import cogent as cg
 from ...convert.gml import *
 from ...basic import Wordlist
 from ...read.csv import csv2dict,csv2list
+
+
+def get_gls(
+        paps,
+        taxa,
+        tree,
+        gpl = 1,
+        weights = (1,1),
+        push_gains = True,
+        missing_data = 0
+        ):
+    """
+    Calculate a gain-loss scenario. 
+
+    Notes
+    -----
+    This is an enhanced version of the older approach to parsimony-based
+    gain-loss mapping. The algorithm is much faster than the previous one and
+    also written much clearer as to the code. In most tests I ran so far, it
+    also outperformed other approaches by finding more parsimonious solutions.
+
+    """
+    # this line is just to make sure we actually copy the paps and don't change
+    # them unwillingly
+    pap = [p for p in paps]
+
+    for i,taxon in enumerate(taxa):
+        if pap[i] == -1:
+            pap[i] = missing_data
+    
+    # get dictionary for taxa with their states
+    statesD = dict(zip(taxa,pap))
+
+    states1 = [s for s in statesD if statesD[s] == 1]
+    states0 = [s for s in statesD if statesD[s] == 0]
+
+    # get subtree for taxa with positive paps
+    tree = tree.lowestCommonAncestor([t for t in taxa if statesD[t] == 1])
+
+    # get the tips for the current subtree
+    tips = tree.getTipNames()
+
+    # get the root name
+    root = tree.Name
+
+    # get the nodes
+    nodes = tree.getNodeNames()
+
+    # get the distance from each taxon to the root
+    distances = {}
+    for node in [n for n in nodes if n != root]:
+        
+        # get distance to root
+        d = len(tree.getConnectingEdges(root,node))
+        
+        # append to dictionary
+        try:
+            distances[d] += [node]
+        except:
+            distances[d] = [node]
+    distances[0] = [root]
+
+    # assign the scenarios, each scenario consists of the state of the node in
+    # the tree and a dictionary with the previous events, where the node-name
+    # is the key and the event (1,0,-1) is the value
+    scenarios = {}
+    for taxon in tips:
+        scenarios[taxon] = [(statesD[taxon],{})]
+
+    # return simple scenario if the group is single origin
+    if [statesD[tip] for tip in tips].count(1) == len(tips):
+        return [(root,1)]
+
+    # start iteration over outmost layer
+    for i in sorted(distances,reverse=True):
+        if rcParams['debug']: print("[D] Calculating Layer {0}...".format(i))
+
+        # iterate over all nodes in the layer
+        for node in distances[i]:
+            
+            # get the tree node
+            tree_node = tree.getNodeMatchingName(node)
+
+            # check whether node is tip
+            if not tree_node.isTip():
+
+                # get the nodes' children
+                names = [n.Name for n in tree_node.Children]
+                children = [scenarios[n] for n in names]
+
+
+                if rcParams['debug']: print("... current node {0} ({1})".format(node,names))
+                
+                # get all possible combinations
+                combinations = itertools.product(*children)
+
+                # define new nodes list (to be appended to new node
+                new_nodes = []
+
+                for combination in combinations:
+                    
+                    # get stories
+                    states = [node[0] for node in combination]
+                    stories = [node[1] for node in combination]
+
+                    # evaluate the states
+                    s1 = states.count(1)
+                    s0 = states.count(0)
+                    sM = states.count(-1)
+
+                    # get the length of the states
+                    sL = len(states)
+
+                    # get new stories
+                    new_stories = {}
+                    for story in stories:
+                        new_stories.update(story)
+
+                    # combine states if they evaluate to 1
+                    if s1 + sM == sL:
+                        
+                        # append the new combined stuff to the dictionary
+                        new_nodes += [(1,new_stories)]
+                        
+                        if rcParams['debug']: print("...... 1 nodes:",new_nodes[-1])
+
+                    # combine states if they evaluate to 0
+                    elif s0 + sM == sL:
+                        
+                        # append the new combined stuff to the dictionary
+                        new_nodes += [(0,new_stories)]
+
+                        if rcParams['debug']: print("...... 0 nodes:",new_nodes[-1])
+
+                    # if the both evaluate to -1, also combine them
+                    elif sM == sL:
+                        new_nodes += [(-1,new_stories)]
+
+                    # append both scenarios if there's both 1 and 0
+                    else:
+
+                        # assuming origin, each node that has a 0, needs an extra
+                        # origin
+                        new_storiesA = new_stories.copy()
+                        new_storiesB = new_stories.copy()
+
+                        for j,state in enumerate(states):
+                            if state == 1:
+                                new_storiesA[names[j]] = 1
+                            if state == 0:
+                                new_storiesB[names[j]] = 0
+
+                        new_nodes += [(1,new_storiesB)]
+                        new_nodes += [(0,new_storiesA)]
+                        
+                        if rcParams['debug']: print("...... 01 nodes:",new_nodes[-2])
+                        if rcParams['debug']: print("...... 01 nodes:",new_nodes[-1])
+
+            
+                # evaluate the scenarios for consistency reasons,
+                good_nodes = []
+                minGains,minLoss = {},{}
+                for j,(state,scenario) in enumerate(new_nodes):
+                    
+                    # avoid to append scenarios with more than allowed gains
+                    # per lineage
+                    if not (state == 1 and list(scenario.values()).count(1) > gpl):
+                        
+                        # check scenarios having a loss in order to retrieve
+                        # the scenario with the minimal weight, since once a
+                        # loss is determined, the gains can be freely chosen
+                        if state == 0:
+                            gains = list(scenario.values()).count(1)
+                            losses = list(scenario.values()).count(0)
+                            w = gains * weights[0] + losses * weights[1] 
+                            try:
+                                minGains[w] += [j]
+                            except KeyError:
+                                minGains[w] = [j]
+
+                        # do the same for scenarios having a gain, if multiple
+                        # loss-models are encountered
+                        elif state == 1:
+                            gains = list(scenario.values()).count(1)
+                            losses = list(scenario.values()).count(0)
+                            w = gains * weights[0] + losses * weights[1]
+                            try:
+                                minLoss[w] += [j]
+                            except:
+                                minLoss[w] = [j]
+                        #else:
+                        #    good_nodes += [(state,scenario)]
+
+                # append lowest weights in gains to the list
+                if minGains:
+                    good_nodes += [new_nodes[idx] for idx in
+                            minGains[min(minGains)]]
+                if minLoss:
+                    good_nodes += [new_nodes[idx] for idx in
+                            minLoss[min(minLoss)]]
+
+                scenarios[tree_node.Name] = good_nodes
+
+    
+    # select the best of all scenarios by comparing all weights
+    w = len(taxa) * weights[0]
+
+    winners = {}
+    for s in scenarios[root]:
+        if s[0] == 1:
+            s[1][root] = s[0]
+
+        # count the weights
+        events = list(s[1].values())
+        gains = events.count(1)
+        losses = events.count(0)
+
+        w = gains * weights[0] + losses * weights[1]
+        
+        try:
+            winners[w] += [list(s[1].items())]
+        except:
+            winners[w] = [list(s[1].items())]
+
+    # select the scenario with the hightest number of gains, if push-gains
+    # option is set to true
+    if rcParams['debug']:
+        print([x for x in tree.getNodeMatchingName(root).getTipNames() if x not
+            in states1])
+
+    if push_gains:
+        winner = sorted(
+                winners[min(winners)],
+                key = lambda x: [y[1] for y in x].count(1)
+                )
+    else:
+        winner = sorted(
+                winners[min(winners)],
+                key = lambda x: [y[1] for y in x].count(0)
+                )
+
+    return winner[0]
+
 
 class PhyBo(Wordlist):
     """
@@ -493,7 +736,7 @@ class PhyBo(Wordlist):
 
         return output
 
-        
+
     def _get_GLS(
             self,
             pap,
@@ -980,14 +1223,25 @@ class PhyBo(Wordlist):
                     gls = [(self.taxa[self.paps[cog].index(1)],1)]
                 else:
                     if mode == 'weighted':
-                        gls = self._get_GLS(
+                        gls = get_gls(
                                 self.paps[cog],
-                                r = ratio,
-                                mode = 'w',
+                                self.taxa,
+                                self.tree,
                                 gpl = keywords['gpl'],
+                                weights = ratio,
                                 push_gains = keywords['push_gains'],
                                 missing_data = keywords['missing_data']
                                 )
+
+
+                        #gls = self._get_GLS(
+                        #        self.paps[cog],
+                        #        r = ratio,
+                        #        mode = 'w',
+                        #        gpl = keywords['gpl'],
+                        #        push_gains = keywords['push_gains'],
+                        #        missing_data = keywords['missing_data']
+                        #        )
 
                     if mode == 'restriction':
                         gls = self._get_GLS(
