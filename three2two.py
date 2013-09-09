@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@gmail.com
 # created  : 2013-07-10 14:22
-# modified : 2013-08-26 16:36
+# modified : 2013-09-09 20:25
 """
 Script converts Python3-version of LingPy into a (hopefully valid) Python2-version.
 """
 
 __author__="Johann-Mattis List, Peter Bouda"
-__date__="2013-08-26"
+__date__="2013-09-09"
 
 #from glob import glob
 import os
@@ -26,25 +26,6 @@ def run3to2():
             elif len([x for x in ['.bin','.o','.so','.pyc','~','.swp'] if f.endswith(x)]) == 0:
                 files.append(os.path.join(root, f))
 
-    # # read in all files
-    # while inits:
-    #     f = inits.pop(0)
-    #     if f.endswith('.py') or f.endswith('pyx'):
-    #         files += [f]
-    #     elif osp.isfile(f):
-    #         #if f.endswith('.bin'):
-    #         #    files += [f]
-    #         if len([x for x in ['.bin','.o','.so','.pyc','~'] if f.endswith(x)]) == 0:
-    #             files += [f]
-    #     else:
-    #         try:
-    #             newfiles = glob(f+'/*')
-    #             for f in newfiles:
-    #                 inits += [f]
-    #         except:
-    #             pass
-
-
     prefix = """\
 # *-* coding: utf-8 *-*
 # These lines were automatically added by the 3to2-conversion.
@@ -56,6 +37,7 @@ from __future__ import unicode_literals
     # create source target list for simple replacements
     st_list = [
             ('input(','raw_input('),
+            (' str:',' unicode:') 
             ]
 
     # pyxlist

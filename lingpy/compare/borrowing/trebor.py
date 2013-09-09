@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-09-05 18:15
+# modified : 2013-09-09 18:10
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-09-05"
+__date__="2013-09-09"
 
 
 # basic imports
@@ -15,6 +15,7 @@ import os
 import json
 import itertools
 import codecs
+import re
 
 # thirdparty imports
 import numpy as np
@@ -1584,6 +1585,8 @@ class PhyBo(Wordlist):
 
             # iterate over the gls and assign the respective values to all
             # children
+            # XXX note that here we assume that missing data is coded as
+            # 0, so this should probably be adapted XXX
             for name,event in gls:
                 if event == 1:
                     this_state = 1
@@ -1643,9 +1646,12 @@ class PhyBo(Wordlist):
 
                     if n != 'root':
                         node = self.tree.getNodeMatchingName(n)
-                        node = str(node).replace('(','').replace(')','').replace(',','-')
+                        node = n #''.join(
+                                #[x for x in str(node) if x not in '";()'+"'"]
+                                #)#.replace('(','').replace(')','').replace(',','-')
                     else:
                         node = n
+                    
                     try:
                         self.acs[glm][node] += [(c,m,p)]
                     except:
@@ -2647,7 +2653,13 @@ class PhyBo(Wordlist):
         """
         Calculate Patchily Distributed Cognates.
         """
-        
+        defaults = dict(
+                aligned_output = True,
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
         patchy = {}
         paps = []
 
@@ -2830,11 +2842,11 @@ class PhyBo(Wordlist):
         # write alternative stats on concepts including information of
         # singletons (excluding them may bias the results)
         f = codecs.open(
-                os.path.join(self.dataset+'_phybo','concepts-alt-'+glm+'.stats'),
+                os.path.join(self.dataset+'_phybo','cognates-'+glm+'.stats'),
                 'w',
                 'utf-8'
                 )
-        f.write('CONCEPT\tORIGINS\tREFLEXES\tORI/REF\n')
+        f.write('CONCEPT\tCOGNATES\tPATCHIES\tREFLEXES\tPCR\n')
 
         concepts = {}
         for pap in self.etd:
@@ -2842,40 +2854,49 @@ class PhyBo(Wordlist):
             gloss = self.pap2con[pap]
             idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
             patchies = [self[idx,'patchy'] for idx in idxs]
+            cogs = [self[idx,self._pap_string] for idx in idxs]
             reflexes = len(patchies)
             patchies = len(set(patchies))
+            cogs = len(set(cogs))
             try:
-                concepts[gloss] += [(patchies,reflexes,patchies/float(reflexes))]
+                concepts[gloss] += [(cogs,patchies,reflexes)]
             except:
-                concepts[gloss] = [(patchies,reflexes,patchies/float(reflexes))]
+                concepts[gloss] = [(cogs,patchies,reflexes)]
 
         for key,value in concepts.items():
             concepts[key] = (
-                    sum([v[0] for v in value]) / float(len(value)),
-                    sum([v[1] for v in value]) / float(len(value)),
-                    sum([v[2] for v in value]) / float(len(value))
+                    sum([v[0] for v in value]),
+                    sum([v[1] for v in value]),
+                    sum([v[2] for v in value])
                     )
         
-        for k,(p,r,s) in sorted(concepts.items(),key=lambda x:x[1][2],reverse=True): 
-            f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.4f}\n'.format(k,p,r,s)) 
+        for k,(c,p,r) in sorted(concepts.items(),key=lambda x:x[1][2],reverse=True): 
+            f.write('{0}\t{1}\t{2}\t{3}\t{4:.2f}\n'.format(k,c,p,r,(p-c+1)/r)) 
         # write mean
-        f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.4f}\n'.format(
+
+        mc = sum([x[0] for x in concepts.values()]) / len(concepts)
+        mp = sum([x[1] for x in concepts.values()]) / len(concepts)
+        mr = sum([x[2] for x in concepts.values()]) / len(concepts)
+
+        f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\t{4:.2f}\n'.format(
             "MEAN",
-            sum([x[0] for x in concepts.values()]) / len(concepts),
-            sum([x[1] for x in concepts.values()]) / len(concepts),
-            sum([x[2] for x in concepts.values()]) / len(concepts)
+            mc,
+            mp,
+            mr,
+            (mp-mc+1)/mr
             ))
+
         f.close()
         if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
         
         # store params in attribute stats
         self.stats["CONCEPTS"] = dict(
-                ano_s = sum([x[0] for x in concepts.values()]) / self.height,
-                rpc_s = sum([x[1] for x in concepts.values()]) / self.height,
-                ppr_s= sum([x[2] for x in concepts.values()]) / self.height,
-                ano_c = sum([x[0] for x in cstats.values()]) / self.height,
-                rpc_c = sum([x[1] for x in cstats.values()]) / self.height,
-                ppr_c= sum([x[2] for x in cstats.values()]) / self.height
+                cognates = sum([x[0] for x in concepts.values()]) / self.height,
+                patchies = sum([x[1] for x in concepts.values()]) / self.height,
+                reflexes = sum([x[2] for x in concepts.values()]) / self.height,
+                origins = sum([x[0] for x in cstats.values()]) / self.height,
+                #reflexes = sum([x[1] for x in cstats.values()]) / self.height,
+                patchy_per_reflex = sum([x[2] for x in cstats.values()]) / self.height
                 )
 
         # write results to alm-file
@@ -2909,55 +2930,56 @@ class PhyBo(Wordlist):
                     tmp[concept][pap][patchy] += [(taxon,word)]
                 except:
                     tmp[concept][pap][patchy] = [(taxon,word)]
-
-        # write stuff to alm-file
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo',self.dataset+'-'+glm+'.alm.patchy'),
-                'w',
-                'utf-8'
-                )
-        for concept in sorted(tmp.keys()):
-            
-            f.write('# Basic Concept: "{0}"\n\n'.format(concept))
-            
-            for pap in sorted(tmp[concept].keys()):
-
-                f.write('## Cognate-Set: "{0}"\n'.format(pap))
-
-                words = []
-                langs = []
-                patchies = []
+        
+        if keywords["aligned_output"]:
+            # write stuff to alm-file
+            f = codecs.open(
+                    os.path.join(self.dataset+'_phybo',self.dataset+'-'+glm+'.alm.patchy'),
+                    'w',
+                    'utf-8'
+                    )
+            for concept in sorted(tmp.keys()):
                 
-                for patchy in sorted(tmp[concept][pap].keys()):
-                    
-                    # get words and languages
-                    words += [t[1].replace("ˈ",'') for t in tmp[concept][pap][patchy]]
-                    langs += [t[0] for t in tmp[concept][pap][patchy]]
-        
-                    patchies += [patchy[-1] for i in
-                            range(len(tmp[concept][pap][patchy]))]
+                f.write('# Basic Concept: "{0}"\n\n'.format(concept))
                 
-                msa = Multiple(words)
-                # XXX add for different alignment algorithm later XXX
-                msa.prog_align()
-                alms = msa.alm_matrix
-        
-                # get formatter for languages
-                formatter = max([len(lang) for lang in langs])
-        
-                for i,word in enumerate(words):
+                for pap in sorted(tmp[concept].keys()):
+
+                    f.write('## Cognate-Set: "{0}"\n'.format(pap))
+
+                    words = []
+                    langs = []
+                    patchies = []
                     
-                    string = '{0:'+str(formatter)+'}\t{1}\t|\t{2}\t|\t[{3}]\n'
-                    f.write(string.format(
-                        langs[i],
-                        patchies[i],
-                        '\t'.join(alms[i]),
-                        word
-                        ))
+                    for patchy in sorted(tmp[concept][pap].keys()):
+                        
+                        # get words and languages
+                        words += [t[1].replace("ˈ",'') for t in tmp[concept][pap][patchy]]
+                        langs += [t[0] for t in tmp[concept][pap][patchy]]
+            
+                        patchies += [patchy[-1] for i in
+                                range(len(tmp[concept][pap][patchy]))]
+                    
+                    msa = Multiple(words)
+                    # XXX add for different alignment algorithm later XXX
+                    msa.prog_align()
+                    alms = msa.alm_matrix
+            
+                    # get formatter for languages
+                    formatter = max([len(lang) for lang in langs])
+            
+                    for i,word in enumerate(words):
+                        
+                        string = '{0:'+str(formatter)+'}\t{1}\t|\t{2}\t|\t[{3}]\n'
+                        f.write(string.format(
+                            langs[i],
+                            patchies[i],
+                            '\t'.join(alms[i]),
+                            word
+                            ))
+                    f.write('\n')
                 f.write('\n')
-            f.write('\n')
-        
-        f.close()
+            
+            f.close()
 
     def get_edge(
             self,
@@ -3153,7 +3175,8 @@ class PhyBo(Wordlist):
                 'method' : 'mr', # majority rule
                 'gpl' : 1,
                 "push_gains" : True,
-                "missing_data" : 0
+                "missing_data" : 0,
+                "aligned_output" : False
                 }
 
         for key in defaults:
@@ -3458,6 +3481,7 @@ class PhyBo(Wordlist):
 
             self.get_PDC(
                     self.best_model,
+                    **keywords
                     )
 
     def plot_MLN(
@@ -3592,11 +3616,19 @@ class PhyBo(Wordlist):
         for a,b in [(x,y) for x,y in self.tree.getNodesDict().items() if x not in self.taxa]:
             
             if a != 'root':
-                node = str(b).replace(')','').replace('(','').replace(',','-')
+                node = a #''.join([x for x in str(b) if x not in '",;()'+"'"])  
+                #re.sub(
+                #        r":[0-9\.]+",
+                #        '',
+                #        str(b).replace(')','').replace('(','').replace(',','-')
+                #        ).replace("'",'').replace(';','')
             else:
                 node = 'root'
-
-            node_dict[a] = len(self.acs[glm][node]) * keywords['vsd_scale']
+            
+            if node in self.acs[glm]:
+                node_dict[a] = len(self.acs[glm][node]) * keywords['vsd_scale']
+            else:
+                node_dict[a] = 1 * keywords['vsd_scale']
         
         # get the graph
         graph = self.graph[glm]
