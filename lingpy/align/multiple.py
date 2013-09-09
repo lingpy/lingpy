@@ -1536,7 +1536,7 @@ class Multiple(object):
             The factor by which the penalty for the extension of gaps (gap
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
-            algorithm for affine gap penalties [Goto81]_.
+            algorithm for affine gap penalties :evobib:`Gotoh1981`.
 
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
@@ -1704,7 +1704,7 @@ class Multiple(object):
             The factor by which the penalty for the extension of gaps (gap
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
-            algorithm for affine gap penalties [Goto81]_.
+            algorithm for affine gap penalties :evobib:`Gotoh1981`.
 
         factor : float (default=0.3)
             The factor by which the initial and the descending position shall
