@@ -1,9 +1,14 @@
-# LingPy 
-#
-# Copyright (C) 2012 Johann-Mattis List 
-# Author: Johann-Mattis List, Steven Moran
-# Author Email: <mattis.list@uni-marburg.de> URL: <http://lingulist.de/lingpy> 
-# For license information, see <gpl-3.0.txt>
+# author   : Johann-Mattis List, Peter Bouda
+# email    : mattis.list@uni-marburg.de
+# created  : 2013-09-09 16:28
+# modified : 2013-09-09 16:28
+"""
+Setup-Script for LingPy
+"""
+
+__author__="Johann-Mattis List,Peter Bouda"
+__date__="2013-09-09"
+
 
 import distribute_setup
 distribute_setup.use_setuptools()
@@ -12,6 +17,17 @@ from setuptools import setup, find_packages,Extension
 import sys
 import os
 import os.path
+
+
+# check for specific features
+with_c = False
+for i,arg in enumerate(sys.argv):
+    if arg.lower() == '--with-c':
+        del sys.argv[i]
+        with_c = True
+        break
+
+
 
 extra = {}
 if sys.version_info >= (3,):
@@ -46,9 +62,8 @@ else:
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
     if this_version == "3":
-        answer = input("[i] Do you want to install with C-modules (requires Cython)? (Y/N) ")
 
-        if answer.lower() in ['y','j','yes']:
+        if with_c: #"--with-c" in sys.argv or '--with-C' in sys.argv in sys.argv:
             extension_modules = [
                         Extension(
                             'lingpy.algorithm.cython/calign',
