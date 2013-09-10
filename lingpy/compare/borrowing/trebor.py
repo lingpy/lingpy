@@ -1713,7 +1713,8 @@ class PhyBo(Wordlist):
         for a,b in [(x,y) for x,y in self.tree.getNodesDict().items() if x not in self.taxa]:
             
             if a != 'root':
-                node = str(b).replace(')','').replace('(','').replace(',','-')
+                node = a
+                #node = str(b).replace(')','').replace('(','').replace(',','-')
             else:
                 node = 'root'
 

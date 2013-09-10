@@ -1120,14 +1120,15 @@ class Alignments(Wordlist):
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
+                self.msa[ref][cog]["consensus"] = cons
+
             # if there's no msa for a given cognate set, this set is a
             # singleton
             else:
                 cons = self[[k[0] for k in self.etd[ref][cog] if k != 0][0],counterpart]
             
             # add consensus to dictionary
-            cons_dict[cog] = cons
-        
+            cons_dict[cog] = cons        
         
         # add the entries
         self.add_entries(

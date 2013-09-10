@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 06:55
-# modified : 2013-08-23 22:29
+# modified : 2013-09-10 16:26
 """
 Module provides functions and methods for the creation of csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-08-23"
+__date__="2013-09-10"
 
 # external imports
 import re
@@ -109,7 +109,7 @@ def wl2csv(
                         key,
                         value
                         )
-        elif k == 'scorer':
+        elif k == 'scorer' and k not in keywords['ignore']:
             for key,value in v.items():
                 scorer += '<{2} id="{0}">\n{1}</{2}>\n\n'.format(
                         key,
@@ -139,7 +139,12 @@ def wl2csv(
         for ref in msapairs:
             out += "\n# MSA reference: {0}\n".format(ref)
             for k,v in msapairs[ref].items():
-                out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
+                
+                if 'consensus' in v:
+                    out += '#\n<msa id="{0}" ref="{1}" consensus="{2}">\n'.format(
+                            k,ref,v['consensus'])
+                else:
+                    out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
                 out += msa2str(v,wordlist=True)
                 out += "</msa>\n"
     if distances and 'distances' not in keywords['ignore']:

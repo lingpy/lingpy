@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 13:10
-# modified : 2013-07-25 13:10
+# modified : 2013-09-10 16:26
 """
 Module provides basic functions for the reading of text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-25"
+__date__="2013-09-10"
 
 
 from .csv import csv2list
@@ -189,6 +189,11 @@ def read_qlc(
                 tmp_msa['alignment'] = []
                 tmp_msa['taxa'] = []
                 tmp_msa['ID'] = []
+
+                # add consensus string to msa, if it appears in the keys
+                if "consensus" in keys:
+                    tmp_msa['consensus'] = keys['consensus']
+
                 for l in tmp:
                     if not l.startswith(comment):
 
