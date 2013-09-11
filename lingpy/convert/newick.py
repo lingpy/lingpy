@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@gmail.com
 # created  : 2013-04-02 07:01
-# modified : 2013-09-05 09:56
+# modified : 2013-09-11 16:37
 """
 Functions for tree calculations and working with Newick files.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-09-05"
+__date__="2013-09-11"
 
 # external
 import xml.dom.minidom as minidom
@@ -22,11 +22,38 @@ try:
 except:
     from ..algorithm.cython import _cluster as cluster
 
+def newick_taxon(taxon):
+    """
+    Function cleans a taxon string in order to make it apt for newick-representation.
+    """
+    # strip whitespace off
+    taxon = taxon.strip()
+
+    # replace white space underscore
+    taxon = taxon.replace(' ','_')
+
+    # exclude all kinds of brackets
+    return ''.join([t for t in taxon if t not in '()[]{},;:."'+"'"])
+
 def xml2dict(
         infile,
+        tax_name = 'pri-name'
         ):
     """
     Convert xml-based MultiTree format to Newick format.
+
+    Parameters
+    ----------
+    infile : str
+        Name of the input file.
+    tax_name : str (default="pri-name")
+        Name of the value that shall be used to create the tree. Use "code" in
+        order to get the iso-code, "pri-name" will get the primary name.
+
+    Returns
+    -------
+    newick,taxa : dict,list
+        A dictionary in tree structure and a list of the taxon-names.
     """
 
     # parse the xml-file
@@ -46,17 +73,17 @@ def xml2dict(
     
 
     # now start iteration
-    nwk = {0:[]}
-    queue = [(document['root'],0)]
+    nwk = {(0,'root'):[]}
+    queue = [(document['root'],(0,"root"))]
     taxa = []
     while queue:
         
-        root,idx = queue.pop()
+        root,(idx,tname) = queue.pop()
         
-        max_idx = max([k for k in nwk if type(k) == int])
+        max_idx = max([k[0] for k in nwk if type(k) == tuple]) #type(k) == int])
     
-        if idx not in nwk:
-            nwk[idx] = []
+        if (idx,tname) not in nwk:
+            nwk[(idx,tname)] = []
     
         # get the children
         children = [c for c in root.childNodes if c.nodeName == 'children']
@@ -70,57 +97,82 @@ def xml2dict(
             # iterate over childs
             for i,child in enumerate(childs):
                 
+                # get the name of the child
+                name = [c for c in child.childNodes if c.nodeName == tax_name]
+                name = name[0].childNodes[0].data
+
+
                 if idx < max_idx+i+1:
-                    queue += [(child,max_idx+i+1)]
-                    nwk[idx] += [max_idx+i+1]
+                    queue += [(child,(max_idx+i+1,name))]
+                    nwk[idx,tname] += [(max_idx+i+1,name)]
                 else:
-                    name = [c for c in child.childNodes if c.nodeName=='pri-name']
+                    name = [c for c in child.childNodes if c.nodeName==tax_name]
                     name = name[0].childNodes[0].data
-                    nwk[idx] = [name]
-                    taxa.append(name)
+                    nwk[idx,tname] = [newick_taxon(name)]
+                    taxa.append(newick_taxon(name))
     
         else:
-            name = [c for c in root.childNodes if c.nodeName == 'pri-name'][0]
+            name = [c for c in root.childNodes if c.nodeName == tax_name][0]
             name = name.childNodes[0].data
             
-            nwk[idx] = [name]
-            taxa.append(name)
+            nwk[idx,tname] = [newick_taxon(name)]
+            taxa.append(newick_taxon(name))
     
     return nwk,taxa
 
 def xml2nwk(
         infile,
-        filename = ''
+        filename = '',
+        tax_name = 'pri-name',
         ):
     """
     Convert xml-based MultiTree format to Newick-format.
+
+    Parameters
+    ----------
+    infile : str
+        Name of the input file.
+    filename : str (default="")
+        If string is empty, the data will be returned as string, if a full
+        string is passed, the data will be written to a file with that name.
+    tax_name : str (default="pri-name")
+        Name of the value that shall be used to create the tree. Use "code" in
+        order to get the iso-code, "pri-name" will get the primary name.
+
+    Returns
+    -------
+    newick : str
+        A newick-string, if filename is not left empty.
+
     """
-    nwk,taxa = xml2dict(infile)
+    nwk,taxa = xml2dict(infile,tax_name)
 
     # first, create a specific newick-dictionary
     newick = {}
-
+    
     # make a lambda function for conversion of internal nodes into names
-    makeChild = lambda x: '{{x_{0}}}'.format(x) if x not in taxa else x
+    makeChild = lambda x: '{{x_{0}_{1}}}'.format(x[0],newick_taxon(x[1])) if type(x) == tuple else x
 
-    for i in range(len(nwk)):
+    for i,n in sorted(nwk,key=lambda x: x[0]): #range(len(nwk)):
         
+        name = newick_taxon(n)
         #create format-string for children
-        children = [makeChild(c) for c in nwk[i]]
+        children = [makeChild(c) for c in nwk[i,n]]
     
         # create dictionary to replace previous format string
         if len(children) > 1:
-            newick['x_'+str(i)] = '('+','.join(children)+')'
+            newick['x_'+str(i)+'_'+name] = '('+','.join(children)+')'+name
         else:
-            newick['x_'+str(i)] = children[0]
+            newick['x_'+str(i)+'_'+name] = children[0]
     
     # add the taxa
     for taxon in taxa:
-        newick['x_'+str(taxon)] = taxon
+        newick[str(taxon)] = taxon
+
 
     
     # create the newick-string
-    newick_string = "{x_0};"
+    newick_string = "{x_0_root};"
     newick_check = newick_string
     
     # start conversion
@@ -132,6 +184,8 @@ def xml2nwk(
             break
         else:
             newick_check = newick_string
+
+    return newick_string
     
     if not filename:
         return newick_string
