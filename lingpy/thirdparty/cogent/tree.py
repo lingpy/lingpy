@@ -101,6 +101,9 @@ class TreeNode(object):
         self._parent = Parent
         if (Parent is not None) and not (self in Parent.Children):
             Parent.append(self)
+        
+        # added taxa here, for convenience when using tree-class in lingpy JML
+        self.taxa = self.getTipNames()
 
 ### built-in methods and list interface support
     def __repr__(self):

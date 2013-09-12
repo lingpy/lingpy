@@ -22,7 +22,7 @@ try:
 except:
     from ..algorithm.cython import _cluster as cluster
 
-def newick_taxon(taxon):
+def _nwk_format(taxon):
     """
     Function cleans a taxon string in order to make it apt for newick-representation.
     """
@@ -108,15 +108,15 @@ def xml2dict(
                 else:
                     name = [c for c in child.childNodes if c.nodeName==tax_name]
                     name = name[0].childNodes[0].data
-                    nwk[idx,tname] = [newick_taxon(name)]
-                    taxa.append(newick_taxon(name))
+                    nwk[idx,tname] = [_nwk_format(name)]
+                    taxa.append(_nwk_format(name))
     
         else:
             name = [c for c in root.childNodes if c.nodeName == tax_name][0]
             name = name.childNodes[0].data
             
-            nwk[idx,tname] = [newick_taxon(name)]
-            taxa.append(newick_taxon(name))
+            nwk[idx,tname] = [_nwk_format(name)]
+            taxa.append(_nwk_format(name))
     
     return nwk,taxa
 
@@ -151,11 +151,11 @@ def xml2nwk(
     newick = {}
     
     # make a lambda function for conversion of internal nodes into names
-    makeChild = lambda x: '{{x_{0}_{1}}}'.format(x[0],newick_taxon(x[1])) if type(x) == tuple else x
+    makeChild = lambda x: '{{x_{0}_{1}}}'.format(x[0],_nwk_format(x[1])) if type(x) == tuple else x
 
     for i,n in sorted(nwk,key=lambda x: x[0]): #range(len(nwk)):
         
-        name = newick_taxon(n)
+        name = _nwk_format(n)
         #create format-string for children
         children = [makeChild(c) for c in nwk[i,n]]
     

@@ -49,19 +49,49 @@ rcParams.update(lexstat)
 
 # these are alignment-specific parameters, all prefixed by "align"
 alignments = dict(
-        align_mode                       = 'global',
-        align_modes                      = [
+        align_mode                                    = 'global',
+        align_modes                                   = [
                 ('global',-2,0.5),
                 ('local',-1,0.5),
                 ],
-        align_scale                      = 0.5,
-        align_factor                     = 0.3,
-        align_gap_weight                 = 0.5,
-        align_classes                    = True,
-        align_sonar                      = True,
-        align_scorer                     = {},
-        align_tree_calc                  = 'neighbor',
-        align_gop = -2
+        align_scale                                   = 0.5,
+        align_factor                                  = 0.3,
+        align_gap_weight                              = 0.5,
+        align_classes                                 = True,
+        align_sonar                                   = True,
+        align_scorer                                  = {},
+        align_tree_calc                               = 'neighbor',
+        align_gop                                     = -2,
+        align_transform                               = {
+
+            # new values for alternative prostrings
+            'A' : 1.6,  # initial
+            'B' : 1.3, # syllable-initial
+            'C' : 1.2,  # ascending
+            'L' : 1.1,  # descending
+            'M' : 1.1,  # syllable-descending
+            'N' : 0.5,  # final
+            'X' : 3.0,  # vowel in initial syllable
+            'Y' : 3.0,  # vowel in non-final syllable
+            'Z' : 0.7,  # vowel in final syllable
+            'T' : 1.0,  # Tone
+            '_' : 0.0   # break character
+            },
+        align_notransform                             = {
+            # new values for alternative prostrings
+            'A' : 1,  # initial
+            'B' : 1, # syllable-initial
+            'C' : 1,  # ascending
+            'L' : 1,  # descending
+            'M' : 1,  # syllable-descending
+            'N' : 1,  # final
+            'X' : 1,  # vowel in initial syllable
+            'Y' : 1,  # vowel in non-final syllable
+            'Z' : 1,  # vowel in final syllable
+            'T' : 1,  # Tone
+            '_' : 1   # break character
+            }
+
         )
 rcParams.update(alignments)
 

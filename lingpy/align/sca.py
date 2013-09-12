@@ -685,7 +685,8 @@ class PSA(Pairwise):
     def output(
             self,
             fileformat = 'psa',
-            filename =  None
+            filename =  None,
+            **keywords
             ):
         """
         Write the results of the analyses to a text file.
@@ -703,6 +704,16 @@ class PSA(Pairwise):
             the infile will be taken by default.
 
         """
+        defaults = dict(
+                gop = -2,
+                model = rcParams['sca'],
+                transform = rcParams['align_transform'],
+                scores = False
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
         if not filename:
             filename = self.infile
 
@@ -747,6 +758,37 @@ class PSA(Pairwise):
                 
                 out.write(txf.format(self.taxa[i][0])+'\t'+'\t'.join(a)+'\n')
                 out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
+                
+                if keywords['scores']:
+                    # get partial alignment scores
+                    scores = []
+                    idxA,idxB = 0,0
+                    proA = self.weights[i][0] 
+                    proB = self.weights[i][1]
+
+                    for x,y in zip(a,b):
+                        if '-' not in (x,y):
+                            try:
+                                scores += [self.model(x,y)]
+                            except:
+                                self._set_model(model=keywords['model'])
+                            idxA += 1
+                            idxB += 1
+
+                        else:
+                            if x == '-':
+                                scores += [keywords['gop'] * proB[idxB]]
+                                idxB += 1
+                            elif y == '-':
+                                scores += [keywords['gop'] * proA[idxA]]
+                                idxA += 1
+
+                            
+                    out.write(
+                            txf.format(self.comment)+'\t'+'\t'.join(
+                                ['{0:.2f}'.format(s) for s in scores]
+                                )+'\t{0:.2f}\n'.format(sum(scores))
+                            )
                 out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
             out.close()
 

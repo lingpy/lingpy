@@ -161,7 +161,8 @@ class Pairwise(object):
         """
         defaults = dict(
                 model = rcParams['sca'],
-                stress = rcParams['stress']
+                stress = rcParams['stress'],
+                transform = rcParams['align_transform']
                 )
         for k in defaults:
             if k not in keywords:
@@ -189,21 +190,16 @@ class Pairwise(object):
 
         self.weights = []
         for prA,prB in self.prostrings:
-            self.weights += [(prosodic_weights(prA),prosodic_weights(prB))]
+            self.weights += [(
+                prosodic_weights(prA,_transform=keywords['transform']),
+                prosodic_weights(prB,_transform=keywords['transform'])
+                )]
         
         self.scoredict = self.model.scorer
 
     def align(
             self,
             **keywords
-            #gop = -1,
-            #scale = 0.5,
-            #mode = 'global',
-            #factor = 0.3,
-            #restricted_chars = 'T_',
-            #distance = False,
-            #model = None,
-            #pprint = False
             ):
         """
         Align a pair of sequences or multiple sequence pairs.
@@ -244,7 +240,9 @@ class Pairwise(object):
                 restricted_chars = 'T_',
                 distance = False,
                 model = rcParams['sca'],
-                pprint = False
+                pprint = False,
+                transform = rcParams['align_transform']
+
                 )
         for k in defaults:
             if k not in keywords:

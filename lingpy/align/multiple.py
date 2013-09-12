@@ -25,6 +25,7 @@ except:
     from ..algorithm.cython import _cluster as cluster
     from ..algorithm.cython import _misc as misc
 
+from ..thirdparty.cogent import LoadTree
 from ..sequence.sound_classes import *
 from ..settings import rcParams
 
@@ -399,11 +400,14 @@ class Multiple(object):
             gop = -2,
             scale = 0.5, 
             factor = 0.3,
-            restricted_chars = 'T_'
+            restricted_chars = 'T_',
+            **keywords
             ):
         """
         Function calculates all pairwise alignments from the data.
         """
+        if 'transform' not in keywords:
+            keywords['transform'] = rcParams['align_transform']
         
         # create array for alignments
         self._alignments = [[0 for i in range(self.height)] for i in range(self.height)]
@@ -414,9 +418,13 @@ class Multiple(object):
         # check for the mode, if sonority profiles are not chose, take the
         # simple alignment function
         if self._sonars:
+
+            # define a lambda-shortcut for creation of prosodic weights
+            make_pro_weights = lambda x: prosodic_weights(x,_transform = keywords['transform'])
+            
             # get the weights
             if not hasattr(self,'weights'):
-                self._weights = list(map(prosodic_weights,self._prostrings))
+                self._weights = list(map(make_pro_weights,self._prostrings))
             
             alignments = calign.align_pairwise(
                     self._numbers,
@@ -590,6 +598,15 @@ class Multiple(object):
             cluster._neighbor(clusters,self.matrix,self.tree_matrix)
         else:
             raise ValueError('[i] Method <'+tree_calc+'> for tree calculation not available.')
+
+        # create a newick-representation of the string
+        self.tree = LoadTree(
+                cluster._tree2nwk(
+                    self.tree_matrix,
+                    [''.join(c) for c in self._classes],
+                    False
+                    )
+                )
 
     def _align_profile(
             self,
