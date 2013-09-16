@@ -18,6 +18,8 @@ import sys
 import os
 import os.path
 
+from three2two import run3to2,run3to3
+
 
 # check for specific features
 with_c = False
@@ -27,37 +29,34 @@ for i,arg in enumerate(sys.argv):
         with_c = True
         break
 
-
-
 extra = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = False
     this_version = "3"
+    pkg_location = 'lingpy_build'
     pkgname = 'lingpy'
+    pkg_dir = {'':'lingpy_build'}
+    run3to3()
+
+    # import lingpy from lingpy_build folder
+    sys.path = ['lingpy_build/'] + sys.path
+    from lingpy import *
+    
 else:
     # make a specific directory for lingpy2
     this_version = "2"
-    if not os.path.isdir('lingpy2'):
-        os.mkdir('lingpy2')
-    from three2two import run3to2
+    if not os.path.isdir('lingpy_build'):
+        os.mkdir('lingpy_build')
+        os.mkdir('lingpy_build/lingpy')
     run3to2()
-
-    pkgname = 'lingpy2'
+    pkgname = 'lingpy'
     # replace manifest path
+    pkg_location = 'lingpy_build'
+    pkg_dir = {'':'lingpy_build'}
 
-if this_version == '2':
-    f = open('MANIFEST.in').read()
-    if not 'lingpy2' in f:
-        out = open('MANIFEST.in','w')
-        out.write(f.replace('lingpy','lingpy2'))
-        out.close()
-else:
-    f = open('MANIFEST.in').read()
-    if 'lingpy2' in f:
-        out = open('MANIFEST.in','w')
-        out.write(f.replace('lingpy2','lingpy'))
-        out.close()
-
+    # import lingpy2 to compile the data
+    sys.path = ['lingpy_build/'] + sys.path
+    from lingpy import *
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
@@ -98,14 +97,14 @@ else:
     extension_modules = []
 
 # make global name of this version
-thisversion = "2.0"
+thisversion = "2.1"
 setup(
         name = pkgname,
         version = thisversion,
-        packages = find_packages(),
-        include_package_data = True,
+        packages = find_packages(pkg_location),
+        package_dir = pkg_dir,
         install_requires = ['numpy','networkx','regex'],
-        author = "Johann-Mattis List, Steven Moran",
+        author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [
             "historical linguistics", 
@@ -117,10 +116,10 @@ setup(
         license = "gpl-3.0",
         platforms = ["unix","linux","windows"],
         ext_modules=extension_modules,
+        extras_require = {
+            "borrowing" : ["matplotlib","networkx","scipy"]
+            },
+        include_package_data = True,
+        exclude_package_data = {}, #{'':["*.bin"]},
         **extra
         )
-
-if this_version == '2':
-    from lingpy2 import *
-else:
-    from lingpy import *

@@ -62,18 +62,10 @@ from __future__ import unicode_literals
                 stuff = re.sub("('.*?')",r"u\1",stuff)
                 stuff = re.sub('(".*?")',r"u\1",stuff)
     
-            nf = f.replace('lingpy','lingpy2') #f.replace(path2package,'lingpy2')
+            nf = f.replace('lingpy','lingpy_build/lingpy') 
             d = os.path.dirname(nf)
             if d and not os.path.exists(d):
                 os.makedirs(d)
-
-            # if '/' in nf:
-            #     paths = nf.split('/')[:-1]
-            #     for i in range(1,len(paths)+1):
-            #         if osp.isdir('/'.join(paths[:i])):
-            #             pass
-            #         else:
-            #             os.mkdir('/'.join(paths[:i]))
             
             out = codecs.open(nf,'w','utf-8')
             if f.endswith('.py') or f.endswith('.pyx'):
@@ -81,7 +73,7 @@ from __future__ import unicode_literals
             out.write(stuff)
             out.close()
         else:
-            nf = f.replace('lingpy','lingpy2')
+            nf = f.replace('lingpy','lingpy_build/lingpy')
             d = os.path.dirname(nf)
             if d and not os.path.exists(d):
                 os.makedirs(d)
@@ -91,4 +83,36 @@ from __future__ import unicode_literals
             out.write(stuff)
             out.close()
 
+def run3to3():
+    files = []
 
+    for root, dirnames, filenames in os.walk('lingpy'):
+        for f in filenames:
+            if f.endswith('.py') or f.endswith('.pyx'):
+                files.append(os.path.join(root, f))
+            elif len([x for x in ['.bin','.o','.so','.pyc','~','.swp'] if f.endswith(x)]) == 0:
+                files.append(os.path.join(root, f))
+    
+    for f in files:
+        if not f.endswith('.bin'):
+            print("[i] Copying file {0}...".format(f))
+            stuff = codecs.open(f,'r','utf-8').read()
+            
+            nf = f.replace('lingpy','lingpy_build/lingpy') 
+            d = os.path.dirname(nf)
+            if d and not os.path.exists(d):
+                os.makedirs(d)
+            
+            out = codecs.open(nf,'w','utf-8')
+            out.write(stuff)
+            out.close()
+        else:
+            nf = f.replace('lingpy','lingpy_build/lingpy')
+            d = os.path.dirname(nf)
+            if d and not os.path.exists(d):
+                os.makedirs(d)
+
+            stuff = open(f,'rb').read()
+            out = open(nf,'wb')
+            out.write(stuff)
+            out.close()
