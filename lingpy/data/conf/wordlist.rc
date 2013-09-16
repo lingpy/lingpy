@@ -18,3 +18,7 @@ weights	lambda x:[float(y) for y in x.split(' ')]	weights
 scaid	int	scaid
 lexstatid	int	lexstatid
 editid	int	editid
+turchinid	int	turchinid
+
+# New namespaces for patchy cognates
+patchyid	int	patchyid

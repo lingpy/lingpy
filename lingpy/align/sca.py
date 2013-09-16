@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-09-03 17:09
+# modified : 2013-09-16 15:25
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-09-03"
+__date__="2013-09-16"
 
 import numpy as np
 import re
@@ -1285,8 +1285,9 @@ class Alignments(Wordlist):
                     else:
                         this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx,'taxon']
-                        seq = self[this_idx,'tokens']
+                        seq = self[this_idx,'ipa']
                         cid = concept2id[concept]
+
                         out += '\t'.join(
                                 [
                                     str(cogid),

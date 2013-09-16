@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-09-16 09:34
+# modified : 2013-09-16 16:58
 """
 Basic parser for text files in QLC format.
 """
@@ -73,38 +73,42 @@ class _QLCParser(object):
         """
 
         # try to load the data
-        internal_import = False
-        try:
+        # check whether it's a dictionary from which we load
+        if type(filename) == dict:
+            input_data = filename
+            self.filename = rcParams['filename']
+
+        # check whether it's another wordlist-object
+        elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+            input_data = dict(filename._data.items())
+            input_data.update(filename._meta.items())
+            input_data[0] = [a for a,b in sorted(
+                filename.header.items(),
+                key = lambda x:x[1],
+                reverse = False
+                )]
+            internal_import = True
+            self.filename = rcParams['filename']
+        
+        # or whether the data is an actual file
+        elif os.path.isfile(filename):
             input_data = read_qlc(filename)
             if filename[-3:].lower() in ['csv','qlc']:
                 self.filename = filename[:-4]
             else:
                 self.filename = filename
-        except NameError:
-            if type(filename) == dict:
-                input_data = filename
-                self.filename = rcParams['filename'] 
-            # if it's a wordlist object, add its basic parameters
-            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
-                input_data = dict(filename._data.items())
-                input_data.update(filename._meta.items())
-                input_data[0] = [a for a,b in sorted(
-                    filename.header.items(),
-                    key = lambda x:x[1],
-                    reverse = False
-                    )]
-                internal_import = True
-                self.filename = rcParams['filename'] 
+        
+        # raise an error otherwise
+        else:
+            if not os.path.isfile(filename):
+                raise IOError(
+                        "[ERROR] Input file does not exist."
+                        )
             else:
-                if not os.path.isfile(filename):
-                    raise IOError(
-                            "[ERROR] Input file does not exist."
-                            )
-                else:
-                    exc_type, exc_value, exc_traceback = sys.exc_info()
-                    lines = traceback.format_exception(exc_type, exc_value,
-                        exc_traceback)
-                    raise ValueError('[ERROR] Could not parse the input file. {0}'.format(lines))
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                lines = traceback.format_exception(exc_type, exc_value,
+                    exc_traceback)
+                raise ValueError('[ERROR] Could not parse the input file. {0}'.format(lines))
 
         # load the configuration file
         if not conf:
