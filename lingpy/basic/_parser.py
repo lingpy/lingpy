@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-07-25 12:25
+# modified : 2013-09-16 09:34
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-25"
+__date__="2013-09-16"
 
 import os
 import pickle
@@ -101,7 +101,10 @@ class _QLCParser(object):
                             "[ERROR] Input file does not exist."
                             )
                 else:
-                    raise ValueError('[ERROR] Could not parse the input file.')
+                    exc_type, exc_value, exc_traceback = sys.exc_info()
+                    lines = traceback.format_exception(exc_type, exc_value,
+                        exc_traceback)
+                    raise ValueError('[ERROR] Could not parse the input file. {0}'.format(lines))
 
         # load the configuration file
         if not conf:

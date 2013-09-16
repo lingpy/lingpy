@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-28 11:47
-# modified : 2013-08-27 19:05
+# modified : 2013-09-12 23:39
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
@@ -21,13 +21,15 @@ given alignment analysis.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-08-27"
+__date__="2013-09-12"
 
 import os
 import colorsys
 import codecs
 
 from ..settings import rcParams
+
+import numpy as np
 
 try:
     import networkx as nx
@@ -1492,3 +1494,202 @@ def plot_concept_evolution(
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
     if rcParams['verbose']: print(rcParams['M_file_written'].foramt(filename+'.'+fileformat))
+
+def plot_heatmap(
+        wordlist,
+        filename = "heatmap",
+        fileformat = "pdf",
+        ref = 'cogid',
+        normalized = False,
+        **keywords
+        ):
+    """
+    Create a heatmap-representation of shared cognates for a given wordlist.
+
+    Parameters
+    ----------
+    wordlist : lingpy.basic.wordlist.Wordlist
+        A Wordlist object containing cognate IDs.
+    filename : str (default="heatmap")
+        Name of the file to which the heatmap will be written.
+    fileformat : str (default="pdf")
+        A regular matplotlib-fileformat (pdf, png, pgf, svg).
+    ref : str (default="cogid')
+        The name of the column that contains the cognate identifiers.
+    normalized : {bool str} (default=True)
+        If set to c{False}, don't normalize the data. Otherwise, select the
+        normalization method, choose between:
+        
+        * "jaccard" for the Jaccard-distance (see :evobib:`Bategelj1995` for
+          details), and
+        * "swadesh" for traditional lexicostatistical calculation of shared
+          cognate percentages.
+
+    cmap : matplotlib.cm (default=matplotlib.cm.jet)
+        The color scheme to be used for the heatmap.
+    steps : int (default=5)
+        The number of steps in which names of taxa will be written to the axes.
+    xrotation : int (default=45)
+        The rotation of the taxon-names on the x-axis.
+    colorbar : bool (default=True)
+        Specify, whether a colorbar should be added to the plot.
+    figsize : tuple (default=(10,10))
+        Specify the size of the figure.
+    tree : str (default='')
+        A tree passed for the taxa in Newick-format. If no tree is specified,
+        the method looks for a tree object in the Wordlist.
+
+    Notes
+    -----
+    This function plots shared cognate percentages
+
+    """
+    defaults = dict(
+            cmap              = mpl.cm.jet,
+            textsize          = 5,
+            steps             = 20,
+            xrotation         = 45,
+            colorbar          = True,
+            colorbar_label    = "Shared Cognates",
+            figsize           = (10,10),
+            colorbar_shrink   = 0.75,
+            colorbar_textsize = 10,
+            left              = 0.05,#rcParams['phybo_xlimr'],
+            right             = 0.95,#rcParams['phybo_xliml'],
+            top               = 0.95,#rcParams['phybo_ylimt'],
+            bottom            = 0.05,#rcParams['phybo_ylimb']
+            tree              = '',
+            normalization     = "jaccard"
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
+    # access the reference tree of the wordlist and create a function that
+    # orders the taxa accordingly
+    if not keywords['tree']:
+        try:
+            tree = wordlist.tree
+        except:
+            raise ValueError("No tree could be found")
+    else:
+        tree = keywords["tree"]
+
+    # check for normalization
+    if normalized:
+        if normalized not in ["jaccard","swadesh"]:
+            raise ValueError("Keyword 'normalized' must be one of 'jaccard','swadesh',False.")
+
+    # create an empty matrix 
+    if not normalized:
+        matrix = np.zeros((wordlist.width,wordlist.width),dtype=int)
+    else:
+        matrix = np.zeros((wordlist.width,wordlist.width),dtype=float)
+
+    # start iterating over taxa in order of the reference tree and fill in the
+    # matrix with numbers of shared cognates
+    for i,taxonA in enumerate(tree.taxa):
+        for j,taxonB in enumerate(tree.taxa):
+            if i < j:
+                if normalized in [False,"jaccard"]:
+                    cogsA = wordlist.get_list(
+                            taxa = taxonA,
+                            flat = True,
+                            entry = ref
+                            )
+                    cogsB = wordlist.get_list(
+                            taxa = taxonB,
+                            flat = True,
+                            entry = ref
+                            )
+
+                    cogsA,cogsB = set(cogsA),set(cogsB)
+                    
+                    shared = len(cogsA.intersection(cogsB))
+
+                    if normalized:
+                        shared = shared / len(cogsA.union(cogsB))
+                else:
+                    cogsA = wordlist.get_dict(
+                            taxa = taxonA,
+                            entry = ref
+                            )
+                    cogsB = wordlist.get_dict(
+                            taxa = taxonB,
+                            entry = ref
+                            )
+                    
+                    shared = 0
+                    slots = 0
+                    
+                    # iterate over cognate sets in meaning slots
+                    for key in cogsA.keys():
+                        # check whether keys are present, we follow the
+                        # STARLING procedure in ignoring missing data
+                        if key in cogsA and key in cogsB:
+                            
+                            # check for shared items
+                            if [k for k in cogsA[key] if k in cogsB[key]]:
+                                shared += 1
+                            slots += 1
+                    try:
+                        shared = shared / slots
+                    except ZeroDivisionError:
+                        print(shared,slots,len(cogsA),len(cogsB),taxonA,taxonB)
+                        shared = 0.0
+
+                matrix[i][j] = shared
+                matrix[j][i] = shared
+
+            elif i == j:
+                cogs = wordlist.get_list(
+                        taxa = taxonA,
+                        flat = True,
+                        entry = ref
+                        )
+                if normalized:
+                    matrix[i][j] = 1.0
+                else:
+                    matrix[i][j] = len(set(cogs))
+    
+    fig = plt.figure(figsize=keywords['figsize'])
+    ax = fig.add_subplot(111)
+    cmap = mpl.cm.jet
+    ax.imshow(matrix,interpolation='nearest',cmap=cmap)
+    
+    # set the xticks
+    steps = int(len(tree.taxa)/keywords['steps'] + 0.5)
+    start = int(steps/2 + 0.5)
+    idxs = list(range(start,len(tree.taxa),steps))
+    selected_taxa = [tree.taxa[i] for i in idxs]
+    plt.yticks(
+            idxs,
+            selected_taxa,
+            size=keywords['textsize']
+            )
+    plt.xticks(
+            idxs,
+            selected_taxa,
+            size=keywords['textsize'],
+            rotation=keywords['xrotation'],
+            rotation_mode = "default"
+            )
+
+
+    if keywords["colorbar"]:
+        plt.imshow(matrix,cmap=keywords['cmap'],visible=False)
+        c = plt.colorbar(shrink=keywords['colorbar_shrink'])
+        c.set_label(keywords["colorbar_label"],size=keywords['colorbar_textsize'])
+
+    plt.subplots_adjust(
+            left   = keywords['left'],
+            right  = keywords['right'],
+            top    = keywords['top'],
+            bottom = keywords['bottom']
+            )
+    plt.savefig(filename + '.' + fileformat)
+    
+    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+
+
+
