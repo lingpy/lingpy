@@ -73,10 +73,13 @@ class _QLCParser(object):
         """
 
         # try to load the data
+        internal_import = False
+
         # check whether it's a dictionary from which we load
         if type(filename) == dict:
             input_data = filename
             self.filename = rcParams['filename']
+            internal_import = True
 
         # check whether it's another wordlist-object
         elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
