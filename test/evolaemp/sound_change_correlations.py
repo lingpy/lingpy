@@ -11,6 +11,7 @@ from ete2 import Tree, TextFace
 import math
 
 graphicalOutput = False
+cognateDetection = False
 
 def ensure_dir(f):
     try:
@@ -97,7 +98,7 @@ nameToID = dict({(names[i],i) for i in range(0,len(names))})
 
 #load replacement weights for reconstruction
 # reading in 'asjpMatrix.txt' into a numpy array
-mfile = open("data/asjp/replacement-weights-global-round1.txt","r")
+mfile = open("replacement-weights.txt","r")
 sounds = array(mfile.readline().strip().split("\t"))
 repWeightsRaw = mfile.readlines()
 mfile.close()
@@ -114,9 +115,11 @@ def rep_weights(phon1, phon2):
 guideTree = cg.LoadTree("data/asjp/world-NWPV.nwk")
 #convert guideTree node names to integers as expected by Lingpy MSA
 for leaf in guideTree.tips():
-    leaf.Name = str(longNameToID[leaf.Name])   
+    leaf.Name = str(longNameToID[leaf.Name]) 
 
-for familyName in unique(asjpMatrix[1461:1602,2]):
+globalParsimony = 0  
+
+for familyName in unique(asjpMatrix[:,2]):
     langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
     phylName = str(asjpMatrix[langs[0],1])
     print phylName + "." + str(familyName)
@@ -146,8 +149,6 @@ for familyName in unique(asjpMatrix[1461:1602,2]):
     familyNameTable = [longnames[lang] for lang in langs]
     nameTable = [names[lang] for lang in langs]
     #printTree(familyGuideTree,0,names=familyNameTable)
-    
-    cognateDetection = False
     
     for conceptID in range(4,44):
         if cognateDetection:
@@ -258,7 +259,10 @@ for familyName in unique(asjpMatrix[1461:1602,2]):
                 #    print str(node.Name)
                 #    print str(node.Name) + ": " + str(node.recon_changes)
                 #printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="recon_changes")
-    print("Total parsimony while deriving proto-" + familyName + ": " + str(familyParsimony))    
+    print("Total parsimony while deriving proto-" + familyName + ": " + str(familyParsimony))  
+    globalParsimony += familyParsimony  
+
+print("Global parsimony while reconstructing all families: " + str(globalParsimony))  
              
 guideTree = familyGuideTree
 

@@ -156,7 +156,7 @@ while iteration <= numIterations:
     for sound in sounds:
         probCorrectionsMinus[sound] = dict((sound,0.0) for sound in sounds)
     
-    for familyName in unique(asjpMatrix[1426:1459,2]):
+    for familyName in unique(asjpMatrix[:,2]):
         langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
         phylName = str(asjpMatrix[langs[0],1])
         #print phylName + "." + str(familyName)
@@ -378,6 +378,7 @@ while iteration <= numIterations:
     for phon1 in sounds:
         global_replacement_probabilities[phon1] = dict()
         entrySum = sum(global_replacements[phon1].values())
+        entrySum += len([phon2 for phon2 in sounds if global_replacements[phon1][phon2] == 0]) * 0.0001
         for phon2 in sounds:
             if entrySum == 0 or global_replacements[phon1][phon2] == 0:
                 global_replacement_probabilities[phon1][phon2] = 0.0001
@@ -390,41 +391,41 @@ while iteration <= numIterations:
                 print phon1 + phon2 + ": " + str(- log(global_replacement_probabilities[phon1][phon2]))
         print
     
-    exponent = 1.0/(5 * iteration)
-    #re-estimation of replacement probabilities 
-    for phon1 in sounds:
-        for phon2 in sounds:
-            if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
-                posEvidence = probCorrectionsPlus[phon1][phon2]
-                if (posEvidence < 0.1): posEvidence = 0.1
-                negEvidence = probCorrectionsMinus[phon1][phon2]
-                if (negEvidence < 0.1): negEvidence = 0.1
-                correctionFactor = (posEvidence / negEvidence) ** exponent
-                #correctionFactor = 1.0
-                #if probCorrectionsMinus[phon1][phon2] > 1:
-                #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
-                #if probCorrectionsPlus[phon1][phon2] > 1:
-                #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
-                print phon1 + phon2 + ": " + str(probCorrectionsPlus[phon1][phon2]) + ", " + str(probCorrectionsMinus[phon1][phon2]) + " -> " + str(correctionFactor)
-    print
-    for phon1 in sounds:
-        for phon2 in sounds:
-            if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
-                posEvidence = probCorrectionsPlus[phon1][phon2]
-                if (posEvidence < 0.1): posEvidence = 0.1
-                negEvidence = probCorrectionsMinus[phon1][phon2]
-                if (negEvidence < 0.1): negEvidence = 0.1
-                correctionFactor = (posEvidence / negEvidence) ** exponent
-                #correctionFactor = 1.0
-                #if probCorrectionsMinus[phon1][phon2] > 1:
-                #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
-                #if probCorrectionsPlus[phon1][phon2] > 1:
-                #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
-                global_replacement_probabilities[phon1][phon2] *= correctionFactor
-        normalizationFactor = sum(global_replacement_probabilities[phon1].values())
-        if normalizationFactor != 0.0:
-            for phon2 in sounds:
-                global_replacement_probabilities[phon1][phon2] /= normalizationFactor
+#     exponent = 1.0/(5 * iteration)
+#     #re-estimation of replacement probabilities 
+#     for phon1 in sounds:
+#         for phon2 in sounds:
+#             if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
+#                 posEvidence = probCorrectionsPlus[phon1][phon2]
+#                 if (posEvidence < 0.1): posEvidence = 0.1
+#                 negEvidence = probCorrectionsMinus[phon1][phon2]
+#                 if (negEvidence < 0.1): negEvidence = 0.1
+#                 correctionFactor = (posEvidence / negEvidence) ** exponent
+#                 #correctionFactor = 1.0
+#                 #if probCorrectionsMinus[phon1][phon2] > 1:
+#                 #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
+#                 #if probCorrectionsPlus[phon1][phon2] > 1:
+#                 #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
+#                 print phon1 + phon2 + ": " + str(probCorrectionsPlus[phon1][phon2]) + ", " + str(probCorrectionsMinus[phon1][phon2]) + " -> " + str(correctionFactor)
+#     print
+#     for phon1 in sounds:
+#         for phon2 in sounds:
+#             if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
+#                 posEvidence = probCorrectionsPlus[phon1][phon2]
+#                 if (posEvidence < 0.1): posEvidence = 0.1
+#                 negEvidence = probCorrectionsMinus[phon1][phon2]
+#                 if (negEvidence < 0.1): negEvidence = 0.1
+#                 correctionFactor = (posEvidence / negEvidence) ** exponent
+#                 #correctionFactor = 1.0
+#                 #if probCorrectionsMinus[phon1][phon2] > 1:
+#                 #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
+#                 #if probCorrectionsPlus[phon1][phon2] > 1:
+#                 #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
+#                 global_replacement_probabilities[phon1][phon2] *= correctionFactor
+#         normalizationFactor = sum(global_replacement_probabilities[phon1].values())
+#         if normalizationFactor != 0.0:
+#             for phon2 in sounds:
+#                 global_replacement_probabilities[phon1][phon2] /= normalizationFactor
     
     replacementWeightsFile = open("replacement-weights" + str(iteration) + ".txt",'w')
     replacementWeightsFile.write("\t".join(sounds) + "\n")
