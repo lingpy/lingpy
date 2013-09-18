@@ -1720,6 +1720,7 @@ def get_consensus(
                                 node.reconstructed.append(maxKey)
         elif recon_alg == "sankoff_parsimony":
             systematizationBonus = True
+            distributionBonus = True
             for node in tree.postorder():
                 node.sankoffTable = []
                 node.sankoffPointers = []
@@ -1759,6 +1760,9 @@ def get_consensus(
                                         if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
                                             bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char+char2]
                                             #print ("bonusFactor2: " + str(bonusFactor2))   
+                                    if distributionBonus:
+                                        bonusFactor1 /= node.distribution[i][char]
+                                        bonusFactor2 /= node.distribution[i][char]
                                     sankoffValue = mtx(char,char1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2) * bonusFactor2 + sankoff2[char2]
                                     if (sankoffValue < minSankoffValue):
                                         minSankoffValue = sankoffValue
