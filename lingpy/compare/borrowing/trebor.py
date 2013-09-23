@@ -1454,8 +1454,6 @@ class PhyBo(Wordlist):
                         ) + '\t'+str(noo)+'\n'
                     )
         f.close()
-        if rcParams["verbose"]: print("done.")
-
         
         # print out average number of origins
         if rcParams["verbose"]: print("[i] Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
@@ -3309,7 +3307,8 @@ class PhyBo(Wordlist):
                     output_plot=output_plot,
                     output_gml=output_gml,
                     tar=tar,
-                    leading_model = glm 
+                    leading_model = glm,
+                    evaluation = 'mwu'
                     )
 
             # set the mixed model as the best one
@@ -4195,7 +4194,7 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
+        #if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
 
         return
 
@@ -4521,7 +4520,7 @@ class PhyBo(Wordlist):
             except:
                 raise ValueError('[!] Configuration is not specified!')
 
-        if rcParams["verbose"]: LoadDataMessage('configuration')
+        #if rcParams["verbose"]: LoadDataMessage('configuration')
 
         # overwrite configuration from keywords
         for k in keywords:
@@ -4835,7 +4834,8 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
+        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+
     
     def plot_concepts(
             self,
@@ -4904,7 +4904,7 @@ class PhyBo(Wordlist):
         #else:
         #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
-        if rcParams["verbose"]: LoadDataMessage('coordinates','groups','colors').message('loaded')
+        #if rcParams["verbose"]: LoadDataMessage('coordinates','groups','colors').message('loaded')
         
         # load the rc-file XXX add internal loading later
         try:
@@ -4912,7 +4912,7 @@ class PhyBo(Wordlist):
         except:
             pass # XXX add fallback later
         
-        if rcParams["verbose"]: LoadDataMessage('configuration')
+        #if rcParams["verbose"]: LoadDataMessage('configuration')
                 
         # get the paps
         these_taxa = {}

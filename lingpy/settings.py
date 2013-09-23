@@ -105,6 +105,7 @@ rcParamsUpd = dict(
         dolgo                      = Model('dolgo'),
         _color                     = Model('color'),
         art                        = Model('art'),
+        jaeger                     = Model('jaeger'),
         diacritics                 = diacritics,
         vowels                     = vowels,
         tones                      = tones,
@@ -186,6 +187,7 @@ def rc(**keywords):
                     rcParams['sca'] = Model('sca_el')
                     rcParams['dolgo'] = Model('dolgo_el')
                     rcParams['art'] = Model('art_el')
+                    rcParams['jaeger'] = Model('jaeger_el')
                     rcParams['diacritics'] = diacritics
                     rcParams['vowels'] = vowels
                     rcParams['tones'] = tones

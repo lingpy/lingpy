@@ -1100,7 +1100,7 @@ def plot_concept_evolution(
             markeredgewidth = 2.5,
             wedgeedgewidth  = 2,
             gain_linestyle            = 'dotted',
-            show_labels     = False,
+            #show_labels     = False,
             loss_linestyle = 'solid',
             ax_linewidth = 0,
             labels = {},
@@ -1108,7 +1108,13 @@ def plot_concept_evolution(
             _suffix = '   -',
             colors = {},
             start = 0,
-            filename = rcParams['filename'] 
+            filename = rcParams['filename'],
+            loss_alpha = 0.1,
+            loss_background = '0.75',
+            edges = [],
+            hedge_color = "black",
+            hedge_width = 5,
+            hedge_linestyle = 'dashed',
             )
 
     for k in defaults:
@@ -1288,6 +1294,26 @@ def plot_concept_evolution(
                 linewidth=keywords['edgewidth']
                 )
 
+    # add horizontal edges if this option is chosen
+    if keywords['edges']:
+        # get the coordinates
+        for nA,nB in keywords['edges']:
+
+            gA = g.node[nA]['graphics']
+            gB = g.node[nB]['graphics']
+            xA,yA = gA['x'],gA['y']
+            xB,yB = gB['x'],gB['y']
+
+            plt.plot(
+                    [xA,xB],
+                    [yA,yB],
+                    '-',
+                    color= keywords['hedge_color'],
+                    linewidth=keywords["hedge_width"],
+                    linestyle = keywords['hedge_linestyle']
+                    )
+
+
     # now iterate over the nodes
     for n,d in graph.nodes(data=True):
         cpaps = d['pap']
@@ -1325,6 +1351,7 @@ def plot_concept_evolution(
                     linestyle = keywords['gain_linestyle'],
                     )
             figsp.add_artist(w)
+        # check for retentions
         elif 'o' in cpaps.values():
             w = mpl.patches.Wedge(
                     (x,y),
@@ -1344,7 +1371,7 @@ def plot_concept_evolution(
                     keywords['radius']+keywords['outer_radius'],
                     0,
                     360,
-                    facecolor='0.5',
+                    facecolor=keywords['loss_background'],
                     zorder = 58+z,
                     linewidth = keywords['markeredgewidth'],
                     edgecolor='black',
@@ -1358,7 +1385,7 @@ def plot_concept_evolution(
                     keywords['radius']+keywords['outer_radius'],
                     0,
                     360,
-                    facecolor='0.5',
+                    facecolor=keywords['loss_background'],
                     zorder = 59+z,
                     linewidth = keywords['markeredgewidth'],
                     edgecolor='black',
@@ -1372,6 +1399,8 @@ def plot_concept_evolution(
             color = colors[pap]
 
             # check for characteristics of this pap
+
+            # if it's a loss
             if cpaps[pap] == 'L':
 
                 w = mpl.patches.Wedge(
@@ -1381,7 +1410,7 @@ def plot_concept_evolution(
                         theta2,
                         facecolor= color,
                         zorder = 61+z,
-                        alpha = 0.25,
+                        alpha = keywords['loss_alpha'], #0.25,
                         linewidth = keywords['wedgeedgewidth'],
                         edgecolor='black',
                         linestyle = keywords['loss_linestyle']
@@ -1418,7 +1447,7 @@ def plot_concept_evolution(
                 figsp.add_artist(w)         
 
         # add the labels if this option is chosen
-        if keywords['show_labels']:
+        if keywords['labels']:
             # if node is a tip
             if tgraph.node[n]['tip']:
 
@@ -1559,7 +1588,9 @@ def plot_heatmap(
             top               = 0.95,#rcParams['phybo_ylimt'],
             bottom            = 0.05,#rcParams['phybo_ylimb']
             tree              = '',
-            normalization     = "jaccard"
+            normalization     = "jaccard",
+            labels  = {}, # taxon labels passed for the taxa
+            
             )
     for k in defaults:
         if k not in keywords:
@@ -1660,8 +1691,14 @@ def plot_heatmap(
     # set the xticks
     steps = int(len(tree.taxa)/keywords['steps'] + 0.5)
     start = int(steps/2 + 0.5)
-    idxs = list(range(start,len(tree.taxa),steps))
+    idxs = [0]+list(range(start,len(tree.taxa),steps))
     selected_taxa = [tree.taxa[i] for i in idxs]
+    
+    # modify taxon names if this is specified
+    for i,t in enumerate(selected_taxa):
+        if t in keywords['labels']:
+            selected_taxa[i] = keywords['labels'][t]
+
     plt.yticks(
             idxs,
             selected_taxa,

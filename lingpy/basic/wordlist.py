@@ -1350,6 +1350,7 @@ class Wordlist(_QLCParser):
             entry_sep = '',
             item_sep = '',
             template = '',
+            exclude = [],
             **keywords
             ):
         """
@@ -1404,7 +1405,8 @@ class Wordlist(_QLCParser):
         out = wl2dict(
                 self,
                 sections,
-                entries
+                entries,
+                exclude
                 )
     
         # assign the output string
