@@ -1351,6 +1351,8 @@ class Wordlist(_QLCParser):
             item_sep = '',
             template = '',
             exclude = [],
+            entry_start = '',
+            entry_close = '',
             **keywords
             ):
         """
@@ -1454,7 +1456,7 @@ class Wordlist(_QLCParser):
                     tmp_strings = []
                     for line in sorted(tmp):
                         tmp_strings += [item_sep.join(line)]
-                    out_string += entry_sep.join(tmp_strings)
+                    out_string += entry_start+entry_sep.join(tmp_strings)+entry_close
 
                     tmp = pointer[idx-1][0]
                     del pointer[idx]
