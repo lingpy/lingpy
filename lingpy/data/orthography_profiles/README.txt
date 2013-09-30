@@ -46,7 +46,7 @@ All columns after "graphemes" are user specified.
 
 The other extension of the orthography profile, the orthography profile rules specification, should also contain a hash-commented header for metadata about the source document. Afterwards, orthography re-write rules are specified line-by-line as regular expressions of the follow format (NOTE: these rules are applied in order, so feeding and bleeding situations can occur):
 
-[a|á|e|é|i|í|o|ó|u|ú])(n)(\s)([a|á|e|é|i|í|o|ó|u|ú])
+([a|e|i|o|u])(n)(\s)([a|e|i|o|u|), \1 \2 \4
 
 These strings are delimited by comma "," and follow the Python regular expression format. Here any vowel followed by an <n> by a space and by another vowel is replaced as first vowel followed by space followed by <n> followed by space followed by second vowel, so:
 
