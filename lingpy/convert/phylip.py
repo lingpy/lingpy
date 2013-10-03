@@ -13,6 +13,8 @@ __date__="2013-07-10"
 # external
 import codecs
 
+from .._settings import rcParams
+
 try:
     from ..algorithm.cython import misc
 except:
@@ -23,8 +25,7 @@ def matrix2dst(
         taxa = [],
         stamp = '',
         filename = '',
-        verbose = True
-        ):
+     ):
     """
     Convert matrix to dst-format.
     """
@@ -45,5 +46,5 @@ def matrix2dst(
         f = codecs.open(filename+'.dst','w','utf-8')
         f.write(out)
         f.close()
-        if verbose: print(FileWriteMessage(filename,'dst'))
+        if rcParams['verbose']: print(rcParams['fw'].format('dst')) # (filename,'dst'))
 

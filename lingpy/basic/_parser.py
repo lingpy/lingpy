@@ -1,17 +1,19 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-09-16 16:58
+# modified : 2013-09-29 11:44
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-16"
+__date__="2013-09-29"
 
 import os
 import pickle
 import codecs
+
+import numpy as np
 
 from ..settings import rcParams
 from ..read.qlc import read_qlc
@@ -78,9 +80,9 @@ class _QLCParser(object):
         # check whether it's a dictionary from which we load
         if type(filename) == dict:
             input_data = filename
-            self.filename = rcParams['filename']
+            if 'filename' not in input_data:
+                self.filename = rcParams['filename']
             internal_import = True
-
         # check whether it's another wordlist-object
         elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
             input_data = dict(filename._data.items())
@@ -184,9 +186,13 @@ class _QLCParser(object):
             except:
                 pass
         
-        # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
-        
+        # assign the data as attribute to the word list class. Note that we
+        # need to check for the type here, but since numpy also offers integer
+        # types, we don't check for type(x) == int, but instead use the
+        # str.numeric-function that returns numeric values only if it is an
+        # integer
+        self._data = dict([(int(k),v) for k,v in input_data.items() if k != 0 and str(k).isnumeric()])
+
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
         if not internal_import:

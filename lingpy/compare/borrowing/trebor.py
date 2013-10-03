@@ -23,6 +23,7 @@ import numpy as np
 import numpy.linalg as linalg
 
 # import error classes
+from .utils import *
 from ._settings import rcParams
 from ...align.multiple import Multiple
 from ...convert.plot import plot_tree, plot_gls, plot_concept_evolution
@@ -398,17 +399,17 @@ class PhyBo(Wordlist):
                     )
         # check for paps as attribute in the wordlist
         if paps not in self.entries:
-            
+             
             # define the function for conversion
             f = lambda x,y: "{0}:{1}".format(x[y[0]],x[y[1]])
             self.add_entries(
                     paps,
-                    ref+',glid',
-                    f
-                    )
-
+                     ref+',glid',
+                     f
+                     )
+ 
             if rcParams["verbose"]: print("[i] Created entry PAP.")
-        
+         
         # get the paps and the etymological dictionary
         if not hasattr(self,'paps'):
             self.paps = self.get_paps(ref=paps,missing=keywords['missing'])
@@ -1495,24 +1496,36 @@ class PhyBo(Wordlist):
         Calculate the Contemporary Vocabulary Size Distribution (CVSD).
 
         """
-        # define taxa and concept as attribute for convenience
-        taxa = self.taxa
-        concepts = self.concept #XXX do we need this? XXX
+        #-># define taxa and concept as attribute for convenience
+        #->taxa = self.taxa
+        #->concepts = self.concept #XXX do we need this? XXX
 
-        # calculate vocabulary size
-        forms = []
-        meanings = []
-        for taxon in taxa:
-            f = [x for x in set(
-                self.get_list(col=taxon,entry=self._pap_string,flat=True)
-                ) if x in self.cogs
-                ]
-            m = set([x.split(':')[1] for x in f])
-            forms += [len(f)]
-            meanings += [len(m)]
-        
-        # store the stuff as an attribute
-        self.dists['contemporary'] = [x for x,y in zip(forms,meanings)] # XXX
+        #-># calculate vocabulary size
+        #->forms = []
+        #->meanings = []
+        #->for taxon in taxa:
+        #->    f = [x for x in set(
+        #->        self.get_list(col=taxon,entry=self._pap_string,flat=True)
+        #->        ) if x in self.cogs
+        #->        ]
+        #->    m = set([x.split(':')[1] for x in f])
+        #->    forms += [len(f)]
+        #->    meanings += [len(m)]
+        #->
+        #-># store the stuff as an attribute
+        #->self.dists['contemporary'] = [x for x,y in zip(forms,meanings)] # XXX
+        dists = []
+        for t in self.taxa:
+            paps = sorted(set([p for p in self.get_list(
+                    taxa = t,
+                    entry = self._pap_string,
+                    flat = True
+                    ) if p not in self.singletons]))
+            forms = len(paps)
+            concepts = len(set(
+                [self.pap2con[p] for p in paps]))
+            dists += [forms]# / concepts]
+        self.dists['contemporary'] = dists
 
         if rcParams["verbose"]: print("[i] Calculated the distributions for contemporary taxa.")
         
@@ -1543,117 +1556,128 @@ class PhyBo(Wordlist):
                 print("For recalculation, set 'force' to True.")
                 return
 
-        # define concepts for convenience
-        concepts = self.concepts # XXX do we need this? XXX
+        # get acs with help of utils
+        acs,dst = get_acs(self,glm,**keywords)
         
-        # get all internal nodes, i.e. the nontips and also the root
-        nodes = ['root'] + sorted(
-                [node.Name for node in self.tree.nontips()],
-                key=lambda x: len(self.tree.getNodeMatchingName(x).tips()),
-                reverse = True
-                )
+        # append stuff to dist
+        self.dists[glm] = dst
 
-        # retrieve scenarios
-        tmp = sorted([(a,b,c) for a,(b,c) in self.gls[glm].items()])
-        cog_list = [t[0] for t in tmp]
-        gls_list = [t[1] for t in tmp]
-        noo_list = [t[2] for t in tmp]
-
-        # create a list that stores the paps
-        paps = [[0 for i in range(len(nodes))] for j in range(len(cog_list))]
-
-        # iterate and assign values
-        for i,cog in enumerate(cog_list):
-            
-            # sort the respective gls
-            gls = sorted(
-                    gls_list[i],
-                    key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
-                    reverse = True
-                    )
-
-            # retrieve the state of the root
-            if gls[0][1] == 1 and gls[0][0] == 'root':
-                state = 1
-            else:
-                state = 0
-
-            # assign the state of the root to all nodes
-            paps[i] = [state for node in nodes]
-
-            # iterate over the gls and assign the respective values to all
-            # children
-            # XXX note that here we assume that missing data is coded as
-            # 0, so this should probably be adapted XXX
-            for name,event in gls:
-                if event == 1:
-                    this_state = 1
-                else:
-                    this_state = 0
-
-                # get the subtree nodes
-                sub_tree_nodes = [node.Name for node in
-                        self.tree.getNodeMatchingName(name).nontips()]
-
-                # assign this state to all subtree nodes
-                for node in sub_tree_nodes:
-                    paps[i][nodes.index(node)] = this_state
-
-        # get number of forms and number of meanings
-        # extract cogs instead of numbers, XXX this can actually be done in the
-        # step before, it's just for testing at the moment
-        for i,cog in enumerate(cog_list):
-            for j,t in enumerate(paps[i]):
-                if t == 1:
-                    paps[i][j] = cog
-                else:
-                    pass
-        
-        # get forms and meanings
-        forms = []
-        meanings = []
-        for i in range(len(paps[0])):
-            f = set([x[i] for x in paps if x[i] != 0])
-            m = set([x[i].split(':')[1] for x in paps if x[i] != 0])
-            forms += [len(f)]
-            meanings += [len(m)]
-
-        # store the number of forms as an attribute
-        self.dists[glm] = [x for x,y in zip(forms,meanings)] # XXX
-
-        # store results of the analyses, that is, all paps for each ancestral
-        # node
-        cogs = [k[self.header['pap']] for k in self._data.values()]
-
-        # search for proto as keyword
-        if keywords['proto']:
-            protos = [k[self.header[keywords['proto']]] for k in
-                    self._data.values()]
-            cogs2proto = dict(zip(cogs,protos))
-        else:
-            cogs2proto = dict(zip(cogs,cogs))
-
-        # store data in acs attribute (ancestral cognate states)
+        # append stuff to acs
         self.acs[glm] = {}
-        for i,n in enumerate(nodes):
-            for j,p in enumerate(paps):
-                c = paps[j][i]
-                if c != 0:
-                    m = self.pap2con[c]
-                    p = cogs2proto[c]
+        for k,v in acs.items():
+            self.acs[glm][k] = [(p,self.pap2con[p],p) for p in v]
 
-                    if n != 'root':
-                        node = self.tree.getNodeMatchingName(n)
-                        node = n #''.join(
-                                #[x for x in str(node) if x not in '";()'+"'"]
-                                #)#.replace('(','').replace(')','').replace(',','-')
-                    else:
-                        node = n
-                    
-                    try:
-                        self.acs[glm][node] += [(c,m,p)]
-                    except:
-                        self.acs[glm][node] = [(c,m,p)]
+        #-># define concepts for convenience
+        #->concepts = self.concepts # XXX do we need this? XXX
+        #->
+        #-># get all internal nodes, i.e. the nontips and also the root
+        #->nodes = ['root'] + sorted(
+        #->        [node.Name for node in self.tree.nontips()],
+        #->        key=lambda x: len(self.tree.getNodeMatchingName(x).tips()),
+        #->        reverse = True
+        #->        )
+
+        #-># retrieve scenarios
+        #->tmp = sorted([(a,b,c) for a,(b,c) in self.gls[glm].items()])
+        #->cog_list = [t[0] for t in tmp]
+        #->gls_list = [t[1] for t in tmp]
+        #->noo_list = [t[2] for t in tmp]
+
+        #-># create a list that stores the paps
+        #->paps = [[0 for i in range(len(nodes))] for j in range(len(cog_list))]
+
+        #-># iterate and assign values
+        #->for i,cog in enumerate(cog_list):
+        #->    
+        #->    # sort the respective gls
+        #->    gls = sorted(
+        #->            gls_list[i],
+        #->            key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
+        #->            reverse = True
+        #->            )
+
+        #->    # retrieve the state of the root
+        #->    if gls[0][1] == 1 and gls[0][0] == 'root':
+        #->        state = 1
+        #->    else:
+        #->        state = 0
+
+        #->    # assign the state of the root to all nodes
+        #->    paps[i] = [state for node in nodes]
+
+        #->    # iterate over the gls and assign the respective values to all
+        #->    # children
+        #->    # XXX note that here we assume that missing data is coded as
+        #->    # 0, so this should probably be adapted XXX
+        #->    for name,event in gls:
+        #->        if event == 1:
+        #->            this_state = 1
+        #->        else:
+        #->            this_state = 0
+
+        #->        # get the subtree nodes
+        #->        sub_tree_nodes = [node.Name for node in
+        #->                self.tree.getNodeMatchingName(name).nontips()]
+
+        #->        # assign this state to all subtree nodes
+        #->        for node in sub_tree_nodes:
+        #->            paps[i][nodes.index(node)] = this_state
+
+        #-># get number of forms and number of meanings
+        #-># extract cogs instead of numbers, XXX this can actually be done in the
+        #-># step before, it's just for testing at the moment
+        #->for i,cog in enumerate(cog_list):
+        #->    for j,t in enumerate(paps[i]):
+        #->        if t == 1:
+        #->            paps[i][j] = cog
+        #->        else:
+        #->            pass
+        #->
+        #-># get forms and meanings
+        #->forms = []
+        #->meanings = []
+        #->for i in range(len(paps[0])):
+        #->    f = set([x[i] for x in paps if x[i] != 0])
+        #->    m = set([x[i].split(':')[1] for x in paps if x[i] != 0])
+        #->    forms += [len(f)]
+        #->    meanings += [len(m)]
+
+        #-># store the number of forms as an attribute
+        #->self.dists[glm] = [x for x,y in zip(forms,meanings)] # XXX
+
+        #-># store results of the analyses, that is, all paps for each ancestral
+        #-># node
+        #->cogs = [k[self.header['pap']] for k in self._data.values()]
+
+        #-># search for proto as keyword
+        #->if keywords['proto']:
+        #->    protos = [k[self.header[keywords['proto']]] for k in
+        #->            self._data.values()]
+        #->    cogs2proto = dict(zip(cogs,protos))
+        #->else:
+        #->    cogs2proto = dict(zip(cogs,cogs))
+
+        #-># store data in acs attribute (ancestral cognate states)
+        #->self.acs[glm] = {}
+        #->for i,n in enumerate(nodes):
+        #->    for j,p in enumerate(paps):
+        #->        c = paps[j][i]
+        #->        if c != 0:
+        #->            m = self.pap2con[c]
+        #->            p = cogs2proto[c]
+
+        #->            if n != 'root':
+        #->                node = self.tree.getNodeMatchingName(n)
+        #->                node = n #''.join(
+        #->                        #[x for x in str(node) if x not in '";()'+"'"]
+        #->                        #)#.replace('(','').replace(')','').replace(',','-')
+        #->            else:
+        #->                node = n
+        #->            
+        #->            try:
+        #->                self.acs[glm][node] += [(c,m,p)]
+        #->            except:
+        #->                self.acs[glm][node] = [(c,m,p)]
 
         if rcParams["verbose"]: print("[i] Calculated the distributions for ancestral taxa.")
 
@@ -1692,13 +1716,13 @@ class PhyBo(Wordlist):
         for taxon in self.taxa:
             
             # get all cognates that are not singletongs
-            cogs = [
+            cogs = sorted(set([
                     x for x in self.get_list(
                         col = taxon,
                         flat = True,
                         entry = 'pap'
-                        ) if x in self.cogs
-                    ]
+                        ) if x in self.singletons
+                    ]))
 
             # count the number of paps
             node_dict[taxon] = dict(nodesize = len(cogs) * keywords['scaler'])
@@ -1752,7 +1776,7 @@ class PhyBo(Wordlist):
             tar = True,
             leading_model = False,
             mixed_threshold = 0.0,
-            evaluation = 'average',
+            evaluation = 'mwu',
             **keywords
             ):
         """
@@ -1806,7 +1830,7 @@ class PhyBo(Wordlist):
                         entry=self._pap_string,
                         flat=True
                         )
-                    ) if i in self.cogs]
+                    ) if i not in self.singletons]
 
             # get the models
             if leading_model:
@@ -1821,44 +1845,66 @@ class PhyBo(Wordlist):
             # get the scenarios
             avsd_list = []
             for idx,glm in enumerate(models):
-                avsd_list += [[0 for node in nodes]]
-                for pap in pap_set:
-                    gls,noo = self.gls[glm][pap]
+                
+                tmp_list = []
+                queue = ['root']
+                while queue:
+                    
+                    # get the parent
+                    parent = queue.pop(0)
+                    
+                    # get paps of parent
+                    parent_paps = [p[0] for p in self.acs[glm][parent]]
 
-                    # sort the gls
-                    gls = sorted(
-                            gls,
-                            key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
-                            reverse = True
-                            )
+                    # count number of paps
+                    forms = [f for f in pap_set if f in parent_paps] #self.acs[glm][parent]]
+                    tmp_list += [len(forms)]
 
-                    # retrieve the state of the root
-                    if gls[0][1] == 1 and gls[0][0] == 'root':
-                        state = 1
-                    else:
-                        state = 0
+                    children = self.tree.getNodeMatchingName(parent).Children
+                    for child in children:
+                        if child not in self.taxa:
+                            queue += [child.Name]
+                
+                avsd_list += [tmp_list]
 
-                    # assign the state of the root to all nodes in tmp
-                    tmp = [state for node in nodes]
+                #-> avsd_list += [[0 for node in nodes]]
+                #-> for pap in pap_set:
+                #->     gls,noo = self.gls[glm][pap]
 
-                    # iterate over the gls and assign the respective values to all
-                    # children
-                    for name,event in gls:
-                        if event == 1:
-                            this_state = 1
-                        else:
-                            this_state = 0
+                #->     # sort the gls
+                #->     gls = sorted(
+                #->             gls,
+                #->             key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
+                #->             reverse = True
+                #->             )
 
-                        # get the subtree nodes
-                        sub_tree_nodes = [node.Name for node in
-                                self.tree.getNodeMatchingName(name).nontips()]
+                #->     # retrieve the state of the root
+                #->     if gls[0][1] == 1 and gls[0][0] == 'root':
+                #->         state = 1
+                #->     else:
+                #->         state = 0
 
-                        # assign this state to all subtree nodes
-                        for node in sub_tree_nodes:
-                            tmp[nodes.index(node)] = this_state
+                #->     # assign the state of the root to all nodes in tmp
+                #->     tmp = [state for node in nodes]
 
-                    # add the values to the avsd_list
-                    avsd_list[-1] = [a+b for a,b in zip(avsd_list[-1],tmp)]
+                #->     # iterate over the gls and assign the respective values to all
+                #->     # children
+                #->     for name,event in gls:
+                #->         if event == 1:
+                #->             this_state = 1
+                #->         else:
+                #->             this_state = 0
+
+                #->         # get the subtree nodes
+                #->         sub_tree_nodes = [node.Name for node in
+                #->                 self.tree.getNodeMatchingName(name).nontips()]
+
+                #->         # assign this state to all subtree nodes
+                #->         for node in sub_tree_nodes:
+                #->             tmp[nodes.index(node)] = this_state
+
+                #->     # add the values to the avsd_list
+                #->     avsd_list[-1] = [a+b for a,b in zip(avsd_list[-1],tmp)]
             
             # calculate best distribution, we can use averages for this
             # purpose, since it seems that the kruskalwallis test or
@@ -1871,7 +1917,7 @@ class PhyBo(Wordlist):
                     zp_vsd.append((0,0.0))
                 else:
                     if evaluation in ['mwu','mannwhitneyu']:
-                        vsd = sps.mstats.kruskalwallis( #sps.mannwhitneyu(
+                        vsd = sps.mstats.kruskalwallis(#mannwhitneyu(
                                 cvsd,
                                 avsd,
                                 #use_continuity=False
@@ -1925,11 +1971,13 @@ class PhyBo(Wordlist):
         #print(sum([n for m,n,o in best_models.values()]) / len(best_models))
         
         # append to distributions
-        self.dists['mixed'] = all_avsd
+        
+        #self.dists['mixed'] = all_avsd
 
         # append to available models
         self.gls['mixed'] = scenarios
-
+        self.get_AVSD('mixed')
+        
         # write the results to file
         # make the folder for the data to store the stats
         folder = self.dataset+'_phybo'
@@ -2344,6 +2392,35 @@ class PhyBo(Wordlist):
                                     nodeB,
                                     weight = int(100 * (1 - w)) #int(1000 / w)
                                     )
+            elif method in ['central_node','cn']:
+
+                # get the weighted degrees for the primary graph
+                degrees = gPrm.degree(weight='weight')
+
+                # get the maximum degree
+                max_deg = sorted(
+                        degrees,
+                        key=lambda x:degrees[x],
+                        reverse=True
+                        )[0]
+
+                # add all nodes as simple 
+                for i,nodeA in enumerate(oris):
+                    for j,nodeB in enumerate(oris):
+                        if i < j:
+                            if max_deg in [nodeA,nodeB]:
+                                w = 0
+                            else:
+                                w = 10
+                            
+                            gWeights.add_edge(
+                                    nodeA,
+                                    nodeB,
+                                    weight = w
+                                    )
+                            #try:
+                            #    w = 10
+                            #except:
 
             # if the graph is not empty
             if gWeights:
@@ -2418,6 +2495,8 @@ class PhyBo(Wordlist):
                                 cogs=[cog]
                                 )
                     ile[cog]+= [(nodeA,nodeB)]
+
+        # calculate simple model with 
 
         # load data for nodes into new graph
         for node,data in gTpl.nodes(data=True):
@@ -3175,7 +3254,8 @@ class PhyBo(Wordlist):
                 'gpl' : 1,
                 "push_gains" : True,
                 "missing_data" : 0,
-                "aligned_output" : False
+                "aligned_output" : False,
+                "homoplasy" : 0.0,
                 }
 
         for key in defaults:
@@ -3658,7 +3738,10 @@ class PhyBo(Wordlist):
         weights = sorted(set(edge_weights))
 
         # get the scale for the weights (needed for the line-width)
-        scale = 20.0 / max(edge_weights) * keywords['linescale']
+        try:
+            scale = 20.0 / max(edge_weights) * keywords['linescale']
+        except ValueError:
+            scale = 1.0
 
         # write colors and scale to graph
         for nA,nB,data in graph.edges(data=True):
@@ -3728,6 +3811,9 @@ class PhyBo(Wordlist):
 
                 weights.append(d['weight'])
         
+        if not weights:
+            weights = [0]
+
         # usetex
         mpl.rc('text',usetex = usetex)
 

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-07-17 11:02
+# modified : 2013-09-29 11:44
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List, Steven Moran"
-__date__="2013-07-17"
+__date__="2013-09-29"
 
 import os
 import sys
@@ -132,7 +132,7 @@ class Wordlist(_QLCParser):
             # first, find out, how many items (== synonyms) are there maximally for
             # each row
             tmp_dict = {}
-            for key,value in [(k,v) for k,v in self._data.items() if k != 0 and type(k) == int]:
+            for key,value in [(k,v) for k,v in self._data.items() if k != 0 and str(k).isnumeric()]:
                 try:
                     tmp_dict[value[rowIdx]][value[colIdx]] += [key]
                 except KeyError:
@@ -1002,7 +1002,6 @@ class Wordlist(_QLCParser):
             concepts = 'concepts',
             ref = 'cogid',
             threshold = 0.6,
-            verbose = False,
             **keywords
             ):
         """
@@ -1047,7 +1046,7 @@ class Wordlist(_QLCParser):
         else:
             return
 
-        if verbose: print("[i] Successfully calculated {0}.".format(data))
+        if rcParams['verbose']: print("[i] Successfully calculated {0}.".format(data))
 
     def _output(
             self,
@@ -1512,7 +1511,7 @@ class Wordlist(_QLCParser):
             ortho_profile = '',
             source = "counterpart",
             target = "tokens",
-            verbose = False,
+            conversion = 'graphemes',
             ** keywords
             ):
         """
@@ -1549,7 +1548,7 @@ class Wordlist(_QLCParser):
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":
-            if verbose: print("[i] Found the orthography profile.")
+            if rcParams['verbose']: print("[i] Found the orthography profile.")
             op = OrthographyParser(ortho_path)
 
             # check for valid IPA parse

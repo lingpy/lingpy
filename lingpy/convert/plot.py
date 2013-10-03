@@ -26,8 +26,10 @@ __date__="2013-09-12"
 import os
 import colorsys
 import codecs
+import webbrowser
 
 from ..settings import rcParams
+from .newick import *
 
 import numpy as np
 
@@ -40,6 +42,11 @@ try:
     import matplotlib as mpl
 except:
     print(rcParams['W_missing_module'].format('matplotlib'))
+
+try:
+    import scipy.cluster.hierarchy as sch
+except:
+    print(rcParams['W_missing_module'].format('scipy'))
 
 from ..align.sca import SCA
 from ..thirdparty import cogent as cg
@@ -79,7 +86,8 @@ def alm2html(
         shorttitle = '',
         filename='',
         colored=True,
-        verbose = True
+        verbose = True,
+        show = True
         ):
     """
     Convert files in ``alm``-format into colored ``html``-format.
@@ -235,6 +243,10 @@ def alm2html(
     out = codecs.open(filename+'.html','w','utf-8')
     out.write(html)
     out.close()
+
+    if show:
+        url = 'file://'+os.path.abspath(os.curdir)+'/'+filename+'.html'
+        webbrowser.open(url)
 
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
     return
@@ -1530,6 +1542,7 @@ def plot_heatmap(
         fileformat = "pdf",
         ref = 'cogid',
         normalized = False,
+        refB = '',
         **keywords
         ):
     """
@@ -1577,10 +1590,10 @@ def plot_heatmap(
             cmap              = mpl.cm.jet,
             textsize          = 5,
             steps             = 20,
-            xrotation         = 45,
+            xrotation         = 90,
             colorbar          = True,
             colorbar_label    = "Shared Cognates",
-            figsize           = (10,10),
+            figsize           = (10,5),
             colorbar_shrink   = 0.75,
             colorbar_textsize = 10,
             left              = 0.05,#rcParams['phybo_xlimr'],
@@ -1589,8 +1602,7 @@ def plot_heatmap(
             bottom            = 0.05,#rcParams['phybo_ylimb']
             tree              = '',
             normalization     = "jaccard",
-            labels  = {}, # taxon labels passed for the taxa
-            
+            labels  = {}, # taxon labels passed for the taxa,
             )
     for k in defaults:
         if k not in keywords:
@@ -1602,7 +1614,7 @@ def plot_heatmap(
         try:
             tree = wordlist.tree
         except:
-            raise ValueError("No tree could be found")
+            raise ValueError("[i] No tree could be found")
     else:
         tree = keywords["tree"]
 
@@ -1616,7 +1628,7 @@ def plot_heatmap(
         matrix = np.zeros((wordlist.width,wordlist.width),dtype=int)
     else:
         matrix = np.zeros((wordlist.width,wordlist.width),dtype=float)
-
+    
     # start iterating over taxa in order of the reference tree and fill in the
     # matrix with numbers of shared cognates
     for i,taxonA in enumerate(tree.taxa):
@@ -1670,7 +1682,60 @@ def plot_heatmap(
                         shared = 0.0
 
                 matrix[i][j] = shared
-                matrix[j][i] = shared
+
+                # if refB is also a possibiltiy
+                if not refB:
+                    matrix[j][i] = shared
+            
+            elif i > j and refB:
+                if normalized in [False,"jaccard"]:
+                    cogsA = wordlist.get_list(
+                            taxa = taxonA,
+                            flat = True,
+                            entry = refB
+                            )
+                    cogsB = wordlist.get_list(
+                            taxa = taxonB,
+                            flat = True,
+                            entry = refB
+                            )
+
+                    cogsA,cogsB = set(cogsA),set(cogsB)
+                    
+                    shared = len(cogsA.intersection(cogsB))
+
+                    if normalized:
+                        shared = shared / len(cogsA.union(cogsB))
+                else:
+                    cogsA = wordlist.get_dict(
+                            taxa = taxonA,
+                            entry = refB
+                            )
+                    cogsB = wordlist.get_dict(
+                            taxa = taxonB,
+                            entry = refB
+                            )
+                    
+                    shared = 0
+                    slots = 0
+                    
+                    # iterate over cognate sets in meaning slots
+                    for key in cogsA.keys():
+                        # check whether keys are present, we follow the
+                        # STARLING procedure in ignoring missing data
+                        if key in cogsA and key in cogsB:
+                            
+                            # check for shared items
+                            if [k for k in cogsA[key] if k in cogsB[key]]:
+                                shared += 1
+                            slots += 1
+                    try:
+                        shared = shared / slots
+                    except ZeroDivisionError:
+                        print(shared,slots,len(cogsA),len(cogsB),taxonA,taxonB)
+                        shared = 0.0
+
+                matrix[i][j] = shared
 
             elif i == j:
                 cogs = wordlist.get_list(
@@ -1683,11 +1748,23 @@ def plot_heatmap(
                 else:
                     matrix[i][j] = len(set(cogs))
     
+
+    tree_matrix = nwk2tree_matrix(tree)
     fig = plt.figure(figsize=keywords['figsize'])
-    ax = fig.add_subplot(111)
-    cmap = mpl.cm.jet
-    ax.imshow(matrix,interpolation='nearest',cmap=cmap)
+    ax1 = fig.add_axes([0.01,0.1,0.2,0.7])
+    d = sch.dendrogram(
+            np.array(tree_matrix),
+            labels = tree.taxa,
+            orientation = 'right'
+            )
     
+    ax1.set_xticks([])
+    #ax1.set_yticks([])
+    ax2 = fig.add_axes([0.15,0.1,0.7,0.7])
+
+    cmap = mpl.cm.jet
+    im = ax2.matshow(matrix,aspect='auto',origin='lower',interpolation='nearest',cmap=cmap)
+   
     # set the xticks
     steps = int(len(tree.taxa)/keywords['steps'] + 0.5)
     start = int(steps/2 + 0.5)
@@ -1699,11 +1776,28 @@ def plot_heatmap(
         if t in keywords['labels']:
             selected_taxa[i] = keywords['labels'][t]
 
-    plt.yticks(
-            idxs,
-            selected_taxa,
-            size=keywords['textsize']
-            )
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+    #ax1.get_xaxis().set_visible(False)
+    ax1.spines['bottom'].set_color('#ffffff')
+    ax1.spines['top'].set_color('#ffffff')
+    ax1.spines['left'].set_color('#ffffff')
+    ax1.spines['right'].set_color('#ffffff')
+
+
+
+
+    #ax1.get_yaxis().set_visible(False)
+    #ax1.patch.set_visible(False)
+    #ax1.set_axis_off()
+    
+    #ax3 = fig.add_axes([0.3,0.8,0.6,0.2])
+    #
+    ##ax3.set_yticks(
+    ##        idxs,
+    ##        selected_taxa,
+    ##        size=keywords['textsize']
+    ##        )
     plt.xticks(
             idxs,
             selected_taxa,
@@ -1711,19 +1805,24 @@ def plot_heatmap(
             rotation=keywords['xrotation'],
             rotation_mode = "default"
             )
+    #ax3.set_yticks([])
 
 
     if keywords["colorbar"]:
+        #ax3 = fig.add_axes([0.9,0.1,0.1,0.6])
+        
         plt.imshow(matrix,cmap=keywords['cmap'],visible=False)
-        c = plt.colorbar(shrink=keywords['colorbar_shrink'])
+        c = plt.colorbar(im,shrink=keywords['colorbar_shrink'])
         c.set_label(keywords["colorbar_label"],size=keywords['colorbar_textsize'])
-
+        #ax3.set_xticks([])
+        #ax3.set_yticks([])
     plt.subplots_adjust(
             left   = keywords['left'],
             right  = keywords['right'],
             top    = keywords['top'],
             bottom = keywords['bottom']
             )
+    plt.axis('off')
     plt.savefig(filename + '.' + fileformat)
     
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))

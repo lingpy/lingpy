@@ -97,11 +97,16 @@ def wl2dst(
         wl, # wordlist object
         taxa = "taxa",
         concepts = "concepts",
-        cognates = "cogid",
+        ref = 'cogid',
+        **keywords
         ):
     """
     Function converts wordlist to distance matrix.
     """
+    if 'cognates' in keywords:
+        print("[i] Warning 'cognates' is deprecated!")
+        ref = keywords['cognates']
+
     # check for taxon attribute
     taxa = getattr(wl,taxa)
 
@@ -115,8 +120,8 @@ def wl2dst(
             if i < j:
                 
                 # get the two dictionaries
-                dictA = wl.get_dict(col=taxA,entry=cognates)
-                dictB = wl.get_dict(col=taxB,entry=cognates)
+                dictA = wl.get_dict(col=taxA,entry=ref)
+                dictB = wl.get_dict(col=taxB,entry=ref)
     
                 # count amount of shared concepts
                 shared = 0
@@ -151,9 +156,18 @@ def matrix2groups(
     flats = cluster.flat_upgma(
             threshold,
             distances,
-            revert=True
+            taxa = [t for t in taxa]
             )
-            
+    
+    mapper = dict(zip(flats,range(1,len(taxa)+1)))
+    out = {}
+    for key in flats:
+        n = 'G_{0}'.format(mapper[key])
+        for t in flats[key]:
+            out[t] = n
+    return out
+        
+
     groups = [flats[i] for i in range(len(taxa))]
     
     # renumber the groups

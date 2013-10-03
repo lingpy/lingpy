@@ -834,9 +834,10 @@ class LexStat(Wordlist):
 
         # check for attribute
         if hasattr(self,'params') and not kw['force']:
-            if self.params['scorer'] == params:
-                print(rcParams['W_identical_scorer'])
-                return
+            if 'cscorer' in self.params:
+                if self.params['cscorer'] == params:
+                    print(rcParams['W_identical_scorer'])
+                    return
             else:
                 print(rcParams['W_overwrite_scorer'])
 
@@ -1068,6 +1069,7 @@ class LexStat(Wordlist):
             mode = 'overlap',
             gop = -2,
             restriction = '',
+            ref = '',
             **keywords
             ):
         """
@@ -1139,7 +1141,7 @@ class LexStat(Wordlist):
             
             # check for scorer
             if not hasattr(self,'cscorer'):
-                print("[i] No correspondence-scorer has been specied.")
+                print("[i] No correspondence-scorer has been specified.")
                 return
             
             # define the function with help of lambda
@@ -1242,16 +1244,20 @@ class LexStat(Wordlist):
             override = keywords['override']
         else:
             override = False
-
-        if method == 'turchin':
-            self.add_entries('turchinid',clr,lambda x:x,override=override)
-        elif method == 'lexstat':
-            self.add_entries('lexstatid',clr,lambda x:x,override=override)
-        elif method == 'sca':
-            self.add_entries('scaid',clr,lambda x:x,override=override)
-        else:
-            self.add_entries('editid',clr,lambda x:x,override=override)       
         
+        # assign ids
+        if not ref:
+            if method == 'turchin':
+                self.add_entries('turchinid',clr,lambda x:x,override=override)
+            elif method == 'lexstat':
+                self.add_entries('lexstatid',clr,lambda x:x,override=override)
+            elif method == 'sca':
+                self.add_entries('scaid',clr,lambda x:x,override=override)
+            else:
+                self.add_entries('editid',clr,lambda x:x,override=override)       
+        else:
+            self.add_entries(ref,clr,lambda x:x,override=override)
+
     def get_random_distances(
             self,
             method='lexstat',
