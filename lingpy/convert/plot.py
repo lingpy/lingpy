@@ -1596,13 +1596,20 @@ def plot_heatmap(
             figsize           = (10,5),
             colorbar_shrink   = 0.75,
             colorbar_textsize = 10,
-            left              = 0.05,#rcParams['phybo_xlimr'],
+            left              = 0.01,#rcParams['phybo_xlimr'],
             right             = 0.95,#rcParams['phybo_xliml'],
             top               = 0.95,#rcParams['phybo_ylimt'],
-            bottom            = 0.05,#rcParams['phybo_ylimb']
+            bottom            = 0.01,#rcParams['phybo_ylimb']
             tree              = '',
             normalization     = "jaccard",
             labels  = {}, # taxon labels passed for the taxa,
+            show_tree = True,
+            tree_left = 0.1,
+            tree_bottom = 0.1,
+            tree_width = 0.2,
+            height = 0.8,
+            width = 0.8,
+            scale = 0.075
             )
     for k in defaults:
         if k not in keywords:
@@ -1628,11 +1635,49 @@ def plot_heatmap(
         matrix = np.zeros((wordlist.width,wordlist.width),dtype=int)
     else:
         matrix = np.zeros((wordlist.width,wordlist.width),dtype=float)
+
+
+    # make a lambda function for the labels
+    mklb = lambda x:keywords['labels'][x] if x in keywords['labels'] else x
+
+    # create the figure
+    fig = plt.figure(figsize=keywords['figsize'])
+   
+    # plot the reference tree
+    if keywords['show_tree']:
+        tree_matrix,taxa = nwk2tree_matrix(tree)
+        ax1 = fig.add_axes(
+                [
+                    keywords['left'],
+                    keywords['bottom'],
+                    0.25 * keywords['width'],
+                    keywords['height']
+                ]
+                )
+                #[0.01,0.1,0.2,0.7])
+        d = sch.dendrogram(
+                np.array(tree_matrix),
+                labels = [t for t in taxa],
+                orientation = 'right',
+
+                )
+        taxa = d['ivl'][::-1]
+        ax1.set_xticks([])
+        
+        #for i,ticks in enumerate(ax1.yaxis.iter_ticks()):
+        #    ticks[0].set(textsize=6) #mklb(taxa[i])+)
+        ax1.set_yticks([])
     
+        left = keywords['left']+keywords['scale'] * keywords['width']
+
+    else:
+        left = keywords['left']
+        taxa = tree.taxa
+
     # start iterating over taxa in order of the reference tree and fill in the
     # matrix with numbers of shared cognates
-    for i,taxonA in enumerate(tree.taxa):
-        for j,taxonB in enumerate(tree.taxa):
+    for i,taxonA in enumerate(taxa):
+        for j,taxonB in enumerate(taxa):
             if i < j:
                 if normalized in [False,"jaccard"]:
                     cogsA = wordlist.get_list(
@@ -1749,27 +1794,26 @@ def plot_heatmap(
                     matrix[i][j] = len(set(cogs))
     
 
-    tree_matrix = nwk2tree_matrix(tree)
-    fig = plt.figure(figsize=keywords['figsize'])
-    ax1 = fig.add_axes([0.01,0.1,0.2,0.7])
-    d = sch.dendrogram(
-            np.array(tree_matrix),
-            labels = tree.taxa,
-            orientation = 'right'
+
+    ax2 = fig.add_axes(
+            [
+                left, #keywords['left']+0.25 * keywords['width']+0.05,
+                keywords['bottom'],
+                keywords['width'],
+                keywords['height']
+                ]
             )
-    
-    ax1.set_xticks([])
-    #ax1.set_yticks([])
-    ax2 = fig.add_axes([0.15,0.1,0.7,0.7])
+            
+            #[0.15,0.1,0.7,0.7])
 
     cmap = mpl.cm.jet
     im = ax2.matshow(matrix,aspect='auto',origin='lower',interpolation='nearest',cmap=cmap)
    
     # set the xticks
-    steps = int(len(tree.taxa)/keywords['steps'] + 0.5)
+    steps = int(len(taxa)/keywords['steps'] + 0.5)
     start = int(steps/2 + 0.5)
-    idxs = [0]+list(range(start,len(tree.taxa),steps))
-    selected_taxa = [tree.taxa[i] for i in idxs]
+    idxs = [0]+list(range(start,len(taxa),steps))
+    selected_taxa = [taxa[i] for i in idxs]
     
     # modify taxon names if this is specified
     for i,t in enumerate(selected_taxa):
@@ -1778,14 +1822,11 @@ def plot_heatmap(
 
     ax2.set_xticks([])
     ax2.set_yticks([])
-    #ax1.get_xaxis().set_visible(False)
+    
     ax1.spines['bottom'].set_color('#ffffff')
     ax1.spines['top'].set_color('#ffffff')
     ax1.spines['left'].set_color('#ffffff')
     ax1.spines['right'].set_color('#ffffff')
-
-
-
 
     #ax1.get_yaxis().set_visible(False)
     #ax1.patch.set_visible(False)
@@ -1805,6 +1846,11 @@ def plot_heatmap(
             rotation=keywords['xrotation'],
             rotation_mode = "default"
             )
+    plt.yticks(
+            idxs,
+            selected_taxa,
+            size=keywords['textsize'],
+            )
     #ax3.set_yticks([])
 
 
@@ -1822,7 +1868,6 @@ def plot_heatmap(
             top    = keywords['top'],
             bottom = keywords['bottom']
             )
-    plt.axis('off')
     plt.savefig(filename + '.' + fileformat)
     
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
