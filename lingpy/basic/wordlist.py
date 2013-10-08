@@ -21,6 +21,7 @@ from ..read.qlc import read_qlc
 from ..convert import *
 from ..settings import rcParams
 from ._parser import _QLCParser
+from .ops import calculate,renumber
 
 try:
     from ..algorithm.cython import cluster
@@ -994,14 +995,13 @@ class Wordlist(_QLCParser):
         self._cache['#paps#'+str(missing)+'#',ref] = paps
         
         return paps
-
+    
     def calculate(
             self,
             data,
             taxa = 'taxa',
             concepts = 'concepts',
             ref = 'cogid',
-            threshold = 0.6,
             **keywords
             ):
         """
@@ -1010,43 +1010,43 @@ class Wordlist(_QLCParser):
         Parameters
         ----------
         data : str
-            The type of data that shall be calculated.
+            The type of data that shall be calculated. Currently supports
+
+            * "tree": calculate a reference tree based on shared cognates
+            * "dst": get distances between taxa based on shared cognates
+            * "cluster": cluster the taxa into groups using different methods
 
         """
-        if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
-            ref = keywords['cognates']
+        
+        calculate(self,data,taxa,concepts,ref,**keywords)
 
-        # XXX take care of keywords XXX
-        if data in ['distances','dst']:
-            self._meta['distances'] = wl2dst(self,taxa,concepts,ref)
-        elif data in ['tre','nwk','tree']:
-            if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,ref)
-            if 'distances' not in keywords:
-                keywords['distances'] = False
-            if 'tree_calc' not in keywords:
-                keywords['tree_calc'] = 'neighbor'
+    def renumber(
+            self,
+            source,
+            target=''
+            ):
+        """
+        Renumber a given set of string identifiers by replacing the ids by integers.
+        
+        Paremeters
+        ----------
+        source : str
+            The source column to be manipulated.
 
-            self._meta['tree'] = matrix2tree(
-                    self._meta['distances'],
-                    self.taxa,
-                    keywords['tree_calc'],
-                    keywords['distances']
-                    )
+        target : str (default='')
+            The name of the target colummn. If no name is chosen, the target
+            column will be manipulated by adding "id" to its name.
 
-        elif data in ['groups','cluster']:
-            if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,ref)
-            self._meta['groups'] = matrix2groups(
-                    threshold,
-                    self.distances,
-                    self.taxa
-                    )
-        else:
-            return
+        Notes
+        -----
+        In addition to a new column, an further entry is added to the "_meta"
+        attribute of the wordlist by which newly coined ids can be retrieved
+        from the former string attributes. This attribute is called
+        "source2target" and can be accessed either via the "_meta" dictionary
+        or directly as an attribute of the wordlist.
 
-        if rcParams['verbose']: print("[i] Successfully calculated {0}.".format(data))
+        """
+        renumber(wordlist,source,target)
 
     def _output(
             self,

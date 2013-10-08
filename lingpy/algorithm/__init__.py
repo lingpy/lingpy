@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-04-15"
 
 from .distance import *
+from .cluster import *
 from ..settings import rcParams
 
 cmod = {}

@@ -304,7 +304,6 @@ def subGuideTree(tree,selIndices):
     return subtree
 
 
-
 def nwk2tree_matrix(newick):
     """
     Convert a newick file to a tree matrix.
@@ -333,14 +332,12 @@ def nwk2tree_matrix(newick):
             nodes,
             key = lambda x:len(tree.getNodeMatchingName(x).tips()),
             )
-    print(nodes)
     matrix = []
 
     counts = dict(zip(taxa,range(len(tree.taxa))))
     
     for node in nodes:
         
-        print(node)
         n = tree.getNodeMatchingName(node)
         children = n.Children
         names = [c.Name for c in children]
@@ -351,116 +348,6 @@ def nwk2tree_matrix(newick):
         obs = len(n.tips())
         dst = obs * 1.0
         matrix += [[idxA,idxB,dst,obs]]
-
-    #queue = [t for t in taxa]
-    ##visited = ['root']
-    #queue = ['root']
-    #matrix = []
-    #
-    #idxd = {}
-    #idx = 2 * len(taxa) - 1
-
-    #idxd['root'] = idx
-    #for c in counts:
-    #    idxd[c] = counts[c]
-
-    #while queue:
-
-    #    taxon = queue.pop()
-    #    idx = idxd[taxon]
-
-    #    node = tree.getNodeMatchingName(taxon)
-
-    #    children = node.Children
-    #    names = [c.Name for c in children]
-
-    #    if len(children) != 2:
-    #        pass
-    #    else:
-    #        if names[0] not in idxd:
-    #            idxA = idx - 1
-    #            idxd[names[0]] = idxA
-    #        else:
-    #            idxA = idxd[names[0]]
-    #        if names[1] not in idxd:
-    #            if idxA != idx -1:
-    #                idxB = idx - 1
-    #            else:
-    #                idxB = idx-2
-    #            idxd[names[1]] = idxB
-    #        else:
-    #            idxB = idxd[names[1]]
-
-    #        #    idxB = idx - 2
-    #        #idxA = idx - 1
-    #        #idxB = idx - 2
-    #        
-    #        queue += [names[0]]
-    #        queue += [names[1]]
-
-    #        obs = len(node.tips())
-    #        dst = obs * 1.0
-    #        
-    #        print(idxA,idxB,names[0],names[1])
-    #        matrix += [[idxA,idxB,dst,obs]]
-
-         
-
-        #taxon = queue.pop(0)
-
-        ## get all siblings
-        #
-        #if taxon not in visited:
-        #    parent = tree.getNodeMatchingName(taxon).Parent
-        #     
-        #    if parent:
-        #        pname = parent.Name
-
-        #        #if pname not in counts:
-        #        #    counts[pname] = max(counts.values())+1
-
-        #        children = parent.Children
-        #        names = [c.Name for c in children]
-        #        visited += [n for n in  names]
-        #        
-        #        queue += [parent.Name]
-
-        #        if len(children) > 2:
-        #            raise ValueError("tree is not bifurcating")
-        #        else: #if names[0] in counts or names[1] in counts:
-        #            
-        #            if names[0] not in counts:
-        #                counts[names[0]] = idx
-        #                idx += 1
-        #            if names[1] not in counts:
-        #                counts[names[1]] = idx
-        #                idx += 1
-        #            if pname not in counts:
-        #                if max(counts.values()) < len(taxa)+1:
-        #                    counts[pname] = len(taxa)+1
-        #                else:
-        #                    counts[pname] = max(counts.values())+1
-        #            
-        #            #if names[0] not in counts:
-        #            #    counts[names[0]] = max(counts.values())+1
-        #            #if names[1] not in counts:
-        #            #    counts[names[1]] = max(counts.values())+1
-        #            
-        #            childA = counts[names[0]]
-        #            childB = counts[names[1]]
-
-
-        #            dist = children[0].distance(parent)
-        #            obs = len(parent.tips())
-        #            if not dist:
-        #                dist = 0.5 * obs
-        #            
-        #            
-
-        #            print(names[0],names[1])
-        #            matrix += [[min(childA,childB),max(childA,childB),dist,obs]]
     
-    
-    return matrix
+    return matrix,taxa
 
-    #return sorted(matrix,key=lambda x:(x[0],x[1]))

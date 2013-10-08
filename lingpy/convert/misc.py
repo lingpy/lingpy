@@ -98,6 +98,8 @@ def wl2dst(
         taxa = "taxa",
         concepts = "concepts",
         ref = 'cogid',
+        refB = '',
+        mode = 'swadesh',
         **keywords
         ):
     """
@@ -113,35 +115,83 @@ def wl2dst(
     # check for concepts
     concepts = getattr(wl,concepts)
 
-    distances = []
+    distances = [[0 for i in range(wl.width)] for j in range(wl.width)]
 
     for i,taxA in enumerate(taxa):
         for j,taxB in enumerate(taxa):
             if i < j:
-                
-                # get the two dictionaries
-                dictA = wl.get_dict(col=taxA,entry=ref)
-                dictB = wl.get_dict(col=taxB,entry=ref)
+                if mode == 'shared':
+                    listA = wl.get_list(col=taxA,entry=ref)
+                    listB = wl.get_list(col=taxB,entry=ref)
+                    
+                    shared = [x for x in listA if x in listB]
+                    missing = 0
+                    score = len(shared)
+
+                elif mode == 'swadesh':
+
+                    # get the two dictionaries
+                    dictA = wl.get_dict(col=taxA,entry=ref)
+                    dictB = wl.get_dict(col=taxB,entry=ref)
     
-                # count amount of shared concepts
-                shared = 0
-                missing = 0
-                for concept in concepts:
+                    # count amount of shared concepts
+                    shared = 0
+                    missing = 0
+                    for concept in concepts:
+                        try:
+                            if [k for k in dictA[concept] if k in dictB[concept]]:
+                                shared += 1
+                            else:
+                                pass
+                        except KeyError:
+                            missing += 1
                     try:
-                        if [k for k in dictA[concept] if k in dictB[concept]]:
-                            shared += 1
-                        else:
-                            pass
-                    except KeyError:
-                        missing += 1
+                        score = 1 - shared / (wl.height - missing)
+                    except ZeroDivisionError:
+                        print(rcParams['E_zero_division'].format(taxA,taxB))
+                        score = 1.0
+                
+                 
+                distances[i][j] = score
+                if not refB:
+                    distances[j][i] = score
+            elif i == j:
+                if mode == 'shared':
+                    distances[i][j] = len(wl.get_list(col=taxA,flat=True))
+            elif i > j and refB:
+                if mode == 'shared':
+                    listA = wl.get_list(col=taxA,entry=refB)
+                    listB = wl.get_list(col=taxB,entry=refB)
+                    
+                    shared = [x for x in listA if x in listB]
+                    missing = 0
+                    score = len(shared)
+
+                elif mode == 'swadesh':
+
+                    # get the two dictionaries
+                    dictA = wl.get_dict(col=taxA,entry=refB)
+                    dictB = wl.get_dict(col=taxB,entry=refB)
     
-                # append to distances, catch ZeroDivisionError
-                try:
-                    distances += [ 1 - shared / (wl.height-missing)]
-                except ZeroDivisionError:
-                    print(rcParams['E_zero_division'].format(taxA,taxB))
-                    distances += [1.0]
-    distances = misc.squareform(distances)
+                    # count amount of shared concepts
+                    shared = 0
+                    missing = 0
+                    for concept in concepts:
+                        try:
+                            if [k for k in dictA[concept] if k in dictB[concept]]:
+                                shared += 1
+                            else:
+                                pass
+                        except KeyError:
+                            missing += 1
+                    try:
+                        score = 1 - shared / (wl.height - missing)
+                    except ZeroDivisionError:
+                        print(rcParams['E_zero_division'].format(taxA,taxB))
+                        score = 1.0
+                 
+                distances[i][j] = score
+
     return distances
 
 def matrix2groups(
@@ -206,10 +256,71 @@ def scorer2str(
 
     return out
 
-def newick2matrix(newick,labels):
+def wl2dict(
+        wordlist,
+        sections,
+        entries,
+        exclude = []
+        ):
     """
-    Function converts a newick-representation of a string into a tree-matrix.
+    Convert a wordlist to a complex dictionary with headings as keys.
     """
+    
+    # define output dictionary
+    out = {}
+    
+    # determine the last section
+    sorted_sections = sorted(sections)
+    last_section = sorted_sections[-1]
+   
+    # iterate over wordlist
+    for key in wordlist:
+        
+        if key not in exclude:
+            # pass temporary pointer
+            tmp = out
 
-    pass
-            
+            # iterate over sections
+            for s in sorted_sections:
+
+                # get datapoint and text
+                data_point = wordlist[key,sections[s][0]]
+                text = sections[s][1].format(data_point)
+
+                # dive deeper if this is not the last section
+                if s != last_section:
+                    
+                    # access datapoint and text
+                    #data_point = wordlist[key,sections[s][0]]
+                    #text = sections[s][1].format(data_point)
+
+                    # dive deeper
+                    try:
+                        tmp = tmp[data_point,text]
+                    except KeyError:
+                        tmp[data_point,text] = {}
+                        tmp = tmp[data_point,text]
+                
+                # assign all entries
+                else:
+                    
+                    # dive to last level
+                    try:
+                        tmp = tmp[data_point,text]
+                    except:
+                        tmp[data_point,text] = []
+                        tmp = tmp[data_point,text]
+                    
+                    # get the final list of entries
+                    tmp_list = []
+                    for entry,format_string in entries:
+                        if type(entry) in (list,tuple):
+                            entry = ' '.join(entry)
+                        tmp_list += [
+                                format_string.format(
+                                    wordlist[key,entry]
+                                    )
+                                ]
+                    tmp += [tmp_list]
+    
+    return out
