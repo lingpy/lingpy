@@ -19,7 +19,7 @@ from ..sequence.orthography import *
 from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
-from ..convert.csv import wl2csv
+from ..convert import * #.csv import wl2csv
 
 class Spreadsheet:
     """

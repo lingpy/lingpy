@@ -25,7 +25,7 @@ from ..sequence.sound_classes import *
 from ..sequence.generate import MCPhon
 from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
-from ..convert.misc import *
+from ..convert import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
 
 try:
@@ -1367,7 +1367,7 @@ class LexStat(Wordlist):
             f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
             f.write(out)
             f.close()
-            print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
 
         else:
             self._output(fileformat,**keywords)

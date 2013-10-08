@@ -23,7 +23,7 @@ import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
-from ..convert.newick import subGuideTree
+from ..convert import *
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise

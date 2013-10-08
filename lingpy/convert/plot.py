@@ -29,7 +29,6 @@ import codecs
 import webbrowser
 
 from ..settings import rcParams
-from .newick import *
 
 import numpy as np
 
@@ -50,7 +49,10 @@ except:
 
 from ..align.sca import SCA
 from ..thirdparty import cogent as cg
-from .gml import *
+
+from .strings import *
+from .tree import *
+from .graph import *
 
 def colorRange(
         number,

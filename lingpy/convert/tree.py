@@ -3,7 +3,7 @@
 # created  : 2013-04-02 07:01
 # modified : 2013-09-11 16:37
 """
-Functions for tree calculations and working with Newick files.
+Functions for tree calculations and working with trees.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
@@ -35,7 +35,7 @@ def _nwk_format(taxon):
     # exclude all kinds of brackets
     return ''.join([t for t in taxon if t not in '()[]{},;:."'+"'"])
 
-def xml2dict(
+def _xml2dict(
         infile,
         tax_name = 'pri-name'
         ):
@@ -145,7 +145,7 @@ def xml2nwk(
         A newick-string, if filename is not left empty.
 
     """
-    nwk,taxa = xml2dict(infile,tax_name)
+    nwk,taxa = _xml2dict(infile,tax_name)
 
     # first, create a specific newick-dictionary
     newick = {}
@@ -169,8 +169,6 @@ def xml2nwk(
     for taxon in taxa:
         newick[str(taxon)] = taxon
 
-
-    
     # create the newick-string
     newick_string = "{x_0_root};"
     newick_check = newick_string
@@ -196,33 +194,6 @@ def xml2nwk(
         if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
         return
 
-def matrix2tree(
-        matrix,
-        taxa,
-        tree_calc = "neighbor",
-        distances = True,
-        filename = ''
-        ):
-    """
-    Calculate a tree of a given distance matrix.
-    """
-    
-    if tree_calc == 'upgma':
-        algorithm = cluster.upgma
-    elif tree_calc == 'neighbor':
-        algorithm = cluster.neighbor
-
-    newick = algorithm(matrix,taxa,distances)
-
-    tree = cg.LoadTree(treestring=newick)
-    
-    if not filename:
-        return tree
-    else:
-        out = codecs.open(filename+'.nwk','w','utf-8')
-        out.write(str(tree))
-        out.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
 
 def nwk2guidetree(
                   newick
@@ -351,3 +322,30 @@ def nwk2tree_matrix(newick):
     
     return matrix,taxa
 
+#def matrix2tree(
+#        matrix,
+#        taxa,
+#        tree_calc = "neighbor",
+#        distances = True,
+#        filename = ''
+#        ):
+#    """
+#    Calculate a tree of a given distance matrix.
+#    """
+#    
+#    if tree_calc == 'upgma':
+#        algorithm = cluster.upgma
+#    elif tree_calc == 'neighbor':
+#        algorithm = cluster.neighbor
+#
+#    newick = algorithm(matrix,taxa,distances)
+#
+#    tree = cg.LoadTree(treestring=newick)
+#    
+#    if not filename:
+#        return tree
+#    else:
+#        out = codecs.open(filename+'.nwk','w','utf-8')
+#        out.write(str(tree))
+#        out.close()
+#        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))

@@ -21,7 +21,7 @@ from ..read.qlc import read_qlc
 from ..convert import *
 from ..settings import rcParams
 from ._parser import _QLCParser
-from .ops import calculate,renumber
+from .ops import *
 
 try:
     from ..algorithm.cython import cluster
@@ -1046,7 +1046,7 @@ class Wordlist(_QLCParser):
         or directly as an attribute of the wordlist.
 
         """
-        renumber(wordlist,source,target)
+        renumber(self,source,target)
 
     def _output(
             self,
@@ -1139,7 +1139,7 @@ class Wordlist(_QLCParser):
             # get the data, in case a subset is chosen
             if not keywords['subset']:
                 # write stuff to file
-                wl2csv(
+                wl2qlc(
                         header,
                         self._data,
                         **keywords
