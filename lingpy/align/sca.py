@@ -1385,7 +1385,7 @@ def get_consensus(
         A consensus string of the given MSA.
     """
     # set defaults
-    def rep_weights(char1, char2):
+    def rep_weights(char1, char2, prosody):
                     if char1 == char2:
                         return 0
                     else:
@@ -1746,6 +1746,8 @@ def get_consensus(
                         node.sankoffPointers.append(dict())
                         sankoff1 = node.Children[0].sankoffTable[i]
                         sankoff2 = node.Children[1].sankoffTable[i]
+                        recon1 = node.Children[0].reconstructed
+                        recon2 = node.Children[1].reconstructed
                         for char in set(sankoff1.keys()) | set(sankoff2.keys()):
                             minSankoffValue = 65536
                             backPointers = ['-','-']
@@ -1763,7 +1765,13 @@ def get_consensus(
                                     if distributionBonus:
                                         bonusFactor1 /= node.distribution[i][char]
                                         bonusFactor2 /= node.distribution[i][char]
-                                    sankoffValue = mtx(char,char1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2) * bonusFactor2 + sankoff2[char2]
+                                    char1no5 = char1
+                                    char2no5 = char2
+                                    if char1no5 == "5": char1no5 = "N"
+                                    if char2no5 == "5": char2no5 = "N"
+                                    proso1 = prosodic_string(recon1 + [char1no5])[-1]
+                                    proso2 = prosodic_string(recon2 + [char2no5])[-1]
+                                    sankoffValue = mtx(char,char1,proso1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2,proso2) * bonusFactor2 + sankoff2[char2]
                                     if (sankoffValue < minSankoffValue):
                                         minSankoffValue = sankoffValue
                                         backPointers[0] = char1
@@ -1798,7 +1806,8 @@ def get_consensus(
                 minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
                 reconChar = minKeys[0]
                 def reconstruct_by_sankoff(node, char):
-                    node.reconstructed.append(char)
+                    if char == "5": node.reconstructed.append("N")
+                    else: node.reconstructed.append(char)
                     if not node.isTip():
                         reconstruct_by_sankoff(node.Children[0], node.sankoffPointers[i][char][0])
                         reconstruct_by_sankoff(node.Children[1], node.sankoffPointers[i][char][1])

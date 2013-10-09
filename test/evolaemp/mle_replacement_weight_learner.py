@@ -1,11 +1,11 @@
 from numpy import *
-from lingpy2 import *
+from lingpy import *
 import os
 
 # switch namespace to evolaemp
-from lingpy2.data.names.evolaemp import *
-from lingpy2.align.sca import get_consensus
-from lingpy2.thirdparty import cogent as cg
+from lingpy.data.names.evolaemp import *
+from lingpy.align.sca import get_consensus
+from lingpy.thirdparty import cogent as cg
 from ete2 import Tree, TextFace
 
 import math
