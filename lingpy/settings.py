@@ -105,6 +105,7 @@ rcParamsUpd = dict(
         dolgo                      = Model('dolgo'),
         _color                     = Model('color'),
         art                        = Model('art'),
+        jaeger                     = Model('jaeger'),
         diacritics                 = diacritics,
         vowels                     = vowels,
         tones                      = tones,
@@ -166,8 +167,8 @@ def rc(**keywords):
         if key in rcParams:
             # check for special keyword "schema"
             if key == "schema":
-                if keywords[key] == "qlc":
-                    diacritis,vowels,tones = load_dvt()
+                if keywords[key] in ["qlc",'ipa']:
+                    diacritics,vowels,tones = load_dvt(path='')
                     rcParams['asjp'] = Model('asjp')
                     rcParams['sca'] = Model('sca')
                     rcParams['dolgo'] = Model('dolgo')
@@ -180,12 +181,13 @@ def rc(**keywords):
                     rcParams['breaks']       = '.-'
                     rcParams['stress']       = "ˈˌ'"
                     rcParams['merge_vowels'] = True
-                elif keywords[key] in ['evolaemp','el']:
+                elif keywords[key] in ['evolaemp','el','asjp']:
                     diacritics,vowels,tones = load_dvt(path='el')
                     rcParams['asjp'] = Model('asjp_el')
                     rcParams['sca'] = Model('sca_el')
                     rcParams['dolgo'] = Model('dolgo_el')
                     rcParams['art'] = Model('art_el')
+                    rcParams['jaeger'] = Model('jaeger_el')
                     rcParams['diacritics'] = diacritics
                     rcParams['vowels'] = vowels
                     rcParams['tones'] = tones

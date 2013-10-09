@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-07-17 11:02
+# modified : 2013-09-29 11:44
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List, Steven Moran"
-__date__="2013-07-17"
+__date__="2013-09-29"
 
 import os
 import sys
@@ -21,6 +21,7 @@ from ..read.qlc import read_qlc
 from ..convert import *
 from ..settings import rcParams
 from ._parser import _QLCParser
+from .ops import *
 
 try:
     from ..algorithm.cython import cluster
@@ -132,7 +133,7 @@ class Wordlist(_QLCParser):
             # first, find out, how many items (== synonyms) are there maximally for
             # each row
             tmp_dict = {}
-            for key,value in [(k,v) for k,v in self._data.items() if k != 0 and type(k) == int]:
+            for key,value in [(k,v) for k,v in self._data.items() if k != 0 and str(k).isnumeric()]:
                 try:
                     tmp_dict[value[rowIdx]][value[colIdx]] += [key]
                 except KeyError:
@@ -994,15 +995,13 @@ class Wordlist(_QLCParser):
         self._cache['#paps#'+str(missing)+'#',ref] = paps
         
         return paps
-
+    
     def calculate(
             self,
             data,
             taxa = 'taxa',
             concepts = 'concepts',
             ref = 'cogid',
-            threshold = 0.6,
-            verbose = False,
             **keywords
             ):
         """
@@ -1011,43 +1010,43 @@ class Wordlist(_QLCParser):
         Parameters
         ----------
         data : str
-            The type of data that shall be calculated.
+            The type of data that shall be calculated. Currently supports
+
+            * "tree": calculate a reference tree based on shared cognates
+            * "dst": get distances between taxa based on shared cognates
+            * "cluster": cluster the taxa into groups using different methods
 
         """
-        if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
-            ref = keywords['cognates']
+        
+        calculate(self,data,taxa,concepts,ref,**keywords)
 
-        # XXX take care of keywords XXX
-        if data in ['distances','dst']:
-            self._meta['distances'] = wl2dst(self,taxa,concepts,ref)
-        elif data in ['tre','nwk','tree']:
-            if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,ref)
-            if 'distances' not in keywords:
-                keywords['distances'] = False
-            if 'tree_calc' not in keywords:
-                keywords['tree_calc'] = 'neighbor'
+    def renumber(
+            self,
+            source,
+            target=''
+            ):
+        """
+        Renumber a given set of string identifiers by replacing the ids by integers.
+        
+        Paremeters
+        ----------
+        source : str
+            The source column to be manipulated.
 
-            self._meta['tree'] = matrix2tree(
-                    self._meta['distances'],
-                    self.taxa,
-                    keywords['tree_calc'],
-                    keywords['distances']
-                    )
+        target : str (default='')
+            The name of the target colummn. If no name is chosen, the target
+            column will be manipulated by adding "id" to its name.
 
-        elif data in ['groups','cluster']:
-            if 'distances' not in self._meta:
-                self.calculate('distances',taxa,concepts,ref)
-            self._meta['groups'] = matrix2groups(
-                    threshold,
-                    self.distances,
-                    self.taxa
-                    )
-        else:
-            return
+        Notes
+        -----
+        In addition to a new column, an further entry is added to the "_meta"
+        attribute of the wordlist by which newly coined ids can be retrieved
+        from the former string attributes. This attribute is called
+        "source2target" and can be accessed either via the "_meta" dictionary
+        or directly as an attribute of the wordlist.
 
-        if verbose: print("[i] Successfully calculated {0}.".format(data))
+        """
+        renumber(self,source,target)
 
     def _output(
             self,
@@ -1140,7 +1139,7 @@ class Wordlist(_QLCParser):
             # get the data, in case a subset is chosen
             if not keywords['subset']:
                 # write stuff to file
-                wl2csv(
+                wl2qlc(
                         header,
                         self._data,
                         **keywords
@@ -1350,6 +1349,9 @@ class Wordlist(_QLCParser):
             entry_sep = '',
             item_sep = '',
             template = '',
+            exclude = [],
+            entry_start = '',
+            entry_close = '',
             **keywords
             ):
         """
@@ -1404,7 +1406,8 @@ class Wordlist(_QLCParser):
         out = wl2dict(
                 self,
                 sections,
-                entries
+                entries,
+                exclude
                 )
     
         # assign the output string
@@ -1452,7 +1455,7 @@ class Wordlist(_QLCParser):
                     tmp_strings = []
                     for line in sorted(tmp):
                         tmp_strings += [item_sep.join(line)]
-                    out_string += entry_sep.join(tmp_strings)
+                    out_string += entry_start+entry_sep.join(tmp_strings)+entry_close
 
                     tmp = pointer[idx-1][0]
                     del pointer[idx]
@@ -1508,7 +1511,7 @@ class Wordlist(_QLCParser):
             ortho_profile = '',
             source = "counterpart",
             target = "tokens",
-            verbose = False,
+            conversion = 'graphemes',
             ** keywords
             ):
         """
@@ -1545,7 +1548,7 @@ class Wordlist(_QLCParser):
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":
-            if verbose: print("[i] Found the orthography profile.")
+            if rcParams['verbose']: print("[i] Found the orthography profile.")
             op = OrthographyParser(ortho_path)
 
             # check for valid IPA parse

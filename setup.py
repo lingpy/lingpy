@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-09 16:28
-# modified : 2013-09-09 16:28
+# modified : 2013-10-04 16:46
 """
 Setup-Script for LingPy
 """
 
 __author__="Johann-Mattis List,Peter Bouda"
-__date__="2013-09-09"
+__date__="2013-10-04"
 
 
 import distribute_setup
@@ -17,9 +17,14 @@ from setuptools import setup, find_packages,Extension
 import sys
 import os
 import os.path
+import shutil
 
 from three2two import run3to2,run3to3
 
+# check whether a build directory is available
+if not os.path.isdir('lingpy_build'):
+    os.mkdir('lingpy_build')
+    os.mkdir('lingpy_build/lingpy')
 
 # check for specific features
 with_c = False
@@ -45,9 +50,7 @@ if sys.version_info >= (3,):
 else:
     # make a specific directory for lingpy2
     this_version = "2"
-    if not os.path.isdir('lingpy_build'):
-        os.mkdir('lingpy_build')
-        os.mkdir('lingpy_build/lingpy')
+
     run3to2()
     pkgname = 'lingpy'
     # replace manifest path
@@ -103,7 +106,7 @@ setup(
         version = thisversion,
         packages = find_packages(pkg_location),
         package_dir = pkg_dir,
-        install_requires = ['numpy','networkx','regex'],
+        install_requires = ['numpy','regex'],
         author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [
@@ -123,3 +126,10 @@ setup(
         exclude_package_data = {}, #{'':["*.bin"]},
         **extra
         )
+
+# remove the build directory in order to prevent that it leads to confusion
+# when installing lingpy in both the py2 and the py3 version
+print("[i] Removing the build directory.")
+shutil.rmtree('lingpy_build/')
+print("[i] Done.")
+print("[i] LingPy was successfully installed on your system.")

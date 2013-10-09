@@ -48,3 +48,6 @@ if cmod:
     rcParams['cmodules'] = False
 else:
     rcParams['cmodules'] = True
+
+from .clustering import *
+
