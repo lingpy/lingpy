@@ -214,6 +214,27 @@ def renumber(wordlist,source,target=''):
 
     if rcParams['verbose']: print("[i] Successfully renumbered {0}.".format(source))
 
+def clean_taxnames(
+        wordlist,
+        taxa = 'taxa'
+        ):
+    # clean the names for all taxa in a wordlist
+    current_taxa = eval('wordlist.'+taxa)
+    new_taxa = [''.join([t for t in taxon if t not in ['() ,;[]{}']]) for taxon in current_taxa]
+
+    old2new = dict(zip(current_taxa,new_taxa))
+
+    wordlist.cols = [old2new[t] for t in wordlist.cols]
+    
+    # get idx for taxon
+    idx = wordlist._header[taxa]
+
+    for key in wordlist:
+        wordlist._data[key][idx] = old2new[wordlist[key][idx]]
+    wordlist.add_entries('taxa','taxa',lambda x:old2new[x],override=True)
+    wordlist._clean_cache()
+    return wordlist
+
 
 def calculate(
         wordlist,

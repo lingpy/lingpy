@@ -21,6 +21,9 @@ from ..thirdparty import cogent as cg
 
 from ..settings import rcParams
 
+# thirdparty modules
+import numpy as np
+
 try:
     import networkx as nx
 except ImportError:
@@ -69,7 +72,7 @@ def flat_upgma(threshold,matrix,taxa=[],revert=False):
            [ 0.5 ,  0.  ,  0.4 ,  0.7 ,  0.6 ],
            [ 0.67,  0.4 ,  0.  ,  0.8 ,  0.8 ],
            [ 0.8 ,  0.7 ,  0.8 ,  0.  ,  0.3 ],
-           [ 0.2 ,  0.6 ,  0.8 ,  0.3 ,  0.  ]])
+           [ 0.2 ,  0.6 ,  0.8 ,  0.3 ,  0.  ]]
 
     Carry out the flat cluster analysis.
 
@@ -561,4 +564,129 @@ def matrix2groups(
     groups = [renum[i] for i in groups]
 
     return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
+
+
+# the following lines of code are devoted to mcl clustering algorithm
+
+def _normalize_matrix(matrix):
+    """
+    Normalize the matrix.
+    """
+    return matrix / sum(matrix)
+
+def _is_idempotent(matrix):
+    """
+    Check whether the matrix is idempotent.
+    """
+
+    for line in matrix:
+        if len([x for x in set(line) if x != 0]) > 1:
+            return False
+    return True
+
+def _interprete_matrix(matrix,revert=False):
+    """
+    Look for attracting nodes in the matrix.
+    """
+
+    clusters = []
+    flags = len(matrix) * [False]
+    for i in range(len(matrix)):
+        clr = []
+        for j in range(len(matrix)):
+            if not flags[j] and matrix[i][j] > 0:
+                clr += [j]
+                flags[j] = True
+        if clr:
+            clusters += [clr]
     
+    # make a converter for length
+    out = [0 for i in range(len(matrix))]
+    idx = 0 
+    for clr in clusters:
+        for i in clr:
+            out[i] = idx
+        idx += 1
+    
+    return out
+
+def mcl(
+        nodes,
+        adjmatrix,
+        max_steps = 20,
+        threshold=False,
+        inflation = 2,
+        expansion = 2,
+        add_self_loops = True,
+        revert = False
+        ):
+    """
+    Carry out mcl clustering.
+    """
+    # check for type of matrix
+    if type(adjmatrix) != np.ndarray:
+        matrix = np.array(adjmatrix)
+    else:
+        matrix = adjmatrix.copy()
+
+    # check for threshold
+    if threshold:
+        for i in range(len(matrix)):
+            matrix[i][i] = 0
+            for j in range(i,len(matrix)):
+                if matrix[i][j] > threshold:
+                    matrix[i][j] = 0
+                    matrix[j][i] = 0
+                else:
+                    matrix[i][j] = 1
+                    matrix[j][i] = 1
+    
+    # check for self_loops
+    if add_self_loops:
+        for i in range(len(matrix)):
+            matrix[i][i] = sum(matrix[:,i])
+
+
+    # normalize the matrix
+    matrix = _normalize_matrix(matrix)
+
+    # start looping and the like
+    steps = 0
+    while True:
+        
+        # expansion
+        matrix = np.linalg.matrix_power(matrix,expansion)
+        
+        # inflation
+        matrix = matrix ** inflation
+
+        # normalization
+        matrix = _normalize_matrix(matrix)
+
+        # increase steps
+        steps += 1
+
+        # check for matrix convergence
+        if steps >= max_steps or _is_idempotent(matrix):
+            if rcParams['debug']:
+                print("[DEBUG] Number of steps {0}.".format(steps))
+            break
+    
+    # retrieve the clusters
+    clusters = _interprete_matrix(matrix)
+
+    # modify clusters
+    if revert:
+        return dict(
+                zip(
+                    range(len(nodes)),
+                    clusters
+                    )
+                )
+    
+    return clusters
+
+    
+    
+        
+

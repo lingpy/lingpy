@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-06-26 17:40
+# modified : 2013-10-10 16:14
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-06-26"
+__date__="2013-10-10"
 
 # thirdparty imports
 import numpy as np
@@ -242,7 +242,7 @@ class Multiple(object):
             model = None,
             classes = True,
             sonar = True,
-            scorer = {}
+            scoredict = {}
             ):
         """
         Method defines a specific class model for the calculation.
@@ -295,9 +295,30 @@ class Multiple(object):
         self._numbers = [[str(i+1)+'.'+str(j+1) for j in
             range(len(self._classes[i]))] for i in range(self.height)]
 
+        # create an index which allows to quickly interchange between classes
+        # and given sequences (trivial without sequence uniqueness
+        if self.unique_seqs:
+            self.int2ext = dict(
+                    [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]      
+                    )
+        else:
+            self.int2ext = dict(  
+                    [(i,[i]) for i in range(len(keys))]    
+                    )
+
+        # -> # create external to internal in order to allow for a quick switching
+        # -> # of the vals
+        # -> self.ext2int = {}
+        # -> for k,vals in self.int2ext.items():
+        # ->     for v in vals:
+        # ->         self.ext2int[v] = k
+
         # store sonars if they are passed as a list
         if type(sonar) == list:
-            self._sonars = sonar
+            self._sonars = [sonar[key] for key in keys]
+            # -> self._sonars = [0 for i in range(len(sonar))]
+            # -> for i in range(len(self._sonars)):
+            # ->     self._sonars[self.ext2int[i]] = sonar[i]
             self._prostrings = list([prosodic_string(s) for s in self._sonars])
         # create sonars if the argument is true
         elif sonar:
@@ -316,25 +337,14 @@ class Multiple(object):
         else:
             self._sonars = False
             self._prostrings = False
-
-        # create an index which allows to quickly interchange between classes
-        # and given sequences (trivial without sequence uniqueness
-        if self.unique_seqs:
-            self.int2ext = dict(
-                    [(i,indices[tuple(self._classes[i])]) for i in range(len(keys))]      
-                    )
-        else:
-            self.int2ext = dict(  
-                    [(i,[i]) for i in range(len(keys))]    
-                    )
         
         # create a scoredict for the calculation of alignment analyses
         # append the scorer if it is given with the model
         if classes:
             scorer = lambda x,y:self.model.scorer[x,y]
         # leave the scorer that was passed if it is not empty
-        elif scorer:
-            scorer = lambda x,y:scorer[x,y]
+        elif scoredict:
+            scorer = lambda x,y:scoredict[x,y]
         # create a short function if the scorer is empty
         else:
             def scorer(x,y):
@@ -959,7 +969,7 @@ class Multiple(object):
                 restricted_chars = rcParams['restricted_chars'],
                 classes          = rcParams['align_classes'],
                 sonar            = rcParams['align_sonar'],
-                scorer           = rcParams['align_scorer'],
+                scoredict           = rcParams['align_scorer'],
                 gop              = rcParams['align_gop'],
                 gap_weight       = rcParams['align_gap_weight']
                 )
@@ -986,7 +996,7 @@ class Multiple(object):
         self._set_model(model,
                 kw['classes'],
                 kw['sonar'],
-                kw['scorer']
+                kw['scoredict']
                 )
 
         # set the scorer

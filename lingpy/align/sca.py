@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-09-16 15:25
+# modified : 2013-10-10 16:14
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-09-16"
+__date__="2013-10-10"
 
 import numpy as np
 import re
@@ -1002,7 +1002,7 @@ class Alignments(Wordlist):
                 restricted_chars = rcParams['restricted_chars'],
                 classes = rcParams['classes'],
                 sonar = rcParams['sonar'],
-                scorer = rcParams['scorer'],
+                scoredict = rcParams['scorer'],
                 plot = False,
                 ref = rcParams['ref']
                 )
@@ -1013,11 +1013,27 @@ class Alignments(Wordlist):
                 key=lambda x:x[0]
                 ):
             if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
+            
+            # check for scorer keyword
+            if not kw['scoredict']:
+                m = SCA(
+                        value,
+                        **kw
+                        )
+            else:
+                # get the tokens 
+                numbers = [self[idx,'numbers'] for idx in value['ID']]
+                sonars = [self[idx,'sonars'] for idx in value['ID']]
+                value['seqs'] = numbers
+                m = SCA(
+                        value,
+                        **kw
+                        )
 
-            m = SCA(
-                    value,
-                    **kw
-                    )
+                kw['sonar'] = sonars
+                kw['classes'] = False
+                kw['scoredict'] = self.cscorer
+            
             if kw['method'] == 'progressive':
                 m.prog_align(**kw)
                         
@@ -1031,6 +1047,13 @@ class Alignments(Wordlist):
 
             if kw['swap_check']:
                 m.swap_check()
+
+            # convert back to external format, if scoredict is set
+            if kw['scoredict']:
+                for i,alm in enumerate(m.alm_matrix):
+                    tk = self[m.ID[i],'tokens']
+                    new_tk = class2tokens(tk,alm)
+                    m.alm_matrix[i] = new_tk
 
             if kw['output']:
                 try:

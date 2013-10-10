@@ -32,11 +32,11 @@ except:
     from .cython import _talign as talign
     cmod['talign'] = 1
 
-try:
-    from .cython import cluster as cluster
-except:
-    from .cython import _cluster as cluster
-    cmod['cluster'] = 1
+#try:
+#    from .cython import cluster as cluster
+#except:
+#    from .cython import _cluster as cluster
+#    cmod['cluster'] = 1
 
 try:
     from .cython import misc as misc

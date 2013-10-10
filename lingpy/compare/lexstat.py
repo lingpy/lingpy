@@ -27,6 +27,7 @@ from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
 from ..convert import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
+from ..algorithm.clustering import mcl
 
 try:
     from ..algorithm.cython import calign
@@ -1062,7 +1063,7 @@ class LexStat(Wordlist):
             self,
             method = 'sca',
             cluster_method='upgma',
-            threshold = 0.55,
+            threshold = 0.3,
             scale = 0.5,
             factor = 0.3,
             restricted_chars = '_T',
@@ -1079,10 +1080,11 @@ class LexStat(Wordlist):
         ----------
         method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
             Select the method that shall be used for the calculation.
-        cluster_method : {'upgma','single','complete'} (default='upgma')
-            Select the cluster method. 'upgma' (:evobib:`Sokal1958` refers to
-            average linkage clustering.
-        threshold : float (default=0.6)
+        cluster_method : {'upgma','single','complete', 'mcl'} (default='upgma')
+            Select the cluster method. 'upgma' (:evobib:`Sokal1958`) refers to
+            average linkage clustering, 'mcl' refers to the "Markov Clustering
+            Algorithm" (:evobib:`Dongen2000`).
+        threshold : float (default=0.3)
             Select the threshold for the cluster approach. If set to c{False},
             an automatic threshold will be calculated by calculating the
             average distance of unrelated sequences (use with care).
@@ -1108,6 +1110,20 @@ class LexStat(Wordlist):
             of the longest sequence, as described in :evobib:`Heeringa2006`.
 
         """
+        # set up defaults
+        defaults = dict(
+                inflation = 2,
+                expansion = 2,
+                max_steps = 1000,
+                add_self_loops = False,
+                prepare_matrix = lambda x:np.array(x)
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+
+
         if not threshold:
             # use the 5 percentile of the random distribution of non-related
             # words (cross-semantic alignments) in order to determine a
@@ -1204,6 +1220,27 @@ class LexStat(Wordlist):
         # for convenience and later addons
         concepts = self.concepts
 
+        # set up clustering algorithm, first the simple basics
+        if cluster_method in ['upgma','single','complete']:
+            fclust = lambda x: cluster.flat_cluster(
+                    cluster_method,
+                    threshold,
+                    x,
+                    revert = True
+                    )
+        # we need specific conditions for mcl clustering
+        elif cluster_method == 'mcl':
+            fclust = lambda x: mcl(
+                    list(range(len(x))),
+                    keywords['prepare_matrix'](x), # convert distances to similarities
+                    keywords['max_steps'],
+                    threshold = threshold,
+                    inflation = keywords['inflation'],
+                    expansion = keywords['expansion'],
+                    add_self_loops = keywords['add_self_loops'],
+                    revert = True
+                    )
+
         # make a dictionary that stores the clusters for later update
         clr = {}
         k = 0
@@ -1228,7 +1265,8 @@ class LexStat(Wordlist):
             matrix = misc.squareform(matrix)
             
             # calculate the clusters using flat-upgma
-            c = cluster.flat_cluster(cluster_method,threshold,matrix,revert=True)
+            #c = cluster.flat_cluster(cluster_method,threshold,matrix,revert=True)
+            c = fclust(matrix)
 
             # extract the clusters
             clusters = [c[i]+k for i in range(len(matrix))]
@@ -1350,6 +1388,44 @@ class LexStat(Wordlist):
             ):
         """
         Write data for lexstat to file.
+
+        Parameters
+        ----------
+        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+            The format that is written to file. This corresponds to the file
+            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            a file in Phylip-distance format, etc.
+        filename : str
+            Specify the name of the output file (defaults to a filename that
+            indicates the creation date).
+        subset : bool (default=False)
+            If set to c{True}, return only a subset of the data. Which subset
+            is specified in the keywords 'cols' and 'rows'.
+        cols : list
+            If *subset* is set to c{True}, specify the columns that shall be
+            written to the csv-file.
+        rows : dict
+            If *subset* is set to c{True}, use a dictionary consisting of keys
+            that specify a column and values that give a Python-statement in
+            raw text, such as, e.g., "== 'hand'". The content of the specified
+            column will then be checked against statement passed in the
+            dictionary, and if it is evaluated to c{True}, the respective row
+            will be written to file.
+        cognates : str
+            Name of the column that contains the cognate IDs if 'starling' is
+            chosen as an output format.
+
+        missing : { str, int } (default=0)
+            If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
+            will be inserted as an indicator of missing data.
+
+        tree_calc : {'neighbor', 'upgma'}
+            If no tree has been calculated and 'tre' or 'nwk' is chosen as
+            output format, the method that is used to calculate the tree.
+
+        threshold : float (default=0.6)
+            The threshold that is used to carry out a flat cluster analysis if
+            'groups' or 'cluster' is chosen as output format.
         """
 
         defaults = dict(
@@ -1372,67 +1448,27 @@ class LexStat(Wordlist):
         else:
             self._output(fileformat,**keywords)
 
-    #def output(
-    #        fileformat,
-    #        **keywords
-    #        ):
-    #    """
-    #    Write wordlist to file.
+    def mcl(
+            self,
+            method = 'sca',
+            cluster_method='upgma',
+            threshold = 0.6,
+            scale = 0.5,
+            factor = 0.3,
+            restricted_chars = '_T',
+            mode = 'overlap',
+            gop = -2,
+            restriction = '',
+            ref = '',
+            **keywords
+            ):
+        """
+        Carry out cluster analyses with help of the Markov Cluster Algorithm.
 
-    #    Parameters
-    #    ----------
-    #    fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
-    #        The format that is written to file. This corresponds to the file
-    #        extension, thus 'csv' creates a file in csv-format, 'dst' creates
-    #        a file in Phylip-distance format, etc.
-    #    filename : str
-    #        Specify the name of the output file (defaults to a filename that
-    #        indicates the creation date).
-    #    subset : bool (default=False)
-    #        If set to c{True}, return only a subset of the data. Which subset
-    #        is specified in the keywords 'cols' and 'rows'.
-    #    cols : list
-    #        If *subset* is set to c{True}, specify the columns that shall be
-    #        written to the csv-file.
-    #    rows : dict
-    #        If *subset* is set to c{True}, use a dictionary consisting of keys
-    #        that specify a column and values that give a Python-statement in
-    #        raw text, such as, e.g., "== 'hand'". The content of the specified
-    #        column will then be checked against statement passed in the
-    #        dictionary, and if it is evaluated to c{True}, the respective row
-    #        will be written to file.
-    #    cognates : str
-    #        Name of the column that contains the cognate IDs if 'starling' is
-    #        chosen as an output format.
+        Notes
+        -----
+        When using this function you need the 
+        """
 
-    #    missing : { str, int } (default=0)
-    #        If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
-    #        will be inserted as an indicator of missing data.
-
-    #    tree_calc : {'neighbor', 'upgma'}
-    #        If no tree has been calculated and 'tre' or 'nwk' is chosen as
-    #        output format, the method that is used to calculate the tree.
-
-    #    threshold : float (default=0.6)
-    #        The threshold that is used to carry out a flat cluster analysis if
-    #        'groups' or 'cluster' is chosen as output format.
-    #    
-    #    """
-    #    
-    #    if fileformat not in ['alm']:
-    #        return self._output(fileformat,**keywords)
-    #    
-    #    if fileformat == 'alm':
-    #        pass
-
-    #        ## check for "cognates"-keywords
-    #        #if "cognates" not in keywords:
-    #        #    cognates = 'cogid'
-    #        #for concept in self.concepts:
-    #        #    l = self.get_list(
-    #        #            row=concept,
-    #        #            entry=cognates,
-    #        #            flat=True
-    #        #            )
-    #        #    l = sorted(set(l))
+        pass
                 
