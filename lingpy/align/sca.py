@@ -24,9 +24,11 @@ import os
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import *
+from ..convert import html
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+
 try:
     from ..algorithm.cython import misc
 except:
@@ -982,9 +984,6 @@ class Alignments(Wordlist):
             should therefore be aligned specifically. This defaults to "T",
             since this is the character that represents tones in the prosodic
             strings of sequences.
-
-        plot : bool (default=False)
-            Determine whether MSA should be plotted in HTML.
         """
         kw = dict(
                 method = 'progressive',
@@ -1003,9 +1002,11 @@ class Alignments(Wordlist):
                 classes = rcParams['classes'],
                 sonar = rcParams['sonar'],
                 scoredict = rcParams['scorer'],
+                ref = rcParams['ref'],
                 plot = False,
-                ref = rcParams['ref']
+                filename = self.filename
                 )
+
         kw.update(keywords)
 
         for key,value in sorted(
@@ -1023,7 +1024,10 @@ class Alignments(Wordlist):
             else:
                 # get the tokens 
                 numbers = [self[idx,'numbers'] for idx in value['ID']]
-                sonars = [self[idx,'sonars'] for idx in value['ID']]
+                if kw['sonar']:
+                    sonars = [self[idx,'sonars'] for idx in value['ID']]
+                else:
+                    sonars = False
                 value['seqs'] = numbers
                 m = SCA(
                         value,
@@ -1032,7 +1036,6 @@ class Alignments(Wordlist):
 
                 kw['sonar'] = sonars
                 kw['classes'] = False
-                kw['scoredict'] = self.cscorer
             
             if kw['method'] == 'progressive':
                 m.prog_align(**kw)
@@ -1077,6 +1080,10 @@ class Alignments(Wordlist):
                             )
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+        
+        if kw['plots']:
+            self.output('alm',ref=kw['ref'],filename='.tmp')
+            html.alm2html('.tmp.alm',filename=kw['filename'])
                     
     def __len__(self):
         return len(self.msa)

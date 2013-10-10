@@ -1108,6 +1108,10 @@ class LexStat(Wordlist):
             will be prohibited in the calculations and the edit distance will
             be normalized by the length of the alignment rather than the length
             of the longest sequence, as described in :evobib:`Heeringa2006`.
+        inflation : {int, float} (default=2)
+            Specify the inflation parameter for the use of the MCL algorithm.
+        expansion : int (default=2)
+            Specify the expansion parameter for the use of the MCL algorithm.
 
         """
         # set up defaults
