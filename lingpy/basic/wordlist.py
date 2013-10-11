@@ -816,7 +816,8 @@ class Wordlist(_QLCParser):
             self,
             ref = "cogid",
             entry = '',
-            loans = False
+            loans = False,
+            fuzzy = False
             ):
         """
         Return an etymological dictionary representation of the word list.
@@ -845,6 +846,12 @@ class Wordlist(_QLCParser):
         # make an alias for the reference
         ref = (self._alias[ref],loans)
 
+        # make converting function for loans
+        if loans:
+            f = lambda x: abs(x)
+        else:
+            f = lambda x: x
+
         # check in the cache
         try:
             return self._cache[ref,entry]
@@ -865,9 +872,9 @@ class Wordlist(_QLCParser):
             cogIdx = self._header[ref[0]]
             
             # iterate over all data
-            if not loans:
+            if not fuzzy:
                 for key in self:
-                    cogid = self[key][cogIdx]
+                    cogid = f(self[key][cogIdx])
                     colIdx = self.cols.index(self[key][self._colIdx])
 
                     # assign new line if cogid is missing
@@ -879,20 +886,35 @@ class Wordlist(_QLCParser):
                         self._etym_dict[ref][cogid][colIdx] += [key]
                     except:
                         self._etym_dict[ref][cogid][colIdx] = [key]
-            else:
-                for key in self:
-                    cogid = abs(self[key][cogIdx])
-                    colIdx = self.cols.index(self[key][self._colIdx])
+            #elif loans and not fuzzy:
+            #    for key in self:
+            #        cogid = abs(self[key][cogIdx])
+            #        colIdx = self.cols.index(self[key][self._colIdx])
 
-                    # assign new line if cogid is missing
-                    if cogid not in self._etym_dict[ref]:
-                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-                    
-                    # assign the values for the current session
-                    try:
-                        self._etym_dict[ref][cogid][colIdx] += [key]
-                    except:
-                        self._etym_dict[ref][cogid][colIdx] = [key]
+            #        # assign new line if cogid is missing
+            #        if cogid not in self._etym_dict[ref]:
+            #            self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+            #        
+            #        # assign the values for the current session
+            #        try:
+            #            self._etym_dict[ref][cogid][colIdx] += [key]
+            #        except:
+            #            self._etym_dict[ref][cogid][colIdx] = [key]
+            elif fuzzy:
+                for key in self:
+                    cogids = self[key][cogIdx]
+                    colIdx = self.cols.index(self[key][self._colIdx])
+                    for cog in cogids:
+                        cogid = f(cog)
+                        if cog not in self._etym_dict[ref]:
+                            self._etym_dict[ref][cog] = [0 for i in range(self.width)]
+
+                        # assign new values for the current session
+                        try:
+                            self._etym_dict[ref][cog][colIdx] += [key]
+                        except:
+                            self._etym_dict[ref][cog][colIdx] = [key]
+                        
         
         if entry:
             # create the output
@@ -1047,6 +1069,14 @@ class Wordlist(_QLCParser):
 
         """
         renumber(self,source,target)
+
+    def _clean(
+            self,
+            source,
+            f=lambda x:''.join([t for t in x if t not in '()[] {},;:'])    
+            ):
+        if self._alias[source] == 'doculect':
+            clean_taxnames(self,self._alias[source],f)
 
     def _output(
             self,

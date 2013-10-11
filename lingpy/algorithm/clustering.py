@@ -340,129 +340,6 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
 
     return out
 
-def link_clustering(matrix,taxa,cutoff=0.5,threshold=False,revert=False):
-    """
-    Carry out a link clustering analysis using the method by :evobib:`Ahn2010`.
-
-    Parameters
-    ----------
-    matrix : list or :py:class:`numpy.array`
-        A two-dimensional list containing the distances.
-
-    taxa : list
-        An list containing the names of all taxa corresponding to the distances
-        in the matrix.
-    
-    cutoff : float
-        The threshold that shall be used for the initial selection of links
-        assignd to the data.
-
-
-    threshold : float (default=0.5)
-        The threshold that shall be used for the internal clustering of the
-        data.
-
-    """
-    # check for cutoff
-    if type(cutoff) == float:
-        t = cutoff
-        cutoff = lambda x: x if x <= t else False
-
-    # get the edges and the adjacency from the thresholds
-    edges = set()
-    adjacency = dict([(t,set()) for t in taxa])
-    weights = {}
-
-    for i,taxA in enumerate(taxa):
-        for j,taxB in enumerate(taxa):
-            if i < j:
-                if cutoff:
-                    if cutoff(matrix[i][j]): # <= cutoff:
-                        edges.add((taxA,taxB))
-                        adjacency[taxA].add(taxB)
-                else:
-                    edges.add((taxA,taxB))
-                    adjacency[taxA].add(taxB)
-                    adjacency[taxB].add(taxA)
-                    edges.add((taxB,taxA))
-                    weights[taxA,taxB] = matrix[i][j]
-                    weights[taxB,taxA] = matrix[i][j]
-    
-    if not weights:
-        weights = None
-
-    # initialize the HLC object
-    hlc = lc.HLC(adjacency,edges)
-
-    # carry out the analyses using defaults for the clustering
-    comms = hlc.single_linkage(threshold=threshold,w=weights)
-    edge2cid = comms[0]
-    
-    # retrieve all clusterings for the nodes
-    cluster = dict([(t,[]) for t in taxa])
-    
-    # retrieve the data
-    clr2nodes = dict()
-    clr2edges = dict()
-    
-    for edge,idx in edge2cid.items():
-        nodeA,nodeB = edge[0],edge[1]
-
-        try:
-            clr2edges[idx] += [edge]
-        except KeyError:
-            clr2edges[idx] = [edge]
-        try:
-            clr2nodes[idx] += [nodeA,nodeB]
-        except KeyError:
-            clr2nodes[idx] = [nodeA,nodeB]
-
-
-    for idx in clr2nodes:
-        clr2nodes[idx] = sorted(set(clr2nodes[idx]))
-    
-    # delete all clusters that appear as subsets of larger clusters
-    delis = []
-    for keyA in sorted(clr2nodes):
-        for keyB in sorted(clr2nodes):
-            if keyA != keyB:
-                valsA = set(clr2nodes[keyA])
-                valsB = set(clr2nodes[keyB])
-                
-                if valsA != valsB:
-                    if valsA.issubset(valsB):
-                        delis += [keyA]
-                    elif valsB.issubset(valsA):
-                        delis += [keyB]
-                elif valsA == valsB:
-                    delis += [keyB]
-    for k in set(delis):
-        del clr2nodes[k]
-
-    # renumber the data
-    mapper = dict(zip(clr2nodes.keys(),range(len(clr2nodes))))
-    
-    out = {}
-    found = []
-    for idx in clr2nodes:
-        out[mapper[idx]] = clr2nodes[idx]
-        found += clr2nodes[idx]
-    missing = [f for f in taxa if f not in found]
-    idx = max(out.keys())+1
-    for m in missing:
-        out[idx] = [m]
-        idx += 1
-
-    if not revert:
-        return out
-    else:
-        cluster = dict([(t,[]) for t in taxa])
-        for idx in out:
-            for t in out[idx]:
-                cluster[t] += [idx]
-
-        return cluster
-
 def matrix2tree(
         matrix,
         taxa,
@@ -565,6 +442,153 @@ def matrix2groups(
 
     return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
 
+def find_optimal_cutoff(matrix):
+    """
+    Use the method by :evobib:`Apeltsin2011` in order to find an optimal threshold. 
+    """
+    
+    pass
+
+def link_clustering(
+        matrix,
+        taxa,
+        cutoff=0.5,
+        threshold=False,
+        revert=False
+        ):
+    """
+    Carry out a link clustering analysis using the method by :evobib:`Ahn2010`.
+
+    Parameters
+    ----------
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
+
+    taxa : list
+        An list containing the names of all taxa corresponding to the distances
+        in the matrix.
+    
+    cutoff : float
+        The threshold that shall be used for the initial selection of links
+        assignd to the data.
+
+
+    threshold : float (default=0.5)
+        The threshold that shall be used for the internal clustering of the
+        data.
+
+    Returns
+    -------
+    cluster : dict
+        A dictionary that displays the clusters.
+
+    """
+    # check for cutoff
+    if type(cutoff) == float:
+        t = cutoff
+        cutoff = lambda x: x if x < t else False
+
+    # get the edges and the adjacency from the thresholds
+    edges = set()
+    adjacency = dict([(t,set()) for t in taxa])
+    weights = {}
+
+    for i,taxA in enumerate(taxa):
+        for j,taxB in enumerate(taxa):
+            if i < j:
+                if cutoff:
+                    if cutoff(matrix[i][j]): # <= cutoff:
+                        edges.add((taxA,taxB))
+                        adjacency[taxA].add(taxB)
+                else:
+                    edges.add((taxA,taxB))
+                    adjacency[taxA].add(taxB)
+                    adjacency[taxB].add(taxA)
+                    edges.add((taxB,taxA))
+                    weights[taxA,taxB] = matrix[i][j]
+                    weights[taxB,taxA] = matrix[i][j]
+    
+    if not weights:
+        weights = None
+    
+    if edges:
+        # initialize the HLC object
+        hlc = lc.HLC(adjacency,edges)
+    else:
+        # check for null edges: if they occur, return the clusters directly
+        if revert:
+            return dict([(a,[b]) for a,b in zip(taxa,range(len(taxa)))])
+        else:
+            return dict([(a,[b]) for a,b in zip(range(len(taxa)),taxa)])
+
+    # carry out the analyses using defaults for the clustering
+    comms = hlc.single_linkage(threshold=threshold,w=weights)
+    edge2cid = comms[0]
+    
+    # retrieve all clusterings for the nodes
+    cluster = dict([(t,[]) for t in taxa])
+    
+    # retrieve the data
+    clr2nodes = dict()
+    clr2edges = dict()
+    
+    for edge,idx in edge2cid.items():
+        nodeA,nodeB = edge[0],edge[1]
+
+        try:
+            clr2edges[idx] += [edge]
+        except KeyError:
+            clr2edges[idx] = [edge]
+        try:
+            clr2nodes[idx] += [nodeA,nodeB]
+        except KeyError:
+            clr2nodes[idx] = [nodeA,nodeB]
+
+
+    for idx in clr2nodes:
+        clr2nodes[idx] = sorted(set(clr2nodes[idx]))
+    
+    # delete all clusters that appear as subsets of larger clusters
+    delis = []
+    for keyA in sorted(clr2nodes):
+        for keyB in sorted(clr2nodes):
+            if keyA != keyB:
+                valsA = set(clr2nodes[keyA])
+                valsB = set(clr2nodes[keyB])
+                
+                if valsA != valsB:
+                    if valsA.issubset(valsB):
+                        delis += [keyA]
+                    elif valsB.issubset(valsA):
+                        delis += [keyB]
+                elif valsA == valsB:
+                    delis += [keyB]
+    for k in set(delis):
+        del clr2nodes[k]
+
+    # renumber the data
+    mapper = dict(zip(clr2nodes.keys(),range(1,len(clr2nodes)+1)))
+    
+    out = {}
+    found = []
+    for idx in clr2nodes:
+        out[mapper[idx]] = clr2nodes[idx]
+        found += clr2nodes[idx]
+    missing = [f for f in taxa if f not in found]
+    idx = max(out.keys())+1
+    for m in missing:
+        out[idx] = [m]
+        idx += 1
+
+    if not revert:
+        return out
+    else:
+        cluster = dict([(t,[]) for t in taxa])
+        for idx in out:
+            for t in out[idx]:
+                cluster[t] += [idx]
+
+        return cluster
 
 # the following lines of code are devoted to mcl clustering algorithm
 
@@ -602,7 +626,7 @@ def _interprete_matrix(matrix,revert=False):
     
     # make a converter for length
     out = [0 for i in range(len(matrix))]
-    idx = 0 
+    idx = 1 
     for clr in clusters:
         for i in clr:
             out[i] = idx
@@ -613,7 +637,7 @@ def _interprete_matrix(matrix,revert=False):
 def mcl(
         nodes,
         adjmatrix,
-        max_steps = 20,
+        max_steps = 1000,
         threshold=False,
         inflation = 2,
         expansion = 2,

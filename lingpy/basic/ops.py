@@ -216,25 +216,25 @@ def renumber(wordlist,source,target=''):
 
 def clean_taxnames(
         wordlist,
-        taxa = 'taxa'
+        column = 'doculect',
+        f = lambda x:''.join([t for t in x if t not in '()[]{},;:'])
         ):
+    """
+    Function cleans taxon names in order to make sure they can be used in Newick files.
+
+    """
     # clean the names for all taxa in a wordlist
-    current_taxa = eval('wordlist.'+taxa)
-    new_taxa = [''.join([t for t in taxon if t not in ['() ,;[]{}']]) for taxon in current_taxa]
+    current_taxa = eval('wordlist.'+column)
+    new_taxa = [f(taxon) for taxon in current_taxa]
 
     old2new = dict(zip(current_taxa,new_taxa))
-
-    wordlist.cols = [old2new[t] for t in wordlist.cols]
+    new2old = dict(zip(new_taxa,current_taxa))
     
-    # get idx for taxon
-    idx = wordlist._header[taxa]
-
-    for key in wordlist:
-        wordlist._data[key][idx] = old2new[wordlist[key][idx]]
-    wordlist.add_entries('taxa','taxa',lambda x:old2new[x],override=True)
-    wordlist._clean_cache()
-    return wordlist
-
+    if column == wordlist._col_name:
+        wordlist.cols = [old2new[t] for t in current_taxa]
+    
+    wordlist.add_entries('_doculect','doculect',lambda x:old2new[x],override=True)
+    wordlist.add_entries('doculect','_doculect',lambda x:new2old[x],override=True)
 
 def calculate(
         wordlist,

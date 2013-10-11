@@ -16,7 +16,7 @@ def bcubes(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True
         ):
     """
@@ -139,7 +139,7 @@ def pairs(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True
         ):
     """
@@ -229,10 +229,11 @@ def diff(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True,
         filename = '',
-        tofile = True
+        tofile = True,
+        fuzzy = False
         ):
     r"""
     Write differences in classifications on an item-basis to file.
@@ -327,8 +328,12 @@ def diff(
     # iterate over all concepts
     for concept in lex.concepts:
         idxs = lex.get_list(row=concept,flat=True)
-        cogsG = lex.get_list(row=concept,entry=gold,flat=True)
-        cogsT = lex.get_list(row=concept,entry=test,flat=True)
+        if not fuzzy:
+            cogsG = lex.get_list(row=concept,entry=gold,flat=True)
+            cogsT = lex.get_list(row=concept,entry=test,flat=True)
+        else:
+            cogsG = [i[0] for i in lex.get_list(row=concept,entry=gold,flat=True)]
+            cogsT = [i[0] for i in lex.get_list(row=concept,entry=test,flat=True)]
 
         # compare cogs and test
         # get the basic index for all seqs

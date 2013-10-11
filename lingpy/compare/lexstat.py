@@ -27,7 +27,7 @@ from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
 from ..convert import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
-from ..algorithm.clustering import mcl
+from ..algorithm.clustering import mcl,link_clustering
 
 try:
     from ..algorithm.cython import calign
@@ -445,6 +445,9 @@ class LexStat(Wordlist):
                 preprocessing = False,
                 gop = rcParams['align_gop'],
                 cluster_method='upgma',
+                ref = 'scaid',
+                preprocessing_method = rcParams['lexstat_preprocessing_method'],
+                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold']
                 )
         kw.update(keywords)
 
@@ -452,14 +455,15 @@ class LexStat(Wordlist):
         corrdist = {}
 
         if kw['preprocessing']:
-            if 'scaid' in self.header:
+            if kw['ref'] in self.header:
                 pass
             else:
                 self.cluster(
-                        method='sca',
-                        threshold=kw['threshold'],
+                        method=kw['preprocessing_method'],
+                        threshold=kw['preprocessing_threshold'],
                         gop = kw['gop'],
-                        cluster_method=kw['cluster_method']
+                        cluster_method=kw['cluster_method'],
+                        ref=kw['ref']
                         )
         
         for i,tA in enumerate(self.taxa):
@@ -470,11 +474,11 @@ class LexStat(Wordlist):
                     for mode,gop,scale in kw['modes']:
                         if kw['preprocessing']: 
                             numbers = [self[pair,"numbers"] for pair in
-                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
                             weights = [self[pair,"weights"] for pair in
-                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
                             prostrings = [self[pair,"prostrings"] for pair in
-                                    self.pairs[tA,tB] if self[pair,"scaid"][0] == self[pair,'scaid'][1]]
+                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
                             corrs,included = calign.corrdist(
                                     10.0,
                                     numbers,
@@ -496,7 +500,7 @@ class LexStat(Wordlist):
                             prostrings = [self[pair,"prostrings"] for pair in
                                 self.pairs[tA,tB]]
                             corrs,included = calign.corrdist(
-                                    threshold,
+                                    kw['preprocessing_threshold'],
                                     numbers,
                                     weights,
                                     prostrings,
@@ -787,7 +791,9 @@ class LexStat(Wordlist):
             rands = rcParams['lexstat_rands'],
             limit = rcParams['lexstat_limit'],
             cluster_method = rcParams['lexstat_cluster_method'],
-            gop = rcParams['align_gop']
+            gop = rcParams['align_gop'],
+            preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
+            preprocessing_method=rcParams['lexstat_preprocessing_method']
             )
         kw.update(keywords)
 
@@ -1244,6 +1250,14 @@ class LexStat(Wordlist):
                     add_self_loops = keywords['add_self_loops'],
                     revert = True
                     )
+        elif cluster_method in ['lcl','link_clustering','lc']:
+            fclust = lambda x: link_clustering(
+                    x,
+                    list(range(len(x))),
+                    cutoff = threshold,
+                    revert = True
+                    )
+
 
         # make a dictionary that stores the clusters for later update
         clr = {}
@@ -1269,18 +1283,28 @@ class LexStat(Wordlist):
             matrix = misc.squareform(matrix)
             
             # calculate the clusters using flat-upgma
-            #c = cluster.flat_cluster(cluster_method,threshold,matrix,revert=True)
             c = fclust(matrix)
 
-            # extract the clusters
-            clusters = [c[i]+k for i in range(len(matrix))]
+            if cluster_method in ['link_communities','lc','lcl']:
+                clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
+                tests = []
+                for clrx in clusters:
+                    for x in clrx:
+                        tests += [x]
+                k = max(tests)
+                for idxA,idxB in zip(indices,clusters):
+                    clr[idxA] = idxB
+                    
+            else:
+                # extract the clusters
+                clusters = [c[i]+k for i in range(len(matrix))]
 
-            # reassign the "k" value
-            k = max(clusters)
+                # reassign the "k" value
+                k = max(clusters)
             
-            # add values to cluster dictionary
-            for idxA,idxB in zip(indices,clusters):
-                clr[idxA] = idxB
+                # add values to cluster dictionary
+                for idxA,idxB in zip(indices,clusters):
+                    clr[idxA] = idxB
         
         if 'override' in keywords:
             override = keywords['override']
@@ -1451,28 +1475,4 @@ class LexStat(Wordlist):
 
         else:
             self._output(fileformat,**keywords)
-
-    def mcl(
-            self,
-            method = 'sca',
-            cluster_method='upgma',
-            threshold = 0.6,
-            scale = 0.5,
-            factor = 0.3,
-            restricted_chars = '_T',
-            mode = 'overlap',
-            gop = -2,
-            restriction = '',
-            ref = '',
-            **keywords
-            ):
-        """
-        Carry out cluster analyses with help of the Markov Cluster Algorithm.
-
-        Notes
-        -----
-        When using this function you need the 
-        """
-
-        pass
-                
+  

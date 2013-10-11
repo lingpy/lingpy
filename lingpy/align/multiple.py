@@ -258,7 +258,7 @@ class Multiple(object):
         else: 
             # check for the model
             if not model:
-                self.model = sca
+                self.model = rcParams['sca']
             else:
                 self.model = model
 
