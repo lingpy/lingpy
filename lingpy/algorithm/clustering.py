@@ -450,11 +450,12 @@ def find_optimal_cutoff(matrix):
     pass
 
 def link_clustering(
-        matrix,
         taxa,
+        matrix,
         cutoff=0.5,
         threshold=False,
-        revert=False
+        revert=False,
+        matrix_type = 'distances'
         ):
     """
     Carry out a link clustering analysis using the method by :evobib:`Ahn2010`.
@@ -483,10 +484,13 @@ def link_clustering(
         A dictionary that displays the clusters.
 
     """
-    # check for cutoff
-    if type(cutoff) == float:
-        t = cutoff
-        cutoff = lambda x: x if x < t else False
+    # check for matrix type
+    if matrix_type == 'distances':
+        evaluate = lambda x:True if x < cutoff else False
+    elif matrix_type == 'similarities':
+        evaluate = lambda x:True if x > cutoff else False
+    elif matrix_type == 'weights':
+        evaluate = lambda x:False
 
     # get the edges and the adjacency from the thresholds
     edges = set()
@@ -496,11 +500,11 @@ def link_clustering(
     for i,taxA in enumerate(taxa):
         for j,taxB in enumerate(taxa):
             if i < j:
-                if cutoff:
-                    if cutoff(matrix[i][j]): # <= cutoff:
-                        edges.add((taxA,taxB))
-                        adjacency[taxA].add(taxB)
-                else:
+                if evaluate(matrix[i][j]):
+                    edges.add((taxA,taxB))
+                    adjacency[taxA].add(taxB)
+                    adjacency[taxB].add(taxA)
+                elif matrix_type == 'weights':
                     edges.add((taxA,taxB))
                     adjacency[taxA].add(taxB)
                     adjacency[taxB].add(taxA)
@@ -637,8 +641,8 @@ def _interprete_matrix(matrix,revert=False):
 def mcl(
         nodes,
         adjmatrix,
-        max_steps = 1000,
         threshold=False,
+        max_steps = 1000,
         inflation = 2,
         expansion = 2,
         add_self_loops = True,
