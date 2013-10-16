@@ -27,7 +27,7 @@ import numpy as np
 try:
     import networkx as nx
 except ImportError:
-    print(rcParams['W_missing_module'].format('networkx'))
+    if rcParams['verbose']: print(rcParams['W_missing_module'].format('networkx'))
 
 def flat_upgma(threshold,matrix,taxa=[],revert=False):
     """
@@ -330,8 +330,12 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     --------
     ~lingpy.algorithm.clustering.link_clustering
     """
-    
-    g = nx.Graph()
+    try:
+        g = nx.Graph()
+    except NameError:
+        print(rcParams['W_missing_module'].format('networkx'))
+        return
+
     for taxon in taxa: g.add_node(taxon)
 
     for idx,taxon in enumerate(taxa):    
