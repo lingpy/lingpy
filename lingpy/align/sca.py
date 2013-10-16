@@ -856,6 +856,9 @@ class Alignments(Wordlist):
                     "[i] Did not find a cognate ID in the input file."
                     )
 
+        # store loan-status
+        self._loans = loans
+
         # check for strings
         if 'tokens' in self.header:
             stridx = self.header['tokens']
@@ -1003,8 +1006,9 @@ class Alignments(Wordlist):
                 sonar = rcParams['sonar'],
                 scoredict = rcParams['scorer'],
                 ref = rcParams['ref'],
-                plot = False,
-                filename = self.filename
+                plots = False,
+                filename = self.filename,
+                show = False
                 )
 
         kw.update(keywords)
@@ -1081,12 +1085,38 @@ class Alignments(Wordlist):
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
         
-        if kw['plots']:
-            self.output('alm',ref=kw['ref'],filename='.tmp')
-            html.alm2html('.tmp.alm',filename=kw['filename'])
+        #if kw['plots']:
+        #    self.output('alm',ref=kw['ref'],filename='.tmp')
+        #    html.alm2html('.tmp.alm',filename=kw['filename'],show=kw['show'])
                     
     def __len__(self):
         return len(self.msa)
+
+    def plot(
+            self,
+            fileformat = 'html',
+            **keywords
+            ):
+        """
+        Make an HTML plot of the aligned data.
+        """
+        defaults = dict(
+                title = 'LexStat - Automatic Cognate Judgments',
+                shorttitle = "LexStat",
+                dataset = self.filename,
+                show = False,
+                filename = self.filename,
+                ref = 'cogid'
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        self.output('alm',ref=keywords['ref'],filename='.tmp')
+        html.alm2html(
+                '.tmp.alm',
+                **keywords
+                )
 
     def get_consensus(
             self,
@@ -1295,7 +1325,10 @@ class Alignments(Wordlist):
                         row=concept,
                         flat=True
                         )
-                cogids = [self[i,ref] for i in indices]
+                if self._loans:
+                    cogids = [abs(self[i,ref]) for i in indices]
+                else:
+                    cogids = [self[i,ref] for i in indices]
                 cogids = sorted(set(cogids))
                 for cogid in cogids:
                     if cogid in self.msa[ref]:
@@ -1303,9 +1336,11 @@ class Alignments(Wordlist):
                             taxon = self.msa[ref][cogid]['taxa'][i]
                             seq = self.msa[ref][cogid]['seqs'][i]
                             cid = concept2id[concept]
+                            # add this line for alignments containing loans
+                            real_cogid = self[self.msa[ref][cogid]['ID'][i],ref]
                             out += '\t'.join(
                                 [
-                                    str(cogid),
+                                    str(real_cogid),
                                     taxon,
                                     concept,
                                     str(cid),

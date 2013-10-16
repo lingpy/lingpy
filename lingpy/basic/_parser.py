@@ -37,7 +37,9 @@ class _QLCParser(object):
             if os.path.isdir('__lingpy__'):
                 # check for file extension
                 if filename[-3:].lower() in ['qlc','csv']:
-                    path = os.path.join('__lingpy__',filename[:-3]+'bin')
+                    # split path in case it is over multiple dirs
+                    fn = os.path.split(filename)[1]
+                    path = os.path.join('__lingpy__',fn[:-3]+'bin')
                 else:
                     path = ''
                 if os.path.isfile(path):
@@ -278,7 +280,12 @@ class _QLCParser(object):
         """
         if not os.path.isdir('__lingpy__'):
             os.mkdir('__lingpy__')
-        path = os.path.join('__lingpy__/',self.filename+'.bin')
+        
+        # get the rest of the filename, important for cases in which a user
+        # loads a wordlist inside a folder without having cded into it.
+        fn = os.path.split(self.filename)[1]
+
+        path = os.path.join('__lingpy__',fn+'.bin')
         out = open(path,'wb')
         d = {}
         for key,value in self.__dict__.items():

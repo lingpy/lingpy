@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-07 14:05
-# modified : 2013-10-07 14:05
+# modified : 2013-10-16 13:40
 """
 Module provides general clustering functions for LingPy.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-07"
+__date__="2013-10-16"
 
 try:
     from .cython import cluster as cluster
@@ -68,21 +68,24 @@ def flat_upgma(threshold,matrix,taxa=[],revert=False):
 
     >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
     >>> matrix
-    array([[ 0.  ,  0.5 ,  0.67,  0.8 ,  0.2 ],
-           [ 0.5 ,  0.  ,  0.4 ,  0.7 ,  0.6 ],
-           [ 0.67,  0.4 ,  0.  ,  0.8 ,  0.8 ],
-           [ 0.8 ,  0.7 ,  0.8 ,  0.  ,  0.3 ],
-           [ 0.2 ,  0.6 ,  0.8 ,  0.3 ,  0.  ]]
+    [[0.0, 0.5, 0.67, 0.8, 0.2],
+     [0.5, 0.0, 0.4, 0.7, 0.6],
+     [0.67, 0.4, 0.0, 0.8, 0.8],
+     [0.8, 0.7, 0.8, 0.0, 0.3],
+     [0.2, 0.6, 0.8, 0.3, 0.0]]
 
     Carry out the flat cluster analysis.
 
-    >>> flat_upgma(0.5,matrix,taxa)
+    >>> flat_upgma(0.6,matrix,taxa)
     {0: ['German', 'Dutch', 'English'], 1: ['Swedish', 'Icelandic']}
 
     See also
     --------
-    lingpy.algorithm.clusters.upgma
-    lingpy.algorithm.clusters.neighbor
+    ~lingpy.algorithm.clustering.flat_cluster
+    ~lingpy.algorithm.clustering.flat_upgma
+    ~lingpy.algorithm.clustering.fuzzy
+    ~lingpy.algorithm.clustering.link_clustering
+    ~lingpy.algorithm.clustering.mcl
 
     """
     
@@ -96,7 +99,7 @@ def flat_cluster(
         revert=False
         ):
     """
-    Carry out a flat cluster analysis based on the UPGMA algorithm.
+    Carry out a flat cluster analysis based on linkage algorithms.
     
     Parameters
     ----------
@@ -134,21 +137,24 @@ def flat_cluster(
 
     >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
     >>> matrix
-    array([[ 0.  ,  0.5 ,  0.67,  0.8 ,  0.2 ],
-           [ 0.5 ,  0.  ,  0.4 ,  0.7 ,  0.6 ],
-           [ 0.67,  0.4 ,  0.  ,  0.8 ,  0.8 ],
-           [ 0.8 ,  0.7 ,  0.8 ,  0.  ,  0.3 ],
-           [ 0.2 ,  0.6 ,  0.8 ,  0.3 ,  0.  ]])
+    [[0.0, 0.5, 0.67, 0.8, 0.2],
+     [0.5, 0.0, 0.4, 0.7, 0.6],
+     [0.67, 0.4, 0.0, 0.8, 0.8],
+     [0.8, 0.7, 0.8, 0.0, 0.3],
+     [0.2, 0.6, 0.8, 0.3, 0.0]]
 
     Carry out the flat cluster analysis.
 
-    >>> flat_upgma(0.5,matrix,taxa)
+    >>> flat_cluster('upgma',0.6,matrix,taxa)
     {0: ['German', 'Dutch', 'English'], 1: ['Swedish', 'Icelandic']}
 
     See also
     --------
-    lingpy.algorithm.clusters.upgma
-    lingpy.algorithm.clusters.neighbor
+    ~lingpy.algorithm.clustering.flat_cluster
+    ~lingpy.algorithm.clustering.flat_upgma
+    ~lingpy.algorithm.clustering.fuzzy
+    ~lingpy.algorithm.clustering.link_clustering
+    ~lingpy.algorithm.clustering.mcl
 
     """
     return cluster.flat_cluster(method,threshold,matrix,taxa,revert)
@@ -203,9 +209,7 @@ def upgma(
 
     See also
     --------
-    lingpy.algorithm.cluster.neighbor
-    lingpy.algorithm.cluster.flat_upgma
-   
+    ~lingpy.algorithm.clustering.neighbor   
     """
 
     return cluster.upgma(matrix,taxa,distances)
@@ -256,8 +260,7 @@ def neighbor(matrix,taxa,distances=True):
 
     See also
     --------
-    lingpy.algorithm.cluster.upgma
-    lingpy.algorithm.cluster.flat_upgma
+    ~lingpy.algorithm.cluster.upgma
     """
     
     return cluster.upgma(matrix,taxa,distances)
@@ -283,7 +286,38 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
 
     revert : bool (default=False)
         Specify whether a reverted dictionary should be returned. 
+    
+    Returns
+    -------
+    cluster : dict
+        A dictionary with cluster-IDs as keys and a list as value, containing
+        the taxa that are assigned to a given cluster-ID.
 
+    Examples
+    --------
+    The function is automatically imported along with LingPy.
+
+    >>> from lingpy import *
+    
+    Create a list of arbitrary taxa.
+
+    >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    Create an arbitrary distance matrix.
+
+    >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
+    >>> matrix
+    [[0.0, 0.5, 0.67, 0.8, 0.2],
+     [0.5, 0.0, 0.4, 0.7, 0.6],
+     [0.67, 0.4, 0.0, 0.8, 0.8],
+     [0.8, 0.7, 0.8, 0.0, 0.3],
+     [0.2, 0.6, 0.8, 0.3, 0.0]]
+
+    Carry out the fuzzy flat cluster analysis.
+
+    >>> fuzzy(0.5,matrix,taxa)
+    {1: ['Swedish', 'Icelandic'], 2: ['Dutch', 'German'], 3: ['Dutch', 'English']}
+    
     Notes
     -----
     This is a very simple fuzzy clustering algorithm. It basically does nothing
@@ -291,6 +325,10 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     remaining taxa with the corresponding threshold, and then returning a
     combined "consensus" cluster in which taxa may be assigned to multiple
     clusters.
+
+    See also
+    --------
+    ~lingpy.algorithm.clustering.link_clustering
     """
     
     g = nx.Graph()
@@ -394,7 +432,8 @@ def matrix2tree(
 def matrix2groups(
         threshold,
         matrix,
-        taxa
+        taxa,
+        cluster_method = 'upgma'
         ):
     """
     Calculate flat cluster of distance matrix.
@@ -412,21 +451,36 @@ def matrix2groups(
     -------
     groups : dict
         A dictionary with the taxa as keys and the group assignment as values.
-        
+
+    Notes
+    -----
+    This function is important for internal calculations within wordlist. It is
+    not recommended for further use.
     """
     
-    flats = cluster.flat_upgma(
-            threshold,
-            distances,
-            taxa = [t for t in taxa]
-            )
+    if cluster_method not in ['mcl','markov']:
+        flats = cluster.flat_cluster(
+                cluster_method,
+                threshold,
+                matrix,
+                taxa = [t for t in taxa],
+                )
+    elif cluster_method in ['mcl','markov']:
+        flats = mcl(
+                taxa,
+                matrix,
+                threshold
+                )
     
     mapper = dict(zip(flats,range(1,len(taxa)+1)))
     out = {}
-    for key in flats:
+    for i,key in enumerate(flats):
         n = 'G_{0}'.format(mapper[key])
-        for t in flats[key]:
-            out[t] = n
+        if cluster_method not in ['mcl','markov']:
+            for t in flats[key]:
+                out[t] = n
+        else:
+            out[taxa[i]] = n
     return out
         
 
@@ -442,18 +496,164 @@ def matrix2groups(
 
     return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
 
-def find_optimal_cutoff(matrix):
+def _get_wad(matrix,threshold,logs = False):
     """
-    Use the method by :evobib:`Apeltsin2011` in order to find an optimal threshold. 
+    Get weighted average degree.
     """
+    if not logs:
+        logs = lambda x:x
+    elif logs == True:
+        logs = -np.log(1-score)
+
+    degreeDict = {}
+
+    for i in range(len(matrix)):
+        for j in range(i+1,len(matrix)):
+            score = matrix[i][j]
+            if score < threshold:
+                deg = logs(score)
+                try:
+                    degreeDict[i] += [deg]
+                except KeyError:
+                    degreeDict[i] = [deg]
+                try:
+                    degreeDict[j] += [deg]
+                except KeyError:
+                    degreeDict[j] = [deg]
     
-    pass
+    deg_sum = 0
+    for weights in degreeDict.values():
+        deg = sum(weights)
+        deg_sum += deg
+
+    if degreeDict:
+        return deg_sum / len(degreeDict)
+
+def find_threshold(
+        matrix,
+        thresholds=[i*0.05 for i in range(1,19)][::-1],
+        logs = True
+        ):
+    """
+    Use a variant of the method by :evobib:`Apeltsin2011` in order to find an optimal threshold.
+
+    Parameters
+    ----------
+    matrix : list
+        The distance matrix for which the threshold shall be determined.
+    thresholds : list (default = [i*0.05 for i in range(1,19)[::-1])
+        The range of thresholds that shall be tested.
+    logs : {bool,builtins.function} (default=True)
+        If set to c{True}, the logarithm of the score beyond the threshold will
+        be assigned as weight to the graph. If set to c{False} all weights will
+        be set to 1. Use a custom function to define individual ways to
+        calculate the weights.
+
+    Returns
+    -------
+    threshold : {float,None}
+        If a float is returned, this is the threshold identified by the method.
+        If c{None} is returned, no threshold could be identified.
+
+    Notes
+    -----
+    This is a very simple method that may not work well depending on the
+    dataset. So we recommend to use it with great care.
+    """
+ 
+    # get the old degree of the matrix
+    odeg = _get_wad(matrix,1)
+    
+    # store the plateaus (where nothing changes in the network)
+    plato = {0:[1.0]}
+    
+    # this is the current index of the last plateau
+    ci = 0
+    minc = 0
+    mint = 1.0
+    
+    alls = []
+
+    # start iterating and calculating
+    for i,t in enumerate(thresholds[1:],1):
+        
+        # get the new degree of the matrix under threshold t
+        ndeg = _get_wad(matrix,t,logs)
+        
+        # if there is a new degree
+        if ndeg:
+
+            # get the change in comparison with the old degree
+            cdeg = ndeg - odeg
+
+            if cdeg < minc:
+                minc = cdeg
+                mint = t
+            
+            # swap old degree to new degree
+            odeg = ndeg
+
+            # if there's a plateau, the changed degree should be equal or
+            # greater zero
+            if cdeg >= 0:
+                plato[ci] += [t]
+            else:
+                plato[i] = [t]
+                ci = i
+
+            alls += [(t,ndeg)]
+
+    # try to find the plateau of maximal length
+    sorted_plato = sorted(
+            plato,
+            key = lambda x: len(plato[x]),
+            reverse = True
+            )
+    #return [mint] 
+    if rcParams['verbose']: 
+        print('[i] Found {0} thresholds.'.format(
+            len([p for p in plato if len(plato[p]) > 1])))
+        print('... ',sorted([len(plato[p]) for p in plato],reverse=True))
+    # check if first entry is NOT of length 1
+    try:
+        return [sum(plato[t]) / len(plato[t]) for t in sorted_plato if len(plato[t]) > 1][0]
+    except:
+        return
+        # get the median
+        results = [r[1] for r in alls]
+        if len(results) / 2 != len(results) // 2:
+            median = sorted(results)[(len(results)-1)//2]
+            return alls[results.index(median)][0]
+        else:
+            if results:
+                median1 = sorted(results)[(len(results)-1)//2]
+                median2 = sorted(results)[len(results)//2]
+                r1 = alls[results.index(median1)][0]
+                r2 = alls[results.index(median2)][0]
+                return r1+r2 / 2
+        return
+       
+    
+    #if len(plato[sorted_plato[0]]) > 1 and sorted_plato[0] != 0:
+    #    t = plato[sorted_plato[0]][-1]
+    #    return t
+    #elif len(plato[sorted_plato[0]]) > 1:
+    #    if len(sorted_plato) > 1:
+    #        if len(plato[sorted_plato[1]]) > 1:
+    #            return plato[sorted_plato[1]][-1]
+    #        else:
+    #            return plato[sorted_plato[0]][-1]
+    #    else:
+    #        return plato[sorted_plato[0]][-1]
+    #elif len(plato[sorted_plato[0]]) > 1:
+    #    return plato[sorted_plato[0]][-1]
+            
 
 def link_clustering(
-        taxa,
+        threshold,
         matrix,
-        cutoff=0.5,
-        threshold=False,
+        taxa,
+        link_threshold=False,
         revert=False,
         matrix_type = 'distances'
         ):
@@ -462,33 +662,70 @@ def link_clustering(
 
     Parameters
     ----------
+    threshold : {float, bool}
+        The threshold that shall be used for the initial selection of links
+        assigned to the data. If set to c{False}, the weights from the matrix
+        will be used directly.
+
     matrix : list or :py:class:`numpy.array`
         A two-dimensional list containing the distances.
 
     taxa : list
         An list containing the names of all taxa corresponding to the distances
         in the matrix.
-    
-    cutoff : float
-        The threshold that shall be used for the initial selection of links
-        assignd to the data.
 
-
-    threshold : float (default=0.5)
+    link_threshold : float (default=0.5)
         The threshold that shall be used for the internal clustering of the
         data.
+
+    matrix_type : {"distances","similarities","weights"} (default="distances")
+        Specify the type of the matrix. If the matrix contains distance data,
+        it will be adapted to similarity data. If it contains "similarities",
+        no adaptation is needed. If it contains "weights", a weighted version
+        of link clustering (see the supplementary in :evobib:`Ahn2010` for
+        details) ]will be carried out.
 
     Returns
     -------
     cluster : dict
-        A dictionary that displays the clusters.
+        A dictionary with cluster-IDs as keys and a list as value, containing
+        the taxa that are assigned to a given cluster-ID.
 
+    Examples
+    --------
+
+    The function is automatically imported along with LingPy.
+
+    >>> from lingpy import *
+    
+    Create a list of arbitrary taxa.
+
+    >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    Create an arbitrary distance matrix.
+
+    >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
+    >>> matrix
+    [[0.0, 0.5, 0.67, 0.8, 0.2],
+     [0.5, 0.0, 0.4, 0.7, 0.6],
+     [0.67, 0.4, 0.0, 0.8, 0.8],
+     [0.8, 0.7, 0.8, 0.0, 0.3],
+     [0.2, 0.6, 0.8, 0.3, 0.0]]
+
+    Carry out the link-clustering analysis.
+
+    >>> link_clustering(0.5,matrix,taxa)
+    {1: ['Dutch', 'English', 'German'], 2: ['Icelandic', 'Swedish']}
+
+    See also
+    --------
+    ~lingpy.algorithm.clustering.fuzzy
     """
     # check for matrix type
     if matrix_type == 'distances':
-        evaluate = lambda x:True if x < cutoff else False
+        evaluate = lambda x:True if x < threshold else False
     elif matrix_type == 'similarities':
-        evaluate = lambda x:True if x > cutoff else False
+        evaluate = lambda x:True if x > threshold else False
     elif matrix_type == 'weights':
         evaluate = lambda x:False
 
@@ -526,7 +763,7 @@ def link_clustering(
             return dict([(a,[b]) for a,b in zip(range(len(taxa)),taxa)])
 
     # carry out the analyses using defaults for the clustering
-    comms = hlc.single_linkage(threshold=threshold,w=weights)
+    comms = hlc.single_linkage(threshold=link_threshold,w=weights)
     edge2cid = comms[0]
     
     # retrieve all clusterings for the nodes
@@ -612,10 +849,13 @@ def _is_idempotent(matrix):
             return False
     return True
 
-def _interprete_matrix(matrix,revert=False):
+def _interprete_matrix(
+        matrix
+        ):
     """
     Look for attracting nodes in the matrix.
     """
+    if rcParams['debug']: print(matrix)
 
     clusters = []
     flags = len(matrix) * [False]
@@ -635,84 +875,184 @@ def _interprete_matrix(matrix,revert=False):
         for i in clr:
             out[i] = idx
         idx += 1
+
+    if sum(out) == 0:
+        return list(range(len(out)))
     
     return out
 
 def mcl(
-        nodes,
-        adjmatrix,
-        threshold=False,
+        threshold,
+        matrix,
+        taxa,
         max_steps = 1000,
         inflation = 2,
         expansion = 2,
         add_self_loops = True,
-        revert = False
+        revert = False,
+        logs = True,
+        matrix_type = "distances"
         ):
     """
-    Carry out mcl clustering.
+    Carry out a clustering using the MCL algorithm (:evobib:`Dongen2000`).
+
+    Parameters
+    ----------
+    threshold : {float, bool}
+        The threshold that shall be used for the initial selection of links
+        assigned to the data. If set to c{False}, the weights from the matrix
+        will be used directly.
+
+    matrix : list or :py:class:`numpy.array`
+        A two-dimensional list containing the distances.
+
+    taxa : list
+        An list containing the names of all taxa corresponding to the distances
+        in the matrix.
+
+    max_steps : int (default=1000)
+        Maximal number of iterations.
+
+    inflation : int (default=2)
+        Inflation parameter for the MCL algorithm.
+
+    expansion : int (default=2)
+        Expansion parameter of the MCL algorithm.
+
+    add_self_loops : {True, False, builtins.function} (default=True)
+        Determine whether self-loops should be added, and if so, how they
+        should be weighted. If a function for the calculation of self-loops is
+        given, it will take the whole column of the matrix for each taxon as
+        input.
+    
+    logs : {bool,builtins.function} (default=True)
+        If set to c{True}, the logarithm of the score beyond the threshold will
+        be assigned as weight to the graph. If set to c{False} all weights will
+        be set to 1. Use a custom function to define individual ways to
+        calculate the weights.
+    
+    matrix_type : {"distances", "similarities"}
+        Specify the type of the matrix. If the matrix contains distance data,
+        it will be adapted to similarity data. If it contains "similarities",
+        no adaptation is needed.
+    
+    Examples
+    --------
+
+    The function is automatically imported along with LingPy.
+
+    >>> from lingpy import *
+    
+    Create a list of arbitrary taxa.
+
+    >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    Create an arbitrary distance matrix.
+
+    >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
+    >>> matrix
+    [[0.0, 0.5, 0.67, 0.8, 0.2],
+     [0.5, 0.0, 0.4, 0.7, 0.6],
+     [0.67, 0.4, 0.0, 0.8, 0.8],
+     [0.8, 0.7, 0.8, 0.0, 0.3],
+     [0.2, 0.6, 0.8, 0.3, 0.0]]
+
+    Carry out the link-clustering analysis.
+
+    >>> mcl(0.5,matrix,taxa)
+    {1: ['German', 'English', 'Dutch'], 2: ['Swedish', 'Icelandic']}
+
     """
     # check for type of matrix
-    if type(adjmatrix) != np.ndarray:
-        matrix = np.array(adjmatrix)
+    if type(matrix) != np.ndarray:
+        imatrix = np.array(matrix)
     else:
-        matrix = adjmatrix.copy()
+        imatrix = matrix.copy()
+    
+    # check for matrix type and decide how to handle logs
+    if matrix_type == 'distances':
+        evaluate = lambda x: True if x < threshold else False
+        if logs == True:
+            logs = lambda x: -np.log2((1-x)**2)
+        elif logs == False:
+            logs = lambda x: x
+    elif matrix_type == 'similarities':
+        evaluate = lambda x: True if x > threshold else False
+        if logs == True:
+            logs = lambda x: -np.log(x**2)
+        else:
+            logs = lambda x: x
 
     # check for threshold
     if threshold:
-        for i in range(len(matrix)):
-            matrix[i][i] = 0
-            for j in range(i,len(matrix)):
-                if matrix[i][j] > threshold:
-                    matrix[i][j] = 0
-                    matrix[j][i] = 0
+        
+        for i in range(len(imatrix)):
+            for j in range(i+1,len(imatrix)):
+                score = imatrix[i][j]
+                if evaluate(score):
+                    imatrix[i][j] = logs(score)
+                    imatrix[j][i] = logs(score)
                 else:
-                    matrix[i][j] = 1
-                    matrix[j][i] = 1
+                    imatrix[i][j] = 0
+                    imatrix[j][i] = 0
     
     # check for self_loops
-    if add_self_loops:
-        for i in range(len(matrix)):
-            matrix[i][i] = sum(matrix[:,i])
+    if add_self_loops == True:
+        for i in range(len(imatrix)):
+            imatrix[i][i] = 1
+    elif add_self_loops == False:
+        pass
+    else:
+        for i in range(len(imatrix)):
+            imatrix[i][i] = add_self_loops(imatrix[:,i])
 
+    if rcParams['debug']: print("[DEBUG]\n",imatrix)
 
     # normalize the matrix
-    matrix = _normalize_matrix(matrix)
+    imatrix = _normalize_matrix(imatrix)
 
     # start looping and the like
     steps = 0
     while True:
         
         # expansion
-        matrix = np.linalg.matrix_power(matrix,expansion)
+        imatrix = np.linalg.matrix_power(imatrix,expansion)
         
         # inflation
-        matrix = matrix ** inflation
+        imatrix = imatrix ** inflation
 
         # normalization
-        matrix = _normalize_matrix(matrix)
+        imatrix = _normalize_matrix(imatrix)
 
         # increase steps
         steps += 1
 
         # check for matrix convergence
-        if steps >= max_steps or _is_idempotent(matrix):
+        if steps >= max_steps or _is_idempotent(imatrix):
             if rcParams['debug']:
                 print("[DEBUG] Number of steps {0}.".format(steps))
             break
     
     # retrieve the clusters
-    clusters = _interprete_matrix(matrix)
+    clusters = _interprete_matrix(imatrix)
 
     # modify clusters
     if revert:
         return dict(
                 zip(
-                    range(len(nodes)),
+                    range(len(taxa)),
                     clusters
                     )
                 )
     
-    return clusters
+    clr = {}
+    for i,t in enumerate(taxa):
+        try:
+            clr[clusters[i]] += [t]
+        except:
+            clr[clusters[i]] = [t]
+
+    return clr
 
     
     

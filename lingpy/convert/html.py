@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2013-10-10 16:31
+# modified : 2013-10-15 12:51
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-10"
+__date__="2013-10-15"
 
 
 import os
@@ -53,9 +53,13 @@ def alm2html(
         title = '',
         shorttitle = '',
         filename='',
-        colored=True,
+        colored= False,
         verbose = True,
-        show = True
+        show = True,
+        main_template = '',
+        table_template = '',
+        dataset = '',
+        **keywords
         ):
     """
     Convert files in ``alm``-format into colored ``html``-format.
@@ -103,16 +107,39 @@ def alm2html(
     
     # read in the templates
     path = os.path.dirname(os.path.realpath(__file__))
-    html_path = os.path.join(path, 'templates', 'alm2html.html')
-    table_path = os.path.join(path, 'templates', 'alm2html.table.html')
-    html = codecs.open(html_path,'r','utf-8').read()
-    table = codecs.open(table_path,'r','utf-8').read()
+    
+    if main_template:
+        try:
+            html = codecs.open(main_template,'r','utf-8').read()
+        except:
+            html = codecs.open(
+                    os.path.join(path,'templates',main_template),
+                    'r',
+                    'utf-8'
+                    ).read()
+    else:
+        html_path = os.path.join(path, 'templates', 'alm2html.html')
+        html = codecs.open(html_path,'r','utf-8').read()
+    
+    if table_template:
+        try:
+            table = codecs.open(table_template,'r','utf-8').read()
+        except:
+            table = codecs.open(
+                    os.path.join(path,'templates',table_template),
+                    'r',
+                    'utf-8'
+                    ).read()
+    else:
+        table_path = os.path.join(path, 'templates', 'alm2html.table.html')
+        table = codecs.open(table_path,'r','utf-8').read()
 
     # split the data into blocks
     blocks = data.split('\n\n')
 
     # retrieve the dataset
-    dataset = blocks[0]
+    if not dataset:
+        dataset = blocks[0]
 
     # iterate over the rest of the blocks and store the data in a dictionary
     cogs = {}
@@ -141,12 +168,12 @@ def alm2html(
         else:
             colors = []
             white = True
-            for i in sorted(set([int(l[0]) for l in m])):
+            for i in sorted(set([abs(int(l[0])) for l in m])):
                 if white:
                     colors.append((i,'white'))
                     white = False
                 else:
-                    colors.append((i,'gray'))
+                    colors.append((i,'lightgray'))
                     white = True
             colors = dict(colors)
         
@@ -159,17 +186,34 @@ def alm2html(
                 NAME=iName,
                 ID = iID)
         # define the basic string for the insertion
-        bas = '<tr bgcolor="{0}">\n{1}\n</tr>'
-        for l in m:
+        bas = '<tr style="background-color:{0};font-weight:{2}">\n{1}\n</tr>'
+
+        for tracer,l in enumerate(m):
+            # check whether the current line is a borrowing
+            if int(l[0]) < 0:
+                loan_line = 'bold'
+            else:
+                loan_line = 'normal'
+
             # assign the cognate id
             tmp = '<td>{0}</td>\n'.format(l[0])
-            tmp += '<td bgcolor=white> </td>\n'
             tmp += '<td>{0}</td>\n'.format(l[1].strip('.'))
-            tmp += '<td bgcolor=white> </td>\n'
             tmp += '<td>{0}</td>\n'.format(''.join(l[4:]).replace('-',''))
-            tmp += '<td bgcolor=white> </td>\n'
-            tmp += '<td bgcolor=white><table bgcolor=white>\n<tr>\n{0}\n</tr>\n</table>\n'
-            if len(l[4:]) > 1:
+            tmp += '<td style="background-color:{0}">'.format(colors[abs(int(l[0]))])
+            tmp += '<table style="background-color:{0}">\n'.format(colors[abs(int(l[0]))])
+            tmp += '<tr>\n{0}\n</tr>\n</table>\n'
+            
+            # check whether another entry follows that is also an alignment,
+            # otherwise, there's no need to display a word as an alignment
+            cognate_set = False
+            if tracer < len(m)-1:
+                if abs(int(m[tracer+1][0])) == abs(int(l[0])):
+                    cognate_set = True
+            if tracer > 0:
+                if abs(int(m[tracer-1][0])) == abs(int(l[0])):
+                    cognate_set = True
+
+            if cognate_set: #len(l[4:]) > 1:
                 alm = ''
                 for char in l[4:]:
                     char = char
@@ -182,20 +226,34 @@ def alm2html(
                         except:
                             c = 'white'
                             error = True
-                    alm += '<td width="30px" align="center"'
+                    alm += '<td style="width:30px;text-align:center;'
                     if error:
-                        alm += 'bgcolor="{0}"><font color="red"><b>{1}</b></font></td>'.format(c,char)
+                        alm += 'background-color:{0};color:red;font-weight:bold">{1}</td>'.format(c,char)
                        
                     else:
-                        alm += 'bgcolor="{0}"><font color="white"><b>{1}</b></font></td>'.format(c,char)
+                        alm += 'background-color:{0};color:white;font-weight:bold;">{1}</td>'.format(c,char)
             else:
-                alm = '<td bgcolor="white">{0}'.format('--')
-
+                alm = '<td style="border-color:{0};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
+            
+            # format the alignment
             tmp = tmp.format(alm)
-            tmp += '<tr><td></td></tr>\n'
+
+            # check for last line, where a new line should be inserted (not the
+            # fastest solution, but plotting is not a matter of time, and it
+            # suffices it's current purpose
+            if tracer < len(m)-1:
+                pass
+            else:
+                tmp += '<tr style="background-color:white;"><td colspan="4">'
+                tmp += '<hr style="background-color:white;border-color:white;border:0;height:2pt;"/>\n'
+            
+            # format the whole string
             tmp_str += bas.format(
-                    colors[int(l[0])],
-                    tmp)
+                    colors[abs(int(l[0]))],
+                    tmp,
+                    loan_line
+                    )
+
     if not title:
         title = "LexStat - Automatic Cognate Judgments"
     if not shorttitle:
@@ -205,7 +263,8 @@ def alm2html(
             shorttitle = shorttitle,
             title = title,
             table = tmp_str,
-            dataset = dataset
+            dataset = dataset,
+            **keywords
             )
 
     out = codecs.open(filename+'.html','w','utf-8')

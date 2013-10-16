@@ -27,7 +27,7 @@ from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
 from ..convert import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
-from ..algorithm.clustering import mcl,link_clustering
+from ..algorithm import clustering
 
 try:
     from ..algorithm.cython import calign
@@ -978,6 +978,7 @@ class LexStat(Wordlist):
         keywords['factor'] = factor
         keywords['distance'] = distance
         keywords['restricted_chars'] = restricted_chars
+        keywords['return_distance'] = return_distance
 
         if type(idxA) in [tuple,str]:
             if type(idxA) == tuple:
@@ -1125,26 +1126,33 @@ class LexStat(Wordlist):
                 inflation = 2,
                 expansion = 2,
                 max_steps = 1000,
-                add_self_loops = False,
-                prepare_matrix = lambda x:np.array(x)
+                add_self_loops = True,
+                guess_threshold = False,
+                gt_logs = False,
+                mcl_logs = lambda x: -np.log2((1-x)**2),
+                _return_matrix = False # help function for test purposes
                 )
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
-
-
-
-        if not threshold:
-            # use the 5 percentile of the random distribution of non-related
-            # words (cross-semantic alignments) in order to determine a
-            # suitable threshold for the analysis.
-            if rcParams['verbose']: print("[i] Calculating a threshold for the calculation.")
-            d = self.get_random_distances(
-                    method=method,
-                    mode=mode
-                    )
-            threshold = d[int(len(d) * 15 / 1000)]
-
+        
+        # XXX the following ideas for threshold heuristics are deprecated for the
+        # moment XXX
+        #if not threshold:
+        #    # use the 5 percentile of the random distribution of non-related
+        #    # words (cross-semantic alignments) in order to determine a
+        #    # suitable threshold for the analysis.
+        #    if rcParams['verbose']: print("[i] Calculating a threshold for the calculation.")
+        #    d = self.get_random_distances(
+        #            method=method,
+        #            mode=mode
+        #            )
+        #    threshold = sum(d) / len(d) * keywords['threshold_guess']
+        #    #threshold = d[int(len(d) * keywords['threshold_guess'] / 1000)]
+        #    if rcParams['verbose']: print("[i] Threshold was set to {0:.2f}".format(threshold))
+        
+        # check for parameters and add clustering, in order to make sure that
+        # analyses are not repeated
         if hasattr(self,'params'):
             pass
         else:
@@ -1232,36 +1240,40 @@ class LexStat(Wordlist):
 
         # set up clustering algorithm, first the simple basics
         if cluster_method in ['upgma','single','complete']:
-            fclust = lambda x: cluster.flat_cluster(
+            fclust = lambda x,y: clustering.flat_cluster(
                     cluster_method,
-                    threshold,
+                    y,
                     x,
                     revert = True
                     )
         # we need specific conditions for mcl clustering
         elif cluster_method == 'mcl':
-            fclust = lambda x: mcl(
+            fclust = lambda x,y: clustering.mcl(
+                    y,
+                    x,
                     list(range(len(x))),
-                    keywords['prepare_matrix'](x), # convert distances to similarities
-                    keywords['max_steps'],
-                    threshold = threshold,
+                    max_steps = keywords['max_steps'],
                     inflation = keywords['inflation'],
                     expansion = keywords['expansion'],
                     add_self_loops = keywords['add_self_loops'],
-                    revert = True
+                    logs = keywords['mcl_logs'],
+                    revert = True,
                     )
         elif cluster_method in ['lcl','link_clustering','lc']:
-            fclust = lambda x: link_clustering(
+            fclust = lambda x,y: clustering.link_clustering(
+                    y,
                     x,
                     list(range(len(x))),
-                    cutoff = threshold,
                     revert = True
                     )
-
 
         # make a dictionary that stores the clusters for later update
         clr = {}
         k = 0
+
+        # check for return matrix keywords
+        if keywords['_return_matrix']:
+            matrices = {}
 
         for concept in sorted(concepts):
             if rcParams['verbose']: print("[i] Analyzing concept <{0}>.".format(concept))
@@ -1278,12 +1290,25 @@ class LexStat(Wordlist):
                     if i < j:
                         d = function(idxA,idxB)
                         
-                        ## append distance score to matrix
+                        # append distance score to matrix
                         matrix += [d]
-            matrix = misc.squareform(matrix)
             
-            # calculate the clusters using flat-upgma
-            c = fclust(matrix)
+            # squareform the matrix 
+            matrix = misc.squareform(matrix)
+
+            # check for return matrix
+            if keywords['_return_matrix']:
+                matrices[concept] = matrix
+            
+            # calculate the clusters using flat clustering methods
+            if keywords['guess_threshold']:
+                t = clustering.find_threshold(matrix,logs=keywords['gt_logs'])
+                if not t:
+                    t = threshold
+            else:
+                t = threshold
+            
+            c = fclust(matrix,t)
 
             if cluster_method in ['link_communities','lc','lcl']:
                 clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
@@ -1323,6 +1348,10 @@ class LexStat(Wordlist):
                 self.add_entries('editid',clr,lambda x:x,override=override)       
         else:
             self.add_entries(ref,clr,lambda x:x,override=override)
+
+        # return matrix
+        if keywords['_return_matrix']:
+            return matrices
 
     def get_random_distances(
             self,
@@ -1409,6 +1438,76 @@ class LexStat(Wordlist):
 
         return sorted(D)
     
+    def get_distances(
+            self,
+            method='lexstat',
+            mode = 'overlap',
+            gop = -2,
+            scale = 0.5,
+            factor = 0.3,
+            restricted_chars = 'T_'
+            ):
+        """
+        Method calculates randoms scores for unrelated words in a dataset.
+
+        Parameters
+        ----------
+        method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
+            Select the method that shall be used for the calculation.
+        runs : int (default=100)
+            Select the number of random alignments for each language pair.
+        mode : {'global','local','overlap','dialign'} (default='overlap')
+            Select the mode for the alignment analysis.
+        gop : int (default=-2)
+            If 'sca' is selected as a method, define the gap opening penalty.
+        scale : float (default=0.5)
+            Select the scale for the gap extension penalty.
+        factor : float (default=0.3)
+            Select the factor for extra scores for identical prosodic segments.
+        restricted_chars : str (default="T_")
+            Select the restricted chars (boundary markers) in the prosodic
+            strings in order to enable secondary alignment.
+
+        Returns
+        -------
+        D : c{numpy.array}
+            An array with all distances calculated for each sequence pair.
+        """
+        D = []
+        
+        if method in ['sca','lexstat']:
+            function = lambda x,y: self.align_pairs(
+                    x,
+                    y,
+                    method=method,
+                    distance=True,
+                    return_distance=True,
+                    pprint=False,
+                    mode = mode,
+                    scale = scale,
+                    factor = factor,
+                    gop = gop
+                    )
+        else:
+            function = lambda x,y: edit_dist(
+                    self[x,'tokens'],
+                    self[y,'tokens']
+                    )
+
+        for i,taxA in enumerate(self.taxa):
+            for j,taxB in enumerate(self.taxa):
+                if i < j:
+
+                    # get a random selection of words from both taxa
+                    sample_pairs = self.pairs[taxA,taxB]
+                    
+                    for pA,pB in sample_pairs:
+                        d = function(pA,pB)
+
+                        D += [d]
+
+        return sorted(D)
+
     def output(
             self,
             fileformat,

@@ -1,23 +1,17 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-08 11:38
-# modified : 2013-10-08 11:38
+# modified : 2013-10-14 13:15
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-08"
+__date__="2013-10-14"
 
 import codecs
 
 from ..settings import rcParams
-
-#try:
-#    from ..algorithm.cython import cluster,misc
-#except:
-#    from ..algorithm.cython import _cluster as cluster
-#    from ..algorithm.cython import _misc as misc
 
 def scorer2str(
         scorer

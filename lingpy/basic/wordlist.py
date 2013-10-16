@@ -182,8 +182,9 @@ class Wordlist(_QLCParser):
         self._cache = {}
 
         # check for taxa in meta
-        if 'taxa' not in self._meta:
-            self._meta['taxa'] = self.taxa
+        if 'taxa' in self._alias:
+            if self._alias['taxa'] not in self._meta:
+                self._meta[self._alias['taxa']] = self.cols
 
     def __getitem__(self,idx):
         """

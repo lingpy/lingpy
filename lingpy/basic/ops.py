@@ -264,6 +264,7 @@ def calculate(
             cluster = "upgma",
             force = False,
             threshold = 0.5,
+            cluster_method = 'mcl',
             )
     for k in defaults:
         if k not in keywords:
@@ -307,7 +308,8 @@ def calculate(
         wordlist._meta['groups'] = clustering.matrix2groups(
                 keywords['threshold'],
                 distances,
-                these_taxa
+                these_taxa,
+                keywords['cluster_method']
                 )
 
     if rcParams['verbose']: print("[i] Successfully calculated {0}.".format(data))
@@ -395,7 +397,7 @@ def wl2qlc(
             out += '@{0}:{1}\n'.format(k,v)
     if taxa and keywords['taxa']:
         out += '\n# TAXA\n<taxa>\n'+taxa+'\n</taxa>\n'
-    if jsonpairs:
+    if jsonpairs and 'json' not in keywords['ignore']:
         out += '\n# JSON\n'
         out += "<json>\n"
         out += json.dumps(jsonpairs,indent=4)
