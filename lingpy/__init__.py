@@ -57,5 +57,3 @@ from .compare.lexstat import *
 # import algorithm-stuff
 from .algorithm import *
 
-# import basic namespace
-from .data.names.qlc import *

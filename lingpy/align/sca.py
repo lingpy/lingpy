@@ -1106,7 +1106,7 @@ class Alignments(Wordlist):
                 dataset = self.filename,
                 show = False,
                 filename = self.filename,
-                ref = 'cogid'
+                ref = rcParams['ref']
                 )
         for k in defaults:
             if k not in keywords:
