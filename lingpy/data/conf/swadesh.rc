@@ -1,0 +1,6 @@
+item	str	item
+key	int	key
+list	str	list,swadesh_list
+gloss	str	gloss
+number	str	number
+sense	lambda x:set(x.split(';'))	sense	
