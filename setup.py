@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-09 16:28
-# modified : 2013-10-04 16:46
+# modified : 2013-10-18 11:35
 """
 Setup-Script for LingPy
 """
 
 __author__="Johann-Mattis List,Peter Bouda"
-__date__="2013-10-04"
+__date__="2013-10-18"
 
 
 import distribute_setup
@@ -46,6 +46,7 @@ if sys.version_info >= (3,):
     # import lingpy from lingpy_build folder
     sys.path = ['lingpy_build/'] + sys.path
     from lingpy import *
+    rc(schema='asjp')
     
 else:
     # make a specific directory for lingpy2
@@ -60,6 +61,7 @@ else:
     # import lingpy2 to compile the data
     sys.path = ['lingpy_build/'] + sys.path
     from lingpy import *
+    rc(schema='asjp')
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
