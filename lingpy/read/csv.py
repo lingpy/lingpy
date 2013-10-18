@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-09-01 13:00
+# modified : 2013-10-18 23:31
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-01"
+__date__="2013-10-18"
 
 import codecs
 import os
@@ -63,7 +63,7 @@ def csv2list(
     else:
         infile = filename
     if not os.path.isfile(infile):
-        raise FileNotFoundError(
+        raise NameError(
                 "[ERROR] File {0} could not be found.".format(infile)
                 )
 
@@ -183,7 +183,8 @@ def read_asjp(
         classification = 'hh',
         max_synonyms = 2,
         min_population = 0,
-        merge_vowels=True
+        merge_vowels=True,
+        evaluate = False
         ):
     
     # read in all data
@@ -194,7 +195,7 @@ def read_asjp(
     header = [h.lower() for h in data[0]]
     
     # check for family type
-    if type(family) == str:
+    if not evaluate:
         evaluate = lambda x:x.startswith(family)
 
     # index the classification index
