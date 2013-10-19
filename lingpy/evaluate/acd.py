@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-13 18:31
-# modified : 2013-03-15 10:48
+# modified : 2013-10-19 10:26
 """
 Evaluation methods for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-15"
+__date__="2013-10-19"
 
 import codecs
 from ..settings import rcParams
@@ -57,19 +57,24 @@ def bcubes(
     --------
     diff
     pairs
-    """
+    """        
+    # if loans are treated as homologs
+    if loans:
+        evl = lambda x:abs(x)
+    else:
+        evl = lambda x:x
 
     # get the etymdicts
     etdG = []
     for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
         etdG += [[]]
-        for value in [x for x in line if x != 0]:
-            etdG[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdG[-1] += [value]
     etdT = []
     for key,line in lex.get_etymdict(ref=test,loans=loans).items():
         etdT += [[]]
-        for value in [x for x in line if x != 0]:
-            etdT[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdT[-1] += [value]
     
     # b-cubed recall
     bcr = []
@@ -84,7 +89,7 @@ def bcubes(
         if gLen > 1:
 
             # get cognate-ids in the testset for the line
-            lineT = [lex[idx,test] for idx in lineG]
+            lineT = [evl(lex[idx,test]) for idx in lineG]
             
             # get the recall
             for idx in lineT:
@@ -107,7 +112,7 @@ def bcubes(
         if tLen > 1:
 
             # get cognate-ids in the testset for the line
-            lineG = [lex[idx,gold] for idx in lineT]
+            lineG = [evl(lex[idx,gold]) for idx in lineT]
             
             # get the recall
             for idx in lineG:
@@ -178,18 +183,23 @@ def pairs(
     diff
     bcubes
     """
+    # if loans are treated as homologs
+    if loans:
+        evl = lambda x:abs(x)
+    else:
+        evl = lambda x:x
 
     # get the etymdicts
     etdG = []
     for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
         etdG += [[]]
-        for value in [x for x in line if x != 0]:
-            etdG[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdG[-1] += [value]
     etdT = []
     for key,line in lex.get_etymdict(ref=test,loans=loans).items():
         etdT += [[]]
-        for value in [x for x in line if x != 0]:
-            etdT[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdT[-1] += [value]
     
     # get the pairs for gold and test
     pairsG = []
