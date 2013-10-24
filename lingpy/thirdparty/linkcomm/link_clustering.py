@@ -160,8 +160,9 @@ def similarities_weighted(adj, ij2wij):
     Aij = copy(ij2wij)
     n2a_sqrd = {}
     for n in adj:
-        Aij[n,n] = 1.0*sum( ij2wij[swap(n,i)] for i in adj[n] )/len(adj[n])
-        n2a_sqrd[n] = sum( Aij[swap(n,i)]**2 for i in i_adj[n] ) # includes (n,n)!
+        if adj[n]: # added check whether node has neighbors or not JML
+            Aij[n,n] = 1.0*sum( ij2wij[swap(n,i)] for i in adj[n] )/len(adj[n])
+            n2a_sqrd[n] = sum( Aij[swap(n,i)]**2 for i in i_adj[n] ) # includes (n,n)!
     
     min_heap = [] # elements are (1-sim,eij,eik)
     for ind,n in enumerate(adj): # n is the shared node
