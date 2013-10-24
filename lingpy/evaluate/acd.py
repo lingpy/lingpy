@@ -57,7 +57,10 @@ def bcubes(
     --------
     diff
     pairs
-    """        
+    """       
+    # clean cache of lexstat object
+    lex._clean_cache()
+
     # if loans are treated as homologs
     if loans:
         evl = lambda x:abs(x)
@@ -136,6 +139,9 @@ def bcubes(
         print('* B-Cubed-Recall:    {0:.4f} *'.format(BCR))
         print('* B-Cubed-F-Scores:  {0:.4f} *'.format(FSC))
         print('*****************************')
+    
+    # clean cache again
+    lex._clean_cache()
 
     # return the stuff
     return BCP,BCR,FSC

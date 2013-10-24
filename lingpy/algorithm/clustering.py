@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-07 14:05
-# modified : 2013-10-16 13:40
+# modified : 2013-10-24 15:17
 """
 Module provides general clustering functions for LingPy.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-16"
+__date__="2013-10-24"
 
 try:
     from .cython import cluster as cluster
@@ -29,7 +29,7 @@ try:
 except ImportError:
     if rcParams['verbose']: print(rcParams['W_missing_module'].format('networkx'))
 
-def flat_upgma(threshold,matrix,taxa=[],revert=False):
+def flat_upgma(threshold,matrix,taxa=None,revert=False):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
     (:evobib:`Sokal1958`).
@@ -88,14 +88,16 @@ def flat_upgma(threshold,matrix,taxa=[],revert=False):
     ~lingpy.algorithm.clustering.mcl
 
     """
-    
+    if taxa is None:
+        taxa = []
+
     return cluster.flat_upgma(threshold,matrix,taxa,revert)
 
 def flat_cluster(
         method,
         threshold,
         matrix,
-        taxa=[],
+        taxa=None,
         revert=False
         ):
     """
@@ -157,6 +159,9 @@ def flat_cluster(
     ~lingpy.algorithm.clustering.mcl
 
     """
+    if taxa is None:
+        taxa = []
+
     return cluster.flat_cluster(method,threshold,matrix,taxa,revert)
 
 def upgma(
@@ -659,7 +664,8 @@ def link_clustering(
         taxa,
         link_threshold=False,
         revert=False,
-        matrix_type = 'distances'
+        matrix_type = 'distances',
+        fuzzy = True
         ):
     """
     Carry out a link clustering analysis using the method by :evobib:`Ahn2010`.
@@ -746,13 +752,13 @@ def link_clustering(
                     adjacency[taxA].add(taxB)
                     adjacency[taxB].add(taxA)
                 elif matrix_type == 'weights':
-                    edges.add((taxA,taxB))
-                    adjacency[taxA].add(taxB)
-                    adjacency[taxB].add(taxA)
-                    edges.add((taxB,taxA))
-                    weights[taxA,taxB] = matrix[i][j]
-                    weights[taxB,taxA] = matrix[i][j]
-    
+                    if matrix[i][j] < threshold:
+                        edges.add((taxA,taxB))
+                        adjacency[taxA].add(taxB)
+                        adjacency[taxB].add(taxA)
+                        edges.add((taxB,taxA))
+                        weights[taxA,taxB] = -np.log2((1-matrix[i][j])**2)
+                    
     if not weights:
         weights = None
     
@@ -762,9 +768,15 @@ def link_clustering(
     else:
         # check for null edges: if they occur, return the clusters directly
         if revert:
-            return dict([(a,[b]) for a,b in zip(taxa,range(len(taxa)))])
+            if fuzzy:
+                return dict([(a,[b]) for a,b in zip(taxa,range(len(taxa)))])
+            else:
+                return dict([(a,b) for a,b in zip(taxa,range(len(taxa)))])
         else:
-            return dict([(a,[b]) for a,b in zip(range(len(taxa)),taxa)])
+            if fuzzy:
+                return dict([(a,[b]) for a,b in zip(range(len(taxa)),taxa)])
+            else:
+                return dict([(a,b) for a,b in zip(range(len(taxa)),taxa)])
 
     # carry out the analyses using defaults for the clustering
     comms = hlc.single_linkage(threshold=link_threshold,w=weights)
@@ -777,6 +789,7 @@ def link_clustering(
     clr2nodes = dict()
     clr2edges = dict()
     
+    # count the links of 
     for edge,idx in edge2cid.items():
         nodeA,nodeB = edge[0],edge[1]
 
@@ -788,7 +801,6 @@ def link_clustering(
             clr2nodes[idx] += [nodeA,nodeB]
         except KeyError:
             clr2nodes[idx] = [nodeA,nodeB]
-
 
     for idx in clr2nodes:
         clr2nodes[idx] = sorted(set(clr2nodes[idx]))
@@ -824,7 +836,46 @@ def link_clustering(
     for m in missing:
         out[idx] = [m]
         idx += 1
+    
+    # determine weights for communities to edges
+    node_weights = dict([(t,{}) for t in taxa])
+    for c,e in clr2edges.items():
+        for nA,nB in e:
+            if c in mapper:
+                this_c = mapper[c]
+                try:
+                    node_weights[nA][this_c] += 1
+                except KeyError:
+                    node_weights[nA][this_c] = 1
+                try:
+                    node_weights[nB][this_c] += 1
+                except KeyError:
+                    node_weights[nB][this_c] = 1
 
+    # revert stuff first
+    cluster = dict([(t,[]) for t in taxa])
+    for idx in out:
+        for t in out[idx]:
+            cluster[t] += [idx]
+    
+    # weight membership of nodes and assign to most prominent community
+    if not fuzzy:
+        new_cluster = {}
+        for t,clr in cluster.items():
+            weighted = sorted(
+                    clr,
+                    key = lambda x: node_weights[t][x] if x in node_weights[t] else 0,
+                    reverse=True
+                    )
+            new_cluster[t] = weighted[0]
+        if revert:
+            return dict([(taxa.index(t),c) for t,c in new_cluster.items()])    
+        else:
+            out = dict([(c,[]) for c in set(new_cluster.values())])
+            for t,c in new_cluster.items():
+                out[c] += [t]
+        return out
+            
     if not revert:
         return out
     else:
@@ -1058,6 +1109,162 @@ def mcl(
 
     return clr
 
+def partition_density(matrix,t):
+    """
+    Calculate partition density for a given threshold on a distance matrix.
+    
+    Notes
+    -----
+    See :evobib:`Ahn2012` for details on the calculation of partition density
+    in a given network.
+    """
+    
+    # compute cutoff for matrix at t
+    m = np.zeros((len(matrix),len(matrix)))
+
+    for i in range(len(matrix)):
+        for j in range(i+1,len(matrix)):
+            if matrix[i][j] < t:
+                m[i][j] = 1
+                m[j][i] = 1
+    # get the total number of links
+    T = sum(m.flatten()) / 2
+    
+    # get connected components
+    nodes = list(range(len(m)))
+    idx = 1
+    parts = [0 for i in range(len(m))]
+    
+    for i in range(len(m)):
+        for j in range(i+1,len(m)):
+            if m[i][j] == 1:
+                if parts[i] == parts[j] and parts[i] != 0:
+                    pass
+                else:
+                    # most complicated, update all the stuff
+                    if parts[i] > 0 and parts[j] > 0:
+                        
+                        # determine best idx
+                        if parts[i] > parts[j]:
+                            this = parts[j]
+                            other = parts[i]
+                        else:
+                            this = parts[i]
+                            other = parts[j]
+                            
+                        # find all neighbors of the 
+                        idxs = [n for n in nodes if parts[n] == other]
+                        for n in idxs:
+                            parts[n] = this
+                    elif parts[i] == 0 and parts[j] == 0:
+                        parts[i] = idx
+                        parts[j] = idx
+                        idx += 1
+                    elif parts[i] > 0:
+                        parts[j] = parts[i]
+                    elif parts[j] > 0:
+                        parts[i] = parts[j]
+    
+    # finish unconnected components
+    for i,p in enumerate(parts):
+        if p == 0:
+            parts[i] = max(parts) + 1
+
+    # convert to dictionary
+    components = sorted(set(parts))
+
+    # return zero, if all components are different
+    if len(components) == len(m):
+        return 0.0,len(components)
+
+    # count density
+    D = 0
+
+    for part in components:
+        # get nodes
+        nodes = [n for n in range(len(parts)) if parts[n] == part]
+
+        # get edges
+        edges = 0
+        for i in range(len(nodes)):
+            for j in range(i+1,len(nodes)):
+                if m[nodes[i]][nodes[j]] == 1:
+                    edges += 1
+
+        N = len(nodes)
+        M = edges
+        
+        # calculate sum formula
+        x = 1
+        try:
+
+            t = M * (M - (N - x)) / ((N - 1 + x) * ( N -x))
+            D += t
+        except ZeroDivisionError:
+            pass
+
+    return 2 / T * D,len(components)
+
+def best_threshold(
+        matrix,
+        trange = (0.3,0.7,0.05)
+        ):
+    """
+    Calculate the best threshold by maximizing partition density for a given range of thresholds.
+    
+    Notes
+    -----
+    This method makes use of the idea of partition density proposed in
+    :evobib:`Ahn2010`.
+
+    """
+    best_score = 0
+    best_t = False
+    pds = []
+    for t in np.arange(*trange):
+        p = partition_density(matrix,t)
+        pds += [(p[0],p[1],t)]
+
+    # strip off the hightes values from the end
+    delis = []
+    pds = pds[::-1]
+    start = pds[0][0]
+    for i,(p1,p2,t) in enumerate(pds):
+        if p1 == start:
+            delis += [i]
+        else:
+            break
+    
+    if len(delis) == len(pds):
+        return 0.5 * (trange[1] - trange[0])
+    
+    for d in delis[::-1]:
+        del pds[d]
+
+    pds = pds[::-1]
+    delis = []
+    start = pds[0][0]
+    for i,(p1,p2,t) in enumerate(pds):
+        if p1 == start:
+            delis += [i]
+        else:
+            break
+
+    if len(delis) == len(pds):
+        return 0.5 * (trange[1] - trange[0])
+
+    for d in delis[::-1]:
+        del pds[d]
+
+    for p in pds:
+        
+        v = p[0] / (len(matrix)+1 - p[1])
+        if v >= best_score:
+            best_score = v
+            best_t = p[2]
+        else:
+            pass
+    return best_t
     
     
         

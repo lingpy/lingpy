@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-07-01 16:50
+# modified : 2013-10-24 15:20
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-01"
+__date__="2013-10-24"
 
 # builtin
 import random
@@ -29,14 +29,8 @@ from ..convert import *
 from ..read.phylip import read_scorer # for easy reading of scoring functions
 from ..algorithm import clustering
 
-try:
-    from ..algorithm.cython import calign
-    from ..algorithm.cython import misc
-    from ..algorithm.cython import cluster
-except:
-    from ..algorithm.cython import _calign as calign
-    from ..algorithm.cython import _misc as misc
-    from ..algorithm.cython import _cluster as cluster
+from ..algorithm import calign
+from ..algorithm import misc
 
 class LexStat(Wordlist):
     """
@@ -543,7 +537,7 @@ class LexStat(Wordlist):
                 runs = rcParams['lexstat_runs'],
                 rands = rcParams['lexstat_rands'],
                 limit = rcParams['lexstat_limit'],
-                method = rcParams['lexstat_method']
+                method = rcParams['lexstat_scoring_method']
                 )
         kw.update(keywords)
                 
@@ -649,9 +643,9 @@ class LexStat(Wordlist):
 
                                 # append to overall dist
                                 try:
-                                    corrdist[tA,tB][a,b] += d / len(modes)
+                                    corrdist[tA,tB][a,b] += d / len(kw['modes'])
                                 except:
-                                    corrdist[tA,tB][a,b] = d / len(modes)
+                                    corrdist[tA,tB][a,b] = d / len(kw['modes'])
 
         # use shuffle approach otherwise
         else:
@@ -778,13 +772,13 @@ class LexStat(Wordlist):
             the preprocessing calculation of cognates.
         """
         kw = dict(
-            method = 'shuffle',
+            method = rcParams['lexstat_scoring_method'],
             ratio = rcParams['lexstat_ratio'],
             vscale = rcParams['lexstat_vscale'],
             runs = rcParams['lexstat_runs'],
             threshold = rcParams['lexstat_threshold'],
-            modes = rcParams['lexstat_modes'], #[("global",-2,0.5),("local",-1,0.5)],
-            factor = rcParams['align_factor'], #0.3,
+            modes = rcParams['lexstat_modes'],
+            factor = rcParams['align_factor'], 
             restricted_chars = rcParams['restricted_chars'],
             force = False,
             preprocessing = True,
@@ -846,7 +840,7 @@ class LexStat(Wordlist):
                     print(rcParams['W_identical_scorer'])
                     return
             else:
-                print(rcParams['W_overwrite_scorer'])
+                if rcParams['verbose']: print(rcParams['W_overwrite_scorer'])
 
         # store parameters
         self.params = {'cscorer':params }
@@ -1065,110 +1059,32 @@ class LexStat(Wordlist):
         
         if return_distance:
             return d
-            
-    def cluster(
+    
+    def _get_matrices(
             self,
+            concept = False,
             method = 'sca',
-            cluster_method='upgma',
-            threshold = 0.3,
             scale = 0.5,
             factor = 0.3,
             restricted_chars = '_T',
             mode = 'overlap',
             gop = -2,
             restriction = '',
-            ref = '',
             **keywords
             ):
         """
-        Function for flat clustering of words into cognate sets.
+        Calculate alignment matrices.
 
-        Parameters
-        ----------
-        method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
-            Select the method that shall be used for the calculation.
-        cluster_method : {'upgma','single','complete', 'mcl'} (default='upgma')
-            Select the cluster method. 'upgma' (:evobib:`Sokal1958`) refers to
-            average linkage clustering, 'mcl' refers to the "Markov Clustering
-            Algorithm" (:evobib:`Dongen2000`).
-        threshold : float (default=0.3)
-            Select the threshold for the cluster approach. If set to c{False},
-            an automatic threshold will be calculated by calculating the
-            average distance of unrelated sequences (use with care).
-        scale : float (default=0.5)
-            Select the scale for the gap extension penalty.
-        factor : float (default=0.3)
-            Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
-            Select the restricted chars (boundary markers) in the prosodic
-            strings in order to enable secondary alignment.
-        mode : {'global','local','overlap','dialign'} (default='overlap')
-            Select the mode for the alignment analysis.
-        verbose : bool (default=False)
-            Define whether verbose output should be used or not.
-        gop : int (default=-2)
-            If 'sca' is selected as a method, define the gap opening penalty.
-        restriction : {'cv'} (default="")
-            Specify the restriction for calculations using the edit-distance.
-            Currently, only "cv" is supported. If *edit-dist* is selected as
-            *method* and *restriction* is set to *cv*, consonant-vowel matches
-            will be prohibited in the calculations and the edit distance will
-            be normalized by the length of the alignment rather than the length
-            of the longest sequence, as described in :evobib:`Heeringa2006`.
-        inflation : {int, float} (default=2)
-            Specify the inflation parameter for the use of the MCL algorithm.
-        expansion : int (default=2)
-            Specify the expansion parameter for the use of the MCL algorithm.
-
+        Notes
+        -----
+        This is an iterator object and it yields the indices of a given
+        concept, the matrix, and the concept.
         """
-        # set up defaults
-        defaults = dict(
-                inflation = 2,
-                expansion = 2,
-                max_steps = 1000,
-                add_self_loops = True,
-                guess_threshold = False,
-                gt_logs = False,
-                mcl_logs = lambda x: -np.log2((1-x)**2),
-                _return_matrix = False # help function for test purposes
-                )
+        # currently, there are no defaults XXX
+        defaults = dict()
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
-        
-        # XXX the following ideas for threshold heuristics are deprecated for the
-        # moment XXX
-        #if not threshold:
-        #    # use the 5 percentile of the random distribution of non-related
-        #    # words (cross-semantic alignments) in order to determine a
-        #    # suitable threshold for the analysis.
-        #    if rcParams['verbose']: print("[i] Calculating a threshold for the calculation.")
-        #    d = self.get_random_distances(
-        #            method=method,
-        #            mode=mode
-        #            )
-        #    threshold = sum(d) / len(d) * keywords['threshold_guess']
-        #    #threshold = d[int(len(d) * keywords['threshold_guess'] / 1000)]
-        #    if rcParams['verbose']: print("[i] Threshold was set to {0:.2f}".format(threshold))
-        
-        # check for parameters and add clustering, in order to make sure that
-        # analyses are not repeated
-        if hasattr(self,'params'):
-            pass
-        else:
-            self.params = {}
-        
-        self.params['cluster'] = "{0}_{1}_{2:.2f}".format(
-                method,
-                cluster_method,
-                threshold
-                )
-        self._stamp += '# Cluster: ' + self.params['cluster']
-        
-        if method not in ['lexstat','sca','turchin','edit-dist']:
-            raise ValueError(
-                    "[!] The method you selected is not available."
-                    )
 
         # check for method
         if method == 'lexstat':
@@ -1234,12 +1150,136 @@ class LexStat(Wordlist):
                     self[idxA,'tokens'],
                     self[idxB,'tokens']
                     )
-        
-        # for convenience and later addons
-        concepts = self.concepts
 
+        if not concept:
+            concepts = sorted(self.rows)
+        else:
+            concepts = [concept]
+
+        for c in sorted(concepts):
+            if rcParams['verbose']: print("[i] Analyzing words for concept <{0}>.".format(concept))
+
+            indices = self.get_list(
+                    row=c,
+                    flat=True
+                    )
+
+            matrix = [] #matrices[concept]
+            
+            for i,idxA in enumerate(indices):
+                for j,idxB in enumerate(indices):
+                    if i < j:
+                        d = function(idxA,idxB)
+                        
+                        # append distance score to matrix
+                        matrix += [d]
+            
+            # squareform the matrix 
+            matrix = misc.squareform(matrix)
+            
+            if not concept:
+                yield c,indices,matrix
+            else:
+                return matrix
+
+    def cluster(
+            self,
+            method = 'sca',
+            cluster_method='single',
+            threshold = 0.3,
+            scale = 0.5,
+            factor = 0.3,
+            restricted_chars = '_T',
+            mode = 'overlap',
+            gop = -2,
+            restriction = '',
+            ref = '',
+            external_function = None,
+            **keywords
+            ):
+        """
+        Function for flat clustering of words into cognate sets.
+
+        Parameters
+        ----------
+        method : {'sca','lexstat','edit-dist','turchin'} (default='sca')
+            Select the method that shall be used for the calculation.
+        cluster_method : {'upgma','single','complete', 'mcl'} (default='upgma')
+            Select the cluster method. 'upgma' (:evobib:`Sokal1958`) refers to
+            average linkage clustering, 'mcl' refers to the "Markov Clustering
+            Algorithm" (:evobib:`Dongen2000`).
+        threshold : float (default=0.3)
+            Select the threshold for the cluster approach. If set to c{False},
+            an automatic threshold will be calculated by calculating the
+            average distance of unrelated sequences (use with care).
+        scale : float (default=0.5)
+            Select the scale for the gap extension penalty.
+        factor : float (default=0.3)
+            Select the factor for extra scores for identical prosodic segments.
+        restricted_chars : str (default="T_")
+            Select the restricted chars (boundary markers) in the prosodic
+            strings in order to enable secondary alignment.
+        mode : {'global','local','overlap','dialign'} (default='overlap')
+            Select the mode for the alignment analysis.
+        verbose : bool (default=False)
+            Define whether verbose output should be used or not.
+        gop : int (default=-2)
+            If 'sca' is selected as a method, define the gap opening penalty.
+        restriction : {'cv'} (default="")
+            Specify the restriction for calculations using the edit-distance.
+            Currently, only "cv" is supported. If *edit-dist* is selected as
+            *method* and *restriction* is set to *cv*, consonant-vowel matches
+            will be prohibited in the calculations and the edit distance will
+            be normalized by the length of the alignment rather than the length
+            of the longest sequence, as described in :evobib:`Heeringa2006`.
+        inflation : {int, float} (default=2)
+            Specify the inflation parameter for the use of the MCL algorithm.
+        expansion : int (default=2)
+            Specify the expansion parameter for the use of the MCL algorithm.
+
+        """
+        # set up defaults
+        defaults = dict(
+                inflation = 2,
+                expansion = 2,
+                max_steps = 1000,
+                add_self_loops = True,
+                guess_threshold = False,
+                gt_trange = (0.4,0.6,0.02),
+                mcl_logs = lambda x: -np.log2((1-x)**2),
+                gt_mode = 'average',
+                matrix_type = 'distances',
+                link_threshold = False,
+                _return_matrix = False # help function for test purposes
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+        
+        # check for parameters and add clustering, in order to make sure that
+        # analyses are not repeated
+        if hasattr(self,'params'):
+            pass
+        else:
+            self.params = {}
+        
+        self.params['cluster'] = "{0}_{1}_{2:.2f}".format(
+                method,
+                cluster_method,
+                threshold
+                )
+        self._stamp += '# Cluster: ' + self.params['cluster']
+        
+        if method not in ['lexstat','sca','turchin','edit-dist']:
+            raise ValueError(
+                    "[!] The method you selected is not available."
+                    )
+        
         # set up clustering algorithm, first the simple basics
-        if cluster_method in ['upgma','single','complete']:
+        if external_function:
+            fclust = external_function
+
+        elif cluster_method in ['upgma','single','complete']:
             fclust = lambda x,y: clustering.flat_cluster(
                     cluster_method,
                     y,
@@ -1264,53 +1304,57 @@ class LexStat(Wordlist):
                     y,
                     x,
                     list(range(len(x))),
-                    revert = True
+                    revert = True,
+                    fuzzy = False,
+                    matrix_type = keywords['matrix_type'],
+                    link_threshold = keywords['link_threshold']
                     )
 
         # make a dictionary that stores the clusters for later update
         clr = {}
         k = 0
+        
+        # create a matrix iterator
+        matrices = self._get_matrices(
+                method            = method,
+                scale             = scale,
+                factor            = factor,
+                restricted_chars  = restricted_chars,
+                mode              = mode,
+                gop               = gop,
+                restriction       = restriction,
+                **keywords
+                )
 
-        # check for return matrix keywords
-        if keywords['_return_matrix']:
-            matrices = {}
-
-        for concept in sorted(concepts):
-            if rcParams['verbose']: print("[i] Analyzing concept <{0}>.".format(concept))
-
-            indices = self.get_list(
-                    row=concept,
-                    flat=True
+        # check for full consideration of basic t
+        if keywords['guess_threshold'] and keywords['gt_mode'] == 'average':
+            thresholds = []
+            matrices = list(matrices)
+            for c,i,m in matrices:
+                t = clustering.best_threshold(
+                    m,
+                    keywords['gt_trange']
                     )
-
-            matrix = []
+                thresholds += [t]
+            threshold = sum(thresholds) / len(thresholds)
+        
+        # iterate over the matrices
+        for concept,indices,matrix in matrices:
             
-            for i,idxA in enumerate(indices):
-                for j,idxB in enumerate(indices):
-                    if i < j:
-                        d = function(idxA,idxB)
-                        
-                        # append distance score to matrix
-                        matrix += [d]
-            
-            # squareform the matrix 
-            matrix = misc.squareform(matrix)
-
-            # check for return matrix
-            if keywords['_return_matrix']:
-                matrices[concept] = matrix
-            
-            # calculate the clusters using flat clustering methods
-            if keywords['guess_threshold']:
-                t = clustering.find_threshold(matrix,logs=keywords['gt_logs'])
-                if not t:
-                    t = threshold
+            # check for keyword to guess the threshold
+            if keywords['guess_threshold'] and keywords['gt_mode'] == 'item':
+                t = clustering.best_threshold(
+                        matrix,
+                        keywords['gt_trange']
+                        )
             else:
                 t = threshold
-            
-            c = fclust(matrix,t)
 
-            if cluster_method in ['link_communities','lc','lcl']:
+            c = fclust(matrix,t)
+            
+            # specific clustering for fuzzy methods, currently not yet
+            # supported
+            if cluster_method in ['fuzzy']: #['link_communities','lc','lcl']:
                 clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
                 tests = []
                 for clrx in clusters:
@@ -1349,9 +1393,8 @@ class LexStat(Wordlist):
         else:
             self.add_entries(ref,clr,lambda x:x,override=override)
 
-        # return matrix
-        if keywords['_return_matrix']:
-            return matrices
+        # assign thresholds to parameters
+        self._current_threshold = threshold
 
     def get_random_distances(
             self,

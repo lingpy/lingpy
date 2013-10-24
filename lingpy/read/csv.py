@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-10-18 23:31
+# modified : 2013-10-24 15:24
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-18"
+__date__="2013-10-24"
 
 import codecs
 import os
@@ -18,7 +18,7 @@ import re
 def csv2list(
         filename,
         fileformat = '',
-        dtype = [],
+        dtype = None,
         comment = '#',
         sep = '\t',
         strip_lines = True,
@@ -66,6 +66,8 @@ def csv2list(
         raise NameError(
                 "[ERROR] File {0} could not be found.".format(infile)
                 )
+
+    if dtype is None: dtype = []
 
     l = []
     
@@ -142,7 +144,7 @@ def csv2dict(
 def read_csv(
         filename,
         fileformat = '',
-        dtype = [],
+        dtype = None,
         comment = '#',
         sep = '\t'
         ):
@@ -196,10 +198,16 @@ def read_asjp(
     
     # check for family type
     if not evaluate:
-        evaluate = lambda x:x.startswith(family)
+        evaluate = lambda x,y,z:x[y].startswith(z)
 
     # index the classification index
-    cls_idx = header.index(classification)
+    if ',' in classification:
+        a,b = classification.split(',')
+        clsA_idx = header.index(a)
+        clsB_idx = header.index(b)
+        cls_idx = (clsA_idx,clsB_idx)
+    else:
+        cls_idx = header.index(classification)
     
     # create dictionary to store the data
     D,idx = {},1
@@ -219,7 +227,7 @@ def read_asjp(
 
     # iterate over data and extract the lines
     for line in data[1:]:
-        if evaluate(line[cls_idx]):
+        if evaluate(line,cls_idx,family):
             lang = line[0].strip()
             wls = line[1].strip()
             wls_gen = line[2].strip()
@@ -231,7 +239,7 @@ def read_asjp(
             except:
                 lat = ''
                 lng = ''
-            pop = int(line[7]) if line[7] else ''
+            pop = int(line[7]) if line[7] else -10
             iso = line[9].strip()
             
             # check for population
@@ -262,7 +270,7 @@ def read_asjp(
                         tokens = ' '.join(
                                     ipa2tokens(
                                         entry,
-                                        diacritics = '*$~',
+                                        diacritics = '*$~"',
                                         vowels = 'aeiouE3',
                                         tones = '',
                                         combiners = '',
@@ -270,6 +278,7 @@ def read_asjp(
                                         )
                                     )
                         tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
+                        tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
 
                         D[idx] = [
                                 lang,

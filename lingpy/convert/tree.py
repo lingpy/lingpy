@@ -17,10 +17,6 @@ from collections import deque
 # internal
 from ..settings import rcParams
 from ..thirdparty import cogent as cg
-try:
-    from ..algorithm.cython import cluster
-except:
-    from ..algorithm.cython import _cluster as cluster
 
 def _nwk_format(taxon):
     """
@@ -321,31 +317,3 @@ def nwk2tree_matrix(newick):
         matrix += [[idxA,idxB,dst,obs]]
     
     return matrix,taxa
-
-#def matrix2tree(
-#        matrix,
-#        taxa,
-#        tree_calc = "neighbor",
-#        distances = True,
-#        filename = ''
-#        ):
-#    """
-#    Calculate a tree of a given distance matrix.
-#    """
-#    
-#    if tree_calc == 'upgma':
-#        algorithm = cluster.upgma
-#    elif tree_calc == 'neighbor':
-#        algorithm = cluster.neighbor
-#
-#    newick = algorithm(matrix,taxa,distances)
-#
-#    tree = cg.LoadTree(treestring=newick)
-#    
-#    if not filename:
-#        return tree
-#    else:
-#        out = codecs.open(filename+'.nwk','w','utf-8')
-#        out.write(str(tree))
-#        out.close()
-#        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))

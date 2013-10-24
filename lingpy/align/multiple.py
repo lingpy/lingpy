@@ -1,29 +1,21 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-10-10 16:14
+# modified : 2013-10-23 15:17
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-10"
+__date__="2013-10-23"
 
 # thirdparty imports
 import numpy as np
 
-# lingpy imports
-#from ..data import *
-try:
-    from ..algorithm.cython import calign
-    from ..algorithm.cython import talign
-    from ..algorithm.cython import cluster
-    from ..algorithm.cython import misc
-except:
-    from ..algorithm.cython import _calign as calign
-    from ..algorithm.cython import _talign as talign
-    from ..algorithm.cython import _cluster as cluster
-    from ..algorithm.cython import _misc as misc
+from ..algorithm import calign
+from ..algorithm import talign
+from ..algorithm import cluster
+from ..algorithm import misc
 
 from ..thirdparty.cogent import LoadTree
 from ..sequence.sound_classes import *

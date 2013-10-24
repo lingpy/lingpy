@@ -23,12 +23,8 @@ from ..settings import rcParams
 from ._parser import _QLCParser
 from .ops import *
 
-try:
-    from ..algorithm.cython import cluster
-    from ..algorithm.cython import misc
-except:
-    from ..algorithm.cython import _cluster as cluster
-    from ..algorithm.cython import _misc as misc
+from ..algorithm import clustering as cluster
+from ..algorithm import misc
 
 # import ortho-parser
 from ..sequence.orthography import OrthographyParser
@@ -1214,7 +1210,7 @@ class Wordlist(_QLCParser):
                     else:
                         out[key] = [line[i] for i in indices]
 
-                wl2csv(
+                wl2qlc(
                         header,
                         out,
                         **keywords
