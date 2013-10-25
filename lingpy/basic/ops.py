@@ -264,7 +264,7 @@ def calculate(
             cluster = "upgma",
             force = False,
             threshold = 0.5,
-            cluster_method = 'mcl',
+            cluster_method = 'upgma',
             )
     for k in defaults:
         if k not in keywords:

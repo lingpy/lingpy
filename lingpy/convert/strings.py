@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-08 11:38
-# modified : 2013-10-14 13:15
+# modified : 2013-10-25 14:11
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-14"
+__date__="2013-10-25"
 
 import codecs
 
@@ -118,7 +118,7 @@ def msa2str(msa,wordlist=False):
 
 def matrix2dst(
         matrix,
-        taxa = [],
+        taxa = None,
         stamp = '',
         filename = '',
      ):

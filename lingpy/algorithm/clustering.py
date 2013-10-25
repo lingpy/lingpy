@@ -478,9 +478,9 @@ def matrix2groups(
                 )
     elif cluster_method in ['mcl','markov']:
         flats = mcl(
-                taxa,
+                threshold,
                 matrix,
-                threshold
+                taxa
                 )
     
     mapper = dict(zip(flats,range(1,len(taxa)+1)))
