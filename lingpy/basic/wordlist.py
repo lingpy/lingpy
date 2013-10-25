@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-09-29 11:44
+# modified : 2013-10-25 15:38
 """
 This module provides a basic class for the handling of word lists.
 """
 
-__author__="Johann-Mattis List, Steven Moran"
-__date__="2013-09-29"
+__author__="Johann-Mattis List"
+__date__="2013-10-25"
 
 import os
 import sys
@@ -1162,6 +1162,10 @@ class Wordlist(_QLCParser):
                     key = lambda x: self._header[x]
                     )
             header = [h.upper() for h in header]
+
+            # check for taxa in meta
+            if not 'taxa' in self._meta:
+                self._meta['taxa'] = self.taxa
 
             # get the data, in case a subset is chosen
             if not keywords['subset']:
