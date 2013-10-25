@@ -379,7 +379,7 @@ def _export_score_dict(score_dict):
     """
     
     letters = list(set([key[0] for key in score_dict.keys()]))
-    outfile = codes.open('score_dict.csv','w','utf-8')
+    outfile = codecs.open('score_dict.csv','w','utf-8')
     outfile.write('\t'+'\t'.join(letters)+'\n')
     for letter1 in letters:
         outfile.write(letter1)
