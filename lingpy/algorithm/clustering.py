@@ -9,6 +9,8 @@ Module provides general clustering functions for LingPy.
 __author__="Johann-Mattis List"
 __date__="2013-10-24"
 
+import codecs
+
 try:
     from .cython import cluster as cluster
     from .cython import misc as misc
@@ -505,14 +507,14 @@ def matrix2groups(
 
     return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
 
-def _get_wad(matrix,threshold,logs = False):
+def _get_wad(matrix, threshold, use_log=False):
     """
     Get weighted average degree.
     """
-    if not logs:
-        logs = lambda x:x
-    elif logs == True:
-        logs = -np.log(1-score)
+    if use_log:
+        log_f = lambda x: -np.log(1-x)
+    else:
+        log_f = lambda x: x
 
     degreeDict = {}
 
@@ -520,7 +522,7 @@ def _get_wad(matrix,threshold,logs = False):
         for j in range(i+1,len(matrix)):
             score = matrix[i][j]
             if score < threshold:
-                deg = logs(score)
+                deg = log_f(score)
                 try:
                     degreeDict[i] += [deg]
                 except KeyError:
