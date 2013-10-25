@@ -13,10 +13,9 @@ import os
 import pickle
 import codecs
 
-import numpy as np
-
 from ..settings import rcParams
 from ..read.qlc import read_qlc
+
 
 class _QLCParser(object):
     """
@@ -106,16 +105,10 @@ class _QLCParser(object):
                 self.filename = filename
         
         # raise an error otherwise
+        elif type(filename) == str:
+            raise IOError("[ERROR] Input file '{0}' does not exist.".format(filename))
         else:
-            if not os.path.isfile(filename):
-                raise IOError(
-                        "[ERROR] Input file does not exist."
-                        )
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                lines = traceback.format_exception(exc_type, exc_value,
-                    exc_traceback)
-                raise ValueError('[ERROR] Could not parse the input file. {0}'.format(lines))
+            raise TypeError("[ERROR] Unrecognized type for 'filename' arguemnt: {0}".format(type(filename).__name__))
 
         # load the configuration file
         if not conf:
