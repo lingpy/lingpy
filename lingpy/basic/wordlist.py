@@ -1279,7 +1279,7 @@ class Wordlist(_QLCParser):
                 self._meta['distances'] = wl2dst(self) # check for keywords
 
             if 'groups' not in self._meta:
-                self._meta['groups'] = matrix2groups(
+                self._meta['groups'] = cluster.matrix2groups(
                         keywords['threshold'],
                         self._meta['distances'],
                         self.taxa
