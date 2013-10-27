@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-10-16"
 
 from .distance import *
-from ..settings import rcParams
+from .settings import rcParams
 
 cmod = {}
 # check for c-modules
