@@ -443,9 +443,6 @@ class Spreadsheet:
                                 tokenized_matrix[i][j] = tokenized_form                    
         return tokenized_matrix
 
-<<<<<<< HEAD
-    def get_full_rows(self):
-=======
     def _init_matrix(self):
         """
         Create a 2D array from the CSV input and Unicode normalize its contents
@@ -647,7 +644,6 @@ class Spreadsheet:
         """
 
     def get_full_rows(self, matrix):
->>>>>>> a1825053dddf2017c501f65e938ac5ea58541021
         """
         Create a 2D matrix from only the full rows in the spreadsheet.
         """
