@@ -51,7 +51,8 @@ warnings = dict(
         W_missing_module   = "Module '{0}' could not be loaded. Some methods may not work properly.",
         W_identical_scorer = "An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
         W_overwrite_scorer = "A different scoring function has already been calculated, overwriting previous settings.",
-        W_zero_division    = "Zero-division error encountered in '{0}' and '{1}'."
+        W_zero_division    = "Zero-division error encountered in '{0}' and '{1}'.",
+        W_force = "{0} has already been calculated, force overwrite by setting 'force' to 'True'."
         )
 # adjust the prefix for the warning message
 for k,v in warnings.items():

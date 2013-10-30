@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-08 17:30
-# modified : 2013-03-08 17:30
+# modified : 2013-10-02 20:30
 """
 Module for the derivation of sound class models.
 
@@ -11,9 +11,15 @@ access when loading the library, the models are compiled and stored in binary
 files.
 """
 __author__="Johann-Mattis List"
-__date__="2013-03-08"
+__date__="2013-10-02"
 
-import networkx as nx
+from ..settings import rcParams
+
+try:
+    import networkx as nx
+except ImportError:
+    print(rcParams['W_missing_module'].format("networkx"))
+
 from pickle import dump
 import os
 import codecs
@@ -373,7 +379,7 @@ def _export_score_dict(score_dict):
     """
     
     letters = list(set([key[0] for key in score_dict.keys()]))
-    outfile = codes.open('score_dict.csv','w','utf-8')
+    outfile = codecs.open('score_dict.csv','w','utf-8')
     outfile.write('\t'+'\t'.join(letters)+'\n')
     for letter1 in letters:
         outfile.write(letter1)

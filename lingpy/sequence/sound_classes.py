@@ -213,7 +213,11 @@ def tokens2class(
             stress = rcParams['stress']
             )
     kw.update(keywords)
-
+    
+    # check whether model is passed as real model or as string
+    if str(model) == model:
+        model = rcParams[model]
+    
     out = []
     for token in tstring:
         try:

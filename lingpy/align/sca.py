@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-09-16 15:25
+# modified : 2013-10-10 16:14
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-09-16"
+__date__="2013-10-10"
 
 import numpy as np
 import re
@@ -23,10 +23,12 @@ import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
-from ..convert.newick import subGuideTree
+from ..convert import *
+from ..convert import html
 from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
+
 try:
     from ..algorithm.cython import misc
 except:
@@ -854,6 +856,9 @@ class Alignments(Wordlist):
                     "[i] Did not find a cognate ID in the input file."
                     )
 
+        # store loan-status
+        self._loans = loans
+
         # check for strings
         if 'tokens' in self.header:
             stridx = self.header['tokens']
@@ -982,9 +987,6 @@ class Alignments(Wordlist):
             should therefore be aligned specifically. This defaults to "T",
             since this is the character that represents tones in the prosodic
             strings of sequences.
-
-        plot : bool (default=False)
-            Determine whether MSA should be plotted in HTML.
         """
         kw = dict(
                 method = 'progressive',
@@ -1002,10 +1004,13 @@ class Alignments(Wordlist):
                 restricted_chars = rcParams['restricted_chars'],
                 classes = rcParams['classes'],
                 sonar = rcParams['sonar'],
-                scorer = rcParams['scorer'],
-                plot = False,
-                ref = rcParams['ref']
+                scoredict = rcParams['scorer'],
+                ref = rcParams['ref'],
+                plots = False,
+                filename = self.filename,
+                show = False
                 )
+
         kw.update(keywords)
 
         for key,value in sorted(
@@ -1013,11 +1018,29 @@ class Alignments(Wordlist):
                 key=lambda x:x[0]
                 ):
             if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
+            
+            # check for scorer keyword
+            if not kw['scoredict']:
+                m = SCA(
+                        value,
+                        **kw
+                        )
+            else:
+                # get the tokens 
+                numbers = [self[idx,'numbers'] for idx in value['ID']]
+                if kw['sonar']:
+                    sonars = [self[idx,'sonars'] for idx in value['ID']]
+                else:
+                    sonars = False
+                value['seqs'] = numbers
+                m = SCA(
+                        value,
+                        **kw
+                        )
 
-            m = SCA(
-                    value,
-                    **kw
-                    )
+                kw['sonar'] = sonars
+                kw['classes'] = False
+            
             if kw['method'] == 'progressive':
                 m.prog_align(**kw)
                         
@@ -1031,6 +1054,13 @@ class Alignments(Wordlist):
 
             if kw['swap_check']:
                 m.swap_check()
+
+            # convert back to external format, if scoredict is set
+            if kw['scoredict']:
+                for i,alm in enumerate(m.alm_matrix):
+                    tk = self[m.ID[i],'tokens']
+                    new_tk = class2tokens(tk,alm)
+                    m.alm_matrix[i] = new_tk
 
             if kw['output']:
                 try:
@@ -1054,9 +1084,39 @@ class Alignments(Wordlist):
                             )
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+        
+        #if kw['plots']:
+        #    self.output('alm',ref=kw['ref'],filename='.tmp')
+        #    html.alm2html('.tmp.alm',filename=kw['filename'],show=kw['show'])
                     
     def __len__(self):
         return len(self.msa)
+
+    def plot(
+            self,
+            fileformat = 'html',
+            **keywords
+            ):
+        """
+        Make an HTML plot of the aligned data.
+        """
+        defaults = dict(
+                title = 'LexStat - Automatic Cognate Judgments',
+                shorttitle = "LexStat",
+                dataset = self.filename,
+                show = False,
+                filename = self.filename,
+                ref = rcParams['ref']
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+
+        self.output('alm',ref=keywords['ref'],filename='.tmp')
+        html.alm2html(
+                '.tmp.alm',
+                **keywords
+                )
 
     def get_consensus(
             self,
@@ -1265,7 +1325,10 @@ class Alignments(Wordlist):
                         row=concept,
                         flat=True
                         )
-                cogids = [self[i,ref] for i in indices]
+                if self._loans:
+                    cogids = [abs(self[i,ref]) for i in indices]
+                else:
+                    cogids = [self[i,ref] for i in indices]
                 cogids = sorted(set(cogids))
                 for cogid in cogids:
                     if cogid in self.msa[ref]:
@@ -1273,9 +1336,11 @@ class Alignments(Wordlist):
                             taxon = self.msa[ref][cogid]['taxa'][i]
                             seq = self.msa[ref][cogid]['seqs'][i]
                             cid = concept2id[concept]
+                            # add this line for alignments containing loans
+                            real_cogid = self[self.msa[ref][cogid]['ID'][i],ref]
                             out += '\t'.join(
                                 [
-                                    str(cogid),
+                                    str(real_cogid),
                                     taxon,
                                     concept,
                                     str(cid),
@@ -1385,7 +1450,7 @@ def get_consensus(
         A consensus string of the given MSA.
     """
     # set defaults
-    def rep_weights(char1, char2):
+    def rep_weights(char1, char2, prosody):
                     if char1 == char2:
                         return 0
                     else:
@@ -1746,6 +1811,8 @@ def get_consensus(
                         node.sankoffPointers.append(dict())
                         sankoff1 = node.Children[0].sankoffTable[i]
                         sankoff2 = node.Children[1].sankoffTable[i]
+                        recon1 = node.Children[0].reconstructed
+                        recon2 = node.Children[1].reconstructed
                         for char in set(sankoff1.keys()) | set(sankoff2.keys()):
                             minSankoffValue = 65536
                             backPointers = ['-','-']
@@ -1763,7 +1830,13 @@ def get_consensus(
                                     if distributionBonus:
                                         bonusFactor1 /= node.distribution[i][char]
                                         bonusFactor2 /= node.distribution[i][char]
-                                    sankoffValue = mtx(char,char1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2) * bonusFactor2 + sankoff2[char2]
+                                    char1no5 = char1
+                                    char2no5 = char2
+                                    if char1no5 == "5": char1no5 = "N"
+                                    if char2no5 == "5": char2no5 = "N"
+                                    proso1 = prosodic_string(recon1 + [char1no5])[-1]
+                                    proso2 = prosodic_string(recon2 + [char2no5])[-1]
+                                    sankoffValue = mtx(char,char1,proso1) * bonusFactor1 + sankoff1[char1]  + mtx(char,char2,proso2) * bonusFactor2 + sankoff2[char2]
                                     if (sankoffValue < minSankoffValue):
                                         minSankoffValue = sankoffValue
                                         backPointers[0] = char1
@@ -1798,7 +1871,8 @@ def get_consensus(
                 minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
                 reconChar = minKeys[0]
                 def reconstruct_by_sankoff(node, char):
-                    node.reconstructed.append(char)
+                    if char == "5": node.reconstructed.append("N")
+                    else: node.reconstructed.append(char)
                     if not node.isTip():
                         reconstruct_by_sankoff(node.Children[0], node.sankoffPointers[i][char][0])
                         reconstruct_by_sankoff(node.Children[1], node.sankoffPointers[i][char][1])

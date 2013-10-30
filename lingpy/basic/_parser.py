@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-09-16 16:58
+# modified : 2013-09-29 11:44
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-16"
+__date__="2013-09-29"
 
 import os
 import pickle
@@ -15,6 +15,7 @@ import codecs
 
 from ..settings import rcParams
 from ..read.qlc import read_qlc
+
 
 class _QLCParser(object):
     """
@@ -35,7 +36,9 @@ class _QLCParser(object):
             if os.path.isdir('__lingpy__'):
                 # check for file extension
                 if filename[-3:].lower() in ['qlc','csv']:
-                    path = os.path.join('__lingpy__',filename[:-3]+'bin')
+                    # split path in case it is over multiple dirs
+                    fn = os.path.split(filename)[1]
+                    path = os.path.join('__lingpy__',fn[:-3]+'bin')
                 else:
                     path = ''
                 if os.path.isfile(path):
@@ -78,9 +81,9 @@ class _QLCParser(object):
         # check whether it's a dictionary from which we load
         if type(filename) == dict:
             input_data = filename
-            self.filename = rcParams['filename']
+            if 'filename' not in input_data:
+                self.filename = rcParams['filename']
             internal_import = True
-
         # check whether it's another wordlist-object
         elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
             input_data = dict(filename._data.items())
@@ -102,16 +105,10 @@ class _QLCParser(object):
                 self.filename = filename
         
         # raise an error otherwise
+        elif type(filename) == str:
+            raise IOError("[ERROR] Input file '{0}' does not exist.".format(filename))
         else:
-            if not os.path.isfile(filename):
-                raise IOError(
-                        "[ERROR] Input file does not exist."
-                        )
-            else:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                lines = traceback.format_exception(exc_type, exc_value,
-                    exc_traceback)
-                raise ValueError('[ERROR] Could not parse the input file. {0}'.format(lines))
+            raise TypeError("[ERROR] Unrecognized type for 'filename' arguemnt: {0}".format(type(filename).__name__))
 
         # load the configuration file
         if not conf:
@@ -184,9 +181,13 @@ class _QLCParser(object):
             except:
                 pass
         
-        # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
-        
+        # assign the data as attribute to the word list class. Note that we
+        # need to check for the type here, but since numpy also offers integer
+        # types, we don't check for type(x) == int, but instead use the
+        # str.numeric-function that returns numeric values only if it is an
+        # integer
+        self._data = dict([(int(k),v) for k,v in input_data.items() if k != 0 and str(k).isnumeric()])
+
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
         if not internal_import:
@@ -272,7 +273,12 @@ class _QLCParser(object):
         """
         if not os.path.isdir('__lingpy__'):
             os.mkdir('__lingpy__')
-        path = os.path.join('__lingpy__/',self.filename+'.bin')
+        
+        # get the rest of the filename, important for cases in which a user
+        # loads a wordlist inside a folder without having cded into it.
+        fn = os.path.split(self.filename)[1]
+
+        path = os.path.join('__lingpy__',fn+'.bin')
         out = open(path,'wb')
         d = {}
         for key,value in self.__dict__.items():

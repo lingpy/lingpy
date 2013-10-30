@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-13 18:31
-# modified : 2013-03-15 10:48
+# modified : 2013-10-19 10:26
 """
 Evaluation methods for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-15"
+__date__="2013-10-19"
 
 import codecs
 from ..settings import rcParams
@@ -16,7 +16,7 @@ def bcubes(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True
         ):
     """
@@ -57,19 +57,27 @@ def bcubes(
     --------
     diff
     pairs
-    """
+    """       
+    # clean cache of lexstat object
+    lex._clean_cache()
+
+    # if loans are treated as homologs
+    if loans:
+        evl = lambda x:abs(x)
+    else:
+        evl = lambda x:x
 
     # get the etymdicts
     etdG = []
     for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
         etdG += [[]]
-        for value in [x for x in line if x != 0]:
-            etdG[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdG[-1] += [value]
     etdT = []
     for key,line in lex.get_etymdict(ref=test,loans=loans).items():
         etdT += [[]]
-        for value in [x for x in line if x != 0]:
-            etdT[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdT[-1] += [value]
     
     # b-cubed recall
     bcr = []
@@ -84,7 +92,7 @@ def bcubes(
         if gLen > 1:
 
             # get cognate-ids in the testset for the line
-            lineT = [lex[idx,test] for idx in lineG]
+            lineT = [evl(lex[idx,test]) for idx in lineG]
             
             # get the recall
             for idx in lineT:
@@ -107,7 +115,7 @@ def bcubes(
         if tLen > 1:
 
             # get cognate-ids in the testset for the line
-            lineG = [lex[idx,gold] for idx in lineT]
+            lineG = [evl(lex[idx,gold]) for idx in lineT]
             
             # get the recall
             for idx in lineG:
@@ -131,6 +139,9 @@ def bcubes(
         print('* B-Cubed-Recall:    {0:.4f} *'.format(BCR))
         print('* B-Cubed-F-Scores:  {0:.4f} *'.format(FSC))
         print('*****************************')
+    
+    # clean cache again
+    lex._clean_cache()
 
     # return the stuff
     return BCP,BCR,FSC
@@ -139,7 +150,7 @@ def pairs(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True
         ):
     """
@@ -178,18 +189,23 @@ def pairs(
     diff
     bcubes
     """
+    # if loans are treated as homologs
+    if loans:
+        evl = lambda x:abs(x)
+    else:
+        evl = lambda x:x
 
     # get the etymdicts
     etdG = []
     for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
         etdG += [[]]
-        for value in [x for x in line if x != 0]:
-            etdG[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdG[-1] += [value]
     etdT = []
     for key,line in lex.get_etymdict(ref=test,loans=loans).items():
         etdT += [[]]
-        for value in [x for x in line if x != 0]:
-            etdT[-1] += value
+        for value in [evl(x[0]) for x in line if x != 0]:
+            etdT[-1] += [value]
     
     # get the pairs for gold and test
     pairsG = []
@@ -229,10 +245,11 @@ def diff(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=True,
+        loans=False,
         pprint=True,
         filename = '',
-        tofile = True
+        tofile = True,
+        fuzzy = False
         ):
     r"""
     Write differences in classifications on an item-basis to file.
@@ -327,8 +344,12 @@ def diff(
     # iterate over all concepts
     for concept in lex.concepts:
         idxs = lex.get_list(row=concept,flat=True)
-        cogsG = lex.get_list(row=concept,entry=gold,flat=True)
-        cogsT = lex.get_list(row=concept,entry=test,flat=True)
+        if not fuzzy:
+            cogsG = lex.get_list(row=concept,entry=gold,flat=True)
+            cogsT = lex.get_list(row=concept,entry=test,flat=True)
+        else:
+            cogsG = [i[0] for i in lex.get_list(row=concept,entry=gold,flat=True)]
+            cogsT = [i[0] for i in lex.get_list(row=concept,entry=test,flat=True)]
 
         # compare cogs and test
         # get the basic index for all seqs

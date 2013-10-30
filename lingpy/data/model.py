@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 23:14
-# modified : 2013-07-17 14:51
+# modified : 2013-10-02 20:31
 """
 Module for handling sequence models.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-17"
+__date__="2013-10-02"
 
 
 import re
@@ -237,5 +237,5 @@ def load_dvt(path=''):
     except:
         compile_dvt(path)
         dvt = load(open(pathx,'rb'))
-
+    
     return dvt
