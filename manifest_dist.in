@@ -1,0 +1,7 @@
+include distribute_setup.py three2two.py
+recursive-include lingpy *.lxs *.msa *.msq *.psq *.psq *.csv *.rc
+recursive-include lingpy *.c *.cpp *.pyx
+recursive-include lingpy *.html *.css
+recursive-include lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
+include lingpy/data/orthography_profiles/*.txt
+include lingpy/data/swadesh/*.txt

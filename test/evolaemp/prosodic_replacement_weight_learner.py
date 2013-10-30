@@ -1,5 +1,6 @@
 from numpy import *
 from lingpy import *
+from itertools import *
 import os
 
 # switch namespace to evolaemp
@@ -117,46 +118,52 @@ while iteration <= numIterations:
         #repWeights = array([x.strip().split('\t') for x in repWeightsRaw])
         
         sounds = array(['!','3','4','5','7','8','C','E','G','L','N','S','T','X','Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','-'])
-        repWeights = array([[-log(0.2 / (len(sounds) - 1)) for phon1 in sounds] for phon2 in sounds])
-        for i in range(len(sounds)):
-            repWeights[i,i] = -log(0.8) 
+        sounds_iter = iter(sounds)
+        prosody = array(['A','B','C','L','M','N','X','Y','Z'])
+        prosody_iter = iter(prosody)
+        sound_prosody_pairs = [pair[0] + pair[1] for pair in product(sounds_iter,prosody_iter)]
+        repWeights = array([[-log(0.2 / (len(sounds) - 1)) for phon1 in sound_prosody_pairs] for phon2 in sounds])
+        for j in range(len(sounds)):
+            for i in range(len(prosody)):
+                repWeights[j, j * 9 + i] = -log(0.8) 
     else:    
         #load replacement weights for reconstruction
-        mfile = open("replacement-weights" + str(iteration -1) + ".txt","r")
-        sounds = array(mfile.readline().strip().split("\t"))
+        mfile = open("prosodic-replacement-weights" + str(iteration -1) + ".txt","r")
+        #sounds = array(mfile.readline().strip().split("\t"))
+        mfile.readline()
         repWeightsRaw = mfile.readlines()
         mfile.close()
         
         repWeights = array([x.strip().split('\t') for x in repWeightsRaw])
         
-    if iteration % 2 == 0:
-        method = "strengthenClearWinner"
-    else:
-        method = "strengthenUnclearWinner"
+    #if iteration % 2 == 0:
+    #    method = "strengthenClearWinner"
+    #else:
+    #    method = "strengthenUnclearWinner"
         
     symbolToSoundID = dict([(sounds[i],i) for i in range(len(sounds))])
-    def rep_weights(phon1, phon2):
+    pairToPairID = dict([(sound_prosody_pairs[i],i) for i in range(len(sound_prosody_pairs))])
+    def rep_weights(phon1, phon2, prosody):
         if len(phon1) == 1 and len(phon2) == 1:
-            return double(repWeights[symbolToSoundID[phon1],symbolToSoundID[phon2]])
+            return double(repWeights[symbolToSoundID[phon2],pairToPairID[phon1 + prosody]])
         return 10
     
     global_replacement_probabilities = dict()
     for phon1 in sounds:
-        global_replacement_probabilities[phon1] = dict()
-        for phon2 in sounds:
-            global_replacement_probabilities[phon1][phon2] = exp(-rep_weights(phon1,phon2))
+        for proso in prosody:
+            global_replacement_probabilities[phon1 + proso] = dict()
+            for phon2 in sounds:
+                global_replacement_probabilities[phon1+proso][phon2] = exp(-rep_weights(phon1,phon2,proso))
     
     globalParsimony = 0  
-    globalLikelihood = 0
-    
     probCorrectionsPlus = dict()
-    for sound in sounds:
+    for sound in sound_prosody_pairs:
         probCorrectionsPlus[sound] = dict((sound,0.0) for sound in sounds)
     probCorrectionsMinus = dict()
-    for sound in sounds:
+    for sound in sound_prosody_pairs:
         probCorrectionsMinus[sound] = dict((sound,0.0) for sound in sounds)
     
-    for familyName in unique(asjpMatrix[:,2]):
+    for familyName in unique(asjpMatrix[2068:2077,2]):
         langs = where(asjpMatrix[:,2] == familyName)[0].tolist()
         phylName = str(asjpMatrix[langs[0],1])
         #print phylName + "." + str(familyName)
@@ -165,11 +172,12 @@ while iteration <= numIterations:
             #print "only one language, skipped"
     
         familyParsimony = 0.0
-        familyLikelihood = 0.0
         
         ensure_dir("output/" + phylName + "/" + familyName)
         ensure_dir("cognates/" + phylName + "/" + familyName)
     
+    #langs = range(2068,2077) #chinese languages
+    #langs = range(2425,3579) #austronesian
     #langs = range(1603,1670) #iranian languages
     #langs = range(1426,1459) #germanic languages
     #langs = range(1461,1602) #indic languages
@@ -246,10 +254,19 @@ while iteration <= numIterations:
                     #collect correction estimates based on the assumption that the reconstruction is correct
                     for node in cognateGuideTree.postorder():
                         if not node.isTip():
+                            compressed_prosody_string = prosodic_string("".join(node.reconstructed).replace("-","").replace("5","N"))
+                            prosody_string = ""
+                            pos = 0
+                            for char in node.reconstructed:
+                                if char == "-":
+                                    prosody_string += "Y" #dummy prosody value for gaps
+                                else:
+                                    prosody_string += compressed_prosody_string[pos]
+                                    pos += 1
+                            #print("".join(node.reconstructed))
+                            #print(prosody_string)
+                            #print
                             for i in range(len(node.reconstructed)):
-                                #OLD VERSION, this lead to locally suboptimal values because it built on the most parsimonious reconstruction!
-                                #minValue = node.sankoffTable[i][node.reconstructed[i]]
-                                #optimalChar = node.reconstructed[i]
                                 minValue = min(node.sankoffTable[i].values())
                                 optimalChar = [key for key in node.sankoffTable[i].keys() if node.sankoffTable[i][key]==minValue][0]
                                 if len(optimalChar) == 1:
@@ -266,45 +283,35 @@ while iteration <= numIterations:
                                         scalingFactor = 0.0
                                         if secondPlaceValue != 0:
                                             scalingFactor = minValue / secondPlaceValue
-                                        if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar][node.Children[0].reconstructed[i]] += 1.0 * scalingFactor
-                                        if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar][node.Children[1].reconstructed[i]] += 1.0 * scalingFactor
+                                        if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar + prosody_string[i]][node.Children[0].reconstructed[i]] += 1.0 * scalingFactor
+                                        if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar + prosody_string[i]][node.Children[1].reconstructed[i]] += 1.0 * scalingFactor
                                         parsimonySumWrong = sum(node.sankoffTable[i].values()) - node.sankoffTable[i][optimalChar]
                                         for phon in node.sankoffTable[i].keys():
                                             if len(phon) == 1 and phon != optimalChar:
-                                                if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsMinus[phon][node.Children[0].reconstructed[i]] += (node.sankoffTable[i][phon] / parsimonySumWrong) * scalingFactor
-                                                if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsMinus[phon][node.Children[1].reconstructed[i]] += (node.sankoffTable[i][phon] / parsimonySumWrong) * scalingFactor
+                                                if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsMinus[phon+prosody_string[i]][node.Children[0].reconstructed[i]] += (node.sankoffTable[i][phon] / parsimonySumWrong) * scalingFactor
+                                                if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsMinus[phon+prosody_string[i]][node.Children[1].reconstructed[i]] += (node.sankoffTable[i][phon] / parsimonySumWrong) * scalingFactor
                                     #THIS METHOD FURTHER STRENGTHENS THE WINNER (AND WEAKENS THE LOSERS) IN CASE OF A CLEAR OUTCOME
                                     elif method == "strengthenClearWinner":
                                         scalingFactor = 1.0
                                         if secondPlaceValue != 0:
                                             scalingFactor = 1.0 - (minValue / secondPlaceValue)
-                                        if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar][node.Children[0].reconstructed[i]] += 1.0 * scalingFactor
-                                        if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar][node.Children[1].reconstructed[i]] += 1.0 * scalingFactor
+                                        if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar + prosody_string[i]][node.Children[0].reconstructed[i]] += 1.0 * scalingFactor
+                                        if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsPlus[optimalChar + prosody_string[i]][node.Children[1].reconstructed[i]] += 1.0 * scalingFactor
                                         parsimonyDifferenceSum = sum([node.sankoffTable[i][phon] - minValue for phon in node.sankoffTable[i].keys()])
                                         #parsimonyDifferenceSum = 0.0 #comment out this line to activate collection of negative evidence
                                         if parsimonyDifferenceSum != 0.0:
                                             for phon in node.sankoffTable[i].keys():
                                                 if len(phon) == 1 and phon != optimalChar:
-                                                    if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsMinus[phon][node.Children[0].reconstructed[i]] += ((node.sankoffTable[i][phon] - minValue) / parsimonyDifferenceSum) * scalingFactor
-                                                    if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsMinus[phon][node.Children[1].reconstructed[i]] += ((node.sankoffTable[i][phon] - minValue) / parsimonyDifferenceSum) * scalingFactor
+                                                    if len(node.Children[0].reconstructed[i]) == 1: probCorrectionsMinus[phon+prosody_string[i]][node.Children[0].reconstructed[i]] += ((node.sankoffTable[i][phon] - minValue) / parsimonyDifferenceSum) * scalingFactor
+                                                    if len(node.Children[1].reconstructed[i]) == 1: probCorrectionsMinus[phon+prosody_string[i]][node.Children[1].reconstructed[i]] += ((node.sankoffTable[i][phon] - minValue) / parsimonyDifferenceSum) * scalingFactor
     
-                    #aggregate the parsimony value
                     cognateParsimony = 0.0
+                    
+                    #aggregate the parsimony value
                     for i in range(len(cognateGuideTree.reconstructed)):
                         cognateParsimony += min(cognateGuideTree.sankoffTable[i].values())
+                        
                     familyParsimony += cognateParsimony
-                    
-                    #aggregate the likelihood value
-                    cognateLikelihood = 0.0
-                    for node in cognateGuideTree.postorder():
-                        if not node.isTip():
-                            for i in range(len(node.reconstructed)):
-                                char = node.reconstructed[i]
-                                char1 = node.Children[0].reconstructed[i]
-                                char2 = node.Children[1].reconstructed[i]
-                                if len(char) == 1 and len(char1) == 1 and len(char2) == 1:
-                                    cognateLikelihood += rep_weights(char,char1) + rep_weights(char,char2)
-                    familyLikelihood += cognateLikelihood
                         
                     #print("Reconstructed proto-" + familyName + " word for concept " + str(conceptID - 3) + ":\t" + cons + "\twith average parsimony " + str(cognateParsimony / len(cognateLangs)))
                      
@@ -354,82 +361,47 @@ while iteration <= numIterations:
                     #printTree(cognateGuideTree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="recon_changes")
         #print("Total parsimony while deriving proto-" + familyName + ": " + str(familyParsimony))  
         globalParsimony += familyParsimony  
-        globalLikelihood += familyLikelihood
-    print("Iteration " + str(iteration) + " complete - parsimony " + str(globalParsimony) + ", likelihood " + str(globalLikelihood)) 
+    print("Iteration " + str(iteration) + " complete - global parsimony while reconstructing all families: " + str(globalParsimony)) 
     
-    global_replacements = dict()
-    for phon1 in sounds:
-        global_replacements[phon1] = dict()
+    exponent = 1.0/(5 * iteration)
+    #re-estimation of replacement probabilities 
+    for phon1 in sound_prosody_pairs:
         for phon2 in sounds:
-            global_replacements[phon1][phon2] = 0
-    
-    for node in guideTree.postorder():
-      if hasattr(node, "recon_changes"):
-          for phon1 in node.recon_changes.keys():
-            entries = node.recon_changes[phon1]
-            entrySum = sum(entries.values())
-            for phon2 in entries.keys():
-              if len(phon1) == 1 and len(phon2) == 1: #avoid problems with "87" and the like
-                global_replacements[phon1][phon2] += entries[phon2]
-                #print("  " + taxon1 + "->" + taxon2 + ", " + phon1 + "->" + phon2 + ": " + str(entries[phon2]) + "/" + str(entrySum))
-                entries[phon2] = entries[phon2] / entrySum
-              
-    global_replacement_probabilities = dict()
-    for phon1 in sounds:
-        global_replacement_probabilities[phon1] = dict()
-        entrySum = sum(global_replacements[phon1].values())
-        entrySum += len([phon2 for phon2 in sounds if global_replacements[phon1][phon2] == 0]) * 0.0001
+            if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
+                posEvidence = probCorrectionsPlus[phon1][phon2]
+                if (posEvidence < 0.1): posEvidence = 0.1
+                negEvidence = probCorrectionsMinus[phon1][phon2]
+                if (negEvidence < 0.1): negEvidence = 0.1
+                correctionFactor = (posEvidence / negEvidence) ** exponent
+                #correctionFactor = 1.0
+                #if probCorrectionsMinus[phon1][phon2] > 1:
+                #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
+                #if probCorrectionsPlus[phon1][phon2] > 1:
+                #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
+                print phon1 + phon2 + ": " + str(probCorrectionsPlus[phon1][phon2]) + ", " + str(probCorrectionsMinus[phon1][phon2]) + " -> " + str(correctionFactor)
+    print
+    for phon1 in sound_prosody_pairs:
         for phon2 in sounds:
-            if entrySum == 0 or global_replacements[phon1][phon2] == 0:
-                global_replacement_probabilities[phon1][phon2] = 0.0001
-            else:
-                global_replacement_probabilities[phon1][phon2] = global_replacements[phon1][phon2] / entrySum
+            if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
+                posEvidence = probCorrectionsPlus[phon1][phon2]
+                if (posEvidence < 0.1): posEvidence = 0.1
+                negEvidence = probCorrectionsMinus[phon1][phon2]
+                if (negEvidence < 0.1): negEvidence = 0.1
+                correctionFactor = (posEvidence / negEvidence) ** exponent
+                #correctionFactor = 1.0
+                #if probCorrectionsMinus[phon1][phon2] > 1:
+                #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
+                #if probCorrectionsPlus[phon1][phon2] > 1:
+                #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
+                global_replacement_probabilities[phon1][phon2] *= correctionFactor
+        normalizationFactor = sum(global_replacement_probabilities[phon1].values())
+        if normalizationFactor != 0.0:
+            for phon2 in sounds:
+                global_replacement_probabilities[phon1][phon2] /= normalizationFactor
     
-    for phon1 in sounds:
-        for phon2 in sounds:
-            if global_replacement_probabilities[phon1][phon2] != 0.0001:
-                print phon1 + phon2 + ": " + str(- log(global_replacement_probabilities[phon1][phon2]))
-        print
-    
-#     exponent = 1.0/(5 * iteration)
-#     #re-estimation of replacement probabilities 
-#     for phon1 in sounds:
-#         for phon2 in sounds:
-#             if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
-#                 posEvidence = probCorrectionsPlus[phon1][phon2]
-#                 if (posEvidence < 0.1): posEvidence = 0.1
-#                 negEvidence = probCorrectionsMinus[phon1][phon2]
-#                 if (negEvidence < 0.1): negEvidence = 0.1
-#                 correctionFactor = (posEvidence / negEvidence) ** exponent
-#                 #correctionFactor = 1.0
-#                 #if probCorrectionsMinus[phon1][phon2] > 1:
-#                 #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
-#                 #if probCorrectionsPlus[phon1][phon2] > 1:
-#                 #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
-#                 print phon1 + phon2 + ": " + str(probCorrectionsPlus[phon1][phon2]) + ", " + str(probCorrectionsMinus[phon1][phon2]) + " -> " + str(correctionFactor)
-#     print
-#     for phon1 in sounds:
-#         for phon2 in sounds:
-#             if probCorrectionsPlus[phon1][phon2] != 0 or probCorrectionsMinus[phon1][phon2] != 0:
-#                 posEvidence = probCorrectionsPlus[phon1][phon2]
-#                 if (posEvidence < 0.1): posEvidence = 0.1
-#                 negEvidence = probCorrectionsMinus[phon1][phon2]
-#                 if (negEvidence < 0.1): negEvidence = 0.1
-#                 correctionFactor = (posEvidence / negEvidence) ** exponent
-#                 #correctionFactor = 1.0
-#                 #if probCorrectionsMinus[phon1][phon2] > 1:
-#                 #    correctionFactor *= 1/(log(probCorrectionsMinus[phon1][phon2] + 1.8)) ** exponent
-#                 #if probCorrectionsPlus[phon1][phon2] > 1:
-#                 #    correctionFactor *= 1 + log(probCorrectionsPlus[phon1][phon2]) ** exponent
-#                 global_replacement_probabilities[phon1][phon2] *= correctionFactor
-#         normalizationFactor = sum(global_replacement_probabilities[phon1].values())
-#         if normalizationFactor != 0.0:
-#             for phon2 in sounds:
-#                 global_replacement_probabilities[phon1][phon2] /= normalizationFactor
-    
-    replacementWeightsFile = open("replacement-weights" + str(iteration) + ".txt",'w')
-    replacementWeightsFile.write("\t".join(sounds) + "\n")
-    for phon1 in sounds:
-        replacementWeightsFile.write("\t".join([str(- log(global_replacement_probabilities[phon1][phon2])) for phon2 in sounds]) + "\n")
+    replacementWeightsFile = open("prosodic-replacement-weights" + str(iteration) + ".txt",'w')
+    replacementWeightsFile.write("\t".join(sound_prosody_pairs) + "\n")
+    for phon2 in sounds:
+        replacementWeightsFile.write("\t".join([str(- log(global_replacement_probabilities[phon1][phon2])) for phon1 in sound_prosody_pairs]) + "\n")
     replacementWeightsFile.close()
     iteration += 1

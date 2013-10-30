@@ -19,6 +19,13 @@ scaid	int	scaid
 lexstatid	int	lexstatid
 editid	int	editid
 turchinid	int	turchinid
+fuzzyid	lambda x:[int(s) for s in x.split(" ")]	fuzzyid
 
 # New namespaces for patchy cognates
 patchyid	int	patchyid
+papid	int	papid
+
+# New namespaces for makrocomparison
+makroid	int	makroid
+mikroid	int	mikroid
+mikro_entries	lambda x: [int(i) for i in x.split(" ")]	mikro_entries

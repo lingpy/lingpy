@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 08:05
-# modified : 2013-04-15 09:30
+# modified : 2013-10-16 13:45
 """
 Package for specific algorithms and time-intensive routines.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-04-15"
+__date__="2013-10-16"
 
 from .distance import *
 from ..settings import rcParams
@@ -33,12 +33,6 @@ except:
     cmod['talign'] = 1
 
 try:
-    from .cython import cluster as cluster
-except:
-    from .cython import _cluster as cluster
-    cmod['cluster'] = 1
-
-try:
     from .cython import misc as misc
 except:
     from .cython import _misc as misc
@@ -48,3 +42,9 @@ if cmod:
     rcParams['cmodules'] = False
 else:
     rcParams['cmodules'] = True
+
+from .clustering import *
+
+# define squareform for global lingpy-applications
+squareform = misc.squareform
+

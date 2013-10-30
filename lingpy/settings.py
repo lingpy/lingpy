@@ -39,11 +39,13 @@ lexstat = dict(
         lexstat_modes          = [("global",-2,0.5),("local",-1,0.5)],
         lexstat_rands          = 1000,
         lexstat_limit          = 10000,
-        lexstat_method         = 'markov',
+        lexstat_scoring_method = 'shuffle',
         lexstat_ratio          = (2,1),
         lexstat_vscale         = 0.5,
         lexstat_threshold      = 0.7,
         lexstat_cluster_method = 'upgma',
+        lexstat_preprocessing_method = 'sca',
+        lexstat_preprocessing_threshold = 0.7
         )
 rcParams.update(lexstat)
 
@@ -167,8 +169,8 @@ def rc(**keywords):
         if key in rcParams:
             # check for special keyword "schema"
             if key == "schema":
-                if keywords[key] == "qlc":
-                    diacritis,vowels,tones = load_dvt()
+                if keywords[key] in ["qlc",'ipa']:
+                    diacritics,vowels,tones = load_dvt(path='')
                     rcParams['asjp'] = Model('asjp')
                     rcParams['sca'] = Model('sca')
                     rcParams['dolgo'] = Model('dolgo')
@@ -181,7 +183,7 @@ def rc(**keywords):
                     rcParams['breaks']       = '.-'
                     rcParams['stress']       = "ˈˌ'"
                     rcParams['merge_vowels'] = True
-                elif keywords[key] in ['evolaemp','el']:
+                elif keywords[key] in ['evolaemp','el','asjp']:
                     diacritics,vowels,tones = load_dvt(path='el')
                     rcParams['asjp'] = Model('asjp_el')
                     rcParams['sca'] = Model('sca_el')

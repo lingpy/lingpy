@@ -13,14 +13,9 @@ __date__="2013-03-05"
 #from ..data import *
 from ..settings import rcParams
 from ..sequence.sound_classes import *
-try:
-    from ..algorithm.cython import malign
-    from ..algorithm.cython import calign
-    from ..algorithm.cython import talign
-except:
-    from ..algorithm.cython import _malign as malign
-    from ..algorithm.cython import _calign as calign
-    from ..algorithm.cython import _talign as talign
+from ..algorithm import malign
+from ..algorithm import calign
+from ..algorithm import talign
 
 class Pairwise(object):
     """
