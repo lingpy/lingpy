@@ -1180,7 +1180,7 @@ class LexStat(Wordlist):
             if not concept:
                 yield c,indices,matrix
             else:
-                return matrix
+                yield matrix
 
     def cluster(
             self,
