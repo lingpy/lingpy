@@ -1,0 +1,11 @@
+# LingPy / QLC example profile
+# 
+# used also in testing of the orthography profile
+#
+# Author: Steven Moran
+#
+#
+graphemes	IPA
+-		# test case for replacement with none
+a	a
+aa	aː	# add the length marker
