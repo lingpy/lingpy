@@ -3,15 +3,16 @@ This module provides a basic class for reading in a simple spreadsheet (delimite
 """
 
 __author__="Steven Moran"
-__date__="2013-04"
+__date__="2013-07"
 
 # external imports
-import regex as re
 import sys 
+import copy
 import codecs
 import unicodedata
 import collections
 import operator
+import regex as re
 from time import gmtime, strftime
 
 # internal imports
@@ -19,7 +20,8 @@ from ..sequence.orthography import *
 from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
-from ..convert.csv import wl2csv
+from ..convert import *
+
 
 class Spreadsheet:
     """
@@ -35,18 +37,19 @@ class Spreadsheet:
     """
     def __init__(self, 
                  filename,
-                 fileformat = None, # ? what do you need this for? req'd in read.csv
-                 dtype = None, # flag for different datatypes; required in read.csv 
-                 comment = '#',
+                 fileformat = None, # req'd in read.csv
+                 dtype = None, # req' in read.csv 
+                 comment = '#', # comment marker
                  sep = '\t', # column separator
-                 language_id = "NAME", # think about this variable name
-                 lang_cols = [], # int specified columns for languages in a spreadsheet (index starts at 0)
+                 language_id = "NAME", # language column identifier
+                 # lang_cols = [], # int specified columns for languages in a spreadsheet (index starts at 0)
                  meanings = "CONCEPT", # explicit name of column containing concepts
                  blacklist = "", # filename path to blacklist file
                  conf = "", # spreadsheet .rc file
-                 cellsep = ';', # cell separator, separates forms in the same cell
+                 cellsep = ';', # cell separator, separates forms in the same cell; delimited with pipe "|"
                  verbose = False,
                  skip_empty_concepts = True,
+                 profiles = {}, # file path and names to orthography profiles
                  **keywords
                  ):
 
@@ -56,19 +59,30 @@ class Spreadsheet:
         self.comment = comment
         self.sep = sep
         self.language_id = language_id
-        self.lang_cols = lang_cols
+        # self.lang_cols = lang_cols
         self.meanings = meanings
         self.blacklist = blacklist
         self.conf = conf
         self.cellsep = cellsep
         self.skip_empty_concepts = skip_empty_concepts
+        self.profiles = profiles
         self.verbose = verbose
 
         # set up matrix
         self.matrix = []
         self._init_matrix()
         self._normalize()
-        self._blacklist()
+
+        # if self.blacklist: self._blacklist()
+        if self.profiles: self.tokenized_matrix = self._tokenize(profiles)
+
+
+        for i in range(0, len(self.matrix)):
+            print("\t".join(self.matrix[i]))
+            print("\t".join(self.tokenized_matrix[i]))
+            print()
+        sys.exit(1)
+
         self._prepare()
 
     def _blacklist(self):
@@ -95,7 +109,7 @@ class Spreadsheet:
             if line.startswith("#") or line == "":
                 continue
             line = unicodedata.normalize("NFD", line)
-            rule, replacement = line.split(",") # black list regexes must be comma delimited
+            rule, replacement = line.split(",,,") # black list regexes must be triple-comma delimited
             rule = rule.strip() # just in case there's trailing whitespace
             replacement = replacement.strip() # because there's probably trailing whitespace!
             rules.append(re.compile(rule))
@@ -104,8 +118,13 @@ class Spreadsheet:
 
         # blacklist the spreadsheet data - don't skip the header row, since
         # this may also contain blacklist information (as in Matthias' case)
-        for i in range(0, len(self.matrix)):
+        # doesn't apply to the header
+        header = self.matrix[0]
+        for i in range(1, len(self.matrix)):
             for j in range(0, len(self.matrix[i])):
+                # skip removing anything from the concept column, e.g. ()'s
+                if header[j] == self.meanings:
+                    continue
                 for k in range(0, len(rules)):
                     match = rules[k].search(self.matrix[i][j])
                     if not match == None:
@@ -227,21 +246,53 @@ class Spreadsheet:
         return type_matrix
 
 
-    def orthographic_transform(self, **kwargs):
+    def _tokenize(self, profiles):
         """ 
-        Take a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
+        Takes a dictionary or list of kwargs that specifies "column name" and "path to orthography profile".
         This function lets a user specify different orthographic profiles per column in a spreadsheet that's 
         already been semantically aligned.
         """
-        for k, v in kwargs.items():
-            # check for the orthography profile
-            # get an orthography parser
-            # identify the column and orthographically parse it in the matrix
-            # apply tokenization?
-            print(k, v)
+        tokenized_matrix = copy.deepcopy(self.matrix)
 
-        # return orthographicaly parsed (and tokenized?) matrix
-    
+        # get orthography parsers and store them in dict
+        ops = {}
+        for k, v in profiles.items():
+            ops[k] = OrthographyParser(v) #, debug=True)
+
+        # TODO: identify the column and orthographically parse it in the matrix
+
+        # apply tokenization
+        header = tokenized_matrix[0]
+        for i in range(1, len(tokenized_matrix)):
+            for j in range(0, len(tokenized_matrix[i])):
+                cell = tokenized_matrix[i][j].strip()
+                if cell == "":
+                    continue
+
+                # split up tokens by the cell separtor and grapheme-ically parse them
+                tokens = cell.split(self.cellsep)
+                tokenized_tokens = []
+                for token in tokens:
+                    token = token.strip()
+                    if header[j] in ops:
+                        tokenized_form = ops[header[j]].parse_graphemes(token).strip() # .replace("#", "").strip()
+                        if tokenized_form == "":
+                            tokenized_tokens.append("FAIL")
+                        else:
+                            tokenized_tokens.append(tokenized_form)
+                            tokenized_matrix[i][j] = " \\\\ ".join(tokenized_tokens)
+
+                    # original
+                    # tokenized_matrix[i][j] = ops[header[j]].parse_graphemes(cell).strip() # .replace("#", "").strip()
+                    # print(ops[header[j]].parse_graphemes(cell).strip()) # .replace("#", "").strip()
+                    else:
+                        if header[j] in ops:
+                            tokenized_form = ops[header[j]].parse_graphemes(cell).strip() # .replace("#", "").strip()
+                            if tokenized_form == "":
+                                tokenized_matrix[i][j] = "FAIL"
+                            else:
+                                tokenized_matrix[i][j] = tokenized_form                    
+        return tokenized_matrix
 
     def _init_matrix(self):
         """
@@ -254,18 +305,19 @@ class Spreadsheet:
             self.dtype, 
             self.comment, 
             self.sep,
-            strip_lines = False # this is of crucial importance, otherwise
+            strip_lines = False # this is of crucial importance -- why?
             )
 
         # columns that have language data
         language_indices = []
         concept_id = 0
 
-        # first row must be the header in the input; TODO: add more functionality
+        # first row must be the header in the input
+        # TODO: add more functionality
         header = spreadsheet[0] 
 
+        # TODO: fix Mattis's verbosity stuff
         if rcParams['verbose']: print(header[0:10])
-        
         for i, cell in enumerate(header):
             cell = cell.strip()
             if rcParams['verbose']: print(cell)
@@ -274,6 +326,7 @@ class Spreadsheet:
             if self.language_id in cell:
                 language_indices.append(i)
 
+        # create matrix
         matrix_header = []
         matrix_header.append(header[concept_id])        
         for i in language_indices:
@@ -284,34 +337,14 @@ class Spreadsheet:
         for i in range(1, len(spreadsheet)):
             matrix_row = []
             # if the concept cell is empty skip if flagged
-            if spreadsheet[i][concept_id] == "" and self.skip_empty_concepts:
-                continue
+            #if spreadsheet[i][concept_id] == "" and self.skip_empty_concepts:
+            #    continue
+
             for j in range(0, len(spreadsheet[i])):
                 if j == concept_id or j in language_indices:
-                    matrix_row.append(spreadsheet[i][j])
+                    matrix_row.append(spreadsheet[i][j].strip())
             self.matrix.append(matrix_row)
 
-        """
-        matrix_header = []
-        matrix_header.append(header[self.concepts])        
-        for i in language_indices:
-            matrix_header.append(header[i].replace(self.language_id, "").strip())
-        self.matrix.append(matrix_header)
-
-        # append the concepts and words in languages and append the rows
-        for i in range(1, len(spreadsheet)): # skip the header row
-            matrix_row = [] # collect concepts and languages to add to matrix
-            temp = []
-            for j in range(0, len(spreadsheet[i])):
-                if j == self.concepts:
-                    matrix_row.append(spreadsheet[i][j])
-                if j in language_indices:
-                    temp.append(spreadsheet[i][j])
-            for item in temp:
-                print(item)
-                matrix_row.append(item)
-            self.matrix.append(matrix_row)
-            """
 
     def _normalize(self):
         """ 
@@ -325,10 +358,88 @@ class Spreadsheet:
                         print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
                     self.matrix[i][j] = normalized_cell
     
+
+    def _prepare(self, full_rows=False):
+        """
+        
+        """
+        # Prepare the spreadsheet(s) for automatic pass-on to Wordlist.
+        # We now assume that the matrix contains only concepts and counterparts, 
+        # TODO: in later versions, we should make this more flexible by adding, 
+        # for example, also proto-forms, or cognate ids, etc.
+
+        """
+        # define temp matrices with full rows if specified
+        if not full_rows:
+            matrix = self.matrix
+            tokenized_matrix = self.tokenized_matrix
+        else:
+            matrix = self.get_full_rows(self.matrix)
+            tokenized_matrix = self.get_full_rows(self.tokenized_matrix)
+            """
+        matrix = self.matrix
+        tokenized_matrix = self.tokenized_matrix
+
+        # store and process the data
+        wordlist = {}
+        id = 1
+        for i in range(1, len(matrix)):
+            # get concept
+            if matrix[i]:
+                concept = matrix[i][0].strip()
+                # proceed only if there is a concept
+                if concept:
+                    for j in range(1, len(matrix[i])):
+                        language = matrix[0][j].replace(self.language_id, "").strip()
+                        counterparts = [x.strip() for x in matrix[i][j].split(self.cellsep)]
+                        # if a tokenized matrix, gather the tokenized forms
+                        tokenized_counterparts = []
+                        if self.tokenized_matrix:
+                            tokenized_counterparts = [y.strip() for y in tokenized_matrix[i][j].split(self.cellsep)]
+
+                        if not len(counterparts) == len(tokenized_counterparts):
+                            print(concept)
+                            print(self.matrix[i])
+                            print(self.tokenized_matrix[i])
+                            print(self.matrix[i][j])
+                            print(len(counterparts), counterparts)
+                            print(self.tokenized_matrix[i][j])
+                            print(len(tokenized_counterparts), tokenized_counterparts)
+                            print()
+
+
+                        # append stuff to dictionary
+                        for k in range (0, len(counterparts)):
+                            if self.tokenized_matrix:
+                                if counterparts[k]:
+                                    # wordlist[id] = [concept, language, counterparts[k], tokenized_counterparts[k]]
+                                    wordlist[id] = [concept, language, counterparts[k]]
+                                    id += 1
+                            else:
+                                if counterparts[k]:
+                                    wordlist[id] = [concept, language, counterparts[k]]
+                                    id += 1
+
+        # add the header to the wordlist dictionaries
+        if self.tokenized_matrix:
+            wordlist[0] = ["concept", "doculect", "counterpart", "tokens"]
+        else:
+            wordlist[0] = ["concept", "doculect", "counterpart"]
+
+        # make the dictionary an attribute of this spreadsheet object
+        self._data = dict([(k, v) for k, v in wordlist.items() if k > 0])
+
+        # make empty meta-attribute
+        self._meta = dict(
+                filename = self.filename
+                )
+
+        # make a simple header for wordlist import
+        self.header = dict([(a, b) for a, b in zip(wordlist[0], range(len(wordlist[0])))])
+
+    """
     def _prepare(self,full_rows = False):
-        """
-        Prepare the spreadsheet for automatic pass-on to Wordlist.
-        """
+        # Prepare the spreadsheet for automatic pass-on to Wordlist.
         # XXX we now assume that the matrix is 'normalized',i.e. that it only
         # contains concepts and counterparts, in later versions, we should make
         # this more flexible by adding, for example, also proto-forms, or
@@ -381,14 +492,15 @@ class Spreadsheet:
 
         # make a simple header for wordlist import
         self.header = dict([(a,b) for a,b in zip(d[0],range(len(d[0])))])
+        """
 
-    def get_full_rows(self):
+    def get_full_rows(self, matrix):
         """
         Create a 2D matrix from only the full rows in the spreadsheet.
         """
         full_row_matrix = []
 
-        for row in self.matrix:
+        for row in matrix:
             is_full = 1
 
             for token in row:
