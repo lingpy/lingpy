@@ -1,3 +1,7 @@
+# author   : Steven Moran
+# email    : steve.moran@lmu.de
+# created  : 2013-04-01
+
 """
 This module provides a basic class for reading in a simple spreadsheet (delimited text file) for concepts and words in a set of languages.
 """
@@ -5,13 +9,12 @@ This module provides a basic class for reading in a simple spreadsheet (delimite
 __author__="Steven Moran"
 __date__="2013-04"
 
-# external imports
-import regex as re
 import sys 
 import codecs
+import operator
 import unicodedata
 import collections
-import operator
+import regex as re
 from time import gmtime, strftime
 
 # internal imports
@@ -19,7 +22,7 @@ from ..sequence.orthography import *
 from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
-from ..convert.csv import wl2csv
+from ..convert import *
 
 class Spreadsheet:
     """
@@ -70,6 +73,149 @@ class Spreadsheet:
         self._normalize()
         self._blacklist()
         self._prepare()
+
+
+    def _init_matrix(self):
+        """
+        Create a 2D array from the CSV input and Unicode normalize its contents
+        """
+        # TODO: check if spreadsheet is empty and throw error
+        spreadsheet = csv2list(
+            self.filename, 
+            self.fileformat, 
+            self.dtype, 
+            self.comment, 
+            self.sep,
+            strip_lines = False # this is of crucial importance, otherwise
+            )
+
+        # columns that have language data
+        language_indices = []
+        concept_id = 0
+
+        # first row must be the header in the input; TODO: add more functionality
+        header = spreadsheet[0] 
+
+        if rcParams['verbose']: print(header[0:10])
+        
+        for i, cell in enumerate(header):
+            cell = cell.strip()
+            if rcParams['verbose']: print(cell)
+            if cell == self.meanings:
+                concept_id = i
+            if self.language_id in cell:
+                language_indices.append(i)
+
+        matrix_header = []
+        matrix_header.append(header[concept_id])        
+        for i in language_indices:
+            matrix_header.append(header[i].replace(self.language_id, "").strip())
+        self.matrix.append(matrix_header)
+
+        # append the concepts and words in languages and append the rows (skip header row)
+        for i in range(1, len(spreadsheet)):
+            matrix_row = []
+            # if the concept cell is empty skip if flagged
+            if spreadsheet[i][concept_id] == "" and self.skip_empty_concepts:
+                continue
+            for j in range(0, len(spreadsheet[i])):
+                if j == concept_id or j in language_indices:
+                    matrix_row.append(spreadsheet[i][j])
+            self.matrix.append(matrix_row)
+
+        """
+        matrix_header = []
+        matrix_header.append(header[self.concepts])        
+        for i in language_indices:
+            matrix_header.append(header[i].replace(self.language_id, "").strip())
+        self.matrix.append(matrix_header)
+
+        # append the concepts and words in languages and append the rows
+        for i in range(1, len(spreadsheet)): # skip the header row
+            matrix_row = [] # collect concepts and languages to add to matrix
+            temp = []
+            for j in range(0, len(spreadsheet[i])):
+                if j == self.concepts:
+                    matrix_row.append(spreadsheet[i][j])
+                if j in language_indices:
+                    temp.append(spreadsheet[i][j])
+            for item in temp:
+                print(item)
+                matrix_row.append(item)
+            self.matrix.append(matrix_row)
+            """
+
+    def _normalize(self):
+        """ 
+        Function to Unicode normalize (NFD) cells in the matrix.
+        """
+        for i in range(0, len(self.matrix)):
+            for j in range(0, len(self.matrix[i])):
+                normalized_cell = unicodedata.normalize("NFD", self.matrix[i][j])
+                if not normalized_cell == self.matrix[i][j]:
+                    if self.verbose:
+                        print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
+                    self.matrix[i][j] = normalized_cell
+    
+    def _prepare(self,full_rows = False):
+        """
+        Prepare the spreadsheet for automatic pass-on to Wordlist.
+        """
+        # XXX we now assume that the matrix is 'normalized',i.e. that it only
+        # contains concepts and counterparts, in later versions, we should make
+        # this more flexible by adding, for example, also proto-forms, or
+        # cognate ids
+
+        # define a temporary matrix with full rows
+        if not full_rows:
+            matrix = self.matrix
+        else:
+            matrix = self.get_full_rows()
+
+        # create the dictionary that stores all the data
+        d = {}
+
+        # iterate over the matrix
+        idx = 1
+        for i,line in enumerate(matrix[1:]):
+            # only append lines that really work!
+            if line:
+                # get the concept
+                concept = line[0].strip()
+
+                if concept:
+
+                    # get the rest
+                    for j,cell in enumerate(line[1:]):
+
+                        # get the language
+                        language = matrix[0][j+1].replace(self.language_id,'').strip()
+
+                        # get the counterparts
+                        counterparts = [x.strip() for x in cell.split(self.cellsep)]
+
+                        # append stuff to dictionary
+                        for counterpart in counterparts:
+                            if counterpart:
+                                d[idx] = [concept,language,counterpart]
+                                idx += 1
+
+        # add the header to the dictionary
+        d[0] = ["concept","doculect","counterpart"]
+
+        # make the dictionary an attribute of spreadsheet
+        self._data = dict([(k,v) for k,v in d.items() if k > 0])
+
+        # make empty meta-attribute
+        self._meta = dict(
+                filename = self.filename
+                )
+
+        # make a simple header for wordlist import
+        self.header = dict([(a,b) for a,b in zip(d[0],range(len(d[0])))])
+
+
+
 
     def _blacklist(self):
         """
@@ -242,145 +388,6 @@ class Spreadsheet:
 
         # return orthographicaly parsed (and tokenized?) matrix
     
-
-    def _init_matrix(self):
-        """
-        Create a 2D array from the CSV input and Unicode normalize its contents
-        """
-        # TODO: check if spreadsheet is empty and throw error
-        spreadsheet = csv2list(
-            self.filename, 
-            self.fileformat, 
-            self.dtype, 
-            self.comment, 
-            self.sep,
-            strip_lines = False # this is of crucial importance, otherwise
-            )
-
-        # columns that have language data
-        language_indices = []
-        concept_id = 0
-
-        # first row must be the header in the input; TODO: add more functionality
-        header = spreadsheet[0] 
-
-        if rcParams['verbose']: print(header[0:10])
-        
-        for i, cell in enumerate(header):
-            cell = cell.strip()
-            if rcParams['verbose']: print(cell)
-            if cell == self.meanings:
-                concept_id = i
-            if self.language_id in cell:
-                language_indices.append(i)
-
-        matrix_header = []
-        matrix_header.append(header[concept_id])        
-        for i in language_indices:
-            matrix_header.append(header[i].replace(self.language_id, "").strip())
-        self.matrix.append(matrix_header)
-
-        # append the concepts and words in languages and append the rows (skip header row)
-        for i in range(1, len(spreadsheet)):
-            matrix_row = []
-            # if the concept cell is empty skip if flagged
-            if spreadsheet[i][concept_id] == "" and self.skip_empty_concepts:
-                continue
-            for j in range(0, len(spreadsheet[i])):
-                if j == concept_id or j in language_indices:
-                    matrix_row.append(spreadsheet[i][j])
-            self.matrix.append(matrix_row)
-
-        """
-        matrix_header = []
-        matrix_header.append(header[self.concepts])        
-        for i in language_indices:
-            matrix_header.append(header[i].replace(self.language_id, "").strip())
-        self.matrix.append(matrix_header)
-
-        # append the concepts and words in languages and append the rows
-        for i in range(1, len(spreadsheet)): # skip the header row
-            matrix_row = [] # collect concepts and languages to add to matrix
-            temp = []
-            for j in range(0, len(spreadsheet[i])):
-                if j == self.concepts:
-                    matrix_row.append(spreadsheet[i][j])
-                if j in language_indices:
-                    temp.append(spreadsheet[i][j])
-            for item in temp:
-                print(item)
-                matrix_row.append(item)
-            self.matrix.append(matrix_row)
-            """
-
-    def _normalize(self):
-        """ 
-        Function to Unicode normalize (NFD) cells in the matrix.
-        """
-        for i in range(0, len(self.matrix)):
-            for j in range(0, len(self.matrix[i])):
-                normalized_cell = unicodedata.normalize("NFD", self.matrix[i][j])
-                if not normalized_cell == self.matrix[i][j]:
-                    if self.verbose:
-                        print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
-                    self.matrix[i][j] = normalized_cell
-    
-    def _prepare(self,full_rows = False):
-        """
-        Prepare the spreadsheet for automatic pass-on to Wordlist.
-        """
-        # XXX we now assume that the matrix is 'normalized',i.e. that it only
-        # contains concepts and counterparts, in later versions, we should make
-        # this more flexible by adding, for example, also proto-forms, or
-        # cognate ids
-
-        # define a temporary matrix with full rows
-        if not full_rows:
-            matrix = self.matrix
-        else:
-            matrix = self.get_full_rows()
-
-        # create the dictionary that stores all the data
-        d = {}
-
-        # iterate over the matrix
-        idx = 1
-        for i,line in enumerate(matrix[1:]):
-            # only append lines that really work!
-            if line:
-                # get the concept
-                concept = line[0].strip()
-
-                if concept:
-
-                    # get the rest
-                    for j,cell in enumerate(line[1:]):
-
-                        # get the language
-                        language = matrix[0][j+1].replace(self.language_id,'').strip()
-
-                        # get the counterparts
-                        counterparts = [x.strip() for x in cell.split(self.cellsep)]
-
-                        # append stuff to dictionary
-                        for counterpart in counterparts:
-                            if counterpart:
-                                d[idx] = [concept,language,counterpart]
-                                idx += 1
-
-        # add the header to the dictionary
-        d[0] = ["concept","doculect","counterpart"]
-
-        # make the dictionary an attribute of spreadsheet
-        self._data = dict([(k,v) for k,v in d.items() if k > 0])
-
-        # make empty meta-attribute
-        self._meta = dict(
-                filename = self.filename
-                )
-
-        # make a simple header for wordlist import
-        self.header = dict([(a,b) for a,b in zip(d[0],range(len(d[0])))])
 
     def get_full_rows(self):
         """
