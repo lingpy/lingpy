@@ -324,6 +324,7 @@ class OrthographyParser(object):
         line_count = 0
         for line in file:
             line_count += 1
+
             line = line.strip()
 
             # skip any comments
@@ -332,11 +333,12 @@ class OrthographyParser(object):
 
             line = unicodedata.normalize("NFD", line)
 
-            tokens = line.split(",") # split the orthography profile into columns
+            tokens = line.split("\t") # split the orthography profile into columns
 
             if len(tokens) > 1:
                 self.multiple_columns = True
 
+            print(tokens,len(tokens))
             grapheme = tokens[0].strip()
             phoneme = tokens[1].strip()
 
