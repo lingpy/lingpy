@@ -1411,17 +1411,17 @@ class Wordlist(_QLCParser):
         if not entries:
             if fileformat == 'txt':
                 entries = [
-                        ('language','{0}'),
+                        ('language','{0} '),
                         ('ipa','{0}\n')
                         ]
             elif fileformat == 'tex':
                 entries = [
-                        ('language','{0}'),
+                        ('language','{0} '),
                         ('ipa','[{0}]'+'\n')
                         ]
             elif fileformat == 'html':
                 entries = [
-                        ('language','{0}'),
+                        ('language','{0}&nbsp;'),
                         ('ipa','[{0}]\n')
                         ]
         

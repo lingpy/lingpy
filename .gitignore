@@ -1,7 +1,8 @@
 __pycache__
 *.pyc
 *.so
-
+*~
+*.swp
 /build
 /dist
 /doc/build
