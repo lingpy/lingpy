@@ -335,7 +335,6 @@ class OrthographyParser(object):
 
             line = unicodedata.normalize("NFD", line)
 
-<<<<<<< HEAD
             # first line in profile must be the header
             if not header:
                 header = line.split("\t")
@@ -344,10 +343,6 @@ class OrthographyParser(object):
             # tokens = line.split(",") # split the orthography profile into columns
             tokens = line.split("\t") # split the orthography profile into columns
             
-=======
-            tokens = line.split("\t") # split the orthography profile into columns
-
->>>>>>> 38e3a0e6bde44138b29778ec850a41a1f4772090
             if len(tokens) > 1:
                 self.multiple_columns = True
 
