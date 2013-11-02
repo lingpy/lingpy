@@ -5,13 +5,13 @@ E : e, E
 D : 8
 G : X, x
 I : i, I
-H : H, h
+H : H, h, 7
 K : q, k, g
 J : y
 M : m
 L : l, L
 O : 3
-N : n, 7, N
+N : n, N, 5
 P : p, b
 S : s, z, S, Z
 R : r, R
@@ -22,6 +22,5 @@ Y : u
 1 : 1
 2 : 2
 4 : 4
-5 : 5
 6 : 6
 _ : _

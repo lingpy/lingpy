@@ -430,11 +430,20 @@ def wl2qlc(
     if formatter in header:
         idx = header.index(formatter)
         formatter = None
+        sorted_data = sorted(data.keys(),key=lambda x:data[x][idx])
+    elif len(formatter.split(',')) == 2:
+        idxA,idxB = formatter.split(',')
+        idxA = header.index(idxA)
+        idxB = header.index(idxB)
+        idx = idxA
+        formatter = None
+        sorted_data = sorted(data.keys(),key=lambda x:(data[x][idxA],data[x][idxB]))
     else:
         idx = False
         formatter = ''
+        sorted_data = sorted(data.keys())
 
-    for key in sorted(data.keys()):
+    for key in sorted_data:
         
         # get the line
         line = data[key]

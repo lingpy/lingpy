@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-10-25 15:38
+# modified : 2013-11-02 13:18
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-25"
+__date__="2013-11-02"
 
 import os
 import sys
@@ -1107,7 +1107,8 @@ class Wordlist(_QLCParser):
                 'meta'      : self._meta,
                 'entry'     : 'word',
                 'taxa'      : False,
-                'fileformat': fileformat
+                'fileformat': fileformat,
+                'entries'   : ("concept","counterpart"),
                 }
             
         # compare with keywords and add missing ones
@@ -1322,6 +1323,23 @@ class Wordlist(_QLCParser):
                             zip(line,cogs[j]))+'\n')
             f.close()
             if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+
+        if fileformat == 'separated':
+            if not os.path.isdir(keywords['filename']):
+                os.mkdir(keywords['filename'])
+
+            for l in self.cols:
+                f = codecs.open('{0}/{1}.tsv'.format(keywords['filename'],l),'w','utf-8')
+                for key in self.get_list(col=l,flat=True):
+                    line = [key]
+                    for entry in keywords['entries']:
+                        line += [self[key,entry]]
+                    f.write(
+                            '\t'.join(
+                                '{0}'.format(x) for x in line
+                                )+'\n'
+                            )
+                f.close()
 
     def output(
             self,
