@@ -22,4 +22,3 @@ print(t.transform(word, "ipa")+"\t\t"+"Tokenizer.transform(word, 'ipa')")
 print(t.transform(word, "funny")+"\t\t"+"Tokenizer.transform(word, 'funny')")
 print(t.rules(word)+"\t\t\t\t"+"Tokenizer.rules(word)")
 
-

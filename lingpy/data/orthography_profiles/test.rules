@@ -8,6 +8,9 @@
 #
 # Rules are given in simple tuple format, comma delimited. Regular expressions are given in Python syntax.
 
-# some type of tone thing; move to the preceding grapheme
-(\w+)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)(˻), \1\2\4
+Mà, J
+t{2}, e
+í.*s, l
+t, ena
 
+# Màttís List -> Jelena

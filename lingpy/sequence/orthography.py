@@ -1,3 +1,7 @@
+# author   : Steven Moran
+# email    : steve.moran@lmu.de
+# created  : 2010-10-11
+
 """
 This module provides graphemic and orthographic parsing with orthography profiles into QLC format.
 """
@@ -5,28 +9,25 @@ This module provides graphemic and orthographic parsing with orthography profile
 __author__ = "Steven Moran"
 __date__ = "2010-12-01"
 
-import sys
-import unicodedata
 import os
+import sys
 import codecs
+import unicodedata
 
+# basic lingpy imports
 from ..settings import rcParams
 
-# import regex with a module warning
 try:
     import regex as re
 except ImportError:
     import re
     print(rcParams['W_missing_module'].format('regex'))
 
-# class DuplicateExceptation(Exception): pass
 
 class GraphemeParser(object):
     """
     Class for Unicode graphemic parsing of Unicode strings. 
 
-    Parameters
-    ----------
 
     Notes
     -----
@@ -53,9 +54,6 @@ class GraphemeParser(object):
     """
 
     def __init__(self):
-        """
-        Create the Unicode grapheme pattern match object.
-        """
         self.grapheme_pattern = re.compile("\X", re.UNICODE)
 
     def combine_modifiers(self, string):
@@ -64,17 +62,18 @@ class GraphemeParser(object):
 
         Parameters
         ----------
-
-        string : string
+        string : string (default = "")
             A Unicode string to be parsed into graphemes.
 
         .. todo:: check if we need to apply NDF after string is parsed
+
         """
 
         result = []
         graphemes = string[1:-1].split()
         temp = ""
         count = len(graphemes)
+
         for grapheme in reversed(graphemes):
             count -= 1
             if len(grapheme) == 1 and unicodedata.category(grapheme) == "Lm":
@@ -178,9 +177,8 @@ class OrthographyRulesParser(object):
 
     Parameters
     ----------
-    orthography_profile_rules : file
-        An orthography profile rules file.
-
+    orthography_profile_rules : string
+        A string defining the path to the orthography profile rules file (filename.rules).
 
     Notes
     -----
@@ -201,7 +199,7 @@ class OrthographyRulesParser(object):
 
     def __init__(self, orthography_profile_rules):
         try:
-            codecs.open(orthography_profile_rules,'r','utf-8')
+            codecs.open(orthography_profile_rules, 'r', 'utf-8')
         except IOError as e:
             print("\nWARNING: There is no file at the path you've specified.\n\n")
 
@@ -227,8 +225,7 @@ class OrthographyRulesParser(object):
 
         # check that num rules == num replacements
         if len(self.rules) != len(self.replacements):
-            print("there is a problem with your orthographic rules file: number of inputs does not match number of outputs")
-            sys.exit(1)
+            raise ValueError("[i] Number of inputs does not match number of outputs in the rules file.")
 
     def parse_string(self, string):
         """
@@ -261,8 +258,10 @@ class OrthographyParser(object):
 
     Parameters
     ----------
-    orthography_profile : file
+    orthography_profile : file (default = "")
         A document source-specific orthography profile.
+
+    debug : int (default = 0)
 
 
     Notes
@@ -298,7 +297,7 @@ class OrthographyParser(object):
 
     def __init__(self, orthography_profile, debug=0):
         try:
-            codecs.open(orthography_profile,'r','utf-8')
+            codecs.open(orthography_profile, 'r', 'utf-8')
         except IOError as e:
             print("\n[WARNING:] There is no file at the path you've specified.\n\n")
 
@@ -321,7 +320,10 @@ class OrthographyParser(object):
         # the first column is graphemes, the second IPA, etc.
         self.multiple_columns = False
 
+        header_flag = False
+        header = ""
         line_count = 0
+
         for line in file:
             line_count += 1
 
@@ -333,8 +335,19 @@ class OrthographyParser(object):
 
             line = unicodedata.normalize("NFD", line)
 
+<<<<<<< HEAD
+            # first line in profile must be the header
+            if not header:
+                header = line.split("\t")
+                header_flag = True
+                
+            # tokens = line.split(",") # split the orthography profile into columns
+            tokens = line.split("\t") # split the orthography profile into columns
+            
+=======
             tokens = line.split("\t") # split the orthography profile into columns
 
+>>>>>>> 38e3a0e6bde44138b29778ec850a41a1f4772090
             if len(tokens) > 1:
                 self.multiple_columns = True
 
@@ -348,7 +361,10 @@ class OrthographyParser(object):
             else:
                 # raise DuplicateException("You have a duplicate in your orthography profile at: {0}".format(line_count))
                 raise Exception("You have a duplicate in your orthography profile at: {0}".format(line_count))
+
         file.close()
+
+
 
         # uncomment this line if you want to see the orthography profile tree structure
         # printTree(self.root, "")
@@ -683,18 +699,3 @@ def printTree(root, path):
         printTree(child, path + branch + char)
     if len(root.getChildren()) == 0:
         print(path)
-
-# ---------- Main ------
-if __name__=="__main__":
-    o = OrthographyParser("../data/orthography_profiles/thiesen1998.txt")
-    g = GraphemeParser()
-    test_words = ["aa", "aabuu", "uuabaa auubaa"]
-    print()
-    for word in test_words:
-        print("original word:", word)
-        print("parse_string_to_graphemes_string:", o.parse_string_to_graphemes_string(word))
-        print("parse_string_to_ipa_string:", o.parse_string_to_ipa_string(word))
-        print("parse_string_to_graphemes:", o.parse_string_to_graphemes(word))
-        # print("parse_graphemes:", g.parse_graphemes(word))
-        print()
-

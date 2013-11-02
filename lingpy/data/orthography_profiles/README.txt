@@ -4,6 +4,7 @@ Orthography Profiles
 Orthography profiles can be a combination of two files:
 
 1. orthography profile - a document-specific specification of grapheme clusters (Unicode grapheme clusters)
+
 2. orthography rules - a document-specific specification of orthographic replace rules specified with regular expressions
 
 These files can be used to parse string input into orthographic tokens, as specifed in these documents. Each document should be given the proper extention and their filenames should match, e.g.:
@@ -40,9 +41,12 @@ a	  a
 aa	  aː
 b	  b
 ch	  tʃ
+x	  NULL
 ...	  ...
 
 All columns after "graphemes" are user specified.
+
+Note we use a special keyword "NULL" to indicate that the source input grapheme has no equivalent in the target column, or in other words, the grapheme should be removed (e.g. in this example any occurrence of <x> will be removed).
 
 The other extension of the orthography profile, the orthography profile rules specification, should also contain a hash-commented header for metadata about the source document. Afterwards, orthography re-write rules are specified line-by-line as regular expressions of the follow format (NOTE: these rules are applied in order, so feeding and bleeding situations can occur):
 
