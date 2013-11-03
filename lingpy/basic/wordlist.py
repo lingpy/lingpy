@@ -26,9 +26,8 @@ from .ops import *
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
 
-# import ortho-parser
-from ..sequence.orthography import OrthographyParser
-from ..sequence.orthography import GraphemeParser
+# import tokenizer
+from ..sequence.tokenizer import Tokenizer
 
 
 class Wordlist(_QLCParser):
@@ -1558,6 +1557,7 @@ class Wordlist(_QLCParser):
     def tokenize(
             self,
             ortho_profile = '',
+            ortho_rules = '',
             source = "counterpart",
             target = "tokens",
             conversion = 'graphemes',
@@ -1572,12 +1572,20 @@ class Wordlist(_QLCParser):
         Path to the orthographic profile used to convert and tokenize the
         input data into IPA tokens. If not specified, a simple Unicode
         grapheme parsing is carried out.
-        
+
+        ortho_rules : str (default='')
+        Path to the orthographic profile rules used to apply regular expression 
+        rewrite to the data. 
+
         source : str (default="counterpart")
         The source data that shall be used for the tokenization procedures.
         
         target : str (default="tokens")
         The name of the target column that will be added to the wordlist.
+
+        conversion : str (default="graphemes")
+        Tokenization target.
+
         Notes
         -----
         This is a shortcut to the extended
@@ -1594,35 +1602,44 @@ class Wordlist(_QLCParser):
                     'orthography_profiles',
                     ortho_profile
                     )
+
+        if os.path.exists(ortho_rules):
+            ortho_rules_path = ortho_rules
+        else:
+            ortho_rules_path = os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'orthography_profiles',
+                    ortho_rules
+                    )
         
         # if the orthography profile does exist, carry out to tokenize the data
         if os.path.exists(ortho_path) and not ortho_profile == "":
             if rcParams['verbose']: print("[i] Found the orthography profile.")
-            op = OrthographyParser(ortho_path)
 
-            # check for valid IPA parse
-            if op.exists_multiple_columns():
+            t = Tokenizer(ortho_path, ortho_rules_path)
 
-                # tokenize the data, define specific output if target == 'tokens'
-                # for direct lexstat input
-                if target == 'tokens':
-                    function = lambda x: op.graphemes_to_ipa(x).split(' ')[1:-1]
-                else:
-                    function = lambda x: op.graphemes_to_ipa(x)
+            # tokenize the data, define specific output if target == 'tokens'
+            # for direct lexstat input
+            if target == 'tokens':
+                function = lambda x: t.transform_rules(x).split(' ')
+            else:
+                function = lambda x: t.transform_rules(x)
 
-                self.add_entries(
-                        target,
-                        source,
-                        function
-                        )
-        
+            self.add_entries(
+                target,
+                source,
+                function
+                )
+
+        # else just return a Unicode grapheme clusters parse
         else:
-            gp = GraphemeParser()
+            t = Tokenizer()
 
             if target == 'tokens':
-                function = lambda x: gp.parse_graphemes(x).split(' ')[1:-1]
+                function = lambda x: t.grapheme_clusters(x).split(' ')
             else:
-                function = lambda x: gp.parse_graphemes(x)
+                function = lambda x: t.grapheme_clusters(x)
 
             self.add_entries(
                 target,
