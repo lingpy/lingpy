@@ -24,7 +24,7 @@ d = {
 s = Spreadsheet("ex_dogon_wordlists_leipzig-jakarta.csv", meanings="Leipzig-Jakarta", skip_empty_concepts=False, cellsep="\\\\", blacklist="dogon.bl", profiles=d)
 
 wl = Wordlist(s)
-# wl.tokenize()
+wl.tokenize()
 wl.output('qlc',filename='tokenized-heath2013')
 
 # s = Spreadsheet("/Users/stiv/Dropbox/Fieldwork/comparative_dogon/scripts/test.csv", meanings="English")
