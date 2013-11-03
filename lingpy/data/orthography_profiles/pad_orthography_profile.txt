@@ -1,0 +1,124 @@
+# orthography profile rules for PAD data
+# date: 2012-12-01
+# author: Steven Moran
+# corrected on 2013-03-06 by Jelena Prokic
+
+# consonants for reference
+#([\||b|c|ɕ|d|ð|ɖ|f|ɡ|ɣ|h|ʜ|ɦ|j|ɟ|k|l|ɫ|ɬ|ɭ|ɮ|ʎ|m|ɱ|n|ɴ|ɲ|ɳ|ŋ|p|ɸ|q|r|ʀ|ɹ|ɻ|ɽ|ɾ|ʁ|s|ʂ|ʃ|t|ʈ|ɰ|v|ʋ|w|ʍ|x|z|ʑ|ʒ|ʔ|β|θ|χ])
+
+# vowels for reference
+# ([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])
+
+# diacritics for reference
+# ([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤])
+
+# (V)+ -> (V)retracted; TODO: check if it's a vowel
+(\w+)(\s)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤]*)(\s)(\+), \1̟\3
+(\w+)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤]*)(\s)(\+), \1̟\2
+
+#removing space before <ʿ̃> combination 
+(\w+)(\s)(ʿ̃), \1\3
+
+#removing space before <ʾ̟> combination 
+(\w+)(\s)(ʾ̟), \1\3
+
+#removing space before <ʿ̜> combination 
+(\w+)(\s)(ʿ̜), \1\3
+
+#removing space before <ʱ̫> combination 
+(\w+)(\s)(ʱ̫), \1\3
+
+#removing space before <ʾ̠> combination 
+(\w+)(\s)(ʾ̠), \1\3
+
+#removing space before <ʿ̣> combination 
+(\w+)(\s)(ʿ̣), \1\3
+
+#removing space before <ʿ̟> combination 
+(\w+)(\s)(ʿ̟), \1\3
+
+
+# some type of tone thing; move to the preceding grapheme
+(\w+)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)(˻), \1\2\4
+
+# move the vowels together (Mattis suggestion)
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])(\s)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\3\5\6
+
+
+#move the vowels together after the length marker (didn't work automatically(?)) 
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(ː)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\2\3\5\6
+#move the vowels together after <̜> (didn't work automatically(?))
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(̜)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\2\3\5\6
+#move the vowels together after <ʿ> (didn't work automatically(?))
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])(ʿ)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ]), \1\2\4
+#move the vowels together after <̠> (didn't work automatically(?))
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])(̠)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ]), \1\2\4
+#move the vowels together after <̣> (didn't work automatically(?))
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])(̣)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ]), \1\2\4
+
+
+
+# remove syllable boundary and keep vowels graphemically separated
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)(\.)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\2\3\5\6
+
+# remove syllable boundary at end of the word
+(\w+)(\s)(\.)(\s)(\#), \1\2\5
+
+# remove syllable boundary between words (what's left over?)
+(\w+)(\s)(\.)(\s)(\w+)(\s)(\.)(\s)(\w+), \1\2\5\2\9
+(\w+)(\s)(\.)(\s)(\w+), \1\2\5
+
+
+# take care of pf digraph
+(p)(\s)(f), p͡f
+
+# COMBINING DOUBLE INVERTED BREVE 
+(\w+)(\s)(\.)(͡)(\s)(\w+), \1\4\6
+(\w+)(\s)(ː)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(͡)(\s)(\w+), \1\3\4\5\7
+(\w+)([̣|̟])(\s)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(͡)(\s)(\w+), \1\2\4\5\7
+(\w+)(\s)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(͡)(\s)(\w+), \1\3\4\6
+
+
+# possible error - diacritic on the length marker
+# 180;"neun";534378;"ˈniː̜͡ɪ̣→ə";"""ni:_o*I_r*\@"
+
+# U+0361 <͡> COMBINING DOUBLE INVERTED BREVE 
+(\w+͡)(\s)(\w+͡)(\s)(\w+), \1\3\5
+(\w+͡)(\s)(\w+), \1\3
+
+
+# U+2192 <→> occurs between vowels; its meaning is unclear. Treat all sequences V→V as one grapheme VV.
+# Note however: 27;"abend";92088;"ọ+͡ʊmt͡s̠";"o_r+*Umt*s_-" . Where they seem to use U+0361 to link two vowels.
+(\w+)(\s)(→)(\s)(\w+)(\s)(→)(\s)(\w+), \1\3\5\7\9
+(\w+)(\s)(→)(\s)(\w+), \1\3\5
+(\w)(→)(\w)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\2\3\5\6
+
+
+#attach vowel after <→> and <͡> combination
+(\w+)(→)(\w+)(͡)(\w+)(\s)([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*), \1\2\3\4\5\7
+
+
+# Remove the stress marker -- removed in the pre-processing with str.replace
+(\w+)(ˈ)(\s)(\w+), \1\3\4
+(ˈ)(\w+), \2
+
+# The "underlie" U+203F signifies that the word was bound to a preceding or following word in the original sound files. Removing it.
+(\s)(‿)(\s), \1 
+
+# From Michael's specification for <h> and <ʰ>
+# Ch -> Ch
+([\||b|c|ɕ|d|ð|ɖ|f|ɡ|ɣ|h|ʜ|ɦ|j|ɟ|k|l|ɫ|ɬ|ɭ|ɮ|ʎ|m|ɱ|n|ɴ|ɲ|ɳ|ŋ|p|ɸ|q|r|ʀ|ɹ|ɻ|ɽ|ɾ|ʁ|s|ʂ|ʃ|t|ʈ|ɰ|v|ʋ|w|ʍ|x|z|ʑ|ʒ|ʔ|β|θ|χ]+)([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)(h), \1\2\4
+
+# Vh -> V h (rare), e.g. 13515 "werden" ˈʋehe̜→ɐ̠nː # ˈʋ eʰ e̜ɐ̠ nː #
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(h), \1\2 \3
+
+# Vʰ -> Vʰ (shouldn't occur, as it makes no sense)
+([a|æ|ɐ|ɑ|e|ə|ɛ|ɤ|i|ɨ|o|ø|œ|ɶ|ɔ|ɵ|u|ʉ|ɯ|ʊ|ʌ|y|ʏ|ɪ|ɒ])([ː|ʰ|ʼ|ʿ|ʾ|̜|̠|̟|͡|̪|̰|̣|̥|̩|‿|\.|→|˻|\+|̃|̫|̤|ʱ]*)(\s)(ʰ), ###ERROR###
+
+# Cʰ -> Cʰ
+(\w+)(\s)(ʰ), \1\3
+
+# errors?
+# one occurrence of rhoticity < ˞ >; move to preceding vowel
+(\w+)(\s)(˞), \1\3
+
