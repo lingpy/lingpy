@@ -5,6 +5,7 @@ This module provides graphemic and orthographic tokenization using with orthogra
 __author__ = "Steven Moran"
 __date__ = "2010-12-01"
 
+import os
 import sys
 import codecs
 import unicodedata
@@ -25,15 +26,11 @@ class Tokenizer(object):
     Parameters
     ----------
 
-    orthography_profile : sting
-        Filepath to a document source-specific orthography profile (e.g. test.prf).
-
-    orthography_profile_rules : string
-        Filepath to the orthography profile rules file (e.g. test.rules).
+    orthography_profile : string
+        Filename (without extension) of the a document source-specific orthography profile and rules file.
 
     debug : int (default = 0)
         Turn debug mode on / off.
-
 
     Notes
     -----
@@ -90,46 +87,57 @@ class Tokenizer(object):
 
     """
 
-
-    def __init__(self, orthography_profile=None, orthography_profile_rules=None, debug=0):
-        # path and filename of orthography profile
-        self.orthography_profile = orthography_profile
-        self.orthography_profile_rules = orthography_profile_rules
-
+    # def __init__(self, orthography_profile=None, orthography_profile_rules=None, debug=0):
+    def __init__(self, orthography_profile=None, debug=0):
         self.debug = debug
+        self.orthography_profile = orthography_profile
 
-        if self.orthography_profile:
-            # read in orthography profile and create a trie structure for tokenization
-            self.root = createTree(self.orthography_profile)
+        if not orthography_profile == None:
+            # strip possible file extension
+            orthography_profile = orthography_profile.rstrip(".prf").strip()
 
-            # store column labels from the orthography profile
-            self.column_labels = []
+            # get path and filename of orthography profile
+            if os.path.exists(orthography_profile+".prf"):
+                ortho_path = orthography_profile
+            else:
+                ortho_path = os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'orthography_profiles',
+                    orthography_profile
+                    )
 
-            # look up table of graphemes to other column transforms
-            self.mappings = {}
+            # orthography profile processing
+            if os.path.isfile(ortho_path+".prf"):
+                self.orthography_profile = ortho_path+".prf"
 
-            # double check that there are no duplicate graphemes in the orthography profile
-            self.op_graphemes = {}
+                # read in orthography profile and create a trie structure for tokenization
+                self.root = createTree(self.orthography_profile)
 
-            # process the orthography profiles and rules
-            self._init_profile(self.orthography_profile)
+                # store column labels from the orthography profile
+                self.column_labels = []
 
-        # orthography profile rules and replacements
-        if self.orthography_profile_rules:
-            self.op_rules = []
-            self.op_replacements = []
-            self._init_rules(self.orthography_profile_rules)
+                # look up table of graphemes to other column transforms
+                self.mappings = {}
 
+                # double check that there are no duplicate graphemes in the orthography profile
+                self.op_graphemes = {}
+
+                # process the orthography profiles and rules
+                self._init_profile(self.orthography_profile)
+
+            # orthography profile rules and replacements
+            if os.path.isfile(ortho_path+".rules"):
+                self.orthography_profile_rules = ortho_path+".rules"
+                self.op_rules = []
+                self.op_replacements = []
+                self._init_rules(self.orthography_profile_rules)
+    
     
     def _init_profile(self, file):
         """
         Process and initialize data structures given an orthography profile.
         """
-        try:
-            codecs.open(file, 'r', 'utf-8')
-        except IOError as e:
-            print("\n[i] There is no file at the path you've specified.\n\n")
-
         file = codecs.open(file, "r", "utf-8")
         line_count = 0
         for line in file:
@@ -187,11 +195,6 @@ class Tokenizer(object):
         """
         Process the orthography rules file.
         """
-        try:
-            codecs.open(file, 'r', 'utf-8')
-        except IOError as e:
-            print("\n[i] There is no file at the path you've specified.\n\n")
-
         rules_file = codecs.open(file, "r", 'utf-8')
 
         # compile the orthography rules
@@ -346,7 +349,9 @@ class Tokenizer(object):
             Result of the transformation.
 
         """
-        column = column.lower()
+        # This method can't be called unless an orthography profile was specified.
+        if self.orthography_profile == None:
+            raise Exception("This method only works when an orthography profile is specified.")
 
         if column == "graphemes":
             return self.graphemes(string)
@@ -395,9 +400,11 @@ class Tokenizer(object):
             Result of the orthography rules applied to the input str.
 
         """
+        # if no orthography profile was initiated, this method can't be called
+        if self.orthography_profile == None:
+            raise Exception("This function requires that an orthography profile is specified.")
 
-        # if no orthography profile rules file has been specified,
-        # simply return the string
+        # if no orthography profile rules file has been specified, simply return the string
         if self.orthography_profile_rules == None:
             return string
 
