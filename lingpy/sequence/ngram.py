@@ -11,9 +11,6 @@ import sys
 import operator
 import unicodedata
 
-# don't use absolute names for lingpy-imports
-from .orthography import OrthographyParser
-
 def character_model(list):
     """
     Method counts characters and their frequences given a list of words.
@@ -238,16 +235,3 @@ def words_ngrams_matrix_for_graphemes_list(graphemes_list, n=1):
             matrix[i][j] = ngrams_counts[i][ngram]
 
     return matrix
-        
-if __name__ == '__main__':
-    # NgramTest().run()
-    # tuple = ('#', 'h', 'a', 'd', 'ɯ', '#')
-    graphemes = ('#', 'h', '#')
-    # string = "#h#"
-    print()
-    print("ngrams_from_graphemes, tuple:", ngrams_from_graphemes(graphemes, 1))
-    print()
-
-#    from lingpy.sequence import tokenizer
-#    t = tokenizer.tokenizer()
-#    unigram_model(t)
