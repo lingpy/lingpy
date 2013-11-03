@@ -2,7 +2,7 @@
 #
 #author: Jelena Prokic
 Graphemes	IPA	Comments
-_	 	
+_	NULL
 a	 a	 
 á	 a	
 an	 ã	
@@ -53,5 +53,5 @@ ts	 ts
 ty	 tʲ	
 v	 β	
 x	 x
-y	 ʑ	 not clear which sound it is	 it never occurs word initially
+y	 ʑ	 not clear which sound it is; it never occurs word initially
 z	 z	 only in Spanish loan words
