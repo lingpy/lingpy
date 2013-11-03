@@ -556,8 +556,7 @@ class Dictionary():
 
     def tokenize(
             self,
-            ortho_profile = '',
-            ortho_rules = '',
+            orthography_profile = '',
             source = "head",
             target = "tokens",
             conversion = 'graphemes',
@@ -569,13 +568,8 @@ class Dictionary():
         Parameters
         ----------
         ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the
-            input data into IPA tokens. If not specified, a simple Unicode
-            grapheme parsing is carried out.
-
-        ortho_rules : str (default='')
-            Path to the orthographic profile rules used to apply regular expression            
-            rewrite to the data.
+            Path to the orthographic profile used to convert and tokenize the 
+            input data into IPA tokens.
         
         source : str (default="translation")
             The source data that shall be used for the tokenization procedures.
@@ -595,58 +589,16 @@ class Dictionary():
         
         """
 
-        if os.path.exists(ortho_profile):
-            ortho_path = ortho_profile
-        else:
-            ortho_path = os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'orthography_profiles',
-                    ortho_profile
-                    )
+        t = Tokenizer(orthography_profile)
 
-        if os.path.exists(ortho_rules):
-            ortho_rules_path = ortho_rules
-        else:
-            ortho_rules_path = os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'orthography_profiles',
-                    ortho_rules
-                    )
-        
-        # if the orthography profile does exist, carry out to tokenize the data
-        if os.path.exists(ortho_path) and not ortho_profile == "":
-            if rcParams['verbose']: print("[i] Found the orthography profile.")
-
-            t = Tokenizer(ortho_path, ortho_rules_path)
-
-            # tokenize the data, define specific output if target == 'tokens'
-            # for direct lexstat input
-            if target == 'tokens':
-                function = lambda x: t.transform_rules(x).split(' ')
-            else:
-                function = lambda x: t.transform_rules(x)
-
-            self.add_entries(
-                target,
-                source,
-                function
-                )
-        
         # else just return a Unicode grapheme clusters parse
+        if target == 'tokens':
+            function = lambda x: t.transform_rules(x).split(' ')
         else:
-            t = Tokenizer()
+            function = lambda x: t.transform_rules(x)
 
-            if target == 'tokens':
-                function = lambda x: t.grapheme_clusters(x).split(' ')
-            else:
-                function = lambda x: t.grapheme_clusters(x)
-
-            self.add_entries(
-                target,
-                source,
-                function
-                )
-
-
+        self.add_entries(
+            target,
+            source,
+            function
+            )
