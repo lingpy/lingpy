@@ -21,7 +21,7 @@ d = {
 
 # load the spreadsheet, specify attributes like the black list file
 # s = Spreadsheet("test.csv", meanings="Leipzig-Jakarta", skip_empty_concepts=False, cellsep="\\\\", blacklist="dogon.bl", profiles=d)
-csv = Csv("dogon_wordlists_leipzig-jakarta.csv", meanings="Leipzig-Jakarta", skip_empty_concepts=False, cellsep="\\\\", blacklist="dogon.bl", profiles=d)
+csv = Csv("ex_dogon_wordlists_leipzig-jakarta.csv", meanings="Leipzig-Jakarta", skip_empty_concepts=False, cellsep="\\\\", blacklist="dogon.bl", profiles=d)
 
 wl = Wordlist(csv)
 # wl.tokenize()
