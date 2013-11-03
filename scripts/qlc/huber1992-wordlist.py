@@ -15,7 +15,4 @@ from lingpy import *
 file = read_qlc("../../lingpy/data/qlc/huber1992.csv")
 wl = Wordlist(file)
 wl.tokenize("../../lingpy/data/orthography_profiles/huber1992.prf", "../../lingpy/data/orthography_profiles/huber1992.rules")
-wl.output("qlc", filename="huber1992-tokenized")
-
-
-
+wl.output("qlc", filename="tokenized-huber1992")
