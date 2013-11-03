@@ -82,7 +82,6 @@ class Spreadsheet:
         # if self.blacklist: self._blacklist()
         if self.profiles: self.tokenized_matrix = self._tokenize(profiles)
 
-
         for i in range(0, len(self.matrix)):
             print("\t".join(self.matrix[i]))
             print("\t".join(self.tokenized_matrix[i]))
@@ -424,7 +423,7 @@ class Spreadsheet:
                 for token in tokens:
                     token = token.strip()
                     if header[j] in ops:
-                        tokenized_form = ops[header[j]].parse_graphemes(token).strip() # .replace("#", "").strip()
+                        tokenized_form = ops[header[j]].tokenize_graphemes(token).strip() # .replace("#", "").strip()
                         if tokenized_form == "":
                             tokenized_tokens.append("FAIL")
                         else:
@@ -436,7 +435,7 @@ class Spreadsheet:
                     # print(ops[header[j]].parse_graphemes(cell).strip()) # .replace("#", "").strip()
                     else:
                         if header[j] in ops:
-                            tokenized_form = ops[header[j]].parse_graphemes(cell).strip() # .replace("#", "").strip()
+                            tokenized_form = ops[header[j]].tokenize_graphemes(cell).strip() # .replace("#", "").strip()
                             if tokenized_form == "":
                                 tokenized_matrix[i][j] = "FAIL"
                             else:
