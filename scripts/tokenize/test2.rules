@@ -1,0 +1,16 @@
+# LingPy / QLC Orthography Profile Rules
+# 
+# An example of an orthography profile rules file
+#
+# Author: Steven Moran
+#
+# Initial metadata and all comments are preceded by "#". Blank lines are skipped by the parser.
+#
+# Rules are given in simple tuple format, comma delimited. Regular expressions are given in Python syntax.
+
+Mà, J
+t{2}, e
+í.*s, l
+t, ena
+
+# Màttís List -> Jelena

@@ -10,7 +10,9 @@ from lingpy import *
 
 word = "Màttís List"
 
-t = Tokenizer("../../lingpy/data/orthography_profiles/test.prf", "../../lingpy/data/orthography_profiles/test.rules")
+# t = Tokenizer("../../data/orthography_profiles/test.prf")
+# t = Tokenizer("test.prf")
+t = Tokenizer("test2")
 
 print()
 print(word+"\t\t\t"+"word")
@@ -23,3 +25,11 @@ print(t.transform(word, "funny")+"\t\t"+"Tokenizer.transform(word, 'funny')")
 print(t.rules(word)+"\t\t\t\t"+"Tokenizer.rules(word)")
 print(t.transform_rules(word)+"\t\t\t"+"Tokenizer.transform_rules(word)")
 
+"""
+print()
+t2 = Tokenizer()
+print()
+print(word+"\t\t\t"+"word")
+print(t2.characters(word)+"\t\t"+"Tokenizer.characters(word)")
+print(t2.grapheme_clusters(word)+"\t\t"+"Tokenizer.grapheme_clusters(word)")
+"""
