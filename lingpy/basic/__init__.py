@@ -16,4 +16,4 @@ __date__="2013-07-12"
 # add imorts for basic classes
 from .wordlist import Wordlist
 from .dictionary import Dictionary
-from .csv import Csv
+from .spreadsheet import Spreadsheet
