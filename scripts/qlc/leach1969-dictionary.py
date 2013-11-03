@@ -14,8 +14,8 @@ from lingpy import *
 
 file = read_qlc("../../lingpy/data/qlc/leach1969-67-161.csv")
 d = Dictionary(file)
-d.tokenize("../../lingpy/data/orthography_profiles/leach1969.prf", "../../lingpy/data/orthography_profiles/leach1969.rules")
-d.output("qlc", filename="tokenized-leach1969")
+d.tokenize("leach1969")
+# d.output("qlc", filename="tokenized-leach1969")
 
 
 
