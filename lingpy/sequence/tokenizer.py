@@ -91,49 +91,45 @@ class Tokenizer(object):
     """
 
 
-    def __init__(self, orthography_profile, orthography_profile_rules, debug=0):
-        # check for the files
-        try:
-            codecs.open(orthography_profile, 'r', 'utf-8')
-        except IOError as e:
-            print("\n[i] There is no file at the path you've specified.\n\n")
-
-        try:
-            codecs.open(orthography_profile_rules, 'r', 'utf-8')
-        except IOError as e:
-            print("\n[i] There is no file at the path you've specified.\n\n")
-
-        self.debug = debug
-
-        # store column labels from the orthography profile
-        self.column_labels = []
-
-        # look up table of graphemes to other column transforms
-        self.mappings = {}
-
-        # double check that there are no duplicate graphemes in the orthography profile
-        self.op_graphemes = {}
-
-        # orthography profile rules and replacements
-        self.op_rules = []
-        self.op_replacements = []
-
+    def __init__(self, orthography_profile=None, orthography_profile_rules=None, debug=0):
         # path and filename of orthography profile
         self.orthography_profile = orthography_profile
         self.orthography_profile_rules = orthography_profile_rules
 
-        # read in orthography profile and create a trie structure for tokenization
-        self.root = createTree(self.orthography_profile)
+        self.debug = debug
 
-        # process the orthography profiles and rules
-        self._init_profile(self.orthography_profile)
-        self._init_rules(self.orthography_profile_rules)
+        if self.orthography_profile:
+            # read in orthography profile and create a trie structure for tokenization
+            self.root = createTree(self.orthography_profile)
+
+            # store column labels from the orthography profile
+            self.column_labels = []
+
+            # look up table of graphemes to other column transforms
+            self.mappings = {}
+
+            # double check that there are no duplicate graphemes in the orthography profile
+            self.op_graphemes = {}
+
+            # process the orthography profiles and rules
+            self._init_profile(self.orthography_profile)
+
+        # orthography profile rules and replacements
+        if self.orthography_profile_rules:
+            self.op_rules = []
+            self.op_replacements = []
+            self._init_rules(self.orthography_profile_rules)
 
     
     def _init_profile(self, file):
         """
         Process and initialize data structures given an orthography profile.
         """
+        try:
+            codecs.open(file, 'r', 'utf-8')
+        except IOError as e:
+            print("\n[i] There is no file at the path you've specified.\n\n")
+
         file = codecs.open(file, "r", "utf-8")
         line_count = 0
         for line in file:
@@ -191,6 +187,11 @@ class Tokenizer(object):
         """
         Process the orthography rules file.
         """
+        try:
+            codecs.open(file, 'r', 'utf-8')
+        except IOError as e:
+            print("\n[i] There is no file at the path you've specified.\n\n")
+
         rules_file = codecs.open(file, "r", 'utf-8')
 
         # compile the orthography rules
@@ -297,6 +298,11 @@ class Tokenizer(object):
 
         """
         string = unicodedata.normalize("NFD", string)
+        
+        # if no orthography profile is specified, simply return 
+        # Unicode grapheme clusters, regex pattern "\X"
+        if self.orthography_profile == None:
+            return self.grapheme_clusters(string)
 
         parses = []
         for word in string.split():
@@ -323,7 +329,7 @@ class Tokenizer(object):
     def transform(self, string, column="graphemes"):
         """
         Transform a string's graphemes into the mappings given in a different column 
-        in the orthography profile. By default this function returns a orthography 
+        in the orthography profile. By default this function returns an orthography 
         profile grapheme tokenized string.
 
         Parameters
@@ -367,6 +373,13 @@ class Tokenizer(object):
 
         return " ".join(result).strip()
 
+    def transform_rules(self, string):
+        """
+        Convenience function that first tokenizes a string into orthographic profile-
+        specified graphemes and then applies the orthography profile rules.
+        """
+        return self.rules(self.transform(string))
+
     def rules(self, string):
         """
         Function to parse input string and return output of str with ortho rules applied.
@@ -382,6 +395,12 @@ class Tokenizer(object):
             Result of the orthography rules applied to the input str.
 
         """
+
+        # if no orthography profile rules file has been specified,
+        # simply return the string
+        if self.orthography_profile_rules == None:
+            return string
+
         result = unicodedata.normalize("NFD", string)
         for i in range(0, len(self.op_rules)):
             match = self.op_rules[i].search(result)
