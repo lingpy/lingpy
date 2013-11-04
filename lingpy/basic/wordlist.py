@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-11-02 13:18
+# modified : 2013-11-04 11:15
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-02"
+__date__="2013-11-04"
 
 import os
 import sys
