@@ -24,7 +24,7 @@ from ..read.csv import *
 from ..convert import *
 
 
-class Csv:
+class Spreadsheet:
     """
     Basic class for reading tabular data exported from a spreadsheet.
 
@@ -80,8 +80,8 @@ class Csv:
         if self.profiles: 
             self.tokenized_matrix = self._tokenize(profiles)
 
-        # self._prepare()
-        self._prepare_tokenized()
+        self._prepare()
+        # self._prepare_tokenized()
 
     def _init_matrix(self):
         """
