@@ -121,7 +121,8 @@ def ipa2tokens(
         # check for stress
         elif char in kw['stress']:
             out += [char]
-            start = True
+            # XXX be careful about the removement of the start-flag here, but it
+            # XXX seems to make sense so far!
             merge = True
             tone = False
             vowel = False
