@@ -77,3 +77,4 @@ for k,v in questions.items():
     questions[k] = "[?] "+v+" (y/n) "
 rcParams.update(questions)
 
+rcParams['basic_orthography'] = 'fuzzy'

@@ -183,6 +183,7 @@ def rc(**keywords):
                     rcParams['breaks']       = '.-'
                     rcParams['stress']       = "ˈˌ'"
                     rcParams['merge_vowels'] = True
+                    rcParams['basic_orthography'] = 'fuzzy'
                 elif keywords[key] in ['evolaemp','el','asjp']:
                     diacritics,vowels,tones = load_dvt(path='el')
                     rcParams['asjp'] = Model('asjp_el')
@@ -198,6 +199,7 @@ def rc(**keywords):
                     rcParams['breaks']       = '.-'
                     rcParams['stress']       = "ˈˌ'"
                     rcParams['merge_vowels'] = False
+                    rcParams['basic_orthography'] = 'asjp'
 
             if key in alias:
                 for k in alias[key]:
