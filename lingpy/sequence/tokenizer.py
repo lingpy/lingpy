@@ -183,7 +183,7 @@ class Tokenizer(object):
             # if rcParams['verbose']: print(rcParams['W_empty_cons'])
             # if rcParams['verbose']: print(rcParams['W_duplicates_in_op'])
 
-        file.close()
+        f.close()
 
         # print the trie structure if debug mode is on
         if self.debug:
@@ -577,7 +577,7 @@ def createTree(file_name):
         tokens = line.split("\t") # split the orthography profile into columns
         grapheme = tokens[0]
         addMultigraph(root, grapheme)
-
+    f.close()
     return root
 
 def printMultigraphs(root, line, result):
