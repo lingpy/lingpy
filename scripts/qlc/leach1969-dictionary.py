@@ -12,8 +12,8 @@ __date__ = "2013-11-01"
 
 from lingpy import *
 
-file = read_qlc("../../lingpy/data/qlc/leach1969-67-161.csv")
-d = Dictionary(file)
+f = read_qlc("../../lingpy/data/qlc/leach1969-67-161.csv")
+d = Dictionary(f)
 d.tokenize("leach1969")
 # d.output("qlc", filename="tokenized-leach1969")
 

@@ -12,7 +12,7 @@ __date__ = "2013-11-01"
 
 from lingpy import *
 
-file = read_qlc("../../lingpy/data/qlc/huber1992.csv")
-wl = Wordlist(file)
+f = read_qlc("../../lingpy/data/qlc/huber1992.csv")
+wl = Wordlist(f)
 wl.tokenize("huber1992")
 wl.output("qlc", filename="tokenized-huber1992")
