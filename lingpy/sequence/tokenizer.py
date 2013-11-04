@@ -91,6 +91,7 @@ class Tokenizer(object):
     def __init__(self, orthography_profile=None, debug=0):
         self.debug = debug
         self.orthography_profile = orthography_profile
+        self.orthography_profile_rules = None
 
         if not orthography_profile == None:
             # strip possible file extension
@@ -383,7 +384,12 @@ class Tokenizer(object):
         Convenience function that first tokenizes a string into orthographic profile-
         specified graphemes and then applies the orthography profile rules.
         """
-        return self.rules(self.transform(string))
+
+        # Return at least a Unicode \X tokenization (see wordlist.py, dictionary.py)
+        if not self.orthography_profile:
+            return self.grapheme_clusters(string)
+        else:
+            return self.rules(self.transform(string))
 
     def rules(self, string):
         """
@@ -423,7 +429,6 @@ class Tokenizer(object):
         result = unicodedata.normalize("NFD", result)
         return result
 
-
     def find_missing_characters(self, char_tokenized_string):
         """
         Given a string tokenized into characters, return a characters
@@ -439,26 +444,36 @@ class Tokenizer(object):
                 output.append(char)
         return " ".join(output)
 
+    def tokenize_ipa(self, string):
+        """
+        Experimental method for tokenizing IPA.
+        """
+        string = unicodedata.normalize("NFD", string)
+        grapheme_clusters = self.grapheme_clusters(string)
+        result = self.combine_modifiers(grapheme_clusters)
+        return result
+
+        """
+        # try with the profiles as well
+        t = Tokenizer("../data/orthography_profiles/unicode_ipa.prf")
+        tokens = t.graphemes(string)
+        print(tokens)
+        """
 
     def combine_modifiers(self, string):
         """
-        string == grapheme_clusters
-
-        # Input should be tokenized on space...
-
         Given a string that is space-delimited on Unicode graphemes, group Unicode modifier letters with their preceeding base characters.
 
         Parameters
         ----------
         string : str
-            A Unicode string to be parsed into Unicode cluster graphemes.
+            A Unicode string tokenized into grapheme clusters to be tokenized into simple IPA.
 
         .. todo:: check if we need to apply NDF after string is parsed
 
         """
-
         result = []
-        graphemes = string[1:-1].split()
+        graphemes = string.split()
         temp = ""
         count = len(graphemes)
 
@@ -474,7 +489,7 @@ class Tokenizer(object):
 
             result.append(grapheme+temp)
             temp = ""
-        return "# "+" ".join(result[::-1])+" #"
+        return " ".join(result[::-1])
 
         
     def exists_multiple_columns(self):
@@ -493,11 +508,6 @@ class Tokenizer(object):
         string = string.replace("#", " ")
         return string
 
-    def simple_ipa(self, string):
-        """
-        Simple IPA parsing
-        """
-        pass
 
 
 # ---------- Tree node --------
