@@ -153,5 +153,6 @@ setup(
 if 'install' in sys.argv:
     print("[i] Removing the build directory.")
     shutil.rmtree('lingpy_build/')
+    shutil.rmtree('build/') 
     print("[i] Done.")
     print("[i] LingPy was successfully installed on your system.")
