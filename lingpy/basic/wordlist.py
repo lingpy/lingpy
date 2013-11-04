@@ -73,9 +73,9 @@ class Wordlist(_QLCParser):
     def __init__(
             self,
             filename,
-            row = 'concept',
-            col = 'doculect',
-            conf = ''
+            row='concept',
+            col='doculect',
+            conf=''
             ):
         # set up basic path for configuration file
         if not conf:
@@ -181,7 +181,10 @@ class Wordlist(_QLCParser):
             if self._alias['taxa'] not in self._meta:
                 self._meta[self._alias['taxa']] = self.cols
 
-    def __getitem__(self,idx):
+    def __getitem__(
+            self,
+            idx
+            ):
         """
         Method allows quick access to the data by passing the integer key.
         """
@@ -215,45 +218,11 @@ class Wordlist(_QLCParser):
         del self._cache
         self._cache = {}
 
-    #def _pickle(self):
-    #    """
-    #    Store the current data in a pickled object.
-    #    """
-    #    if not os.path.isdir('__lingpy__'):
-    #        os.mkdir('__lingpy__')
-    #    path = os.path.join('__lingpy__/',self.filename+'.bin')
-    #    out = open(path,'wb')
-    #    d = {}
-    #    for key,value in self.__dict__.items():
-    #        if key not in  [
-    #                '_class',
-    #                ]:
-    #            d[key] = value
-    #    d['__date__'] = rcParams['timestamp']
-    #    pickle.dump(d,out)
-    #    out.close()
-
-    #def pickle(self):
-    #    """
-    #    Store a dump of the data in a binary file.
-
-    #    Notes
-    #    -----
-    #    The function creates a folder ``__lingpy__`` on your system containing a
-    #    binary file called ``FILENAME.bin`` with ``FILENAME`` corresponding to
-    #    the name of the original CSV-file. Instantiating the same
-    #    :py:class:`~lingpy.basic.wordlist.Wordlist` instance again will first
-    #    check for already compiled binary files and, if they are there, load
-    #    them instead of the CSV-file.
-    #    """
-
-    #    self._pickle()
-
     def get_dict(
             self,
-            col = '',
-            row = '',
-            entry = '',
+            col='',
+            row='',
+            entry='',
             **keywords
             ):
         """
@@ -641,7 +610,7 @@ class Wordlist(_QLCParser):
             entry,
             source,
             function,
-            override = False,
+            override=False,
             **keywords
             ):
         """
@@ -810,10 +779,10 @@ class Wordlist(_QLCParser):
     
     def get_etymdict(
             self,
-            ref = "cogid",
-            entry = '',
-            loans = False,
-            fuzzy = False
+            ref="cogid",
+            entry='',
+            loans=False,
+            fuzzy=False
             ):
         """
         Return an etymological dictionary representation of the word list.
@@ -939,9 +908,9 @@ class Wordlist(_QLCParser):
 
     def get_paps(
             self,
-            ref = 'cogid',
-            entry = 'concept',
-            missing = 0,
+            ref='cogid',
+            entry='concept',
+            missing=0,
             ):
         """
         Function returns a list of present-absent-patterns of a given word list.
@@ -1017,9 +986,9 @@ class Wordlist(_QLCParser):
     def calculate(
             self,
             data,
-            taxa = 'taxa',
-            concepts = 'concepts',
-            ref = 'cogid',
+            taxa='taxa',
+            concepts='concepts',
+            ref='cogid',
             **keywords
             ):
         """
@@ -1069,8 +1038,22 @@ class Wordlist(_QLCParser):
     def _clean(
             self,
             source,
-            f=lambda x:''.join([t for t in x if t not in '()[] {},;:'])    
+            f=lambda x: ''.join([t for t in x if t not in '()[] {},;:'])
             ):
+        """
+        Clean given names of doculects to make them work in Newick.
+
+        Notes
+        -----
+        The function basically removes all brackes, whitespace, and the like
+        from the taxon names in a wordlist. This is quite important for later
+        calculation of trees and the like, since the Newick representation
+        format requires taxon-names to contain no brackets, and other
+        characters such as colons or dots. It is also useful for display, since
+        language names like "German (Standard)" do not look really appealing in
+        basic applications.
+        """
+        
         if self._alias[source] == 'doculect':
             clean_taxnames(self,self._alias[source],f)
 
@@ -1091,23 +1074,23 @@ class Wordlist(_QLCParser):
 
         # add the default parameters, they will be checked against the keywords
         defaults = {
-                'ref'       : 'cogid',
+                'cols'      : False,
+                'distances' : False,
+                'entries'   : ("concept","counterpart"),
                 'entry'     : 'concept',
-                'missing'   : 0,
+                'entry'     : 'word',
+                'fileformat': fileformat,
                 'filename'  : rcParams['filename'],
                 'formatter' : 'concept',
-                'tree_calc' : 'neighbor',
-                'distances' : False,
-                'ref'       : 'cogid',
-                'threshold' : 0.6, # threshold for flat clustering
-                'subset'    : False, # setup a subset of the data,
-                'cols'      : False,
-                'rows'      : False,
                 'meta'      : self._meta,
-                'entry'     : 'word',
+                'missing'   : 0,
+                'ref'       : 'cogid',
+                'ref'       : 'cogid',
+                'rows'      : False,
+                'subset'    : False, # setup a subset of the data,
                 'taxa'      : False,
-                'fileformat': fileformat,
-                'entries'   : ("concept","counterpart"),
+                'threshold' : 0.6, # threshold for flat clustering
+                'tree_calc' : 'neighbor',
                 }
             
         # compare with keywords and add missing ones
@@ -1392,14 +1375,14 @@ class Wordlist(_QLCParser):
     def _export(
             self,
             fileformat,
-            sections = {},
-            entries = [],
-            entry_sep = '',
-            item_sep = '',
-            template = '',
-            exclude = [],
-            entry_start = '',
-            entry_close = '',
+            sections=None,
+            entries=None,
+            entry_sep='',
+            item_sep='',
+            template='',
+            exclude=None,
+            entry_start='',
+            entry_close='',
             **keywords
             ):
         """
@@ -1409,37 +1392,37 @@ class Wordlist(_QLCParser):
         if not sections:
             if fileformat == 'txt':
                 sections = dict(
-                        h1 = ('concept','\n# Concept: {0}\n'),
-                        h2 = ('cogid','## Cognate-ID: {0}\n'),
+                        h1 = ('concept', '\n# Concept: {0}\n'),
+                        h2 = ('cogid', '## Cognate-ID: {0}\n'),
                         )
             elif fileformat == 'tex':
                 sections = dict(
-                        h1 = ('concept',r'\section{{Concept: ``{0}"}}'+'\n'),
-                        h2 = ('cogid',r'\subsection{{Cognate Set: ``{0}"}}'+'\n')
+                        h1 = ('concept', r'\section{{Concept: ``{0}"}}'+'\n'),
+                        h2 = ('cogid', r'\subsection{{Cognate Set: ``{0}"}}'+'\n')
                         )
             elif fileformat == 'html':
                 
                 sections = dict(
-                        h1 = ('concept','<h1>Concept: {0}</h1>'),
-                        h2 = ('cogid','<h2>Cognate Set: {0}</h2>')
+                        h1 = ('concept', '<h1>Concept: {0}</h1>'),
+                        h2 = ('cogid', '<h2>Cognate Set: {0}</h2>')
                         )
     
         # check for entries
         if not entries:
             if fileformat == 'txt':
                 entries = [
-                        ('language','{0} '),
-                        ('ipa','{0}\n')
+                        ('language', '{0} '),
+                        ('ipa', '{0}\n')
                         ]
             elif fileformat == 'tex':
                 entries = [
-                        ('language','{0} '),
-                        ('ipa','[{0}]'+'\n')
+                        ('language', '{0} '),
+                        ('ipa', '[{0}]'+'\n')
                         ]
             elif fileformat == 'html':
                 entries = [
-                        ('language','{0}&nbsp;'),
-                        ('ipa','[{0}]\n')
+                        ('language', '{0}&nbsp;'),
+                        ('ipa', '[{0}]\n')
                         ]
         
         # setup defaults
@@ -1521,16 +1504,21 @@ class Wordlist(_QLCParser):
         else:
             f.write(tmpl.format(out_string))
         f.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
+        if rcParams['verbose']: 
+            print(
+                    rcParams['M_file_written'].format(
+                        keywords['filename']+'.'+fileformat
+                        )
+                )
 
     def export(
             self,
             fileformat,
-            sections = {},
-            entries = [],
-            entry_sep = '',
-            item_sep = '',
-            template = '',
+            sections=None,
+            entries=None,
+            entry_sep='',
+            item_sep='',
+            template='',
             **keywords
             ):
         """
@@ -1556,11 +1544,11 @@ class Wordlist(_QLCParser):
 
     def tokenize(
             self,
-            orthography_profile = '',
-            source = "counterpart",
-            target = "tokens",
-            conversion = 'graphemes',
-            ** keywords
+            orthography_profile='',
+            source="counterpart",
+            target="tokens",
+            conversion='graphemes',
+            **keywords
             ):
         """
         Tokenize the data with help of orthography profiles.
@@ -1568,23 +1556,17 @@ class Wordlist(_QLCParser):
         Parameters
         ----------
         ortho_profile : str (default='')
-        Path to the orthographic profile used to convert and tokenize the
-        input data into IPA tokens. 
+            Path to the orthographic profile used to convert and tokenize the
+            input data into IPA tokens. 
 
         source : str (default="counterpart")
-        The source data that shall be used for the tokenization procedures.
+            The source data that shall be used for the tokenization procedures.
         
         target : str (default="tokens")
-        The name of the target column that will be added to the wordlist.
+            The name of the target column that will be added to the wordlist.
 
         conversion : str (default="graphemes")
-        Tokenization target.
-
-        Notes
-        -----
-        This is a shortcut to the extended
-        :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
-        automatically tokenizes it.
+            Tokenization target.
         """
 
         t = Tokenizer(orthography_profile)
