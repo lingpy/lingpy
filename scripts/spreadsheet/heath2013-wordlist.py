@@ -13,10 +13,10 @@ from lingpy.basic import *
 # specify the column name-to-orthography profiles
 
 d = {
-"Sangha So (Moran, Sangha)":"../../lingpy/data/orthography_profiles/Moran2013.prf", 
-"Ben Tey (Beni, JH)":"../../lingpy/data/orthography_profiles/Heath2013.prf",
-"Toro Tegu (Toupere, JH)":"../../lingpy/data/orthography_profiles/Heath2013.prf",
-"Bangime (Bounou, AH)":"../../lingpy/data/orthography_profiles/Heath2013.prf"
+"Sangha So (Moran, Sangha)":"Moran2013.prf", 
+"Ben Tey (Beni, JH)":"Heath2013.prf",
+"Toro Tegu (Toupere, JH)":"Heath2013.prf",
+"Bangime (Bounou, AH)":"Heath2013.prf"
 }
 
 # load the spreadsheet, specify attributes like the black list file
