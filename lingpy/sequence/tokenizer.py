@@ -95,7 +95,8 @@ class Tokenizer(object):
 
         if not orthography_profile == None:
             # strip possible file extension
-            orthography_profile = orthography_profile.rstrip(".prf").strip()
+            if orthography_profile.endswith('.prf'):
+                orthography_profile = orthography_profile[:-4]
 
             # get path and filename of orthography profile
             if os.path.exists(orthography_profile+".prf"):
@@ -126,6 +127,7 @@ class Tokenizer(object):
 
                 # process the orthography profiles and rules
                 self._init_profile(self.orthography_profile)
+            if rcParams['debug']: print(ortho_path)
 
             # orthography profile rules and replacements
             if os.path.isfile(ortho_path+".rules"):
