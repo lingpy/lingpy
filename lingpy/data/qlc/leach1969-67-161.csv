@@ -1,0 +1,100 @@
+@date: 2013-08-29
+@url: http://www.quanthistling.info/data/source/leach1969/dictionary-67-161.html
+@source_title: Vocabulario Ocaina
+@source_author: Leach, Ilo M.
+@source_year: 1969
+
+<json>
+{
+    "doculect": [
+        "Ocaina, oca, Ocaina, Witotoan",
+        "Castellano, spa, Castellano, Witotoan"
+    ]
+}
+</json>
+
+<json>
+{
+    "head_iso": [
+        "oca"
+    ]
+}
+</json>
+
+<json>
+{
+    "translation_iso": [
+        "spa"
+    ]
+}
+</json>
+
+QLCID	HEAD	HEAD_DOCULECT	TRANSLATION	TRANSLATION_DOCULECT	POS
+leach1969/67/1	aa	Ocaina	venir	Castellano	III (b)
+leach1969/67/1	uu	Ocaina	venir	Castellano	III (b)
+leach1969/67/1	aaji	Ocaina	venir	Castellano	III (b)
+leach1969/67/2	jáhaajiyi	Ocaina	vendrá	Castellano	
+leach1969/67/3	jáhááhsha	Ocaina	vino (recién)	Castellano	
+leach1969/67/4	aajin̈áhtsi	Ocaina	los que vinieron (hace tiempo)	Castellano	
+leach1969/67/5	bah úúhtyo oon	Ocaina	no venga aquí	Castellano	
+leach1969/67/6	aaa	Ocaina	madurar (ablanda o suaviza como aguaje o aguacate)	Castellano	III
+leach1969/67/7	tyáhaaa	Ocaina	está madura	Castellano	
+leach1969/67/8	nom̈áánjin ááañi	Ocaina	las paltas no están maduras	Castellano	
+leach1969/67/9	aaan	Ocaina	salir del cascarón	Castellano	III
+leach1969/67/10	aaborátyo	Ocaina	especie de avispa	Castellano	
+leach1969/67/12	aacho	Ocaina	rozar	Castellano	II
+leach1969/67/13	tya jáhachóxa	Ocaina	lo rozó	Castellano	
+leach1969/67/14	aadsi	Ocaina	golpear	Castellano	II
+leach1969/67/14	aadsi	Ocaina	machacar barbasco	Castellano	II
+leach1969/67/14	aadsi	Ocaina	pescar con veneno	Castellano	II
+leach1969/67/15	tya jahadsíxa	Ocaina	lo golpeó	Castellano	
+leach1969/67/16	áádyo	Ocaina	largo tiempo	Castellano	
+leach1969/67/16	áádyo	Ocaina	hace tiempo	Castellano	
+leach1969/67/17	aadyohtyojún	Ocaina	antes de eso	Castellano	
+leach1969/67/18	áádyohmu	Ocaina	hace mucho tiempo	Castellano	
+leach1969/67/19	aagu	Ocaina	engusanarse	Castellano	I
+leach1969/67/20	tya agúhxa	Ocaina	se engusanó	Castellano	
+leach1969/67/21	aah	Ocaina	tejer	Castellano	I (b)
+leach1969/67/22	tya jáhaaju	Ocaina	lo teje (canasta u hojas para el techo)	Castellano	
+leach1969/67/23	ajúúhxa	Ocaina	tejido	Castellano	
+leach1969/67/24	tya jahááhxa	Ocaina	lo tejió	Castellano	
+leach1969/67/25	aahi	Ocaina	picar	Castellano	I
+leach1969/67/26	ña jáhaahi	Ocaina	lo pica (como pica una hormiga o alacrán)	Castellano	
+leach1969/67/27	ña jahaahíhxa	Ocaina	lo picó	Castellano	
+leach1969/67/28	aahih	Ocaina	recién	Castellano	
+leach1969/67/28	aahih	Ocaina	hace unas pocas horas	Castellano	
+leach1969/67/29	aahih natyón	Ocaina	anoche	Castellano	
+leach1969/67/30	aahímu	Ocaina	temprano	Castellano	
+leach1969/67/30	aahímu	Ocaina	la mañana	Castellano	
+leach1969/67/31	aaho	Ocaina	llamar	Castellano	II tr.|III intr.
+leach1969/67/32	ña jáhaaho	Ocaina	le llama	Castellano	
+leach1969/67/33	jáhaaho	Ocaina	él llama	Castellano	
+leach1969/67/34	ña jáhahoxa	Ocaina	le llamó	Castellano	
+leach1969/67/35	jahaahóhsha	Ocaina	llamó	Castellano	
+leach1969/67/36	ahójin xáxaxa jahááhsha	Ocaina	oyendo una llamada	Castellano	
+leach1969/67/36	ahójin xáxaxa jahááhsha	Ocaina	vino	Castellano	
+leach1969/67/37	ááhti	Ocaina	adolorido	Castellano	
+leach1969/67/38	ááhxo	Ocaina	suguigui negro (C)	Castellano	
+leach1969/67/38	ááhxo	Ocaina	tocón (P)	Castellano	
+leach1969/67/38	ááhxo	Ocaina	mono	Castellano	
+leach1969/67/40	aain	Ocaina	botar	Castellano	I
+leach1969/67/41	tya jáhaain	Ocaina	lo bota	Castellano	
+leach1969/67/42	tya jahaaínhxa	Ocaina	lo botó	Castellano	
+leach1969/67/43	oohfo aíínhxam̈a	Ocaina	peluquero	Castellano	
+leach1969/67/44	aam̈i	Ocaina	arriba	Castellano	
+leach1969/67/44	aam̈i	Ocaina	cielo	Castellano	
+leach1969/67/45	aam̈ijón	Ocaina	cielo	Castellano	
+leach1969/67/46	aam̈i jáhaan	Ocaina	está arriba	Castellano	
+leach1969/68/1	aam̈ih axán	Ocaina	mira arriba	Castellano	
+leach1969/68/2	aam̈ih jañííhxa	Ocaina	baleó arriba	Castellano	
+leach1969/68/3	aam̈i	Ocaina	micolunudo (C)	Castellano	
+leach1969/68/3	aam̈i	Ocaina	chosna (P)	Castellano	
+leach1969/68/3	aam̈i	Ocaina	mono	Castellano	
+leach1969/68/5	aam̈i jañííhxa	Ocaina	él baleó una chosna	Castellano	
+leach1969/68/6	aam̈on	Ocaina	crecer (plantas)	Castellano	III
+leach1969/68/7	tyáhaam̈ón	Ocaina	crece	Castellano	
+leach1969/68/8	aan	Ocaina	abajo	Castellano	
+leach1969/68/8	aan	Ocaina	bajo	Castellano	
+leach1969/68/8	aan	Ocaina	debajo de	Castellano	
+leach1969/68/8	aann̈a	Ocaina	abajo	Castellano	
+leach1969/68/8	aann̈a	Ocaina	bajo	Castellano	

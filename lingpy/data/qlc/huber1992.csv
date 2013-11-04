@@ -1,0 +1,100 @@
+@date: 2012-11-23
+@url: http://www.quanthistling.info/data/source/huber1992/wordlist.html
+@source_title: VOCABULARIO COMPARATIVO - Palabras Selectas de Lenguas Indígenas de Colombia
+@source_author: Huber, Randall Q. & Reed, Robert B.
+@source_year: 1992
+@doculect: kamsá, kbh, kamsa
+@doculect: Español, spa, Espanol
+@doculect: baniva, bvv, baniva
+@doculect: English, eng, English
+@doculect: achagua, aca, achagua
+@doculect: epena Saija, sja, epena Saija
+@doculect: awa, kwi, awa
+@doculect: epena basurudó, sja, epena basurudo
+@doculect: bora, boa, bora, Witotoan
+@doculect: giacone, tae, giacone
+@doculect: barí, mot, bari
+@doculect: bará, bao, bara
+@doculect: guahibo, guh, guahibo
+@doculect: barasana, bsn, barasana
+@doculect: cabiyarí, cbb, cabiyari
+@doculect: secoya, sey, secoya
+@doculect: cha'palaachi, cbi, cha'palaachi
+@doculect: guambiano, gum, guambiano
+@doculect: cuiba, cui, cuiba
+@doculect: carijona, cbd, carijona
+@doculect: macuna, myy, macuna
+@doculect: chimila, cbg, chimila
+@doculect: guayabero, guo, guayabero
+@doculect: embera chamí, cmi, embera chami
+@doculect: carapana, cbc, carapana
+@doculect: curripaco, kpc, curripaco
+@doculect: ika, arh, ika
+@doculect: catío, cto, catio
+@doculect: cubeo, cub, cubeo
+@doculect: muinane, bmr, muinane, Witotoan
+@doculect: desano, des, desano
+@doculect: inga, inb, inga
+@doculect: dí̵mi̵na, mbp, dimina
+@doculect: embera Darién, emp, embera Darien
+@doculect: nukak, mbr, nukak
+@doculect: jupda, jup, jupda
+@doculect: jitnu, mbn, jitnu
+@doculect: koreguaje, coe, koreguaje
+@doculect: páez, pbb, paez
+@doculect: kakua, cbv, kakua
+@doculect: witoto mi̵ni̵ca, hto, witoto minica, Witotoan
+@doculect: kogui, kog, kogui
+@doculect: witoto ni̵pode, hux, witoto nipode, Witotoan
+@doculect: miraña, boa, mirana, Witotoan
+@doculect: piratapuyo, pir, piratapuyo
+@doculect: playero, gob, playero
+@doculect: witoto murui, huu, witoto murui, Witotoan
+@doculect: ocaina, oca, ocaina, Witotoan
+@doculect: orejón, ore, orejon
+@doculect: piapoco, pio, piapoco
+@doculect: puinave, pui, puinave
+@doculect: resígaro, rgr, resigaro
+@doculect: sáliba, slc, saliba
+@doculect: siona, snn, siona
+@doculect: siriano, sri, siriano
+@doculect: tatuyo, tav, tatuyo
+@doculect: tucano, tuo, tucano
+@doculect: embera Tadó, tdc, embera Tado
+@doculect: tanimuca, tnc, tanimuca
+@doculect: tunebo central, tuf, tunebo central
+@doculect: tariano, tae, tariano
+@doculect: tsafiqui pila, cof, tsafiqui pila
+@doculect: totoró, ttk, totoro
+@doculect: tuyuca, tue, tuyuca
+@doculect: waimaja, bao, waimaja
+@doculect: wounaan, noa, wounaan
+@doculect: wanano, gvc, wanano
+@doculect: wayuu, guc, wayuu
+@doculect: yucuna, ycn, yucuna
+@doculect: yukpa, yup, yukpa
+@doculect: yurutí, yui, yuruti
+QLCID	CONCEPT	COUNTERPART	COUNTERPART_DOCULECT
+huber1992/1/22	LENGUA_TONGUE	biʧtáxa	kamsá
+huber1992/2/22	BOCA_MOUTH	wajáɕa	kamsá
+huber1992/3/22	LABIO_LIP	wajatsebiáɕa	kamsá
+huber1992/4/22	DIENTE_TOOTH	xuatsáɕe	kamsá
+huber1992/5/22	NARIZ_NOSE	tsxáɕe	kamsá
+huber1992/6/22	OJO_EYE	bɕni̵bé	kamsá
+huber1992/6/22	OJO_EYE	bomínje	kamsá
+huber1992/7/22	OREJA_EAR	matskuáɕe	kamsá
+huber1992/8/22	CABEZA_HEAD	bestɕáɕe	kamsá
+huber1992/8/22	CABEZA_HEAD	betɕáɕe	kamsá
+huber1992/9/22	FRENTE_FOREHEAD	xuentsi̵ɕáɕe	kamsá
+huber1992/10/22	CABELLO_HAIR	stxi̵ní̵xa	kamsá
+huber1992/11/22	MENTÓN_CHIN	kumbambíɕa	kamsá
+huber1992/12/22	BARBA_BEARD	wangi̵tsboboʃí̵xua	kamsá
+huber1992/13/22	CUELLO_NECK	tamoɕáxa	kamsá
+huber1992/14/22	PECHO_CHEST	koʧáxa	kamsá
+huber1992/15/22	TETA, SENO, PECHO_WOMAN’S BREASTS	ʧóʧo	kamsá
+huber1992/16/22	VIENTRE, ABDOMEN_ABDOMEN, BELLY	wabsbiá	kamsá
+huber1992/17/22	ESPALDA_BACK	sti̵tɕáxa	kamsá
+huber1992/18/22	HOMBRO_SHOULDER	tantɕáxa	kamsá
+huber1992/19/22	BRAZO_ARM	buakuátɕe	kamsá
+huber1992/21/22	CODO_ELBOW	ʃi̵miabé	kamsá
+huber1992/22/22	MANO_HAND	kukuátɕe	kamsá
