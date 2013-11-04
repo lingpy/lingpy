@@ -135,13 +135,13 @@ class Tokenizer(object):
                 self._init_rules(self.orthography_profile_rules)
     
     
-    def _init_profile(self, file):
+    def _init_profile(self, f):
         """
         Process and initialize data structures given an orthography profile.
         """
-        file = codecs.open(file, "r", "utf-8")
+        f = codecs.open(f, "r", "utf-8")
         line_count = 0
-        for line in file:
+        for line in f:
             line_count += 1
             line = line.strip()
 
@@ -192,11 +192,11 @@ class Tokenizer(object):
             print()
 
 
-    def _init_rules(self, file):
+    def _init_rules(self, f):
         """
         Process the orthography rules file.
         """
-        rules_file = codecs.open(file, "r", 'utf-8')
+        rules_file = codecs.open(f, "r", 'utf-8')
 
         # compile the orthography rules
         for line in rules_file:
@@ -558,10 +558,10 @@ def createTree(file_name):
     root = TreeNode('')
     root.makeSentinel()
 
-    file = codecs.open(file_name, "r", "utf-8")
+    f = codecs.open(file_name, "r", "utf-8")
     header = []
 
-    for line in file:
+    for line in f:
         line = line.strip()
 
         # skip any comments
