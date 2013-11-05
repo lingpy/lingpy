@@ -90,9 +90,10 @@ class Tokenizer(object):
     # def __init__(self, orthography_profile=None, orthography_profile_rules=None, debug=0):
     def __init__(self, orthography_profile=None, debug=0):
         self.debug = debug
-        self.orthography_profile = orthography_profile
-        self.orthography_profile_rules = None
+        # self.orthography_profile = None
+        # self.orthography_profile_rules = None
 
+        ortho_path = ""
         if not orthography_profile == None:
             # strip possible file extension
             if orthography_profile.endswith('.prf'):
@@ -108,34 +109,44 @@ class Tokenizer(object):
                     'orthography_profiles',
                     orthography_profile
                     )
+        print(ortho_path)
+        # print("op", ortho_path)
+        # orthography profile processing
+        if os.path.isfile(ortho_path+".prf"):
+            self.orthography_profile = ortho_path+".prf"
 
-            # orthography profile processing
-            if os.path.isfile(ortho_path+".prf"):
-                self.orthography_profile = ortho_path+".prf"
+            # read in orthography profile and create a trie structure for tokenization
+            self.root = createTree(self.orthography_profile)
 
-                # read in orthography profile and create a trie structure for tokenization
-                self.root = createTree(self.orthography_profile)
+            # store column labels from the orthography profile
+            self.column_labels = []
 
-                # store column labels from the orthography profile
-                self.column_labels = []
+            # look up table of graphemes to other column transforms
+            self.mappings = {}
 
-                # look up table of graphemes to other column transforms
-                self.mappings = {}
+            # double check that there are no duplicate graphemes in the orthography profile
+            self.op_graphemes = {}
 
-                # double check that there are no duplicate graphemes in the orthography profile
-                self.op_graphemes = {}
+            # process the orthography profiles and rules
+            self._init_profile(self.orthography_profile)
 
-                # process the orthography profiles and rules
-                self._init_profile(self.orthography_profile)
-            if rcParams['debug']: print(ortho_path)
+            # if rcParams['debug']: print(ortho_path)
 
-            # orthography profile rules and replacements
-            if os.path.isfile(ortho_path+".rules"):
-                self.orthography_profile_rules = ortho_path+".rules"
-                self.op_rules = []
-                self.op_replacements = []
-                self._init_rules(self.orthography_profile_rules)
-    
+        else:
+            self.orthography_profile = None
+        
+        # orthography profile rules and replacements
+        if os.path.isfile(ortho_path+".rules"):
+            self.orthography_profile_rules = ortho_path+".rules"
+            self.op_rules = []
+            self.op_replacements = []
+            self._init_rules(self.orthography_profile_rules)
+        else:
+            self.orthography_profile_rules = None
+
+        # print(self.orthography_profile)
+        # print(self.orthography_profile_rules)
+                
     
     def _init_profile(self, f):
         """
@@ -386,7 +397,14 @@ class Tokenizer(object):
         Convenience function that first tokenizes a string into orthographic profile-
         specified graphemes and then applies the orthography profile rules.
         """
-
+        # TODO: handle missing profile case
+        """
+        if self.orthography_profile == None:
+            if not self.orthography_profile_rules == None:
+                result = self.rules(string)
+                print(result.grapheme_clusters(result))
+                return result
+                """
         # Return at least a Unicode \X tokenization (see wordlist.py, dictionary.py)
         if not self.orthography_profile:
             return self.grapheme_clusters(string)
