@@ -109,7 +109,7 @@ class Tokenizer(object):
                     'orthography_profiles',
                     orthography_profile
                     )
-        print(ortho_path)
+        if rcParams['debug']: print(ortho_path)
         # print("op", ortho_path)
         # orthography profile processing
         if os.path.isfile(ortho_path+".prf"):
