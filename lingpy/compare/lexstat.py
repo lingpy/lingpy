@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-10-24 15:20
+# modified : 2013-11-05 07:19
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-24"
+__date__="2013-11-05"
 
 # builtin
 import random
@@ -1157,7 +1157,7 @@ class LexStat(Wordlist):
             concepts = [concept]
 
         for c in sorted(concepts):
-            if rcParams['verbose']: print("[i] Analyzing words for concept <{0}>.".format(concept))
+            if rcParams['verbose']: print("[i] Analyzing words for concept <{0}>.".format(c))
 
             indices = self.get_list(
                     row=c,
