@@ -8,7 +8,7 @@ __date__ = "2010-11-06"
 
 from lingpy import *
 
-# rcParams["debug"]=True
+rcParams["debug"]=True
 
 wl = Wordlist("pad_data_qlc.qlc")
 wl.tokenize('pad_orthography_profile')
