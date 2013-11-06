@@ -26,11 +26,8 @@ class Tokenizer(object):
     Parameters
     ----------
 
-    orthography_profile : string
+    orthography_profile : string (default = None)
         Filename (without extension) of the a document source-specific orthography profile and rules file.
-
-    debug : int (default = 0)
-        Turn debug mode on / off.
 
     Notes
     -----
@@ -87,12 +84,8 @@ class Tokenizer(object):
 
     """
 
-    # def __init__(self, orthography_profile=None, orthography_profile_rules=None, debug=0):
-    def __init__(self, orthography_profile=None, debug=0):
-        self.debug = debug
-        # self.orthography_profile = None
-        # self.orthography_profile_rules = None
-
+    def __init__(self, orthography_profile=None):
+        # check various places for orthography profiles
         ortho_path = ""
         if not orthography_profile == None:
             # strip possible file extension
@@ -109,8 +102,7 @@ class Tokenizer(object):
                     'orthography_profiles',
                     orthography_profile
                     )
-        if rcParams['debug']: print(ortho_path)
-        # print("op", ortho_path)
+
         # orthography profile processing
         if os.path.isfile(ortho_path+".prf"):
             self.orthography_profile = ortho_path+".prf"
@@ -130,11 +122,9 @@ class Tokenizer(object):
             # process the orthography profiles and rules
             self._init_profile(self.orthography_profile)
 
-            # if rcParams['debug']: print(ortho_path)
-
         else:
             self.orthography_profile = None
-        
+
         # orthography profile rules and replacements
         if os.path.isfile(ortho_path+".rules"):
             self.orthography_profile_rules = ortho_path+".rules"
@@ -144,9 +134,10 @@ class Tokenizer(object):
         else:
             self.orthography_profile_rules = None
 
-        # print(self.orthography_profile)
-        # print(self.orthography_profile_rules)
-                
+        if rcParams['debug']: 
+            print("[i] Orthography profile: ", self.orthography_profile)
+            print("[i] Orthography rules: ", self.orthography_profile_rules)
+
     
     def _init_profile(self, f):
         """
@@ -192,14 +183,13 @@ class Tokenizer(object):
                 token = tokens[i].strip()
                 self.mappings[grapheme, self.column_labels[i].lower()] = token
 
-            # move to rcParams
-            # if rcParams['verbose']: print(rcParams['W_empty_cons'])
-            # if rcParams['verbose']: print(rcParams['W_duplicates_in_op'])
+                if rcParams['debug']: 
+                    print(grapheme, self.column_labels[i].lower())
 
         f.close()
 
         # print the trie structure if debug mode is on
-        if self.debug:
+        if rcParams['debug']: 
             print("A graphical representation of your orthography profile in a trie ('*' denotes sentinels):\n")
             printTree(self.root, "")
             print()
@@ -330,9 +320,9 @@ class Tokenizer(object):
                 # replace characters in string but not in orthography profile with <?>
                 parse = " "+self.find_missing_characters(self.characters(word))
                 # write problematic stuff to standard error
-                if self.debug:
-                    print("[i] The string '{0}' does not parse given the specified orthography profile.\n".format(word))
-                    sys.stderr.write("The string '{0}' could not be tokenized".format(word))
+                if rcParams['debug']: 
+                    print("[i] The string '{0}' does not parse given the specified orthography profile {1}.\n".format(word, self.orthography_profile))
+                    # sys.stderr.write("The string '{0}' could not be tokenized".format(word))
 
             parses.append(parse)
 
@@ -369,7 +359,8 @@ class Tokenizer(object):
 
         if column == "graphemes":
             return self.graphemes(string)
-        
+
+        # if the column label for conversion doesn't exist, return grapheme tokenization
         if not column in self.column_labels:
             return self.graphemes(string)
 
@@ -387,24 +378,64 @@ class Tokenizer(object):
                 result.append("?")
                 continue
 
-            # transform given the grapheme and column label
-            result.append(self.mappings[token, column]) 
+            # transform given the grapheme and column label; skip NULL
+            target = self.mappings[token, column]
+            if not target == "NULL":
+                # result.append(self.mappings[token, column]) 
+                result.append(target)
 
         return " ".join(result).strip()
+
+    def tokenize(self, string, column="graphemes"):
+        """
+        This function determines what to do given any combination 
+        of orthography profiles and rules or not orthography profiles
+        or rules.
+
+        Parameters
+        ----------
+        string : str
+            The input string to be tokenized.
+
+        column : str (default = "graphemes")
+            The column label for the transformation, if specified.
+
+        Returns
+        -------
+        result : str
+            Result of the tokenization.
+
+        """
+
+        if self.orthography_profile and self.orthography_profile_rules:
+            return self.rules(self.transform(string, column))
+
+        if not self.orthography_profile and not self.orthography_profile_rules:
+            return self.grapheme_clusters(string)
+
+        if self.orthography_profile and not self.orthography_profile_rules:
+            return self.transform(string, column)
+
+        if not self.orthography_profile and self.orthography_profile_rules:
+            return self.grapheme_clusters(self.rules(string))
+
 
     def transform_rules(self, string):
         """
         Convenience function that first tokenizes a string into orthographic profile-
         specified graphemes and then applies the orthography profile rules.
         """
-        # TODO: handle missing profile case
-        """
+        return self.rules(self.transform(string))
+
+        # Handle missing profile case
         if self.orthography_profile == None:
             if not self.orthography_profile_rules == None:
                 result = self.rules(string)
-                print(result.grapheme_clusters(result))
-                return result
-                """
+                # print(self.grapheme_clusters(result))
+                return result                
+            else:
+                return self.grapheme_clusters(string)
+
         # Return at least a Unicode \X tokenization (see wordlist.py, dictionary.py)
         if not self.orthography_profile:
             return self.grapheme_clusters(string)
@@ -427,8 +458,8 @@ class Tokenizer(object):
 
         """
         # if no orthography profile was initiated, this method can't be called
-        if self.orthography_profile == None:
-            raise Exception("This function requires that an orthography profile is specified.")
+        # if self.orthography_profile == None:
+        #    raise Exception("This function requires that an orthography profile is specified.")
 
         # if no orthography profile rules file has been specified, simply return the string
         if self.orthography_profile_rules == None:
@@ -439,9 +470,10 @@ class Tokenizer(object):
             match = self.op_rules[i].search(result)
             if not match == None:
                 result = re.sub(self.op_rules[i], self.op_replacements[i], result)
-                if self.debug:
-                    print("input: ", string, "\t", "output: ", result)
-                    print("pattern: ", self.op_rules[i].pattern, "\t", "replacement: ", self.op_replacements[i])
+
+                if rcParams['debug']: 
+                    print("[i] Input: ", string, "\t", "output: ", result)
+                    print("[i] Pattern: ", self.op_rules[i].pattern, "\t", "replacement: ", self.op_replacements[i])
                     print()
 
         # this is incase someone introduces a non-NFD ordered sequence of characters
