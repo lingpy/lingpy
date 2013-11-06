@@ -593,9 +593,9 @@ class Dictionary():
 
         # else just return a Unicode grapheme clusters parse
         if target == 'tokens':
-            function = lambda x: t.transform_rules(x).split(' ')
+            function = lambda x: t.tokenize(x).split(' ')
         else:
-            function = lambda x: t.transform_rules(x)
+            function = lambda x: t.tokenize(x)
 
         self.add_entries(
             target,
