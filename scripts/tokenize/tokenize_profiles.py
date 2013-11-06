@@ -9,6 +9,11 @@ from lingpy import *
 
 rcParams["debug"]=True
 
+# op and rules
+wl = Dictionary("leach1969-67-161.csv")
+wl.tokenize('leach1969')
+# wl.output("qlc", filename="tokenized-leach1969") 
+
 # op, rules
 wl = Wordlist("huber1992.csv")
 wl.tokenize('huber1992')
