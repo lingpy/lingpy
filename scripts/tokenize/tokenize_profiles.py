@@ -7,7 +7,18 @@ __date__ = "2010-11-06"
 
 from lingpy import *
 
-rcParams["debug"]=True
+# rcParams["debug"]=True
+
+
+# op and no rules - dictionary
+d = Dictionary("minor1971-3-74.csv")
+d.tokenize('minor1971')
+# d.output("qlc", filename="tokenized-minor1971") 
+
+# op and no rules - dictionary
+d = Dictionary("burtch1983-19-262.csv")
+d.tokenize('burtch1983')
+# d.output("qlc", filename="tokenized-leach1969") 
 
 # op and rules
 wl = Dictionary("leach1969-67-161.csv")
@@ -19,6 +30,7 @@ wl = Wordlist("huber1992.csv")
 wl.tokenize('huber1992')
 wl.output("qlc", filename="tokenized-huber1992") 
 
+sys.exit(1)
 # op, no rules
 wl = Wordlist("zgraggen1980.csv")
 wl.tokenize('zgraggen1980')
