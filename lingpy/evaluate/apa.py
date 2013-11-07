@@ -16,7 +16,7 @@ import codecs
 # internal modules
 from ..settings import rcParams
 from ..align.sca import PSA,MSA
-from ..algorithm.cython.misc import transpose
+from ..algorithm import misc
 
 class EvalMSA(object):
     """
@@ -54,8 +54,8 @@ class EvalMSA(object):
         Calculate the c-scores.
         """
         
-        almsGold = transpose(self.gold.alm_matrix)
-        almsTest = transpose(self.test.alm_matrix)
+        almsGold = misc.transpose(self.gold.alm_matrix)
+        almsTest = misc.transpose(self.test.alm_matrix)
 
         commons = len([i for i in almsGold if i in almsTest])
         

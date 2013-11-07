@@ -11,12 +11,11 @@ __date__="2013-10-24"
 
 import codecs
 
+from . import misc
 try:
     from .cython import cluster as cluster
-    from .cython import misc as misc
 except ImportError:
     from .cython import _cluster as cluster
-    from .cython import _misc as misc
 
 from ..thirdparty import linkcomm as lc
 from ..thirdparty import cogent as cg
