@@ -215,6 +215,47 @@ class Wordlist(_QLCParser):
         del self._cache
         self._cache = {}
 
+    def add_entries(
+            self,
+            entry,
+            source,
+            function,
+            override=False,
+            **keywords
+            ):
+        """
+        Add new entry-types to the word list by modifying given ones.
+
+        Parameters
+        ----------
+        entry : string
+            A string specifying the name of the new entry-type to be added to the
+            word list.
+
+        source : string
+            A string specifying the basic entry-type that shall be modified. If
+            multiple entry-types shall be used to create a new entry, they
+            should be passed in a simple string separated by a comma.
+
+        function : function
+            A function which is used to convert the source into the target
+            value.
+
+        keywords : {dict}
+            A dictionary of keywords that are passed as parameters to the
+            function.
+
+        Notes
+        -----
+        This method can be used to add new entry-types to the data by
+        converting given ones. There are a lot of possibilities for adding new
+        entries, but the most basic procedure is to use an existing entry-type
+        and to modify it with help of a function.
+
+        """
+        self._add_entries(entry, source, function, override, **keywords)
+        self._clean_cache()
+
     def get_dict(
             self,
             col='',

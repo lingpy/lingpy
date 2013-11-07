@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-09-29 11:44
+# modified : 2013-11-07 14:07
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-29"
+__date__="2013-11-07"
 
 import os
 import pickle
@@ -386,7 +386,7 @@ class _QLCParser(object):
 
             # if the source is a dictionary, this dictionary will be directly added to the
             # original data-storage of the wordlist
-            elif type(source) == dict:
+            elif hasattr(source,'keys') and hasattr(source,'values'): 
                 
                 for key in self:
                     s = source[key]
@@ -495,8 +495,6 @@ class _QLCParser(object):
 
         """
         self._add_entries(entry, source, function, override, **keywords)
-        # clear the cache
-        self._clean_cache()
 
     def _tokenize(
             self,
