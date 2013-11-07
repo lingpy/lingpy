@@ -3517,6 +3517,8 @@ class PhyBo(Wordlist):
                     zorder = 1
                     )
 
+            plt.subplots_adjust(bottom=0.2)
+
             # save the figure
             plt.savefig(
                     os.path.join(
@@ -3527,7 +3529,6 @@ class PhyBo(Wordlist):
             plt.clf()
             
             if rcParams["verbose"]: print("[i] Plotted the distributions.")
-        
 
         # carry out further analyses if this is specified
         if full_analysis:

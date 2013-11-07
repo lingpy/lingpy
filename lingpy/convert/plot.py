@@ -1873,6 +1873,18 @@ def plot_heatmap(
     plt.savefig(filename + '.' + fileformat)
     
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+    
+    f = open(filename+'.matrix','w')
+    for i,t in enumerate(taxa):
+        f.write('{0:20}'.format(t))
+        for j,c in enumerate(matrix[i]):
+            try: 
+                f.write('\t{0:3}'.format(int(c)))
+            except:
+                f.write('\t{0:.2f}'.format(c))
+        f.write('\n')
+    f.close()
 
+            
 
 
