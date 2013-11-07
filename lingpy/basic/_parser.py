@@ -16,6 +16,8 @@ import codecs
 from ..settings import rcParams
 from ..read.qlc import read_qlc
 
+from ..sequence.tokenizer import Tokenizer
+
 
 class _QLCParser(object):
     """
@@ -310,3 +312,252 @@ class _QLCParser(object):
         """
 
         self._pickle()
+
+    def _add_entries(
+            self,
+            entry,
+            source,
+            function,
+            override=False,
+            **keywords
+            ):
+        """
+        Add new entry-types to the word list by modifying given ones.
+
+        """
+        # check for emtpy entries etc.
+        if not entry:
+            print("[i] Entry was not properly specified!")
+            return
+        
+        # check for override stuff, this causes otherwise an error message
+        if entry not in self.header and override:
+            return self.add_entries(entry,source,function,override=False)
+
+        # check whether the stuff is already there
+        if entry in self._header and not override:
+            answer = input("[?] Datatype <{entry}> has already been produced, do you want to override? (y/n) ".format(entry=entry))
+            if answer.lower() in ['y','yes','j']:
+                keywords['override'] = True
+                self.add_entries(entry,source,function,**keywords)
+            else:
+                print("[i] ...aborting...")
+                return
+        elif not override:
+
+            # get the new index into the header
+            # add a new alias if this is not specified
+            if entry.lower() not in self._alias2:
+                self._alias2[entry.lower()] = [entry.lower(),entry.upper()]
+                self._alias[entry.lower()] = entry.lower()
+                self._alias[entry.upper()] = entry.lower()
+
+            # get the true value
+            name = self._alias[entry.lower()]
+
+            # get the new index
+            newIdx = max(self._header.values()) + 1
+            
+            # change the aliassed header for each entry in alias2
+            for a in self._alias2[name]:
+                self._header[a] = newIdx
+
+            self.header[name] = self._header[name]
+
+            # modify the entries attribute
+            self.entries = sorted(set(self.entries + [entry]))
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
+
+                # iterate over the data and create the new entry
+                for key in self:
+
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key].append(t)
+
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the wordlist
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key].append(t)
+            
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key].append(t)
+        
+        elif override:
+
+            # get the index that shall be replaced
+            rIdx = self._header[entry.lower()]
+            
+            # check for multiple entries (separated by comma)
+            if ',' in source:
+                sources = source.split(',')
+                idxs = [self._header[s] for s in sources]
+
+                # iterate over the data and create the new entry
+                for key in self:
+
+                    # get the id line
+                    s = self[key]
+
+                    # transform according to the function
+                    t = function(s,idxs)
+
+                    # add the stuff to the dictionary
+                    self[key][rIdx] = t
+
+            # if the source is a dictionary, this dictionary will be directly added to the
+            # original data-storage of the wordlist
+            elif type(source) == dict:
+                
+                for key in self:
+                    s = source[key]
+                    t = function(s)
+                    self[key][rIdx] = t
+
+            else:
+                # get the index of the source in self
+                idx = self._header[source]            
+
+                # iterate over the data and create the new entry
+                for key in self:
+                    
+                    # get the source
+                    s = self[key][idx]
+
+                    # transform s
+                    t = function(s,**keywords)
+
+                    # add
+                    self[key][rIdx] = t
+
+    def add_entries(
+            self,
+            entry,
+            source,
+            function,
+            override=False,
+            **keywords
+            ):
+        """
+        Add new entry-types to the word list by modifying given ones.
+
+        Parameters
+        ----------
+        entry : string
+            A string specifying the name of the new entry-type to be added to the
+            word list.
+
+        source : string
+            A string specifying the basic entry-type that shall be modified. If
+            multiple entry-types shall be used to create a new entry, they
+            should be passed in a simple string separated by a comma.
+
+        function : function
+            A function which is used to convert the source into the target
+            value.
+
+        keywords : {dict}
+            A dictionary of keywords that are passed as parameters to the
+            function.
+
+        Notes
+        -----
+        This method can be used to add new entry-types to the data by
+        converting given ones. There are a lot of possibilities for adding new
+        entries, but the most basic procedure is to use an existing entry-type
+        and to modify it with help of a function.
+
+        """
+        self._add_entries(entry, source, function, override, **keywords)
+        # clear the cache
+        self._clean_cache()
+
+    def _tokenize(
+            self,
+            orthography_profile = '',
+            source = "head",
+            target = "tokens",
+            conversion = 'graphemes',
+            ** keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
+                
+        """
+
+        t = Tokenizer(orthography_profile)
+
+        # else just return a Unicode grapheme clusters parse
+        if target == 'tokens':
+            function = lambda x: t.tokenize(x).split(' ')
+        else:
+            function = lambda x: t.tokenize(x)
+
+        self.add_entries(
+            target,
+            source,
+            function
+            )
+
+    def tokenize(
+            self,
+            orthography_profile = '',
+            source = "counterpart",
+            target = "tokens",
+            conversion = 'graphemes',
+            ** keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
+
+        Parameters
+        ----------
+        ortho_profile : str (default='')
+            Path to the orthographic profile used to convert and tokenize the 
+            input data into IPA tokens.
+        
+        source : str (default="translation")
+            The source data that shall be used for the tokenization procedures.
+        
+        target : str (default="tokens")
+            The name of the target column that will be added to the wordlist.
+
+        conversion : str (default="graphemes")
+            Tokenization target.
+
+
+        Notes
+        -----
+        This is a shortcut to the extended
+        :py:class:`~lingpy.basic.wordlist.Wordlist` class that loads data and
+        automatically tokenizes it.
+
+        """
+        self._tokenize(orthography_profile, source, target, conversion,
+            keywords)
