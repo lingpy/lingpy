@@ -558,4 +558,4 @@ class _QLCParser(object):
 
         """
         self._tokenize(orthography_profile, source, target, conversion,
-            keywords)
+            **keywords)
