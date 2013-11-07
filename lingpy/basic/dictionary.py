@@ -20,6 +20,7 @@ from operator import itemgetter
 import abc
 
 # basic lingpy imports
+from ._parser import _QLCParser
 from ..read.qlc import read_qlc
 from ..settings import rcParams
 
@@ -32,7 +33,7 @@ from ..settings import rcParams
 from ..sequence.tokenizer import Tokenizer
 
 
-class Dictionary():
+class Dictionary(_QLCParser):
     """
     Basic class for the handling of multilingual word lists.
 
@@ -42,6 +43,14 @@ class Dictionary():
         The input file that contains the data. Otherwise a dictionary with
         consecutive integers as keys and lists as values with the key 0
         specifying the header.
+
+    row : str (default = "head")
+        A string indicating the name of the row that shall be taken as the
+        basis for the tabular representation of the dictionary.
+    
+    col : str (default = "translation")
+        A string indicating the name of the column that shall be taken as the
+        basis for the tabular representation of the dictionary.
 
     conf : string (default='')
         A string defining the path to the configuration file. 
@@ -59,168 +68,17 @@ class Dictionary():
     def __init__(
             self,
             filename,
+            row='head',
+            col='translation',
             conf = ''
             ):
 
-        # set the loaded var
-        loaded = False
-
-        # check for existing cache-directory
-        if os.path.isdir('__lingpy__'):
-            path = '__lingpy__/'+filename.replace('.csv','.bin')
-            if os.path.isfile(path):
-                # open the infile
-                infile = open(path,'rb')
-
-                # load the dictionary
-                d = pickle.load(infile)
-
-                # close the infile
-                infile.close()
-
-                # set the attributes
-                for key,val in d.items():
-                    setattr(self,key,val)
-                
-                # reset the class attribute
-                self._class = dict([(key,eval(value)) for key,value in
-                    self._class_string.items()])
-                
-                loaded = True
-            else:
-                loaded = False
-        if not loaded:
-            self._init_first(filename,conf)
-
-    def _init_first(
-            self,
-            filename,
-            conf
-            ):
-
-        try:
-            input_data = read_qlc(filename)
-            if filename[-3:] in ['csv','qlc']:
-                self.filename = filename[:-4]
-            else:
-                self.filename = filename
-        except:
-            if type(filename) == dict:
-                input_data = filename
-                self.filename = rcParams['filename'] 
-            # if it's a wordlist object, add its basic parameters
-            elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
-                input_data = dict(filename._data.items())
-                input_data.update(filename._meta.items())
-                input_data[0] = [a for a,b in sorted(
-                    filename.header.items(),
-                    key = lambda x:x[1],
-                    reverse = False
-                    )]
-                internal_import = True
-                self.filename = rcParams['filename'] 
-            else:
-                if not os.path.isfile(filename):
-                    raise IOError(
-                            "[i] Input file does not exist."
-                            )
-                else:
-                    raise ValueError('[i] Could not parse the input file.')
-
-        # load the configuration file
+        # set up basic path for configuration file
         if not conf:
-            conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
+            conf = os.path.join(rcParams['_path'],'data','conf','dictionary.rc')
 
-        # read the file defined by its path in conf
-        rcf = codecs.open(conf,'r','utf-8')
-        tmp = [line.strip('\n\r').split('\t') for line in rcf if not
-                line.startswith('#') and line.strip('\n\r')]
-        rcf.close()
-                
-        # define two attributes, _alias, and _class which store the aliases and
-        # the datatypes (classes) of the given entries
-        self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
-        for name,cls,alias in tmp:
-            
-            # make sure the name itself is there
-            self._alias[name.lower()] = name
-            self._alias[name.upper()] = name
-
-            self._class[name.lower()] = eval(cls)
-            self._class[name.upper()] = eval(cls)
-
-            self._class_string[name.lower()] = cls
-            self._class_string[name.upper()] = cls
-
-            # add the aliases
-            for a in alias.split(','):
-                self._alias[a.lower()] = name
-                self._alias[a.upper()] = name
-                self._class[a.lower()] = eval(cls)
-                self._class[a.upper()] = eval(cls)
-                self._class_string[a.lower()] = cls
-                self._class_string[a.upper()] = cls
-
-            self._alias2[name] = sorted(set(alias.split(','))) + [name]
-
-        # append the names in data[0] to self.conf to make sure that all data
-        # is covered, even the types which are not specifically defined in the
-        # conf file. the datatype defaults here to "str"
-        for name in input_data[0]:
-            if name.lower() not in self._alias:
-                self._alias[name.lower()] = name.lower()
-                self._class[name.lower()] = str
-            if name.upper() not in self._alias:
-                self._alias[name.upper()] = name.lower()
-                self._class[name.upper()] = str
-
-        # add emtpy alias for empty strings XXX why was that? I can't remember
-        # why this was important XXX
-        self._alias[''] = ''
-
-        # the header stores the indices of the data in the original data
-        # dictionary
-        self.header = dict(
-                zip(
-                    [self._alias[x] for x in input_data[0]],
-                    range(len(input_data[0]))
-                    )
-                )
-
-        # now create a specific header which has all aliases
-        self._header = dict([(k,v) for k,v in self.header.items()])
-        
-        # assign all aliases to the header
-        for alias in self._alias:
-            try:
-                idx = self._header[self._alias[alias]]
-                self._header[alias] = idx
-            except:
-                pass
-        
-        # assign the data as attribute to the word list class
-        self._data = dict([(k,v) for k,v in input_data.items() if k != 0 and type(k) == int])
-
-        # iterate over self._data and change the values according to the
-        # functions
-        heads = sorted(self._header.items(),key=lambda x:x[1])
-        for key in self._data:
-            check = []
-            for head,i in heads:
-                if i not in check:
-                    self._data[key][i] = self._class[head](self._data[key][i])
-                    check.append(i)
-
-        # # define a cache dictionary for stored data for quick access
-        # self._cache = {}
-
-        # create entry attribute of the wordlist
-        self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
-                       
-        # assign meta-data
-        self._meta = {}
-        for key in [k for k in input_data if type(k) != int]:
-            self._meta[key] = input_data[key]
+        # initialize the qlc_parser
+        _QLCParser.__init__(self,filename,conf)
 
         # build a doculect->iso map for @doculect meta data
         self.doculect2iso = {}
@@ -247,104 +105,6 @@ class Dictionary():
                 self.translation_iso.append(iso)
         else:
             self.translation_iso.append(self._meta["translation_iso"])
-
-    def __getitem__(self,idx):
-        """
-        Method allows quick access to the data by passing the integer key.
-        """
-        try:
-            # return full data entry as list
-            out = self._data[idx]
-            return out
-        except:
-            try:
-                # return data entry with specified key word
-                out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                return out
-            except:
-                try:
-                    out = self._meta[idx]
-                    return out
-                except:
-                    pass
-
-    def __len__(self):
-        """
-        Length of a Wordlist is the number of counterparts.
-        """
-        return len(self._data)
-
-    def __getattr__(
-            self,
-            attr
-            ):
-        """
-        Define how attributes are overloaded.
-        """
-        try:
-            # get the right name
-            nattr = self._alias[attr]
-
-            if nattr in self._header:
-                return self.get_tuples([nattr])
-            else:
-                raise AttributeError("%r object has no attribute %r" %
-                        (self.__class__,attr))
-        except:
-            try:
-                return self._meta[attr]
-            except:
-                raise AttributeError("%r object has no attribute %r" %
-                        (self.__class__,attr))
-
-    def __iter__(self):
-        """
-        Iteration is overloaded by iterating over all keys in the basic data.
-        """
-
-        return iter([key for key in self._data.keys()])
-
-    # def _clean_cache(self):
-
-    #     """
-    #     Function cleans the cache.
-    #     """
-    #     del self._cache
-    #     self._cache = {}
-
-    def _pickle(self):
-        """
-        Store the current data in a pickled object.
-        """
-        if not os.path.isdir('__lingpy__'):
-            os.mkdir('__lingpy__')
-        path = '__lingpy__/'+self.filename+'.bin'
-        out = open(path,'wb')
-        d = {}
-        for key,value in self.__dict__.items():
-            if key not in  [
-                    '_class',
-                    ]:
-                d[key] = value
-        d['__date__'] = str(datetime.today())
-        pickle.dump(d,out)
-        out.close()
-
-    def pickle(self):
-        """
-        Store a dump of the data in a binary file.
-
-        Notes
-        -----
-        The function creates a folder ``__lingpy__`` on your system containing a
-        binary file called ``FILENAME.bin`` with ``FILENAME`` corresponding to
-        the name of the original CSV-file. Instantiating the same
-        :py:class:`~lingpy.basic.wordlist.Wordlist` instance again will first
-        check for already compiled binary files and, if they are there, load
-        them instead of the CSV-file.
-        """
-
-        self._pickle()
 
     def get_tuples(self, columns = [ "head", "translation"]):
         """

@@ -61,7 +61,7 @@ def main(argv):
                             __file__
                             )
                         )
-                    )[0] + "../../lingpy/data/orthography_profiles/{0}.txt".format(f[:f.index("-")])
+                    )[0] + "../../lingpy/data/orthography_profiles/{0}.prf".format(f[:f.index("-")])
                 if os.path.exists(ortho_path):
                     if "spa" in di.head_iso:
                         di.tokenize(ortho_path, source="translation")
