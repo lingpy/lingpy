@@ -21,9 +21,12 @@ import codecs
 import re
 from operator import itemgetter
 import abc
+import csv
+import glob
 
 # basic lingpy imports
 from ..settings import rcParams
+from ..basic.dictionary import Dictionary
 
 try:
     from nltk.stem.snowball import SpanishStemmer
@@ -275,6 +278,62 @@ class ConceptComparerBase():
         """
         raise NotImplementedError("Method must be implemented")
 
+class ConceptComparerStringMatch(ConceptComparerBase):
+    """
+    Implementation of a concept comparer based on a stemmer for spanish.
+
+    Parameters
+    ----------
+    None.
+
+    Notes
+    -----
+    This is a sub-class of
+    :py:class:`~lingpy.meaning.concepts.ConceptComparerBase`. It uses a simple
+    match of the stem of a given (spanish) string against a given context
+    (that is supposed to be a stemmed spanish word stem).
+
+    See also
+    --------
+    ConceptComparerBase
+    ConceptGraph
+    """
+
+    def __init__(self):
+        self.re_brackets = re.compile(" ?\([^)]\)")
+
+    def compare_to_concept(self, element, concept):
+        """Compares a given element to a concept.
+
+        Parameters
+        ----------
+        element : str
+            The string (for example a lexical item: head or translation) to
+            compare to the concept.
+        concept : str or object
+            The conpect to compare to.
+
+        Return
+        ------
+        match : bool
+            True if element matches the given concept, False otherwise.
+
+        Notes
+        -----
+        The `element` is supposed to be a spanish word, the concept a string,
+        for example from a Swadesh list.
+
+        See also
+        --------
+        spanish_swadesh_list
+
+        """
+        element = self.re_brackets.sub("", element)
+        element = element.strip()
+        if concept in element:
+            return True
+        return False
+
 class ConceptComparerSpanishStem(ConceptComparerBase):
     """
     Implementation of a concept comparer based on a stemmer for spanish.
@@ -334,7 +393,7 @@ class ConceptComparerSpanishStem(ConceptComparerBase):
                 return True
         return False
 
-def spanish_swadesh_list():
+def spanish_swadesh_list(stemmed=True):
     """
     Helper function that returns a list of strings with the stems of the
     spanish Swadesh entries.
@@ -357,6 +416,97 @@ def spanish_swadesh_list():
         line = line.strip()
         for e in line.split(","):
             e = e.strip()
-            stem = stemmer.stem(e)
-            swadesh_entries.append(stem)
+            if stemmed:
+                stem = stemmer.stem(e)
+                swadesh_entries.append(stem)
+            else:
+                swadesh_entries.append(e)
     return swadesh_entries
+
+def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
+    output_file=None):
+    """
+    This function extracts a wordlist from the quanthistling dictionaries.
+    The package of dictionaries should be extracted to the current working
+    directory first. If no "sources.csv" file is found the function will try
+    to download the filtered data package, i.e. only the entries that contain
+    a word from the Spanish Swadesh list will be used.
+
+    The resultung wordlist will be written to a file.
+
+    Parameters
+    ----------
+    component : str
+        The component for which to extract the dictionaries. "Witotoan", for
+        example.
+    use_profiles : bool
+        Whether to apply orthography profiles or not. If true, than any
+        dictionary for which there is no profile in lingpy will be skipped.
+    concepts : list
+        A list of concepts to initialize the network. The type of the concecpts
+        is str.
+    iso_pivot : str
+        The ISO 639-2 code of the pivot language. The code is used when the user
+        adds a new dictionary, to extract the correct entries for comparison
+        from the dictionary.
+    output_file: str
+        The filename of the wordlist to output. If none is given, then the
+        component will be used for the filename (e.g. "Witototan.csv").
+
+    Return
+    ------
+    output_file : str
+        The filename of the output file.
+
+    """
+    if not os.path.exists("sources.csv"):
+        try:
+            import requests
+        except:
+            print("Module 'requests' not found. I cannot download the data "
+                  "automatically for you.\n\nPlease download manually at:\n"
+                  "http://www.quanthistling.info/data/downloads/csv/data.zip")
+            return False
+
+        r = requests.get(
+            "http://www.quanthistling.info/data/downloads/csv/data.zip")
+        with open("data.zip", "wb") as f:
+            f.write(r.content)
+
+        z = zipfile.ZipFile("data.zip")
+        z.extractall()
+
+    sources = csv.reader(codecs.open("sources.csv", "r", "utf-8"),
+        delimiter="\t")
+    witotoan_sources = list()
+    for source in sources:
+        if source[5] == component and source[1] == "dictionary": # add for "ready"-only dicts: and source[3] == "True"
+            witotoan_sources.append(source[0])
+
+    cm = ConceptComparerStringMatch()
+    cg = ConceptGraph(concepts, iso_pivot, cm)
+
+    for f in glob.glob("*.csv"):
+        if ("-" in f and f[:f.index("-")] in witotoan_sources) or \
+                ("." in f and f[:f.index(".")] in witotoan_sources):
+            print("Adding {0}...".format(f))
+            di = Dictionary(f)
+            if use_profiles:
+                ortho_path = os.path.join(
+                    rcParams['_path'], 'data', 'orthography_profiles', "{0}.prf".format(
+                    f[:f.index("-")]))
+                if os.path.exists(ortho_path):
+                    if iso_pivot in di.head_iso:
+                        di.tokenize(ortho_path, source="translation")
+                    else:
+                        di.tokenize(ortho_path)
+                    cg.add_dictionary(di)
+                else:
+                    print("  Orthography profile not found, skipping dictionary.")
+            else:
+                cg.add_dictionary(di)
+
+    if not output_file:
+        output_file = "{0}.csv".format(component)
+    cg.output_wordlist(output_file)
+    return output_file
