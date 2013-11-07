@@ -85,7 +85,7 @@ def csv2list(
             if strip_lines:
                 cells = [c.strip() for c in line.strip().split(sep)]
             else:
-                cells = [c for c in line.split(sep)]
+                cells = [c.strip() for c in line.split(sep)]
             if not dtype:
                 l += [cells]
             else:
