@@ -29,10 +29,8 @@ from ..sequence.sound_classes import *
 from .multiple import Multiple
 from .pairwise import Pairwise
 
-try:
-    from ..algorithm.cython import misc
-except:
-    from ..algorithm.cython import _misc as misc
+from ..algorithm import misc
+
 
 class MSA(Multiple):
     """

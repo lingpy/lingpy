@@ -10,13 +10,12 @@ __author__="Johann-Mattis List"
 __date__="2013-10-24"
 
 import codecs
-
-try:
-    from .cython import cluster as cluster
-    from .cython import misc as misc
+try: 
+    from .cython import cluster
 except ImportError:
     from .cython import _cluster as cluster
-    from .cython import _misc as misc
+
+from . import misc
 
 from ..thirdparty import linkcomm as lc
 from ..thirdparty import cogent as cg
