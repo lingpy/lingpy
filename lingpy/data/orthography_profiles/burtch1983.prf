@@ -1,6 +1,6 @@
-#burtch1983 orthography profile
+# burtch1983 orthography profile
 #
-#author: Jelena Prokic
+# author: Jelena Prokic
 Graphemes	IPA	Comment
 a	 a	
 á	 a	 occurs only once in non-parsed entry 'lápiz muìdo jicaì̵ ra'
@@ -48,7 +48,7 @@ uì	 ui
 uì̵	 uɯ	
 v	 β
 z	 θ	 occurs only once in non-parsed entry 'lápiz muìdo jicaì̵ ra'
--	 
+-	 NULL
 A	 a	
 D	 d	
 T	 t	
