@@ -11,10 +11,8 @@ __date__="2013-08-19"
 
 import regex as re
 import os
-try:
-    from algorithm.cython import misc
-except ImportError:
-    from ..algorithm.cython import _misc as misc
+
+from ..algorithm import misc
 from .csv import csv2list
 
 def read_dst(

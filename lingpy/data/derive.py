@@ -26,10 +26,7 @@ import codecs
 
 # lingpy imports
 from ..settings import rcParams
-try:
-    from ..algorithm.cython import misc
-except:
-    from ..algorithm.cython import _misc as misc
+from ..algorithm import misc
 from ..convert import *
 from ..read import *
 
