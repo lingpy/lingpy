@@ -20,10 +20,7 @@ try:
     from .derive import compile_model,compile_dvt
 except ImportError:
     print(rcParams['W_missing_module'].format("networkx"))
-try:
-    from ..algorithm.cython import misc
-except:
-    from ..algorithm.cython import _misc as misc
+from ..algorithm import misc
 from ..read import *
 from ..convert import *
 
