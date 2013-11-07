@@ -31,6 +31,7 @@ from .pairwise import Pairwise
 
 from ..algorithm import misc
 
+
 class MSA(Multiple):
     """
     Basic class for carrying out multiple sequence alignment analyses.

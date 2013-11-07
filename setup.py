@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-09 16:28
-# modified : 2013-10-18 11:35
+# modified : 2013-11-07 13:01
 """
 Setup-Script for LingPy
 """
 
 __author__="Johann-Mattis List,Peter Bouda"
-__date__="2013-10-18"
+__date__="2013-11-07"
 
 
 import distribute_setup
@@ -24,7 +24,7 @@ from three2two import run3to2,run3to3
 # check whether a build directory is available
 if not os.path.isdir('lingpy_build') and 'install' in sys.argv:
     os.mkdir('lingpy_build')
-    os.mkdir('lingpy_build/lingpy')
+    os.mkdir(os.path.join('lingpy_build','lingpy'))
 
 # check for install and organize the manifest.in-file
 if 'install' in sys.argv:
@@ -61,7 +61,7 @@ if sys.version_info >= (3,):
         pkgname = 'lingpy'
         pkg_dir = {'':'lingpy_build'}
         run3to3()
-        sys.path = ['lingpy_build/'] + sys.path
+        sys.path = ['lingpy_build'] + sys.path
         from lingpy import *
         rc(schema='asjp')
     
@@ -78,7 +78,7 @@ else:
         # replace manifest path
         pkg_location = 'lingpy_build'
         pkg_dir = {'':'lingpy_build'}
-        sys.path = ['lingpy_build/'] + sys.path
+        sys.path = ['lingpy_build'] + sys.path
         from lingpy import *
         rc(schema='asjp')
 
@@ -86,27 +86,29 @@ else:
 if 'install' in sys.argv or 'bdist_egg' in sys.argv:
     if this_version == "3":
 
-        if with_c: #"--with-c" in sys.argv or '--with-C' in sys.argv in sys.argv:
+        if with_c:
+            extension_path = ['lingpy','algorithm','cython']
+            extension_prefix = os.path.join(*extension_path)
             extension_modules = [
                         Extension(
-                            'lingpy.algorithm.cython/calign',
-                            ['lingpy/algorithm/cython/calign.c'],
+                            os.path.join('.'.join(extension_path),'calign'),
+                            [os.path.join(extension_prefix,'calign.c')]
                             ),
                         Extension(
-                            'lingpy.algorithm.cython/malign',
-                            ['lingpy/algorithm/cython/malign.c'],
+                             os.path.join('.'.join(extension_path),'malign'),
+                            [os.path.join(extension_prefix,'malign.c')]
                             ),
                         Extension(
-                            'lingpy.algorithm.cython/talign',
-                            ['lingpy/algorithm/cython/talign.c'],
+                            os.path.join('.'.join(extension_path),'talign'),
+                            [os.path.join(extension_prefix,'talign.c')]
                             ),
                         Extension(
-                            'lingpy.algorithm.cython/cluster',
-                            ['lingpy/algorithm/cython/cluster.c'],
+                            os.path.join('.'.join(extension_path),'cluster'),
+                            [os.path.join(extension_prefix,'cluster.c')]
                             ),
                         Extension(
-                            'lingpy.algorithm.cython/misc',
-                            ['lingpy/algorithm/cython/misc.c'],
+                            os.path.join('.'.join(extension_path),'misc'),
+                            [os.path.join(extension_prefix,'misc.c')]
                             ),
                         ]
         else:
@@ -151,8 +153,12 @@ setup(
 # remove the build directory in order to prevent that it leads to confusion
 # when installing lingpy in both the py2 and the py3 version
 if 'install' in sys.argv:
-    print("[i] Removing the build directory.")
-    shutil.rmtree('lingpy_build/')
-    shutil.rmtree('build/') 
-    print("[i] Done.")
+    try:
+        print("[i] Removing the build directory.")
+        shutil.rmtree('lingpy_build')
+        shutil.rmtree('build') 
+        print("[i] Done.")
+    except:
+        print("[i] Failed to remove build directory.")
     print("[i] LingPy was successfully installed on your system.")
+
