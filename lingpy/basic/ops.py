@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2013-09-15 21:41
+# modified : 2013-11-07 08:42
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-15"
+__date__="2013-11-07"
 
 # external imports
 import re

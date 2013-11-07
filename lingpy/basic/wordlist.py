@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-11-04 11:15
+# modified : 2013-11-06 21:33
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-04"
+__date__="2013-11-06"
 
 import os
 import sys
@@ -1088,7 +1088,7 @@ class Wordlist(_QLCParser):
                 'ref'       : 'cogid',
                 'rows'      : False,
                 'subset'    : False, # setup a subset of the data,
-                'taxa'      : False,
+                'taxa'      : 'taxa',
                 'threshold' : 0.6, # threshold for flat clustering
                 'tree_calc' : 'neighbor',
                 }
@@ -1208,7 +1208,7 @@ class Wordlist(_QLCParser):
 
             # check for distances as keyword
             if 'distances' not in self._meta:
-                self._meta['distances'] = wl2dst(self)
+                self._meta['distances'] = wl2dst(self,**keywords)
             
             # write data to file
             filename = keywords['filename']

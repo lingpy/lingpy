@@ -84,6 +84,11 @@ class _QLCParser(object):
             if 'filename' not in input_data:
                 self.filename = rcParams['filename']
             internal_import = True
+            
+            # make check for correct input
+            if len(input_data[0]) != len(input_data[1]):
+                raise ValueError("[!] Wrong input format!")
+
         # check whether it's another wordlist-object
         elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
             input_data = dict(filename._data.items())
