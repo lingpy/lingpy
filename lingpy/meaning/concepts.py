@@ -23,6 +23,7 @@ from operator import itemgetter
 import abc
 import csv
 import glob
+import zipfile
 
 # basic lingpy imports
 from ..settings import rcParams
@@ -399,15 +400,13 @@ def spanish_swadesh_list(stemmed=True):
     spanish Swadesh entries.
 
     """
-    stemmer = SpanishStemmer(True)
+    try:
+        stemmer = SpanishStemmer(True)
+    except:
+        pass
+
     # load swadesh list
-    swadesh_file = os.path.split(
-                    os.path.dirname(
-                        os.path.abspath(
-                            __file__
-                            )
-                        )
-                    )[0] + '/data/swadesh/swadesh_spa.txt'
+    swadesh_file = os.path.join(rcParams['_path'],'data','swadesh','swadesh_spa.txt')
 
     swadesh = codecs.open(swadesh_file, "r", "utf-8")
 
