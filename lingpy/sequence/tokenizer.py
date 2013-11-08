@@ -178,7 +178,6 @@ class Tokenizer(object):
             if len(tokens) == 1:
                 continue
 
-            # build transform table lookup
             for i in range(0, len(tokens)):
                 token = tokens[i].strip()
                 self.mappings[grapheme, self.column_labels[i].lower()] = token
@@ -416,8 +415,9 @@ class Tokenizer(object):
         if self.orthography_profile and not self.orthography_profile_rules:
             return self.transform(string, column)
 
+        # it's not yet clear what the order for this procedure should be
         if not self.orthography_profile and self.orthography_profile_rules:
-            return self.grapheme_clusters(self.rules(string))
+            return self.rules(self.grapheme_clusters(string))
 
 
     def transform_rules(self, string):
@@ -471,10 +471,11 @@ class Tokenizer(object):
             if not match == None:
                 result = re.sub(self.op_rules[i], self.op_replacements[i], result)
 
-                if rcParams['debug']: 
-                    print("[i] Input: ", string, "\t", "output: ", result)
-                    print("[i] Pattern: ", self.op_rules[i].pattern, "\t", "replacement: ", self.op_replacements[i])
+                # debug output for rules
+                if rcParams['debug']:
                     print()
+                    print("[i] Input/output:"+"\t"+string+"\t"+result)
+                    print("[i] Pattern/replacement:"+"\t"+self.op_rules[i].pattern+"\t"+self.op_replacements[i])
 
         # this is incase someone introduces a non-NFD ordered sequence of characters
         # in the orthography profile
@@ -514,7 +515,8 @@ class Tokenizer(object):
 
     def combine_modifiers(self, string):
         """
-        Given a string that is space-delimited on Unicode graphemes, group Unicode modifier letters with their preceeding base characters.
+        Given a string that is space-delimited on Unicode grapheme cluters, 
+        group Unicode modifier letters with their preceeding base characters.
 
         Parameters
         ----------
@@ -524,6 +526,7 @@ class Tokenizer(object):
         .. todo:: check if we need to apply NDF after string is parsed
 
         """
+
         result = []
         graphemes = string.split()
         temp = ""
@@ -533,7 +536,6 @@ class Tokenizer(object):
             count -= 1
             if len(grapheme) == 1 and unicodedata.category(grapheme) == "Lm":
                 temp = grapheme+temp
-
                 # hack for the cases where a space modifier is the first character in the str
                 if count == 0:
                     result[-1] = temp+result[-1]
@@ -541,8 +543,71 @@ class Tokenizer(object):
 
             result.append(grapheme+temp)
             temp = ""
-        return " ".join(result[::-1])
 
+        # return " ".join(result[::-1])
+
+        # check for tie bars
+        segments = result[::-1]
+
+        i = 0
+        r = []
+        while i < len(segments):
+            if ord(segments[i][-1]) in [865, 860]:
+                r.append(segments[i]+segments[i+1])
+                i = i+2
+            else:
+                r.append(segments[i])
+                i += 1
+
+        return " ".join(r)
+
+
+        """
+        # list of points (decimal) of Unicode Mns that require a closing grapheme
+        # 865 COMBINING DOUBLE INVERTED BREVE
+        # 860 COMBINING DOUBLE BREVE BELOW
+
+        bimodifiers = [860, 865]
+
+        graphemes = string.split()
+        print(graphemes)
+
+        result = []
+        temp = ""
+
+        i = 0
+        while i < len(graphemes)-1:
+            # TODO: catch if the first thing is a modifer
+            print(graphemes[i])
+            for char in graphemes[i]:
+                if unicodedata.category(char) == "Mn":
+                    result.append
+            i += 1
+            continue
+
+            # result.append(graphemes[i])
+
+            if i+1 <= len(graphemes):
+                for char in graphemes[i]:
+                    print(graphemes[i])
+                    if unicodedata.category(graphemes[i]) == "Mn":
+                        # temp = graphemes[i]+graphemes[i+1]+graphemes[i+2]
+                        i = i+2
+                        graphemes.append(temp)
+                        continue
+                result.append(graphemes[i])
+                i += 1
+
+            # unicodedata.category() == "Mn" # Mark, non-spacing characters
+            # if i < len(graphemes) - 1:
+                # check for i+1
+                # if it's combiner, grab it
+                # i++
+                # if char is in bimodifiers
+
+        return " ".join(result)
+
+        """
         
     def exists_multiple_columns(self):
         """
