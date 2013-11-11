@@ -15,7 +15,7 @@ from datetime import datetime,date
 
 # internal imports
 from ._settings import rcParams
-from .data.model import Model,load_dvt
+from .data.model import Model, load_dvt
 
 # load diacritics, vowels, tones
 diacritics, vowels, tones = load_dvt()

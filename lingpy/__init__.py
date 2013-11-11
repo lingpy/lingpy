@@ -28,32 +28,35 @@ __author__="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert"
 __date__="2013-04-04"
 
 # import settings
-from .settings import *
+from .settings import rc
 
 # general imports
-from .basic import *
+from .basic import Wordlist, Dictionary
 
 # import converts
-from .convert import *
+# from .convert import *
 
 # we don't import align for the moment for safety reasons...
-from .align import *
+from .align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dist, \
+        pw_align, nw_align, sw_align, we_align, structalign, turchin
 
 # load the sound-class models
-from .data import *
+from .data import Model
 
-# import reading routines
-from .read import *
+# import reading routine
+from .read import csv2list, csv2dict
 
 # import sequence routines
-from .sequence import *
+from .sequence import ipa2tokens, tokens2class, prosodic_string, \
+        prosodic_weights, class2tokens, pid, sampa2uni
 
 # import thirdparty modules
-from .thirdparty import *
+from .thirdparty import LoadTree as Tree
 
 # import lexstat
-from .compare.lexstat import *
+from .compare.lexstat import LexStat
 
 # import algorithm-stuff
-from .algorithm import *
+from .algorithm.clustering import upgma, neighbor, flat_upgma, flat_cluster, \
+        fuzzy, link_clustering, mcl
 

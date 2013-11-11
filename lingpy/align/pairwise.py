@@ -525,15 +525,18 @@ def structalign(
 def turchin(
         seqA,
         seqB,
+        model = 'dolgo',
         **keywords
         ):
     """
     Return cognate judgment based on Turchin et al.'s (2010) method.
     """
-    if 'model' not in keywords:
-        model = rcParams['dolgo']
+    if str(model) == model:
+        model = rcParams[model]
+    elif hasattr(model,'info'):
+        pass
     else:
-        model = keywords['model']
+        raise ValueError("[!] No valid model instance selected.")
 
     if type(seqA) == str:
         seqA = ipa2tokens(seqA)

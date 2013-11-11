@@ -628,10 +628,15 @@ class TreeNode(object):
             if curr:
                 curr.black.append(prev)
                 
-
         curr = self
         while len(curr.black) == 1:
-            curr = curr.black[0]
+            
+            # curr = curr.black[0]
+            # changed above statement in order to check for missing attribute
+            # in lower node JML
+            currX = curr.black[0]
+            if not hasattr(currX,'black'): return curr
+            else: curr = currX
 
         # clear all black attributes from the tree, added by JML
         for n,t in self.getNodesDict().items():
@@ -645,6 +650,56 @@ class TreeNode(object):
     lca = lastCommonAncestor #for convenience
     
     #support for more advanced tree operations
+    def get_LCA(self,*nodes):
+        """
+        Find lowest common ancestor of a given number of nodes.
+
+        Notes
+        -----
+        This function is supposed to yield the same output as
+        lowestCommonAncestor does. It was added in order to overcome certain
+        problems in the original function, resulting from attributes added to a
+        PhyloNode-object that make the use at time unsecure. Furthermore, it
+        works with an arbitrary list of nodes (including tips and internal
+        nodes).
+        """
+        # XXX function added by JML
+
+        # check for nodes that are not in the list of the nodes of self
+        if not set(nodes).issubset(set(self.getNodeNames())):
+            raise ValueError(
+                    "[i] There are nodes that do not occur on the tree."
+                )
+
+        # make a dictionary that stores which nodes have been visited
+        visited = set()
+
+        # pick one node at random (first one)
+        queue = [nodes[0]]
+        
+        while len(visited) < len(nodes):# sum(visited) < len(visited):
+            
+            # get nodes from queue
+            n = queue.pop(0)
+            node = self.getNodeMatchingName(n)
+            
+            # get all tips
+            tips = node.getNodeNames()
+
+            for t in tips:
+                if t in nodes:
+                    visited.add(t)
+            
+            # check for visited
+            if len(visited) == len(nodes):
+                return node
+
+            p = node.Parent.Name
+
+            # append parent to queue
+            queue += [p] 
+            
+        return self.getNodeMatchingName(n)
     
     def separation(self, other):
         """Returns number of edges separating self and other."""
@@ -1249,11 +1304,23 @@ class TreeNode(object):
         (score, tree) = self._sorted(full_sort_order)
         return tree
     
-    def _asciiArt(self, char1='-', show_internal=True, compact=False):
+    def _asciiArt(self, char1='-', show_internal=True, compact=False,
+            labels=False):
+        """
+        Notes
+        -----
+        Added a labels-keyword to this function. This is useful for debugging,
+        since it allows the user to replace all nodes with a specific label,
+        and print it to the tree, accordingly.
+        """
+        # XXX Added labels-keywords: JML
         LEN = 10
         PAD = ' ' * LEN
         PA = ' ' * (LEN-1)
-        namestr = self.Name or '' # prevents name of NoneType
+        if not labels:
+            namestr = self.Name or '' # prevents name of NoneType
+        else:
+            namestr = labels[self.Name]
         if self.Children:
             mids = []
             result = []
@@ -1264,7 +1331,8 @@ class TreeNode(object):
                     char2 = '\\'
                 else:
                     char2 = '-'
-                (clines, mid) = c._asciiArt(char2, show_internal, compact)
+                (clines, mid) = c._asciiArt(char2, show_internal, compact,
+                        labels)
                 mids.append(mid+len(result))
                 result.extend(clines)
                 if not compact:
@@ -1283,15 +1351,20 @@ class TreeNode(object):
         else:
             return ([char1 + '-' + namestr], 0)
     
-    def asciiArt(self, show_internal=True, compact=False):
+    def asciiArt(self, show_internal=True, compact=False, labels=False):
         """Returns a string containing an ascii drawing of the tree.
         
         Arguments:
         - show_internal: includes internal edge names.
         - compact: use exactly one line per tip.
+        - labels: specify specific labels for all nodes in the tree.
+
+        Notes:
+        The labels-keyword was added to the function by JML.
         """
+        # XXX added labels-keywords JML
         (lines, mid) = self._asciiArt(
-                show_internal=show_internal, compact=compact)
+                show_internal=show_internal, compact=compact, labels=labels)
         return '\n'.join(lines)
     
     def _getXmlLines(self, indent=0, parent_params=None):

@@ -76,6 +76,37 @@ def get_gls(
     """
     Calculate a gain-loss scenario. 
 
+    Paremeters
+    ----------
+    paps : list
+        A list containing the presence-absence patterns for all leaves of the
+        reference tree. Presence is indicated by 1, and absence by 0. Missing
+        characters are indicated by -1.
+    taxa : list
+        The list of taxa (leaves of the tree).
+    tree : str
+        A tree in Newick-format. Taxon names should (of course) be identical
+        with the names in the list of taxa.
+    gpl : int
+        Gains per lineage. Specify the maximal amount of gains per lineage. One
+        lineage is hereby defined as one path in the tree. If set to 0, only
+        one gain per lineage is allowed, if set to 1, one additional gain is
+        allowed, and so on. Use with care, since this will lead to larger
+        computation costs (more possibilities have to be taken care of) and can
+        also be quite unrealistic.
+    weights : tuple (default=(1,1))
+        Specify the weights for gains and losses. Setting this parameter to
+        (2,1) will penalize gain events with 2 and loss events with 1.
+    push_gains : bool (default=True)
+        Determine whether of a set of equally parsimonious patterns those
+        should be retained that show gains closer to the leaves of the tree or
+        not.
+    missing_data : int (default=0)
+        Determine how missing data should be represented. If set to 0
+        (default), missing data will be treated in the same way as absence
+        character states. If you want missing data to be accounted for in the
+        algorithm, set this parameter to -1. 
+
     Notes
     -----
     This is an enhanced version of the older approach to parsimony-based
