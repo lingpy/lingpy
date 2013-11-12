@@ -59,10 +59,10 @@ all different possible **entry-types** a word can have, just as in the file `har
     10   Woldemort   Woldemort     wɔldemɔrt   English      6
     11   Woldemort   Владимир      vladimir    Russian      6
     12   Woldemort   Володимир     volodimir   Ukrainian    6
-    9    Harry       Harald        haralt      German       7
-    10   Harry       Harry         hæri        English      7
-    11   Harry       Гарри         gari        Russian      7
-    12   Harry       Гаррi         gari        Ukrainian    7
+    13    Harry       Harald        haralt      German       7
+    14   Harry       Harry         hæri        English      7
+    15   Harry       Гарри         gari        Russian      7
+    16   Harry       Гаррi         gari        Ukrainian    7
 
 This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given

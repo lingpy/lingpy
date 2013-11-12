@@ -1,6 +1,5 @@
-==================
-Concept comparison
-==================
+Concept comparison (:py:mod:`~lingpy.meaning.concepts`)
+=======================================================
 
 .. currentmodule:: lingpy.meaning.concepts
 

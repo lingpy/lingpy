@@ -13,29 +13,28 @@ version, simply download it, unpack the directory, than "cd" into it, and type i
   
      $ python setup.py install
 
-If you use Python3, you will then be asked whether you want to install LingPy along with the C-modules for better
-performance, or not:
+Depending on the python version you use, this will either directly install the Python3 version of
+LingPy, or Python3 scripts will be automatically converted into a hopefully stable Python2 version
+before they are installed. 
+If you use Python3 and Cython is also installed on your system, you can install the C-modules
+along with the regular LingPy package. Using these modules will result in better performance. In
+order to tell the setup-script to install the C-modules, simply type:
 
   .. code-block:: bash
-    
-     [i] Do you want to install with C-modules (requires Cython)? (Y/N) 
+      
+     $ python setup.py install --with-c
 
-Just type in 'Y' or 'N', depending on your preferences and the capabilities of your system.
-If you use Python2, the original Python 3 scripts will be automatically converted into a hopefully
-stable Python2 version and directly installed (Cython currently doesn't work here, due to unicode
-conflicts we have not yet managed to settle).
-You may also need sudo-rights to carry out this command. In order to compile the C-modules, you need Cython. 
-If the compilation fails, you may consider using LingPy without C-extensions (it will still work,
-but in times a bit slower, since the alternative is written in pure Python). 
+You may need sudo-rights to carry out these command.  If the compilation with C-extensions fails,
+you may consider using LingPy without C-extensions (it will still work, but in times a bit slower,
+since the alternative is written in pure Python). 
 
 Installation on Windows
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Our current version of LingPy for Python3 should basically also run on Windows (our tests were successfull, but
-they did not test all functionalities provided with LingPy). In order to install LingPy on a Windows
-machine, we recommend to use the Cygwin terminal and install LingPy in the same way in which one
-would otherwise install it on Linux or Mac machines. Using Python2 and LingPy on windows obviously
-fails for so far unknown reasons.
+Our current version of LingPy for Python3 should basically also run on Windows (our tests were
+successfull, but it is always possible that we forget some functionalities provided with LingPy). In
+order to install LingPy on a Windows machine, we recommend to use the Cygwin terminal and install
+LingPy in the same way in which one would otherwise install it on Linux or Mac machines.
 
 Workarounds
 ^^^^^^^^^^^

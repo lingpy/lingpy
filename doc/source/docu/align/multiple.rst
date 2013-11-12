@@ -5,7 +5,7 @@ Multiple Alignment (:py:mod:`~lingpy.align.multiple`)
 Functions
 ---------
 
-.. autosummary:: 
+.. autosummary::
    :toctree: generated/
    
    ~lingpy.align.multiple.mult_align
@@ -14,9 +14,9 @@ Functions
 Classes
 -------
 
-.. autosummary::
+.. autosummary:: 
    :toctree: generated/
-
+   
    ~lingpy.align.multiple.Multiple
    ~lingpy.align.sca.MSA
    ~lingpy.align.sca.Alignments

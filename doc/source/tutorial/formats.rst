@@ -13,7 +13,7 @@ Wordlist-Format: Basic Format for Storing Large Datasets
 
 For the :py:class:`~lingpy.basic.wordlist.Wordlist` class (and also for all classes that inherit
 from it, such as :py:class:`~lingpy.compare.lexstat.LexStat`,
-:py:class:`~lingpy.compare.borrowing.trebor.TreBor`, :py:class:`~lingpy.align.sca.Alignments`), a
+:py:class:`~lingpy.compare.phylogney.PhyBo`, :py:class:`~lingpy.align.sca.Alignments`), a
 simple csv-format is used. This format is a simple tab-delimited text file in which the header
 specifies all entry types in a given dataset::
 

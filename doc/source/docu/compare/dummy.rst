@@ -1,31 +1,31 @@
 .. autosummary::
    :toctree: generated/
 
-   lingpy.compare.borrowing.trebor.PhyBo.add_entries
-   lingpy.compare.borrowing.trebor.PhyBo.analyze
-   lingpy.compare.borrowing.trebor.PhyBo.get_AVSD
-   lingpy.compare.borrowing.trebor.PhyBo.get_CVSD
-   lingpy.compare.borrowing.trebor.PhyBo.get_GLS
-   lingpy.compare.borrowing.trebor.PhyBo.get_IVSD
-   lingpy.compare.borrowing.trebor.PhyBo.get_MLN
-   lingpy.compare.borrowing.trebor.PhyBo.get_MSN
-   lingpy.compare.borrowing.trebor.PhyBo.get_PDC
-   lingpy.compare.borrowing.trebor.PhyBo.plot_MLN
-   lingpy.compare.borrowing.trebor.PhyBo.plot_MSN
-   lingpy.compare.borrowing.trebor.PhyBo.plot_concepts
-   lingpy.compare.borrowing.trebor.PhyBo.plot_MSN
-   lingpy.compare.borrowing.trebor.PhyBo.plot_concepts
-   lingpy.compare.borrowing.trebor.PhyBo.plot_concept_evolution
-   lingpy.compare.borrowing.trebor.PhyBo.pickle
-   lingpy.compare.borrowing.trebor.PhyBo.output
-   lingpy.compare.borrowing.trebor.PhyBo.get_stats
-   lingpy.compare.borrowing.trebor.PhyBo.get_entries
-   lingpy.compare.borrowing.trebor.PhyBo.add_entries
-   lingpy.compare.borrowing.trebor.PhyBo.export
-   lingpy.compare.borrowing.trebor.PhyBo.calculate
-   lingpy.compare.borrowing.trebor.PhyBo.get_dict
-   lingpy.compare.borrowing.trebor.PhyBo.get_etymdict
-   lingpy.compare.borrowing.trebor.PhyBo.get_edge
+   lingpy.compare.phylogeny.PhyBo.add_entries
+   lingpy.compare.phylogeny.PhyBo.analyze
+   lingpy.compare.phylogeny.PhyBo.get_AVSD
+   lingpy.compare.phylogeny.PhyBo.get_CVSD
+   lingpy.compare.phylogeny.PhyBo.get_GLS
+   lingpy.compare.phylogeny.PhyBo.get_IVSD
+   lingpy.compare.phylogeny.PhyBo.get_MLN
+   lingpy.compare.phylogeny.PhyBo.get_MSN
+   lingpy.compare.phylogeny.PhyBo.get_PDC
+   lingpy.compare.phylogeny.PhyBo.plot_MLN
+   lingpy.compare.phylogeny.PhyBo.plot_MSN
+   lingpy.compare.phylogeny.PhyBo.plot_concepts
+   lingpy.compare.phylogeny.PhyBo.plot_MSN
+   lingpy.compare.phylogeny.PhyBo.plot_concepts
+   lingpy.compare.phylogeny.PhyBo.plot_concept_evolution
+   lingpy.compare.phylogeny.PhyBo.pickle
+   lingpy.compare.phylogeny.PhyBo.output
+   lingpy.compare.phylogeny.PhyBo.get_stats
+   lingpy.compare.phylogeny.PhyBo.get_entries
+   lingpy.compare.phylogeny.PhyBo.add_entries
+   lingpy.compare.phylogeny.PhyBo.export
+   lingpy.compare.phylogeny.PhyBo.calculate
+   lingpy.compare.phylogeny.PhyBo.get_dict
+   lingpy.compare.phylogeny.PhyBo.get_etymdict
+   lingpy.compare.phylogeny.PhyBo.get_edge
    lingpy.compare.lexstat.LexStat.add_entries
    lingpy.compare.lexstat.LexStat.align_pairs
    lingpy.compare.lexstat.LexStat.calculate
@@ -35,6 +35,7 @@
    lingpy.compare.lexstat.LexStat.get_etymdict
    lingpy.compare.lexstat.LexStat.get_list
    lingpy.compare.lexstat.LexStat.get_paps
+   lingpy.compare.lexstat.LexStat.get_distances
    lingpy.compare.lexstat.LexStat.get_random_distances
    lingpy.compare.lexstat.LexStat.get_scorer
    lingpy.compare.lexstat.LexStat.output

@@ -12,7 +12,7 @@ Sequence Modelling
    :maxdepth: 1
    
    sequence/sound_classes
-   sequence/orthography
+   sequence/tokenizer
    sequence/generate
    data/data
    data/derive
@@ -23,7 +23,6 @@ Dataset Handling
    :maxdepth: 1
    
    basic/dictionary
-   basic/spreadsheet
    basic/wordlist
 
 Sequence Comparison
@@ -31,10 +30,15 @@ Sequence Comparison
 .. toctree::
    :maxdepth: 1
    
-   algorithm/distance
    align/pairwise
    align/multiple
 
+Handling Concepts
+^^^^^^^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+
+   meaning/concepts
 
 Language Comparison
 ^^^^^^^^^^^^^^^^^^^
@@ -42,9 +46,9 @@ Language Comparison
 .. toctree::
    :maxdepth: 1
    
-   algorithm/cluster
+   algorithm/clustering
    compare/lexstat
-   compare/trebor
+   compare/phylogeny
 
 Evaluation
 ^^^^^^^^^^
@@ -53,6 +57,8 @@ Evaluation
    :maxdepth: 1
 
    evaluate/acd
+   evaluate/alr
+   evaluate/apa
 
 What's Next?
 ------------

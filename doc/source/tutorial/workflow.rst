@@ -168,22 +168,10 @@ separate MSA-files. More information regarding the format of these files can be 
 The MSA-format is useful for manual editing and comparing multiple alignments. In order to view a
 whole dataset of cognate judgments and aligmnents, however, it not very appropriate. Thus LingPy
 offers a specific colored HTML-output that is very helpful for inspecting the results. In order to
-create this output, we first have to write the aligned data to a specific format with the extension
-``alm``::
-
-  >>> alm.output('alm',ref='lexstatid',filename='DOGON')
-
-Now, that we have created the file DOGON.alm_, we have to load the :py:func:`~lingpy.convert.plot.alm2html` from the
-:py:mod:`~lingpy.convert.plot`-module. This module is not automatically loaded when importing
-LingPy, so we have to import it explicitly::
-
-  >>> from lingpy.convert.plot import alm2hmtl
-
-Once the module is imported, we can use the function to convert the file DOGON.alm_ to colored
-HTML-output::
-
-  >>> alm2html('DOGON.alm',filename='DOGON')
-
+create this output, we simply type::
+  
+  >>> alm.plot(filename='DOGON', ref='lexstatid')
+ 
 As a result, we get the file DOGON.html_ in our folder.
 
 Borrowing Detection
@@ -193,22 +181,21 @@ Automatic approaches to borrowing detection are still in their infancy in histor
 Nevertheless, LingPy offers a full reimplementation along with additional improvements for the MLN
 approach that was originally developed for biological applications (see :evobib:`Dagan2007`) and
 first adapted to linguistic data by :evobib:`Nelson-Sathi2011`. Borrowing detection is handled by
-the :py:class:`~lingpy.compare.borrowing.trebor.TreBor` class. Since this class is quite complex and
+the :py:class:`~lingpy.compare.phylogeny.PhyBo` class. Since this class is quite complex and
 it requires additional thirdparty libraries, such as Matplotlib (http://matplotlib.org), it is not
 automatically loaded when importing lingpy. So we first have to import it directly::
 
-  >>> from lingpy.compare.borrowing.trebor import TreBor
+  >>> from lingpy.compare.phylogeny import PhyBo
 
 The method requires not only that the data be clustered into cognate sets, but also a reference tree
 of the languages under investigation. If this tree is not specified in the dataset, a tree will be
-calculated automatically, using either the UPGMA (:evobib:`Sokal1958`) or the Neighbor-joining (:evobib:`Saitou1987`)
-method. In a previous
-step (see :ref:`Automatic Cognate Detection`), we already calculated a tree.
-When writing the results to file, the tree was also automatically stored. When loading the data into
-a :py:class:`~lingpy.compare.borrowing.trebor.Trebor` object, this tree will therefore be taken as
-reference tree::
+calculated automatically, using either the UPGMA (:evobib:`Sokal1958`) or the Neighbor-joining
+(:evobib:`Saitou1987`) method. In a previous step (see :ref:`Automatic Cognate Detection`), we
+already calculated a tree.  When writing the results to file, the tree was also automatically
+stored. When loading the data into a :py:class:`~lingpy.compare.borrowing.trebor.Trebor` object,
+this tree will therefore be taken as reference tree::
 
-  >>> tre = TreBor('DOGON_lexstat.qlc')
+  >>> tre = PhyBo('DOGON_lexstat.qlc', ref="lexstatid", degree=180)
 
 For the analysis, we have to select a couple of **runs** (general analyses with varying parameters) of
 which the best model will then be selected. Here, we chose the 'weighted' approach which assigns
@@ -216,11 +203,12 @@ different weights to gain and loss events and searches
 for the most parsimonious scenario. As a **mode**, we chose 'mixed'. This will process the data on
 an item-basis, searching for the best solution for each individual concept in our data::
 
-  >>> tre.analyze(runs='weighted',mode='mixed')
+  >>> tre.analyze(runs="weighted", mode="mixed")
 
 This calculation will also take some time. Once it is finished, we can plot the resulting Minimal
 Lateral Network. Note that this will only work if Matplotlib is installed on your system::
-
+  
+  >>> tre.get_MLN(tre.best_model)
   >>> tre.plot_MLN(filename="DOGON",fileformat="SVG")
 
 As a result, the following network plot of the data will appear in the working directory:
@@ -233,6 +221,5 @@ As a result, the following network plot of the data will appear in the working d
 .. _DOGON.qlc: examples/DOGON.qlc
 .. _DOGON_tokens.qlc: examples/DOGON_tokens.qlc
 .. _DOGON_lexstat.qlc: examples/DOGON_lexstat.qlc
-.. _DOGON.alm: examples/DOGON.alm
 .. _DOGON.html: examples/DOGON.html
 

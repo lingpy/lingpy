@@ -9,6 +9,7 @@ Tutorial
    workflow
    formats
    lingpy.basic.wordlist
+   datastructures
 
 
 What's Next?
