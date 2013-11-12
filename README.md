@@ -37,35 +37,35 @@ To use the library in its pre-setup.py stage, git clone the library and put the 
 
 Alternatively (this is the recommended way!), you can make a symlink in your Python3 site-packages folder called "lingpy" and link it to "lingpy/lingpy". For example:
 
-1. Start the Python interpreter (make sure you are using Python 3)
+  1. Start the Python interpreter (make sure you are using Python 3)
 
-```bash
-$ python
-```
+     ```bash
+     $ python
+     ```
 
-2. At the prompt, locate the site-packages folder:
+  2. At the prompt, locate the site-packages folder:
 
-```python
->>> import sys
->>> print(sys.path)
-['', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2/site-packages']
-```
+     ```python
+     >>> import sys
+     >>> print(sys.path)
+     ['', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2/site-packages']
+     ```
 
-3. Create the symlink (you may need sudo):
+  3. Create the symlink (you may need sudo):
 
-```bash
-ln -s /path/to/lingpy/lingpy /path/to/site-packages/symlink
-```
+     ```bash
+     ln -s /path/to/lingpy/lingpy /path/to/site-packages/symlink
+     ```
 
-4. Test in interpreter:
+  4. Test in interpreter:
 
-```bash
-$ python
-```
+     ```bash
+     $ python
+     ```
 
-```python
->>> import lingpy
-```
+     ```python
+     >>> import lingpy
+     ```
 
 Note that we recommend to name the symlink differently if you want to use the regular LingPy version and the development version at the same time. All you have to do for this is to change the target name of the symbolic link (use, for example "lingpyd"). Having done so, you can use both the regular version that can be installed with the setup script, and the development version, even in the same scripts:
 ```python
