@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-11-07 14:07
+# modified : 2013-11-12 14:04
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-07"
+__date__="2013-11-12"
 
 import os
 import pickle
@@ -498,11 +498,11 @@ class _QLCParser(object):
 
     def _tokenize(
             self,
-            orthography_profile = '',
-            source = "head",
-            target = "tokens",
-            conversion = 'graphemes',
-            ** keywords
+            orthography_profile='',
+            source="head",
+            target="tokens",
+            column='graphemes',
+            **keywords
             ):
         """
         Tokenize the data with help of orthography profiles.
@@ -513,9 +513,9 @@ class _QLCParser(object):
 
         # else just return a Unicode grapheme clusters parse
         if target == 'tokens':
-            function = lambda x: t.tokenize(x).split(' ')
+            function = lambda x: t.tokenize(x, **keywords).split(' ')
         else:
-            function = lambda x: t.tokenize(x)
+            function = lambda x: t.tokenize(x, **keywords)
 
         self.add_entries(
             target,
@@ -525,11 +525,11 @@ class _QLCParser(object):
 
     def tokenize(
             self,
-            orthography_profile = '',
-            source = "counterpart",
-            target = "tokens",
-            conversion = 'graphemes',
-            ** keywords
+            orthography_profile='',
+            source="counterpart",
+            target="tokens",
+            column='graphemes',
+            **keywords
             ):
         """
         Tokenize the data with help of orthography profiles.
@@ -557,5 +557,5 @@ class _QLCParser(object):
         automatically tokenizes it.
 
         """
-        self._tokenize(orthography_profile, source, target, conversion,
+        self._tokenize(orthography_profile, source, target, column,
             **keywords)

@@ -662,6 +662,14 @@ class Wordlist(_QLCParser):
         entry : string (default = '')
             The entry-type which shall be selected.
 
+        loans : bool (default=False)
+            Treat all negative cognate ids as if they were positive ones.
+            Negative IDs can be used to indicate borrowings, or, more
+            accurately, xenologs.
+
+        fuzzy : bool (default=False)
+            d
+
         Returns
         -------
         etym_dict : dict
@@ -718,20 +726,7 @@ class Wordlist(_QLCParser):
                         self._etym_dict[ref][cogid][colIdx] += [key]
                     except:
                         self._etym_dict[ref][cogid][colIdx] = [key]
-            #elif loans and not fuzzy:
-            #    for key in self:
-            #        cogid = abs(self[key][cogIdx])
-            #        colIdx = self.cols.index(self[key][self._colIdx])
 
-            #        # assign new line if cogid is missing
-            #        if cogid not in self._etym_dict[ref]:
-            #            self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-            #        
-            #        # assign the values for the current session
-            #        try:
-            #            self._etym_dict[ref][cogid][colIdx] += [key]
-            #        except:
-            #            self._etym_dict[ref][cogid][colIdx] = [key]
             elif fuzzy:
                 for key in self:
                     cogids = self[key][cogIdx]

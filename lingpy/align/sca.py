@@ -1348,8 +1348,9 @@ class Alignments(Wordlist):
                         this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx,'taxon']
                         seq = self[this_idx,'ipa']
+                        if not seq:
+                            seq = ' '.join(self[this_idx,'tokens'])
                         cid = concept2id[concept]
-
                         out += '\t'.join(
                                 [
                                     str(cogid),

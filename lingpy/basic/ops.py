@@ -16,7 +16,7 @@ import codecs
 
 # internal imports
 from ..settings import rcParams
-from ..convert import *
+from ..convert.strings import scorer2str, msa2str, pap2nex, pap2csv
 from ..algorithm import clustering
 
 def wl2dst(
