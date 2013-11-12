@@ -25,21 +25,17 @@ $ cd lingpy
 $ python setup.py install
 ```
 
-Depending on which version of Python you have, these commands will either install the regular Python3 version of LingPy, or a Python2 version will be compiled automatically. In order to use the Python3 version, start Python3 in your terminal and import LingPy as follows:
+Depending on which version of Python you have, these commands will either install the regular Python3 version of LingPy, or a Python2 version will be compiled automatically. In order to use the library, open Python2 or Python3 in your terminal and import LingPy as follows:
 ```python
 >>> from lingpy import *
 ```
-For the use of the Python2 version, start Python2 in your terminal and import LingPy by typing
-```python
->>> from lingy2 import *
-```
-Note that depending on your writing rights on the install path of LingPy, it is possible that you have to run Python with super user rights the first time you use LingPy. During this first install, LingPy automatically compiles a couple of important data structures that can be globally accessed during a LingPy session. Afterwards, it usually works without super user rights.
+Note that, although this should now work withouth problems, there is a certain chance that you will need superuser rights the first time you use LingPy. During this first step (which should now already be handled by the setup-script), LingPy compiles some data and stores it as binary pickled objects. Once this has been done, superuser rights are no longer needed.
 
 ## Setup for Development Version (Python3)
 
 To use the library in its pre-setup.py stage, git clone the library and put the library's "lingpy/lingpy" folder in your path (or Python path).
 
-Alternatively, you can make a symlink in your Python 3 site-packages folder called "lingpy" and link it to "lingpy/lingpy". For example:
+Alternatively (this is the recommended way!), you can make a symlink in your Python3 site-packages folder called "lingpy" and link it to "lingpy/lingpy". For example:
 
 1. Start the Python interpreter (make sure you are using Python 3)
 
@@ -70,6 +66,13 @@ $ python
 ```python
 >>> import lingpy
 ```
+
+Note that we recommend to name the symlink differently if you want to use the regular LingPy version and the development version at the same time. All you have to do for this is to change the target name of the symbolic link (use, for example "lingpyd"). Having done so, you can use both the regular version that can be installed with the setup script, and the development version, even in the same scripts:
+```python
+>>> from lingpyd import futurestuff
+>>> from lingpy import stablestuff
+```
+
 ## Coding Conventions
 
 In order to keep the code transparent even for multiple contributors, we opt for the following conventions.
@@ -97,9 +100,18 @@ import cogent as cg
 import networkx as nx
 import matplotlip.pyplot as plt
 import regex as re # this is useful, since it is then equivalent with the re-module
+import mpl_toolkist.basemap as bmp
 ```
 
+If you are using a specific module offered by numpy or scipy, such as, for example, numpy.linalg, you may import it as:
+```python
+from numpy import linalg
+```
+But in order to make it easier for code reviewing to trace thirdparty and internal code, it is recommended to spell out the full names redundantly, unless they occur very often.
+
 Builtin-modules should be imported "as is", without using aliases.
+
+Please make sure to minimize wildcard imports in your code! Wildcard imports are useful in quick-and-dirty scripting, but not in general-purpose libraries. They make it more difficult to trace errors, and can also dramatically increase namespaces. If we load a specific module, we should always know what we want from this module (be it internal or external).
 
 ### Template for Scripts
 The first lines of the scripts in which we write the modules should more or less confirm to the following template:
