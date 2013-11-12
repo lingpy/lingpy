@@ -18,10 +18,11 @@ import codecs
 
 # basic lingpy imports
 from ..read.qlc import read_qlc
-from ..convert import *
+from ..convert.strings import matrix2dst, pap2nex, pap2csv
 from ..settings import rcParams
 from ._parser import _QLCParser
-from .ops import *
+from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
+        wl2qlc
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
@@ -871,7 +872,7 @@ class Wordlist(_QLCParser):
 
         """
         
-        calculate(self,data,taxa,concepts,ref,**keywords)
+        calculate_data(self,data,taxa,concepts,ref,**keywords)
 
     def renumber(
             self,

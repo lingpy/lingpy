@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-05 07:19
+# modified : 2013-11-12 08:42
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-05"
+__date__="2013-11-12"
 
 # builtin
 import random
@@ -21,11 +21,12 @@ from ..thirdparty import cogent as cg
 
 # lingpy-modules
 from ..settings import rcParams
-from ..sequence.sound_classes import *
+from ..sequence.sound_classes import ipa2tokens, tokens2class, prosodic_string, \
+        prosodic_weights, class2tokens
 from ..sequence.generate import MCPhon
 from ..basic import Wordlist
 from ..align.pairwise import turchin,edit_dist
-from ..convert import *
+from ..convert.strings import scorer2str
 from ..read.phylip import read_scorer # for easy reading of scoring functions
 from ..algorithm import clustering
 

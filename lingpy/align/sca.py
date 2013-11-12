@@ -23,12 +23,11 @@ import os
 
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
-from ..convert import *
 from ..convert import html
-from ..sequence.sound_classes import *
+from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
+        prosodic_string, prosodic_weights
 from .multiple import Multiple
 from .pairwise import Pairwise
-
 from ..algorithm import misc
 
 

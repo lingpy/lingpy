@@ -236,7 +236,7 @@ def clean_taxnames(
     wordlist.add_entries('_doculect','doculect',lambda x:old2new[x],override=True)
     wordlist.add_entries('doculect','_doculect',lambda x:new2old[x],override=True)
 
-def calculate(
+def calculate_data(
         wordlist,
         data,
         taxa = 'taxa',
