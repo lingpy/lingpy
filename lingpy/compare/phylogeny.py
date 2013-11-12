@@ -20,8 +20,6 @@ import re
 # thirdparty imports
 import numpy as np
 
-import numpy.linalg as linalg
-
 # import error classes
 from ._phylogeny.utils import *
 from ._phylogeny._settings import rcParams
@@ -51,7 +49,7 @@ try:
 except:
     print(rcParams['W_missing_module'].format('networkx'))
 try:
-    import scipy.stats as sps
+    import scipy as sp
 except:
     print(rcParams['W_missing_module'].format('scipy'))
 
@@ -1948,7 +1946,7 @@ class PhyBo(Wordlist):
                     zp_vsd.append((0,0.0))
                 else:
                     if evaluation in ['mwu','mannwhitneyu']:
-                        vsd = sps.mstats.kruskalwallis(#mannwhitneyu(
+                        vsd = sp.stats.mstats.kruskalwallis(#mannwhitneyu(
                                 cvsd,
                                 avsd,
                                 #use_continuity=False
@@ -3392,7 +3390,7 @@ class PhyBo(Wordlist):
         
         zp_vsd = []
         for m in modes:
-            vsd = sps.mstats.kruskalwallis( #sps.mannwhitneyu(
+            vsd = sp.stats.mstats.kruskalwallis( #sp.stats.mannwhitneyu(
                     self.dists['contemporary'],
                     self.dists[m],
                     #use_continuity = False
@@ -3428,7 +3426,7 @@ class PhyBo(Wordlist):
 
             if 'mixed' not in modes:
                 modes += ['mixed']
-                vsd = sps.mstats.kruskalwallis( #sps.mannwhitneyu(
+                vsd = sp.stats.mstats.kruskalwallis( #sp.stats.mannwhitneyu(
                         self.dists['contemporary'],
                         self.dists['mixed'],
                         #use_continuity = False
@@ -4427,7 +4425,7 @@ class PhyBo(Wordlist):
                             # get the hull with the minimal euclidean distance
                             distances = []
                             for hull in hulls:
-                                distances.append(linalg.norm(np.array(hull) - np.array(coords[this_label])))
+                                distances.append(np.linalg.norm(np.array(hull) - np.array(coords[this_label])))
                             this_hull = hulls[distances.index(min(distances))]
                             other_label = new_other_nodes[
                                     these_coords.index(
@@ -4488,7 +4486,7 @@ class PhyBo(Wordlist):
                             hulls = []
                             for i,hullA in enumerate(hullsA):
                                 for j,hullB in enumerate(hullsB):
-                                    distances.append(linalg.norm(np.array(hullA)-np.array(hullB)))
+                                    distances.append(np.linalg.norm(np.array(hullA)-np.array(hullB)))
                                     hulls.append((hullA,hullB))
                             minHulls = hulls[distances.index(min(distances))]
                             
