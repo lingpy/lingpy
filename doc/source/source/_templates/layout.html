@@ -1,0 +1,26 @@
+{% extends "!layout.html" %}
+
+{% block rootrellink %}
+	<li><a href="{{ pathto('index') }}">Home</a> |&nbsp;</li>
+	<li><a href="{{ pathto('intro') }}">Introduction</a> |&nbsp;</li>
+	<li><a href="{{ pathto('examples') }}">Examples</a> |&nbsp;</li>
+	<li><a href="{{ pathto('tutorial/index') }}">Tutorial</a> |&nbsp;</li>
+	<li><a href="{{ pathto('docu/index') }}">Documentation</a> |&nbsp;</li>
+        <li><a href="{{ pathto('download') }}">Download </a> </li>
+
+{% endblock %}
+
+{% block relbar1 %}
+<div style="color: black;background-color: white; font-size: 3.2em; text-align: left; padding: 15px 10px 10px 15px">
+LingPy
+</div>
+{{ super() }}
+{% if version.split('.')[-1].startswith('dev') %}
+<br/><p>This documentation is for version <b>{{ version }}</b>, which is
+  not released yet.</p>
+{% endif %}
+{% endblock %}
+
+{# put the sidebar before the body #}
+{#% block sidebar1 %}{{ sidebar() }}{% endblock %#}
+{#% block sidebar2 %}{% endblock %#}

@@ -1,0 +1,95 @@
+@import url("default.css");
+
+div.footer {
+	color: black;
+}
+div.footer a{
+	color: black;
+}
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    background-color: white;
+    font-weight: normal;
+    color: black;
+    border-bottom: 0px;
+    margin: 20px -20px 10px -20px;
+    padding: 3px 0 3px 10px;
+}
+
+div.body h1 { margin-top: 0; font-size: 160%; }
+div.body h2 { font-size: 140%; }
+div.body h3 { font-size: 120%; }
+div.body h4 { font-size: 110%; }
+div.body h5 { font-size: 100%; }
+div.body h6 { font-size: 100%; }
+
+/* Internal References */
+a.reference {
+    color:black;
+}
+tt {
+    font-size: 100%;
+    font-family: "FreeMono",FreeMono,monospace;
+    font-weight: normal;
+}
+
+
+table.citation td.label {
+  font-size: 100%;
+  font-family: "FreeMono",FreeMono,monospace;
+  font-weight: bold;
+  width: 120px;  /** will need to adjust based on largest label. **/
+}
+
+table.citation {
+    border-left: 0px;
+}
+
+/* sphinx sidebar */
+div.sphinxsidebar {
+    margin-left: -50%;
+}
+
+div.sphinxsidebar a {
+    color: white;
+}
+div.sphinxsidebar {
+    float: right;
+}
+
+div.sphinxsidebar h3 {
+    color: #ffffff;
+    font-size: 1.4em;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+}
+
+div.sphinxsidebar h3 a {
+    color: #ffffff;
+}
+
+div.sphinxsidebar h4 {
+    color: #ffffff;
+    font-size: 1.3em;
+    font-weight: normal;
+    margin: 5px 0 0 0;
+    padding: 0;
+}
+
+th.field-name {
+    width:120px;
+
+}
+
+table.indextable a{
+    color: black;
+}
+
+div.genindex-jumpbox a{
+    color: black;
+}
