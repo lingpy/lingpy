@@ -11,7 +11,7 @@ __date__="2013-08-26"
 
 
 import os
-from lingpyd.compare.borrowing import PhyBo
+from lingpy.compare.phylogeny import PhyBo
 
 class TestPhyBo:
 

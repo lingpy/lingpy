@@ -34,7 +34,9 @@ class TestConceptGraph:
     def setup(self):
         concepts = lingpy.meaning.concepts.spanish_swadesh_list()
         cm = lingpy.meaning.concepts.ConceptComparerSpanishStem()
-        self.cg = lingpy.meaning.concepts.ConceptGraph(concepts, "spa", cm)
+        
+        self.cg = lingpy.meaning.concepts.ConceptGraph(concepts, "spa",
+                concepts)
 
     def test_add_dictionary(self):
         dictionary = lingpy.Dictionary(os.path.join(os.path.dirname( __file__ ),
