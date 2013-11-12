@@ -1,0 +1,299 @@
+# Dogon comparartive wordlist orthography profile
+# 
+# author: Steven Moran
+# author: Jelena Prokic
+# author: Johann-Mattis List
+Graphemes	IPA	Note
+a	a
+à	à
+á	á
+ǎ	ǎ
+a:	aː
+à:	àː
+á:	áː
+ǎ:	ǎː
+aⁿ	ã
+àⁿ	ã̀
+áⁿ	ã́
+ǎⁿ	ã̌
+á:ⁿ	ã́ː
+à:ⁿ	ã̀ː
+âⁿ	ã̂
+ǎ:ⁿ	ã̌ː
+â:ⁿ	ã̂ː
+âⁿ:	ã̌ː	typo? (occurs only once)
+â	â
+â:	âː
+a᷈	a᷈
+a᷈:	a᷈ː
+a᷈:ⁿ	ã᷈ː
+á"	á	typo?
+à"	à	typo?
+æ̀	æ̀
+ǽ	ǽ
+æ̂	æ̂
+ǽⁿ	æ̃́
+ǽ:ⁿ	æ̃́ː
+æ̀:ⁿ	æ̃̀ː
+æ̂:ⁿ	æ̃̂ː
+b	b
+ɓ	ɓ
+c	tʃ
+ć	tʃ	occurs only once
+d	d
+dʷ	dʷ
+ɗ	ɗ
+e	e
+é	é
+è	è
+ê	ê
+ě	ě
+é:	éː
+è:	èː
+ě:	ěː
+ê:	êː
+eⁿ	ẽ
+èⁿ	ẽ̀
+éⁿ	ẽ́
+ěⁿ	ẽ̌
+è:ⁿ	ẽ̀
+é:ⁿ	ẽ́
+ě:ⁿ	ẽ̌
+e᷈	e᷈
+e᷈:	e᷈ː
+ɛ	ɛ
+ɛ:	ɛː
+ɛ̀	ɛ̀
+ɛ́	ɛ́
+ɛ́.	ɛ́
+ɛ̌	ɛ̌
+ɛ̌:	ɛ̌ː
+ɛ́:	ɛ́ː
+ɛ̀:	ɛ̀ː
+ɛ̃	ɛ̃ 
+ɛ᷈	ɛ᷈
+ɛ᷈:	ɛ᷈ː
+ɛ̂	ɛ̂
+ɛ̂:	ɛ̂ː
+ɛⁿ	ɛ̃
+ɛ̀ⁿ	ɛ̃̀
+ɛ́ⁿ	ɛ̃́
+ɛ̌ⁿ	ɛ̃̌
+ɛ̂ⁿ	ɛ̃̂
+ɛ́:ⁿ	ɛ̃́ː
+ɛ̀:ⁿ	ɛ̃̀ː
+ɛ̂:ⁿ	ɛ̃̂ː
+ɛ̌:ⁿ	ɛ̃̌ː
+ɛ̃́	ɛ̃́
+ɛ̃̀	ɛ̃̀ 
+ɛ᷈:ⁿ	ɛ̃᷈
+ɛ̄	ɛ	typo?
+È	ɛ̀	typo?
+ə́	ə́
+ə̀	ə̀
+f	f	
+g	ɡ
+ǵ	ɡ
+ɣ	ɣ
+ʔ	ʔ
+ʔⁿ	ʔ	treating as glottal for time being
+h	h
+hʷ	hʷ
+i	i
+i:	iː
+í	í
+ì	ì
+ǐ	ǐ
+î	î
+í:	íː	
+i:́	íː	typo?
+ì:	ìː	
+i:̀	ìː	typo?
+î:	îː	
+ǐ:	ǐː	
+iⁿ	ĩ
+iⁿ̀	ĩ̀	typo?
+ìⁿ	ĩ̀
+íⁿ	ĩ́
+íⁿ̀	ĩ́	typo?
+î:ⁿ	ĩ̂ː
+í:ⁿ	ĩ́ː
+ì:ⁿ	ĩ̀ː
+ǐⁿ	ĩ̌
+îⁿ	ĩ̂
+í̀:ⁿ	ĩ́ː	typo?
+ǐ:ⁿ	ĩ̌ː
+î"	î	typo?
+i᷈:ⁿ	ĩ᷈
+i᷈:	i᷈
+í̀	í	typo?
+#j	dʒ
+ʄ	ʄ	voiced palatal implosive
+k	k	
+ḱ	k	typo
+kʷ	kʷ
+l	l
+l̀	l	typo?
+l:	lː
+m	m
+:m	m	typo?
+m̀	m̀
+ḿ	ḿ
+n	n	
+nⁿ	n
+ǹ	ǹ
+ń	ń
+ǹ:	ǹ	typo?
+ñ	n
+ŋ	ŋ
+ŋ́	ŋ́
+ŋ̀	ŋ̀
+ɲ	ɲ
+ɲ̀	ɲ̀
+ɲ́	ɲ́
+ɳ	ɳ
+o	o
+ò	ò
+ò̀	ò	double accent; typo?
+ó	ó
+o́	ó	double accent; typo?
+ô	ô
+ǒ	ǒ
+ó:	óː
+ò:	òː
+ǒ:	ǒː
+ô:	ôː
+ôⁿ	õ̂ 
+ô:ⁿ	õ̂ː
+ǒ:ⁿ	õ̌ː
+ò:ⁿ	õ̀ː
+ó:ⁿ	ṍː
+óⁿ	ṍ
+òⁿ	õ̀
+o᷈	o᷈
+o᷈:	o᷈ː
+o᷈:	typo?
+õ̀	õ̀
+o᷈::	o᷈ː	typo?
+o̯	o	typo?
+ɔ	ɔ
+ɔⁿ	ɔ̃
+ɔ́	ɔ́
+ɔ̀	ɔ̀
+ɔ:	ɔː
+ɔ̀:	ɔ̀ː
+ɔ̀:̀	ɔ̀ː	typo?
+ɔ̂	ɔ̂
+ɔ̂:	ɔ̂ː
+ɔ̌:	ɔ̌ː
+ɔ́:	ɔ́ː
+ɔ̃	ɔ̃
+ɔ̌	ɔ̌
+ɔ̌:	ɔ̌ː
+ɔ̂ⁿ	ɔ̃̂
+ɔ̀:ⁿ	ɔ̃̀ː
+ɔ́:ⁿ	ɔ̃́ː
+ɔ:ⁿ	ɔ̃ː
+ɔ̌ⁿ	ɔ̃̌
+ɔ̀ⁿ	ɔ̃̀
+ɔ́ⁿ	ɔ̃́
+ɔ́ⁿ	ɔ̃́	typo?
+ɔ᷈:ⁿ	ɔ̃᷈ː
+ɔ̌:ⁿ	ɔ̃̌ː
+ɔ̂:ⁿ	ɔ̃̂ː
+ɔ̀:ⁿ̀	ɔ̃̀ː
+ɔ᷈:	ɔ᷈ː
+ɔ᷈	ɔ᷈
+ɔ̯	ɔ	typo?
+ɔ̀ᵃ	ɔ̀	typo
+ɔ̃́	ɔ̃́	
+ɔ̀ⁿ̀	ɔ̃̀
+ɔ᷈ⁿ	ɔ̃᷈
+ɞ́	ɞ́	typo?  occurs only once
+p	p
+q	q
+r	r
+rᵃ	r
+rⁿ	r̃
+rⁿ̀	r̃
+rᵘ̀	r	typo?
+r̀	r
+s	s
+sⁿ	s
+š	ʃ
+ʃ	ʃ
+t	t
+u	u
+ú	ú
+ù	ù
+û	û
+ǔ	ǔ
+ũ	ũ
+ù:	ùː
+ú:	úː
+û:	ûː
+ǔ:	ǔː
+uⁿ	ũː
+ù:ⁿ	ũ̀ː
+úⁿ	ṹ
+ùⁿ	ũ̀
+ûⁿ	ũ̂
+ǔⁿ	ũ̌
+ú:ⁿ	ṹː
+û:ⁿ	ũ̂ː
+ǔ:ⁿ	ũ̌ː
+u᷈:	u᷈ː
+v	v
+v́	v́	this marks a tonal vowel
+v̀	v̀	this marks a tonal vowel
+w	w
+wⁿ	w̃
+wᵃ	w	typo
+ẃ	ẃ
+ẁ	ẁ
+ẁⁿ	w̃̀
+ẃⁿ	w̃́
+wⁿ́	w̃́
+x	x	
+y	j
+y:	jː
+ý	j́
+ỳ	j̀
+yⁿ	j̃
+yⁿ	j̃	typo?
+yⁿ̀	j̃
+ỳⁿ	j̃̀
+ýⁿ	j̃́
+ŷⁿ	j̃̂
+yᵇ	j	typo?
+z	z	
+ž	z	typo?
+ʒ	ʒ
+∴	∴
+?		missing data
+B		
+D		
+H		
+L		
+C		
+O		
+Y		
+Ú		
+→	→
+(		
+]		
+[		
+)		
+≡	≡
+⇒		
+∅		
+/		
+>		
+2		
+ꜜ	ꜜ
+;		
+!		
+.		
+#		
+X		
+j	dʒ
