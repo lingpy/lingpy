@@ -41,10 +41,10 @@ def flat_upgma(threshold,matrix,taxa=None,revert=False):
     threshold : float
         The threshold which terminates the algorithm.   
     
-    matrix : list or :py:class:`numpy.array`
+    matrix : list 
         A two-dimensional list containing the distances.
 
-    taxa : list (default = [])
+    taxa : list (default=None)
         A list containing the names of the taxa. If the list is left empty, the
         indices of the taxa will be returned instead of their names.
     
@@ -106,16 +106,16 @@ def flat_cluster(
     
     Parameters
     ----------
-    method : str { 'upgma', 'single', 'complete' }
+    method : { "upgma", "single", "complete" }
         Select between 'ugpma', 'single', and 'complete'.
  
     threshold : float
         The threshold which terminates the algorithm.   
     
-    matrix : list or :py:class:`numpy.array`
+    matrix : list
         A two-dimensional list containing the distances.
 
-    taxa : list (default = [])
+    taxa : list (default=None)
         A list containing the names of the taxa. If the list is left empty, the
         indices of the taxa will be returned instead of their names.
     
@@ -168,7 +168,7 @@ def flat_cluster(
 def upgma(
         matrix,
         taxa,
-        distances = True
+        distances=True
         ):
     """
     Carry out a cluster analysis based on the UPGMA algorithm \
@@ -177,15 +177,15 @@ def upgma(
     Parameters
     ----------
 
-    matrix : list or :py:class:`numpy.array`
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list
         An list containing the names of all taxa corresponding to the distances
         in the matrix.
 
-    distances : bool
-        If set to ``False``, only the topology of the tree will be returned.
+    distances : bool (default=True)
+        If set to **False**, only the topology of the tree will be returned.
 
     Returns
     -------
@@ -221,7 +221,7 @@ def upgma(
 
     return cluster.upgma(matrix,taxa,distances)
 
-def neighbor(matrix,taxa,distances=True):
+def neighbor(matrix, taxa, distances=True):
     """
     Function clusters data according to the Neighbor-Joining algorithm \
     (:evobib:`Saitou1987`).
@@ -229,15 +229,15 @@ def neighbor(matrix,taxa,distances=True):
     Parameters
     ----------
 
-    matrix : list or :py:class:`numpy.array`
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list
         An list containing the names of all taxa corresponding to the distances
         in the matrix.
 
-    distances : bool
-        If set to ``False``, only the topology of the tree will be returned.
+    distances : bool (default=True)
+        If set to **False**, only the topology of the tree will be returned.
 
     Returns
     -------
@@ -282,15 +282,18 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     threshold : float
         The threshold that shall be used for the basic clustering of the data.
 
-    matrix : list or :py:class:`numpy.array`
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list
         An list containing the names of all taxa corresponding to the distances
         in the matrix.
 
+    method : { "upgma", "single", "complete" } (default="upgma")
+        Select the method for the flat cluster analysis.
+
     distances : bool
-        If set to ``False``, only the topology of the tree will be returned.
+        If set to "False", only the topology of the tree will be returned.
 
     revert : bool (default=False)
         Specify whether a reverted dictionary should be returned. 
@@ -394,24 +397,25 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
 def matrix2tree(
         matrix,
         taxa,
-        tree_calc = "neighbor",
-        distances = True,
-        filename = ''
+        tree_calc="neighbor",
+        distances=True,
+        filename=""
         ):
     """
     Calculate a tree of a given distance matrix.
 
     Parameters
     ----------
-    matrix : {list, numpy.array}
+    matrix : list
         The distance matrix to be used.
     taxa : list
         A list of the taxa in the distance matrix.
-    tree_calc : str (default='neighbor')
+    tree_calc : str (default="neighbor")
         The method for tree calculation that shall be used. Select between:
 
-        * 'neighbor': Neighbor-joining method (:evobib:`Saitou1987`)
-        * 'upgma' : UPGMA method (:evobib:`Sokal1958`)
+        * "neighbor": Neighbor-joining method (:evobib:`Saitou1987`)
+        * "upgma" : UPGMA method (:evobib:`Sokal1958`)
+
     distances : bool (default=True)
         If set to c{True}, distances will be included in the
         tree-representation.
@@ -446,7 +450,7 @@ def matrix2groups(
         threshold,
         matrix,
         taxa,
-        cluster_method = 'upgma'
+        cluster_method="upgma"
         ):
     """
     Calculate flat cluster of distance matrix.
@@ -455,10 +459,11 @@ def matrix2groups(
     ----------
     threshold : float
         The threshold to be used for the calculation.
-    matrix : {list, numpy.array}
+    matrix : list 
         The distance matrix to be used.
     taxa : list
         A list of the taxa in the distance matrix.
+    cluster_method : {"upgma", "mcl", "single", "complete"} (default="upgma")
 
     Returns
     -------
@@ -554,10 +559,10 @@ def find_threshold(
     ----------
     matrix : list
         The distance matrix for which the threshold shall be determined.
-    thresholds : list (default = [i*0.05 for i in range(1,19)[::-1])
+    thresholds : list (default=[i*0.05 for i in range(1,19)[::-1])
         The range of thresholds that shall be tested.
     logs : {bool,builtins.function} (default=True)
-        If set to c{True}, the logarithm of the score beyond the threshold will
+        If set to **True**, the logarithm of the score beyond the threshold will
         be assigned as weight to the graph. If set to c{False} all weights will
         be set to 1. Use a custom function to define individual ways to
         calculate the weights.
@@ -566,7 +571,7 @@ def find_threshold(
     -------
     threshold : {float,None}
         If a float is returned, this is the threshold identified by the method.
-        If c{None} is returned, no threshold could be identified.
+        If **None** is returned, no threshold could be identified.
 
     Notes
     -----
@@ -644,23 +649,7 @@ def find_threshold(
                 r1 = alls[results.index(median1)][0]
                 r2 = alls[results.index(median2)][0]
                 return r1+r2 / 2
-        return
-       
-    
-    #if len(plato[sorted_plato[0]]) > 1 and sorted_plato[0] != 0:
-    #    t = plato[sorted_plato[0]][-1]
-    #    return t
-    #elif len(plato[sorted_plato[0]]) > 1:
-    #    if len(sorted_plato) > 1:
-    #        if len(plato[sorted_plato[1]]) > 1:
-    #            return plato[sorted_plato[1]][-1]
-    #        else:
-    #            return plato[sorted_plato[0]][-1]
-    #    else:
-    #        return plato[sorted_plato[0]][-1]
-    #elif len(plato[sorted_plato[0]]) > 1:
-    #    return plato[sorted_plato[0]][-1]
-            
+        return            
 
 def link_clustering(
         threshold,
@@ -668,7 +657,7 @@ def link_clustering(
         taxa,
         link_threshold=False,
         revert=False,
-        matrix_type = 'distances',
+        matrix_type = "distances",
         fuzzy = True
         ):
     """
@@ -681,7 +670,7 @@ def link_clustering(
         assigned to the data. If set to c{False}, the weights from the matrix
         will be used directly.
 
-    matrix : list or :py:class:`numpy.array`
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list
@@ -963,7 +952,7 @@ def mcl(
         assigned to the data. If set to c{False}, the weights from the matrix
         will be used directly.
 
-    matrix : list or :py:class:`numpy.array`
+    matrix : list 
         A two-dimensional list containing the distances.
 
     taxa : list
@@ -985,13 +974,13 @@ def mcl(
         given, it will take the whole column of the matrix for each taxon as
         input.
     
-    logs : {bool,builtins.function} (default=True)
+    logs : { bool, function } (default=True)
         If set to c{True}, the logarithm of the score beyond the threshold will
         be assigned as weight to the graph. If set to c{False} all weights will
         be set to 1. Use a custom function to define individual ways to
         calculate the weights.
     
-    matrix_type : {"distances", "similarities"}
+    matrix_type : { "distances", "similarities" }
         Specify the type of the matrix. If the matrix contains distance data,
         it will be adapted to similarity data. If it contains "similarities",
         no adaptation is needed.

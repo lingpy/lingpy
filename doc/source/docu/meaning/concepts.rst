@@ -1,21 +1,23 @@
-Concept comparison (:py:mod:`~lingpy.meaning.concepts`)
-=======================================================
+Concept comparison (:py:mod:`~lingpy.meaning`)
+==============================================
 
-.. currentmodule:: lingpy.meaning.concepts
+.. currentmodule:: lingpy.meaning
 
 Functions
 ---------
 
 .. autosummary::
 
-   spanish_swadesh_list
-   extract_component_as_wordlist
+   ~lingpy.meaning.concept.spanish_swadesh_list
+   ~lingpy.meaning.concept.extract_component_as_wordlist
 
 Classes
 -------
 
 .. autosummary::
 
-   ConceptGraph
-   ConceptComparerBase
-   ConceptComparerSpanishStem  
+   ~ConceptGraph
+   ~ConceptComparerBase
+   ~ConceptComparerStringMatch
+   ~ConceptComparerSpanishStem  
+   ~BasVoc

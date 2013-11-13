@@ -50,6 +50,14 @@ Language Comparison
    compare/lexstat
    compare/phylogeny
 
+Plotting Data
+^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   convert/plot
+
 Evaluation
 ^^^^^^^^^^
 
@@ -67,10 +75,11 @@ What's Next?
 .. toctree::
    :maxdepth: 1
    
+   ../../reference/modules
    ../download
 
 .. toctree::
    :hidden:
 
-   api/lingpy
+   ../../reference/modules
 

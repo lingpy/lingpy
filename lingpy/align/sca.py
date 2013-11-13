@@ -21,6 +21,7 @@ import re
 import codecs
 import os
 
+from ..read.qlc import read_msa
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
@@ -109,79 +110,9 @@ class MSA(Multiple):
         if type(infile) == dict:
             self._init_dict(infile,**keywords)
         else:
-            if infile.endswith('.msa'):
-                self._init_msa(infile,**keywords)
-            else:
-                self._init_seq(infile,**keywords)
-
-    def _init_seq(
-            self,
-            infile,
-            **keywords
-            ):
-        """
-        Load an ``msq``-file.
-        """
-
-        # import the data from the input file
-        self.infile = infile.split('/')[-1].replace('.msq','')
-        data = []
-
-        # catch the data from the input file
-        try:
-            raw_data = codecs.open(infile+'.msq','r','utf-8')
-        except IOError:
-            raw_data = codecs.open(infile,'r','utf-8')
-        
-        for line in raw_data:
-            if not line.startswith(self.comment):
-                data.append(line.strip())
-        
-        # set the first parameters
-        self.dataset = data[0]
-        self.seq_id = data[1]
-        
-        # delete the first lines of the data, since they are no longer needed
-        del data[0]
-        del data[0]
-        
-        # extract the rest of the data
-        for i in range(len(data)):
-            data[i] = data[i].split('\t')
-
-        # strip all whitespace from the data
-        for i in range(len(data)):
-            for j in range(len(data[i])):
-                data[i][j] = data[i][j].strip()
-
-        # delete all lines with empty sequences
-        i = 0
-        while i < len(data):
-            if data[i][1] == '-':
-                del data[i]
-            else:
-                i += 1
-
-        # check the data for inconsistencies
-        try:
-            data = np.array(data)
-        except:
-            print("[!] Error in file {0}.".format(infile))
-            length = len(data[0])
-            print(length)
-            for i in range(len(data)):
-                if len(data[i]) != length:
-                    print("[!] Line {0} in {1} is erroneously coded.".format(
-                        i+3,infile))
-            return
-
-        self.taxa = data[:,0]
-
-        Multiple.__init__(
-                self,
-                data[:,1],
-                **keywords
-                )
+            if infile.endswith('.msa') or infile.endswith('.msq'):
+                tmp = read_msa(infile,**keywords)
+                self._init_dict(tmp,**keywords)
 
     def _init_dict(
             self,
@@ -209,104 +140,6 @@ class MSA(Multiple):
             self.local = initdict['local']
         if 'swaps' in initdict:
             self.swaps = initdict['swaps']
-    
-    def _init_msa(
-            self,
-            infile,
-            **keywords
-            ):
-        """
-        Load an ``msa``-file.
-        """
-        
-        # import the data from the input file
-        self.infile = infile.split('/')[-1].replace('.msa','')
-        data = []
-        try:
-            raw_data = codecs.open(infile+'.msa','r','utf-8')
-        except:
-            raw_data = codecs.open(infile,'r','utf-8')
-
-        for line in raw_data:
-            if not line.startswith(self.comment):
-                data.append(line.strip())
-    
-        # set the first parameters
-        self.dataset = data[0]
-        self.seq_id = data[1]
-        
-        # delete the first lines of the data, since they are no longer needed
-        del data[0]
-        del data[0]
-        
-        # split the data
-        for i in range(len(data)):
-            data[i] = data[i].split('\t')
-        
-        # check for local alignments and swaps in the data
-        tmp_taxa = [line[0].strip('.') for line in data]
-        if 'LOCAL' in tmp_taxa:
-            local_idx = tmp_taxa.index('LOCAL')
-            local = data[local_idx][1:]
-            self.peak_idx = [i for i in range(len(local)) if local[i] == '*']
-            del data[local_idx]
-            del tmp_taxa[local_idx]
-        else:
-            self.peak_idx = []
-
-        if 'SWAPS' in tmp_taxa:
-            swap_idx = tmp_taxa.index('SWAPS')
-            swaps = data[swap_idx][1:]
-            self.swap_index = []
-            i = 0
-            while swaps:
-                if swaps[0] == '.' or swaps[0] == '': # temporary line
-                    swaps.pop(0)
-                    i += 1
-                elif swaps[0] == '+':
-                    swaps.pop(0)
-                    swaps.pop(0)
-                    swaps.pop(0)
-                    self.swap_index.append((i,i+1,i+2))
-                    i += 3
-            del data[swap_idx]
-            del tmp_taxa[swap_idx]
-        else:
-            self.swap_index = []
-
-        # get the rest of the data
-        self.taxa = tmp_taxa[:]
-        
-        # damn the unicode issues in Python2.6!
-        self.alm_matrix = [line[1:] for line in data]
-        for i,line in enumerate(self.alm_matrix):
-            for j,cell in enumerate(line):
-                self.alm_matrix[i][j] = cell
-
-        # join the aligned sequences, keep track of the original tokenization
-        # by joining it with dots. That looks ugly and nasty and should
-        # probably be checked!
-        self.seqs = [
-                re.sub(
-                    '\.+$',
-                    '',
-                    re.sub(
-                        '^\.+',
-                        '',
-                        re.sub(
-                            '\.\.+',
-                            '.',
-                            '.'.join(alm).replace('-','')
-                        )
-                    )
-                ) for alm in self.alm_matrix
-                ]
-
-        Multiple.__init__(
-                self,
-                self.seqs,
-                **keywords
-                )
 
     def ipa2cls(
             self,
@@ -338,10 +171,6 @@ class MSA(Multiple):
         self.classes = []
         
         self.model = keywords['model']
-        #if not model:
-        #    self.model = sca
-        #else:
-        #    self.model = model
 
         # redefine the sequences of the Multiple class
         class_strings = [tokens2class(
@@ -368,18 +197,20 @@ class MSA(Multiple):
             filename =  None,
             sorted_seqs = False,
             unique_seqs = False,
+            **keywords
             ):
         """
         Write data to file.
 
         Parameters
         ----------
-        fileformat : { 'psa', 'msa', 'msq' }
+        fileformat : { "psa", "msa", "msq" }
             Indicate which data should be written to file. Select between:
 
-            * 'psa' -- output of all pairwise alignments in ``psa``-format,
-            * 'msa' -- output of the multiple alignment in ``msa``-format, or
-            * 'msq' -- output of the multiple sequences in ``msq``-format.
+            * "psa" -- output of all pairwise alignments in ``psa``-format,
+            * "msa" -- output of the multiple alignment in ``msa``-format, or
+            * "msq" -- output of the multiple sequences in ``msq``-format.
+            * "html" -- output of the multiple alignment in ``html``-format.
 
         filename : str
             Select a specific name for the outfile, otherwise, the name of
@@ -404,11 +235,12 @@ class MSA(Multiple):
         # length
         mtax = max([len(t) for t in self.taxa])
         txf = '{0:.<'+str(mtax)+'}'
+        
+        if fileformat not in ['html', 'tex']:
+            out = codecs.open(outfile,'w','utf-8')
 
-        out = codecs.open(outfile,'w','utf-8')
-
-        # start writing data to file
-        out.write(self.dataset+'\n')
+            # start writing data to file
+            out.write(self.dataset+'\n')
 
         if fileformat in ['msq','msa']:
             out.write(self.seq_id+'\n')
@@ -465,30 +297,68 @@ class MSA(Multiple):
 
 
         if fileformat == 'msa':
-            if hasattr(self,'peak_idx'):
-                if self.peak_idx:
+            if hasattr(self,'local'):
+                if self.local:
                     out.write(txf.format("LOCAL")+'\t')
                     tmp = ['.'] * len(self.alm_matrix[0])
-                    for i in self.peak_idx:
+                    for i in self.local:
                         tmp[i] = '*'
                     out.write('\t'.join(tmp)+'\n')
 
-            if hasattr(self,'swap_index'):
-                if self.swap_index:
+            if hasattr(self,'swaps'):
+                if self.swaps:
                     out.write(txf.format('SWAPS')+'\t')
                     tmp = ['.'] * len(self.alm_matrix[0])
-                    for i in self.swap_index:
+                    for i in self.swaps:
                         tmp[i[0]] = '+'
                         tmp[i[1]] = '-'
                         tmp[i[2]] = '+'
                     out.write('\t'.join(tmp)+'\n')
-        try:
-            out.write('# Created using LingPy-2.0\n')
-            out.write('# Parameters: '+self.params+'\n')
-            out.write('# Created: {0}\n'.format(rcParams['timestamp']))
-        except:
-            pass
-        out.close()
+            if hasattr(self,'merge'):
+                if len(set(self.merge.values())) < len(set(self.merge.keys())):
+                    out.write(txf.format('MERGE')+'\t')
+                    tmp = ['.'] * len(self.alm_matrix[0])
+                    start = False
+                    before = 1
+                    for k in sorted(self.merge):
+                        if self.merge[k] == before and not start:
+                            tmp[k-1] = '<'
+                            start = True
+                        if self.merge[k] == before and start:
+                            tmp[k] = '-'
+                        if self.merge[k] != before and start:
+                            start = False
+                            tmp[k-1] = '>'
+                            before += 1
+                        elif self.merge[k] != before and not start:
+                            before += 1
+                    out.write('\t'.join(tmp)+'\n')
+
+        if fileformat in ['html','tex']:
+            self.output('msa', '.tmp', sorted_seqs, unique_seqs)
+            if 'filename' not in keywords:
+                keywords['input_file'] = self.infile
+                if 'filename' not in keywords:
+                    keywords['filename'] = self.infile.replace('.msa','')
+            
+            if fileformat == 'html':
+                html.msa2html('.tmp.msa', **keywords)
+            elif fileformat == 'tex':
+                html.msa2tex('.tmp.msa', **keywords)
+            try:
+                os.remove('.tmp.msa')
+            except:
+                pass
+        
+        if fileformat not in ['html','tex']:
+            try:
+                out.write('# Created using LingPy-2.0\n')
+                if hasattr(self,'params'):
+                    out.write('# Parameters: '+self.params+'\n')
+                out.write('# Created: {0}\n'.format(rcParams['timestamp']))
+            except:
+                pass
+            out.close()
 
 class PSA(Pairwise):
     """

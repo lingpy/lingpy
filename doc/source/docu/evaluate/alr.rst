@@ -1,5 +1,5 @@
 Automatic Linguistic Reconstruction (:py:mod:`~lingpy.evaluate.acd`)
-============================================================
+====================================================================
 
 .. currentmodule:: lingpy.evaluate.alr
 

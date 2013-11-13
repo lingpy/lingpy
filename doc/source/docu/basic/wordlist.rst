@@ -9,6 +9,7 @@ Wordlists (:py:class:`~lingpy.basic.Wordlist`)
    .. rubric:: Methods
    .. autosummary::
       
+      ~lingpy.basic.parser.QLCParser.pickle
       ~lingpy.basic.wordlist.Wordlist.add_entries
       ~lingpy.basic.wordlist.Wordlist.calculate
       ~lingpy.basic.wordlist.Wordlist.export
@@ -18,6 +19,5 @@ Wordlists (:py:class:`~lingpy.basic.Wordlist`)
       ~lingpy.basic.wordlist.Wordlist.get_list
       ~lingpy.basic.wordlist.Wordlist.get_paps
       ~lingpy.basic.wordlist.Wordlist.output
-      ~lingpy.basic.parser.QLCParser.pickle
       ~lingpy.basic.wordlist.Wordlist.renumber
-      ~lingpy.basic.parser.QLCParser.tokenize
+      ~lingpy.basic.wordlist.Wordlist.tokenize

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-11-06 21:33
+# modified : 2013-11-13 10:42
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-06"
+__date__="2013-11-13"
 
 import os
 import sys
@@ -34,7 +34,7 @@ class Wordlist(QLCParser):
 
     Parameters
     ----------
-    filename : { string dict }
+    filename : { string, dict }
         The input file that contains the data. Otherwise a dictionary with
         consecutive integers as keys and lists as values with the key 0
         specifying the header.
@@ -269,19 +269,19 @@ class Wordlist(QLCParser):
 
         Parameters
         ----------
-        col : string (default='')
+        col : string (default="")
             The column index evaluated by the method. It should contain one of the
             values in the row of the
             :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
             taxon (language) name.
         
-        row : string (default='')
+        row : string (default="")
             The row index evaluated by the method. It should contain one of the
             values in the row of the
             :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
             taxon (language) name.
         
-        entry : string (default = '')
+        entry : string (default="")
             The index for the entry evaluated by the method. It can be used to specify
             the datatype of the rows or columns selected. As a default, the
             indices of the entries are returned.
@@ -296,7 +296,7 @@ class Wordlist(QLCParser):
 
         Notes
         -----
-        The 'col' and 'row' keywords in the function are all aliased according
+        The "col" and "row" keywords in the function are all aliased according
         to the description in the ``wordlist.rc`` file. Thus, instead of
         using these attributes, the aliases can also be taken. For selecting a
         language, one may type something like::

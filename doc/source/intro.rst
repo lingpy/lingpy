@@ -76,6 +76,7 @@ What's next?
    examples
    tutorial/index
    docu/index
+   reference/modules
    download
 
 .. _README: link2readmefile

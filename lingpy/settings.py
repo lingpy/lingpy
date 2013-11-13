@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-17 10:40
-# modified : 2013-07-18 12:46
+# modified : 2013-11-13 09:58
 """
 Module handels all global parameters used in a LingPy session.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-18"
+__date__="2013-11-13"
 
 # builtin imports
 from datetime import datetime,date
@@ -163,6 +163,33 @@ for key in list(alias.keys()):
 def rc(**keywords):
     """
     Function changes parameters globally set for LingPy sessions.
+
+    Parameters
+    ----------
+    schema : {"ipa", "asjp"}
+        Change the basic schema for sequence comparison. When switching to
+        "asjp", this means that sequences will be treated as sequences in ASJP
+        code, otherwise, they will be treated as sequences written in basic
+        IPA.
+    verbose : bool (default=False)
+        Use this keyword in order to switch to verbose output. This will be
+        useful when using complex methods, in order to understand what the
+        program is actually doing.
+    debug : bool (default=False)
+        Use this keyword to switch to debug-mode. It will give specific,
+        internal output that is much more technical than the output resulting
+        from "verbose".
+
+    Notes
+    -----
+    This function is the standard way to communicate with the *rcParams*
+    dictionary which is not imported as a default. If you want to see which
+    parameters there are, you can load the rcParams dictonary directly::
+
+    >>> from lingpy.settings import rcParams
+
+    However, be careful when changing the values. They might produce some
+    unexpected behavior.
     """
     
     for key in keywords:

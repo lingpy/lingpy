@@ -17,6 +17,146 @@ import json
 import codecs
 import os
 
+
+def _list2msa(
+        msa_lines,
+        ids=False,
+        header=True,
+        **keywords
+        ):
+    """
+    Function retrieves a dictionary from a list of MSA strings.
+
+    """
+    defaults = dict(
+            seq_id = '-',
+            dataset = '-',
+            input_file = 'dummy'
+            )
+    for key in defaults:
+        if key not in keywords:
+            keywords[key] = defaults[key]
+
+    # create the dictionary
+    d = dict(
+            ID = [],
+            taxa = [],
+            alignment = [],
+            seqs = [],
+            infile = keywords['input_file']
+            )
+    
+    if header:
+        start = 2
+        d['dataset'] = msa_lines[0]
+        d['seq_id'] = msa_lines[1]
+    else:
+        start = 0
+        d['dataset'] = keywords['dataset']
+        d['seq_id'] = keywords['seq_id']
+
+    for i,line in enumerate(msa_lines[start:]):
+        if ids:
+            idx = 1
+        else:
+            idx = 0
+        
+        # check for specific id
+        if line[0] in  ['0', 'LOCAL', 'SWAPS', 'MERGE']:
+            if line[idx] == 'LOCAL':
+                d['local'] = []
+                for j,x in enumerate(line[idx+1:]):
+                    if x == '*':
+                        d['local'] += [j]
+            elif line[idx] == 'SWAPS':
+                d['swaps'] = []
+                swapline = [x for x in line[idx+1:]]
+                j=0
+                while swapline:
+                    x = swapline.pop(0)
+                    if x == '+':
+                        d['swaps'] += [(j,j+1,j+2)]
+                        swapline.pop(0)
+                        swapline.pop(0)
+                        j += 2
+                    else:
+                        pass
+                    j += 1
+            elif line[idx] == 'MERGE':
+                d['merge'] = {}
+                mergeline = [x for x in line[idx+1:]]
+                k = 1
+                merge = False
+                for j,m in enumerate(mergeline):
+                    if not merge:
+                        k += 1
+
+                    if m == '<':
+                        merge = True
+                    if m == '>':
+                        merge = False
+
+                    d['merge'][j] = k
+
+        elif line[0] not in ['LOCAL','SWAPS','MERGE','0']:
+            if ids:
+                try:
+                    d['ID'] += [int(line[0])]
+                except:
+                    d['ID'] += [line[0]]
+            else:
+                d["ID"] += [i]
+            d["taxa"] += [line[idx].rstrip('.')]
+            d["seqs"] += [' '.join([l for l in line[idx+1:] if l != '-'])]
+            d["alignment"] += [line[idx+1:]]
+
+    return d
+
+def read_msa(
+        infile,
+        comment = "#",
+        ids = False,
+        **keywords
+        ):
+    """
+    Simple function to load an MSA object.
+
+    Parameters
+    ----------
+    infile : str
+        The name of the input file.
+    comment : str (default="#")
+        The comment character. If a line starts with this character, it will be
+        ignored.
+    ids : bool (default=False)
+        Indicate whether the MSA file contains unique IDs for all sequences or
+        not.
+
+    Returns
+    -------
+    d : dict
+        A dictionary in which keys correspond to specific parts of a multiple
+        alignment. This dictionary can be directly passed to alignment
+        functions, such as :py:class:`lingpy.sca.MSA`.
+    """
+    if 'input_file' not in keywords:
+        keywords['input_file'] = infile
+
+    f = codecs.open(infile,'r','utf-8')
+    msa_lines = []
+    for line in f:
+        if line.strip() and not line.startswith(comment):
+            newlines = [t.strip().rstrip('.') for t in line.split('\t')]
+            if len(newlines) == 1:
+                msa_lines += newlines
+            else:
+                msa_lines += [newlines]
+    
+    d = _list2msa(msa_lines, header=True, ids=False, **keywords)
+
+    return d
+    
+
 def read_qlc(
         infile,
         comment = '#'
@@ -27,7 +167,10 @@ def read_qlc(
     Parameters
     ----------
     infile : str
-        Name of the input file.
+        The name of the input file.
+    comment : str (default="#")
+        The comment character. If a line starts with this character, it will be
+        ignored.
 
     Returns
     -------
@@ -185,50 +328,20 @@ def read_qlc(
                     tmp_msa['dataset'] = infile.replace('.csv','')
 
                 tmp_msa['seq_id'] = keys['id']
-                tmp_msa['seqs'] = []
-                tmp_msa['alignment'] = []
-                tmp_msa['taxa'] = []
-                tmp_msa['ID'] = []
 
                 # add consensus string to msa, if it appears in the keys
                 if "consensus" in keys:
                     tmp_msa['consensus'] = keys['consensus']
-
+                
+                msad = []
                 for l in tmp:
                     if not l.startswith(comment):
+                        
+                        line = [x.strip().rstrip('.') for x in
+                                l.split('\t')]
+                        msad += [line]
+                tmp_msa = _list2msa(msad,header=False,ids=True,**tmp_msa)
 
-                        this_line = l.split('\t')
-                    
-                        # check for specific id
-                        if this_line[0] == '0':
-                            if this_line[1].strip().upper() == 'LOCAL':
-                                tmp_msa['local'] = []
-                                for i,x in enumerate(this_line[2:]):
-                                    if x == '*':
-                                        tmp_msa['local'] += [i]
-                            elif this_line[1].strip().upper() == 'SWAPS':
-                                tmp_msa['swaps'] = []
-                                swapline = [x for x in this_line[2:]]
-                                i=0
-                                while swapline:
-                                    x = swapline.pop(0)
-                                    if x == '+':
-                                        tmp_msa['swaps'] += [(i,i+1,i+2)]
-                                        swapline.pop(0)
-                                        swapline.pop(0)
-                                        i += 2
-                                    else:
-                                        pass
-                                    i += 1
-                                    
-                        else:
-                            try:
-                                tmp_msa['ID'] += [int(this_line[0])]
-                            except:
-                                tmp_msa['ID'] += [this_line[0]]
-                            tmp_msa['taxa'] += [this_line[1].strip()]
-                            tmp_msa['seqs'] += [' '.join(this_line[2:])]
-                            tmp_msa['alignment'] += [this_line[2:]]
                 try:
                     meta['msa'][ref][int(keys['id'])] = tmp_msa   
                 except:

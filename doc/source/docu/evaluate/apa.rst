@@ -12,7 +12,7 @@ Classes
 .. autosummary::
    :toctree:
 
-   ~lingpy.evaluate.apa.EvalPSA
-   ~lingpy.evaluate.apa.EvalMSA
+   ~lingpy.evaluate.EvalPSA
+   ~lingpy.evaluate.EvalMSA
 
 

@@ -38,7 +38,8 @@ from .basic import Wordlist, Dictionary
 
 # we don't import align for the moment for safety reasons...
 from .align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dist, \
-        pw_align, nw_align, sw_align, we_align, structalign, turchin
+        pw_align, nw_align, sw_align, we_align, structalign, turchin, \
+        mult_align
 
 # load the sound-class models
 from .data import Model

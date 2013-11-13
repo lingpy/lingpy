@@ -9,7 +9,6 @@ Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
    .. autosummary::
 
       ~lingpy.basic.parser.QLCParser.pickle
-      ~lingpy.basic.parser.QLCParser.tokenize
       ~lingpy.basic.wordlist.Wordlist.add_entries
       ~lingpy.basic.wordlist.Wordlist.calculate
       ~lingpy.basic.wordlist.Wordlist.export
@@ -20,6 +19,7 @@ Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
       ~lingpy.basic.wordlist.Wordlist.get_paps
       ~lingpy.basic.wordlist.Wordlist.output
       ~lingpy.basic.wordlist.Wordlist.renumber
+      ~lingpy.basic.wordlist.Wordlist.tokenize
       ~lingpy.compare.lexstat.LexStat.align_pairs
       ~lingpy.compare.lexstat.LexStat.cluster
       ~lingpy.compare.lexstat.LexStat.export

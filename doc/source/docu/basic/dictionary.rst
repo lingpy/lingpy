@@ -14,5 +14,5 @@ Dictionaries (:py:class:`~lingpy.basic.Dictionary`)
       ~lingpy.basic.parser.QLCParser.add_entries
       ~Dictionary.get_tuples
       ~lingpy.basic.parser.QLCParser.pickle
-      ~lingpy.basic.parser.QLCParser.tokenize
+      ~lingpy.basic.dictionary.Dictionary.tokenize
    

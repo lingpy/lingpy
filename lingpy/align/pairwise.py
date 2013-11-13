@@ -150,7 +150,7 @@ class Pairwise(object):
 
         Parameters
         ----------
-        model : { None, lingpy.data.model.Model } (default=None)
+        model : { None, Model } (default=None)
             Specify the sound-class model to which the strings shall be
             converted.
         """
@@ -206,7 +206,7 @@ class Pairwise(object):
         scale : float (default=0.5)
             The gap extension penalty (GEP), calculated with help of a scaling
             factor.
-        mode : {'global','local','overlap','dialign'}
+        mode : {"global","local","overlap","dialign"}
             The alignment mode, see :evobib:`List2012a` for details.
         factor : float (default = 0.3)
             The factor by which matches in identical prosodic position are
@@ -494,7 +494,7 @@ def edit_dist(
         the length of the longer string. If *restriction* is set to *cv*
         (consonant-vowel), the edit distance is normalized by the length of the
         alignment.
-    restriction : {'cv'} (default='')
+    restriction : {"cv"} (default="")
         Specify the restrictions to be used. Currently, only ``cv`` is
         supported. This prohibits matches of vowels with consonants.
 
@@ -688,7 +688,7 @@ def turchin(
     seqA, seqB : {str, list, tuple}
         The input strings. These should be iterables, so you can use tuples,
         lists, or strings.
-    model : {~lingpy.data.model.Model, "asjp", "sca", "dolgo"} (default="dolgo")
+    model : {"asjp", "sca", "dolgo"} (default="dolgo")
         A sound-class model instance or a string that denotes one of the
         standard sound class models used in LingPy.
 

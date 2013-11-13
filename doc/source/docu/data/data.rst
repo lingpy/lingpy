@@ -5,4 +5,9 @@ Predefined Datasets (:py:obj:`~lingpy.data`)
 
 .. automodule:: lingpy.data
 
-   .. autofunction:: lingpy.settings.rc
+Functions
+---------
+
+.. autosummary:: 
+   
+   ~lingpy.settings.rc

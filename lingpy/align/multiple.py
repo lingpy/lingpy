@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-10-23 15:17
+# modified : 2013-11-13 10:41
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-23"
+__date__="2013-11-13"
 
 # thirdparty imports
 import numpy as np
@@ -889,7 +889,7 @@ class Multiple(object):
         Parameters
         ----------
 
-        model : { 'dolgo', 'sca', 'asjp' }
+        model : { "dolgo", "sca", "asjp" } (defaul="sca")
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
             Currently, three models are supported:
@@ -904,7 +904,7 @@ class Multiple(object):
               of :evobib:`Brown2011` (see the description in
               :evobib:`List2012`.
         
-        mode : { 'global', 'dialign' }
+        mode : { "global", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
@@ -927,16 +927,16 @@ class Multiple(object):
             The factor by which the initial and the descending position shall
             be modified.
 
-        tree_calc : { 'neighbor', 'upgma' } (default='upgma')
+        tree_calc : { "neighbor", "upgma" } (default="upgma")
             The cluster algorithm which shall be used for the calculation of
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
             
-        guide_tree : tree_matrix as produced by convert.newick.nwk2guidetree()
+        guide_tree : tree_matrix
             Use a custom guide tree instead of performing a cluster algorithm
             for constructing one based on the input similarities. The use of this
-            option makes the tree_calc option irrelevant.
+            option makes the tree_calc option irrelevant. 
 
         gap_weight : float (default=0)
             The factor by which gaps in aligned columns contribute to the
@@ -946,9 +946,10 @@ class Multiple(object):
         
         restricted_chars : string (default="T")
             Define which characters of the prosodic string of a sequence
-            reflect its secondary structure (cf. :evobib:`List2012b`) and should therefore be aligned
-            specifically. This defaults to "T", since this is the character
-            that represents tones in the prosodic strings of sequences.
+            reflect its secondary structure (cf. :evobib:`List2012b`) and
+            should therefore be aligned specifically. This defaults to "T",
+            since this is the character that represents tones in the prosodic
+            strings of sequences.
 
         """
         # set up the defaults parameters stored in the kw dictionary
@@ -1027,7 +1028,9 @@ class Multiple(object):
             ):
         """
         Carry out a library-based progressive alignment analysis of the sequences.
-
+        
+        Notes
+        -----
         In contrast to traditional progressive multiple sequence alignment
         approaches such as :evobib:`Feng1981` and :evobib:`Thompson1994`,
         library-based progressive alignment :evobib:`Notredame2000` is based on
@@ -1040,7 +1043,7 @@ class Multiple(object):
         Parameters
         ----------
 
-        model : { 'dolgo', 'sca', 'asjp' }
+        model : { "dolgo", "sca", "asjp" } (default="sca")
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
             Currently, three models are supported:
@@ -1055,7 +1058,7 @@ class Multiple(object):
               of :evobib:`Brown2011` (see the description in
               :evobib:`List2012`.
 
-        mode : { 'global', 'dialign' }
+        mode : { "global", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
@@ -1065,7 +1068,7 @@ class Multiple(object):
             * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
 
-        modes : list (default=[('global',-10,0.6),('local',-1,0.6)])
+        modes : list (default=[("global",-10,0.6),("local",-1,0.6)])
             Indicate the mode, the gap opening penalties (GOP), and the gap extension scale
             (GEP scale), of the pairwise alignment analyses which
             are used to create the library.
@@ -1083,13 +1086,13 @@ class Multiple(object):
             The factor by which the initial and the descending position shall
             be modified.
 
-        tree_calc : { 'neighbor', 'upgma' }
+        tree_calc : { "neighbor", "upgma" } (default="upgma")
             The cluster algorithm which shall be used for the calculation of
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
             
-        guide_tree : tree_matrix as produced by convert.newick.nwk2guidetree()
+        guide_tree : tree_matrix 
             Use a custom guide tree instead of performing a cluster algorithm
             for constructing one based on the input similarities. The use of this
             option makes the tree_calc option irrelevant.
@@ -1342,11 +1345,11 @@ class Multiple(object):
         Parameters
         ----------
 
-        alm_matrix : { 'self', 'other' }
+        alm_matrix : { "self", "other" } (default="self")
             Indicate for which MSA the sum-of-pairs score shall be calculated.
 
-        mat : None or :py:class:`numpy.array`
-            If 'other' is chosen as an option for **alm_matrix**, define for
+        mat : { None, list }
+            If "other" is chosen as an option for **alm_matrix**, define for
             which matrix the sum-of-pairs score shall be calculated.
 
         gap_weight : float (default=0)
@@ -1444,17 +1447,17 @@ class Multiple(object):
             iteration ("immediate") or after all iterations have been carried
             out ("final").
          
-        mode : { 'global', 'overlap', 'dialign' }
+        mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
-            * 'global' -- traditional global alignment analysis based on the
+            * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
-            * 'dialign' -- global alignment analysis which seeks to maximize
+            * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
 
-            * 'overlap' -- semi-global alignment, where gaps introduced in the
+            * "overlap" -- semi-global alignment, where gaps introduced in the
               beginning and the end of a sequence do not score.     
         
         gop : int (default=-5)
@@ -1521,7 +1524,9 @@ class Multiple(object):
         """
         Iterative refinement based on a flat cluster analysis of the data.
         
-        This method uses the :py:func:`lingpy.algorithm.cluster.flat_upgma`
+        Notes
+        -----
+        This method uses the :py:func:`lingpy.algorithm.clustering.flat_upgma`
         function in order to retrieve a flat cluster of the data.
 
         Parameters
@@ -1535,7 +1540,7 @@ class Multiple(object):
             iteration ("immediate") or after all iterations have been carried
             out ("final").
          
-        mode : { 'global', 'overlap', 'dialign' }
+        mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
@@ -1612,19 +1617,21 @@ class Multiple(object):
             ):
         """
         Iterative refinement based on the *Similar Gap Sites* heuristic.
-
+        
+        Notes
+        -----
         This heuristic is fairly simple. The idea is to try to split a given
         MSA into partitions with identical gap sites.
         
         Parameters
         ----------
 
-        check : { 'final', 'immediate' }
+        check : { "final", "immediate" } (default="final")
             Specify when to check for improved sum-of-pairs scores: After each
             iteration ("immediate") or after all iterations have been carried
             out ("final").
          
-        mode : { 'global', 'overlap', 'dialign' }
+        mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
@@ -1680,40 +1687,42 @@ class Multiple(object):
 
     def iterate_all_sequences(
             self,
-            check = 'final',
-            mode = 'global',
+            check = "final",
+            mode = "global",
             gop = -3,
             scale = 0.5,
             factor = 0,
             gap_weight = 1,
-            restricted_chars = 'T_'
+            restricted_chars = "T_"
             ):
         """
         Iterative refinement based on a complete realignment of all sequences.
-
+        
+        Notes
+        -----
         This method essentially follows the iterative method of
-        :evobib:`Barton1987` with
-        the exception that an MSA has already been calculated.
+        :evobib:`Barton1987` with the exception that an MSA has already been
+        calculated.
         
         Parameters
         ----------
 
-        check : { 'final', 'immediate' }
+        check : { "final", "immediate" } (default="final")
             Specify when to check for improved sum-of-pairs scores: After each
             iteration ("immediate") or after all iterations have been carried
             out ("final").
 
-        mode : { 'global', 'overlap', 'dialign' }
+        mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
             carried out during the progressive phase. Select between: 
             
-            * 'global' -- traditional global alignment analysis based on the
+            * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
-            * 'dialign' -- global alignment analysis which seeks to maximize
+            * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
 
-            * 'overlap' -- semi-global alignment, where gaps introduced in the
+            * "overlap" -- semi-global alignment, where gaps introduced in the
               beginning and the end of a sequence do not score.
         
         gop : int (default=-5)
@@ -1802,7 +1811,17 @@ class Multiple(object):
             threshold = 2,
             gap_weight = 0.0
             ):
+        """
+        Return all peaks in a given alignment.
 
+        Parameters
+        ----------
+        threshold : { int, float } (default=2)
+            The threshold to determine whether a given column is a peak or not.
+        gap_weight : float (default=0.0)
+            The weight for gaps. 
+
+        """
         peaks = self.get_peaks(gap_weight = gap_weight)
         
 
@@ -1811,16 +1830,6 @@ class Multiple(object):
     def get_pairwise_alignments(
             self,
             **keywords
-            #new_calc = True,
-            #model = None,
-            #mode = 'global',
-            #gop = -3,
-            #scale = 0.5,
-            #factor = 1,
-            #restricted_chars = 'T_',
-            #classes = True,
-            #sonar = True,
-            #scorer = {}
             ):
         """
         Function creates a dictionary of all pairwise alignments  scores.
@@ -1869,12 +1878,6 @@ class Multiple(object):
         factor : float (default=1)
             The factor by which the initial and the descending position shall
             be modified.
-
-        tree_calc : { 'neighbor', 'upgma' }
-            The cluster algorithm which shall be used for the calculation of
-            the guide tree. Select between ``neighbor``, the Neighbor-Joining
-            algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
-            algorithm (:evobib:`Sokal1958`).
 
         gap_weight : float (default=0)
             The factor by which gaps in aligned columns contribute to the
@@ -2006,7 +2009,7 @@ class Multiple(object):
         
         Parameters
         ----------
-        mode : { 1, 2, 3, 4, 5 }
+        mode : { 1, 2, 3, 4, 5 } (default=1)
             Indicate which of the four possible PID scores described in :evobib:`Raghava2006`
             should be calculated, the fifth possibility is added for linguistic
             purposes:
@@ -2258,10 +2261,10 @@ class Multiple(object):
 
         Parameters
         ----------
-        swap_penalty : int or float
+        swap_penalty : { int, float } (default=-3)
             Specify the penalty for swaps in the alignment.
 
-        score_mode : { 'classes', 'library' }
+        score_mode : { "classes", "library" } (default="classes")
             Define the score-mode of the calculation which is either based on
             sound classes proper, or on the specific scores derived from the
             library approach.
@@ -2279,16 +2282,27 @@ class Multiple(object):
 
         Examples
         --------
-        Load a file containing swaps from the test data. 
+        Define a set of strings whose alignment contans a swap. 
 
         >>> from lingpy import *
-        >>> mult = Multiple(get_file('test.msq'))
+        >>> mult = Multiple(["woldemort", "waldemar", "wladimir"])
 
         Align the data, using the progressive approach.
 
         >>> mult.prog_align()
 
         Check for swaps.
+
+        >>> mult.swap_check()
+        True
+
+        Print the alignment
+
+        >>> print(mult)
+        w   o   l   -   d   e   m   o   r   t
+        w   a   l   -   d   e   m   a   r   -
+        v   -   l   a   d   i   m   i   r   -
+
         """
 
         self._set_scorer(score_mode)
@@ -2350,6 +2364,14 @@ def mult_align(
     alignments : list
         A two-dimensional list in which alignments are represented as a list of
         tokens.
+
+    Examples
+    --------
+    >>> m = mult_align(["woldemort", "waldemar", "vladimir"], pprint=True)
+    w   o   l   -   d   e   m   o   r   t
+    w   a   l   -   d   e   m   a   r   -
+    -   v   l   a   d   i   m   i   r   -
+    
 
     """
 
