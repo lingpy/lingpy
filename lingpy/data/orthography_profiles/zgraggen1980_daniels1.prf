@@ -1,9 +1,10 @@
-﻿#zgraggen1980 orthography profile
+#zgraggen1980 orthography profile
 #
 #date: 29 June 2012
 #author: Jelena Prokic 
 #reduced vowel separation: Don Daniels
-Graphemes IPA Comments
+# OP conventions corrected by Steven Moran
+Graphemes	IPA	Comments
 a	a	 
 a:	a:	 
 aʰ	a	 
@@ -136,5 +137,4 @@ S	S
 T	T	 
 U	U	 
 W	W	 
-Y	Y	 
- 
+Y	Y

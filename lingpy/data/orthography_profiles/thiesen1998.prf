@@ -1,8 +1,9 @@
 #thiesen1998 orthography profile
 #
 #author: Jelena Prokic
-Graphemes	IPA Comments
--	 
+# OP conventions corrected by Steven Moran
+Graphemes	IPA	Comments
+-	 NULL
 a	 a	 
 á	 a	
 a̱	 a	
@@ -23,10 +24,10 @@ ú	 u
 u̱	 u	
 ú̱	 u	 
 i̵	 i̵	
-ɨ	 i̵	 probably digitalization error	 should be the same as above
+ɨ	 i̵	 probably digitalization error should be the same as above
 í̵	 i̵	 
 i̵̱	 i̵	
-ɨ̱	 i̵	 probably digitalization error	 should be the same as above
+ɨ̱	 i̵	 probably digitalization error should be the same as above
 aa	 a:	
 áá	 a:	
 ee	 e:	

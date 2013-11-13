@@ -2,6 +2,7 @@
 #
 #author: Jelena Prokic
 #interpretation: Jelena Prokic & Don Daniels
+# OP conventions corrected by Steven Moran
 Graphemes	IPA	Comments
 a	 a	  
 b	 mb	 (this symbol is in complementary distribution with the digraph <mb>)
@@ -9,7 +10,7 @@ c	 c
 d	 nd	 (this symbol is in complementary distribution with the digraph <nd>)
 e	 e	
 ɸ	 p	 (this is an allophone of /p/)
-g	 ŋg	 (this symbol is in complementary distribution with the complex grapheme <ŋg>. It is also used in the complex grapheme <ŋgw>	 sometimes realized as <gw>)
+g	 ŋg	 (this symbol is in complementary distribution with the complex grapheme <ŋg>. It is also used in the complex grapheme <ŋgw> sometimes realized as <gw>)
 gw	 gʷ
 ɣ	 ɣ	 (this also occurs in the complex grapheme <ɣw>)
 ɣw	 ɣʷ
@@ -35,7 +36,7 @@ p	 p
 r	 r	
 s	 s	
 β	 β
-S	 s	(this is the same as <s>	 two graphemes up)
+S	 s	(this is the same as <s> two graphemes up)
 t	 t	
 u	 u	
 y	 y	

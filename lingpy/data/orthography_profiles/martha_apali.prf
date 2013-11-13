@@ -2,6 +2,7 @@
 #
 #author: Jelena Prokic
 #interpretation: Jelena Prokic & Don Daniels
+# OP conventions corrected by Steven Moran
 Graphemes	IPA	Comments
 a	 a	
 b	 mb	 (this symbol is in complementary distribution with the digraph <mb>)
@@ -32,5 +33,6 @@ s	 s
 t	 t	
 u	 u	 
 v	 β	 (this grapheme represents /β/)
-z	 s	 (I'm not sure about this one, but I think it's an allophone of /s/. It could also be its own phoneme	 in which case it would be represented by the digraph <nz>.)
+z	 s	 (I'm not sure about this one, but I think it's an allophone of /s/. It could also be its own phoneme in which case it would be represented by the digraph <nz>.)
+
 nz	 z	
