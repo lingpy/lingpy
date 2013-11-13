@@ -6,7 +6,7 @@ Download
 Current Version
 ---------------
 
-The current (hopefully) stable release of LingPy is version 2.0. This (and older versions) can be downloaded from:
+The current (hopefully) stable release of LingPy is version 2.2. This (and older versions) can be downloaded from:
 
 * **PyPi**: https://pypi.python.org/pypi/lingpy/2.0
 
