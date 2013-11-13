@@ -20,7 +20,7 @@ import codecs
 from ..read.qlc import read_qlc
 from ..convert.strings import matrix2dst, pap2nex, pap2csv
 from ..settings import rcParams
-from ._parser import _QLCParser
+from .parser import QLCParser
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
         wl2qlc
 
@@ -28,7 +28,7 @@ from ..algorithm import clustering as cluster
 from ..algorithm import misc
 
 
-class Wordlist(_QLCParser):
+class Wordlist(QLCParser):
     """
     Basic class for the handling of multilingual word lists.
 
@@ -80,7 +80,7 @@ class Wordlist(_QLCParser):
             conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
 
         # initialize the qlc_parser
-        _QLCParser.__init__(self,filename,conf)
+        QLCParser.__init__(self,filename,conf)
         
         # check whether additional data has to be loaded
         if not hasattr(self,'_rowidx'):
@@ -1403,4 +1403,34 @@ class Wordlist(_QLCParser):
                 template,
                 **keywords
                 )
+
+    def tokenize(
+            self,
+            orthography_profile='',
+            source="counterpart",
+            target="tokens",
+            column='graphemes',
+            **keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
+
+        Parameters
+        ----------
+        ortho_profile : str (default='')
+            Path to the orthographic profile used to convert and tokenize the 
+            input data into IPA tokens.
+        
+        source : str (default="translation")
+            The source data that shall be used for the tokenization procedures.
+        
+        target : str (default="tokens")
+            The name of the target column that will be added to the wordlist.
+
+        column : str (default="graphemes")
+            Tokenization target.
+
+        """
+        self._tokenize(orthography_profile, source, target, column,
+            **keywords)
 

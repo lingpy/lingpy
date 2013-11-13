@@ -200,7 +200,7 @@ def tokens2class(
     --------
     >>> from lingpy import *
     >>> tokens = ipa2tokens('t͡sɔyɡə')
-    >>> classes = tokens2class(tokens,sca)
+    >>> classes = tokens2class(tokens,'sca')
     >>> print(classes)
     CUKE
 
@@ -295,7 +295,7 @@ def prosodic_string(
 
     Examples
     --------
-    >>> profile = [int(i) for i in tokens2class(ipa2tokens('t͡sɔyɡə'),art)]
+    >>> profile = [int(i) for i in tokens2class(ipa2tokens('t͡sɔyɡə'),'art')]
     >>> prosodic_string(profile)
     '#vC>'
 
@@ -444,7 +444,6 @@ def prosodic_string(
 
 def prosodic_weights(
         prostring,
-        factor = 0.3,
         _transform = {}
         ):
     """
@@ -455,15 +454,10 @@ def prosodic_weights(
 
     prostring : string
         A prosodic string as it is returned by :py:func:`prosodic_string`.
-
-    scale : tuple or list
-        A tuple or list of floats indicating the degree by which the gaps in
-        the environment of ascending, maximum, and descending sonority should be
-        decreased or increased.
-
-    factor : float
-        A scaling factor by which the specific positions of initial and final
-        should be increased and decreased.
+    _transform : dict
+        A dictionary that determines how prosodic strings should be transformed
+        into prosodic weights. Use this dictionary to adjust the prosodic
+        strings to your own user-defined prosodic weight schema.
 
     Returns
     -------
@@ -482,17 +476,12 @@ def prosodic_weights(
     >>> from lingpy import *
     >>> prostring = '#vC>'
     >>> prosodic_weights(prostring)
-    [1.5600000000000001, 1.0, 1.2, 0.69999999999999996]
-    >>> prosodic_weights(prostring,scale=(4,1,2),factor=0.5)
-    [6.0, 1, 4, 0.5]
+    [2.0, 1.3, 1.5, 0.7]
     
     See also
     --------
     prosodic_string
 
-    Todo
-    ----
-    Change the documentation for the new scaling mode!
     """
     # check for transformer
     if _transform:
@@ -856,7 +845,13 @@ def get_all_ngrams(sequence):
 
 def sampa2uni(seq):
     """
-    Convert sequence in ipa.sampa-format to ipa.unicode.
+    Convert sequence in IPA-sampa-format to IPA-unicode.
+
+    Notes
+    -----
+    This function is based on code taken from Peter Kleiweg
+    (http://www.let.rug.nl/~kleiweg/L04/devel/python/xsampa.html). 
+
     """
 
     result = ''

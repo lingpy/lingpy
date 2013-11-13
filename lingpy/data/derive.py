@@ -477,7 +477,7 @@ def compile_model(
     See also
     --------
     lingpy.data.model.Model
-    lingpy.data.derive.compile_diacritcs_and_vowels
+    compile_dvt
 
     """
      
@@ -556,14 +556,15 @@ def compile_dvt(path=''):
 
     Notes
     -----
-    Diacritics and vowels are defined in the :file:`data/models/dv/` directory
+    Diacritics, vowels, and tones are defined in the :file:`data/models/dv/` directory
     of the LingPy package and automatically loaded when loading the LingPy
     library. The values are defined as the constants
-    :py:obj:`ipa_diacritics` and
-    :py:obj:`ipa_vowels`. Their core purpose is to guide the
+    :py:obj:`rcParams['vowels']`, :py:obj:`rcParams['diacritics']`, and
+    :py:obj:`rcParams['tones']`. Their core purpose is to guide the
     tokenization of IPA strings (cf.
-    :py:func:`~lingpy.algorithm.misc.ipa2tokens`). In order to change the
-    variables, one simply has to change the text files :file:`diacritics` and
+    :py:func:`~lingpy.sequence.sound_classes.ipa2tokens`). In order to change the
+    variables, one simply has to change the text files :file:`diacritics`,
+    :file:`tones`, and
     :file:`vowels` in the :file:`data/models/dv` directory. The structure of
     these files is fairly simple: Each line contains a vowel or a diacritic
     character, whereas diacritics are preceded by a dash.

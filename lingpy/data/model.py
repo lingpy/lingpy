@@ -83,6 +83,13 @@ class Model(object):
 
     >>> from lingpy import *
 
+    Define a couple of standard models for convenience.
+
+    >>> asjp = Model('asjp')
+    >>> sca = Model('sca')
+    >>> dolgo = Model('dolgo')
+    >>> art = model('art')
+
     Check, how the letter ``a`` is converted in the various models:
 
     >>> for m in [asjp,sca,dolgo,art]: 
@@ -106,7 +113,7 @@ class Model(object):
     See also
     --------
     lingpy.data.derive.compile_model
-    lingpy.data.derive.compile_diacritics_and_vowels
+    lingpy.data.derive.compile_dvt
 
     """
 

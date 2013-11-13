@@ -120,7 +120,7 @@ def wl2dict(
         wordlist,
         sections,
         entries,
-        exclude = []
+        exclude = None
         ):
     """
     Convert a wordlist to a complex dictionary with headings as keys.
@@ -129,6 +129,9 @@ def wl2dict(
     # define output dictionary
     out = {}
     
+    if not exclude:
+        exclude = []
+
     # determine the last section
     sorted_sections = sorted(sections)
     last_section = sorted_sections[-1]

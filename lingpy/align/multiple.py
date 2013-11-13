@@ -2031,7 +2031,7 @@ class Multiple(object):
 
         See also
         --------
-        lingpy.algorithm.misc.pid
+        lingpy.sequence.sound_classes.pid
 
         """
 

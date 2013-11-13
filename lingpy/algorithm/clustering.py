@@ -82,11 +82,11 @@ def flat_upgma(threshold,matrix,taxa=None,revert=False):
 
     See also
     --------
-    ~lingpy.algorithm.clustering.flat_cluster
-    ~lingpy.algorithm.clustering.flat_upgma
-    ~lingpy.algorithm.clustering.fuzzy
-    ~lingpy.algorithm.clustering.link_clustering
-    ~lingpy.algorithm.clustering.mcl
+    flat_cluster
+    flat_upgma
+    fuzzy
+    link_clustering
+    mcl
 
     """
     if taxa is None:
@@ -153,11 +153,11 @@ def flat_cluster(
 
     See also
     --------
-    ~lingpy.algorithm.clustering.flat_cluster
-    ~lingpy.algorithm.clustering.flat_upgma
-    ~lingpy.algorithm.clustering.fuzzy
-    ~lingpy.algorithm.clustering.link_clustering
-    ~lingpy.algorithm.clustering.mcl
+    flat_cluster
+    flat_upgma
+    fuzzy
+    link_clustering
+    mcl
 
     """
     if taxa is None:
@@ -215,7 +215,8 @@ def upgma(
 
     See also
     --------
-    ~lingpy.algorithm.clustering.neighbor   
+    neighbor   
+    
     """
 
     return cluster.upgma(matrix,taxa,distances)
@@ -266,7 +267,8 @@ def neighbor(matrix,taxa,distances=True):
 
     See also
     --------
-    ~lingpy.algorithm.cluster.upgma
+    upgma
+    
     """
     
     return cluster.upgma(matrix,taxa,distances)
@@ -334,7 +336,8 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
 
     See also
     --------
-    ~lingpy.algorithm.clustering.link_clustering
+    link_clustering
+    
     """
     try:
         g = nx.Graph()
@@ -730,7 +733,8 @@ def link_clustering(
 
     See also
     --------
-    ~lingpy.algorithm.clustering.fuzzy
+    fuzzy
+    
     """
     # check for matrix type
     if matrix_type == 'distances':

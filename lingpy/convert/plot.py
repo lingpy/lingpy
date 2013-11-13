@@ -1830,17 +1830,6 @@ def plot_heatmap(
     ax1.spines['left'].set_color('#ffffff')
     ax1.spines['right'].set_color('#ffffff')
 
-    #ax1.get_yaxis().set_visible(False)
-    #ax1.patch.set_visible(False)
-    #ax1.set_axis_off()
-    
-    #ax3 = fig.add_axes([0.3,0.8,0.6,0.2])
-    #
-    ##ax3.set_yticks(
-    ##        idxs,
-    ##        selected_taxa,
-    ##        size=keywords['textsize']
-    ##        )
     plt.xticks(
             idxs,
             selected_taxa,
@@ -1853,17 +1842,12 @@ def plot_heatmap(
             selected_taxa,
             size=keywords['textsize'],
             )
-    #ax3.set_yticks([])
-
 
     if keywords["colorbar"]:
-        #ax3 = fig.add_axes([0.9,0.1,0.1,0.6])
-        
         plt.imshow(matrix,cmap=keywords['cmap'],visible=False)
         c = plt.colorbar(im,shrink=keywords['colorbar_shrink'])
         c.set_label(keywords["colorbar_label"],size=keywords['colorbar_textsize'])
-        #ax3.set_xticks([])
-        #ax3.set_yticks([])
+    
     plt.subplots_adjust(
             left   = keywords['left'],
             right  = keywords['right'],
@@ -1878,9 +1862,9 @@ def plot_heatmap(
     for i,t in enumerate(taxa):
         f.write('{0:20}'.format(t))
         for j,c in enumerate(matrix[i]):
-            try: 
+            if not normalized:
                 f.write('\t{0:3}'.format(int(c)))
-            except:
+            else:
                 f.write('\t{0:.2f}'.format(c))
         f.write('\n')
     f.close()

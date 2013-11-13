@@ -20,12 +20,12 @@ from operator import itemgetter
 import abc
 
 # basic lingpy imports
-from ._parser import _QLCParser
+from .parser import QLCParser
 from ..read.qlc import read_qlc
 from ..settings import rcParams
 
 
-class Dictionary(_QLCParser):
+class Dictionary(QLCParser):
     """
     Basic class for the handling of multilingual word lists.
 
@@ -70,7 +70,7 @@ class Dictionary(_QLCParser):
             conf = os.path.join(rcParams['_path'],'data','conf','dictionary.rc')
 
         # initialize the qlc_parser
-        _QLCParser.__init__(self,filename,conf)
+        QLCParser.__init__(self,filename,conf)
 
         # build a doculect->iso map for @doculect meta data
         self.doculect2iso = {}
@@ -135,11 +135,11 @@ class Dictionary(_QLCParser):
 
     def tokenize(
             self,
-            orthography_profile = '',
-            source = "head",
-            target = "tokens",
-            conversion = 'graphemes',
-            ** keywords
+            orthography_profile='',
+            source="head",
+            target="tokens",
+            column='graphemes',
+            **keywords
             ):
         """
         Tokenize the data with help of orthography profiles.
@@ -154,13 +154,13 @@ class Dictionary(_QLCParser):
             The source data that shall be used for the tokenization procedures.
         
         target : str (default="tokens")
-            The name of the target column that will be added to the dictionary.
+            The name of the target column that will be added to the wordlist.
 
-        conversion : str (default="graphemes")
+        column : str (default="graphemes")
             Tokenization target.
 
         """
-        self._tokenize(orthography_profile, source, target, conversion,
+        self._tokenize(orthography_profile, source, target, column,
             **keywords)
 
     def add_entries(

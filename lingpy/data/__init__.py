@@ -1,38 +1,7 @@
 """
-LingPy comes along with many different kinds of predefined data.  When loading
-the library, the following data are automatically loaded and can be used in all
-applications:
-
-    .. py:data:: ipa_diacritics : str
-    
-       The default string of IPA diacritics which is used for the
-       tokenization of IPA strings.
-    
-    .. py:data:: ipa_vowels : str
-    
-       The default string of IPA vowels which is used for the tokenization of IPA
-       strings.
-    
-    .. py:data:: sca : Model
-       
-       The SCA sound-class :py:class:`~lingpy.data.model.Model` (see
-       :evobib:`List2012`).
-    
-    .. py:data:: dolgo : Model
-    
-       The DOLGO sound-class :py:class:`~lingpy.data.model.Model` (see
-       :evobib:`Dolgopolsky1986`).
-    
-    .. py:data:: asjp : Model
-    
-       The ASJP sound-class :py:class:`~lingpy.data.model.Model` (see
-       :evobib:`Brown2008` and :evobib:`Brown2011`).
-    
-    .. py:data:: art : Model
-    
-       The ART sound-class :py:class:`~lingpy.data.model.Model` which is
-       used for the calculation of sonority profiles and prosodic strings (see
-       :evobib:`List2012`).
+LingPy comes along with many different kinds of predefined data. When loading
+the library, the following dictionary is automatically loaded and employed by
+all LingPy modules:
 
     .. py:data:: rcParams : dict
 
@@ -52,10 +21,24 @@ applications:
        rcParams dictionary, but also provides more complex functions that change whole
        sets of variables, such as the following statement::
           
-          >>> rc(schema="evolaemp")
+          >>> rc(schema="asjp")
           
        which switches the variables "asjp", "dolgo", etc. to the ASCII-based
        transcription system of the ASJP project.
+
+       If you want to change the content of c{rcParams} directly, you need to
+       import the dictionary explicitly::
+
+          >>> from lingpy.settings import rcParams
+
+       However, changing the values in the dictionary randomly can produce
+       unexpected behavior and we recommend to use the regular ``rc`` function
+       for this purpose.
+
+
+.. autofunction::
+
+    lingpy.settings.rc
 
 """
 

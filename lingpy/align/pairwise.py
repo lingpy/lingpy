@@ -340,6 +340,38 @@ def pw_align(
         ):
     """
     Align two sequences in various ways.
+
+    Parameters
+    ----------
+    seqA, seqB : {str, list, tuple}
+        The input strings. These should be iterables, so you can use tuples,
+        lists, or strings.
+    scorer : dict (default=False)
+        If set to c{False} a scorer will automatically be calculated,
+        otherwise, the scorer needs to be passed as a dictionary that covers
+        all segment matches between the input strings.
+    gop : int (default=-1)
+        The gap opening penalty.
+    scale : float (default=0.5)
+        The gap extension scale. This scale is similar to the gap extension
+        penalty, but in contrast to the traditional GEP, it "scales" the gap
+        opening penalty. 
+    mode : {"global", "local", "diagonal", "overlap"} (default="global")
+        Select between one of the four different alignment modes regularly
+        implemented in LingPy, see :evobib:`List2012a` for details.
+    distance : bool (default=False)
+        If set to c{True} return the distance score following the formula by
+        :evobib:`Downey2008`. Otherwise, return the basic similarity score.
+
+    Examples
+    --------
+    >>> seqA = 'fat cat'
+    >>> setB = 'catfat'
+    >>> pw_align(seqA, seqB, mode='dialign')
+    (['f', 'a', 't', ' ', 'c', 'a', 't', '-', '-', '-'],
+     ['-', '-', '-', '-', 'c', 'a', 't', 'f', 'a', 't'],
+     3.0)
+    
     """
 
     # check whether the sequences are lists
@@ -393,6 +425,38 @@ def nw_align(
         ):
     """
     Carry out the traditional Needleman-Wunsch algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : {str, list, tuple}
+        The input strings. These should be iterables, so you can use tuples,
+        lists, or strings.
+    scorer : dict (default=False)
+        If set to c{False} a scorer will automatically be calculated,
+        otherwise, the scorer needs to be passed as a dictionary that covers
+        all segment matches between the input strings.
+    gap : int (default=-1)
+        The gap penalty.
+
+    Notes
+    -----
+    The Needleman-Wunsch algorithm (see :evobib:`Needleman1970`) returns a global
+    alignment of two sequences. 
+
+    Returns
+    -------
+    alm : tuple
+        A tuple consisting of the aligments of the first and the second
+        sequence, and the alignment score.
+
+    Examples
+    --------
+    
+    >>> seqA = 'fat cat'
+    >>> setB = 'catfat'
+    >>> nw_align(seqA,seqB)
+    (['f', 'a', 't', ' ', 'c', 'a', 't'], ['c', 'a', 't', '-', 'f', 'a', 't'], 1)
+
     """
     # check whether the sequences are tuples
     if type(seqA) == str or type(seqA) == tuple:
@@ -434,6 +498,25 @@ def edit_dist(
         Specify the restrictions to be used. Currently, only ``cv`` is
         supported. This prohibits matches of vowels with consonants.
 
+    Notes
+    -----
+    The edit distance was first formally defined by V. I. Levenshtein
+    (:evobib:`Levenshtein1965`). The first algorithm to compute the edit
+    distance was proposed by Wagner and Fisher (:evobib:`Wagner1974`).
+
+    Returns
+    -------
+    dist : {int float}
+        The edit distance, which is a float if normalized is set to c{True},
+        and an integer otherwise.
+
+    Examples
+    --------
+    >>> seqA = 'fat cat'
+    >>> setB = 'catfat'
+    >>> edit_dist(seqA,seqB)
+    3
+
     """
     # check whether the sequences are tuples
     if type(seqA) == str or type(seqA) == tuple:
@@ -465,6 +548,40 @@ def sw_align(
         ):
     """
     Carry out the traditional Smith-Waterman algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : {str, list, tuple}
+        The input strings. These should be iterables, so you can use tuples,
+        lists, or strings.
+    scorer : dict (default=False)
+        If set to c{False} a scorer will automatically be calculated,
+        otherwise, the scorer needs to be passed as a dictionary that covers
+        all segment matches between the input strings.
+    gap : int (default=-1)
+        The gap penalty.
+
+    Notes
+    -----
+    The Smith-Waterman algorithm (see :evobib:`Smith1981`) returns a local
+    alignment between two sequences. A local alignment is an alignment of those
+    subsequences of the input sequences that yields the highest score.
+
+    Returns
+    -------
+    alm : tuple
+        A tuple consisting of prefix, alignment, and suffix of the first and
+        the second sequence, and the alignment score.
+
+    Examples
+    --------
+    
+    >>> seqA = 'fat cat'
+    >>> setB = 'catfat'
+    >>> sw_align(seqA,seqB)
+    (([], ['f', 'a', 't'], [' ', 'c', 'a', 't']),
+     (['c', 'a', 't'], ['f', 'a', 't'], []),
+     3.0)
     """
 
     # check whether the sequences are tuples
@@ -493,6 +610,41 @@ def we_align(
         ):
     """
     Carry out the traditional Waterman-Eggert algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : {str, list, tuple}
+        The input strings. These should be iterables, so you can use tuples,
+        lists, or strings.
+    scorer : dict (default=False)
+        If set to c{False} a scorer will automatically be calculated,
+        otherwise, the scorer needs to be passed as a dictionary that covers
+        all segment matches between the input strings.
+    gap : int (default=-1)
+        The gap penalty.
+
+    Notes
+    -----
+    The Waterman-Eggert algorithm (see :evobib:`Waterman1987`) returns *all*
+    local matches between two sequences.
+
+    Returns
+    -------
+    alms : list
+        A list consisting of tuples. Each tuple gives the alignment of one of
+        the subsequences of the input sequences. Each tuple contains the
+        aligned part of the first, the aligned part of the second sequence, and
+        the score of the alignment. 
+
+    Examples
+    --------
+    
+    >>> seqA = 'fat cat'
+    >>> setB = 'catfat'
+    >>> we_align(seqA,seqB)
+    [(['f', 'a', 't'], ['f', 'a', 't'], 3.0),
+     (['c', 'a', 't'], ['c', 'a', 't'], 3.0)]
+
     """
 
     # check whether the sequences are tuples
@@ -529,7 +681,23 @@ def turchin(
         **keywords
         ):
     """
-    Return cognate judgment based on Turchin et al.'s (2010) method.
+    Return cognate judgment based on the method by :evobib:`Turchin2010`.
+    
+    Parameters
+    ----------
+    seqA, seqB : {str, list, tuple}
+        The input strings. These should be iterables, so you can use tuples,
+        lists, or strings.
+    model : {~lingpy.data.model.Model, "asjp", "sca", "dolgo"} (default="dolgo")
+        A sound-class model instance or a string that denotes one of the
+        standard sound class models used in LingPy.
+
+    Returns
+    -------
+    cognacy : {0, 1}
+        The cognacy assertion which is either 0 (words are probably cognate) or
+        1 (words are not likely to be cognate).
+
     """
     if str(model) == model:
         model = rcParams[model]

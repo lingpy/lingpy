@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-05 18:22
-# modified : 2013-09-05 18:22
+# modified : 2013-11-12 14:46
 """
 Module provides methods for the evaluation of automatic linguistic reconstruction analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-05"
+__date__="2013-11-12"
 
 from ..settings import rcParams,rc
 from ..align.pairwise import edit_dist
@@ -38,6 +38,11 @@ def mean_edit_distance(
     -------
     dist : float
         The mean edit distance between gold and test reconstructions.
+
+    Notes
+    -----
+    This function has an alias ("med"). Calling it will produce the same
+    results.
     """
     defaults = dict(
             merge_vowels = rcParams['merge_vowels'],
