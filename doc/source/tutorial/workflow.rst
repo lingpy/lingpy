@@ -43,7 +43,7 @@ Orthographic parsing is the first step in preparing the data. For the analyses i
 This has already been prepared. It is stored in the file Heath2013.prf_. In order to parse the data,
 type in the following::
 
-  >>> wl.tokenize(ortho_profile='Heath2013.prf')
+  >>> wl.tokenize('Heath2013.prf', column="IPA")
 
 As a result, LingPy will iterate over all words in the dataset and convert them to IPA, as specified
 in the orthography profile. We can now write the data to an output file so that we can use it in the next
@@ -85,14 +85,14 @@ This preprocessing stage is computationally-intensive and make take some time to
 
 Now, we can carry out the cognate detection. This is a cluster method that clusters all sequences, which are similar to each other, into the same cognate set. Which sequences are clustered depends on a threshold that we have to pass as an argument to the function. Here we chosen 0.5 as a threshold (see :evobib:`List2012c` for a detailed description of the LexStat algorithm). This is a rather conservative score, which avoids generating too many false positives::
 
-  >>> lex.cluster(method='lexstat',threshold=0.5)
+  >>> lex.cluster(method='lexstat', threshold=0.5)
 
 Having calculated the cognates, we can go on and calculate a tree. Here we use the
 :py:func:`lingpy.basic.wordlist.Wordlist.calculate` function. We've chosen 'neighbor' (see
 :evobib:`Saitou1987`) as the algorithm for the tree-calculation, and we must define 'lexstatid' as
 the column where the cognate IDs are stored::
 
-  >>> lex.calculate('tree',ref='lexstatid',tree_calc='neighbor')
+  >>> lex.calculate('tree', ref='lexstatid', tree_calc='neighbor')
 
 As a result, the :py:class:`~lingpy.compare.lexstat.LexStat` object gets a **tree** attribute. This
 is again is a specific class taken from the PyCogent library (see http://pycogent.org/). It can be
@@ -142,7 +142,7 @@ setting the **subset** keyword to c{True} and pass the data that we want as a li
 In order to have a nice format with all words corresponding to the same concept in the same block,
 we specify the keyword **formatter** as 'concepts'::
 
-  >>> lex.output('qlc',filename='DOGON_lexstat',subset=True,formatter='concepts',cols=['concepts','taxa','counterpart','tokens','lexstatid'])
+  >>> lex.output('qlc', filename='DOGON_lexstat', subset=True, formatter='concepts', cols=['concepts', 'taxa', 'counterpart', 'tokens', 'lexstatid'])
 
 This produces the file DOGON_lexstat.qlc_ in our folder.
 
@@ -155,13 +155,13 @@ hint of whether the cognates that an algorithm detected are "good" ones, or not.
 multiple alignment analyses from a cognate set, we can load the data that we just wrote to an output file in
 the previous step into an :py:class:`~lingpy.align.sca.Alignments` object. Note that we should specify where the cognates are. In the case of a LexStat analysis, they are stored in the 'lexstatid' column::
 
-  >>> alm = Alignments('DOGON_lexstat.qlc',ref='lexstatid')
+  >>> alm = Alignments('DOGON_lexstat.qlc', ref='lexstatid')
 
 Carrying out a default alignment analysis is now very simple. We choose the default parameters, 
 the 'library'-method for multiple alignments (see :evobib:`List2012a`), and we also set the **output**
 kewyord to c{True} in order to have all alignments written to separate files::
 
-  >>> alm.align(method='library',output=True)
+  >>> alm.align(method='library', output=True)
 
 This will produce a new folder ``DOGON_lexstat_msa/`` that contains all multiple alignments in
 separate MSA-files. More information regarding the format of these files can be found under: :ref:`msa_formats`.
@@ -209,7 +209,7 @@ This calculation will also take some time. Once it is finished, we can plot the 
 Lateral Network. Note that this will only work if Matplotlib is installed on your system::
   
   >>> tre.get_MLN(tre.best_model)
-  >>> tre.plot_MLN(filename="DOGON",fileformat="SVG")
+  >>> tre.plot_MLN(filename="DOGON", fileformat="SVG")
 
 As a result, the following network plot of the data will appear in the working directory:
 
