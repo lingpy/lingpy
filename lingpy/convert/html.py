@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2013-10-15 12:51
+# modified : 2013-11-14 09:49
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-15"
+__date__="2013-11-14"
 
 
 import os
@@ -86,55 +86,54 @@ def alm2html(
 
     See also
     --------
-    lingpy.output.plot.msa2html
-
-    .. todo:: Format Change
-       
-       Adapt the input format in order to make it more flexible for general
-       approaches, especially in collaboration with qlc.
+    lingpy.convert.html.msa2html
+    lingpy.convert.html.msa2tex
 
     """
-    # get the path to the templates
-    #path = os.path.join(os.path.split(os.path.abspath(__file__))[0], '/templates/')
-    
     # open the infile
     try:
-        data = codecs.open(infile, "r", "utf-8").read()[:-1]
+        data = codecs.open(infile, "r", "utf-8").read()
     except:
-        data = codecs.open(infile+'.alm', "r", "utf-8").read()[:-1]
+        data = codecs.open(infile+'.alm', "r", "utf-8").read()
 
     # create the outfile
     if not filename:
         filename = rcParams['filename']
     
     # read in the templates
-    path = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(rcParams['_path'],'data','templates')
     
     if main_template:
-        try:
-            html = codecs.open(main_template,'r','utf-8').read()
-        except:
-            html = codecs.open(
-                    os.path.join(path,'templates',main_template),
-                    'r',
-                    'utf-8'
-                    ).read()
+        html = codecs.open(main_template,'r','utf-8').read()
     else:
-        html_path = os.path.join(path, 'templates', 'alm2html.html')
-        html = codecs.open(html_path,'r','utf-8').read()
+        html = codecs.open(
+                os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'templates',
+                    'alm2html.html'
+                    ),
+                'r',
+                'utf-8'
+                ).read()
     
     if table_template:
-        try:
-            table = codecs.open(table_template,'r','utf-8').read()
-        except:
-            table = codecs.open(
-                    os.path.join(path,'templates',table_template),
-                    'r',
-                    'utf-8'
-                    ).read()
+        table = codecs.open(table_template,'r','utf-8').read()
     else:
-        table_path = os.path.join(path, 'templates', 'alm2html.table.html')
-        table = codecs.open(table_path,'r','utf-8').read()
+        table = codecs.open(
+                os.path.join(
+                    rcParams['_path'],
+                    'data',
+                    'templates',
+                    'alm2html.table.html'
+                    ),
+                'r',
+                'utf-8'
+                ).read()
+
+
+    # check for windows-compatibility
+    data = data.replace(os.linesep,'\n')[:-1]
 
     # split the data into blocks
     blocks = data.split('\n\n')
@@ -284,7 +283,6 @@ def msa2html(
         msa,
         shorttitle = '',
         filename = '',
-        path = '',
         template = '',
         **keywords
         ):
@@ -300,9 +298,14 @@ def msa2html(
         Define the shorttitle of the ``html``-page. If no title is provided,
         the default title ``SCA`` will be used.
 
-    filename : str
+    filename : str (default="")
         Define the name of the output file. If no name is defined, the name of
         the input file will be taken as a default.
+
+    template : str (default="")
+        The path to the template file. If no name is defined, the basic
+        template will be used. The basic template currently used can be found
+        under ``lingpy/data/templates/msa2html.html``.
 
     Examples
     --------
@@ -353,9 +356,7 @@ def msa2html(
     # msa-format should be loaded first (once this is already provided), the
     # loss in speed won't matter much, since output of data is not a daily task
     
-    # get the path to the templates
-    if not path:
-        path = os.path.join(rcParams['_path'],'convert','templates')
+    path = os.path.join(rcParams['_path'],'data','templates')
 
     # load templates
     if not template:
@@ -537,20 +538,14 @@ def msa2tex(
     # loss in speed won't matter much, since output of data is not a daily task
     
     ## get the path to the templates
-    if not path:
-        path = os.path.split(os.path.abspath(__file__))[0] + '/templates/'
-    else:
-        if path.endswith('/'):
-            pass
-        else:
-            path += '/'
+    path = os.path.join(rcParams['_path'],'data','templates','msa.tex')
 
     # load msa
     msa = read_msa(infile)
 
     ## load templates
     if not template:
-        tex = codecs.open(path+'msa.tex','r','utf-8').read()
+        tex = codecs.open(path,'r','utf-8').read()
     else:
         tex = codecs.open(template,'r','utf-8').read()
 
