@@ -25,6 +25,7 @@ from ..read.qlc import read_msa
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
+from ..convert.tree import subGuideTree
 from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
         prosodic_string, prosodic_weights
 from .multiple import Multiple
