@@ -282,7 +282,7 @@ def nwk2tree_matrix(newick):
     that scipy's linkage functions create.
     """
     if type(newick) == str:
-        tree = LoadTree(newick)
+        tree = cg.LoadTree(treestring=newick)
     elif hasattr(newick,'root'):
         tree = newick
 
