@@ -11,6 +11,7 @@ __author__ = "Steven Moran"
 __date__ = "2013-11-01"
 
 from lingpy import *
+from lingpy.read import read_qlc
 
 f = read_qlc("../../lingpy/data/qlc/leach1969-67-161.csv")
 d = Dictionary(f)

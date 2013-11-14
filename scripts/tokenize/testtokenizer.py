@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-11-04"
 
 from lingpy import *
+from lingpy.sequence import tokenize
 
 words = [
     "tʰɔxtər",

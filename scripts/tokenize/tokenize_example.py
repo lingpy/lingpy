@@ -6,7 +6,7 @@ Test script for the orthography / tokenization module.
 __author__ = "Steven Moran"
 __date__ = "2010-12-01"
 
-from lingpy import *
+from lingpy.sequence.tokenizer import *
 
 word = "Màttís List"
 

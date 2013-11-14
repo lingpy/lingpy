@@ -7,7 +7,7 @@ __date__ = "2013-11-02"
 
 import codecs
 
-from lingpy import *
+from lingpy.sequence.tokenizer import *
 
 t = Tokenizer()
 t.tokenize_ipa("string")
