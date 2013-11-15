@@ -258,7 +258,7 @@ def get_gls(
                     # avoid to append scenarios with more than allowed gains
                     # per lineage
                     if not (state == 1 and list(scenario.values()).count(1) > gpl):
-                        
+
                         # check scenarios having a loss in order to retrieve
                         # the scenario with the minimal weight, since once a
                         # loss is determined, the gains can be freely chosen
@@ -281,8 +281,6 @@ def get_gls(
                                 minLoss[w] += [j]
                             except:
                                 minLoss[w] = [j]
-                        #else:
-                        #    good_nodes += [(state,scenario)]
 
                 # append lowest weights in gains to the list
                 if minGains:
@@ -499,23 +497,18 @@ class PhyBo(Wordlist):
             if rcParams["verbose"]: print("[i] Loaded the tree.")
         else:
             pass
-
-        # create the template graph XXX add fallback procedure
-        try:
-            gTpl = nx.read_gml(dataset+'.gml')
-        except:
-            
-            # if no good topology is given, create it automatically, using
-            # the radial layout function
-            gTpl = radial_layout(
-                    str(self.tree),
-                    filename='',
-                    degree=keywords['degree'],
-                    change= keywords['change'],
-                    start = keywords['start']
-                    )
-            
-            if rcParams["verbose"]: print("[i] Calculated radial layout for the tree. ")
+        
+        # if no good topology is given, create it automatically, using
+        # the radial layout function
+        gTpl = radial_layout(
+                str(self.tree),
+                filename='',
+                degree=keywords['degree'],
+                change= keywords['change'],
+                start = keywords['start']
+                )
+        
+        if rcParams["verbose"]: print("[i] Calculated radial layout for the tree. ")
         
         self.tgraph = gTpl
         
@@ -523,7 +516,7 @@ class PhyBo(Wordlist):
         for a in ['stats','gls','dists','graph','acs']:
             if not hasattr(self,a):
                 setattr(self,a,{})
-    
+
     def _get_GLS_top_down(
             self,
             pap,
@@ -3668,6 +3661,7 @@ class PhyBo(Wordlist):
                 vedgestyle       = rcParams['phybo_vedgestyle'], 
                 vedgecolor       = rcParams['phybo_vedgecolor'], 
                 vedgelinewidth   = rcParams['phybo_vedgelinewidth'], 
+                vedgeinnerline   = rcParams['phybo_vedgeinnerline'],
                 hedgescale       = rcParams['phybo_hedgescale'], 
                 nodestyle        = rcParams['phybo_nodestyle'], 
                 nodesize         = rcParams['phybo_nodesize'], 
@@ -3726,12 +3720,8 @@ class PhyBo(Wordlist):
         for a,b in [(x,y) for x,y in self.tree.getNodesDict().items() if x not in self.taxa]:
             
             if a != 'root':
-                node = a #''.join([x for x in str(b) if x not in '",;()'+"'"])  
-                #re.sub(
-                #        r":[0-9\.]+",
-                #        '',
-                #        str(b).replace(')','').replace('(','').replace(',','-')
-                #        ).replace("'",'').replace(';','')
+                node = a   
+
             else:
                 node = 'root'
             
@@ -3888,7 +3878,7 @@ class PhyBo(Wordlist):
                         [yA,yB],
                         '-',
                         color='1.0',
-                        linewidth=keywords['vedgelinewidth']-3,
+                        linewidth=keywords['vedgeinnerline'],
                         )
         # store x,y values for ylim,xlim drawing
         xvals = []

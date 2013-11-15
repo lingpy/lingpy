@@ -203,7 +203,7 @@ def radial_layout(
         degree = 100,
         filename = '',
         start = 0,
-        verbose = True
+        root = 'root'
         ):
     """
     Function calculates a simple radial tree layout.
@@ -279,7 +279,7 @@ def radial_layout(
     paths = {}
     
     for l in leaves:
-        path = tree.getConnectingEdges('root',l)
+        path = tree.getConnectingEdges(root,l)
         try:
             paths[len(path)] += [l]
         except:
@@ -335,14 +335,14 @@ def radial_layout(
                        [coords[child] for child in children]
                        )
                 parent = tree.getNodeMatchingName(node).Parent.Name
-                if parent == 'root':
+                if parent == root:
                     coords[parent] = (x,y,dim+1)
                 else:
                     coords[parent] = (x,y,dim)
 
                 visited += [child for child in children]
                 
-                if parent != 'root':
+                if parent != root:
                     queue += [(parent,dim)]
     
     # convert tree to graph

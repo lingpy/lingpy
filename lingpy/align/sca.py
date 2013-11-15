@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-10-10 16:14
+# modified : 2013-11-14 12:30
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-10-10"
+__date__="2013-11-14"
 
 import numpy as np
 import re
@@ -337,10 +337,9 @@ class MSA(Multiple):
         if fileformat in ['html','tex']:
             self.output('msa', '.tmp', sorted_seqs, unique_seqs)
             if 'filename' not in keywords:
-                keywords['input_file'] = self.infile
-                if 'filename' not in keywords:
-                    keywords['filename'] = self.infile.replace('.msa','')
-            
+                keywords['input_file'] = os.path.split(self.infile)[1]
+                keywords['filename'] = filename
+
             if fileformat == 'html':
                 html.msa2html('.tmp.msa', **keywords)
             elif fileformat == 'tex':
