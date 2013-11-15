@@ -776,16 +776,16 @@ def check_tokens(tokens,**keywords):
 
     for i,token in enumerate(tokens):
         
-        # check for conversion within the articulation-model
+        # check for conversion within the rcParams['art']iculation-model
         try:
-            art.converter[token]
+            rcParams['art'].converter[token]
         except KeyError:
             try:
-                art.converter[token[0]]
+                rcParams['art'].converter[token[0]]
             except KeyError:
                 if token[0] in keywords['stress']:
                     try:
-                        art.converter[token[1]]
+                        rcParams['art'].converter[token[1]]
                     except KeyError:
                         errors.append((i,token))
                 else:
