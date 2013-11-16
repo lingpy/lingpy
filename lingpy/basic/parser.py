@@ -67,7 +67,7 @@ class QLCParser(object):
                 else:
                     loaded = False
         if not loaded:
-            self._init_first(filename,conf)
+            self._init_first(filename,conf)        
 
     def _init_first(
             self,
@@ -89,7 +89,8 @@ class QLCParser(object):
             internal_import = True
             
             # make check for correct input
-            if len(input_data[0]) != len(input_data[1]):
+            tmp_keys = [k for k in input_data if k > 0]
+            if len(input_data[0]) != len(input_data[tmp_keys[0]]):
                 raise ValueError("[!] Wrong input format!")
 
         # check whether it's another wordlist-object
