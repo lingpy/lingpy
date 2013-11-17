@@ -3639,6 +3639,7 @@ class PhyBo(Wordlist):
 
         defaults = dict(
                 figsize          = rcParams['phybo_figsize'], 
+                figure_width     = 10,
                 colormap         = mpl.cm.jet,
                 filename         = self.dataset,
                 linescale        = rcParams['phybo_linescale'], 
@@ -3677,6 +3678,22 @@ class PhyBo(Wordlist):
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
+
+        # get max and min values for coordinates
+        xvals,yvals = [],[]
+        for n,d in self.graph[glm].nodes(data=True):
+            xvals += [d['graphics']['x']]
+            yvals += [d['graphics']['y']]
+
+        minX, minY, maxX, maxY = min(xvals), min(yvals), max(xvals), max(yvals)
+        if keywords['figsize'] == 'optimal':
+            w = maxX + abs(minX)
+            h = maxY + abs(minY)            
+            keywords['figsize'] = (
+                    keywords['figure_width'], 
+                    h / (w / keywords['figure_width']
+                        )
+                    )
         
         if keywords['latex_preamble']:
             mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
