@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-11-13 10:41
+# modified : 2013-11-18 09:36
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-13"
+__date__="2013-11-18"
 
 # thirdparty imports
 import numpy as np
@@ -244,6 +244,10 @@ class Multiple(object):
         model : { None ~lingpy.data.model.Model } (default=None)
             A sound class model.
         """
+        # check whether model is a string
+        if not hasattr(model,'name'):
+            model = rcParams[model]
+
         # check for keyword classes
         if not classes:
             classify = lambda x:x
@@ -986,7 +990,8 @@ class Multiple(object):
                 )
         
         # set the model
-        self._set_model(model,
+        self._set_model(
+                model,
                 kw['classes'],
                 kw['sonar'],
                 kw['scoredict']

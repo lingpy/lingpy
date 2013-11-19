@@ -218,6 +218,7 @@ def plot_tree(
         treestring,
         degree = 90,
         fileformat = 'pdf',
+        root = "root",
         **keywords
         ):
     """
@@ -240,37 +241,38 @@ def plot_tree(
     """
 
     default = dict(
-            linewidth = 5,
-            linecolor = 'black',
-            nodesize = 10,
-            nodecolor = 'black',
-            textsize = '10',
-            textcolor = 'white',
-            va = 'center',
-            ha = 'center',
-            bg = 'black',
-            fontweight = 'bold',
-            left = 0.05,
-            right = 0.95,
-            top = 0.95,
-            bottom = 0.05,
-            figsize = (10,10),
-            node_dict = {},
-            no_labels = False,
-            xlim            = 5,
-            ylim            = 5,
-            xlimr           = False,
-            xliml           = False,
-            ylimt           = False,
-            ylimb           = False,
-            change = lambda x: x**1.75,
-            frameon = False,
-            edge_list = [],
             ax_linewidth = 0,
-            start = 0,
-            usetex = False,
+            bg = 'black',
+            bottom = 0.05,
+            change = lambda x: x**1.75,
+            edge_list = [],
+            figsize = (10,10),
             filename = rcParams['filename'],
-            labels = []
+            fontweight = 'bold',
+            frameon = False,
+            ha = 'center',
+            labels = [],
+            left = 0.05,
+            linecolor = 'black',
+            linewidth = 5,
+            no_labels = False,
+            node_dict = {},
+            nodecolor = 'black',
+            nodesize = 10,
+            right = 0.95,
+            start = 0,
+            textcolor = 'white',
+            textsize = '10',
+            top = 0.95,
+            usetex = False,
+            va = 'center',
+            xlim            = 5,
+            xliml           = False,
+            xlimr           = False,
+            ylim            = 5,
+            ylimb           = False,
+            ylimt           = False,
+            rotation_mode='anchor',
             )
     for k in default:
         if k not in keywords:
@@ -292,7 +294,8 @@ def plot_tree(
             treestring,
             degree=degree,
             change=keywords['change'],
-            start=keywords['start']
+            start=keywords['start'],
+            root=root
             )
     
     # create the figure
@@ -347,7 +350,8 @@ def plot_tree(
 
         # try to get information from the node-dict
         try:
-            settings = keywords['node_dict'][n]
+            settings = {}
+            settings.update(keywords['node_dict'][n])
         except:
             settings = {}
         
@@ -356,7 +360,7 @@ def plot_tree(
             if k not in settings:
                 settings[k] = keywords[k]
     
-        if d['label'].startswith('edge') or d['label'].startswith('root') or keywords['no_labels']:
+        if d['label'].startswith('edge') or d['label'].startswith(root) or keywords['no_labels']:
             plt.plot(
                     x,
                     y,
@@ -370,6 +374,10 @@ def plot_tree(
                 label = keywords['labels'][d['label']]
             except:
                 label = d['label']
+            if 'rotation' in settings:
+                r = settings['rotation']
+            else:
+                r = g['angle']
             plt.text(
                     x,
                     y,
@@ -385,8 +393,8 @@ def plot_tree(
                         ec="none",
                         ),
                     size = settings['textsize'],
-                    rotation = g['angle'],
-                    rotation_mode = 'anchor'
+                    rotation = r, #g['angle'],
+                    rotation_mode = settings['rotation_mode']
                     )
     
     # set up the xlimits
@@ -403,8 +411,6 @@ def plot_tree(
 
     plt.xlim((min(xvals)-xl,max(xvals)+xr))
     plt.ylim((min(yvals)-yb,max(yvals)+yt))           
-    #plt.xlim(min(xvals)-keywords['xlim'],max(xvals)+keywords['xlim'])
-    #plt.ylim(min(yvals)-keywords['ylim'],max(yvals)+keywords['ylim'])
 
     plt.subplots_adjust(
             left = keywords['left'],
