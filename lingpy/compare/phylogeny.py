@@ -4317,7 +4317,9 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
+        #if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
 
+        return
 
     def get_MSN(
             self,
@@ -5177,6 +5179,8 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
+        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
+        return
     
     def plot_GLS(
             self,

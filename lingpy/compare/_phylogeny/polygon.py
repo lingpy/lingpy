@@ -103,7 +103,7 @@ def getPolygonFromNodes(
         elif absY == 0:
             d = absX
         else:
-            d = np.sqrt(absX**2+absY**2)
+            d = sqrt(absX**2+absY**2)
         g.add_edge(a,b,weight=d)
     
     # sort the lines

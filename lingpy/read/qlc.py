@@ -62,7 +62,7 @@ def _list2msa(
             idx = 0
         
         # check for specific id
-        if line[0] in  ['0', 'LOCAL', 'SWAPS', 'MERGE']:
+        if line[0] in  ['0', 'LOCAL', 'SWAPS', 'MERGE', 'PROTO', 'CONSE']:
             if line[idx] == 'LOCAL':
                 d['local'] = []
                 for j,x in enumerate(line[idx+1:]):
@@ -97,8 +97,13 @@ def _list2msa(
                         merge = False
 
                     d['merge'][j] = k
+            elif line[idx] in ['CONSE', 'PROTO']:
+                if line[idx] == 'CONSE':
+                    d['consensus'] = line[idx+1:]
+                else:
+                    d['proto'] = line[idx+1:]
 
-        elif line[0] not in ['LOCAL','SWAPS','MERGE','0']:
+        elif line[0] not in ['LOCAL','SWAPS','MERGE','0', 'PROTO', 'CONSE']:
             if ids:
                 try:
                     d['ID'] += [int(line[0])]
@@ -393,7 +398,7 @@ def read_qlc(
                 d[i] = line
                 i += 1
     except:
-        raise Exception("Error processing line:\n" + line)
+        raise InputFileError(infile)
 
     # assign the header to d[0]
     if local_id:

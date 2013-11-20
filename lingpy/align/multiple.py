@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-11-18 09:36
+# modified : 2013-11-18 14:36
 """
 Module provides classes and functions for multiple alignment analyses.
 """
@@ -245,7 +245,7 @@ class Multiple(object):
             A sound class model.
         """
         # check whether model is a string
-        if not hasattr(model,'name'):
+        if not hasattr(model,'name') and model is not None:
             model = rcParams[model]
 
         # check for keyword classes
@@ -974,6 +974,9 @@ class Multiple(object):
         
         # define the model for convenience
         model = kw['model']
+
+        if not hasattr(model,'name'):
+            model = rcParams[model]
 
         # create a string with the current parameters
         self.params = '_'.join(

@@ -414,7 +414,7 @@ class BasVoc(QLCParser):
 
         Example
         -------
-        >>> from lingpy.meaning import concepticon
+        >>> from lingy.meaning import concepticon
         >>> concepticon.get_sublist('dolgopolsky','jachontov','item')
         ['water',
          'eye',

@@ -24,7 +24,6 @@ Definition of relevant terms or abbreviations:
        from a node
     -  stem: the edge immediately preceeding a clade
 """
-import sys
 from numpy import zeros, argsort
 from copy import deepcopy
 import re
@@ -47,12 +46,6 @@ __version__ = "1.5.1"
 __maintainer__ = "Gavin Huttley"
 __email__ = "gavin.huttley@anu.edu.au"
 __status__ = "Production"
-
-if sys.version_info[0] > 2:
-    from functools import reduce
-
-    def cmp(a, b):
-        return (a < b) - (b < a)
 
 
 def comb(items, n=None):
@@ -2218,7 +2211,8 @@ class TreeBuilder(object):
         self._known_edges[id(node)] = node
         return node
 
-def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=False):
+def LoadTree(filename=None, treestring=None, tip_names=None, format=None, \
+    underscore_unmunge=False):
 
     """Constructor for tree.
     
@@ -2240,11 +2234,23 @@ def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=
             treestring = filename
         else:
             treestring = codecs.open(filename,'r','utf-8').read()
+        if format is None and filename.endswith('.xml'):
+            format = "xml"
     if treestring:
         assert not tip_names
+        if format is None and treestring.startswith('<'):
+            format = "xml"
+        if format == "xml":
+            parser = tree_xml_parse_string
+        else:
+            parser = newick_parse_string
         tree_builder = TreeBuilder().createEdge
         #FIXME: More general strategy for underscore_unmunge
-        tree = newick_parse_string(treestring, tree_builder, underscore_unmunge=underscore_unmunge)
+        if parser is newick_parse_string:
+            tree = parser(treestring, tree_builder, \
+                    underscore_unmunge=underscore_unmunge)
+        else:
+            tree = parser(treestring, tree_builder)
         if not tree.NameLoaded:
             tree.Name = 'root'
     elif tip_names:
