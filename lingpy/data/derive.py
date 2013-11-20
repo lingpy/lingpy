@@ -13,8 +13,6 @@ files.
 __author__="Johann-Mattis List"
 __date__="2013-10-02"
 
-from ..settings import rcParams
-
 try:
     import networkx as nx
 except ImportError:
@@ -27,7 +25,7 @@ import codecs
 # lingpy imports
 from ..settings import rcParams
 from ..algorithm import misc
-from ..convert import *
+from ..convert.strings import scorer2str
 from ..read import *
 
 def _import_sound_classes(filename):
