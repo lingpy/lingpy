@@ -1,10 +1,12 @@
 @date: 2013-07-16
 @source_title: Automatically created wordlist, by lingpy.
-@doculect: Ocaina, oca
-@doculect: Bora, boa
-@doculect: Huitoto Murui, huu
-@doculect: Castellano, spa
-@doculect: Huitoto Muinane, hto
+@doculect:Ocaina, oca,
+@doculect:Bora, boa
+@doculect:Huitoto Murui, huu
+@doculect:Castellano, spa
+@doculect:Huitoto Muinane, hto
+
+
 QLCID	CONCEPT	COUNTERPART	COUNTERPART_DOCULECT	TOKENS
 thiesen1998/239/12	CERC	pí̵hí̵	Bora	pʰ i̵ ʔ i̵
 thiesen1998/183/18	CERC	míhlleta	Bora	m i ʔ tʰʃ e tʰ a

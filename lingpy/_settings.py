@@ -78,3 +78,4 @@ for k,v in questions.items():
 rcParams.update(questions)
 
 rcParams['basic_orthography'] = 'fuzzy'
+rcParams['_tp'] = os.path.join(rcParams['_path'], 'tests','test_data','{0}')

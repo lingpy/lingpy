@@ -46,5 +46,6 @@ phybo = dict(
                 phybo_ylim             = 5,
                 phybo_ylimb            = False,
                 phybo_ylimt            = False,
+                phybo_vedgeinnerline   = 2,
                 )
 rcParams.update(phybo)
