@@ -688,7 +688,7 @@ def plot_concept_evolution(
 
         # get z-value which serves as zorder attribute
         try:
-            z = 6 * len(self.tree.getConnectingEdges('root',n))
+            z = 6 * len(tree.getConnectingEdges('root',n))
         except:
             z = 0
 

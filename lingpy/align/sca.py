@@ -334,13 +334,6 @@ class MSA(Multiple):
                         elif self.merge[k] != before and not start:
                             before += 1
                     out.write('\t'.join(tmp)+'\n')
-            if hasattr(self,'proto'):
-                out.write(txf.format('PROTO')+'\t')
-                out.write('\t'.join(self.proto)+'\n')
-            if hasattr(self,'consensus'):
-                out.write(txf.format("CONSE")+'\t')
-                out.write('\t'.join(self.consensus)+'\n')
-
 
         if fileformat in ['html','tex']:
             self.output('msa', '.tmp', sorted_seqs, unique_seqs)
@@ -1365,7 +1358,7 @@ def get_consensus(
             keywords[k] = defaults[k]
     
     # stores the consensus string
-    cons = []
+    cons = ''
 
     # transform the matrix
     if hasattr(msa,'alm_matrix'):
@@ -1463,7 +1456,7 @@ def get_consensus(
                     )]
                 
                 # append highest-scoring char
-                cons += [chars[0]]
+                cons += chars[0]
         elif classes:
             for i,col in enumerate(classes):
                 tmpA = {}
@@ -1545,7 +1538,7 @@ def get_consensus(
                     reverse=True
                     )] 
 
-                cons += [chars[0]]
+                cons += chars[0]
 
     # otherwise, we use a bottom-up parsimony approach to determine the best
     # match
@@ -1760,7 +1753,7 @@ def get_consensus(
     if gaps:
         return cons
     else:
-        return [c for c in cons if c != '-'] #cons.replace('-','')
+        return cons.replace('-','')
 
 
 

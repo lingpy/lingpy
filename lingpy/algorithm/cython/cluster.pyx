@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-11 18:38
-# modified : 2013-09-12 13:14
+# modified : 2013-03-11 18:47
 """
 This module provides functions for basic cluster algorithms.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-12"
+__date__="2013-03-11"
 
 try:
     from .misc import transpose,squareform
@@ -376,43 +376,8 @@ def upgma(
     cdef list tree = []
 
     _upgma(clusters,matrix,tree)
-    
-    newick_string = _tree2nwk(tree,taxa,distances)
 
-    return newick_string
-
-def _tree2nwk(
-        list tree,
-        list taxa,
-        bint distances
-        ):
-    """
-    Convert the tree-matrix created by the _upgma-function to newick representation.
-    
-    Parameters
-    ----------
-    tree_matrix : list
-        The tree-representation that is yielded by _upgma, also used in
-        scipy-cluster algorithms.
-    taxa : list 
-        List of the taxa (or sequences) in the order in which the tree was
-        created.
-    distances : bool
-        Specify whether distances should be included in the string or not.
-
-    Returns
-    -------
-    newick : str
-        A newick string.
-
-    """
-
-    cdef int i,a,b
-    cdef float c,d
-    cdef int x = len(taxa)
-    cdef str newick_string
-
-    cdef dict newick = dict([(i,taxa[i]) for i in range(x)])
+    cdef dict newick = dict([(i,taxa[i]) for i in range(len(taxa))])
     
     # create different output, depending on the options for the inclusion of
     # distances or topology only
