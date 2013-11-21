@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-12 08:42
+# modified : 2013-11-21 08:56
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-12"
+__date__="2013-11-21"
 
 # builtin
 import random
@@ -96,7 +96,10 @@ class LexStat(Wordlist):
                 keywords[k] = defaults[k]
         
         # store the model
-        self.model = keywords['model']
+        if hasattr(self,'name'):
+            self.model = keywords['model']
+        else:
+            self.model = rcParams[keywords['model']]
 
         # set the lexstat stamp
         self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
@@ -467,6 +470,17 @@ class LexStat(Wordlist):
                     if rcParams['verbose']: print(rcParams["M_alignments"].format(tA,tB))
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in kw['modes']:
+                        
+                        # XXX this is where we should add the new function for
+                        # subsets of swadesh lists XXX 
+                        # this can be easily done by first checking for a
+                        # sublist parameter and then getting all the numbers in
+                        # a temporary variable "pairs" for all cases where this
+                        # subset is defined, all that needs to be done is to
+                        # provide an extra function that creates a
+                        # subset-variable or hash in which for all language
+                        # pairs the subset is defined. 
+
                         if kw['preprocessing']: 
                             numbers = [self[pair,"numbers"] for pair in
                                     self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
