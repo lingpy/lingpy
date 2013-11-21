@@ -96,10 +96,10 @@ class LexStat(Wordlist):
                 keywords[k] = defaults[k]
         
         # store the model
-        if hasattr(self,'name'):
-            self.model = keywords['model']
-        else:
+        if str(keywords['model']) == keywords['model']:
             self.model = rcParams[keywords['model']]
+        else:
+            self.model = keywords['model']
 
         # set the lexstat stamp
         self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
@@ -427,6 +427,40 @@ class LexStat(Wordlist):
                     return out
                 except KeyError:
                     pass
+
+    def get_subset(self, sublist, ref='concept'):
+        """
+        Function creates a specific subset of all word pairs.
+
+        Parameters
+        ----------
+        sublist : list
+            A list which contains those items which should be considered for
+            the subset creation, for example, a list of concepts.
+        ref : string (default="concept")
+            The reference point to compare the given sublist. 
+
+        Notes
+        -----
+        This function can be used to consider only a smaller part of word pairs
+        when creating a scorer. Normally, all words are compared, but defining
+        a subset allows to compare only those belonging to a specific concept
+        list (Swadesh list). 
+        """
+        self.subsets = {}
+        for i, tA in enumerate(self.taxa):
+            for j, tB in enumerate(self.taxa):
+                if i <= j:
+                    self.subsets[tA,tB] = []
+                    
+                    # get current pairs
+                    pairs = self.pairs[tA,tB]
+
+                    # iterate over pairs and append those whose reference point
+                    # is in the sublist
+                    for pair in pairs:
+                        if self[pair,ref][0] in sublist:
+                            self.subsets[tA,tB] += [pair]
             
     def _get_corrdist(
             self,
@@ -436,16 +470,17 @@ class LexStat(Wordlist):
         Use alignments to get a correspondences statistics.
         """
         kw = dict(
-                threshold = rcParams['lexstat_threshold'],
-                modes = rcParams['lexstat_modes'],
-                factor = rcParams['align_factor'],
-                restricted_chars = rcParams['restricted_chars'],
-                preprocessing = False,
-                gop = rcParams['align_gop'],
-                cluster_method='upgma',
-                ref = 'scaid',
-                preprocessing_method = rcParams['lexstat_preprocessing_method'],
-                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold']
+                cluster_method          = 'upgma',
+                factor                  = rcParams['align_factor'],
+                gop                     = rcParams['align_gop'],
+                modes                   = rcParams['lexstat_modes'],
+                preprocessing           = False,
+                preprocessing_method    = rcParams['lexstat_preprocessing_method'],
+                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold'],
+                ref                     = 'scaid',
+                restricted_chars        = rcParams['restricted_chars'],
+                threshold               = rcParams['lexstat_threshold'],
+                subset                  = False
                 )
         kw.update(keywords)
 
@@ -480,14 +515,22 @@ class LexStat(Wordlist):
                         # provide an extra function that creates a
                         # subset-variable or hash in which for all language
                         # pairs the subset is defined. 
+                        if kw['subset']:
+                            pairs = [pair for pair in self.pairs[tA,tB] if \
+                                    pair in self.subsets[tA,tB]]
+                        else:
+                            pairs = self.pairs[tA,tB]
 
                         if kw['preprocessing']: 
-                            numbers = [self[pair,"numbers"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
-                            weights = [self[pair,"weights"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
+                            numbers = [self[pair,"numbers"] for pair in pairs \
+                                    if self[pair, kw['ref']][0] == self[pair, 
+                                        kw['ref']][1]]
+                            weights = [self[pair,"weights"] for pair in pairs \
+                                    if self[pair, kw['ref']][0] == self[pair, 
+                                        kw['ref']][1]]
                             prostrings = [self[pair,"prostrings"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
+                                    pairs if self[pair, kw['ref']][0] ==  self[pair, 
+                                        kw['ref']][1]]
                             corrs,included = calign.corrdist(
                                     10.0,
                                     numbers,
@@ -502,12 +545,10 @@ class LexStat(Wordlist):
                                     )
 
                         else:    
-                            numbers = [self[pair,"numbers"] for pair in
-                                    self.pairs[tA,tB]]
-                            weights = [self[pair,"weights"] for pair in
-                                    self.pairs[tA,tB]]
+                            numbers = [self[pair,"numbers"] for pair in pairs]
+                            weights = [self[pair,"weights"] for pair in pairs]
                             prostrings = [self[pair,"prostrings"] for pair in
-                                self.pairs[tA,tB]]
+                                    pairs]
                             corrs,included = calign.corrdist(
                                     kw['preprocessing_threshold'],
                                     numbers,
@@ -802,7 +843,8 @@ class LexStat(Wordlist):
             cluster_method = rcParams['lexstat_cluster_method'],
             gop = rcParams['align_gop'],
             preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
-            preprocessing_method=rcParams['lexstat_preprocessing_method']
+            preprocessing_method=rcParams['lexstat_preprocessing_method'],
+            subset = False
             )
         kw.update(keywords)
 

@@ -249,6 +249,8 @@ class QLCParser(object):
         """
         Define how attributes are overloaded.
         """
+        if attr.startswith('_'): return self.__getattribute__(attr)
+        
         try:
             # get the right name
             nattr = self._alias[attr]
