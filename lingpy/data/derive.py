@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-08 17:30
-# modified : 2013-10-02 20:30
+# modified : 2013-11-21 12:48
 """
 Module for the derivation of sound class models.
 
@@ -11,12 +11,9 @@ access when loading the library, the models are compiled and stored in binary
 files.
 """
 __author__="Johann-Mattis List"
-__date__="2013-10-02"
+__date__="2013-11-21"
 
-try:
-    import networkx as nx
-except ImportError:
-    print(rcParams['W_missing_module'].format("networkx"))
+
 
 from pickle import dump
 import os
@@ -27,6 +24,11 @@ from ..settings import rcParams
 from ..algorithm import misc
 from ..convert.strings import scorer2str
 from ..read import *
+
+try:
+    import networkx as nx
+except ImportError:
+    print(rcParams['W_missing_module'].format("networkx"))
 
 def _import_sound_classes(filename):
     """
