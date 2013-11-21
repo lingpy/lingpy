@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-11 18:38
-# modified : 2013-09-12 13:14
+# modified : 2013-03-11 18:47
 """
 This module provides functions for basic cluster algorithms.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-12"
+__date__="2013-03-11"
 
 try:
     from .misc import transpose,squareform
@@ -376,43 +376,8 @@ def upgma(
     tree = []
 
     _upgma(clusters,matrix,tree)
-    
-    newick_string = _tree2nwk(tree,taxa,distances)
 
-    return newick_string
-
-def _tree2nwk(
-        tree,
-        taxa,
-        distances
-        ):
-    """
-    Convert the tree-matrix created by the _upgma-function to newick representation.
-    
-    Parameters
-    ----------
-    tree_matrix : list
-        The tree-representation that is yielded by _upgma, also used in
-        scipy-cluster algorithms.
-    taxa : list 
-        List of the taxa (or sequences) in the order in which the tree was
-        created.
-    distances : bool
-        Specify whether distances should be included in the string or not.
-
-    Returns
-    -------
-    newick : str
-        A newick string.
-
-    """
-
-#     cdef int i,a,b
-#     cdef float c,d
-    x = len(taxa)
-#     cdef str newick_string
-
-    newick = dict([(i,taxa[i]) for i in range(x)])
+    newick = dict([(i,taxa[i]) for i in range(len(taxa))])
     
     # create different output, depending on the options for the inclusion of
     # distances or topology only
@@ -720,4 +685,59 @@ def _neighbor(
             constant_matrix,
             tracer
             )
+def _tree2nwk(
+        tree,
+        taxa,
+        distances
+        ):
+    """
+    Convert the tree-matrix created by the _upgma-function to newick representation.
+    
+    Parameters
+    ----------
+    tree_matrix : list
+        The tree-representation that is yielded by _upgma, also used in
+        scipy-cluster algorithms.
+    taxa : list 
+        List of the taxa (or sequences) in the order in which the tree was
+        created.
+    distances : bool
+        Specify whether distances should be included in the string or not.
 
+    Returns
+    -------
+    newick : str
+        A newick string.
+
+    """
+
+#     cdef int i,a,b
+#     cdef float c,d
+    x = len(taxa)
+#     cdef str newick_string
+
+    newick = dict([(i,taxa[i]) for i in range(x)])
+    
+    # create different output, depending on the options for the inclusion of
+    # distances or topology only
+    if distances:
+        for i,(a,b,c,d) in enumerate(tree):
+            newick[x+i] = '({0}:{2:.2f},{1}:{3:.2f})'.format(
+                    newick[a],
+                    newick[b],
+                    c,
+                    d
+                    )
+    else:
+        for i in range(len(tree)):
+            newick[x+i] = '({0},{1})'.format(
+                    newick[tree[i][0]],
+                    newick[tree[i][1]]
+                    )
+    
+    newick_string = newick[max(newick.keys())] + ';'
+
+    return newick_string    
+    
+    
+    

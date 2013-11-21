@@ -117,18 +117,26 @@ class TestWordlist:
                 assert False
     
     def test_output(self):
+
+        fn = os.path.join(
+                rcParams['_path'],
+                'tests',
+                'output',
+                'test'
+                )
         
         try:
-            self.wordlist.output('taxa', filename='test')
-            self.wordlist.output('tree', filename='test')
-            self.wordlist.output('dst', filename='test')
-            self.wordlist.output('starling', filename='test', ref='word')
+            self.wordlist.output('taxa', filename=fn)
+            self.wordlist.output('tree', filename=fn)
+            self.wordlist.output('dst', filename=fn)
+            self.wordlist.output('starling', filename=fn, ref='word')
             assert True
         except:
             assert False
         try:
-            self.wordlist.output('paps.nex', filename='test')
-            self.wordlist.output('paps.csv', filename='test')
+            self.wordlist.output('paps.nex', filename=fn)
+            self.wordlist.output('paps.csv', filename=fn)
             assert True
         except:
             assert False
+

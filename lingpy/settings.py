@@ -137,6 +137,16 @@ rcParamsUpd = dict(
         )
 rcParams.update(rcParamsUpd)
 
+# define parameters for specific semi-verbose output
+rcParams.update(
+        dict(
+            _sverb = True,
+            _sverb_fchar = '-',
+            _sverb_tbar_len = 100,
+            _sverb_tchar = '+',
+            )
+        )
+
 # define aliases for parameters
 kw_base = dict(
     filename = ('filename','fn'),

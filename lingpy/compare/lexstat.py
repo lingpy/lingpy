@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-21 08:56
+# modified : 2013-11-21 22:59
 """
 LexStat algorithm for automatic cognate detection.
 """
@@ -12,6 +12,7 @@ __date__="2013-11-21"
 # builtin
 import random
 import codecs
+import sys
 
 # thirdparty
 import numpy as np
@@ -498,11 +499,39 @@ class LexStat(Wordlist):
                         cluster_method=kw['cluster_method'],
                         ref=kw['ref']
                         )
+
+        # semi-verbose output of taskbars and the like
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.rows)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' CORRESPONDENCE CALCULATION '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
                 if i <= j:
                     if rcParams['verbose']: print(rcParams["M_alignments"].format(tA,tB))
+                    elif rcParams['_sverb']:
+                        if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                            sys.stdout.write(task_char)
+                            sys.stdout.flush()
+                            control_char += len(task_char)
+                        task_count += 1   
+
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in kw['modes']:
                         
@@ -577,6 +606,13 @@ class LexStat(Wordlist):
                             except:
                                 corrdist[tA,tB][a,b] = d / len(kw['modes'])
 
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+
         return corrdist
 
     def _get_randist(
@@ -614,8 +650,36 @@ class LexStat(Wordlist):
                     kw['runs']
                     )
 
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.cols)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' SEQUENCE GENERATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+
+
             for i,taxon in enumerate(self.taxa):
                 if rcParams['verbose']: print("[i] Analyzing taxon {0}.".format(taxon))
+                elif rcParams['_sverb']:
+                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                        sys.stdout.write(task_char)
+                        sys.stdout.flush()
+                        control_char += len(task_char)
+                    task_count += 1   
+
                 tokens = self.get_list(
                         col=taxon,
                         entry="tokens",
@@ -657,12 +721,50 @@ class LexStat(Wordlist):
                             [self._transform[pr] for pr in pros[taxon][-1]]
                             )
                         ]]
-            
+
+            if not rcParams['verbose'] and rcParams['_sverb']: 
+                if control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(
+                            (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                                )
+                sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+                sys.stdout.flush()
+
+
+
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.pairs)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+           
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
                         if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
+                        elif rcParams['_sverb']:
+                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                                sys.stdout.write(task_char)
+                                sys.stdout.flush()
+                                control_char += len(task_char)
+                            task_count += 1   
+                            corrdist[tA,tB] = {}
+                            
                         corrdist[tA,tB] = {}
                         for mode,gop,scale in kw['modes']:
                             numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
@@ -705,13 +807,38 @@ class LexStat(Wordlist):
 
         # use shuffle approach otherwise
         else:
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.pairs)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
                         if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
-
-                        corrdist[tA,tB] = {}
+                        elif rcParams['_sverb']:
+                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                                sys.stdout.write(task_char)
+                                sys.stdout.flush()
+                                control_char += len(task_char)
+                            task_count += 1   
+                            corrdist[tA,tB] = {}
 
                         # get the number pairs etc.
                         numbers = [self[pair,'numbers'] for pair in
@@ -774,6 +901,15 @@ class LexStat(Wordlist):
                                     corrdist[tA,tB][a,b] += d / len(kw['modes'])
                                 except:
                                     corrdist[tA,tB][a,b] = d / len(kw['modes'])
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
         return corrdist
 
     def get_scorer(
@@ -1383,6 +1519,26 @@ class LexStat(Wordlist):
                 **keywords
                 )
 
+        # semi-verbose output of taskbars and the like
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.rows)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' SEQUENCE CLUSTERING '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         # check for full consideration of basic t
         if keywords['guess_threshold'] and keywords['gt_mode'] == 'average':
             thresholds = []
@@ -1397,6 +1553,12 @@ class LexStat(Wordlist):
         
         # iterate over the matrices
         for concept,indices,matrix in matrices:
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1           
             
             # check for keyword to guess the threshold
             if keywords['guess_threshold'] and keywords['gt_mode'] == 'item':
@@ -1437,6 +1599,15 @@ class LexStat(Wordlist):
         else:
             override = False
         
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                        )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
+
         # assign ids
         if not ref:
             if method == 'turchin':
@@ -1452,6 +1623,8 @@ class LexStat(Wordlist):
 
         # assign thresholds to parameters
         self._current_threshold = threshold
+
+
 
     def get_random_distances(
             self,

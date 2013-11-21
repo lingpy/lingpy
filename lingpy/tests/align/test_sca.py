@@ -84,11 +84,17 @@ class TestAlignments(object):
                                 )
                                 ]
     def test_output(self):
-        
+       
+        fn = os.path.join(
+                rcParams['_path'],
+                'tests',
+                'output',
+                'test'
+                )
         try:
             self.alm.align()
-            self.alm.output('qlc', filename='test')
-            self.alm.output('html', filename='test')
+            self.alm.output('qlc', filename=fn)
+            self.alm.output('html', filename=fn)
 
             assert True
 

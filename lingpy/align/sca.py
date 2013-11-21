@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-11-14 12:30
+# modified : 2013-11-21 21:29
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,12 +14,13 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-11-14"
+__date__="2013-11-21"
 
 import numpy as np
 import re
 import codecs
 import os
+import sys
 
 from ..read.qlc import read_msa
 from ..settings import rcParams
@@ -887,11 +888,36 @@ class Alignments(Wordlist):
 
         kw.update(keywords)
 
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.msa[kw['ref']])
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' ALIGNMENTS '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         for key,value in sorted(
                 self.msa[kw['ref']].items(),
                 key=lambda x:x[0]
                 ):
             if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
+            elif rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1
             
             # check for scorer keyword
             if not kw['scoredict']:
@@ -958,6 +984,15 @@ class Alignments(Wordlist):
                             )
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+        
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
                     
     def __len__(self):
         return len(self.msa)
@@ -987,6 +1022,10 @@ class Alignments(Wordlist):
                 '.tmp.alm',
                 **keywords
                 )
+        try:
+            os.remove('.tmp.alm')
+        except:
+            pass
 
     def get_consensus(
             self,
@@ -1046,11 +1085,40 @@ class Alignments(Wordlist):
                     " an alignment analysis first!")
             return
         
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.msa[ref])
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' CONSENSUS '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
+
         # go on with the analysis
         cons_dict = {}
         for cog in self.etd[ref]:
+
+            
             if cog in self.msa[ref]:
                 if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                elif rcParams['_sverb']:
+                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                        sys.stdout.write(task_char)
+                        sys.stdout.flush()
+                        control_char += len(task_char)
+                    task_count += 1
+
                 
                 # temporary solution for sound-class integration
                 if classes == True:
@@ -1101,6 +1169,14 @@ class Alignments(Wordlist):
             
             # add consensus to dictionary
             cons_dict[cog] = cons        
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
         
         # add the entries
         self.add_entries(

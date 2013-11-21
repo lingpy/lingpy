@@ -345,7 +345,6 @@ class QLCParser(object):
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)
             else:
-                print("[i] ...aborting...")
                 return
         elif not override:
 
