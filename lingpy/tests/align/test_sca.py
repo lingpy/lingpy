@@ -10,11 +10,12 @@ __author__="Johann-Mattis List"
 __date__="2013-11-12"
 
 import os
+import unittest
 from lingpy import Alignments
 from lingpy.settings import rcParams
 import lingpy as lp
 
-class TestAlignments:
+class TestAlignments(object):
 
     def setup(self):
 
@@ -82,3 +83,14 @@ class TestAlignments:
                                 flat=True
                                 )
                                 ]
+    def test_output(self):
+        
+        try:
+            self.alm.align()
+            self.alm.output('qlc', filename='test')
+            self.alm.output('html', filename='test')
+
+            assert True
+
+        except:
+            assert False

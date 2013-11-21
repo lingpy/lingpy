@@ -958,15 +958,11 @@ class Alignments(Wordlist):
                             )
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
-        
-        #if kw['plots']:
-        #    self.output('alm',ref=kw['ref'],filename='.tmp')
-        #    html.alm2html('.tmp.alm',filename=kw['filename'],show=kw['show'])
                     
     def __len__(self):
         return len(self.msa)
 
-    def plot(
+    def _plot(
             self,
             fileformat = 'html',
             **keywords
@@ -1019,7 +1015,7 @@ class Alignments(Wordlist):
         model : ~lingpy.data.model.Model
             A sound class model according to which the IPA strings shall be
             converted to sound-class strings.
-
+        
         """
         # determine defaults
         defaults = dict(
@@ -1123,10 +1119,10 @@ class Alignments(Wordlist):
 
         Parameters
         ----------
-        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+        fileformat : {"qlc", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv" "html"}
             The format that is written to file. This corresponds to the file
             extension, thus 'csv' creates a file in csv-format, 'dst' creates
-            a file in Phylip-distance format, etc.
+            a file in Phylip-distance format, etc. 
         filename : str
             Specify the name of the output file (defaults to a filename that
             indicates the creation date).
@@ -1165,6 +1161,10 @@ class Alignments(Wordlist):
                 filename = rcParams['filename']
                 )
         kw.update(keywords)
+
+        # check for html fileformat
+        if fileformat == 'html':
+            self._plot(**keywords)
 
         # define two vars for convenience
         ref = kw['ref']

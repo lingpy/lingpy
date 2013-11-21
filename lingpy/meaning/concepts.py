@@ -403,7 +403,7 @@ def spanish_swadesh_list(stemmed=True):
     try:
         stemmer = SpanishStemmer(True)
     except:
-        pass
+        print("[!] Warning, Spanish stemmer could not be loaded!")
 
     # load swadesh list
     swadesh_file = os.path.join(rcParams['_path'],'data','swadesh','swadesh_spa.txt')
