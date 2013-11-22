@@ -10,8 +10,14 @@ __author__="Johann-Mattis List"
 __date__="2013-10-25"
 
 import codecs
-import regex as re
 from ..settings import rcParams
+
+try:
+    import regex as re
+except ImportError:
+    import re
+    print(rcParams['W_missing_module'].format('regex'))
+
 
 def scorer2str(
         scorer

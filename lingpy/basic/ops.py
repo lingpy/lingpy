@@ -361,7 +361,7 @@ def wl2qlc(
         # simple key-value-pairs
         if type(v) in [str,int] or k == "tree":
             kvpairs[k] = v
-        elif k == 'msa':
+        elif k == 'msa' and k not in keywords['ignore']:
             # go a level deeper, checking for keys
             for ref in v:
                 if ref not in msapairs:
@@ -370,9 +370,9 @@ def wl2qlc(
                     msapairs[ref][a] = b
         elif k == 'distances':
             distances = matrix2dst(v,meta['taxa'])
-        elif k == 'taxa':
+        elif k == 'taxa' and k not in keywords['ignore']:
             taxa = '\n'.join(meta['taxa'])
-        elif k == 'trees':
+        elif k == 'trees' and k not in keywords['ignore']:
             trees = ''
             for key,value in v.items():
                 trees += '<tre id="{0}">\n{1}\n</tre>\n'.format(

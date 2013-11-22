@@ -17,7 +17,7 @@ import codecs
 
 from .._settings import rcParams
 try:
-    from .derive import compile_model,compile_dvt
+    from .derive import compile_model, compile_dvt
 except ImportError:
     print(rcParams['W_missing_module'].format("networkx"))
 

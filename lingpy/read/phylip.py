@@ -9,7 +9,14 @@ Module provides functions to read in various formats from the Phylip package.
 __author__="Johann-Mattis List"
 __date__="2013-08-19"
 
-import regex as re
+from ..settings import *
+
+try:
+    import regex as re
+except ImportError:
+    import re
+    print(rcParams['W_missing_module'].format('regex'))
+    
 import os
 
 from ..algorithm import misc

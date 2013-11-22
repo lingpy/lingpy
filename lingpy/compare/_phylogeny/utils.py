@@ -1,16 +1,26 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-25 11:47
-# modified : 2013-09-25 11:47
+# modified : 2013-11-22 15:43
 """
 Utility functions for borrowing detection with the PhyBo class.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-25"
+__date__="2013-11-22"
 
-from scipy import stats as sps
-import networkx as nx
+
+from ...settings import rcParams
+
+try:
+    import networkx as nx
+except:
+    print(rcParams['W_missing_module'].format('networkx'))
+try:
+    import scipy.stats as sps
+except:
+    print(rcParams['W_missing_module'].format('scipy'))
+
 from ._settings import rcParams
 
 def tstats(

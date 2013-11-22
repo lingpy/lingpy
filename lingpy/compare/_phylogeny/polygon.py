@@ -1,12 +1,20 @@
 # imports
+from ...settings import rcParams
+
 import numpy as np
+
 try:
     import matplotlib.pyplot as plt
     import matplotlib.patches as mplPatches
 except:
     print("[i] Import of Matplotlib failed. Scripts might not work.")
-import networkx as nx
 
+
+try:
+    import networkx as nx
+except:
+    print(rcParams['W_missing_module'].format('networkx'))
+    
 from .convex_hull import *
 
 # code for intersection taken from http://stackoverflow.com/questions/3252194/numpy-and-line-intersections

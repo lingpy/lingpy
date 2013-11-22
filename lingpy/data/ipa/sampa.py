@@ -1,6 +1,14 @@
+
+from ...settings import *
+
+try:
+    import regex as re
+except ImportError:
+    import re
+    print(rcParams['W_missing_module'].format('regex'))
+
 import sys
 import os
-import regex as re
 import codecs
 
 # data for sampa2ipa (Peter Kleiwegs implementation)

@@ -14,7 +14,7 @@ from ..settings import rcParams
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].foramt("networkx"))
+    print(rcParams['W_missing_module'].format("networkx"))
 
 import numpy as np
 
