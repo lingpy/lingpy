@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-17 10:40
-# modified : 2013-11-13 09:58
+# modified : 2013-11-21 23:54
 """
 Module handels all global parameters used in a LingPy session.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-13"
+__date__="2013-11-21"
 
 # builtin imports
 from datetime import datetime,date
@@ -152,9 +152,9 @@ rcParams.update(
 kw_base = dict(
     filename = ('filename','fn'),
     M_file_written = ('M_fw',),
-    merge_vowels = ('mv','merge_vowels'),
-    sca = ("sca","model"),
-    _sverb = ("taskbar", "_sverb")
+    merge_vowels = ('mv',),
+    sca = ("model",),
+    _sverb = ("taskbar",)
     )
 alias = {}
 for key in kw_base:
