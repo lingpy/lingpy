@@ -12,9 +12,10 @@ __date__="2013-11-04"
 from lingpy import *
 
 words = [
-    "tʰɔxtər",
+    "tʰɔxtə",
     "faːtər",
-    "p͡fyt͡sə"
+    "p͡fyt͡sə",
+    "ɲòŋóm"
     ]
 
 for word in words:
@@ -45,6 +46,7 @@ for word in words:
         "ASJP",
         "\t".join(clsC)
         ))
+    print()
 
 rc(schema='asjp')
 word = "mama*n"

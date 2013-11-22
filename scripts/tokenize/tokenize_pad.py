@@ -27,7 +27,9 @@ for line in infile:
     counterpart = tokens[2]
     grapheme_clusters =t.grapheme_clusters(counterpart)
     rules = t.rules(grapheme_clusters)
-    print(id+"\t"+counterpart+"\t"+rules)
+    modifiers = t.combine_modifiers(rules)
+    # print(id+"\t"+counterpart+"\t"+rules)
+    print(id+"\t"+counterpart+"\t"+modifiers)
 
 
 """
