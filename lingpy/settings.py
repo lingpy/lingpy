@@ -150,11 +150,11 @@ rcParams.update(
 
 # define aliases for parameters
 kw_base = dict(
-    filename = ('filename','fn'),
+    filename = ('filename', 'fn'),
     M_file_written = ('M_fw',),
     merge_vowels = ('mv',),
     sca = ("model",),
-    _sverb = ("taskbar",)
+    _sverb = ("progressbar", "semi_verbose",)
     )
 alias = {}
 for key in kw_base:
