@@ -8,3 +8,4 @@ __pycache__
 /doc/build
 /doc/out
 /lingpy/data/models/*/*.bin
+/generated/

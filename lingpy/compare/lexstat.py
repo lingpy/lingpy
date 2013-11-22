@@ -1,17 +1,18 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-12 08:42
+# modified : 2013-11-21 22:59
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-12"
+__date__="2013-11-21"
 
 # builtin
 import random
 import codecs
+import sys
 
 # thirdparty
 import numpy as np
@@ -96,7 +97,10 @@ class LexStat(Wordlist):
                 keywords[k] = defaults[k]
         
         # store the model
-        self.model = keywords['model']
+        if str(keywords['model']) == keywords['model']:
+            self.model = rcParams[keywords['model']]
+        else:
+            self.model = keywords['model']
 
         # set the lexstat stamp
         self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
@@ -424,6 +428,40 @@ class LexStat(Wordlist):
                     return out
                 except KeyError:
                     pass
+
+    def get_subset(self, sublist, ref='concept'):
+        """
+        Function creates a specific subset of all word pairs.
+
+        Parameters
+        ----------
+        sublist : list
+            A list which contains those items which should be considered for
+            the subset creation, for example, a list of concepts.
+        ref : string (default="concept")
+            The reference point to compare the given sublist. 
+
+        Notes
+        -----
+        This function can be used to consider only a smaller part of word pairs
+        when creating a scorer. Normally, all words are compared, but defining
+        a subset allows to compare only those belonging to a specific concept
+        list (Swadesh list). 
+        """
+        self.subsets = {}
+        for i, tA in enumerate(self.taxa):
+            for j, tB in enumerate(self.taxa):
+                if i <= j:
+                    self.subsets[tA,tB] = []
+                    
+                    # get current pairs
+                    pairs = self.pairs[tA,tB]
+
+                    # iterate over pairs and append those whose reference point
+                    # is in the sublist
+                    for pair in pairs:
+                        if self[pair,ref][0] in sublist:
+                            self.subsets[tA,tB] += [pair]
             
     def _get_corrdist(
             self,
@@ -433,16 +471,17 @@ class LexStat(Wordlist):
         Use alignments to get a correspondences statistics.
         """
         kw = dict(
-                threshold = rcParams['lexstat_threshold'],
-                modes = rcParams['lexstat_modes'],
-                factor = rcParams['align_factor'],
-                restricted_chars = rcParams['restricted_chars'],
-                preprocessing = False,
-                gop = rcParams['align_gop'],
-                cluster_method='upgma',
-                ref = 'scaid',
-                preprocessing_method = rcParams['lexstat_preprocessing_method'],
-                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold']
+                cluster_method          = 'upgma',
+                factor                  = rcParams['align_factor'],
+                gop                     = rcParams['align_gop'],
+                modes                   = rcParams['lexstat_modes'],
+                preprocessing           = False,
+                preprocessing_method    = rcParams['lexstat_preprocessing_method'],
+                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold'],
+                ref                     = 'scaid',
+                restricted_chars        = rcParams['restricted_chars'],
+                threshold               = rcParams['lexstat_threshold'],
+                subset                  = False
                 )
         kw.update(keywords)
 
@@ -460,20 +499,67 @@ class LexStat(Wordlist):
                         cluster_method=kw['cluster_method'],
                         ref=kw['ref']
                         )
+
+        # semi-verbose output of taskbars and the like
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.rows)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' CORRESPONDENCE CALCULATION '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         
         for i,tA in enumerate(self.taxa):
             for j,tB in enumerate(self.taxa):
                 if i <= j:
                     if rcParams['verbose']: print(rcParams["M_alignments"].format(tA,tB))
+                    elif rcParams['_sverb']:
+                        if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                            sys.stdout.write(task_char)
+                            sys.stdout.flush()
+                            control_char += len(task_char)
+                        task_count += 1   
+
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in kw['modes']:
+                        
+                        # XXX this is where we should add the new function for
+                        # subsets of swadesh lists XXX 
+                        # this can be easily done by first checking for a
+                        # sublist parameter and then getting all the numbers in
+                        # a temporary variable "pairs" for all cases where this
+                        # subset is defined, all that needs to be done is to
+                        # provide an extra function that creates a
+                        # subset-variable or hash in which for all language
+                        # pairs the subset is defined. 
+                        if kw['subset']:
+                            pairs = [pair for pair in self.pairs[tA,tB] if \
+                                    pair in self.subsets[tA,tB]]
+                        else:
+                            pairs = self.pairs[tA,tB]
+
                         if kw['preprocessing']: 
-                            numbers = [self[pair,"numbers"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
-                            weights = [self[pair,"weights"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
+                            numbers = [self[pair,"numbers"] for pair in pairs \
+                                    if self[pair, kw['ref']][0] == self[pair, 
+                                        kw['ref']][1]]
+                            weights = [self[pair,"weights"] for pair in pairs \
+                                    if self[pair, kw['ref']][0] == self[pair, 
+                                        kw['ref']][1]]
                             prostrings = [self[pair,"prostrings"] for pair in
-                                    self.pairs[tA,tB] if self[pair,kw['ref']][0] == self[pair,kw['ref']][1]]
+                                    pairs if self[pair, kw['ref']][0] ==  self[pair, 
+                                        kw['ref']][1]]
                             corrs,included = calign.corrdist(
                                     10.0,
                                     numbers,
@@ -488,12 +574,10 @@ class LexStat(Wordlist):
                                     )
 
                         else:    
-                            numbers = [self[pair,"numbers"] for pair in
-                                    self.pairs[tA,tB]]
-                            weights = [self[pair,"weights"] for pair in
-                                    self.pairs[tA,tB]]
+                            numbers = [self[pair,"numbers"] for pair in pairs]
+                            weights = [self[pair,"weights"] for pair in pairs]
                             prostrings = [self[pair,"prostrings"] for pair in
-                                self.pairs[tA,tB]]
+                                    pairs]
                             corrs,included = calign.corrdist(
                                     kw['preprocessing_threshold'],
                                     numbers,
@@ -521,6 +605,13 @@ class LexStat(Wordlist):
                                 corrdist[tA,tB][a,b] += d / len(kw['modes'])
                             except:
                                 corrdist[tA,tB][a,b] = d / len(kw['modes'])
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
 
         return corrdist
 
@@ -559,8 +650,36 @@ class LexStat(Wordlist):
                     kw['runs']
                     )
 
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.cols)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' SEQUENCE GENERATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+
+
             for i,taxon in enumerate(self.taxa):
                 if rcParams['verbose']: print("[i] Analyzing taxon {0}.".format(taxon))
+                elif rcParams['_sverb']:
+                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                        sys.stdout.write(task_char)
+                        sys.stdout.flush()
+                        control_char += len(task_char)
+                    task_count += 1   
+
                 tokens = self.get_list(
                         col=taxon,
                         entry="tokens",
@@ -602,12 +721,50 @@ class LexStat(Wordlist):
                             [self._transform[pr] for pr in pros[taxon][-1]]
                             )
                         ]]
-            
+
+            if not rcParams['verbose'] and rcParams['_sverb']: 
+                if control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(
+                            (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                                )
+                sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+                sys.stdout.flush()
+
+
+
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.pairs)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+           
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
                         if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
+                        elif rcParams['_sverb']:
+                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                                sys.stdout.write(task_char)
+                                sys.stdout.flush()
+                                control_char += len(task_char)
+                            task_count += 1   
+                            corrdist[tA,tB] = {}
+                            
                         corrdist[tA,tB] = {}
                         for mode,gop,scale in kw['modes']:
                             numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
@@ -650,13 +807,38 @@ class LexStat(Wordlist):
 
         # use shuffle approach otherwise
         else:
+            # semi-verbose output of taskbars and the like
+            # define a score-bar that shows how far the work is processed
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                task_len = len(self.pairs)
+                if task_len >= rcParams['_sverb_tbar_len']:
+                    task_char = rcParams['_sverb_tchar']
+                    task_step = task_len / rcParams['_sverb_tbar_len']
+                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+                else:
+                    task_range = list(range(task_len))
+                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
+                        rcParams['_sverb_tbar_len'],
+                        rcParams['_sverb_fchar']
+                        )
+                task_string = '|' + task_string + '|'
+                sys.stdout.write(task_string+'\r|')
+                task_count = 0
+                control_char = 0
+
             corrdist = {}
             for i,tA in enumerate(self.taxa):
                 for j,tB in enumerate(self.taxa):
                     if i <= j:
                         if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
-
-                        corrdist[tA,tB] = {}
+                        elif rcParams['_sverb']:
+                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                                sys.stdout.write(task_char)
+                                sys.stdout.flush()
+                                control_char += len(task_char)
+                            task_count += 1   
+                            corrdist[tA,tB] = {}
 
                         # get the number pairs etc.
                         numbers = [self[pair,'numbers'] for pair in
@@ -719,6 +901,15 @@ class LexStat(Wordlist):
                                     corrdist[tA,tB][a,b] += d / len(kw['modes'])
                                 except:
                                     corrdist[tA,tB][a,b] = d / len(kw['modes'])
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
         return corrdist
 
     def get_scorer(
@@ -788,7 +979,8 @@ class LexStat(Wordlist):
             cluster_method = rcParams['lexstat_cluster_method'],
             gop = rcParams['align_gop'],
             preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
-            preprocessing_method=rcParams['lexstat_preprocessing_method']
+            preprocessing_method=rcParams['lexstat_preprocessing_method'],
+            subset = False
             )
         kw.update(keywords)
 
@@ -1327,6 +1519,26 @@ class LexStat(Wordlist):
                 **keywords
                 )
 
+        # semi-verbose output of taskbars and the like
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.rows)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' SEQUENCE CLUSTERING '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         # check for full consideration of basic t
         if keywords['guess_threshold'] and keywords['gt_mode'] == 'average':
             thresholds = []
@@ -1341,6 +1553,12 @@ class LexStat(Wordlist):
         
         # iterate over the matrices
         for concept,indices,matrix in matrices:
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1           
             
             # check for keyword to guess the threshold
             if keywords['guess_threshold'] and keywords['gt_mode'] == 'item':
@@ -1381,6 +1599,15 @@ class LexStat(Wordlist):
         else:
             override = False
         
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                        )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
+
         # assign ids
         if not ref:
             if method == 'turchin':
@@ -1396,6 +1623,8 @@ class LexStat(Wordlist):
 
         # assign thresholds to parameters
         self._current_threshold = threshold
+
+
 
     def get_random_distances(
             self,

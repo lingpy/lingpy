@@ -103,5 +103,40 @@ class TestWordlist:
             assert etd1[key] == etd3[key]
         for key in etd2:
             assert etd2[key] == etd4[key]
+
+    def test_get_paps(self):
+
+        paps = self.wordlist.get_paps(ref="cogid", loans=True)
+        cogs = self.wordlist.get_etymdict(ref="cogid", loans=True)
+        
+        for key in cogs:
+            if abs(key) in paps:
+                assert True
+            else:
+                print(key)
+                assert False
     
+    def test_output(self):
+
+        fn = os.path.join(
+                rcParams['_path'],
+                'tests',
+                'output',
+                'test'
+                )
+        
+        try:
+            self.wordlist.output('taxa', filename=fn)
+            self.wordlist.output('tree', filename=fn)
+            self.wordlist.output('dst', filename=fn)
+            self.wordlist.output('starling', filename=fn, ref='word')
+            assert True
+        except:
+            assert False
+        try:
+            self.wordlist.output('paps.nex', filename=fn)
+            self.wordlist.output('paps.csv', filename=fn)
+            assert True
+        except:
+            assert False
 

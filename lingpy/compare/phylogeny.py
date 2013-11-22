@@ -1,14 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-09-09 18:10
+# modified : 2013-11-21 22:53
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-09-09"
-
+__date__="2013-11-21"
 
 # basic imports
 import os
@@ -16,6 +15,7 @@ import json
 import itertools
 import codecs
 import re
+import sys
 
 # thirdparty imports
 import numpy as np
@@ -1228,9 +1228,34 @@ class PhyBo(Wordlist):
         # algorithm
         cogDict = {}
         
+        # semi-verbose output
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.cogs)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' GAIN-LOSS-MAPPING ({0}) '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    ).format(glm)
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         skip,nonskip = 0,0
         for cog in self.cogs:
 
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1  
         
             # check whether cog has already been calculated
             cogTuple = tuple(self.paps[cog])
@@ -1257,16 +1282,6 @@ class PhyBo(Wordlist):
                                 missing_data = keywords['missing_data']
                                 )
 
-
-                        #gls = self._get_GLS(
-                        #        self.paps[cog],
-                        #        r = ratio,
-                        #        mode = 'w',
-                        #        gpl = keywords['gpl'],
-                        #        push_gains = keywords['push_gains'],
-                        #        missing_data = keywords['missing_data']
-                        #        )
-
                     if mode == 'restriction':
                         gls = self._get_GLS(
                                 self.paps[cog],
@@ -1290,7 +1305,14 @@ class PhyBo(Wordlist):
                 # append new results to cogDict
                 cogDict[cogTuple] = (gls,noo)
 
-            # attend scenario to gls
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
+
+        # append scenario to gls
         if rcParams["verbose"]: print("[i] Successfully calculated Gain-Loss-Scenarios.")
         
         # write the results to file
@@ -2332,7 +2354,34 @@ class PhyBo(Wordlist):
         # create MST graph
         gMST = nx.Graph()
 
+
+        # semi-verbose output
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(scenarios)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' MLN-REONSTRUCTION) '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         for cog,(gls,noo) in scenarios.items():
+
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1 
             
             ile[cog] = []
 
@@ -2440,9 +2489,6 @@ class PhyBo(Wordlist):
                                     nodeB,
                                     weight = w
                                     )
-                            #try:
-                            #    w = 10
-                            #except:
 
             # if the graph is not empty
             if gWeights:
@@ -2518,7 +2564,12 @@ class PhyBo(Wordlist):
                                 )
                     ile[cog]+= [(nodeA,nodeB)]
 
-        # calculate simple model with 
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
 
         # load data for nodes into new graph
         for node,data in gTpl.nodes(data=True):
@@ -3313,9 +3364,6 @@ class PhyBo(Wordlist):
                     ('restriction',4),
                     ('restriction',5),
                     ('restriction',6),
-                    #('restriction',8),
-                    #('restriction',9),
-                    #('restriction',10),
                     ]
         
         # carry out the various analyses
@@ -3374,9 +3422,43 @@ class PhyBo(Wordlist):
     
         # now calculate the rest of the distributions
         if rcParams["verbose"]: print("[i] Calculating the Ancestral Vocabulary Distributions...")
+        # semi-verbose output
+        elif rcParams['_sverb']:
+            task_len = len(self.gls)
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' ANCESTRAL VOCABULARY DISTRIBUTIONS '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0  
+
         modes = list(self.gls.keys())
-        for m in modes:
+        for m in modes:       
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1             
+            
             self.get_AVSD(m,**keywords)
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
+
 
         # compare the distributions using mannwhitneyu
         if rcParams["verbose"]: print("[i] Comparing the distributions...")
@@ -4317,9 +4399,7 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        #if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
 
-        return
 
     def get_MSN(
             self,
@@ -4376,7 +4456,33 @@ class PhyBo(Wordlist):
         # approximation 
         geoGraph = nx.Graph()
         
+        # semi-verbose output
+        if rcParams['_sverb'] and not rcParams['verbose']:
+            task_len = len(graph.edges())
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' MINIMAL SPATIAL NETWORK '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0  
+
         for nA,nB,d in graph.edges(data=True):
+
+            if not rcParams['verbose'] and rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1   
             
             # get the labels
             lA = graph.node[nA]['label']
@@ -4506,6 +4612,13 @@ class PhyBo(Wordlist):
                                 geoGraph.edge[labelA][labelB]['cogs'] += ','+cog
                             except:
                                 geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
         
         # write stats to file
         f = codecs.open(
@@ -5179,8 +5292,6 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if rcParams["verbose"]: FileWriteMessage(filename,fileformat).message('written')
-        return
     
     def plot_GLS(
             self,

@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-11-14 12:30
+# modified : 2013-11-21 21:29
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,17 +14,19 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-11-14"
+__date__="2013-11-21"
 
 import numpy as np
 import re
 import codecs
 import os
+import sys
 
 from ..read.qlc import read_msa
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
+from ..convert.tree import subGuideTree
 from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
         prosodic_string, prosodic_weights
 from .multiple import Multiple
@@ -333,6 +335,13 @@ class MSA(Multiple):
                         elif self.merge[k] != before and not start:
                             before += 1
                     out.write('\t'.join(tmp)+'\n')
+            if hasattr(self,'proto'):
+                out.write(txf.format('PROTO')+'\t')
+                out.write('\t'.join(self.proto)+'\n')
+            if hasattr(self,'consensus'):
+                out.write(txf.format("CONSE")+'\t')
+                out.write('\t'.join(self.consensus)+'\n')
+
 
         if fileformat in ['html','tex']:
             self.output('msa', '.tmp', sorted_seqs, unique_seqs)
@@ -879,11 +888,36 @@ class Alignments(Wordlist):
 
         kw.update(keywords)
 
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.msa[kw['ref']])
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' ALIGNMENTS '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
         for key,value in sorted(
                 self.msa[kw['ref']].items(),
                 key=lambda x:x[0]
                 ):
             if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
+            elif rcParams['_sverb']:
+                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                    sys.stdout.write(task_char)
+                    sys.stdout.flush()
+                    control_char += len(task_char)
+                task_count += 1
             
             # check for scorer keyword
             if not kw['scoredict']:
@@ -951,14 +985,19 @@ class Alignments(Wordlist):
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
         
-        #if kw['plots']:
-        #    self.output('alm',ref=kw['ref'],filename='.tmp')
-        #    html.alm2html('.tmp.alm',filename=kw['filename'],show=kw['show'])
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
+
                     
     def __len__(self):
         return len(self.msa)
 
-    def plot(
+    def _plot(
             self,
             fileformat = 'html',
             **keywords
@@ -983,6 +1022,10 @@ class Alignments(Wordlist):
                 '.tmp.alm',
                 **keywords
                 )
+        try:
+            os.remove('.tmp.alm')
+        except:
+            pass
 
     def get_consensus(
             self,
@@ -1011,7 +1054,7 @@ class Alignments(Wordlist):
         model : ~lingpy.data.model.Model
             A sound class model according to which the IPA strings shall be
             converted to sound-class strings.
-
+        
         """
         # determine defaults
         defaults = dict(
@@ -1042,11 +1085,40 @@ class Alignments(Wordlist):
                     " an alignment analysis first!")
             return
         
+        # define a score-bar that shows how far the work is processed
+        if not rcParams['verbose'] and rcParams['_sverb']:
+            task_len = len(self.msa[ref])
+            if task_len >= rcParams['_sverb_tbar_len']:
+                task_char = rcParams['_sverb_tchar']
+                task_step = task_len / rcParams['_sverb_tbar_len']
+                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
+            else:
+                task_range = list(range(task_len))
+                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
+            task_string = ' CONSENSUS '.center(
+                    rcParams['_sverb_tbar_len'],
+                    rcParams['_sverb_fchar']
+                    )
+            task_string = '|' + task_string + '|'
+            sys.stdout.write(task_string+'\r|')
+            task_count = 0
+            control_char = 0
+
+
         # go on with the analysis
         cons_dict = {}
         for cog in self.etd[ref]:
+
+            
             if cog in self.msa[ref]:
                 if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                elif rcParams['_sverb']:
+                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
+                        sys.stdout.write(task_char)
+                        sys.stdout.flush()
+                        control_char += len(task_char)
+                    task_count += 1
+
                 
                 # temporary solution for sound-class integration
                 if classes == True:
@@ -1097,6 +1169,14 @@ class Alignments(Wordlist):
             
             # add consensus to dictionary
             cons_dict[cog] = cons        
+
+        if not rcParams['verbose'] and rcParams['_sverb']: 
+            if control_char < rcParams['_sverb_tbar_len']:
+                sys.stdout.write(
+                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                            )
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.flush()
         
         # add the entries
         self.add_entries(
@@ -1115,10 +1195,10 @@ class Alignments(Wordlist):
 
         Parameters
         ----------
-        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+        fileformat : {"qlc", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv" "html"}
             The format that is written to file. This corresponds to the file
             extension, thus 'csv' creates a file in csv-format, 'dst' creates
-            a file in Phylip-distance format, etc.
+            a file in Phylip-distance format, etc. 
         filename : str
             Specify the name of the output file (defaults to a filename that
             indicates the creation date).
@@ -1157,6 +1237,10 @@ class Alignments(Wordlist):
                 filename = rcParams['filename']
                 )
         kw.update(keywords)
+
+        # check for html fileformat
+        if fileformat == 'html':
+            self._plot(**keywords)
 
         # define two vars for convenience
         ref = kw['ref']
@@ -1357,7 +1441,7 @@ def get_consensus(
             keywords[k] = defaults[k]
     
     # stores the consensus string
-    cons = ''
+    cons = []
 
     # transform the matrix
     if hasattr(msa,'alm_matrix'):
@@ -1455,7 +1539,7 @@ def get_consensus(
                     )]
                 
                 # append highest-scoring char
-                cons += chars[0]
+                cons += [chars[0]]
         elif classes:
             for i,col in enumerate(classes):
                 tmpA = {}
@@ -1537,7 +1621,7 @@ def get_consensus(
                     reverse=True
                     )] 
 
-                cons += chars[0]
+                cons += [chars[0]]
 
     # otherwise, we use a bottom-up parsimony approach to determine the best
     # match
@@ -1752,7 +1836,7 @@ def get_consensus(
     if gaps:
         return cons
     else:
-        return cons.replace('-','')
+        return [c for c in cons if c != '-'] #cons.replace('-','')
 
 
 

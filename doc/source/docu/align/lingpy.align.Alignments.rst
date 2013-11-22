@@ -24,7 +24,7 @@ lingpy.align.Alignments
       ~lingpy.basic.wordlist.Wordlist.output
       ~lingpy.basic.parser.QLCParser.pickle
       ~lingpy.basic.wordlist.Wordlist.renumber
-      ~lingpy.basic.parser.QLCParser.tokenize
+      ~lingpy.basic.wordlist.Wordlist.tokenize
 
    
    

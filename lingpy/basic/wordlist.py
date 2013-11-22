@@ -773,6 +773,7 @@ class Wordlist(QLCParser):
             ref='cogid',
             entry='concept',
             missing=0,
+            loans=False
             ):
         """
         Function returns a list of present-absent-patterns of a given word list.
@@ -792,7 +793,7 @@ class Wordlist(QLCParser):
         except:
             pass
         
-        etym_dict = self.get_etymdict(ref=ref,entry=entry)            
+        etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)            
 
         # create dictionary for paps
         paps = {}
@@ -940,19 +941,18 @@ class Wordlist(QLCParser):
                 'distances' : False,
                 'entries'   : ("concept","counterpart"),
                 'entry'     : 'concept',
-                'entry'     : 'word',
                 'fileformat': fileformat,
                 'filename'  : rcParams['filename'],
                 'formatter' : 'concept',
                 'meta'      : self._meta,
                 'missing'   : 0,
                 'ref'       : 'cogid',
-                'ref'       : 'cogid',
                 'rows'      : False,
                 'subset'    : False, # setup a subset of the data,
                 'taxa'      : 'taxa',
                 'threshold' : 0.6, # threshold for flat clustering
                 'tree_calc' : 'neighbor',
+                'loans' : False
                 }
             
         # compare with keywords and add missing ones
@@ -966,20 +966,19 @@ class Wordlist(QLCParser):
                     entry=keywords['entry'],
                     missing=keywords['missing']
                     )
+            print('ok')
             if fileformat == 'paps.nex':
                 pap2nex(
-                        self.cols,
+                        self.taxa,
                         paps,
                         missing=keywords['missing'],
-                        filename=keywords['filename']+'.paps',
-                        verbose = rcParams['verbose']
+                        filename=keywords['filename']+'.paps'
                         )
             elif fileformat == 'paps.csv':
                 pap2csv(
                         self.cols,
                         paps,
-                        filename=keywords['filename']+'.paps',
-                        verbose = rcParams['verbose']
+                        filename=keywords['filename']+'.paps'
                         )
         
         # simple printing of taxa
@@ -1195,9 +1194,9 @@ class Wordlist(QLCParser):
 
         Parameters
         ----------
-        fileformat : {'csv', 'tre','nwk','dst', 'taxa', 'starling', 'paps.nex', 'paps.csv'}
+        fileformat : {"qlc", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv"}
             The format that is written to file. This corresponds to the file
-            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            extension, thus 'qlc' creates a file in qlc-format, 'dst' creates
             a file in Phylip-distance format, etc.
         filename : str
             Specify the name of the output file (defaults to a filename that

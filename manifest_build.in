@@ -1,6 +1,6 @@
 include distribute_setup.py three2two.py
-recursive-include lingpy_build/lingpy *.lxs *.msa *.msq *.psq *.psq *.csv *.rc *.prf *.rules
-recursive-include lingpy_build/lingpy *.c *.cpp *.pyx
+recursive-include lingpy_build/lingpy *.lxs *.msa *.msq *.psq *.psq *.csv *.rc *.prf *.rules *.qlc *.tex
+recursive-include lingpy_build/lingpy *.c *.cpp *.pyx *.md
 recursive-include lingpy_build/lingpy *.html *.css
 recursive-include lingpy_build/lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
 include lingpy_build/lingpy/data/orthography_profiles/*.txt

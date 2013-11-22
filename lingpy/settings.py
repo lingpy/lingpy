@@ -109,6 +109,7 @@ rcParamsUpd = dict(
         art                        = Model('art'),
         jaeger                     = Model('jaeger'),
         diacritics                 = diacritics,
+        model                      = Model('sca'),
         vowels                     = vowels,
         tones                      = tones,
         figsize                    = (10,10),
@@ -137,12 +138,23 @@ rcParamsUpd = dict(
         )
 rcParams.update(rcParamsUpd)
 
+# define parameters for specific semi-verbose output
+rcParams.update(
+        dict(
+            _sverb = True,
+            _sverb_fchar = '-',
+            _sverb_tbar_len = 100,
+            _sverb_tchar = '+',
+            )
+        )
+
 # define aliases for parameters
 kw_base = dict(
     filename = ('filename','fn'),
-    M_file_written = ('M_fw'),
+    M_file_written = ('M_fw',),
     merge_vowels = ('mv','merge_vowels'),
-    sca = ("sca","model")
+    sca = ("sca","model"),
+    _sverb = ("taskbar", "_sverb")
     )
 alias = {}
 for key in kw_base:
@@ -153,11 +165,6 @@ for key in kw_base:
     # set all the alias values
     for value in kw_base[key]:
         alias[value] = key
-
-# apply aliases to initial rcParams
-for key in list(alias.keys()):
-    if key not in rcParams:
-        rcParams[key] = rcParams[alias[key]]
 
 # function changes parameters
 def rc(**keywords):
@@ -193,46 +200,43 @@ def rc(**keywords):
     """
     
     for key in keywords:
-        if key in rcParams:
-            # check for special keyword "schema"
-            if key == "schema":
-                if keywords[key] in ["qlc",'ipa']:
-                    diacritics,vowels,tones = load_dvt(path='')
-                    rcParams['asjp'] = Model('asjp')
-                    rcParams['sca'] = Model('sca')
-                    rcParams['dolgo'] = Model('dolgo')
-                    rcParams['art'] = Model('art')
-                    rcParams['diacritics'] = diacritics
-                    rcParams['vowels'] = vowels
-                    rcParams['tones'] = tones
-                    rcParams['_color'] = Model('color')
-                    rcParams['combiners']    = '\u0361\u035c'
-                    rcParams['breaks']       = '.-'
-                    rcParams['stress']       = "ˈˌ'"
-                    rcParams['merge_vowels'] = True
-                    rcParams['basic_orthography'] = 'fuzzy'
-                elif keywords[key] in ['evolaemp','el','asjp']:
-                    diacritics,vowels,tones = load_dvt(path='el')
-                    rcParams['asjp'] = Model('asjp_el')
-                    rcParams['sca'] = Model('sca_el')
-                    rcParams['dolgo'] = Model('dolgo_el')
-                    rcParams['art'] = Model('art_el')
-                    rcParams['jaeger'] = Model('jaeger_el')
-                    rcParams['diacritics'] = diacritics
-                    rcParams['vowels'] = vowels
-                    rcParams['tones'] = tones
-                    rcParams['_color'] = Model('color_el')
-                    rcParams['combiners']    = '\u0361\u035c'
-                    rcParams['breaks']       = '.-'
-                    rcParams['stress']       = "ˈˌ'"
-                    rcParams['merge_vowels'] = False
-                    rcParams['basic_orthography'] = 'asjp'
+        if key == "schema":
+            if keywords[key] in ["qlc",'ipa']:
+                diacritics,vowels,tones = load_dvt(path='')
+                rcParams['asjp'] = Model('asjp')
+                rcParams['sca'] = Model('sca')
+                rcParams['dolgo'] = Model('dolgo')
+                rcParams['art'] = Model('art')
+                rcParams['diacritics'] = diacritics
+                rcParams['vowels'] = vowels
+                rcParams['tones'] = tones
+                rcParams['_color'] = Model('color')
+                rcParams['combiners']    = '\u0361\u035c'
+                rcParams['breaks']       = '.-'
+                rcParams['stress']       = "ˈˌ'"
+                rcParams['merge_vowels'] = True
+                rcParams['basic_orthography'] = 'fuzzy'
+            elif keywords[key] in ['evolaemp','el','asjp']:
+                diacritics,vowels,tones = load_dvt(path='el')
+                rcParams['asjp'] = Model('asjp_el')
+                rcParams['sca'] = Model('sca_el')
+                rcParams['dolgo'] = Model('dolgo_el')
+                rcParams['art'] = Model('art_el')
+                rcParams['jaeger'] = Model('jaeger_el')
+                rcParams['diacritics'] = diacritics
+                rcParams['vowels'] = vowels
+                rcParams['tones'] = tones
+                rcParams['_color'] = Model('color_el')
+                rcParams['combiners']    = '\u0361\u035c'
+                rcParams['breaks']       = '.-'
+                rcParams['stress']       = "ˈˌ'"
+                rcParams['merge_vowels'] = False
+                rcParams['basic_orthography'] = 'asjp'
 
-            if key in alias:
-                for k in alias[key]:
-                    rcParams[k] = keywords[key]
-            else:
-                rcParams[key] = keywords[key]
+        if key in alias:
+            rcParams[alias[key]] = keywords[key]
+        else:
+            rcParams[key] = keywords[key]
     if rcParams['verbose']:
         print("[i] Successfully changed parameters.")
 

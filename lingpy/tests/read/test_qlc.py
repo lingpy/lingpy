@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-11-13"
 
 import os
-from lingpy.read.qlc import read_msa, list2msa
+from lingpy.read.qlc import read_msa, _list2msa
 from lingpy.align import MSA
 from lingpy.settings import rcParams
 

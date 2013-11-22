@@ -5,6 +5,7 @@ Test script for the orthography / tokenization module.
 __author__ = "Steven Moran"
 __date__ = "2010-11-06"
 
+import sys
 from lingpy import *
 
 # rcParams["debug"]=True

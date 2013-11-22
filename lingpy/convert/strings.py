@@ -10,7 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-10-25"
 
 import codecs
-
+import regex as re
 from ..settings import rcParams
 
 def scorer2str(
@@ -170,7 +170,6 @@ def pap2nex(
     except:
         new_paps = paps
 
-
     # create the matrix
     matrix = ""
     
@@ -205,8 +204,7 @@ def pap2nex(
 def pap2csv(
         taxa,
         paps,
-        filename='',
-        verbose = True
+        filename=''
         ):
     """
     Write paps created by the Wordlist class to a csv-file.

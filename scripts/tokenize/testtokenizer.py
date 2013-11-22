@@ -1,6 +1,6 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-04 22:23
+# author : Johann-Mattis List
+# email : mattis.list@uni-marburg.de
+# created : 2013-11-04 22:23
 # modified : 2013-11-04 22:23
 """
 Test the tokenization function.
@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2013-11-04"
 
 from lingpy import *
+from lingpy.sequence import tokenize
 
 words = [
     "tʰɔxtə",
@@ -76,4 +77,18 @@ print("{0:10}\t{1}".format(
     "ASJP",
     "\t".join(clsC)
     ))
+
+    Status
+    API
+    Training
+    Shop
+    Blog
+    About
+
+    © 2013 GitHub, Inc.
+    Terms
+    Privacy
+    Security
+    Contact
+
 

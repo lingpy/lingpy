@@ -393,7 +393,7 @@ def read_qlc(
                 d[i] = line
                 i += 1
     except:
-        raise InputFileError(infile)
+        raise Exception("Error processing line:\n" + line)
 
     # assign the header to d[0]
     if local_id:

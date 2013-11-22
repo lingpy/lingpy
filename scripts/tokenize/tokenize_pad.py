@@ -9,6 +9,7 @@ __date__ = "2010-11-06"
 import codecs
 
 from lingpy import *
+from lingpy.sequence.tokenizer import *
 
 rc(debug=True)
 
