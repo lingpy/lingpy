@@ -83,7 +83,7 @@ This preprocessing stage is computationally-intensive and make take some time to
 
   >>> lex.pickle()
 
-Now, we can carry out the cognate detection. This is a cluster method that clusters all sequences, which are similar to each other, into the same cognate set. Which sequences are clustered depends on a threshold that we have to pass as an argument to the function. Here we chosen 0.5 as a threshold (see :evobib:`List2012c` for a detailed description of the LexStat algorithm). This is a rather conservative score, which avoids generating too many false positives::
+Now, we can carry out the cognate detection. This is a cluster method that clusters all sequences, which are similar to each other, into the same cognate set. Which sequences are clustered depends on a threshold that we have to pass as an argument to the function. Here we choose 0.5 as a threshold (see :evobib:`List2012b` for a detailed description of the LexStat algorithm). This is a rather conservative score, which avoids generating too many false positives::
 
   >>> lex.cluster(method='lexstat', threshold=0.5)
 
@@ -138,7 +138,7 @@ visualized as follows::
 
 Again, we output the data. However, since the LexStat method produces a lot of alternative data that is
 not necessarily needed for the following analyses, we reduce the output in the CSV-format by
-setting the **subset** keyword to c{True} and pass the data that we want as a list to the keyword **col**. 
+setting the **subset** keyword to **True** and pass the data that we want as a list to the keyword **col**. 
 In order to have a nice format with all words corresponding to the same concept in the same block,
 we specify the keyword **formatter** as 'concepts'::
 
@@ -159,7 +159,7 @@ the previous step into an :py:class:`~lingpy.align.sca.Alignments` object. Note 
 
 Carrying out a default alignment analysis is now very simple. We choose the default parameters, 
 the 'library'-method for multiple alignments (see :evobib:`List2012a`), and we also set the **output**
-kewyord to c{True} in order to have all alignments written to separate files::
+kewyord to **True** in order to have all alignments written to separate files::
 
   >>> alm.align(method='library', output=True)
 
