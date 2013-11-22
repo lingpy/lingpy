@@ -27,6 +27,7 @@ from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
 from ..convert.tree import subGuideTree
+from ..convert.strings import msa2str
 from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
         prosodic_string, prosodic_weights
 from .multiple import Multiple
@@ -227,6 +228,13 @@ class MSA(Multiple):
             not.
 
         """
+        defaults = dict(
+                wordlist = False
+                )
+        for k in defaults:
+            if k not in keywords:
+                keywords[k] = defaults[k]
+                
         if not filename:
             filename = self.infile
 
@@ -341,6 +349,7 @@ class MSA(Multiple):
             if hasattr(self,'consensus'):
                 out.write(txf.format("CONSE")+'\t')
                 out.write('\t'.join(self.consensus)+'\n')
+
 
 
         if fileformat in ['html','tex']:
@@ -864,26 +873,27 @@ class Alignments(Wordlist):
             strings of sequences.
         """
         kw = dict(
-                method = 'progressive',
-                iteration = False,
-                swap_check = False,
-                output = False,
-                model = rcParams['sca'],
-                mode = rcParams['align_mode'],
-                modes = rcParams['align_modes'],
-                gop = rcParams['align_gop'],
-                scale = rcParams['align_scale'],
-                factor = rcParams['align_factor'],
-                tree_calc = rcParams['align_tree_calc'],
-                gap_weight = rcParams['gap_weight'],
+                method           = 'progressive',
+                iteration        = False,
+                swap_check       = False,
+                output           = False,
+                model            = rcParams['sca'],
+                mode             = rcParams['align_mode'],
+                modes            = rcParams['align_modes'],
+                gop              = rcParams['align_gop'],
+                scale            = rcParams['align_scale'],
+                factor           = rcParams['align_factor'],
+                tree_calc        = rcParams['align_tree_calc'],
+                gap_weight       = rcParams['gap_weight'],
                 restricted_chars = rcParams['restricted_chars'],
-                classes = rcParams['classes'],
-                sonar = rcParams['sonar'],
-                scoredict = rcParams['scorer'],
-                ref = rcParams['ref'],
-                plots = False,
-                filename = self.filename,
-                show = False
+                classes          = rcParams['classes'],
+                sonar            = rcParams['sonar'],
+                scoredict        = rcParams['scorer'],
+                ref              = rcParams['ref'],
+                plots            = False,
+                filename         = self.filename,
+                show             = False,
+                wordlist         = False,
                 )
 
         kw.update(keywords)
@@ -962,28 +972,60 @@ class Alignments(Wordlist):
                     new_tk = class2tokens(tk,alm)
                     m.alm_matrix[i] = new_tk
 
-            if kw['output']:
-                try:
-                    m.output(
-                            'msa',
-                            filename='{0}-msa/{1}-{2}'.format(
-                                self.filename,
-                                m.dataset,
-                                key
-                                )
-                            )
-                except:
-                    os.mkdir('{0}-msa'.format(self.filename))
-                    m.output(
-                            'msa',
-                            filename='{0}-msa/{1}-{2}'.format(
-                                self.filename,
-                                m.dataset,
-                                key
-                                )
-                            )
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+
+            if kw['output']:
+                if not kw['wordlist']:
+                    try:                        
+                        m.output(
+                                'msa',
+                                filename='{0}-msa/{1}-{2}'.format(
+                                    self.filename,
+                                    m.dataset,
+                                    key
+                                    )
+                                )
+                    except:
+                        os.mkdir('{0}-msa'.format(self.filename))
+                        m.output(
+                                'msa',
+                                filename='{0}-msa/{1}-{2}'.format(
+                                    self.filename,
+                                    m.dataset,
+                                    key
+                                    )
+                                )
+                else:
+                    msa_string = msa2str(
+                            self._meta['msa'][kw['ref']][key],
+                            wordlist=True
+                            )
+                    try:
+                        f = codecs.open(
+                                '{0}-msa/{1}-{2}'.format(
+                                    self.filename,
+                                    m.dataset,
+                                    key
+                                    ),
+                                'w',
+                                'utf-8'
+                                )
+                        f.write(msa_string)
+                        f.close()
+                    except:
+                        os.mkdir('{0}-msa'.format(self.filename))
+                        f = codecs.open(
+                                '{0}-msa/{1}-{2}'.format(
+                                    self.filename,
+                                    m.dataset,
+                                    key
+                                    ),
+                                'w',
+                                'utf-8'
+                                )
+                        f.write(msa_string)
+                        f.close()
         
         if not rcParams['verbose'] and rcParams['_sverb']: 
             if control_char < rcParams['_sverb_tbar_len']:

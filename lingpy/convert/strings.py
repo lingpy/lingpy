@@ -45,7 +45,7 @@ def scorer2str(
 
     return out
 
-def msa2str(msa,wordlist=False):
+def msa2str(msa, wordlist=False):
     """
     Function converts an MSA object into a string.
     """
