@@ -88,7 +88,7 @@ Now, we can carry out the cognate detection. This is a cluster method that clust
   >>> lex.cluster(method='lexstat', threshold=0.5)
 
 Having calculated the cognates, we can go on and calculate a tree. Here we use the
-:py:func:`lingpy.basic.wordlist.Wordlist.calculate` function. We've chosen 'neighbor' (see
+:py:func:`~lingpy.basic.wordlist.Wordlist.calculate` function. We've chosen 'neighbor' (see
 :evobib:`Saitou1987`) as the algorithm for the tree-calculation, and we must define 'lexstatid' as
 the column where the cognate IDs are stored::
 
@@ -170,7 +170,7 @@ whole dataset of cognate judgments and aligmnents, however, it not very appropri
 offers a specific colored HTML-output that is very helpful for inspecting the results. In order to
 create this output, we simply type::
   
-  >>> alm.plot(filename='DOGON', ref='lexstatid')
+  >>> alm.output("html", filename='DOGON', ref='lexstatid')
  
 As a result, we get the file DOGON.html_ in our folder.
 
@@ -182,7 +182,8 @@ Nevertheless, LingPy offers a full reimplementation along with additional improv
 approach that was originally developed for biological applications (see :evobib:`Dagan2007`) and
 first adapted to linguistic data by :evobib:`Nelson-Sathi2011`. Borrowing detection is handled by
 the :py:class:`~lingpy.compare.phylogeny.PhyBo` class. Since this class is quite complex and
-it requires additional thirdparty libraries, such as Matplotlib (http://matplotlib.org), it is not
+it requires additional thirdparty libraries, such as Matplotlib (http://matplotlib.org) and SciPy
+(http://scipy.org), it is not
 automatically loaded when importing lingpy. So we first have to import it directly::
 
   >>> from lingpy.compare.phylogeny import PhyBo

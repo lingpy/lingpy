@@ -19,6 +19,7 @@ What's Next?
    :maxdepth: 1
     
    ../docu/index
+   ../reference/modules
    ../download
 
 
