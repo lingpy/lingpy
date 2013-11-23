@@ -123,7 +123,7 @@ else:
     extension_modules = []
 
 # make global name of this version
-thisversion = "2.2"
+thisversion = "2.3"
 setup(
         name = pkgname,
         version = thisversion,
