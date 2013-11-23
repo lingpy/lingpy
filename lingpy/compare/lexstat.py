@@ -85,22 +85,22 @@ class LexStat(Wordlist):
             **keywords
             ):
 
-        defaults = {
-                "model" : rcParams['sca'],
+        kw = {
+                "model"        : rcParams['sca'],
                 "merge_vowels" : rcParams['merge_vowels'],
-                'transform' : rcParams['lexstat_transform'],
-                "check" : False,
-                "apply_checks":False
+                'transform'    : rcParams['lexstat_transform'],
+                "check"        : False,
+                "apply_checks" : False,
+                "defaults"     : False
                 }
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        kw.update(keywords)
+        if kw['defaults']: return kw
         
         # store the model
-        if str(keywords['model']) == keywords['model']:
-            self.model = rcParams[keywords['model']]
+        if str(kw['model']) == kw['model']:
+            self.model = rcParams[kw['model']]
         else:
-            self.model = keywords['model']
+            self.model = kw['model']
 
         # set the lexstat stamp
         self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
@@ -116,12 +116,12 @@ class LexStat(Wordlist):
                     "ipa",
                     lambda x:ipa2tokens(
                         x,
-                        merge_vowels = keywords['merge_vowels']
+                        merge_vowels = kw['merge_vowels']
                         )
                     )
 
         # add a debug procedure for tokens
-        if keywords["check"]:
+        if kw["check"]:
             errors = []
             for key in self:
                 line = self[key,"tokens"]
@@ -152,7 +152,7 @@ class LexStat(Wordlist):
                 for a,b,c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
                 out.close()
-                if not keywords["apply_checks"]:
+                if not kw["apply_checks"]:
                     answer = input(rcParams['Q_errors_in_data'])
                 else:
                     answer = "y"
@@ -206,7 +206,7 @@ class LexStat(Wordlist):
             self.add_entries(
                     "classes",
                     "tokens",
-                    lambda x:''.join(tokens2class(x,keywords["model"]))
+                    lambda x:''.join(tokens2class(x,kw["model"]))
                     )
         
         # create IDs for the languages
@@ -222,7 +222,7 @@ class LexStat(Wordlist):
             # change the discriminative potential of the sound-class string
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
-            self._transform =  keywords['transform']
+            self._transform =  kw['transform']
             self.add_entries(
                     "numbers",
                     "langid,classes,prostrings",
@@ -307,7 +307,7 @@ class LexStat(Wordlist):
                     if i < j:
                         
                         # add dictionary scores to the scoredict
-                        score = keywords["model"](
+                        score = kw["model"](
                                 charA[charA.index('.')+1][0],
                                 charB[charB.index('.')+1][0]
                                 )
@@ -315,7 +315,7 @@ class LexStat(Wordlist):
                         matrix[j][i] = score
                     elif i == j:
                         # add dictionary scores to the scoredict
-                        score = keywords["model"](
+                        score = kw["model"](
                                 charA[charA.index('.')+1][0],
                                 charB[charB.index('.')+1][0]
                                 )
@@ -335,7 +335,7 @@ class LexStat(Wordlist):
                     if i < j:
                         
                         # add dictionary scores to the scoredict
-                        score = keywords["model"](
+                        score = kw["model"](
                                 charA[0],
                                 charB[0]
                                 )
@@ -343,7 +343,7 @@ class LexStat(Wordlist):
                         matrix[j][i] = score
                     elif i == j:
                         # add dictionary scores to the scoredict
-                        score = keywords["model"](
+                        score = kw["model"](
                                 charA[0],
                                 charB[0]
                                 )
@@ -964,25 +964,28 @@ class LexStat(Wordlist):
             the preprocessing calculation of cognates.
         """
         kw = dict(
-            method = rcParams['lexstat_scoring_method'],
-            ratio = rcParams['lexstat_ratio'],
-            vscale = rcParams['lexstat_vscale'],
-            runs = rcParams['lexstat_runs'],
-            threshold = rcParams['lexstat_threshold'],
-            modes = rcParams['lexstat_modes'],
-            factor = rcParams['align_factor'], 
-            restricted_chars = rcParams['restricted_chars'],
-            force = False,
-            preprocessing = True,
-            rands = rcParams['lexstat_rands'],
-            limit = rcParams['lexstat_limit'],
-            cluster_method = rcParams['lexstat_cluster_method'],
-            gop = rcParams['align_gop'],
-            preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
-            preprocessing_method=rcParams['lexstat_preprocessing_method'],
-            subset = False
+            method                  = rcParams['lexstat_scoring_method'],
+            ratio                   = rcParams['lexstat_ratio'],
+            vscale                  = rcParams['lexstat_vscale'],
+            runs                    = rcParams['lexstat_runs'],
+            threshold               = rcParams['lexstat_threshold'],
+            modes                   = rcParams['lexstat_modes'],
+            factor                  = rcParams['align_factor'],
+            restricted_chars        = rcParams['restricted_chars'],
+            force                   = False,
+            preprocessing           = True,
+            rands                   = rcParams['lexstat_rands'],
+            limit                   = rcParams['lexstat_limit'],
+            cluster_method          = rcParams['lexstat_cluster_method'],
+            gop                     = rcParams['align_gop'],
+            preprocessing_threshold = rcParams['lexstat_preprocessing_threshold'],
+            preprocessing_method    = rcParams['lexstat_preprocessing_method'],
+            subset                  = False,
+            defaults                = False,
             )
         kw.update(keywords)
+        if kw['defaults']:
+            return kw
 
         # get parameters and store them in string
         modestring = []
@@ -1116,16 +1119,7 @@ class LexStat(Wordlist):
             self,
             idxA,
             idxB,
-            method = 'lexstat',
-            mode = "global",
-            gop = -2,
-            scale = 0.5,
-            factor = 0.3,
-            restricted_chars = '_T',
-            distance = True,
             concept = None,
-            pprint = True,
-            return_distance = False,
             **keywords
             ):
         """
@@ -1158,14 +1152,20 @@ class LexStat(Wordlist):
             If set to c{True}, return the distance score, otherwise, nothing
             will be returned.
         """
-        # add keywords to keywords
-        keywords['method'] = method
-        keywords['mode'] = mode
-        keywords['scale'] = scale
-        keywords['factor'] = factor
-        keywords['distance'] = distance
-        keywords['restricted_chars'] = restricted_chars
-        keywords['return_distance'] = return_distance
+        kw = dict(
+                method           = 'lexstat',
+                mode             = "global",
+                scale            = 0.5,
+                factor           = 0.3,
+                restricted_chars = '_T',
+                pprint           = True,
+                return_distance  = False,
+                gop              = -2,
+                distance         = True,
+                defaults         = False
+                )
+        kw.update(keywords)
+        if kw['defaults']: return kw
 
         if type(idxA) in [tuple,str]:
             if type(idxA) == tuple:
@@ -1173,32 +1173,32 @@ class LexStat(Wordlist):
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]
                 for i,idxA in enumerate(idxsA):
                     for j,idxB in enumerate(idxsB):
-                        self.align_pairs(idxA,idxB,**keywords)
+                        self.align_pairs(idxA,idxB,**kw)
 
             else:
                 if not concept:
                     for c in self.concepts:
                         print("Concept: {0}".format(c))
-                        keywords['concept'] = c
-                        self.align_pairs(idxA,idxB,**keywords)
+                        concept = c
+                        self.align_pairs(idxA,idxB,c,**kw)
                         print('')
                 else:
                     self.align_pairs(
                             (idxA,concept),
                             (idxB,concept),
                             concept=None,
-                            **keywords
+                            **kw
                             )
             return
 
         # assign the distance value
-        distance = 1 if distance else 0
+        distance = 1 if kw['distance'] else 0
 
         # get the language ids
         lA = self[idxA,'langid']
         lB = self[idxB,'langid']
 
-        if method == 'lexstat':
+        if kw['method'] == 'lexstat':
             scorer = self.cscorer
             gop = 1.0
             weightsA = [self.cscorer[str(lA)+'.X.-',n] for n in
@@ -1207,6 +1207,7 @@ class LexStat(Wordlist):
                 self[idxB,'numbers']]
 
         else:
+            gop = kw['gop']
             weightsA = self[idxA,'weights']
             weightsB = self[idxB,'weights']
             scorer = self.bscorer
@@ -1219,16 +1220,16 @@ class LexStat(Wordlist):
                 self[idxA,'prostrings'],
                 self[idxB,'prostrings'],
                 gop,
-                scale,
-                factor,
+                kw['scale'],
+                kw['factor'],
                 scorer,
-                mode,
-                restricted_chars,
+                kw['mode'],
+                kw['restricted_chars'],
                 distance
                 )
 
         # get a string of scores
-        if method == 'lexstat':
+        if kw['method'] == 'lexstat':
             fun = lambda x,y: x if x != '-' else '{0}.X.-'.format(y)
 
             scoreA = [fun(a,lA) for a in almA]
@@ -1241,16 +1242,16 @@ class LexStat(Wordlist):
 
         almA = class2tokens(self[idxA,'tokens'],almA)
         almB = class2tokens(self[idxB,'tokens'],almB)
-        if pprint:
+        if kw['pprint']:
             print('\t'.join(almA))
             print('\t'.join(almB))
             print('\t'.join(scores))
-            if distance:
+            if kw['distance']:
                 print('Distance: {0:.2f}'.format(d))
             else:
                 print('Similarity: {0:.2f}'.format(d))
         
-        if return_distance:
+        if kw['return_distance']:
             return d
     
     def _get_matrices(
@@ -1274,10 +1275,11 @@ class LexStat(Wordlist):
         concept, the matrix, and the concept.
         """
         # currently, there are no defaults XXX
-        defaults = dict()
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        kw = dict(
+                defaults = False
+                )
+        kw.update(keywords)
+        if kw['defaults'] : return kw
 
         # check for method
         if method == 'lexstat':
@@ -1326,7 +1328,7 @@ class LexStat(Wordlist):
 
         elif method == 'edit-dist':
             try:
-                entry = keywords['entry']
+                entry = kw['entry']
             except:
                 entry = 'tokens'
 
@@ -1432,22 +1434,22 @@ class LexStat(Wordlist):
 
         """
         # set up defaults
-        defaults = dict(
-                inflation = 2,
-                expansion = 2,
-                max_steps = 1000,
-                add_self_loops = True,
+        kw = dict(
+                inflation       = 2,
+                expansion       = 2,
+                max_steps       = 1000,
+                add_self_loops  = True,
                 guess_threshold = False,
-                gt_trange = (0.4,0.6,0.02),
-                mcl_logs = lambda x: -np.log2((1-x)**2),
-                gt_mode = 'average',
-                matrix_type = 'distances',
-                link_threshold = False,
-                _return_matrix = False # help function for test purposes
+                gt_trange       = (0.4,0.6,0.02),
+                mcl_logs        = lambda x: -np.log2((1-x)**2),
+                gt_mode         = 'average',
+                matrix_type     = 'distances',
+                link_threshold  = False,
+                _return_matrix  = False, # help function for test purposes
+                defaults        = False,
                 )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        kw.update(keywords)
+        if kw['defaults']: return kw
         
         # check for parameters and add clustering, in order to make sure that
         # analyses are not repeated
@@ -1485,11 +1487,11 @@ class LexStat(Wordlist):
                     y,
                     x,
                     list(range(len(x))),
-                    max_steps = keywords['max_steps'],
-                    inflation = keywords['inflation'],
-                    expansion = keywords['expansion'],
-                    add_self_loops = keywords['add_self_loops'],
-                    logs = keywords['mcl_logs'],
+                    max_steps = kw['max_steps'],
+                    inflation = kw['inflation'],
+                    expansion = kw['expansion'],
+                    add_self_loops = kw['add_self_loops'],
+                    logs = kw['mcl_logs'],
                     revert = True,
                     )
         elif cluster_method in ['lcl','link_clustering','lc']:
@@ -1499,8 +1501,8 @@ class LexStat(Wordlist):
                     list(range(len(x))),
                     revert = True,
                     fuzzy = False,
-                    matrix_type = keywords['matrix_type'],
-                    link_threshold = keywords['link_threshold']
+                    matrix_type = kw['matrix_type'],
+                    link_threshold = kw['link_threshold']
                     )
 
         # make a dictionary that stores the clusters for later update
@@ -1516,7 +1518,7 @@ class LexStat(Wordlist):
                 mode              = mode,
                 gop               = gop,
                 restriction       = restriction,
-                **keywords
+                **kw
                 )
 
         # semi-verbose output of taskbars and the like
@@ -1540,13 +1542,13 @@ class LexStat(Wordlist):
             control_char = 0
 
         # check for full consideration of basic t
-        if keywords['guess_threshold'] and keywords['gt_mode'] == 'average':
+        if kw['guess_threshold'] and kw['gt_mode'] == 'average':
             thresholds = []
             matrices = list(matrices)
             for c,i,m in matrices:
                 t = clustering.best_threshold(
                     m,
-                    keywords['gt_trange']
+                    kw['gt_trange']
                     )
                 thresholds += [t]
             threshold = sum(thresholds) / len(thresholds)
@@ -1561,10 +1563,10 @@ class LexStat(Wordlist):
                 task_count += 1           
             
             # check for keyword to guess the threshold
-            if keywords['guess_threshold'] and keywords['gt_mode'] == 'item':
+            if kw['guess_threshold'] and kw['gt_mode'] == 'item':
                 t = clustering.best_threshold(
                         matrix,
-                        keywords['gt_trange']
+                        kw['gt_trange']
                         )
             else:
                 t = threshold
@@ -1594,8 +1596,8 @@ class LexStat(Wordlist):
                 for idxA,idxB in zip(indices,clusters):
                     clr[idxA] = idxB
         
-        if 'override' in keywords:
-            override = keywords['override']
+        if 'override' in kw:
+            override = kw['override']
         else:
             override = False
         
@@ -1828,23 +1830,22 @@ class LexStat(Wordlist):
             'groups' or 'cluster' is chosen as output format.
         """
 
-        defaults = dict(
+        kw = dict(
                 filename = self.filename,
+                defaults = False
                 )
-        
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        kw.update(keywords)
+        if kw['defaults']: return kw
 
         if fileformat == 'scorer':
-            if 'scorer' not in keywords:
-                keywords['scorer'] = self.rscorer
-            out = scorer2str(keywords['scorer'])
-            f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
+            if 'scorer' not in kw:
+                kw['scorer'] = self.rscorer
+            out = scorer2str(kw['scorer'])
+            f = codecs.open(kw['filename']+'.'+fileformat,'w','utf-8')
             f.write(out)
             f.close()
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(keywords['filename']+'.'+fileformat))
+            if rcParams['verbose']: print(rcParams['M_file_written'].format(kw['filename']+'.'+fileformat))
 
         else:
-            self._output(fileformat,**keywords)
+            self._output(fileformat,**kw)
   

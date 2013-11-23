@@ -890,10 +890,12 @@ class Alignments(Wordlist):
                 plots            = False,
                 filename         = self.filename,
                 show             = False,
-                style            = plain,
+                style            = 'plain',
+                defaults         = False,
                 )
 
         kw.update(keywords)
+        if kw['defaults']: return kw
 
         # define a score-bar that shows how far the work is processed
         if not rcParams['verbose'] and rcParams['_sverb']:

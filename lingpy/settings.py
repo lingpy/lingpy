@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-17 10:40
-# modified : 2013-11-21 23:54
+# modified : 2013-11-23 09:20
 """
 Module handels all global parameters used in a LingPy session.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-21"
+__date__="2013-11-23"
 
 # builtin imports
 from datetime import datetime,date
@@ -174,6 +174,8 @@ def rc(rval=None, **keywords):
 
     Parameters
     ----------
+    rval : string (default=None)
+        Use this keyword to specify a return-value for the rc-function. 
     schema : {"ipa", "asjp"}
         Change the basic schema for sequence comparison. When switching to
         "asjp", this means that sequences will be treated as sequences in ASJP
@@ -198,6 +200,24 @@ def rc(rval=None, **keywords):
 
     However, be careful when changing the values. They might produce some
     unexpected behavior.
+
+    Examples
+    --------
+    Import LingPy:
+
+    >>> from lingpy import *
+    
+    Have the rc-function return a specific value, such as the path to the
+    test-directory of LingPy:
+
+    >>> rc("test_path")
+    '/usr/lib/python3.3/site-packages/lingpyd/tests/test_data/'
+
+    Change basic values. Switch to verbose output, for example:
+
+    >>> rc(verbose=True)
+    [i] Successfully changed parameters.
+    
     """
     if rval:
         return rcParams[rval]
