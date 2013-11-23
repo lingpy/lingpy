@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-11-21 21:29
+# modified : 2013-11-23 09:11
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-11-21"
+__date__="2013-11-23"
 
 import numpy as np
 import re
@@ -56,11 +56,11 @@ class MSA(Multiple):
     Get the path to a file from the testset.
 
     >>> from lingpy import *
-    >>> seq_file = get_file('test.seq')
+    >>> path = rc("test_path")+'harry.msq'
 
     Load the file into the Multiple class.
 
-    >>> mult = Multiple(seq_file)
+    >>> mult = Multiple(path)
 
     Carry out a progressive alignment analysis of the sequences.
 
@@ -76,10 +76,9 @@ class MSA(Multiple):
     Notes
     -----
     There are two possible input formats for this class: the MSQ-format, and
-    the MSA-format. 
-
-    This class inherits the methods of the
-    :py:class:`~lingpy.align.multiple.Multiple` class.
+    the MSA-format (see :ref:`msa_formats` for details). This class directly
+    inherits all methods of the :py:class:`~lingpy.align.multiple.Multiple`
+    class.
 
     """
 
@@ -147,7 +146,6 @@ class MSA(Multiple):
     def ipa2cls(
             self,
             **keywords
-            #model = rcParams['sca']
             ):
         """
         Retrieve sound-class strings from aligned IPA sequences.
@@ -405,9 +403,8 @@ class PSA(Pairwise):
     Notes
     -----
     In order to read in data from text files, two different file formats can be
-    used along with this class: the PSQ-format, and the PSA-format.
-
-    This class inherits the methods of the
+    used along with this class: the PSQ-format, and the PSA-format (see
+    :ref:`psa_formats` for details). This class inherits the methods of the
     :py:class:`~lingpy.align.pairwise.Pairwise` class.
 
     """
@@ -703,10 +700,10 @@ class Alignments(Wordlist):
 
     Notes
     -----
-    This class inherits from :py:class:`~lingpy.basic.wordlist.Wordlist` and 
+    This class inherits from :py:class:`~lingpy.basic.wordlist.Wordlist` and
     additionally creates instances of the
     :py:class:`~lingpy.align.multiple.Multiple` class for all cognate sets that
-    are specified by the "cognates" keyword.
+    are specified by the *ref* keyword.
 
     """
     def __init__(
@@ -893,7 +890,7 @@ class Alignments(Wordlist):
                 plots            = False,
                 filename         = self.filename,
                 show             = False,
-                wordlist         = False,
+                style            = plain,
                 )
 
         kw.update(keywords)
@@ -976,7 +973,7 @@ class Alignments(Wordlist):
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
 
             if kw['output']:
-                if not kw['wordlist']:
+                if kw['style'] in ['plain', 'msa']:
                     try:                        
                         m.output(
                                 'msa',
@@ -996,7 +993,7 @@ class Alignments(Wordlist):
                                     key
                                     )
                                 )
-                else:
+                elif kw['style'] in ['with_id', 'id']:
                     msa_string = msa2str(
                             self._meta['msa'][kw['ref']][key],
                             wordlist=True

@@ -11,7 +11,7 @@ __date__="2013-11-21"
 
 # builtin imports
 from datetime import datetime,date
-#import os
+import os
 
 # internal imports
 from ._settings import rcParams
@@ -135,6 +135,7 @@ rcParamsUpd = dict(
         sonority_consensus_warning = '[WARNING] Sonority profile consensus could not be calculated!',
         deprecation_warning        = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
         missing_module             = "[WARNING] Module '{0}' could not be loaded. Some methods may not work properly.",
+        test_path                  = os.path.join(rcParams['_path'], 'tests', 'test_data', '')
         )
 rcParams.update(rcParamsUpd)
 
@@ -167,7 +168,7 @@ for key in kw_base:
         alias[value] = key
 
 # function changes parameters
-def rc(**keywords):
+def rc(rval=None, **keywords):
     """
     Function changes parameters globally set for LingPy sessions.
 
@@ -198,6 +199,8 @@ def rc(**keywords):
     However, be careful when changing the values. They might produce some
     unexpected behavior.
     """
+    if rval:
+        return rcParams[rval]
     
     for key in keywords:
         if key == "schema":
