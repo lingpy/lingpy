@@ -1031,7 +1031,7 @@ class Alignments(Wordlist):
                 sys.stdout.write(
                         (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
                             )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
             sys.stdout.flush()
 
                     
@@ -1216,7 +1216,7 @@ class Alignments(Wordlist):
                 sys.stdout.write(
                         (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
                             )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
             sys.stdout.flush()
         
         # add the entries

@@ -89,7 +89,7 @@ class QLCParser(object):
             internal_import = True
             
             # make check for correct input
-            tmp_keys = [k for k in input_data if k > 0]
+            tmp_keys = [k for k in input_data if type(k) == int and k != 0]
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
                 raise ValueError("[!] Wrong input format!")
 

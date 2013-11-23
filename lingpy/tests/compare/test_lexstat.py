@@ -41,4 +41,12 @@ class TestLexStat:
         assert ('scaid' in self.lex.header and 'lexstatid' in self.lex.header \
                 and 'editid' in self.lex.header and 'turchinid' in \
                 self.lex.header) == True
+    
+    def test_align_pairs(self):
 
+        try:
+            self.lex.align_pairs('English', 'German', method='sca')
+            assert True
+        except:
+            assert False
+        
