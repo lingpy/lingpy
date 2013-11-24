@@ -1363,6 +1363,11 @@ class Alignments(Wordlist):
             f.close()
 
         if fileformat == 'msa':
+            if kw['style'] in ['id', 'with_id']:
+                wordlist = True
+            else:
+                wordlist = False
+
             for key,value in sorted(
                     self.msa[kw['ref']].items(),
                     key=lambda x:x[0]
@@ -1370,7 +1375,7 @@ class Alignments(Wordlist):
                 
                 msa_string = msa2str(
                         value,
-                        wordlist=True
+                        wordlist=wordlist
                         )
                 try:
                     f = codecs.open(
