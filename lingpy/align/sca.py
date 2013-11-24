@@ -1374,7 +1374,7 @@ class Alignments(Wordlist):
                         )
                 try:
                     f = codecs.open(
-                            '{0}-msa/{1}-{2}'.format(
+                            '{0}-msa/{1}-{2}.msa'.format(
                                 self.filename,
                                 value['dataset'],
                                 key
@@ -1388,7 +1388,7 @@ class Alignments(Wordlist):
                 except:
                     os.mkdir('{0}-msa'.format(self.filename))
                     f = codecs.open(
-                            '{0}-msa/{1}-{2}'.format(
+                            '{0}-msa/{1}-{2}.msa'.format(
                                 self.filename,
                                 value['dataset'],
                                 key
