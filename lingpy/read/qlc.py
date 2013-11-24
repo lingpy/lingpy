@@ -116,6 +116,7 @@ def read_msa(
         infile,
         comment = "#",
         ids = False,
+        header = True,
         **keywords
         ):
     """
@@ -152,7 +153,7 @@ def read_msa(
             else:
                 msa_lines += [newlines]
     
-    d = _list2msa(msa_lines, header=True, ids=False, **keywords)
+    d = _list2msa(msa_lines, header=header, ids=ids, **keywords)
 
     return d
     
