@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-21 22:59
+# modified : 2013-11-24 23:09
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-21"
+__date__="2013-11-24"
 
 # builtin
 import random
@@ -1279,7 +1279,6 @@ class LexStat(Wordlist):
                 defaults = False
                 )
         kw.update(keywords)
-        if kw['defaults'] : return kw
 
         # check for method
         if method == 'lexstat':
@@ -1375,7 +1374,8 @@ class LexStat(Wordlist):
             if not concept:
                 yield c,indices,matrix
             else:
-                yield matrix
+                break
+        yield matrix
 
     def cluster(
             self,
