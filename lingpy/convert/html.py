@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2013-11-14 09:49
+# modified : 2013-11-24 18:31
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-14"
+__date__="2013-11-24"
 
 
 import os
@@ -405,6 +405,8 @@ def msa2html(
             '{0}</td>\n'
     td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
             'align="center" bgcolor="{1}">{0}</td>\n'
+    td_unaligned = '<td class="residue noalign" style="border:dotted 1px gray"'+\
+            'width="50" align="center" bgcolor="white">{0}</td>\n'
     
     # check for swaps in the alignment
     if 'swaps' in msa:
@@ -413,6 +415,13 @@ def msa2html(
             swaps.extend(s)
     else:
         swaps = []
+
+    # check for 
+    local = ['*'] * len(msa['alignment'][0])
+    if 'local' in msa:
+        local = ['.'] * len(msa['alignment'][0])
+        for i in msa['local']:
+            local[i] = '*'
 
     # start iteration
     for i,taxon in enumerate(msa['taxa']):
@@ -428,6 +437,8 @@ def msa2html(
                     print(char)
             if j in swaps:
                 tmp += td_swap.format(char,c)
+            elif local[j] != '*':
+                tmp += td_unaligned.format(char,c)
             else:
                 tmp += td_residue.format(char,c)
         out += tr.format(tmp)
@@ -443,7 +454,6 @@ def msa2html(
             taxa = len(msa['alignment']),
             uniseqs=len(set(msa['seqs']))
             )
-    
     
     if not filename:
         filename = rcParams['filename']
