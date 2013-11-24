@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-08 11:38
-# modified : 2013-10-25 14:11
+# modified : 2013-11-24 15:36
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-25"
+__date__="2013-11-24"
 
 import codecs
 from ..settings import rcParams
@@ -55,29 +55,29 @@ def msa2str(msa, wordlist=False):
     # if wordlist ist set to True, don't write the header line and put the
     # after comment
     if wordlist: 
-        formatter = "{0}\t{1:"+str(max([len(t) for t in msa['taxa']]))+'}'
+        formatter = max([len(t) for t in msa['taxa']])
         out += '# ' +msa['seq_id']+'\n'
         for a,b,c in zip(msa['ID'],msa['taxa'],msa['alignment']):
-            out += formatter.format(a,b)+'\t'
+            out += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
             out += '\t'.join(c)+'\n'
         alm_len = len(c)
 
     elif type(msa) == dict:
         # get formatter
-        formatter = '{0:'+str(max([len(t) for t in msa['taxa']]))+'}'
+        formatter = max([len(t) for t in msa['taxa']])
         out += msa['dataset']+'\n'
         out += msa['seq_id']+'\n'
         for a,b in zip(msa['taxa'],msa['alignment']):
-            out += formatter.format(a)+'\t'
+            out += a.ljust(formatter,'.')+'\t'
             out += '\t'.join(b)+'\n'
         alm_len = len(b)
     else:
         # get formatter
-        formatter = '{0:'+str(max([len(t) for t in msa.taxa]))+'}'
+        formatter = max([len(t) for t in msa.taxa])
         out += msa.dataset+'\n'
         out += msa.seq_id+'\n'
         for a,b in zip(msa.taxa,msa.alm_matrix):
-            out += formatter.format(a)+'\t'
+            out += a.ljust(formatter,'.')+'\t'
             out += '\t'.join(b)+'\n'
         alm_len = len(b)
     
