@@ -1363,7 +1363,6 @@ class Alignments(Wordlist):
             f.close()
 
         if fileformat == 'msa':
-            print('msaya')
             for key,value in sorted(
                     self.msa[kw['ref']].items(),
                     key=lambda x:x[0]
