@@ -1275,9 +1275,12 @@ class Alignments(Wordlist):
         """
         kw = dict(
                 ref = rcParams['ref'],
-                filename = rcParams['filename']
+                filename = rcParams['filename'],
+                style = "id",
+                defaults = False,
                 )
         kw.update(keywords)
+        if kw['defaults']: return kw
 
         # check for html fileformat
         if fileformat == 'html':
@@ -1294,7 +1297,7 @@ class Alignments(Wordlist):
         if ref != rcParams['ref']:
             rcParams['ref'] = ref
 
-        if fileformat not in ['alm']:
+        if fileformat not in ['alm', 'msa']:
             return self._output(fileformat,**kw)
         
         if fileformat == 'alm':
@@ -1358,6 +1361,44 @@ class Alignments(Wordlist):
             f = codecs.open(filename + '.' + fileformat,'w','utf-8')
             f.write(out)
             f.close()
+
+        if fileformat == 'msa':
+            print('msaya')
+            for key,value in sorted(
+                    self.msa[kw['ref']].items(),
+                    key=lambda x:x[0]
+                    ):
+                
+                msa_string = msa2str(
+                        value,
+                        wordlist=True
+                        )
+                try:
+                    f = codecs.open(
+                            '{0}-msa/{1}-{2}'.format(
+                                self.filename,
+                                value['dataset'],
+                                key
+                                ),
+                            'w',
+                            'utf-8'
+                            )
+                    f.write(msa_string)
+                    f.close()
+
+                except:
+                    os.mkdir('{0}-msa'.format(self.filename))
+                    f = codecs.open(
+                            '{0}-msa/{1}-{2}'.format(
+                                self.filename,
+                                value['dataset'],
+                                key
+                                ),
+                            'w',
+                            'utf-8'
+                            )
+                    f.write(msa_string)
+                    f.close()
 
 def SCA(
         infile,

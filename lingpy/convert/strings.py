@@ -94,12 +94,19 @@ def msa2str(msa, wordlist=False):
         swaps = msa.swaps
     else:
         swaps = False
+
+    if 'consensus' in msa:
+        consensus = msa['consensus']
+    elif hasattr(msa, 'consensus'):
+        consensus = msa.consensus
+    else:
+        consensus = False
     
     if local:
         if wordlist:
-            out += formatter.format(0,"LOCAL")+'\t'
+            out += '{0}\t{1}\t'.format(0,'LOCAL'.ljust(formatter, '.'))
         else:
-            out += formatter.format("LOCAL")+'\t'
+            out += '{0}\t'.format('LOCAL'.ljust(formatter, '.'))
         tmp = []
         for i in range(alm_len):
             if i in local:
@@ -109,9 +116,9 @@ def msa2str(msa, wordlist=False):
         out += '\t'.join(tmp)+'\n'
     if swaps:
         if wordlist:
-            out += formatter.format(0,"SWAPS")+'\t'
+            out += '{0}\t{1}\t'.format(0,'SWAPS'.ljust(formatter, '.'))
         else:
-            out += formatter.format("SWAPS")+'\t'
+            out += '{0}\t'.format('SWAPS'.ljust(formatter, '.'))
         tmp = alm_len * ['.']
         for swap in swaps:
             a,b,c = swap
@@ -119,6 +126,13 @@ def msa2str(msa, wordlist=False):
             tmp[b] = '-'
             tmp[c] = '+'
         out += '\t'.join(tmp)+'\n'
+
+    if consensus:
+        if wordlist:
+            out += '{0}\t{1}\t'.format(0,'CONSE'.ljust(formatter, '.'))
+        else:
+            out += '{0}\t'.format('CONSE'.ljust(formatter, '.'))
+        out += '\t'.join(consensus)+'\n'
 
     return out
 

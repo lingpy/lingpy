@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2013-11-07 08:42
+# modified : 2013-11-24 19:31
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-07"
+__date__="2013-11-24"
 
 # external imports
 import re
@@ -405,17 +405,17 @@ def wl2qlc(
         out += "<json>\n"
         out += json.dumps(jsonpairs,indent=4)
         out += '\n</json>\n'
-    if msapairs:
+    if msapairs and 'msa' not in keywords['ignore']:
         for ref in msapairs:
             out += "\n# MSA reference: {0}\n".format(ref)
             for k,v in msapairs[ref].items():
-                
                 if 'consensus' in v:
                     out += '#\n<msa id="{0}" ref="{1}" consensus="{2}">\n'.format(
-                            k,ref,v['consensus'])
+                            k,ref,' '.join(v['consensus']))
                 else:
                     out += '#\n<msa id="{0}" ref="{1}">\n'.format(k,ref)
-                out += msa2str(v,wordlist=True)
+                outs = msa2str(v,wordlist=True)
+                out += outs
                 out += "</msa>\n"
     if distances and 'distances' not in keywords['ignore']:
         out += '\n# DISTANCES\n<dst>\n'
