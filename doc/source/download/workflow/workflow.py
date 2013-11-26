@@ -64,7 +64,7 @@ print('[i] Writing results to wordlist file.')
 msa.output('qlc',filename='DOGON_alignments')
 
 print("[i] Plotting the alignments.")
-msa.output('html',filename='DOGON')
+msa.output('html', filename='DOGON', ref='lexstatid')
 
 print("[i] Starting with the borrowing detection.")
 from lingpy.compare.phylogeny import PhyBo
