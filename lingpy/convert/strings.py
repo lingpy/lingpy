@@ -45,40 +45,49 @@ def scorer2str(
 
     return out
 
-def msa2str(msa, wordlist=False):
+def msa2str(msa, wordlist=False, comment="#",
+        _arange='{stamp}{comment}\n{meta}{comment}\n{body}'):
     """
     Function converts an MSA object into a string.
     """
-    
-    out = ''
+
+    if 'stamp' in msa:
+        stamp = msa['stamp']
+    elif hasattr('stamp', msa):
+        stamp = msa.stamp
+    else:
+        stamp = ''
+
+    body = ''
 
     # if wordlist ist set to True, don't write the header line and put the
     # after comment
-    if wordlist: 
+    if wordlist:
+
         formatter = max([len(t) for t in msa['taxa']])
-        out += '# ' +msa['seq_id']+'\n'
+        #body += '# ' +msa['seq_id']+'\n'
         for a,b,c in zip(msa['ID'],msa['taxa'],msa['alignment']):
-            out += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
-            out += '\t'.join(c)+'\n'
+            body += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
+            body += '\t'.join(c)+'\n'
         alm_len = len(c)
 
     elif type(msa) == dict:
         # get formatter
         formatter = max([len(t) for t in msa['taxa']])
-        out += msa['dataset']+'\n'
-        out += msa['seq_id']+'\n'
+        body += msa['dataset']+'\n'
+        body += msa['seq_id']+'\n'
         for a,b in zip(msa['taxa'],msa['alignment']):
-            out += a.ljust(formatter,'.')+'\t'
-            out += '\t'.join(b)+'\n'
+            body += a.ljust(formatter,'.')+'\t'
+            body += '\t'.join(b)+'\n'
         alm_len = len(b)
     else:
         # get formatter
         formatter = max([len(t) for t in msa.taxa])
-        out += msa.dataset+'\n'
-        out += msa.seq_id+'\n'
+        body += msa.dataset+'\n'
+        body += msa.seq_id+'\n'
         for a,b in zip(msa.taxa,msa.alm_matrix):
-            out += a.ljust(formatter,'.')+'\t'
-            out += '\t'.join(b)+'\n'
+            body += a.ljust(formatter,'.')+'\t'
+            body += '\t'.join(b)+'\n'
         alm_len = len(b)
     
     if 'local' in msa:
@@ -102,39 +111,51 @@ def msa2str(msa, wordlist=False):
     else:
         consensus = False
     
+
+    meta = ''
+
+    if wordlist:
+        meta += '0\t'+'COLUMNID'.ljust(formatter,'.')+'\t'+'\t'.join([str(i+1) for i in range(len(msa['alignment'][0]))])
+        meta += '\n#\n'
+
     if local:
         if wordlist:
-            out += '{0}\t{1}\t'.format(0,'LOCAL'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0,'LOCAL'.ljust(formatter, '.'))
         else:
-            out += '{0}\t'.format('LOCAL'.ljust(formatter, '.'))
+            meta += '{0}\t'.format('LOCAL'.ljust(formatter, '.'))
         tmp = []
         for i in range(alm_len):
             if i in local:
                 tmp += ['*']
             else:
                 tmp += ['.']
-        out += '\t'.join(tmp)+'\n'
+        meta += '\t'.join(tmp)+'\n'
     if swaps:
         if wordlist:
-            out += '{0}\t{1}\t'.format(0,'SWAPS'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0,'CROSSED'.ljust(formatter, '.'))
         else:
-            out += '{0}\t'.format('SWAPS'.ljust(formatter, '.'))
+            meta += '{0}\t'.format('SWAPS'.ljust(formatter, '.'))
         tmp = alm_len * ['.']
         for swap in swaps:
             a,b,c = swap
             tmp[a] = '+'
             tmp[b] = '-'
             tmp[c] = '+'
-        out += '\t'.join(tmp)+'\n'
+        meta += '\t'.join(tmp)+'\n'
 
     if consensus:
         if wordlist:
-            out += '{0}\t{1}\t'.format(0,'CONSE'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0,'CONSENSUS'.ljust(formatter, '.'))
         else:
-            out += '{0}\t'.format('CONSE'.ljust(formatter, '.'))
-        out += '\t'.join(consensus)+'\n'
+            meta += '{0}\t'.format('CONSE'.ljust(formatter, '.'))
+        meta += '\t'.join(consensus)+'\n'
 
-    return out
+    return _arange.format(
+            stamp=stamp,
+            meta=meta,
+            body=body,
+            comment=comment
+            )
 
 def matrix2dst(
         matrix,

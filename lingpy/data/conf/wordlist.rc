@@ -10,6 +10,7 @@ ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens,tokenized_counterpart
 
 # specific names for alignments
 conceptid	int	conceptid
+
 # Specific namespaces for LexStat
 sonars	lambda x:[int(s) for s in x.split(" ")]	sonars
 prostrings	str	prostrings
