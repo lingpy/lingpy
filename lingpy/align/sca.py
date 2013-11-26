@@ -777,9 +777,9 @@ class Alignments(Wordlist):
                     d['ID'] = []
                     if 'concept' in self.header:
                         concept = self[seqids[0],'concept']
-                        d['seq_id'] = 'Cognate Set: {0} ("{1}")'.format(key,concept)
+                        d['seq_id'] = '{0} ("{1}")'.format(key,concept)
                     else:
-                        d['seq_id'] = 'Cognate Set: {0}'.format(key)
+                        d['seq_id'] = '{0}'.format(key)
                     
                     # set up the data
                     for seq in seqids:
@@ -897,6 +897,23 @@ class Alignments(Wordlist):
         kw.update(keywords)
         if kw['defaults']: return kw
 
+        if str(kw['model']) == kw['model']:
+            kw['model'] = rcParams[kw['model']]
+
+        # create a params attribute
+        params = '_'.join(
+                [
+                    kw['method'],
+                    kw['model'].name,
+                    str(kw['gop']),
+                    '{0:.1f}'.format(kw['scale']),
+                    '{0:.1f}'.format(kw['factor']),
+                    kw['tree_calc'],
+                    '{0:.1f}'.format(kw['gap_weight']),
+                    kw['restricted_chars']
+                    ]
+                )
+
         # define a score-bar that shows how far the work is processed
         if not rcParams['verbose'] and rcParams['_sverb']:
             task_len = len(self.msa[kw['ref']])
@@ -973,6 +990,13 @@ class Alignments(Wordlist):
 
             self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
             self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+            self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
+                    m.dataset,
+                    m.seq_id,
+                    rcParams['timestamp'],
+                    params
+                    )
+
 
             if kw['output']:
                 if kw['style'] in ['plain', 'msa']:
@@ -1705,9 +1729,20 @@ def get_consensus(
                     tmp.items(),
                     key=lambda x:(x[1],len(x[0])),
                     reverse=True
-                    )] 
+                    )]
 
-                cons += [chars[0]]
+                # apply check for gaps here, if there are more gaps than in the
+                # full column, take the gaps, otherwise, take the next char
+                if chars[0] == '-':
+                    if tmp['-'] > sum([tmp[x] for x in tmp if x != '-']):
+                        cchar = '-'
+                    else:
+                        cchar = chars[1]
+                else:
+                    cchar = chars[0]
+                    
+                cons += [cchar]
+                #cons += [chars[0]]
 
     # otherwise, we use a bottom-up parsimony approach to determine the best
     # match
