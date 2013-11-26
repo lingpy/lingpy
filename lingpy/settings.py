@@ -92,7 +92,14 @@ alignments = dict(
             'Z' : 1,  # vowel in final syllable
             'T' : 1,  # Tone
             '_' : 1   # break character
-            }
+            },
+        align_stamp                                   = """# MSA
+# dataset    : {0}
+# collection : {1} 
+# aligned by : LingPy-2.2 <www.lingpy.org>
+# created on : {2}
+# parameters : {3}
+"""
 
         )
 rcParams.update(alignments)
