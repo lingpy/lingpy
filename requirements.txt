@@ -1,4 +1,3 @@
-lingpy
 numpy
 regex
 networkx
