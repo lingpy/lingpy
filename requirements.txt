@@ -1,2 +1,6 @@
-numpydoc
+lingpy
+numpy
 regex
+networkx
+matplotlib
+scipy
