@@ -516,9 +516,9 @@ class QLCParser(object):
 
         # else just return a Unicode grapheme clusters parse
         if target == 'tokens':
-            function = lambda x: t.tokenize(x, **keywords).split(' ')
+            function = lambda x: t.tokenize(x, column).split(' ')
         else:
-            function = lambda x: t.tokenize(x, **keywords)
+            function = lambda x: t.tokenize(x, column)
 
         self.add_entries(
             target,
