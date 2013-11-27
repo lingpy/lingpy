@@ -137,7 +137,8 @@ class Tokenizer(object):
         if rcParams['debug']: 
             print("[i] Orthography profile: ", self.orthography_profile)
             print("[i] Orthography rules: ", self.orthography_profile_rules)
-
+            print("[i] Columns labels: ", self.column_labels)
+            print()
     
     def _init_profile(self, f):
         """
@@ -352,6 +353,9 @@ class Tokenizer(object):
             Result of the transformation.
 
         """
+        # column labels are normalized 
+        column = column.lower()
+
         # This method can't be called unless an orthography profile was specified.
         if self.orthography_profile == None:
             raise Exception("This method only works when an orthography profile is specified.")
@@ -405,6 +409,9 @@ class Tokenizer(object):
             Result of the tokenization.
 
         """
+
+        # column labels are normalized 
+        column = column.lower() 
 
         if self.orthography_profile and self.orthography_profile_rules:
             return self.rules(self.transform(string, column))
