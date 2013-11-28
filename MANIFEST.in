@@ -1,7 +1,7 @@
 include distribute_setup.py three2two.py manifest_build.in manifest_dist.in
-recursive-include lingpy *.lxs *.msa *.msq *.psq *.psq *.csv *.rc *.prf *.rules *.qlc *.tex *.tsv *.in
-recursive-include lingpy *.c *.cpp *.pyx *.md
-recursive-include lingpy *.html *.css
-recursive-include lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
-include lingpy/data/orthography_profiles/*.txt
-include lingpy/data/swadesh/*.txt
+recursive-include lingpy_build/lingpy *.lxs *.msa *.msq *.psq *.psq *.csv *.rc *.prf *.rules *.qlc *.tex *.tsv
+recursive-include lingpy_build/lingpy *.c *.cpp *.pyx *.md
+recursive-include lingpy_build/lingpy *.html *.css
+recursive-include lingpy_build/lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
+include lingpy_build/lingpy/data/orthography_profiles/*.txt
+include lingpy_build/lingpy/data/swadesh/*.txt

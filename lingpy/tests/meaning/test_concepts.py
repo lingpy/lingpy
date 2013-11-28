@@ -28,6 +28,26 @@ class TestConceptComparerSpanishStem:
         res = self.cm.compare_to_concept("viver", "cas")
         assert res == False
 
+class TestConceptComparerStringMatch:
+
+    def setup(self):
+        self.cm = lingpy.meaning.concepts.ConceptComparerStringMatch()
+
+    def test_compare_to_concept(self):
+        res = self.cm.compare_to_concept("comer", "comer")
+        assert res == True
+        res = self.cm.compare_to_concept("Tu comer", "comer")
+        assert res == False
+
+        self.cm.complete = False
+        res = self.cm.compare_to_concept("comer", "comer")
+        assert res == True
+        res = self.cm.compare_to_concept("Tu comer", "comer")
+        assert res == True
+        self.cm.complete = True
+
+        res = self.cm.compare_to_concept("viver", "cas")
+        assert res == False
 
 class TestConceptGraph:
 

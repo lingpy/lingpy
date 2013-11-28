@@ -300,8 +300,9 @@ class ConceptComparerStringMatch(ConceptComparerBase):
     ConceptGraph
     """
 
-    def __init__(self):
+    def __init__(self, complete=True):
         self.re_brackets = re.compile(" ?\([^)]\)")
+        self.complete = complete
 
     def compare_to_concept(self, element, concept):
         """Compares a given element to a concept.
@@ -331,8 +332,13 @@ class ConceptComparerStringMatch(ConceptComparerBase):
         """
         element = self.re_brackets.sub("", element)
         element = element.strip()
-        if concept in element:
-            return True
+        if self.complete:
+            if concept == element:
+                return True
+        else:
+            print(element)
+            if concept in element:
+                return True
         return False
 
 class ConceptComparerSpanishStem(ConceptComparerBase):
@@ -423,7 +429,7 @@ def spanish_swadesh_list(stemmed=True):
     return swadesh_entries
 
 def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
-    output_file=None):
+    output_file=None, complete=True):
     """
     This function extracts a wordlist from the quanthistling dictionaries.
     The package of dictionaries should be extracted to the current working
@@ -435,9 +441,10 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
 
     Parameters
     ----------
-    component : str
+    component : str or list
         The component for which to extract the dictionaries. "Witotoan", for
-        example.
+        example. This can also be a list of all bibtex_keys of the books today
+        be processed.
     use_profiles : bool
         Whether to apply orthography profiles or not. If true, than any
         dictionary for which there is no profile in lingpy will be skipped.
@@ -451,6 +458,10 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
     output_file: str
         The filename of the wordlist to output. If none is given, then the
         component will be used for the filename (e.g. "Witototan.csv").
+    complete : bool
+        Match concepts by exact match (e.g. "fuego" == "fuego") if True. If
+        False then the concepts might also be part of the entry (e.g. "fuego"
+            == "asar calentando algo encima del fuego a medio cocer.")
 
     Return
     ------
@@ -458,42 +469,47 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
         The filename of the output file.
 
     """
-    if not os.path.exists("sources.csv"):
-        try:
-            import requests
-        except:
-            print("Module 'requests' not found. I cannot download the data "
-                  "automatically for you.\n\nPlease download manually at:\n"
-                  "http://www.quanthistling.info/data/downloads/csv/data.zip")
-            return False
+    if type(component) is list:
+        component_sources = component
+    else:
+        if not os.path.exists("sources.csv"):
+            try:
+                import requests
+            except:
+                print("Module 'requests' not found. I cannot download the data "
+                      "automatically for you.\n\nPlease download manually at:\n"
+                      "http://www.quanthistling.info/data/downloads/csv/data.zip")
+                return False
 
-        r = requests.get(
-            "http://www.quanthistling.info/data/downloads/csv/data.zip")
-        with open("data.zip", "wb") as f:
-            f.write(r.content)
+            r = requests.get(
+                "http://www.quanthistling.info/data/downloads/csv/data.zip")
+            with open("data.zip", "wb") as f:
+                f.write(r.content)
 
-        z = zipfile.ZipFile("data.zip")
-        z.extractall()
+            z = zipfile.ZipFile("data.zip")
+            z.extractall()
 
-    sources = csv.reader(codecs.open("sources.csv", "r", "utf-8"),
-        delimiter="\t")
-    witotoan_sources = list()
-    for source in sources:
-        if source[5] == component and source[1] == "dictionary": # add for "ready"-only dicts: and source[3] == "True"
-            witotoan_sources.append(source[0])
+        sources = csv.reader(codecs.open("sources.csv", "r", "utf-8"),
+            delimiter="\t")
+        component_sources = list()
+        for source in sources:
+            # add for "ready"-only dicts: and source[3] == "True"
+            if source[5] == component and source[1] == "dictionary":
+                component_sources.append(source[0])
 
-    cm = ConceptComparerStringMatch()
+    cm = ConceptComparerStringMatch(complete)
     cg = ConceptGraph(concepts, iso_pivot, cm)
 
     for f in glob.glob("*.csv"):
-        if ("-" in f and f[:f.index("-")] in witotoan_sources) or \
-                ("." in f and f[:f.index(".")] in witotoan_sources):
+        if ("-" in f and f[:f.index("-")] in component_sources) or \
+                ("." in f and f[:f.index(".")] in component_sources):
             print("Adding {0}...".format(f))
             di = Dictionary(f)
             if use_profiles:
                 ortho_path = os.path.join(
-                    rcParams['_path'], 'data', 'orthography_profiles', "{0}.prf".format(
-                    f[:f.index("-")]))
+                    rcParams['_path'],
+                    'data', 'orthography_profiles', "{0}.prf".format(
+                        f[:f.index("-")]))
                 if os.path.exists(ortho_path):
                     if iso_pivot in di.head_iso:
                         di.tokenize(ortho_path, source="translation")
@@ -501,7 +517,8 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
                         di.tokenize(ortho_path)
                     cg.add_dictionary(di)
                 else:
-                    print("  Orthography profile not found, skipping dictionary.")
+                    print(
+                        "  Orthography profile not found, skipping dictionary.")
             else:
                 cg.add_dictionary(di)
 
