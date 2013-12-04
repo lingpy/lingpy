@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-11-24 23:09
+# modified : 2013-12-04 13:55
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-24"
+__date__="2013-12-04"
 
 # builtin
 import random
@@ -307,7 +307,7 @@ class LexStat(Wordlist):
                     if i < j:
                         
                         # add dictionary scores to the scoredict
-                        score = kw["model"](
+                        score = self.model(
                                 charA[charA.index('.')+1][0],
                                 charB[charB.index('.')+1][0]
                                 )
@@ -315,7 +315,7 @@ class LexStat(Wordlist):
                         matrix[j][i] = score
                     elif i == j:
                         # add dictionary scores to the scoredict
-                        score = kw["model"](
+                        score = self.model(
                                 charA[charA.index('.')+1][0],
                                 charB[charB.index('.')+1][0]
                                 )
@@ -335,7 +335,7 @@ class LexStat(Wordlist):
                     if i < j:
                         
                         # add dictionary scores to the scoredict
-                        score = kw["model"](
+                        score = self.model(
                                 charA[0],
                                 charB[0]
                                 )
@@ -343,7 +343,7 @@ class LexStat(Wordlist):
                         matrix[j][i] = score
                     elif i == j:
                         # add dictionary scores to the scoredict
-                        score = kw["model"](
+                        score = self.model(
                                 charA[0],
                                 charB[0]
                                 )
