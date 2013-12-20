@@ -1,16 +1,17 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-08 11:38
-# modified : 2013-11-24 15:36
+# modified : 2013-12-18 17:25
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-24"
+__date__="2013-12-18"
 
 import codecs
 from ..settings import rcParams
+from ..algorithm import misc
 
 try:
     import regex as re
@@ -46,17 +47,62 @@ def scorer2str(
     return out
 
 def msa2str(msa, wordlist=False, comment="#",
-        _arange='{stamp}{comment}\n{meta}{comment}\n{body}'):
+        _arange='{stamp}{comment}\n{meta}{comment}\n{body}', merge=False):
     """
     Function converts an MSA object into a string.
     """
 
     if 'stamp' in msa:
         stamp = msa['stamp']
-    elif hasattr('stamp', msa):
+    elif hasattr(msa, 'stamp'):
         stamp = msa.stamp
     else:
         stamp = ''
+    
+    def mergeit(m,alm,gap='-'):
+        """
+        Merge a given string according to the merging dictionary m.
+        """
+        new_alm = ['' for i in range(max(m.values())+1)]
+        for i,s in enumerate(alm):
+            
+            new_alm[m[i]] += s
+            if '-' in new_alm[m[i]] and len(new_alm[m[i]]) > 1:
+                new_alm[m[i]] = new_alm[m[i]].replace('-','')
+
+        return new_alm
+
+    meta = ''
+    
+    # define global vars for alignment and taxa for convenience
+    if wordlist or type(msa) == dict:
+        taxa = msa['taxa']
+        alms = msa['alignment']
+    else:
+        taxa = msa.taxa
+        alms = msa.alignment
+
+    alm_length = len(alms[0])
+
+    # add merge in output as feature
+    if hasattr(msa,'merge') or 'merge' in msa:
+        if merge:
+            try:
+                merger = msa['merge']
+            except:
+                merger = msa.merge
+            
+            new_alms = []
+
+            merges = [x for x in range(len(alms[0]))]
+            for alm in alms:
+                new_alms += [mergeit(merger,alm)]
+            alms = new_alms
+        else:
+            merger = dict([(i,i) for i in range(len(alms[0]))])
+    else:
+        merger = dict([(i,i) for i in range(len(alms[0]))])
+
 
     body = ''
 
@@ -66,7 +112,7 @@ def msa2str(msa, wordlist=False, comment="#",
 
         formatter = max([len(t) for t in msa['taxa']])
         #body += '# ' +msa['seq_id']+'\n'
-        for a,b,c in zip(msa['ID'],msa['taxa'],msa['alignment']):
+        for a,b,c in zip(msa['ID'], taxa, alms):
             body += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
             body += '\t'.join(c)+'\n'
         alm_len = len(c)
@@ -76,7 +122,7 @@ def msa2str(msa, wordlist=False, comment="#",
         formatter = max([len(t) for t in msa['taxa']])
         body += msa['dataset']+'\n'
         body += msa['seq_id']+'\n'
-        for a,b in zip(msa['taxa'],msa['alignment']):
+        for a,b in zip(taxa, alms): #,msa['alignment']):
             body += a.ljust(formatter,'.')+'\t'
             body += '\t'.join(b)+'\n'
         alm_len = len(b)
@@ -85,7 +131,7 @@ def msa2str(msa, wordlist=False, comment="#",
         formatter = max([len(t) for t in msa.taxa])
         body += msa.dataset+'\n'
         body += msa.seq_id+'\n'
-        for a,b in zip(msa.taxa,msa.alm_matrix):
+        for a,b in zip(taxa, alms):
             body += a.ljust(formatter,'.')+'\t'
             body += '\t'.join(b)+'\n'
         alm_len = len(b)
@@ -110,12 +156,17 @@ def msa2str(msa, wordlist=False, comment="#",
         consensus = msa.consensus
     else:
         consensus = False
-    
 
-    meta = ''
+    if 'reference' in msa:
+        reference = msa['reference']
+    elif hasattr(msa, 'reference'):
+        reference = msa.reference
+    else:
+        reference = False
 
     if wordlist:
-        meta += '0\t'+'COLUMNID'.ljust(formatter,'.')+'\t'+'\t'.join([str(i+1) for i in range(len(msa['alignment'][0]))])
+        meta += '0\t'+'COLUMNID'.ljust(formatter,'.')+'\t'+'\t'.join([str(i+1)
+            for i in range(alm_len)])
         meta += '\n#\n'
 
     if local:
@@ -129,26 +180,26 @@ def msa2str(msa, wordlist=False, comment="#",
                 tmp += ['*']
             else:
                 tmp += ['.']
-        meta += '\t'.join(tmp)+'\n'
+        meta += '\t'.join(mergeit(merger,tmp))+'\n'
     if swaps:
         if wordlist:
             meta += '{0}\t{1}\t'.format(0,'CROSSED'.ljust(formatter, '.'))
         else:
             meta += '{0}\t'.format('SWAPS'.ljust(formatter, '.'))
-        tmp = alm_len * ['.']
+        tmp = alm_length * ['.']
         for swap in swaps:
             a,b,c = swap
             tmp[a] = '+'
             tmp[b] = '-'
             tmp[c] = '+'
-        meta += '\t'.join(tmp)+'\n'
+        meta += '\t'.join(mergeit(merger, tmp, gap=''))+'\n'
 
     if consensus:
         if wordlist:
             meta += '{0}\t{1}\t'.format(0,'CONSENSUS'.ljust(formatter, '.'))
         else:
             meta += '{0}\t'.format('CONSE'.ljust(formatter, '.'))
-        meta += '\t'.join(consensus)+'\n'
+        meta += '\t'.join(mergeit(merger, consensus, gap=''))+'\n'
 
     return _arange.format(
             stamp=stamp,

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 13:10
-# modified : 2013-09-10 16:26
+# modified : 2013-12-18 17:25
 """
 Module provides basic functions for the reading of text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-09-10"
+__date__="2013-12-18"
 
 
 from .csv import csv2list
@@ -62,13 +62,13 @@ def _list2msa(
             idx = 0
         
         # check for specific id
-        if line[0] in  ['0', 'LOCAL', 'SWAPS', 'MERGE']:
+        if line[0] in  ['0', 'LOCAL', 'CROSSED', 'SWAPS', 'MERGE', 'COMPLEX',]:
             if line[idx] == 'LOCAL':
                 d['local'] = []
                 for j,x in enumerate(line[idx+1:]):
                     if x == '*':
                         d['local'] += [j]
-            elif line[idx] == 'SWAPS':
+            elif line[idx] in ['CROSSED', 'SWAPS']:
                 d['swaps'] = []
                 swapline = [x for x in line[idx+1:]]
                 j=0
@@ -82,14 +82,12 @@ def _list2msa(
                     else:
                         pass
                     j += 1
-            elif line[idx] == 'MERGE':
+            elif line[idx] in ['COMPLEX']:
                 d['merge'] = {}
                 mergeline = [x for x in line[idx+1:]]
-                k = 1
+                k = 0
                 merge = False
                 for j,m in enumerate(mergeline):
-                    if not merge:
-                        k += 1
 
                     if m == '<':
                         merge = True
@@ -97,8 +95,13 @@ def _list2msa(
                         merge = False
 
                     d['merge'][j] = k
+                    if not merge:
+                        k += 1
 
-        elif line[0] not in ['LOCAL','SWAPS','MERGE','0']:
+            else:
+                d[line[idx].lower()] = line[idx+1:]
+
+        elif line[0] not in ['LOCAL','SWAPS','MERGE','COMPLEX','0']:
             if ids:
                 try:
                     d['ID'] += [int(line[0])]

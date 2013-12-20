@@ -3740,7 +3740,7 @@ class PhyBo(Wordlist):
                 cbar_fraction    = rcParams['phybo_cbar_fraction'], 
                 cbar_pad         = rcParams['phybo_cbar_pad'], 
                 cbar_orientation = rcParams['phybo_cbar_orientation'], 
-                cbar_label       = rcParams['phybo_cbar_label'], 
+                cbar_label       = rcParams['phybo_cbar_label'],
                 vedgestyle       = rcParams['phybo_vedgestyle'], 
                 vedgecolor       = rcParams['phybo_vedgecolor'], 
                 vedgelinewidth   = rcParams['phybo_vedgelinewidth'], 
@@ -4331,7 +4331,7 @@ class PhyBo(Wordlist):
                     [zA,zB],
                     color='0.0',
                     linewidth=3,
-                    alpha = 0.5,
+                    alpha = 0.75,
                     zorder = zorder #100 * abs(xA-xB) + 100 * abs(yA-yB)
                     )
             #figsp.plot(
@@ -4723,6 +4723,7 @@ class PhyBo(Wordlist):
                 cbar_pad         = 0.1,
                 cbar_orientation = 'vertical',
                 cbar_label       = 'Inferred Links',
+                cbar_fontsize    = 10,
                 resolution = 'l',
                 table_text_color = 'black',
                 water_color = '0.2',
@@ -5016,10 +5017,10 @@ class PhyBo(Wordlist):
                 orientation = keywords['cbar_orientation'],
                 shrink      = keywords['cbar_shrink'],
                 fraction    = keywords['cbar_fraction'],
-                pad         = keywords['cbar_pad']
+                pad         = keywords['cbar_pad'],
                 )
         cbar.set_clim(1.0)
-        cbar.set_label(keywords['cbar_label'])
+        cbar.set_label(keywords['cbar_label'], fontsize=keywords['cbar_fontsize'])
         cbar.ax.set_yticklabels(
                 [
                     str(min(weights)),
@@ -5027,7 +5028,8 @@ class PhyBo(Wordlist):
                     str(int(max(weights) / 2)),
                     '',
                     str(max(weights))
-                    ]
+                    ],
+                fontsize=keywords['cbar_fontsize']
                 )
 
         # add the legend
