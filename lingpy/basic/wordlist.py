@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2013-11-13 10:42
+# modified : 2014-01-04 10:02
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-13"
+__date__="2014-01-04"
 
 import os
 import sys
@@ -473,23 +473,23 @@ class Wordlist(QLCParser):
 
         Note that this function returns 0 for missing values (concepts that
         don't have a word in the given language). If one wants to avoid this,
-        the 'flat' keyword should be set to c{True}.
+        the 'flat' keyword should be set to *True*.
         
         Select all words (orthographical representation) for the concept
         "Harry"::
         
             >>> wl.get_list(concept="Harry",entry="words")
-            [['hæri', 'haralt', 'gari', 'gari']]            
+            [['Harry', 'Harald', 'Гари', 'Гарi']]            
         
         Note that the values of the list that is returned are always
         two-dimensional
         lists, since it is possible that the original file contains synonyms
         (multiple words corresponding to the same concept). If one wants to
         have a flat representation of the entries, the 'flat' keyword should be
-        set to c{True}::
+        set to *True*::
 
             >>> wl.get_list(concept="Harry",entry="words",flat=True)
-            ['hæri', 'haralt', 'gari', 'gari']
+            ['hæri', 'haralt', 'gari', 'hari']
             
         See also
         --------
