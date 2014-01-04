@@ -25,7 +25,7 @@ specifies all entry types in a given dataset::
     5    leg         Bein          bain        German       3
     6    leg         leg           lɛg         English      4
     7    leg         нога          noga        Russian      5
-    8    leg         нога          noga        Ukrainian    5
+    8    leg         нога          noha        Ukrainian    5
     9    Woldemort   Waldemar      valdemar    German       6
     10   Woldemort   Woldemort     wɔldemɔrt   English      6
     11   Woldemort   Владимир      vladimir    Russian      6
@@ -33,7 +33,7 @@ specifies all entry types in a given dataset::
     9    Harry       Harald        haralt      German       7
     10   Harry       Harry         hæri        English      7
     11   Harry       Гарри         gari        Russian      7
-    12   Harry       Гаррi         gari        Ukrainian    7
+    12   Harry       Гаррi         hari        Ukrainian    7
 
 This format can be further extended by adding key-value pairs in the lines before the header, such
 as, for example, information regarding the author, the data, or general notes:: 

@@ -54,7 +54,7 @@ all different possible **entry-types** a word can have, just as in the file `har
     5    leg         Bein          bain        German       3
     6    leg         leg           lɛg         English      4
     7    leg         нога          noga        Russian      5
-    8    leg         нога          noga        Ukrainian    5
+    8    leg         нога          noha        Ukrainian    5
     9    Woldemort   Waldemar      valdemar    German       6
     10   Woldemort   Woldemort     wɔldemɔrt   English      6
     11   Woldemort   Владимир      vladimir    Russian      6
@@ -62,7 +62,7 @@ all different possible **entry-types** a word can have, just as in the file `har
     13    Harry       Harald        haralt      German       7
     14   Harry       Harry         hæri        English      7
     15   Harry       Гарри         gari        Russian      7
-    16   Harry       Гаррi         gari        Ukrainian    7
+    16   Harry       Гаррi         hari        Ukrainian    7
 
 This format is, of course, much more redundant, than the word list format, but
 it allows to display multiple entry-types for the counterparts of a given
@@ -85,8 +85,8 @@ is::
 
     >>> wl.ipa
     [['wɔldemɔrt', 'valdemar', 'vladimir', 'volodimir'],
-     ['hæri', 'haralt', 'gari', 'gari'],
-     ['lɛg', 'bain', 'noga', 'noga'],
+     ['hæri', 'haralt', 'gari', 'hari'],
+     ['lɛg', 'bain', 'noga', 'noha'],
      ['hænd', 'hant', 'ruka', 'ruka']]
 
 The same for cognates::
@@ -131,7 +131,7 @@ Other entry-types can be added::
      [['l', 'ɛ', 'g'],
       ['b', 'ai', 'n'],
       ['n', 'o', 'g', 'a'],
-      ['n', 'o', 'g', 'a']],
+      ['n', 'o', 'h', 'a']],
      [['h', 'æ', 'n', 'd'],
       ['h', 'a', 'n', 't'],
       ['r', 'u', 'k', 'a'],
@@ -139,7 +139,7 @@ Other entry-types can be added::
      [['h', 'æ', 'r', 'i'],
       ['h', 'a', 'r', 'a', 'l', 't'],
       ['g', 'a', 'r', 'i'],
-      ['g', 'a', 'r', 'i']]]
+      ['h', 'a', 'r', 'i']]]
     
 The wordlist.rc file
 ----------------------
