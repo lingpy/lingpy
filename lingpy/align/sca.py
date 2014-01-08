@@ -175,7 +175,7 @@ class MSA(Multiple):
 
         # redefine the sequences of the Multiple class
         class_strings = [tokens2class(
-            seq.split('.'),
+            seq.split(' '),
             self.model,
             stress=keywords['stress']) for seq in self.seqs]
         
