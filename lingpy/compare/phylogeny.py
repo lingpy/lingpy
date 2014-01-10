@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2013-11-21 22:53
+# modified : 2014-01-10 10:40
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2013-11-21"
+__date__="2014-01-10"
 
 # basic imports
 import os
@@ -492,11 +492,11 @@ class PhyBo(Wordlist):
             # XXX TODO
         
         # if it is explicitly defined, try to load that file
-        elif not hasattr(self,'tree'):
+        else: #not hasattr(self,'tree'):
             self.tree = cg.LoadTree(tree)
             if rcParams["verbose"]: print("[i] Loaded the tree.")
-        else:
-            pass
+        #else:
+        #    pass
         
         # if no good topology is given, create it automatically, using
         # the radial layout function
@@ -4702,50 +4702,50 @@ class PhyBo(Wordlist):
         """
         # set defaults
         defaults = dict(
-                latex_preamble   = [],
-                figsize          = (10,10),
-                colormap         = mpl.cm.jet,
-                filename         = self.dataset,
-                linescale        = 1.0,
-                maxweight        = False,
-                xlim             = 5,
-                ylim             = 5,
-                xlimr            = False,
-                xliml            = False,
-                ylimt            = False,
-                ylimb            = False,
-                left             = 0.02,
-                right            = 0.98,
-                top              = 1.00,
-                bottom           = 0.00,
-                cbar_shrink      = 0.55,
-                cbar_fraction    = 0.1,
-                cbar_pad         = 0.1,
-                cbar_orientation = 'vertical',
-                cbar_label       = 'Inferred Links',
-                cbar_fontsize    = 10,
-                resolution = 'l',
-                table_text_color = 'black',
-                water_color = '0.2',
-                lw = 2,
-                cmap_max = 250,
-                continent_color = '0.9',
-                projection = 'merc',
-                legend_size = 18,
-                linewidth = 4,
-                min_lon = False,
-                max_lon = False,
-                min_lat = False,
-                max_lat = False,
+                latex_preamble     = [],
+                figsize            = (10,10),
+                colormap           = mpl.cm.jet,
+                filename           = self.dataset,
+                linescale          = 1.0,
+                maxweight          = False,
+                xlim               = 5,
+                ylim               = 5,
+                xlimr              = False,
+                xliml              = False,
+                ylimt              = False,
+                ylimb              = False,
+                left               = 0.02,
+                right              = 0.98,
+                top                = 1.00,
+                bottom             = 0.00,
+                cbar_shrink        = 0.55,
+                cbar_fraction      = 0.1,
+                cbar_pad           = 0.1,
+                cbar_orientation   = 'vertical',
+                cbar_label         = 'Inferred Links',
+                cbar_fontsize      = 10,
+                resolution         = 'l',
+                table_text_color   = 'black',
+                water_color        = '0.2',
+                lw                 = 2,
+                cmap_max           = 250,
+                continent_color    = '0.9',
+                projection         = 'merc',
+                legend_size        = 18,
+                linewidth          = 4,
+                min_lon            = False,
+                max_lon            = False,
+                min_lat            = False,
+                max_lat            = False,
                 table_column_width = [0.025,0.1325],
-                coastline_color = "0.5",
-                table_location = 3,
-                legend_location = [0.85,0.02],
-                table_cell_height = 0.024,
-                table_text_size = 10,
-                alpha = 0.75,
-                cmap_min = 30,
-                markersize = 20
+                coastline_color    = "0.5",
+                table_location     = 3,
+                legend_location    = [0.85,0.02],
+                table_cell_height  = 0.024,
+                table_text_size    = 10,
+                alpha              = 0.75,
+                cmap_min           = 30,
+                markersize         = 20
                 )
 
         # load the rc-file XXX add internal loading later
