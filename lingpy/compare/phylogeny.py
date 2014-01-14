@@ -477,19 +477,23 @@ class PhyBo(Wordlist):
 
         # Load the tree, if it is not defined, assume that the treefile has the
         # same name as the dataset
-        if not tree and not hasattr(self,'tree'):
-            # try to load the tree first
-            try:
-                self.tree = cg.LoadTree(dataset+'.tre')
-            except:
-                # create it otherwise
-                self.calculate(
-                        'tree',
-                        ref=ref,
-                        tree_calc=tree_calc,
-                        )
-                if rcParams["verbose"]: print("[i] Tree-file was not found, creating it now...")
-            # XXX TODO
+        if not tree:
+            if hasattr(self, 'tree'):
+                pass
+            else:
+                #elif not tree and not hasattr(self,'tree'):
+                # try to load the tree first
+                try:
+                    self.tree = cg.LoadTree(dataset+'.tre')
+                except:
+                    # create it otherwise
+                    self.calculate(
+                            'tree',
+                            ref=ref,
+                            tree_calc=tree_calc,
+                            )
+                    if rcParams["verbose"]: print("[i] Tree-file was not found, creating it now...")
+                # XXX TODO
         
         # if it is explicitly defined, try to load that file
         else: #not hasattr(self,'tree'):
