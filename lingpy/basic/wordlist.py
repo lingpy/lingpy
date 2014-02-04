@@ -1430,6 +1430,6 @@ class Wordlist(QLCParser):
             Tokenization target.
 
         """
-        self._tokenize(orthography_profile, source, target, column,
-            **keywords)
+        self._tokenize(orthography_profile=orthography_profile, source=source, target=target,
+                column=column, **keywords)
 
