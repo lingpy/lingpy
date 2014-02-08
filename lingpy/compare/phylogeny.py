@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2014-01-10 10:40
+# modified : 2014-02-07 13:01
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2014-01-10"
+__date__="2014-02-07"
 
 # basic imports
 import os
@@ -497,10 +497,8 @@ class PhyBo(Wordlist):
         
         # if it is explicitly defined, try to load that file
         else: #not hasattr(self,'tree'):
-            self.tree = cg.LoadTree(tree)
+            self._meta['tree'] = cg.LoadTree(tree)
             if rcParams["verbose"]: print("[i] Loaded the tree.")
-        #else:
-        #    pass
         
         # if no good topology is given, create it automatically, using
         # the radial layout function
@@ -1612,8 +1610,17 @@ class PhyBo(Wordlist):
 
         # append stuff to acs
         self.acs[glm] = {}
+        if keywords['proto']:
+            paps = [self[k,self._pap_string] for k in self]
+            protos = [self[k,keywords['proto']] for k in self]
+            p2p = dict(zip(paps,protos))
+            pap2protos = lambda x: p2p[x]
+        else:
+            pap2protos = lambda x: x #dict(zip(paps,paps))
+
+
         for k,v in acs.items():
-            self.acs[glm][k] = [(p,self.pap2con[p],p) for p in v]
+            self.acs[glm][k] = [(p,self.pap2con[p],pap2protos(p)) for p in v]
 
         #-># define concepts for convenience
         #->concepts = self.concepts # XXX do we need this? XXX
@@ -2024,7 +2031,7 @@ class PhyBo(Wordlist):
 
         # append to available models
         self.gls['mixed'] = scenarios
-        self.get_AVSD('mixed')
+        self.get_AVSD('mixed', **kw)
         
         # write the results to file
         # make the folder for the data to store the stats
@@ -2222,8 +2229,6 @@ class PhyBo(Wordlist):
     def get_ACS(
             self,
             glm,
-            proto = False,
-            force = False,
             **keywords
             ):
         """
@@ -2231,8 +2236,8 @@ class PhyBo(Wordlist):
 
         """
         defaults = dict(
-                proto = proto,
-                force = force,
+                proto = False,
+                force = False,
                 filename = os.path.join(self.dataset+'_phybo','acs-'+glm),
                 fileformat = 'csv'
                 )
@@ -3332,7 +3337,8 @@ class PhyBo(Wordlist):
                 "push_gains" : True,
                 "missing_data" : 0,
                 "aligned_output" : False,
-                "homoplasy" : 0.0,
+                "homoplasy" : 0.05,
+                'evaluation' : 'mwu'
                 }
 
         for key in defaults:
@@ -3496,7 +3502,7 @@ class PhyBo(Wordlist):
                     output_gml=output_gml,
                     tar=tar,
                     leading_model = glm,
-                    evaluation = 'mwu'
+                    **keywords
                     )
 
             # set the mixed model as the best one
@@ -3724,8 +3730,9 @@ class PhyBo(Wordlist):
             plt.switch_backend('TkAgg')
 
         defaults = dict(
-                figsize          = rcParams['phybo_figsize'], 
+                figsize          = "optimal", #rcParams['phybo_figsize'], 
                 figure_width     = 10,
+                figure_scale     = 1,
                 colormap         = mpl.cm.jet,
                 filename         = self.dataset,
                 linescale        = rcParams['phybo_linescale'], 
@@ -3776,9 +3783,9 @@ class PhyBo(Wordlist):
             w = maxX + abs(minX)
             h = maxY + abs(minY)            
             keywords['figsize'] = (
-                    keywords['figure_width'], 
-                    h / (w / keywords['figure_width']
-                        )
+                    keywords['figure_width'] + keywords['figure_scale'], 
+                    h / (w / (keywords['figure_width'])
+                        ) 
                     )
         
         if keywords['latex_preamble']:

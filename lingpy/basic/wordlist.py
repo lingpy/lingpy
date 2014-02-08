@@ -1048,16 +1048,21 @@ class Wordlist(QLCParser):
                             idx = self._header[key]
                             stmts += ["line[{0}] ".format(idx)+value]
 
+                if rcParams['debug']: print("calculated what should be excluded")
+
                 # get the data
                 out = {}
 
                 for key,line in self._data.items():
+                    if rcParams['debug']: print(key)
+                    
                     if rows:
                         if eval(" and ".join(stmts)):
                             out[key] = [line[i] for i in indices]
                     else:
                         out[key] = [line[i] for i in indices]
-
+                
+                if rcParams['debug']: print("passing data to wl2qlc")
                 wl2qlc(
                         header,
                         out,
