@@ -142,7 +142,7 @@ setting the **subset** keyword to **True** and pass the data that we want as a l
 In order to have a nice format with all words corresponding to the same concept in the same block,
 we specify the keyword **formatter** as 'concepts'::
 
-  >>> lex.output('qlc', filename='DOGON_lexstat', subset=True, formatter='concepts', cols=['concepts', 'taxa', 'counterpart', 'tokens', 'lexstatid'])
+  >>> lex.output('qlc', filename='DOGON_lexstat', subset=True, formatter='concepts', cols=['concepts', 'taxa', 'counterpart', 'tokens', 'lexstatid'], ignore=["scorer"])
 
 This produces the file DOGON_lexstat.qlc_ in our folder.
 
@@ -204,13 +204,13 @@ different weights to gain and loss events and searches
 for the most parsimonious scenario. As a **mode**, we chose 'mixed'. This will process the data on
 an item-basis, searching for the best solution for each individual concept in our data::
 
-  >>> tre.analyze(runs="weighted", mode="mixed")
+  >>> tre.analyze(runs="weighted")
 
 This calculation will also take some time. Once it is finished, we can plot the resulting Minimal
 Lateral Network. Note that this will only work if Matplotlib is installed on your system::
   
   >>> tre.get_MLN(tre.best_model)
-  >>> tre.plot_MLN(filename="DOGON", fileformat="SVG")
+  >>> tre.plot_MLN(tre.best_model, filename="DOGON", fileformat="SVG")
 
 As a result, the following network plot of the data will appear in the working directory:
 

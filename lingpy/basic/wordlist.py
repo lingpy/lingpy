@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2014-01-04 10:02
+# modified : 2014-02-13 12:14
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-01-04"
+__date__="2014-02-13"
 
 import os
 import sys
@@ -966,7 +966,6 @@ class Wordlist(QLCParser):
                     entry=keywords['entry'],
                     missing=keywords['missing']
                     )
-            print('ok')
             if fileformat == 'paps.nex':
                 pap2nex(
                         self.taxa,

@@ -639,3 +639,51 @@ def msa2tex(
     out.write(tex)
     out.close()
     if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.tex'))
+
+
+def tokens2html(
+        string,
+        swaps = [],
+        tax_len = None,
+        path = '',
+        template = ''
+        ):
+    """
+    Function converts an (aligned) string into colored html-format.
+
+    """
+    # set the tr-line
+    tr = '<tr class="msa">\n{0}\n</tr>'
+
+    # get the percentage scaling factor
+    perc = int(80 / len(string) + 0.5)
+
+    # get vals for residue and swaps
+    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
+            '<font color="{2}">{0}</font></td>\n'
+    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
+            'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
+
+    # start with filling the taxon
+    out = '<table>'
+    
+    # go on with the colors
+    for i,char in enumerate(string):
+        try:
+            c = rcParams['_color'][char]
+            fg = '#000000'
+        except:
+            try:
+                c = rcParams['_color'][char[0]]
+                fg = '#000000'
+            except:
+                input("Unknown character '"+char+"', press ANY key to continue. " )
+                c = '#ffffff'
+                fg = '#eb3410'
+
+        if i in swaps:
+            out += td_swap.format(char,c,fg)
+        else:
+            out += td_residue.format(char,c,fg)
+
+    return out+'</table>'

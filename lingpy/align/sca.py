@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2013-11-23 09:11
+# modified : 2014-02-14 14:46
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-11-23"
+__date__="2014-02-14"
 
 import numpy as np
 import re

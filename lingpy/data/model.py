@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 23:14
-# modified : 2013-10-02 20:31
+# modified : 2014-01-16 08:32
 """
 Module for handling sequence models.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-02"
+__date__="2014-01-16"
 
 
 import re
@@ -78,17 +78,20 @@ class Model(object):
     Examples
     --------
     When loading LingPy, the models ``sca``, ``asjp``, ``dolgo``, and ``art``
-    are automatically loaded, and they are accessible as global variables via
-    their names:
+    are automatically loaded, and they are accessible via the
+    :py:func:`~lingpy.settings.rc` function for
+    global settings:
 
     >>> from lingpy import *
+    >>> rc('asjp')
+    <sca-model "asjp">
 
-    Define a couple of standard models for convenience.
-
-    >>> asjp = Model('asjp')
-    >>> sca = Model('sca')
-    >>> dolgo = Model('dolgo')
-    >>> art = model('art')
+    Define variables for the standard models for convenience:
+    
+    >>> asjp = rc('asjp')
+    >>> sca = rc('sca')
+    >>> dolgo = rc('dolgo')
+    >>> art = rc('art')
 
     Check, how the letter ``a`` is converted in the various models:
 
