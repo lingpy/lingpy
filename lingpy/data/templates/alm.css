@@ -1,0 +1,11 @@
+td.char {
+	width: 30px;
+	text-align: center;
+	color: white;
+	font-weight: bold;
+}
+
+.mybut {
+	background-color: #b9d9f2;
+}
+

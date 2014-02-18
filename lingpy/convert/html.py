@@ -131,6 +131,27 @@ def alm2html(
                 'utf-8'
                 ).read()
 
+    css = codecs.open(
+            os.path.join(
+                rcParams['_path'],
+                'data',
+                'templates',
+                'alm.css'
+                ),
+            'r',
+            'utf-8'
+            ).read()
+    js = codecs.open(
+            os.path.join(
+                rcParams['_path'],
+                'data',
+                'templates',
+                'alm.js'
+                ),
+            'r',
+            'utf-8'
+            ).read()
+
 
     # check for windows-compatibility
     data = data.replace(os.linesep,'\n')[:-1]
@@ -160,11 +181,6 @@ def alm2html(
             confB = int(255 * conf)
             conf = (confA, confA, confA)
         return conf
-
-        #if conf <= 0:
-        #    return 0.0
-        #else:
-        #    return conf / 5
 
     def html2rgb(colorstring):
         """ convert #RRGGBB to an (R, G, B) tuple """
@@ -238,7 +254,6 @@ def alm2html(
                 l[4:]]).replace('-', '')
 
             tmp += '<td>{0}</td>\n'.format(ipa_string)
-            #tmp += '<td>{0}</td>\n'.format(''.join(l[4:]).replace('-',''))
             tmp += '<td style="background-color:{0}">'.format(colors[abs(int(l[0]))])
             tmp += '<table style="background-color:{0}">\n'.format(colors[abs(int(l[0]))])
             tmp += '<tr>\n{0}\n</tr>\n</table>\n'
@@ -282,39 +297,34 @@ def alm2html(
                         except:
                             c = '#ffffff'
                             error = True
-
-                    # convert color to rgb
-                    r,g,b = html2rgb(c)
                     
-                    alm += '<td style="width:30px;text-align:center;'
-                    if error:
-                        #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
-                        #alm += 'color:red;font-weight:bold;"'
-                        alm += 'border: 6px solid rgb({0[0]},{0[1]},{0[2]});'.format(rgb)
-                        alm += 'background-color:{0};'.format(c)
-
-                        #alm += 'opacity:{0:.2f}"'.format(conf)
-                        alm += '>{0}</td>'.format(char)
-                       
+                    # same for dolgopolsky sound-class type
+                    if char == '-':
+                        d = 'dolgo_X'
                     else:
-                        #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
+                        try:
+                            d = 'dolgo_'+rcParams['dolgo'][char]
+                        except:
+                            try:
+                                d = 'dolgo_'+rcParams['dolgo'][char[0]]
+                            except:
+                                d = 'dolgo_unknown'
+                    
+                    alm += '<td class="char" confidence_color="{0}" confidence_value={1} " '.format(
+                            "rgb({0[0]},{0[1]},{0[2]})".format(rgb),
+                            conf
+                            )
+                            
+                            
+                    alm += 'class_color="{0}" class_name="{1}" char="{2}" '.format(c,d,char)
+                    alm += 'style="background-color:{0};'.format(c)
+                    if error:
                         
-                        alm += 'border: 5px solid rgb({0[0]},{0[1]},{0[2]});'.format(rgb)
-                        alm += 'background-color:{0};'.format(c)
-
-                        #alm += 'border: 5px solid {0};'.format(c)
-                        #alm += 'background-color: rgba(0,0,0,{0:.2f});'.format(conf)
+                        alm += 'color:red;">{0}</td>'.format(char)
+                         
+                    else:
                         
-                        if conf <= 50:
-                            alm += 'color:white;'
-                        else:
-                            alm += 'color:white;'
-                        alm += 'font-weight:bold;"'
-                        alm += '>'
-                        alm += '<div id="popup">'
-                        alm += '<div id="char">{0}</div>'.format(char)
-                        alm += '<div id="text">{0}</div></div>'.format(conf)
-                        alm += '</td>'
+                        alm += '">{0}</td>'.format(char)
             else:
                 alm = '<td style="border-color:{1};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
             
@@ -347,6 +357,8 @@ def alm2html(
             title = title,
             table = tmp_str,
             dataset = dataset,
+            javascript = js,
+            css = css,
             **keywords
             )
 
