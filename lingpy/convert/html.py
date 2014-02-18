@@ -261,9 +261,17 @@ def alm2html(
                     # check for confidence scores
                     if '<' in char:
                         char,conf = char.split('<')
-                        conf = normalize_confidence(conf)
+                        rgb = normalize_confidence(conf)
+                        conf = float(conf)
+                        if conf > 5:
+                            conf = 1.0
+                        elif conf <= 0:
+                            conf = 0.0
+                        else:
+                            conf = conf / 5
+                        conf = int(100 * conf + 0.5)
                     else:
-                        char,conf = char,(255,255,255)
+                        char,conf,rgb = char,(255,255,255),0.0
 
                     error = False
                     try:
@@ -282,7 +290,7 @@ def alm2html(
                     if error:
                         #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
                         #alm += 'color:red;font-weight:bold;"'
-                        alm += 'border: 6px solid rgb({0[0]},{0[1]},{0[2]});'.format(conf)
+                        alm += 'border: 6px solid rgb({0[0]},{0[1]},{0[2]});'.format(rgb)
                         alm += 'background-color:{0};'.format(c)
 
                         #alm += 'opacity:{0:.2f}"'.format(conf)
@@ -291,29 +299,24 @@ def alm2html(
                     else:
                         #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
                         
-                        alm += 'border: 5px solid rgb({0[0]},{0[1]},{0[2]});'.format(conf)
+                        alm += 'border: 5px solid rgb({0[0]},{0[1]},{0[2]});'.format(rgb)
                         alm += 'background-color:{0};'.format(c)
 
                         #alm += 'border: 5px solid {0};'.format(c)
                         #alm += 'background-color: rgba(0,0,0,{0:.2f});'.format(conf)
                         
-                        #alm += 'background-color:rgba(0,0,0,{0:.2f});'.format(conf)
-                        if conf[0] <= 255/2: #0.5:
+                        if conf <= 50:
                             alm += 'color:white;'
                         else:
                             alm += 'color:white;'
-                        #alm += 'color:white;' #.format(c)
                         alm += 'font-weight:bold;"'
-                        #alm += 'opacity:{0:.2f}"'.format(conf)
-                        #alm += '><span style="font-weight:bold;opacity:1.0;'
-                        #if conf <= 0.5:
-                        #    alm += 'color:black">'
-                        #else:
-                        #    alm += 'color:white">'
-                        alm += '>{0}</td>'.format(char)
-                        #alm += '>{0}</td>'.format(char)
+                        alm += '>'
+                        alm += '<div id="popup">'
+                        alm += '<div id="char">{0}</div>'.format(char)
+                        alm += '<div id="text">{0}</div></div>'.format(conf)
+                        alm += '</td>'
             else:
-                alm = '<td style="border-color:{0};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
+                alm = '<td style="border-color:{1};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
             
             # format the alignment
             tmp = tmp.format(alm)
