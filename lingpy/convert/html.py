@@ -148,12 +148,45 @@ def alm2html(
     # create the outstring
     tmp_str = ''
 
+    def normalize_confidence(conf):
+
+        conf = float(conf)
+
+        if conf <= 0:
+            conf = (255,255,255)
+        else:
+            conf = conf / 5
+            confA = int(255 - (255 * conf))
+            confB = int(255 * conf)
+            conf = (confA, confA, confA)
+        return conf
+
+        #if conf <= 0:
+        #    return 0.0
+        #else:
+        #    return conf / 5
+
+    def html2rgb(colorstring):
+        """ convert #RRGGBB to an (R, G, B) tuple """
+        
+        # code taken from
+        # http://code.activestate.com/recipes/266466-html-colors-tofrom-rgb-tuples/
+        colorstring = colorstring.strip()
+        if colorstring[0] == '#': colorstring = colorstring[1:]
+        if len(colorstring) != 6:
+            raise ValueError("input #{0} is not in #RRGGBB format".format(colorstring))
+        r, g, b = colorstring[:2], colorstring[2:4], colorstring[4:]
+        r, g, b = [int(n, 16) for n in (r, g, b)]
+        return (r, g, b)
+
     for block in blocks[1:]:
         lines = block.split('\n')
         
         m = []
+        confs = []
         for l in lines:
-            m.append(l.split('\t'))
+            if not l.startswith('@'):
+                m.append(l.split('\t'))
         
         # create colordict for different colors
         dc = len(set([l[0] for l in m]))
@@ -199,7 +232,13 @@ def alm2html(
             # assign the cognate id
             tmp = '<td>{0}</td>\n'.format(l[0])
             tmp += '<td>{0}</td>\n'.format(l[1].strip('.'))
-            tmp += '<td>{0}</td>\n'.format(''.join(l[4:]).replace('-',''))
+
+            # check alignments for confidence scores
+            ipa_string = ''.join([cell.split('<')[0] for cell in
+                l[4:]]).replace('-', '')
+
+            tmp += '<td>{0}</td>\n'.format(ipa_string)
+            #tmp += '<td>{0}</td>\n'.format(''.join(l[4:]).replace('-',''))
             tmp += '<td style="background-color:{0}">'.format(colors[abs(int(l[0]))])
             tmp += '<table style="background-color:{0}">\n'.format(colors[abs(int(l[0]))])
             tmp += '<tr>\n{0}\n</tr>\n</table>\n'
@@ -215,9 +254,17 @@ def alm2html(
                     cognate_set = True
 
             if cognate_set: #len(l[4:]) > 1:
+
                 alm = ''
                 for char in l[4:]:
-                    char = char
+
+                    # check for confidence scores
+                    if '<' in char:
+                        char,conf = char.split('<')
+                        conf = normalize_confidence(conf)
+                    else:
+                        char,conf = char,(255,255,255)
+
                     error = False
                     try:
                         c = rcParams['_color'][char]
@@ -225,14 +272,46 @@ def alm2html(
                         try:
                             c = rcParams['_color'][char[0]]
                         except:
-                            c = 'white'
+                            c = '#ffffff'
                             error = True
+
+                    # convert color to rgb
+                    r,g,b = html2rgb(c)
+                    
                     alm += '<td style="width:30px;text-align:center;'
                     if error:
-                        alm += 'background-color:{0};color:red;font-weight:bold">{1}</td>'.format(c,char)
+                        #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
+                        #alm += 'color:red;font-weight:bold;"'
+                        alm += 'border: 6px solid rgb({0[0]},{0[1]},{0[2]});'.format(conf)
+                        alm += 'background-color:{0};'.format(c)
+
+                        #alm += 'opacity:{0:.2f}"'.format(conf)
+                        alm += '>{0}</td>'.format(char)
                        
                     else:
-                        alm += 'background-color:{0};color:white;font-weight:bold;">{1}</td>'.format(c,char)
+                        #alm += 'background-color:rgba({0},{1},{2},{3:.2f});'.format(r,g,b,conf)
+                        
+                        alm += 'border: 5px solid rgb({0[0]},{0[1]},{0[2]});'.format(conf)
+                        alm += 'background-color:{0};'.format(c)
+
+                        #alm += 'border: 5px solid {0};'.format(c)
+                        #alm += 'background-color: rgba(0,0,0,{0:.2f});'.format(conf)
+                        
+                        #alm += 'background-color:rgba(0,0,0,{0:.2f});'.format(conf)
+                        if conf[0] <= 255/2: #0.5:
+                            alm += 'color:white;'
+                        else:
+                            alm += 'color:white;'
+                        #alm += 'color:white;' #.format(c)
+                        alm += 'font-weight:bold;"'
+                        #alm += 'opacity:{0:.2f}"'.format(conf)
+                        #alm += '><span style="font-weight:bold;opacity:1.0;'
+                        #if conf <= 0.5:
+                        #    alm += 'color:black">'
+                        #else:
+                        #    alm += 'color:white">'
+                        alm += '>{0}</td>'.format(char)
+                        #alm += '>{0}</td>'.format(char)
             else:
                 alm = '<td style="border-color:{0};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
             

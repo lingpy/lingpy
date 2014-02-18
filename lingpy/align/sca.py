@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2014-02-14 14:46
+# modified : 2014-02-18 10:49
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2014-02-14"
+__date__="2014-02-18"
 
 import numpy as np
 import re
@@ -33,7 +33,7 @@ from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
 from .multiple import Multiple
 from .pairwise import Pairwise
 from ..algorithm import misc
-
+from ._align import confidence
 
 class MSA(Multiple):
     """
@@ -964,7 +964,7 @@ class Alignments(Wordlist):
                         **kw
                         )
 
-                kw['sonar'] = sonars
+                kw['sonars'] = sonars
                 kw['classes'] = False
             
             if kw['method'] == 'progressive':
@@ -1058,6 +1058,26 @@ class Alignments(Wordlist):
             sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
             sys.stdout.flush()
 
+    def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
+        """
+        Function creates confidence scores for a given set of alignments.
+
+        Parameters
+        ----------
+        scorer : :py:class:`~lingpy.algorithm._misc.ScoreDict`
+            A *ScoreDict* object which gives similarity scores for all segments in
+            the alignment.
+        ref : str (default="lexstatid")
+            The reference entry-type, referring to the cognate-set to be used for
+            the analysis.
+        gap_weight : {loat} (default=1.0)
+            Determine the weight assigned to matches containing gaps.
+
+        """
+        
+        confidence.get_confidence(self, scorer, ref, gap_weight)
+        if rcParams['verbose']:
+            print("[i] Successfully calculated confidence values for alignments.")
                     
     def __len__(self):
         return len(self.msa)
@@ -1076,13 +1096,15 @@ class Alignments(Wordlist):
                 dataset = self.filename,
                 show = False,
                 filename = self.filename,
-                ref = rcParams['ref']
+                ref = rcParams['ref'],
+                confidence = False
                 )
         for k in defaults:
             if k not in keywords:
                 keywords[k] = defaults[k]
 
-        self.output('alm',ref=keywords['ref'],filename='.tmp')
+        self.output('alm',ref=keywords['ref'],filename='.tmp',
+                confidence=keywords['confidence'])
         html.alm2html(
                 '.tmp.alm',
                 **keywords
@@ -1302,6 +1324,7 @@ class Alignments(Wordlist):
                 filename = rcParams['filename'],
                 style = "id",
                 defaults = False,
+                confidence = False
                 )
         kw.update(keywords)
         if kw['defaults']: return kw
@@ -1356,15 +1379,26 @@ class Alignments(Wordlist):
                             cid = concept2id[concept]
                             # add this line for alignments containing loans
                             real_cogid = self[self.msa[ref][cogid]['ID'][i],ref]
+                            if not kw['confidence']:
+                                alm_string = '\t'.join(alm)
+                            else:
+                                confs = ['{0:.2f}'.format(x) for x in
+                                        self.msa[ref][cogid]['confidence'][i]]
+                                alm_string = '\t'.join(
+                                        [a+'<'+b for a,b in zip(alm,confs)]
+                                        )
+
                             out += '\t'.join(
                                 [
                                     str(real_cogid),
                                     taxon,
                                     concept,
                                     str(cid),
-                                    '\t'.join(alm)
+                                    alm_string, #'\t'.join(alm)
                                     ]
                                 )+'\n'
+
+
                     else:
                         this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx,'taxon']

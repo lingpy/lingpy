@@ -234,6 +234,7 @@ class Multiple(object):
             model = None,
             classes = True,
             sonar = True,
+            sonars = False,
             scoredict = {}
             ):
         """
@@ -310,8 +311,8 @@ class Multiple(object):
         # ->         self.ext2int[v] = k
 
         # store sonars if they are passed as a list
-        if type(sonar) == list:
-            self._sonars = [sonar[key] for key in keys]
+        if sonar and sonars:# == list:
+            self._sonars = [sonars[key] for key in keys]
             # -> self._sonars = [0 for i in range(len(sonar))]
             # -> for i in range(len(self._sonars)):
             # ->     self._sonars[self.ext2int[i]] = sonar[i]
@@ -966,7 +967,8 @@ class Multiple(object):
                 restricted_chars = rcParams['restricted_chars'],
                 classes          = rcParams['align_classes'],
                 sonar            = rcParams['align_sonar'],
-                scoredict           = rcParams['align_scorer'],
+                sonars           = False,
+                scoredict        = rcParams['align_scorer'],
                 gop              = rcParams['align_gop'],
                 gap_weight       = rcParams['align_gap_weight']
                 )
@@ -994,7 +996,8 @@ class Multiple(object):
                 model,
                 kw['classes'],
                 kw['sonar'],
-                kw['scoredict']
+                kw['sonars'],
+                kw['scoredict'],
                 )
 
         # set the scorer
@@ -1127,9 +1130,10 @@ class Multiple(object):
                 restricted_chars = rcParams['restricted_chars'],
                 classes          = rcParams['align_classes'],
                 sonar            = rcParams['align_sonar'],
-                scorer           = rcParams['align_scorer'],
+                scoredict        = rcParams['align_scorer'],
                 gop              = rcParams['align_gop'],
-                gap_weight       = rcParams['align_gap_weight']
+                gap_weight       = rcParams['align_gap_weight'],
+                sonars           = False,
                 )
         kw.update(keywords)
 
@@ -1156,7 +1160,13 @@ class Multiple(object):
         self.params = '_'.join(params)
         
         # set the model
-        self._set_model(kw['model'],kw['classes'],kw['sonar'],kw['scorer'])
+        self._set_model(
+                kw['model'],
+                kw['classes'],
+                kw['sonar'],
+                kw['sonars'],
+                kw['scoredict']
+                )
         
         # set the score mode to 'classes'
         self._set_scorer('classes')

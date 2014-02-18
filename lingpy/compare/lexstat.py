@@ -1719,10 +1719,11 @@ class LexStat(Wordlist):
             gop = -2,
             scale = 0.5,
             factor = 0.3,
-            restricted_chars = 'T_'
+            restricted_chars = 'T_',
+            aggregate = True
             ):
         """
-        Method calculates randoms scores for unrelated words in a dataset.
+        Method calculates different distance estimates for language pairs.
 
         Parameters
         ----------
@@ -1741,6 +1742,9 @@ class LexStat(Wordlist):
         restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
+        aggregate : bool (default=True)
+            Return aggregated distances in form of a distance matrix for all
+            taxa in the data.
 
         Returns
         -------
@@ -1767,20 +1771,37 @@ class LexStat(Wordlist):
                     self[x,'tokens'],
                     self[y,'tokens']
                     )
+        if not aggregate:
+            for i,taxA in enumerate(self.taxa):
+                for j,taxB in enumerate(self.taxa):
+                    if i < j:
 
-        for i,taxA in enumerate(self.taxa):
-            for j,taxB in enumerate(self.taxa):
-                if i < j:
+                        # get a random selection of words from both taxa
+                        sample_pairs = self.pairs[taxA,taxB]
+                        
+                        for pA,pB in sample_pairs:
+                            d = function(pA,pB)
 
-                    # get a random selection of words from both taxa
-                    sample_pairs = self.pairs[taxA,taxB]
-                    
-                    for pA,pB in sample_pairs:
-                        d = function(pA,pB)
+                            D += [d]
+            D = sorted(D)
+        else:
+            for i,taxA in enumerate(self.taxa):
+                for j,taxB in enumerate(self.taxa):
+                    if i < j:
+                        sample_pairs = self.pairs[taxA,taxB]
+                        
+                        distances = []
+                        for pA,pB in sample_pairs:
+                            try:
+                                d = function(pA,pB)
+                            except:
+                                print("Zero-Warning")
+                                d = 1.0
+                            distances += [d]
+                        D += [sum(distances) / len(distances)]
+            D = misc.squareform(D)
 
-                        D += [d]
-
-        return sorted(D)
+        return D
 
     def output(
             self,
