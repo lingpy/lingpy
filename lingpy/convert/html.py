@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2013-11-24 18:31
+# modified : 2014-02-19 18:19
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-24"
+__date__="2014-02-19"
 
 
 import os
@@ -295,8 +295,14 @@ def alm2html(
                         try:
                             c = rcParams['_color'][char[0]]
                         except:
-                            c = '#ffffff'
-                            error = True
+                            try:
+                                c = rcParams['_color'][char[1:]]
+                            except:
+                                try:
+                                    c = rcParams['_color'][char[1]]
+                                except:
+                                    c = '#ffffff'
+                                    error = True
                     
                     # same for dolgopolsky sound-class type
                     if char == '-':
@@ -308,7 +314,13 @@ def alm2html(
                             try:
                                 d = 'dolgo_'+rcParams['dolgo'][char[0]]
                             except:
-                                d = 'dolgo_unknown'
+                                try:
+                                    d = 'dolgo_'+rcParams['dolgo'][char[1:]]
+                                except:
+                                    try:
+                                        d = 'dolgo_'+rcParams['dolgo'][char[1]]
+                                    except:
+                                        d = 'dolgo_unknown'
                     
                     alm += '<td class="char" confidence_color="{0}" confidence_value={1} " '.format(
                             "rgb({0[0]},{0[1]},{0[2]})".format(rgb),
@@ -440,7 +452,8 @@ def msa2html(
     lingpy.convert.html.alm2html
     """
     defaults = dict(
-            pid_mode = 1
+            pid_mode = 1,
+            stress = rcParams['stress'],
             )
     for k in defaults:
         if k not in keywords:
@@ -528,7 +541,16 @@ def msa2html(
                 try:
                     c = rcParams['_color'][char[0]]
                 except:
-                    print(char)
+                    try:
+                        # check for accents
+                        c = rcParams['_color'][char[1:]]
+                    except:
+                        try:
+                            c = rcParams['_color'][char[1]]
+                        except:
+                            print("[i] No color-code found for char {0}".format(char))
+                        
+                        
             if j in swaps:
                 tmp += td_swap.format(char,c)
             elif local[j] != '*':

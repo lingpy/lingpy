@@ -227,7 +227,8 @@ class MSA(Multiple):
 
         """
         defaults = dict(
-                wordlist = False
+                wordlist = False,
+                timestamp = False
                 )
         for k in defaults:
             if k not in keywords:
@@ -365,14 +366,16 @@ class MSA(Multiple):
             except:
                 pass
         
-        if fileformat not in ['html','tex']:
+        if fileformat not in ['html','tex'] and keywords['timestamp']:
             try:
-                out.write('# Created using LingPy-2.0\n')
+                out.write('# Created using LingPy-2.2\n')
                 if hasattr(self,'params'):
                     out.write('# Parameters: '+self.params+'\n')
                 out.write('# Created: {0}\n'.format(rcParams['timestamp']))
             except:
                 pass
+            out.close()
+        elif fileformat not in ['html', 'tex']:
             out.close()
 
 class PSA(Pairwise):

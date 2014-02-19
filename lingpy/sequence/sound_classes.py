@@ -126,6 +126,7 @@ def ipa2tokens(
             merge = True
             tone = False
             vowel = False
+            start = False
         
         # check for merge command 
         elif merge:
