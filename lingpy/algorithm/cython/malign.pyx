@@ -12,7 +12,7 @@ __date__="2013-03-11"
 def nw_align(
         list seqA,
         list seqB,
-        dict scorer,
+        object scorer,
         int gap
         ):
     """

@@ -32,6 +32,7 @@ from ..read.phylip import read_scorer # for easy reading of scoring functions
 from ..algorithm import clustering
 
 from ..algorithm import calign
+from ..algorithm import talign
 from ..algorithm import misc
 
 class LexStat(Wordlist):
@@ -1276,7 +1277,8 @@ class LexStat(Wordlist):
         """
         # currently, there are no defaults XXX
         kw = dict(
-                defaults = False
+                defaults = False,
+                external_scorer = False, # external scoring function
                 )
         kw.update(keywords)
 
@@ -1344,6 +1346,17 @@ class LexStat(Wordlist):
                     self[idxA,'tokens'],
                     self[idxB,'tokens']
                     )
+
+        elif method == 'custom':
+            
+            function = lambda idxA,idxB: talign.align_pair(
+                    self[idxA, 'utokens'],
+                    self[idxB, 'utokens'],
+                    gop,
+                    scale,
+                    keywords['external_scorer'],
+                    'overlap',
+                    True)[2]
 
         if not concept:
             concepts = sorted(self.rows)
@@ -1446,6 +1459,7 @@ class LexStat(Wordlist):
                 link_threshold  = False,
                 _return_matrix  = False, # help function for test purposes
                 defaults        = False,
+                external_scorer = False, # external scoring dictionary
                 )
         kw.update(keywords)
         if kw['defaults']: return kw
@@ -1464,7 +1478,7 @@ class LexStat(Wordlist):
                 )
         self._stamp += '# Cluster: ' + self.params['cluster']
         
-        if method not in ['lexstat','sca','turchin','edit-dist']:
+        if method not in ['lexstat','sca','turchin','edit-dist', 'custom']:
             raise ValueError(
                     "[!] The method you selected is not available."
                     )
@@ -1617,6 +1631,8 @@ class LexStat(Wordlist):
                 self.add_entries('lexstatid',clr,lambda x:x,override=override)
             elif method == 'sca':
                 self.add_entries('scaid',clr,lambda x:x,override=override)
+            elif method == 'custom':
+                self.add_entries('customid',clr, lambda x:x, override=override)
             else:
                 self.add_entries('editid',clr,lambda x:x,override=override)       
         else:

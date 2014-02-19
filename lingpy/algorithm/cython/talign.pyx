@@ -17,7 +17,7 @@ def globalign(
         int N, # length of seqB
         int gop,
         float scale,
-        dict scorer
+        object scorer
         ):
     """
     Carry out global alignment of two sequences.
@@ -108,7 +108,7 @@ def semi_globalign(
         int N, # length of seqB
         int gop,
         float scale,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -203,7 +203,7 @@ def localign(
         int N, # length of seqB
         int gop,
         float scale,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -319,7 +319,7 @@ def dialign(
         int M, # length of seqA
         int N, # length of seqB
         float scale,
-        dict scorer
+        object scorer
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -411,7 +411,7 @@ def align_pair(
         list seqB,
         int gop,
         float scale,
-        dict scorer,
+        object scorer,
         str mode,
         int distance = 0
         ):
@@ -494,7 +494,7 @@ def align_pairwise(
         list seqs,
         int gop,
         float scale,
-        dict scorer,
+        object scorer,
         str mode
         ):
     """
@@ -652,7 +652,7 @@ def align_pairs(
         list seqs,
         int gop,
         float scale,
-        dict scorer,
+        object scorer,
         str mode,
         int distance = 0
         ):
@@ -741,7 +741,7 @@ def align_profile(
         list profileB,
         int gop,
         float scale,
-        dict scorer,
+        object scorer,
         str mode,
         float gap_weight
         ):
@@ -816,7 +816,7 @@ def align_profile(
 def score_profile(
         list colA,
         list colB,
-        dict scorer,
+        object scorer,
         int gop,
         float gap_weight = 0.0
         ):
@@ -849,7 +849,7 @@ def score_profile(
 def swap_score_profile(
         list colA,
         list colB,
-        dict scorer,
+        object scorer,
         float gap_weight = 0.0,
         int swap_penalty = -1
         ):
