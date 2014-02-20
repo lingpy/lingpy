@@ -1385,7 +1385,7 @@ class Alignments(Wordlist):
                             if not kw['confidence']:
                                 alm_string = '\t'.join(alm)
                             else:
-                                confs = ['{0:.2f}'.format(x) for x in
+                                confs = ['{0}'.format(x) for x in
                                         self.msa[ref][cogid]['confidence'][i]]
                                 alm_string = '\t'.join(
                                         [a+'<'+b for a,b in zip(alm,confs)]

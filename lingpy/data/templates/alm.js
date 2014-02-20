@@ -27,6 +27,8 @@ if(where=="there"){
 	var s=Math.round(255-(255*y/100));
 	var x = 'rgb('+s+','+s+','+s+')';
 	ar[i].style.backgroundColor=x;
+	var z=ar[i].getAttribute('char');
+	ar[i].innerHTML = z;
 	
 	if(y >= 50)
 	{

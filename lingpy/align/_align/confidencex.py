@@ -93,7 +93,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                                 count += gap_weight
                             
                 if count:
-                    score = score / count 
+                    score = score / count #(len(col) - gaps * gap_weight)
                 else:
                     score = -25
 
@@ -106,19 +106,13 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
 
 
     # sort the values
-    values = sorted(set(values+[1]))
+    values = sorted(set(values))
 
     # make conversion to scale of 100 values
     converter = {}
-    step = 50 / (len(values)+1)
-    valsA = values[:values.index(1)]
-    valsB = values[values.index(1):]
-    stepA = 50 / (len(valsA)+1)
-    stepB = 75 / (len(valsB)+1)
-    for i,score in enumerate(valsA): #values[:values.index(0)):
-        converter[score] = int((stepA * i) / 4 +0.5)
-    for i,score in enumerate(valsB):
-        converter[score] = int(stepB * i+0.5)+50
+    step = 100 / (len(values)+1)
+    for i,score in enumerate(values):
+        converter[score] = int(step * score+0.5)
 
     # iterate over keys again
     for key,msa in alms.msa[ref].items():
@@ -126,7 +120,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
         # get basic stuff
         for i,line in enumerate(msa['confidence']):
             for j,cell in enumerate(line):
-                alms.msa[ref][key]['confidence'][i][j] = converter[cell]
+                msa['confidence'] = converter[cell]
 
 
 

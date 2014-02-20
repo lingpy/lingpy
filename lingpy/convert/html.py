@@ -266,14 +266,14 @@ def alm2html(
                     # check for confidence scores
                     if '<' in char:
                         char,conf = char.split('<')
-                        conf = float(conf)
-                        if conf > 5:
-                            conf = 1.0
-                        elif conf <= 0:
-                            conf = 0.0
-                        else:
-                            conf = conf / 5
-                        conf = int(100 * conf + 0.5)
+                        conf = int(conf) #float(conf)
+                        #if conf > 5:
+                        #    conf = 1.0
+                        #elif conf <= 0:
+                        #    conf = 0.0
+                        #else:
+                        #    conf = conf / 5
+                        #conf = int(100 * conf + 0.5)
                     else:
                         char,conf,rgb = char,(255,255,255),0.0
                     
