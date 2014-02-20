@@ -14,12 +14,14 @@ import os
 import colorsys
 import codecs
 import webbrowser
+import json
 
 from ..settings import rcParams
 from ..read.qlc import read_msa
 from ..sequence.sound_classes import pid, token2class
 
 import numpy as np
+
 
 def colorRange(
         number,
@@ -90,6 +92,13 @@ def alm2html(
     lingpy.convert.html.msa2tex
 
     """
+    defaults = dict(
+            json = ""
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+            
     # open the infile
     try:
         data = codecs.open(infile, "r", "utf-8").read()
@@ -190,8 +199,7 @@ def alm2html(
         m = []
         confs = []
         for l in lines:
-            if not l.startswith('@'):
-                m.append(l.split('\t'))
+            m.append(l.split('\t'))
         
         # create colordict for different colors
         dc = len(set([l[0] for l in m]))
@@ -239,7 +247,7 @@ def alm2html(
             tmp += '  <td>{0}</td>\n'.format(l[1].strip('.'))
 
             # check alignments for confidence scores
-            ipa_string = ''.join([cell.split('<')[0] for cell in
+            ipa_string = ''.join([cell.split('/')[0] for cell in
                 l[4:]]).replace('-', '')
 
             tmp += '  <td>{0}</td>\n'.format(ipa_string)
@@ -264,16 +272,9 @@ def alm2html(
                 for char in l[4:]:
                     
                     # check for confidence scores
-                    if '<' in char:
-                        char,conf = char.split('<')
-                        conf = int(conf) #float(conf)
-                        #if conf > 5:
-                        #    conf = 1.0
-                        #elif conf <= 0:
-                        #    conf = 0.0
-                        #else:
-                        #    conf = conf / 5
-                        #conf = int(100 * conf + 0.5)
+                    if '/' in char:
+                        char,conf,num = char.split('/')
+                        conf = int(conf) 
                     else:
                         char,conf,rgb = char,(255,255,255),0.0
                     
@@ -299,6 +300,8 @@ def alm2html(
                                 d
                                 )
                         alm += 'char="{0}" '.format(char)
+                        alm += 'onclick="'+"show('{0}')".format(num)+'" '
+                        alm += 'num="{0}"'.format(num)
                         alm += '>\n      {0}\n     </td>\n'.format(char)
                     else:
                         alm += '     '
@@ -330,6 +333,11 @@ def alm2html(
         title = "LexStat - Automatic Cognate Judgments"
     if not shorttitle:
         shorttitle = "LexStat"
+
+    # check for json-attribute
+    if keywords['json']:
+        keywords['json'] = 'var myjson = '+json.dumps(keywords['json'],
+                indent=1)
 
     html = html.format(
             shorttitle = shorttitle,

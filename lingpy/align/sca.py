@@ -1078,10 +1078,12 @@ class Alignments(Wordlist):
 
         """
         
-        confidence.get_confidence(self, scorer, ref, gap_weight)
+        corrs = confidence.get_confidence(self, scorer, ref, gap_weight)
         if rcParams['verbose']:
             print("[i] Successfully calculated confidence values for alignments.")
-                    
+        
+        return corrs
+
     def __len__(self):
         return len(self.msa)
 
@@ -1387,8 +1389,15 @@ class Alignments(Wordlist):
                             else:
                                 confs = ['{0}'.format(x) for x in
                                         self.msa[ref][cogid]['confidence'][i]]
+                                chars = [x for x in
+                                        self.msa[ref][cogid]['_charmat'][i]]
                                 alm_string = '\t'.join(
-                                        [a+'<'+b for a,b in zip(alm,confs)]
+                                        [a+'/'+b+'/'+c for a,b,c in zip(
+                                            alm,
+                                            confs,
+                                            chars
+                                            )
+                                            ]
                                         )
 
                             out += '\t'.join(

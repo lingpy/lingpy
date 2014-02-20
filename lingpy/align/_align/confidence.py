@@ -9,7 +9,8 @@ Calculate confidence scores for the scoring functions in alignment plots.
 __author__="Johann-Mattis List"
 __date__="2014-02-18"
 
-from ...sequence.sound_classes import class2tokens
+from ...sequence.sound_classes import class2tokens, token2class
+from ...settings import rcParams
 
 def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
     """
@@ -30,6 +31,9 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
     # store all values for average scores
     values = []
 
+    # store all correspondences
+    corrs = {}
+
     for key,msa in alms.msa[ref].items():
         
         # get basic stuff
@@ -46,6 +50,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
         
         # create new array for confidence
         confidence_matrix = []
+        character_matrix = []
 
         # iterate over each taxon
         for i,taxon in enumerate(taxa):
@@ -57,6 +62,9 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
             # store confidences per line
             confidences = []
 
+            # store chars per line
+            chars = []
+
             # iterate over the sequence
             for j,num in enumerate(nums):
 
@@ -64,12 +72,31 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 
                 score = 0
                 count = 0
+
+                # get the char
+                if num != '-':
+                    charA = taxa[i]+'.'+msa['alignment'][i][j]+'.'+num.split('.')[2]
+                    chars += [charA]
+                else:
+                    chars += ['-']
                     
                 for k,numB in enumerate(col):
                     if k != i:
                         if num == '-' and numB == '-':
                             pass
                         else:
+                            if numB != '-' and num != '-':
+                                # get the second char
+                                charB = taxa[k]+'.'+msa['alignment'][k][j]+'.'+numB.split('.')[2]
+                                
+                                try:
+                                    corrs[charA][charB] += 1
+                                except:
+                                    try:
+                                        corrs[charA][charB] = 1
+                                    except:
+                                        corrs[charA] = {charB : 1}
+
                             gaps = False
                             if num == '-' and numB != '-':
                                 numA = str(idx)+'.X.-'
@@ -100,10 +127,11 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 confidences += [int(score+0.5)]
                 values += [int(score+0.5)]
             confidence_matrix += [confidences]
+            character_matrix += [chars]
 
         # append confidence matrix to alignments
         alms.msa[ref][key]['confidence'] = confidence_matrix
-
+        alms.msa[ref][key]['_charmat'] = character_matrix
 
     # sort the values
     values = sorted(set(values+[1]))
@@ -128,5 +156,84 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
             for j,cell in enumerate(line):
                 alms.msa[ref][key]['confidence'][i][j] = converter[cell]
 
+    jsond = {}
+    for key,corr in corrs.items():
 
+        splits = [c.split('.')+[o] for c,o in corr.items()]
+        sorts = sorted(splits, key=lambda x: (x[0],-x[3]))
+        new_sorts = []
+
+        # check for rowspan
+        spans = {}
+        for a,b,c,d in sorts:
+            if a in spans:
+                if spans[a] < 3 and d > 1:
+                    spans[a] += 1
+                    new_sorts += [[a,b,c,d]]
+            else:
+                if d > 1:
+                    spans[a] = 1
+                    new_sorts += [[a,b,c,d]]
+
+        bestis = []
+        old_lang = ''
+        counter = 0
+        for a,b,c,d in new_sorts:
+            new_lang = a
+            if new_lang != old_lang:
+                old_lang = new_lang
+                
+                tmp = '<tr class="display">'
+                tmp += '<td class="display" rowspan={0}>'.format(spans[a])
+                tmp += a+'</td>'
+                tmp += '<td class="display" onclick="show({0});"><span '.format(
+                        "'"+'.'.join([a,b,c])+"'")
+                tmp += 'class="char {0}">'+b+'</span></td>'
+                tmp += '<td class="display">'
+                tmp += c+'</td>'
+                tmp += '<td class="display">'+str(d)+'</td></tr>'
+                t = 'dolgo_'+token2class(b, rcParams['dolgo'])
+                
+                # bad check for three classes named differently
+                if t == 'dolgo__':
+                    t = 'dolgo_X'
+                elif t == 'dolgo_1':
+                    t = 'dolgo_TONE'
+                elif t == 'dolgo_0':
+                    t = 'dolgo_ERROR'
+
+                bestis += [tmp.format(t)]
+                counter += 1
+
+            elif counter > 0:
+
+                tmp = '<tr class="display">'
+                #tmp += '<td class="display"><span class="char {0}">'+b+'</span></td>'
+                tmp += '<td class="display" onclick="show({0});"><span '.format(
+                        "'"+'.'.join([a,b,c])+"'")
+                tmp += 'class="char {0}">'+b+'</span></td>'
+
+                tmp += '<td class="display">'+c+'</td>'
+                tmp += '<td class="display">'+str(d)+'</td></tr>'
+                t = 'dolgo_'+token2class(b, rcParams['dolgo'])
+                
+                # bad check for three classes named differently
+                if t == 'dolgo__':
+                    t = 'dolgo_X'
+                elif t == 'dolgo_1':
+                    t = 'dolgo_TONE'
+                elif t == 'dolgo_0':
+                    t = 'dolgo_ERROR'
+
+                bestis += [tmp.format(t)]
+                counter += 1
+                old_lang = new_lang
+                
+            else:
+                old_lang = new_lang
+                counter = 0
+
+        jsond[key] = ''.join(bestis)
+
+    return jsond
 
