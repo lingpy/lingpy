@@ -17,10 +17,9 @@ import webbrowser
 
 from ..settings import rcParams
 from ..read.qlc import read_msa
-from ..sequence.sound_classes import pid
+from ..sequence.sound_classes import pid, token2class
 
 import numpy as np
-
 
 def colorRange(
         number,
@@ -61,6 +60,7 @@ def alm2html(
         main_template = '',
         table_template = '',
         dataset = '',
+        confidence = False,
         **keywords
         ):
     """
@@ -120,17 +120,30 @@ def alm2html(
     if table_template:
         table = codecs.open(table_template,'r','utf-8').read()
     else:
-        table = codecs.open(
-                os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'templates',
-                    'alm2html.table.html'
-                    ),
-                'r',
-                'utf-8'
-                ).read()
-
+        if not confidence:
+            table = codecs.open(
+                    os.path.join(
+                        rcParams['_path'],
+                        'data',
+                        'templates',
+                        'alm2html.table.html'
+                        ),
+                    'r',
+                    'utf-8'
+                    ).read()
+        else:
+            table = codecs.open(
+                    os.path.join(
+                        rcParams['_path'],
+                        'data',
+                        'templates',
+                        'alm2html.table.js.html'
+                        ),
+                    'r',
+                    'utf-8'
+                    ).read()
+    
+    # load css
     css = codecs.open(
             os.path.join(
                 rcParams['_path'],
@@ -141,6 +154,8 @@ def alm2html(
             'r',
             'utf-8'
             ).read()
+    
+    # load js
     js = codecs.open(
             os.path.join(
                 rcParams['_path'],
@@ -168,32 +183,6 @@ def alm2html(
     
     # create the outstring
     tmp_str = ''
-
-    def normalize_confidence(conf):
-
-        conf = float(conf)
-
-        if conf <= 0:
-            conf = (255,255,255)
-        else:
-            conf = conf / 5
-            confA = int(255 - (255 * conf))
-            confB = int(255 * conf)
-            conf = (confA, confA, confA)
-        return conf
-
-    def html2rgb(colorstring):
-        """ convert #RRGGBB to an (R, G, B) tuple """
-        
-        # code taken from
-        # http://code.activestate.com/recipes/266466-html-colors-tofrom-rgb-tuples/
-        colorstring = colorstring.strip()
-        if colorstring[0] == '#': colorstring = colorstring[1:]
-        if len(colorstring) != 6:
-            raise ValueError("input #{0} is not in #RRGGBB format".format(colorstring))
-        r, g, b = colorstring[:2], colorstring[2:4], colorstring[4:]
-        r, g, b = [int(n, 16) for n in (r, g, b)]
-        return (r, g, b)
 
     for block in blocks[1:]:
         lines = block.split('\n')
@@ -223,7 +212,7 @@ def alm2html(
                     colors.append((i,'white'))
                     white = False
                 else:
-                    colors.append((i,'lightgray'))
+                    colors.append((i,'gray'))
                     white = True
             colors = dict(colors)
         
@@ -236,27 +225,27 @@ def alm2html(
                 NAME=iName,
                 ID = iID)
         # define the basic string for the insertion
-        bas = '<tr style="background-color:{0};font-weight:{2}">\n{1}\n</tr>'
+        bas = ' <tr class="{0}{2}">\n{1}'
 
         for tracer,l in enumerate(m):
             # check whether the current line is a borrowing
             if int(l[0]) < 0:
-                loan_line = 'bold'
+                loan_line = ' loan'
             else:
-                loan_line = 'normal'
+                loan_line = ''
 
             # assign the cognate id
-            tmp = '<td>{0}</td>\n'.format(l[0])
-            tmp += '<td>{0}</td>\n'.format(l[1].strip('.'))
+            tmp = '  <td>{0}</td>\n'.format(l[0])
+            tmp += '  <td>{0}</td>\n'.format(l[1].strip('.'))
 
             # check alignments for confidence scores
             ipa_string = ''.join([cell.split('<')[0] for cell in
                 l[4:]]).replace('-', '')
 
-            tmp += '<td>{0}</td>\n'.format(ipa_string)
-            tmp += '<td style="background-color:{0}">'.format(colors[abs(int(l[0]))])
-            tmp += '<table style="background-color:{0}">\n'.format(colors[abs(int(l[0]))])
-            tmp += '<tr>\n{0}\n</tr>\n</table>\n'
+            tmp += '  <td>{0}</td>\n'.format(ipa_string)
+            tmp += '  <td class="{0}">\n'.format(colors[abs(int(l[0]))])
+            tmp += '   <table class="{0}">\n'.format(colors[abs(int(l[0]))])
+            tmp += '    <tr>\n{0}    </tr>\n   </table>\n  </td>\n </tr>\n'
             
             # check whether another entry follows that is also an alignment,
             # otherwise, there's no need to display a word as an alignment
@@ -267,16 +256,16 @@ def alm2html(
             if tracer > 0:
                 if abs(int(m[tracer-1][0])) == abs(int(l[0])):
                     cognate_set = True
-
-            if cognate_set: #len(l[4:]) > 1:
+            
+            # fill out html for the cognate sets
+            if cognate_set:
 
                 alm = ''
                 for char in l[4:]:
-
+                    
                     # check for confidence scores
                     if '<' in char:
                         char,conf = char.split('<')
-                        rgb = normalize_confidence(conf)
                         conf = float(conf)
                         if conf > 5:
                             conf = 1.0
@@ -287,58 +276,36 @@ def alm2html(
                         conf = int(100 * conf + 0.5)
                     else:
                         char,conf,rgb = char,(255,255,255),0.0
-
-                    error = False
-                    try:
-                        c = rcParams['_color'][char]
-                    except:
-                        try:
-                            c = rcParams['_color'][char[0]]
-                        except:
-                            try:
-                                c = rcParams['_color'][char[1:]]
-                            except:
-                                try:
-                                    c = rcParams['_color'][char[1]]
-                                except:
-                                    c = '#ffffff'
-                                    error = True
                     
-                    # same for dolgopolsky sound-class type
                     if char == '-':
-                        d = 'dolgo_X'
+                        d = 'dolgo_GAP'
+                        c = '#bbbbbb'
                     else:
-                        try:
-                            d = 'dolgo_'+rcParams['dolgo'][char]
-                        except:
-                            try:
-                                d = 'dolgo_'+rcParams['dolgo'][char[0]]
-                            except:
-                                try:
-                                    d = 'dolgo_'+rcParams['dolgo'][char[1:]]
-                                except:
-                                    try:
-                                        d = 'dolgo_'+rcParams['dolgo'][char[1]]
-                                    except:
-                                        d = 'dolgo_unknown'
+                        d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+                        c = token2class(char, rcParams['_color'])
+
+                        # bad check for three classes named differently
+                        if d == 'dolgo__':
+                            d = 'dolgo_X'
+                        elif d == 'dolgo_1':
+                            d = 'dolgo_TONE'
+                        elif d == 'dolgo_0':
+                            d = 'dolgo_ERROR'
                     
-                    alm += '<td class="char" confidence_color="{0}" confidence_value={1} " '.format(
-                            "rgb({0[0]},{0[1]},{0[2]})".format(rgb),
-                            conf
-                            )
-                            
-                            
-                    alm += 'class_color="{0}" class_name="{1}" char="{2}" '.format(c,d,char)
-                    alm += 'style="background-color:{0};'.format(c)
-                    if error:
-                        
-                        alm += 'color:red;">{0}</td>'.format(char)
-                         
+                    if confidence:
+                        alm += '     '
+                        alm += '<td class="char {1}" confidence={0} '.format(
+                                conf,
+                                d
+                                )
+                        alm += 'char="{0}" '.format(char)
+                        alm += '>\n      {0}\n     </td>\n'.format(char)
                     else:
-                        
-                        alm += '">{0}</td>'.format(char)
+                        alm += '     '
+                        alm += '<td class="char {0}">{1}</td>\n'.format(d,char)
             else:
-                alm = '<td style="border-color:{1};background-color:{1};">{0}'.format('--',colors[abs(int(l[0]))])
+                alm = '      '
+                alm += '<td class="{0}">--</td>\n'.format(colors[abs(int(l[0]))])
             
             # format the alignment
             tmp = tmp.format(alm)
@@ -349,8 +316,8 @@ def alm2html(
             if tracer < len(m)-1:
                 pass
             else:
-                tmp += '<tr style="background-color:white;"><td colspan="4">'
-                tmp += '<hr style="background-color:white;border-color:white;border:0;height:2pt;"/>\n'
+                tmp += ' <tr class="empty"><td colspan="4" class="empty">'
+                tmp += '<hr class="empty" /></td></tr>\n'
             
             # format the whole string
             tmp_str += bas.format(

@@ -174,6 +174,50 @@ def ipa2tokens(
 
     return out
 
+def token2class(
+        token,
+        model,
+        **keywords
+        ):
+    """
+    Convert a single token into a sound-class.
+
+    tokens : str
+        A token (IPA-string).
+
+    model : :py:class:`~lingpy.data.model.Model`
+        A :py:class:`~lingpy.data.model.Model` object.
+
+    Returns
+    -------
+    c : str
+        The corresponding sound-class value.
+
+    """
+    kw = dict(
+            stress = rcParams['stress']
+            )
+    kw.update(keywords)
+
+    # check whether model is passed as real model or as string
+    if str(model) == model:
+        model = rcParams[model]
+
+    try:
+        return model[token]
+    except:
+        try:
+            return model[token[0]]
+        except:
+            try:
+                # check for stress
+                return model[token[1:]]
+            except:
+                try:
+                    return model[token[1]]
+                except:
+                    return '0'
+
 def tokens2class(
         tstring,
         model,

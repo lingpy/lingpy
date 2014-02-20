@@ -94,6 +94,7 @@ class TestAlignments(object):
         try:
             self.alm.align()
             self.alm.output('qlc', filename=fn)
+            
             self.alm.output('html', filename=fn)
 
             assert True
