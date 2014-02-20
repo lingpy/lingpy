@@ -1,33 +1,33 @@
-function getElementsByClass(searchClass,node,tag) {
-	var classElements = new Array();
-	if ( node == null )
-		node = document;
-	if ( tag == null )
-		tag = '*';
-	var els = node.getElementsByTagName(tag);
-	var elsLen = els.length;
-	var pattern = new RegExp('(^|\\\\s)'+searchClass+'(\\\\s|$)');
-	for (i = 0, j = 0; i < elsLen; i++) {
-		if ( pattern.test(els[i].className) ) {
-			classElements[j] = els[i];
-			j++;
-		}
-	}
-	return classElements;
-}
+var dolgo = {};
+dolgo['char dolgo_ERROR'] = 'white';
+dolgo['char dolgo_V'] = '#c86464';
+dolgo['char dolgo_K'] = '#c89664';
+dolgo['char dolgo_P'] = '#c8c864';
+dolgo['char dolgo_H'] = '#96c864';
+dolgo['char dolgo_J'] = '#64c864';
+dolgo['char dolgo_M'] = '#64c896';
+dolgo['char dolgo_N'] = '#64c8c8';
+dolgo['char dolgo_S'] = '#6496c8';
+dolgo['char dolgo_R'] = '#6464c8';
+dolgo['char dolgo_T'] = '#9664c8';
+dolgo['char dolgo_W'] = '#c864c8';
+dolgo['char dolgo_TONE'] = '#c86496';
+dolgo['char dolgo_X']='#bbbbbb';
+dolgo['char dolgo_GAP'] = '#bbbbbb';
 
 function color(where){
 
+
 if(where=="there"){
-    var ar = getElementsByClass("char");
+    var ar = document.getElementsByClassName('char');
     var i=0;
     while(i < ar.length){
 
-	var x=ar[i].getAttribute('confidence_color');
-	var y=ar[i].getAttribute('confidence_value');
-	var z=ar[i].getAttribute('char');
+	var y=ar[i].getAttribute('confidence');
+	var s=Math.round(255-(255*y/100));
+	var x = 'rgb('+s+','+s+','+s+')';
 	ar[i].style.backgroundColor=x;
-	ar[i].innerHTML = z;
+	
 	if(y >= 50)
 	{
 		ar[i].style.color="white";
@@ -41,13 +41,18 @@ if(where=="there"){
     }
 
 else if(where=="scores"){
-    var ar = getElementsByClass("char");
+    var ar = document.getElementsByClassName("char");
     var i=0;
     while(i < ar.length){
 
-	var x=ar[i].getAttribute('confidence_color');
-	var y=ar[i].getAttribute('confidence_value');
-	ar[i].style.backgroundColor=x;
+	var y=ar[i].getAttribute('confidence');
+	var s=Math.round(255-(255*y/100));
+	var x = 'rgb('+s+','+s+','+s+')';
+	ar[i].style.backgroundColor=x
+	//var x=ar[i].getAttribute('color');
+	//var y=ar[i].getAttribute('confidence');
+	//ar[i].style.backgroundColor=x;
+
 	ar[i].innerHTML = y;
 	if(y >= 50)
 	{
@@ -62,13 +67,18 @@ else if(where=="scores"){
     }
 	
 else{
-    var ar = getElementsByClass('char');
+
+    var ar = document.getElementsByClassName('char');
     var i=0;
     while(i < ar.length){
-        var x=ar[i].getAttribute('class_color');
+        //var x=ar[i].getAttribute('class_name');
 	var y=ar[i].getAttribute('char');
-        ar[i].style.backgroundColor=x;
-	ar[i].style.color='white';
+	var x=dolgo[ar[i].getAttribute('class')];
+	ar[i].style.backgroundColor=x;
+	if(x=='white'){
+		ar[i].style.color='red';
+	}
+	else{ar[i].style.color="white";}
 	ar[i].innerHTML = y;
         i++;
 	}

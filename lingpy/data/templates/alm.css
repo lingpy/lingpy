@@ -4,8 +4,42 @@ td.char {
 	color: white;
 	font-weight: bold;
 }
-
+tr.white {
+	background-color: white;
+}
+tr.gray {
+	background-color: lightgray;
+}
+tr.loan {
+	font-weight: bold;
+}
+td.white {
+	background-color: white;
+}
+td.gray {
+	background-color: lightgray;
+}
+td.loan {
+	font-weight: bold;
+}
+tr.empty {background-color: white;}
+td.empty {background-color: white;}
+hr.empty {background-color:white;border=color:white;border:0;height:2pt;}
 .mybut {
 	background-color: #b9d9f2;
 }
-
+td.dolgo_ERROR{background-color: white; color:red;}
+td.dolgo_V{background-color: #c86464;}
+td.dolgo_K{background-color: #c89664;} 
+td.dolgo_P{background-color: #c8c864;} 
+td.dolgo_H{background-color: #96c864;} 
+td.dolgo_J{background-color: #64c864;} 
+td.dolgo_M{background-color: #64c896;} 
+td.dolgo_N{background-color: #64c8c8;} 
+td.dolgo_S{background-color: #6496c8;} 
+td.dolgo_R{background-color: #6464c8;} 
+td.dolgo_T{background-color: #9664c8;} 
+td.dolgo_W{background-color: #c864c8;} 
+td.dolgo_TONE{background-color: #c86496;} 
+td.dolgo_X{background-color: #bbbbbb;}
+td.dolgo_GAP{background-color: #bbbbbb;}
