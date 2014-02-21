@@ -233,7 +233,7 @@ def alm2html(
                 NAME=iName,
                 ID = iID)
         # define the basic string for the insertion
-        bas = ' <tr class="{0}{2}">\n{1}'
+        bas = ' <tr class="{0}{2} taxon" taxon="{3}">\n{1}'
 
         for tracer,l in enumerate(m):
             # check whether the current line is a borrowing
@@ -319,6 +319,9 @@ def alm2html(
             if tracer < len(m)-1:
                 pass
             else:
+                if confidence:
+                    tmp += ' '# </table>\n'
+
                 tmp += ' <tr class="empty"><td colspan="4" class="empty">'
                 tmp += '<hr class="empty" /></td></tr>\n'
             
@@ -326,7 +329,8 @@ def alm2html(
             tmp_str += bas.format(
                     colors[abs(int(l[0]))],
                     tmp,
-                    loan_line
+                    loan_line,
+                    l[1]
                     )
 
     if not title:

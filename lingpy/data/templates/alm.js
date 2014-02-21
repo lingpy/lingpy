@@ -15,103 +15,261 @@ dolgo['char dolgo_TONE'] = '#c86496';
 dolgo['char dolgo_X']='#bbbbbb';
 dolgo['char dolgo_GAP'] = '#bbbbbb';
 
+var myprevious = ['','',''];
+
 function show(what){
-    var ar = document.getElementsByClassName('char');
-    var i=0;
-    var j=0;
-    while(i < ar.length){
-	var num = ar[i].getAttribute('num');
-	if(num==what){
-	    var this_c = ar[i].getAttribute('class');	
-	    ar[i].style.backgroundColor='white';
-	    ar[i].style.color='red';
-	    j++;
-	}
-	else{
-	    var old=dolgo[ar[i].getAttribute('class')];
-	    var c=ar[i].getAttribute('char');
-	    ar[i].style.backgroundColor=old;
-	    ar[i].style.color='white';
-	    ar[i].innerHTML=c;
-	}
-	i++;
+    var words = what.split('.'); 
+    var ar = document.getElementsByClassName('taxon');
+	var k=0;
+    for(var i=0;i<ar.length;i++)
+    {
+		var taxon = ar[i].getAttribute('taxon');
+		if(taxon==words[0]){
+			var chars = ar[i].children[3];
+			chars = chars.children[0];
+			chars = chars.children[0];
+			chars = chars.children[0].children;
+			for(j=0;j<chars.length;j++)
+			{
+				var this_char = chars[j].getAttribute('num');
+				if(this_char==what)
+				{
+					chars[j].style.backgroundColor='white';
+					chars[j].style.color='red';
+					var this_c = chars[j].getAttribute('class');
+					k++;
+				}
+				else
+				{
+					c = dolgo[chars[j].getAttribute('class')];
+					chars[j].style.backgroundColor=c;
+					chars[j].style.color='white';
+				}
+			}
+		}
+		else if(taxon==myprevious[0])
+		{
+			var chars = ar[i].children[3];
+			chars = chars.children[0];
+			chars = chars.children[0];
+			chars = chars.children[0].children;
+			for(j=0;j<chars.length;j++)
+			{
+				var this_char = chars[j].getAttribute('num');
+				if(this_char==myprevious[3])
+				{
+					chars[j].style.backgroundColor=dolgo[chars[j].getAttribute('class')];
+					chars[j].style.color='white';
+				}
+			}
+		}
     }
+    var out = '<table class="popup"><tr class="popup"><th class="popup">';	
+	out = out + words[0]+' <span class="'+this_c+'">'+words[1]+'</span>, context <b>'+words[2]+'</b>, '+k+' occurrences: </th><th class="popup">All occurrences of the sound</th></tr><tr><td class="popup">';
+    out = out+'<table class="display"><tr class="display"><th class="display">Language</th><th class="display">Sound</th><th class="display">Context</th><th class="display">Matches</th><th class="display">Frequency</th></tr>';
+    out = out+myjson[what][0]+'</table></td><td class="popup">';
+    
+    // try to find the best concepts
+    var concepts = myjson[what][1];
+    var cstring = '<ol class="display">';
+    for(var i=0;i<concepts.length;i++)
+    {
+	cstring = cstring+'<li class="display"><a class="display" href="#';
+	cstring = cstring+concepts[i]+'">'+concepts[i]+'</a></li>';
+    }
+    cstring = cstring + '</ol>';
+    //out = out + '<br>All occurrences of the sound:<br>';
+    out = out + cstring;
+	out = out + '</td></tr></table>';
+
     var mod = document.getElementById('display');
-    var words = what.split('.');
-    var out = 'Best matches for '+words[0]+' <span class="'+this_c+'">'+words[1]+'</span>, context <b>'+words[2]+'</b>, '+j+' occurrences: <br><br>';
-    out = out+'<table class="display"><tr class="display"><th class="display">Language</th><th class="display">Sound</th><th class="display">Context</th><th class="display">Number</th></tr>';
-    out = out+myjson[what]+'</table>';
     mod.style.display = 'block';
-    mod.innerHTML = out; //"Total Occurence of "+words[0]+" <b>["+words[1]+"]</b> in context <i>"+words[2]+"</i>: "+j+" times.";
+    mod.innerHTML = out; 
+	myprevious = [words[0], words[1], words[2], what];
 }
 
-function color(where){
-var mod = document.getElementById("display");
-mod.style.display = "none";
+function color(mode, what){
+	// switch off general display on side-panel
+	var mod = document.getElementById("display");
+	mod.style.display = 'none';
 
-if(where=="there"){
-    var ar = document.getElementsByClassName('char');
-    var i=0;
-    while(i < ar.length){
-
-	var y=ar[i].getAttribute('confidence');
-	var s=Math.round(255-(255*y/100));
-	var x = 'rgb('+s+','+s+','+s+')';
-	ar[i].style.backgroundColor=x;
-	var z=ar[i].getAttribute('char');
-	ar[i].innerHTML = z;
-	
-	if(y >= 50)
+    var ar = document.getElementsByClassName('taxon');
+    for(var i=0;i<ar.length;i++)
 	{
-		ar[i].style.color="white";
+		var taxon = ar[i].getAttribute('taxon');
+		if(taxon==myprevious[0])
+		{
+			var chars = ar[i].children[3];
+			chars = chars.children[0];
+			chars = chars.children[0];
+			chars = chars.children[0].children;
+			for(j=0;j<chars.length;j++)
+			{
+				var this_char = chars[j].getAttribute('num');
+				if(this_char==myprevious[3])
+				{
+					chars[j].style.backgroundColor=dolgo[chars[j].getAttribute('class')];
+					chars[j].style.color='white';
+				}
+			}
+		}
 	}
-	else
+
+	// choose relevant block
+	if(mode=='confidence')
 	{
-		ar[i].style.color="black";
+		var trs = document.getElementsByTagName("tr");
+		var this_tr = document.getElementById(what);
+
+		for(var i=0;i<trs.length;i++)
+		{
+			if(trs[i] == this_tr)
+			{
+				var j = i+2;
+				while(j != 0 && j < trs.length)
+				{
+					var next_tr = trs[j];
+
+					// check for break attr
+					var test = trs[j].getAttribute('taxon');
+
+					try
+					{
+						var chars = next_tr.children[3];
+						chars = chars.children[0];
+						chars = chars.children[0];
+						chars = chars.children[0].children;
+						if(chars[0].innerHTML != '--')
+						{
+							for(var k=0;k<chars.length; k++)
+							{
+								// get the confidence color
+								var cf = chars[k].getAttribute('confidence');
+								var cfc = Math.round(255-(255*cf/100));
+								cfc = 'rgb('+cfc+','+cfc+','+cfc+')';
+								chars[k].style.backgroundColor=cfc;
+								var c = chars[k].getAttribute('char');
+								chars[k].innerHTML = c;
+								if(cf >= 50)
+								{
+									chars[k].style.color = "white";
+								}
+								else
+								{
+									chars[k].style.color = "black";
+								}	
+							}
+						}
+						j=j+2;
+					}
+					catch(e)
+					{
+						j = 0;
+					}					
+				}
+			}
+		}
 	}
-	i++;
-	}
-    }
-
-else if(where=="scores"){
-    var ar = document.getElementsByClassName("char");
-    var i=0;
-    while(i < ar.length){
-
-	var y=ar[i].getAttribute('confidence');
-	var s=Math.round(255-(255*y/100));
-	var x = 'rgb('+s+','+s+','+s+')';
-	ar[i].style.backgroundColor=x
-
-	ar[i].innerHTML = y;
-	if(y >= 50)
+	// choose relevant block
+	else if(mode=='sound_classes')
 	{
-		ar[i].style.color="white";
-	}
-	else
-	{
-		ar[i].style.color="black";
-	}
-	i++;
-	}
-    }
-	
-else{
+		var trs = document.getElementsByTagName("tr");
+		var this_tr = document.getElementById(what);
 
-    var ar = document.getElementsByClassName('char');
-    var i=0;
-    while(i < ar.length){
-        //var x=ar[i].getAttribute('class_name');
-	var y=ar[i].getAttribute('char');
-	var x=dolgo[ar[i].getAttribute('class')];
-	ar[i].style.backgroundColor=x;
-	if(x=='white'){
-		ar[i].style.color='red';
+		for(var i=0;i<trs.length;i++)
+		{
+			if(trs[i] == this_tr)
+			{
+				var j = i+2;
+				while(j != 0 && j < trs.length)
+				{
+					var next_tr = trs[j];
+
+					// check for break attr
+					var test = trs[j].getAttribute('taxon');
+					mod.innerHTML = test;
+
+					try
+					{
+						var chars = next_tr.children[3];
+						chars = chars.children[0];
+						chars = chars.children[0];
+						chars = chars.children[0].children;
+						if(chars[0].innerHTML != '--' && typeof(chars) != 'undefined')
+						{
+							for(var k=0;k<chars.length; k++)
+							{
+								// get the sound class color
+								var col = dolgo[chars[k].getAttribute('class')];
+								var c = chars[k].getAttribute('char');
+								chars[k].style.backgroundColor=col;
+								chars[k].style.color = 'white';
+								chars[k].innerHTML = c;
+							}
+						}
+						j=j+2;
+					}
+					catch(e)
+					{
+						j = 0;
+					}
+				}
+			}
+		}
 	}
-	else{ar[i].style.color="white";}
-	ar[i].innerHTML = y;
-        i++;
+	// choose relevant block
+	else if(mode=='scores')
+	{
+		var trs = document.getElementsByTagName("tr");
+		var this_tr = document.getElementById(what);
+
+		for(var i=0;i<trs.length;i++)
+		{
+			if(trs[i] == this_tr)
+			{
+				var j = i+2;
+				while(j != 0 && j < trs.length)
+				{
+					var next_tr = trs[j];
+
+					// check for break attr
+					var test = trs[j].getAttribute('taxon');
+					mod.innerHTML = test;
+
+					try
+					{
+						var chars = next_tr.children[3];
+						chars = chars.children[0];
+						chars = chars.children[0];
+						chars = chars.children[0].children;
+						if(chars[0].innerHTML != '--')
+						{
+							for(var k=0;k<chars.length; k++)
+							{
+								// get the confidence color
+								var cf = chars[k].getAttribute('confidence');
+								var cfc = Math.round(255-(255*cf/100));
+								cfc = 'rgb('+cfc+','+cfc+','+cfc+')';
+								chars[k].style.backgroundColor=cfc;
+								chars[k].innerHTML = cf;
+								if(cf >= 50)
+								{
+									chars[k].style.color = "white";
+								}
+								else
+								{
+									chars[k].style.color = "black";
+								}	
+							}
+						}
+						j=j+2;
+					}
+					catch(e)
+					{
+						j = 0;
+					}
+				}
+			}
+		}
 	}
-    }
 }
-

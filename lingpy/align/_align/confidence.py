@@ -9,6 +9,8 @@ Calculate confidence scores for the scoring functions in alignment plots.
 __author__="Johann-Mattis List"
 __date__="2014-02-18"
 
+import cgi
+
 from ...sequence.sound_classes import class2tokens, token2class
 from ...settings import rcParams
 
@@ -34,11 +36,15 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
     # store all correspondences
     corrs = {}
 
+    # store occurrences
+    occs = {} 
+
     for key,msa in alms.msa[ref].items():
         
         # get basic stuff
         idxs = msa['ID']
         taxa = msa['taxa']
+        concept = cgi.escape(alms[idxs[0],'concept'], True)
 
         # get numerical representation of alignments
         if scorer:
@@ -77,6 +83,10 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 if num != '-':
                     charA = taxa[i]+'.'+msa['alignment'][i][j]+'.'+num.split('.')[2]
                     chars += [charA]
+                    try:
+                        occs[charA] += [concept]
+                    except:
+                        occs[charA] = [concept]
                 else:
                     chars += ['-']
                     
@@ -191,7 +201,9 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 tmp += 'class="char {0}">'+b+'</span></td>'
                 tmp += '<td class="display">'
                 tmp += c+'</td>'
-                tmp += '<td class="display">'+str(d)+'</td></tr>'
+                tmp += '<td class="display">'+str(d)+'</td>'
+                tmp += '<td class="display">'+str(len(occs['.'.join([a,b,c])]))+'</td>'
+                tmp += '</tr>'
                 t = 'dolgo_'+token2class(b, rcParams['dolgo'])
                 
                 # bad check for three classes named differently
@@ -214,7 +226,10 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 tmp += 'class="char {0}">'+b+'</span></td>'
 
                 tmp += '<td class="display">'+c+'</td>'
-                tmp += '<td class="display">'+str(d)+'</td></tr>'
+                tmp += '<td class="display">'+str(d)+'</td>'
+                tmp += '<td class="display">'+str(len(occs['.'.join([a,b,c])]))+'</td>'
+                tmp += '</tr>'
+
                 t = 'dolgo_'+token2class(b, rcParams['dolgo'])
                 
                 # bad check for three classes named differently
@@ -233,7 +248,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 old_lang = new_lang
                 counter = 0
 
-        jsond[key] = ''.join(bestis)
+        jsond[key] = [''.join(bestis), occs[key]]
 
     return jsond
 
