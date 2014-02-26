@@ -405,13 +405,17 @@ def _upgma(
         dict clusters,
         list matrix,
         list tree_matrix,
-        dict branches
+        dict branches = {}
         ):
     """
     Internal implementation of the UPGMA algorithm.
     """
     cdef int i,vA,vB,idxA,idxB,idxNew
     cdef list score,valA,valB
+
+    # check for branches
+    if not branches:
+        branches = dict([(i,0) for i in clusters])
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:

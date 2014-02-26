@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-11 18:38
-# modified : 2013-03-11 18:47
+# modified : 2014-02-26 09:51
 """
 This module provides functions for basic cluster algorithms.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-11"
+__date__="2014-02-26"
 
 try:
     from .misc import transpose,squareform
@@ -405,13 +405,17 @@ def _upgma(
         clusters,
         matrix,
         tree_matrix,
-        branches
+        branches = {}
         ):
     """
     Internal implementation of the UPGMA algorithm.
     """
 #     cdef int i,vA,vB,idxA,idxB,idxNew
 #     cdef list score,valA,valB
+
+    # check for branches
+    if not branches:
+        branches = dict([(i,0) for i in clusters])
     
     # terminate when the dictionary is of length 1
     if len(clusters) == 1:
