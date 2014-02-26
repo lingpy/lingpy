@@ -124,6 +124,7 @@ class Tokenizer(object):
 
         else:
             self.orthography_profile = None
+            self.column_labels = None
 
         # orthography profile rules and replacements
         if os.path.isfile(ortho_path+".rules"):
