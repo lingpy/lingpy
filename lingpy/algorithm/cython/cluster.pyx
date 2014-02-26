@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-11 18:38
-# modified : 2013-03-11 18:47
+# modified : 2014-02-26 09:51
 """
 This module provides functions for basic cluster algorithms.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-11"
+__date__="2014-02-26"
 
 try:
     from .misc import transpose,squareform
@@ -372,10 +372,11 @@ def upgma(
     cdef str newick_string
 
     cdef dict clusters = dict([(i,[i]) for i in range(x)])
+    cdef dict branches = dict([(i,0) for i in range(x)])
 
     cdef list tree = []
 
-    _upgma(clusters,matrix,tree)
+    _upgma(clusters,matrix,tree,branches)
 
     cdef dict newick = dict([(i,taxa[i]) for i in range(len(taxa))])
     
@@ -403,7 +404,8 @@ def upgma(
 def _upgma(
         dict clusters,
         list matrix,
-        list tree_matrix
+        list tree_matrix,
+        dict branches
         ):
     """
     Internal implementation of the UPGMA algorithm.
@@ -434,17 +436,23 @@ def _upgma(
 
     idxA,idxB = indices[scores.index(minimum)]
     
+    bA = minimum / 2 - branches[idxA]
+    bB = minimum / 2 - branches[idxB]
+
+    branches[idxNew] = minimum / 2
+
     clusters[idxNew] = clusters[idxA] + clusters[idxB]
 
     del clusters[idxA]
     del clusters[idxB]
 
-    tree_matrix.append([idxA,idxB,minimum/2,minimum/2])
+    tree_matrix.append([idxA,idxB,bA,bB])
     
     return _upgma(
             clusters,
             matrix,
-            tree_matrix
+            tree_matrix,
+            branches
             )
 
 def neighbor(
@@ -523,6 +531,7 @@ def neighbor(
                     c,
                     d
                     )
+
     else:
         for i in range(len(tree)):
             newick[x+i] = '({0},{1})'.format(
@@ -548,6 +557,7 @@ def _neighbor(
     cdef float sAX,sBX,new_score,score,dist_a,dist_b,dist_ab
     cdef list line,new_matrix
     cdef dict new_clusters
+    cdef list averages
 
     if len(clusters) == 1:
         return
@@ -566,8 +576,8 @@ def _neighbor(
         tracer[tuple(clusters[idxA]+clusters[idxB])] = idxNew
 
         # append the indices to the tree matrix
-        sAX = matrix[idxA][idxB] 
-        sBX = matrix[idxA][idxB]
+        sAX = matrix[idxA][idxB] / 2
+        sBX = matrix[idxA][idxB] / 2
 
         tree_matrix.append(
                 (
@@ -592,7 +602,7 @@ def _neighbor(
     N = len(matrix)
 
     # determine the average scores (divergence r)
-    cdef list averages = []
+    averages = []
     for line in matrix:
         averages.append(sum(line) / (N - 2.0))
     
@@ -628,7 +638,8 @@ def _neighbor(
 
     
     # append the indices to the tree matrix
-    sAX = (matrix[idxA][idxB] + averages[idxA] - averages[idxB]) / 2.0
+    sAX = matrix[idxA][idxB] / 2.0 + (averages[idxA] - averages[idxB]) / 2
+        #(2.0 * (len(matrix) - 2))
     sBX = matrix[idxA][idxB] - sAX
     tree_matrix.append(
             (
@@ -685,6 +696,7 @@ def _neighbor(
             constant_matrix,
             tracer
             )
+
 def _tree2nwk(
         tree,
         taxa,

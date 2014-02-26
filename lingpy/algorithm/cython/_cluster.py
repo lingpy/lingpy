@@ -372,10 +372,11 @@ def upgma(
 #     cdef str newick_string
 
     clusters = dict([(i,[i]) for i in range(x)])
+    branches = dict([(i,0) for i in range(x)])
 
     tree = []
 
-    _upgma(clusters,matrix,tree)
+    _upgma(clusters,matrix,tree,branches)
 
     newick = dict([(i,taxa[i]) for i in range(len(taxa))])
     
@@ -403,7 +404,8 @@ def upgma(
 def _upgma(
         clusters,
         matrix,
-        tree_matrix
+        tree_matrix,
+        branches
         ):
     """
     Internal implementation of the UPGMA algorithm.
@@ -434,17 +436,23 @@ def _upgma(
 
     idxA,idxB = indices[scores.index(minimum)]
     
+    bA = minimum / 2 - branches[idxA]
+    bB = minimum / 2 - branches[idxB]
+
+    branches[idxNew] = minimum / 2
+
     clusters[idxNew] = clusters[idxA] + clusters[idxB]
 
     del clusters[idxA]
     del clusters[idxB]
 
-    tree_matrix.append([idxA,idxB,minimum/2,minimum/2])
+    tree_matrix.append([idxA,idxB,bA,bB])
     
     return _upgma(
             clusters,
             matrix,
-            tree_matrix
+            tree_matrix,
+            branches
             )
 
 def neighbor(
@@ -523,6 +531,7 @@ def neighbor(
                     c,
                     d
                     )
+
     else:
         for i in range(len(tree)):
             newick[x+i] = '({0},{1})'.format(
@@ -548,6 +557,7 @@ def _neighbor(
 #     cdef float sAX,sBX,new_score,score,dist_a,dist_b,dist_ab
 #     cdef list line,new_matrix
 #     cdef dict new_clusters
+#     cdef list averages
 
     if len(clusters) == 1:
         return
@@ -566,8 +576,8 @@ def _neighbor(
         tracer[tuple(clusters[idxA]+clusters[idxB])] = idxNew
 
         # append the indices to the tree matrix
-        sAX = matrix[idxA][idxB] 
-        sBX = matrix[idxA][idxB]
+        sAX = matrix[idxA][idxB] / 2
+        sBX = matrix[idxA][idxB] / 2
 
         tree_matrix.append(
                 (
@@ -628,7 +638,8 @@ def _neighbor(
 
     
     # append the indices to the tree matrix
-    sAX = (matrix[idxA][idxB] + averages[idxA] - averages[idxB]) / 2.0
+    sAX = matrix[idxA][idxB] / 2.0 + (averages[idxA] - averages[idxB]) / 2
+        #(2.0 * (len(matrix) - 2))
     sBX = matrix[idxA][idxB] - sAX
     tree_matrix.append(
             (
@@ -685,6 +696,7 @@ def _neighbor(
             constant_matrix,
             tracer
             )
+
 def _tree2nwk(
         tree,
         taxa,

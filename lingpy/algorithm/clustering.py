@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-07 14:05
-# modified : 2013-10-24 15:17
+# modified : 2014-02-25 10:34
 """
 Module provides general clustering functions for LingPy.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-24"
+__date__="2014-02-25"
 
 import codecs
 
@@ -60,6 +60,7 @@ def flat_upgma(threshold,matrix,taxa=None,revert=False):
     The function is automatically imported along with LingPy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create a list of arbitrary taxa.
 
@@ -131,6 +132,7 @@ def flat_cluster(
     The function is automatically imported along with LingPy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create a list of arbitrary taxa.
 
@@ -199,6 +201,7 @@ def upgma(
     Function is automatically imported when importing lingpy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create an arbitrary list of taxa.
 
@@ -251,6 +254,7 @@ def neighbor(matrix, taxa, distances=True):
     Function is automatically imported when importing lingpy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create an arbitrary list of taxa.
 
@@ -271,7 +275,7 @@ def neighbor(matrix, taxa, distances=True):
     
     """
     
-    return cluster.upgma(matrix,taxa,distances)
+    return cluster.neighbor(matrix,taxa,distances)
 
 def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     """
@@ -309,6 +313,7 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     The function is automatically imported along with LingPy.
 
     >>> from lingpy import *
+    from lingpy.algorithm import squareform
     
     Create a list of arbitrary taxa.
 
@@ -700,6 +705,7 @@ def link_clustering(
     The function is automatically imported along with LingPy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create a list of arbitrary taxa.
 
@@ -991,6 +997,7 @@ def mcl(
     The function is automatically imported along with LingPy.
 
     >>> from lingpy import *
+    >>> from lingpy.algorithm import squareform
     
     Create a list of arbitrary taxa.
 
