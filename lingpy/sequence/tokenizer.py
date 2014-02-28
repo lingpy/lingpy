@@ -87,13 +87,14 @@ class Tokenizer(object):
     def __init__(self, orthography_profile=None):
         # check various places for orthography profiles
         ortho_path = ""
+
         if not orthography_profile == None:
             # strip possible file extension
             if orthography_profile.endswith('.prf'):
                 orthography_profile = orthography_profile[:-4]
 
             # get path and filename of orthography profile
-            if os.path.exists(orthography_profile+".prf"):
+            if os.path.exists(orthography_profile+".prf") or os.path.exists(orthography_profile+".rules"):
                 ortho_path = orthography_profile
             else:
                 ortho_path = os.path.join(
