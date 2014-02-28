@@ -1,0 +1,25 @@
+# commas (",") == alternative transcriptions                                                                                                       
+# -- end of word comma == mistake                                                                                                                  
+# backslash ("\") == two different words for the same thing                                                                                        
+# periods (".") == identify affixes or units of meaning                                                                                            
+# 
+# brackets ("[", "]") ==                                                                                                                           
+# 1a. after the word, e.g. mba [?] -- means "is it correct?"                                                                                       
+# 1b. after the word -- when an informant gives two different words                                                                                
+# 2. within a word -- transcriber thinks segment is phonetic only                                                                                  
+# 3. after a word but not with "?" -- optional compounded word                                                                                     
+# 4. next to a word -- also optional compounded word 
+
+# blacklist = {
+# polysemy : [","]
+# synonyms : ["\\", "//"]
+# removes  : []
+# }
+\((.+)\),,,
+(-),,,
+([)(\.+)(]),,,
+# \(\*\),,,
+xxx,,,
+(\\\\-),,, ""
+(~),,, \\\\
+(,),,, \\\\
