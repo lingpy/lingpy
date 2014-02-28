@@ -1,37 +1,29 @@
 """
-Test script for the spreadsheet reader.
+Example script for the spreadsheet reader.
 """
 
 __author__ = "Steven Moran"
-__date__ = "2010-12-01"
+__date__ = "2014-28-02"
 
 import sys
 from lingpy.basic import *
 
-# relative or absolute paths must be given to the orthography profiles
+rcParams["debug"]=True
+# rcParams["verbose"]=True
 
-# specify the column name-to-orthography profiles
-
-d = {
-"Sangha So (Moran, Sangha)":"Moran2013.prf", 
-"Ben Tey (Beni, JH)":"Heath2013.prf",
-"Toro Tegu (Toupere, JH)":"Heath2013.prf",
-"Bangime (Bounou, AH)":"Heath2013.prf"
-}
-
-# load the spreadsheet, specify attributes like the black list file
-# s = Spreadsheet("test.csv", meanings="Leipzig-Jakarta", skip_empty_concepts=False, cellsep="\\\\", blacklist="dogon.bl", profiles=d)
+# load the spreadsheet and specify attributes like the blacklist file
 s = Spreadsheet(
-    "ex_dogon_wordlists_leipzig-jakarta.csv", 
+    "dogon-wordlist.tsv", 
     meanings="Leipzig-Jakarta", 
     skip_empty_concepts=False, 
     cellsep="\\\\", 
-    blacklist="dogon.bl", 
-    profiles=d)
+    blacklist="dogon.bl")
 
+# load as LingPy wordlist, tokenize and create QLC output format
 wl = Wordlist(s)
-wl.tokenize()
-wl.output('qlc',filename='tokenized-heath2013')
+wl.tokenize("Heath2014", column="ipa")
+wl.output('qlc',filename='heath2014-tokenized')
+
 
 # s.stats()
 # analyses = s.analyze("graphemes")
