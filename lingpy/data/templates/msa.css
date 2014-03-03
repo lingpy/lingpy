@@ -49,5 +49,20 @@ table.msa {
 }
 table.msa th {
 	text-align: left;
+  cursor: pointer;
 }
-tr.msa { }
+tr.msa {
+  display: table-row;
+}
+div.popup div.hidden {
+  display: none;
+}
+div.popup:hover div.hidden{
+  display: block;
+  position: absolute;
+  border: 4px solid #6095be;
+  background-color:#d16a56;
+  width: 250px;
+  color: white;
+  font-weight: bold;
+}

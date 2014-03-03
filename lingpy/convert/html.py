@@ -434,8 +434,7 @@ def msa2html(
             pid_mode = 1,
             stress = rcParams['stress'],
             css = False,
-            css_link = False,
-            css_path = 'msa.css'
+            js = False
             )
     for k in defaults:
         if k not in keywords:
@@ -450,6 +449,9 @@ def msa2html(
     # load templates
     if not template:
         html = codecs.open(os.path.join(path,'msa2html.html'),'r','utf-8').read()
+    elif template == "js":
+        html = codecs.open(os.path.join(path, 'msa2html.js.html'), 'r',
+                'utf-8').read()
     else:
         html = codecs.open(template,'r','utf-8').read()
 
@@ -457,6 +459,11 @@ def msa2html(
         css = codecs.open(os.path.join(path,'msa.css'), 'r', 'utf-8').read()
     else:
         css = codecs.open(keywords['css'], 'r', 'utf-8').read()
+
+    if not keywords['js']:
+        js = codecs.open(os.path.join(path,'msa.js'), 'r', 'utf-8').read()
+    else:
+        js = codecs.open(keywords['js'], 'r', 'utf-8').read()
     
     # treat the msa-object as a file and try to load the file if this is the
     # case
@@ -495,7 +502,7 @@ def msa2html(
     css = css.replace('TAXON_LENGTH', str(taxl * 10))
 
     out = ''
-    tr = '<tr class="msa">{0}</tr>'
+    tr = '<tr class="msa" unique="{1}" taxon={2} sequence={3}>{0}</tr>\n'
     td_taxon = '<td class="taxon">{0}</td>'
     perc = int(80 / len(msa['alignment'][0]) + 0.5)
     td_residue = '<td class="residue {1}">{0}</td>'
@@ -516,11 +523,28 @@ def msa2html(
         local = ['.'] * len(msa['alignment'][0])
         for i in msa['local']:
             local[i] = '*'
+    
+    # get two sorting schemas for the sequences
+    seqs = dict(zip(sorted(msa['seqs']), range(1,len(msa['seqs'])+1)))
+    taxa = dict(zip(sorted(msa['taxa']), range(1,len(msa['taxa'])+1)))
+
+    # set up a list to store unique alignments
+    alignments = []
 
     # start iteration
     for i,taxon in enumerate(msa['taxa']):
         tmp = ''
         tmp += td_taxon.format(taxon)
+        
+        # append alignment to alignments
+        alignment = ''.join(msa['alignment'][i])
+        sequence = msa['seqs'][i]
+        if alignment in alignments:
+            unique = 'false'
+        else:
+            unique = 'true'
+            alignments += [alignment]
+
         for j,char in enumerate(msa['alignment'][i]):
             if char == '-':
                 d = 'dolgo_GAP'
@@ -537,19 +561,13 @@ def msa2html(
                 elif d == 'dolgo_0':
                     d = 'dolgo_ERROR'
 
-                        
             if j in swaps:
                 tmp += td_swap.format(char, d)
             elif local[j] != '*':
                 tmp += td_unaligned.format(char, d)
             else:
                 tmp += td_residue.format(char, d)
-        out += tr.format(tmp)
-    
-    if keywords['css_link']:
-        css_string = '<link rel="stylesheet" href="{0}" type="text/css">'.format(keywords['css_path'])
-    else:
-        css_string = '<style>{0}</style>'.format(css)
+        out += tr.format(tmp, unique, taxa[taxon], seqs[sequence])
 
     html = html.format(
             table = out,
@@ -562,7 +580,8 @@ def msa2html(
             table_width='{0}'.format(len(msa['alignment'][0])* 50 + 15 * taxl),
             taxa = len(msa['alignment']),
             uniseqs=len(set(msa['seqs'])),
-            css = css_string
+            css = css,
+            js = js
             )
     
     if not filename:
