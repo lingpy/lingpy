@@ -1785,7 +1785,8 @@ class LexStat(Wordlist):
         else:
             function = lambda x,y: edit_dist(
                     self[x,'tokens'],
-                    self[y,'tokens']
+                    self[y,'tokens'],
+                    normalized=True
                     )
         if not aggregate:
             for i,taxA in enumerate(self.taxa):

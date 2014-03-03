@@ -42,13 +42,18 @@ def wl2dst(
     for i,taxA in enumerate(taxa):
         for j,taxB in enumerate(taxa):
             if i < j:
-                if mode == 'shared':
+                if mode in ['shared', 'jaccard']:
                     listA = wl.get_list(col=taxA,entry=ref)
                     listB = wl.get_list(col=taxB,entry=ref)
                     
                     shared = [x for x in listA if x in listB]
                     missing = 0
-                    score = len(shared)
+
+                    if mode == 'jaccard':
+                        allc = len(set(listA+listB))
+                        score = 1 - len(set(shared)) / allc
+                    else:
+                        score = len(shared)
 
                 elif mode == 'swadesh':
 
@@ -81,13 +86,18 @@ def wl2dst(
                 if mode == 'shared':
                     distances[i][j] = len(wl.get_list(col=taxA,flat=True))
             elif i > j and refB:
-                if mode == 'shared':
+                if mode in ['shared', 'jaccard']:
                     listA = wl.get_list(col=taxA,entry=refB)
                     listB = wl.get_list(col=taxB,entry=refB)
                     
                     shared = [x for x in listA if x in listB]
                     missing = 0
-                    score = len(shared)
+
+                    if mode == 'jaccard':
+                        allc = len(set(listA+listB))
+                        score = 1 - len(set(shared)) / allc
+                    else:
+                        score = len(shared)
 
                 elif mode == 'swadesh':
 

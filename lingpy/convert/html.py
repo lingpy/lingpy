@@ -15,6 +15,7 @@ import colorsys
 import codecs
 import webbrowser
 import json
+import re
 
 from ..settings import rcParams
 from ..read.qlc import read_msa
@@ -434,7 +435,8 @@ def msa2html(
             pid_mode = 1,
             stress = rcParams['stress'],
             css = False,
-            js = False
+            js = False,
+            compact = False,
             )
     for k in defaults:
         if k not in keywords:
@@ -449,7 +451,7 @@ def msa2html(
     # load templates
     if not template:
         html = codecs.open(os.path.join(path,'msa2html.html'),'r','utf-8').read()
-    elif template == "js":
+    elif template == 'js':
         html = codecs.open(os.path.join(path, 'msa2html.js.html'), 'r',
                 'utf-8').read()
     else:
@@ -589,6 +591,10 @@ def msa2html(
 
     if not filename.endswith('.html'):
         filename = filename+'.html'
+
+    if keywords['compact']:
+        html = html.replace('\n','')
+        html = re.sub(r'\s+',r' ',html)
 
     # check, whether the outfile already exists
     outf = codecs.open(filename,'w','utf-8')
