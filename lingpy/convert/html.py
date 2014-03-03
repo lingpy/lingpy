@@ -320,7 +320,7 @@ def alm2html(
                 pass
             else:
                 if confidence:
-                    tmp += ' '# </table>\n'
+                    tmp += ' </table>\n'
 
                 tmp += ' <tr class="empty"><td colspan="4" class="empty">'
                 tmp += '<hr class="empty" /></td></tr>\n'
@@ -433,6 +433,9 @@ def msa2html(
     defaults = dict(
             pid_mode = 1,
             stress = rcParams['stress'],
+            css = False,
+            css_link = False,
+            css_path = 'msa.css'
             )
     for k in defaults:
         if k not in keywords:
@@ -449,6 +452,11 @@ def msa2html(
         html = codecs.open(os.path.join(path,'msa2html.html'),'r','utf-8').read()
     else:
         html = codecs.open(template,'r','utf-8').read()
+
+    if not keywords['css']:
+        css = codecs.open(os.path.join(path,'msa.css'), 'r', 'utf-8').read()
+    else:
+        css = codecs.open(keywords['css'], 'r', 'utf-8').read()
     
     # treat the msa-object as a file and try to load the file if this is the
     # case
@@ -483,16 +491,16 @@ def msa2html(
     # determine the length of the longest taxon
     taxl = max([len(t) for t in msa['taxa']])
 
+    # format css file 
+    css = css.replace('TAXON_LENGTH', str(taxl * 10))
+
     out = ''
-    tr = '<tr class="msa">\n{0}\n</tr>'
-    td_taxon = '<td class="taxon" width="'+str(15 * taxl)+'">{0}</td>\n'
+    tr = '<tr class="msa">{0}</tr>'
+    td_taxon = '<td class="taxon">{0}</td>'
     perc = int(80 / len(msa['alignment'][0]) + 0.5)
-    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
-            '{0}</td>\n'
-    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
-            'align="center" bgcolor="{1}">{0}</td>\n'
-    td_unaligned = '<td class="residue noalign" style="border:dotted 1px gray"'+\
-            'width="50" align="center" bgcolor="white">{0}</td>\n'
+    td_residue = '<td class="residue {1}">{0}</td>'
+    td_swap = '<td class="residue swap {1}">{0}</td>'
+    td_unaligned = '<td class="residue noalign {1}">{0}</td>'
     
     # check for swaps in the alignment
     if 'swaps' in msa:
@@ -514,29 +522,35 @@ def msa2html(
         tmp = ''
         tmp += td_taxon.format(taxon)
         for j,char in enumerate(msa['alignment'][i]):
-            try:
-                c = rcParams['_color'][char]
-            except:
-                try:
-                    c = rcParams['_color'][char[0]]
-                except:
-                    try:
-                        # check for accents
-                        c = rcParams['_color'][char[1:]]
-                    except:
-                        try:
-                            c = rcParams['_color'][char[1]]
-                        except:
-                            print("[i] No color-code found for char {0}".format(char))
-                        
+            if char == '-':
+                d = 'dolgo_GAP'
+                c = '#bbbbbb'
+            else:
+                d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+                c = token2class(char, rcParams['_color'])
+
+                # bad check for three classes named differently
+                if d == 'dolgo__':
+                    d = 'dolgo_X'
+                elif d == 'dolgo_1':
+                    d = 'dolgo_TONE'
+                elif d == 'dolgo_0':
+                    d = 'dolgo_ERROR'
+
                         
             if j in swaps:
-                tmp += td_swap.format(char,c)
+                tmp += td_swap.format(char, d)
             elif local[j] != '*':
-                tmp += td_unaligned.format(char,c)
+                tmp += td_unaligned.format(char, d)
             else:
-                tmp += td_residue.format(char,c)
+                tmp += td_residue.format(char, d)
         out += tr.format(tmp)
+    
+    if keywords['css_link']:
+        css_string = '<link rel="stylesheet" href="{0}" type="text/css">'.format(keywords['css_path'])
+    else:
+        css_string = '<style>{0}</style>'.format(css)
+
     html = html.format(
             table = out,
             dataset = dataset,
@@ -547,7 +561,8 @@ def msa2html(
             width=len(msa['alignment'][0]),
             table_width='{0}'.format(len(msa['alignment'][0])* 50 + 15 * taxl),
             taxa = len(msa['alignment']),
-            uniseqs=len(set(msa['seqs']))
+            uniseqs=len(set(msa['seqs'])),
+            css = css_string
             )
     
     if not filename:

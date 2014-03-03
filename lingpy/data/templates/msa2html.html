@@ -1,14 +1,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
     <head>
 	<meta http-equiv="content-type"content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="msa.css" type="text/css">
+	{css}
 	<title>{shorttitle}</title>
     </head>
     <body>
 	<table>
 	    <tr>
 		<td>
-		    <table id="header" border=5 bordercolor="#33ce20" bgcolor="#ffa600">
+		    <table class="header" >
 			<tr>
             	    	    <td><b>File: </b></td>
             	    	    <td><b>{file}</b></td>
@@ -26,7 +26,7 @@
 		</td>
 		<td width="10"> </td>
 		<td>
-		    <table id="header" border=5 bordercolor="#33ce20" bgcolor="#ffa600"> 
+		    <table class="header"> 
 			<tr>
             	    	    <td><b>Height (all): </b></td>
             	    	    <td><b>{taxa}</b></td>
@@ -43,15 +43,15 @@
 		</td>
 	    </tr> 
 	</table>
-	<table align="left" border=0 class="msa" width="{table_width}">
+	<table class="msa" width="{table_width}">
 	    <tr>
-		<td align="left"><b>Taxon</b></td>
-		<td align="left" colspan="{width}"><b>Alignment</b></td>
+		<th><b>Taxon</b></td>
+		<th colspan="{width}"><b>Alignment</b></td>
 	    </tr>
 {table}
 	</table>
 	<div style="clear:left;margin-top:1em;text-align:left;padding:10px;font-size:10">
-	    <p>Created using <a href="http://lingpy.org"</a>LingPy</a> (Version 2.0).</a></p>
+	    <p>Created using <a href="http://lingpy.org"</a>LingPy</a> (Version 2.2).</a></p>
  <p>
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US">Creative Commons Attribution-NonCommercial 3.0 Unported License</a>.</p>
 <p>
