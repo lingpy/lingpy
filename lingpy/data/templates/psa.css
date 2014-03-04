@@ -1,0 +1,91 @@
+table.header {
+	border: 2px solid #d16a56;
+	background-color: #6095be;
+}
+table.header tr{
+	border: 2px solid black; //#d16a56;
+}
+table.header td{
+	border: 2px solid #d16a56;
+	color: white;
+	font-weight: bold;
+}
+td.taxon {
+	width: TAXON_LENGTH;
+	text-align: left;
+}
+
+td.residue{
+	width: 50px;
+	text-align: center;
+	color: white;
+	font-weight: bold;
+}
+
+td.swap{
+	border: solid 3px black;
+}
+td.noalign{
+	border: dotted 1px gray;
+}
+td.dolgo_ERROR{background-color: white; color:red;}
+td.dolgo_V{background-color: #c86464;}
+td.dolgo_K{background-color: #c89664;} 
+td.dolgo_P{background-color: #c8c864;} 
+td.dolgo_H{background-color: #96c864;} 
+td.dolgo_J{background-color: #64c864;} 
+td.dolgo_M{background-color: #64c896;} 
+td.dolgo_N{background-color: #64c8c8;} 
+td.dolgo_S{background-color: #6496c8;} 
+td.dolgo_R{background-color: #6464c8;} 
+td.dolgo_T{background-color: #9664c8;} 
+td.dolgo_W{background-color: #c864c8;} 
+td.dolgo_TONE{background-color: #c86496;} 
+td.dolgo_X{background-color: #bbbbbb;}
+td.dolgo_GAP{background-color: #bbbbbb;}
+
+table.msa {
+	border: solid 0px white;
+}
+table.msa th {
+	text-align: left;
+  cursor: pointer;
+}
+tr.msa {
+  display: table-row;
+}
+div.popup div.hidden {
+  display: none;
+}
+div.popup:hover div.hidden{
+  display: block;
+  position: absolute;
+  border: 4px solid #6095be;
+  background-color:#d16a56;
+  width: 250px;
+  color: white;
+  font-weight: bold;
+}
+
+div.dolgo_ERROR{background-color: white; color:red;}
+div.dolgo_V{background-color: #c86464;}
+div.dolgo_K{background-color: #c89664;} 
+div.dolgo_P{background-color: #c8c864;} 
+div.dolgo_H{background-color: #96c864;} 
+div.dolgo_J{background-color: #64c864;} 
+div.dolgo_M{background-color: #64c896;} 
+div.dolgo_N{background-color: #64c8c8;} 
+div.dolgo_S{background-color: #6496c8;} 
+div.dolgo_R{background-color: #6464c8;} 
+div.dolgo_T{background-color: #9664c8;} 
+div.dolgo_W{background-color: #c864c8;} 
+div.dolgo_TONE{background-color: #c86496;} 
+div.dolgo_X{background-color: #bbbbbb;}
+div.dolgo_GAP{background-color: #bbbbbb;}
+div.residue{
+	width: 50px;
+	color: white;
+	font-weight: bold;
+	display: table-cell;
+	text-align: center;
+}

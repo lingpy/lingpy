@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2014-02-19 18:19
+# modified : 2014-03-03 18:52
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-02-19"
+__date__="2014-03-03"
 
 
 import os
@@ -593,8 +593,10 @@ def msa2html(
         filename = filename+'.html'
 
     if keywords['compact']:
-        html = html.replace('\n','')
+        html = html.replace('\n',' ')
         html = re.sub(r'\s+',r' ',html)
+        html = html.replace('> ','>')
+        html = html.replace(' >','>')
 
     # check, whether the outfile already exists
     outf = codecs.open(filename,'w','utf-8')
@@ -822,3 +824,145 @@ def tokens2html(
             out += td_residue.format(char,c,fg)
 
     return out+'</table>'
+
+
+def psa2html(filename, **keywords):
+    """
+    Function converts a PSA-file into colored html-format.
+    """
+
+    kw = dict(
+            template = False,
+            css = False,
+            comment = '#',
+            filename = filename.replace('.psa','.html'),
+            compact = True
+            )
+    kw.update(keywords)
+    
+    path = os.path.join(rcParams['_path'],'data','templates')
+    
+    if not kw['template']:
+        template = codecs.open(os.path.join(path, 'psa.html'), 'r',
+                'utf-8').read()
+    else:
+        template = codecs.open(kw['template'], 'r', 'utf-8').read()
+
+    if not kw['css']:
+        css = codecs.open(os.path.join(path, 'psa.css'), 'r',
+                'utf-8').read()
+    else:
+        css = codecs.open(kw['css'], 'r', 'utf-8').read()
+
+    raw_data = codecs.open(filename, 'r', 'utf-8')
+    data = []
+    for line in raw_data:
+        if not line.startswith(kw['comment']):
+            data += [line.strip()]
+    
+    seq_ids = []
+    pairs = []
+    taxa = []
+    alignments = []
+
+    del data[0]
+
+    i = 0
+    while i <= len(data) - 3:
+        try:
+            seq_ids.append(data[i])
+            
+            datA = data[i+1].split('\t')
+            datB = data[i+2].split('\t')
+            
+            taxonA = datA[0].strip('.')
+            taxonB = datB[0].strip('.')
+            almA = datA[1:]
+            almB = datB[1:]
+            
+            taxa.append((taxonA,taxonB))
+            pairs.append(
+                    (
+                        '.'.join([k for k in almA if k != '-']),
+                        '.'.join([k for k in almB if k != '-'])
+                        )
+                    )
+            alignments.append(
+                    (
+                        [str(a) for a in almA],
+                        [str(b) for b in almB],
+                        0)
+                    )
+            i += 4
+        except:
+            print("[!] Line {0} of the data is probablyb miscoded.".format(
+                i+1
+                ))
+            i += 1
+
+    
+    def get_classes(alm):
+
+        classes = []
+        residue = '<div class="residue {1}">{0}</div>'
+        for j,char in enumerate(alm):
+            if char == '-':
+                d = 'dolgo_GAP'
+            else:
+                d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+
+                # bad check for three classes named differently
+                if d == 'dolgo__':
+                    d = 'dolgo_X'
+                elif d == 'dolgo_1':
+                    d = 'dolgo_TONE'
+                elif d == 'dolgo_0':
+                    d = 'dolgo_ERROR'
+            classes += [residue.format(char, d)]
+        return ''.join(classes)
+    
+    tr = '<tr class="psa">{0}</tr>'
+
+
+    out = '<table>\n' #codecs.open(kw['filename'], 'w', 'utf-8')
+    for i,(a,b,c) in enumerate(alignments):
+        
+        clsA = get_classes(a)
+        clsB = get_classes(b)
+
+        ids = int(100 * pid(a,b)+0.5)
+
+        out += '<tr class="head">'
+        out += '<td colspan=2 class="head"><b>Alignment {0}:</b> <i>{1}</i>, PID: {2}</td></tr>'.format(
+                i+1,
+                seq_ids[i],
+                ids
+                )
+        out += '<tr class="psa">'
+        out += '<td class="taxon">{0}</td>'.format(taxa[i][0])
+        out += '<td class="psa">{0}</td>'.format(clsA)
+        out += '</tr>'
+        out += '<tr class="psa">'
+        out += '<td class="taxon">{0}</td>'.format(taxa[i][1])
+        out += '<td class="psa">{0}</td>'.format(clsB)
+        out += '</tr>'
+        out += '<tr><td colspan=2></td></tr>'
+    
+    out += '</table>'
+    
+    html = template.format(
+            alignments = out,
+            css = css
+            )
+
+    if kw['compact']:
+        html = html.replace('\n',' ')
+        html = re.sub(r'\s+',r' ',html)
+        html = html.replace('> ','>')
+        html = html.replace(' >','>')
+
+    with codecs.open(kw['filename'], 'w', 'utf-8') as f:
+        f.write(html)
+    
+        
+       
