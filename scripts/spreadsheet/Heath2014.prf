@@ -47,6 +47,8 @@ éèⁿ	êːⁿ
 ɪ́ɪ́ⁿ	ɪ́ːⁿ
 ɪ̀ɪ́ⁿ	ɪ̌ːⁿ
 ɪ́ɪ̀ⁿ	ɪ̂ːⁿ
+ĩ́ĩ́	íːⁿ	Used by Hantgan
+ĩ́ĩ̀	îːⁿ	Used by Hantgan
 ìì	ìː
 íí	íː
 ìí	ǐː
@@ -55,6 +57,7 @@ ììⁿ	ìːⁿ
 ííⁿ	íːⁿ
 ìíⁿ	ǐːⁿ
 íìⁿ	îːⁿ
+ĩ̀ĩ́	ǐːⁿ	Nasalized vowels used by Hantgan
 òò	òː
 óó	óː
 òó	ǒː
@@ -104,6 +107,7 @@ a	a
 æ̀:ⁿ	æ̀ːⁿ
 æ̂:ⁿ	æ̂ːⁿ
 b	b
+bʷ	bʷ	In Bangime
 ɓ	ɓ
 c	tʃ
 ć	tʃ	occurs only once
@@ -115,6 +119,7 @@ é	é
 è	è
 ê	ê
 ě	ě
+e:	eː
 é:	éː
 è:	èː
 ě:	ěː
@@ -132,7 +137,6 @@ e᷈:	e᷈ː
 ɛ:	ɛː
 ɛ̀	ɛ̀
 ɛ́	ɛ́
-ɛ́.	ɛ́
 ɛ̌	ɛ̌
 ɛ̌:	ɛ̌ː
 ɛ́:	ɛ́ː
@@ -160,7 +164,9 @@ È	ɛ̀	typo?
 ə̀	ə̀
 f	f
 g	ɡ
+ɡ	ɡ	Correct IPA used by Abbie Hantgan
 ǵ	ɡ
+ɡʷ	ɡʷ	In Bangime
 ɣ	ɣ
 ʔ	ʔ
 ʔⁿ	ʔ	treating as glottal for time being
@@ -194,6 +200,8 @@ î"	î	typo?
 i᷈:ⁿ	i᷈ːⁿ
 i᷈:	i᷈
 í̀	í	typo?
+ɪ̀	ɪ̀	In Sangha So
+ɪ́	ɪ́	In Sangha So
 j	dʒ
 ʄ	ʄ	voiced palatal implosive
 k	k
@@ -203,6 +211,7 @@ l	l
 l̀	l	typo?
 l:	lː
 m	m
+m̀:	m̀ː
 m̀ᵇ	m̀	what's this?
 :m	m	typo?
 m̀	m̀
@@ -214,6 +223,7 @@ ń	ń
 ǹ:	ǹ	typo?
 ñ	n
 ŋ	ŋ
+ŋʷ	ŋʷ	In Bangime
 ŋ́	ŋ́
 ŋ̀	ŋ̀
 ɲ	ɲ
@@ -227,6 +237,7 @@ ó	ó
 o́	ó	double accent; typo?
 ô	ô
 ǒ	ǒ
+o:	oː
 ó:	óː
 ò:	òː
 ǒ:	ǒː
@@ -241,6 +252,7 @@ òⁿ	òⁿ
 o᷈	o᷈
 o᷈:	o᷈ː
 o᷈:	typo?
+ṍ	óⁿ	Used by Hantgan
 õ̀	òⁿ
 o᷈::	o᷈ː	typo?
 o̯	o	typo?
@@ -277,11 +289,14 @@ o̯	o	typo?
 ɔ̃́	ɔ́ⁿ
 ɔ̀ⁿ̀	ɔ̀ⁿ
 ɔ᷈ⁿ	ɔ᷈ⁿ
+ɔ̃̀	ɔ̀ⁿ	Used by Hantgan
 ɞ́	ɞ́	typo?  occurs only once
 p	p
+pʷ	pʷ	In Bangime
 q	q
 r	r
 rᵃ	r
+r̃	rⁿ	Used by Abbie Hantgan
 rⁿ	rⁿ
 rⁿ̀	rⁿ
 rᵘ̀	r	typo?
@@ -291,6 +306,7 @@ sⁿ	s
 š	ʃ
 ʃ	ʃ
 t	t
+tʷ	tʷ	In Bangime
 ú	ú
 ù	ù
 û	û
@@ -311,6 +327,8 @@ û:ⁿ	ûːⁿ
 ǔ:ⁿ	ǔːⁿ
 u᷈:	u᷈ː
 u	u
+ʋ	ʋ	In Bangime
+ɕ	ɕ	In Bangime
 v	v
 v́	v́	this marks a tonal vowel
 v̀	v̀	this marks a tonal vowel
@@ -337,8 +355,10 @@ yᵇ	j	typo?
 z	z
 ž	z	typo?
 ʒ	ʒ
-∴	∴
+ʤ	dʒ	Used by Hantgan
+∴	NULL
 ?	NULL	missing data
+V	NULL	denotes verb
 B	NULL
 D	NULL
 H	NULL
@@ -353,6 +373,7 @@ Ú	NULL
 [	NULL
 )	NULL
 ≡	≡
+=	NULL
 ⇒	NULL
 ∅	NULL
 /	NULL
@@ -366,3 +387,9 @@ Ú	NULL
 X	NULL
 -	NULL	 
 \\	NULL	 
+ɥ	ɥ	Bangime sound
+ð	ð	Used by Steven Moran
+w̃	wⁿ	Used by Abbie Hantgan
+…	NULL	Used by Laura McPherson
+:	ː	Imperative positive PL suffix marker in Ampari
+ⁿ	ⁿ	Tomo Kan (adjectival class suffixes if different from nouns)
