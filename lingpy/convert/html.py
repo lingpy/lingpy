@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-10 16:31
-# modified : 2014-03-03 18:52
+# modified : 2014-03-10 20:31
 """
 Basic functions for HTML-plots.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-03-03"
+__date__="2014-03-10"
 
 
 import os
@@ -19,7 +19,7 @@ import re
 
 from ..settings import rcParams
 from ..read.qlc import read_msa
-from ..sequence.sound_classes import pid, token2class
+from ..sequence.sound_classes import pid, token2class, tokens2class, ipa2tokens
 
 import numpy as np
 
@@ -94,7 +94,8 @@ def alm2html(
 
     """
     defaults = dict(
-            json = ""
+            json = "",
+            labels = {},
             )
     for k in defaults:
         if k not in keywords:
@@ -176,7 +177,9 @@ def alm2html(
             'r',
             'utf-8'
             ).read()
-
+    
+    # define a label function for the taxa
+    label = lambda x: keywords['labels'][x] if x in keywords['labels'] else x
 
     # check for windows-compatibility
     data = data.replace(os.linesep,'\n')[:-1]
@@ -245,7 +248,7 @@ def alm2html(
 
             # assign the cognate id
             tmp = '  <td>{0}</td>\n'.format(l[0])
-            tmp += '  <td>{0}</td>\n'.format(l[1].strip('.'))
+            tmp += '  <td>{0}</td>\n'.format(label(l[1].strip('.')))
 
             # check alignments for confidence scores
             ipa_string = ''.join([cell.split('/')[0] for cell in
@@ -274,8 +277,13 @@ def alm2html(
                     
                     # check for confidence scores
                     if '/' in char:
-                        char,conf,num = char.split('/')
-                        conf = int(conf) 
+                        try:
+                            char,conf,num = char.split('/')
+                            conf = int(conf)
+                        except ValueError:
+                            print(char.split('/'))
+                            raise ValueError("Something is wrong with %s." % (char))
+
                     else:
                         char,conf,rgb = char,(255,255,255),0.0
                     
@@ -312,7 +320,10 @@ def alm2html(
                 alm += '<td class="{0}">--</td>\n'.format(colors[abs(int(l[0]))])
             
             # format the alignment
-            tmp = tmp.format(alm)
+            try:
+                tmp = tmp.format(alm)
+            except ValueError:
+                raise ValueError("Unknown problem in matchin %s and %s." % (alm, tmp))
 
             # check for last line, where a new line should be inserted (not the
             # fastest solution, but plotting is not a matter of time, and it
@@ -437,6 +448,7 @@ def msa2html(
             css = False,
             js = False,
             compact = False,
+            class_sort = True
             )
     for k in defaults:
         if k not in keywords:
@@ -527,7 +539,20 @@ def msa2html(
             local[i] = '*'
     
     # get two sorting schemas for the sequences
-    seqs = dict(zip(sorted(msa['seqs']), range(1,len(msa['seqs'])+1)))
+    if keywords['class_sort']:
+
+        classes = [tokens2class(ipa2tokens(seq), rcParams['asjp']) for seq in msa['seqs']]
+        seqs = dict(
+                [(a[1],b) for a,b in zip(
+                    sorted(
+                        zip(classes,msa['seqs']),
+                        key = lambda x: x[0] #list(zip(x[0],x[1]))
+                        ),
+                    range(1,len(msa['seqs'])+1)
+                    )]
+                )
+    else:
+        seqs = dict(zip(sorted(msa['seqs']), range(1,len(msa['seqs'])+1)))
     taxa = dict(zip(sorted(msa['taxa']), range(1,len(msa['taxa'])+1)))
 
     # set up a list to store unique alignments
@@ -579,7 +604,7 @@ def msa2html(
             sequence = seq_id,
             shorttitle = shorttitle,
             width=len(msa['alignment'][0]),
-            table_width='{0}'.format(len(msa['alignment'][0])* 50 + 15 * taxl),
+            table_width='{0}'.format(len(msa['alignment'][0])* 50 + 8 * taxl),
             taxa = len(msa['alignment']),
             uniseqs=len(set(msa['seqs'])),
             css = css,
@@ -735,7 +760,7 @@ def msa2tex(
         body += r'\ttfamily '+taxon.replace('_',r'\_')
         for j,char in enumerate(msa['alignment'][i]):
             if char != '-':
-                cls = rcParams['dolgo'][char]
+                cls = token2class(char,rcParams['dolgo']) 
             elif char == '-':
                 cls = 'X'
             if char == '_':

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2013-11-24 19:31
+# modified : 2014-03-17 09:36
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-24"
+__date__="2014-03-17"
 
 # external imports
 import re
@@ -297,7 +297,7 @@ def calculate_data(
                 )
     elif data in ['tre','tree','nwk']:
         if 'distances' not in wordlist._meta:
-            distances = wl2dst(wordlist,taxa,concepts,ref,**keywords)
+            wordlist._meta['distances'] = wl2dst(wordlist,taxa,concepts,ref,**keywords)
         else:
             distances = wordlist._meta['distances']
         if 'tree' in wordlist._meta and not keywords['force']:

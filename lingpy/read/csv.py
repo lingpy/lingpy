@@ -184,7 +184,7 @@ def read_asjp(
         family = 'Indo-European',
         classification = 'hh',
         max_synonyms = 2,
-        min_population = 0,
+        min_population = lambda x: x > 0 or abs(x) > 1900,
         merge_vowels=True,
         evaluate = False
         ):
@@ -243,7 +243,7 @@ def read_asjp(
             iso = line[9].strip()
             
             # check for population
-            if pop >= min_population:
+            if min_population(pop): # >= min_population:
                 # append data to meta
                 meta["coords"][lang] = (lat,lng)
                 meta["classification"]["hammarstroem"][lang] = hh

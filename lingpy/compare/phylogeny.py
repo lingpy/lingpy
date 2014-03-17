@@ -2374,7 +2374,7 @@ class PhyBo(Wordlist):
             else:
                 task_range = list(range(task_len))
                 task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' MLN-REONSTRUCTION) '.center(
+            task_string = ' MLN-REONSTRUCTION '.center(
                     rcParams['_sverb_tbar_len'],
                     rcParams['_sverb_fchar']
                     )
