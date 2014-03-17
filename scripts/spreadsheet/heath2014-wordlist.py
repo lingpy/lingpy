@@ -14,7 +14,7 @@ rcParams["debug"]=True
 
 # load the spreadsheet and specify attributes like the blacklist file and the column for concepts
 s = Spreadsheet(
-    "dogon_wordlists.csv", 
+    "dogon_wordlists.tsv", 
     meanings="Leipzig-Jakarta", 
 #    meanings="Swadesh (AH)", 
 #    meanings="English", 
