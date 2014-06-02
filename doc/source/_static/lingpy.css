@@ -1,11 +1,17 @@
 @import url("default.css");
+div.document{
+  max-width:1200px;
+  padding-right: 0px;
+}
+div.documentwrapper {
+    float: left;
+    width: 100%;
+}
+div.related {
+  max-width:1200px;
+  padding-right: 0px;
+}
 
-div.footer {
-	color: black;
-}
-div.footer a{
-	color: black;
-}
 div.body h1,
 div.body h2,
 div.body h3,
@@ -92,4 +98,44 @@ table.indextable a{
 
 div.genindex-jumpbox a{
     color: black;
+}
+
+/* footer */
+#footer {
+	overflow: hidden;
+  max-width: 1200px;
+  clear:both;
+  padding: 10px;
+	font-size: 1.1em;
+	background-color: white;
+	color: black; //#e32f2f;
+}
+#footer p {
+	text-align:center;
+}
+#footer #anysurfer {
+	float:right;
+	margin-left: 10px;
+	border: none;
+}
+#footer a {
+	border-bottom: 1px dotted #fff;
+	text-decoration: none;
+	color:black;
+}
+
+div.fleft {
+  float: left;
+  display: table-cell;
+  max-width:150px;
+}
+div.fright{
+  float:right;
+  display:table-cell;
+  max-width:150px;
+}
+div.fcenter{
+  float: left;
+  display: table-cell;
+  max-width:500px;
 }
