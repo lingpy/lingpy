@@ -33,19 +33,19 @@ Python Library for Historical Linguistics
        <a href="download.html">Download</a>
      </li>
    </ul></td><td style="width:250px">
-   <img style="position:relative;width:200px" src="_images/lingpy.jpg" />
+   <!--<img style="position:relative;width:200px" src="_images/lingpy.jpg" />-->
    </td>
    <td>
    <table class="docutils field-list" style="position:relative;top:70px">
     <col class="field-name" />
     <col class="field-body" />
     <tbody valign="top">
-    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.2</td>
+    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.3</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">November 22, 2013</td>
+    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">June 1, 2014</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Project:</th><td class="field-body">QLC Research Group, Philipps-University Marburg </td>
-    </tr>
+    <!--<tr class="field-even field"><th class="field-name">Project:</th><td class="field-body"> Quantitative Language Comparison </td>
+    </tr>-->
     <tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body">J.-M. List, S. Moran, P. Bouda, and J. Dellert </td>
     </tr>
 

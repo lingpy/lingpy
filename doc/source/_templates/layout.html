@@ -25,3 +25,37 @@ LingPy
 {# put the sidebar before the body #}
 {#% block sidebar1 %}{{ sidebar() }}{% endblock %#}
 {#% block sidebar2 %}{% endblock %#}
+
+{% block footer %}
+ <div id="footer">
+<table>
+<tr><td>
+<div class="footer_left">
+<a href="http://www.hhu.de/"><img width="150px" src="http://www.hhu.de/home/fileadmin/images/uni_duesseldorf_logo.gif" alt="HHUD" /></a>
+ </div></td>
+ <td><div class="footer_left">
+<a href="http://www.bmbf.de/"><img width="150px" src="http://www.bmbf.de/_img/common/BMBF_Logo.png" alt="BMBF" /></a>
+ </div></td>
+<td>
+  <div class="footer_center">
+    <p style="font-size:70%">Created using <a href="http://sphinx-doc.org">Sphinx</a></p>
+    <p style="font-size:70%">Last updated on June 1, 2014</p>
+ <p style="font-size:70%">
+This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US">Creative Commons Attribution-NonCommercial 3.0 Unported License</a>.</p><br>
+<p>
+   <a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US"><img
+		alt="Creative Commons License" style="border-width:0;width:120px;"
+		src="http://i.creativecommons.org/l/by-nc/3.0/88x31.png" /></a> </p>
+</div></td>
+<td>
+  <div class="footer_right">
+<a href="http://erc.europa.eu/"><img width="100px" src="http://quanthistling.info/theme/qhl/images/logo_erc.png" alt="ERC" /></a>
+
+
+</div></td>
+<td>
+  <div class="footer_right">
+<a href="http://www.uni-marburg.de/"><img width="150px" src="http://www.uni-marburg.de/bilder/logo_uni1.gif" alt="PUD" /></a>
+
+</div></td></tr></table>
+{% endblock %}
