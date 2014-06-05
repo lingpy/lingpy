@@ -7,11 +7,11 @@ d	d
 t`	\u0288
 d`	\u0256
 c	c
-J\\	\u025F
+J\	\u025F
 k	k
 g	\u0261
 q	q
-G\\	\u0262
+G\	\u0262
 ?	\u0294
 #	Nasals
 m	m
@@ -20,16 +20,16 @@ n	n
 n`	\u0273
 J	\u0272
 N	\u014B
-N\\	\u0274
+N\	\u0274
 #	Trills
-B\\	\u0299
+B\	\u0299
 r	r
-R\\	\u0280
+R\	\u0280
 #	Tap or flap
 4	\u027E
 r`	\u027D
 #	Fricative
-p\\	\u0278
+p\	\u0278
 B	\u03B2
 f	f
 v	v
@@ -47,36 +47,36 @@ x	x
 G	\u0263
 X	\u03C7
 R	\u0281
-X\\	\u0127
-?\\	\u0295
+X\	\u0127
+?\	\u0295
 h	h
-h\\	\u0266
+h\	\u0266
 # Lateral fricative
 K	\u026C
-K\\	\u026E
+K\	\u026E
 # Approximant
 P	\u028B
-v\\	\u028B
-r\\	\u0279
-r\\`	\u027B
+v\	\u028B
+r\	\u0279
+r\`	\u027B
 j	j
-M\\	\u0270
+M\	\u0270
 # Lateral approximant
 l	l
 l`	\u026D
 L	\u028E
-L\\	\u029F
+L\	\u029F
 # CONSONANTS (NON-PULMONIC) --------
 #|||	Clicks
-O\\[?]	\u0298
-|\\	\u01C0
-!\\	\u01C3
-=\\	\u01C2
-|\\|\\	\u01C1
+O\[?]	\u0298
+|\	\u01C0
+!\	\u01C3
+=\	\u01C2
+|\|\	\u01C1
 # Voiced implosives
 b_<	\u0253
 d_<	\u0257
-J\\_<	\u0284
+J\_<	\u0284
 g_<	\u0260
 G\\_<	\u029B
 # Ejectives
@@ -85,12 +85,12 @@ _>	\u02BC
 "	\u02C8
 %	\u02CC
 :	\u02D0
-:\\	\u02D1
+:\	\u02D1
 _X	\u0306
 .	.
 |	\u01C0
 ||	\u01C1
--\\	\u035C
+-\	\u035C
 # TONES & WORD ACCENTS
 # Level
 _T	\u02E5
@@ -115,7 +115,7 @@ _c	\u031C
 _+	\u031F
 _-	\u0320
 _"	\u0308
-_X[?]	\u033D
+# _X[?]	\u033D
 _=	\u0329
 _^	\u032F
 `	\u02DE
@@ -126,7 +126,7 @@ _w[?]	\u02B7
 \'	\u02B2
 _j	\u02B2
 _G	\u02E0
-_?\\	\u02E4
+_?\	\u02E4
 _e	\u0334
 5	\u026B
 _r	\u031D
@@ -166,7 +166,7 @@ E	\u025B
 9	\u0153
 3	\u025C
 6	\u0250
-3\\	\u025E
+3\	\u025E
 V	\u028C
 O	\u0254
 # Open
@@ -178,22 +178,22 @@ Q	\u0252
 W	\u028D
 w	\u028b
 H	\u0265
-H\\	\u029C
-<\\	\u02A2
->\\	\u02A1
-s\\	\u0255
-z\\	\u0291
-l\\	\u027A
-x\\[?]	\u0267
+H\	\u029C
+<\	\u02A2
+>\	\u02A1
+s\	\u0255
+z\	\u0291
+l\	\u027A
+x\[?]	\u0267
 k_p	k\u0361p
 #t_s	t\u0361s
 p_f	p\u0361f
 dz	\u02A3
 dZ	\u02A4
-dz\\	\u02A5
+dz\	\u02A5
 ts	\u02A6
 tS	\u02A7
-tz\\	\u02A8
+tz\	\u02A8
 fN	\u02A9
 ls	\u02AA
 lz	\u02AB
@@ -213,3 +213,14 @@ l_R	ɭ
 # specific character ';' for multiple entries (added by JML)
 ;	;
 
+# pad character for line-breaks @JML
+>	‿
+<	‿
+*\	→
+-	-
+*\@	→ə
++	+
+#z\	ʑ
+l_G	ɫ
+=	\u0329
+S_w	ʃ

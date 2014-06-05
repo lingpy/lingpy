@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2013-12-04 13:55
+# modified : 2014-04-28 21:04
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-12-04"
+__date__="2014-04-28"
 
 # builtin
 import random
@@ -1565,6 +1565,21 @@ class LexStat(Wordlist):
                     )
                 thresholds += [t]
             threshold = sum(thresholds) / len(thresholds)
+        # new method for threshold estimation based on calculating approximate
+        # random distributions of similarities for each sequence
+        elif kw['guess_threshold'] and kw['gt_mode'] == 'nulld':
+            DR = []
+            align = lambda x,y: self.align_pairs(x, y, method=method,
+                    restricted_chars=restricted_chars, mode=mode, scale=scale,
+                    factor=factor, return_distance=True, pprint=False, gop=gop)
+            for l1,l2 in self.pairs:
+                if l1 != l2:
+                    pairs = self.pairs[l1,l2]
+                    for p1,p2 in pairs:
+                        dx = [align(p1, pairs[random.randint(0, len(pairs)-1)][1])
+                                for i in range(len(pairs)//5)]
+                        DR += dx #[sum(dx)/len(dx)]
+            threshold = sum(DR) / len(DR)
         
         # iterate over the matrices
         for concept,indices,matrix in matrices:
@@ -1581,6 +1596,10 @@ class LexStat(Wordlist):
                         matrix,
                         kw['gt_trange']
                         )
+            # considering new function here JML
+            elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
+                for idx in indices:
+                    pass
             else:
                 t = threshold
 

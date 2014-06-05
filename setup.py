@@ -123,13 +123,13 @@ else:
     extension_modules = []
 
 # make global name of this version
-thisversion = "2.3"
+thisversion = "2.4.dev"
 setup(
         name = pkgname,
         version = thisversion,
         packages = find_packages(pkg_location),
         package_dir = pkg_dir,
-        install_requires = ['numpy','regex'],
+        install_requires = ['numpy'],
         author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [

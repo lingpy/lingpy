@@ -1,14 +1,14 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:27
-# modified : 2013-07-13 10:41
+# modified : 2014-05-11 12:47
 """
 Module provides various methods for the handling of sound classes.
 
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-07-13"
+__date__="2014-05-11"
 
 # lingpy imports
 from ..settings import rcParams
@@ -335,14 +335,13 @@ def prosodic_string(
     * ``M``: syllable-final consonant in descending environment
     * ``N``: word-final consonant
     * ``X``: first vowel in a word
-    * ``Y``: non-final vowel in a words
+    * ``Y``: non-final vowel in a word
     * ``Z``: vowel occuring in the last position of a word
 
     Examples
     --------
-    >>> profile = [int(i) for i in tokens2class(ipa2tokens('t͡sɔyɡə'),'art')]
-    >>> prosodic_string(profile)
-    '#vC>'
+    >>> prosodic_string(ipa2tokens('t͡sɔyɡə')
+    'AXBZ'
 
     """
     defaults = dict(
@@ -855,7 +854,7 @@ def get_all_ngrams(sequence):
 
     Examples
     --------
-    >>> ngrams('abcde')
+    >>> get_all_ngrams('abcde')
     ['abcde', 'bcde', 'abcd', 'cde', 'abc', 'bcd', 'ab', 'de', 'cd', 'bc', 'a', 'e', 'b', 'd', 'c']
 
     """
@@ -906,3 +905,49 @@ def sampa2uni(seq):
         result += xs[tok]
 
     return result
+
+def bigrams(sequence):
+    """
+    Convert a given sequence into a sequence of bigrams.
+    """
+    if ' ' in sequence:
+        seq = sequence.split(' ')
+    else:
+        seq = list(sequence)
+
+    return list(zip(['#']+seq,seq+['$']))
+
+def trigrams(sequence):
+    """
+    Convert a given sequence into a sequence of trigrams.
+    """
+    if ' ' in sequence:
+        seq = sequence.split(' ')
+    else:
+        seq = list(sequence)
+
+    return list(
+            zip(
+                ['#','#']+seq,
+                ['#']+seq+['$'],
+                seq+['$','$']
+                )
+            )
+
+def pgrams(sequence, **keywords):
+    """
+    Convert a given sequence into bigrams consisting of prosodic string symbols and the tokens of the original sequence.
+    """
+    if ' ' in sequence:
+        seq = sequence.split(' ')
+    elif type(sequence) == str:
+        seq = ipa2tokens(sequence)
+    else:
+        seq = list(sequence)
+
+    return list(
+            zip(
+                seq,
+                prosodic_string(seq, **keywords)
+                )
+            )

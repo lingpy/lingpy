@@ -112,6 +112,12 @@ class Pairwise(object):
                         )
             return out
 
+    def __call__(self,**keywords):
+        
+        self.align(**keywords)
+
+        return self.alignments
+
     def __repr__(self):
 
         return str(self.seqs)

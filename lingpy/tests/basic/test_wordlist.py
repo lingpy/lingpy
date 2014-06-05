@@ -127,8 +127,20 @@ class TestWordlist:
         
         try:
             self.wordlist.output('taxa', filename=fn)
-            self.wordlist.output('tree', filename=fn)
+            assert True
+        except:
+            assert False
+        try:
+            self.wordlist.output('tre', filename=fn)
+            assert True
+        except:
+            assert False
+        try:
             self.wordlist.output('dst', filename=fn)
+            assert True
+        except:
+            assert False
+        try:
             self.wordlist.output('starling', filename=fn, ref='word')
             assert True
         except:

@@ -245,49 +245,50 @@ def read_asjp(
             # check for population
             if min_population(pop): # >= min_population:
                 # append data to meta
-                meta["coords"][lang] = (lat,lng)
-                meta["classification"]["hammarstroem"][lang] = hh
-                meta["classification"]["wals"][lang] =  wls
-                meta["classification"]["wals_genus"][lang] = wls_gen
-                meta["classification"]["ethnologue"][lang] = eth
-                meta["population"][lang] = pop
-                meta["iso"][lang] = iso
+                if not lang in meta['coords']:
+                    meta["coords"][lang] = (lat,lng)
+                    meta["classification"]["hammarstroem"][lang] = hh
+                    meta["classification"]["wals"][lang] =  wls
+                    meta["classification"]["wals_genus"][lang] = wls_gen
+                    meta["classification"]["ethnologue"][lang] = eth
+                    meta["population"][lang] = pop
+                    meta["iso"][lang] = iso
 
-                for i,items in enumerate(line[10:],10):
+                    for i,items in enumerate(line[10:],10):
 
-                    item = header[i].strip()
-                    entries = [e.strip() for e in line[i].split(',') if
-                            e.strip() and 'xxx' not in e.lower()][:max_synonyms]
-                
-                    for entry in entries:
-                        if entry.startswith('%'):
-                            entry = entry[1:]
-                            loan = 1
-                        else:
-                            loan = 0
-                        if ' ' in entry:
-                            entry = entry.replace(' ','_')
-                        tokens = ' '.join(
-                                    ipa2tokens(
-                                        entry,
-                                        diacritics = '*$~"',
-                                        vowels = 'aeiouE3',
-                                        tones = '',
-                                        combiners = '',
-                                        merge_vowels = merge_vowels#rcParams['merge_vowels']
+                        item = header[i].strip()
+                        entries = [e.strip() for e in line[i].split(',') if
+                                e.strip() and 'xxx' not in e.lower()][:max_synonyms]
+                    
+                        for entry in entries:
+                            if entry.startswith('%'):
+                                entry = entry[1:]
+                                loan = 1
+                            else:
+                                loan = 0
+                            if ' ' in entry:
+                                entry = entry.replace(' ','_')
+                            tokens = ' '.join(
+                                        ipa2tokens(
+                                            entry,
+                                            diacritics = '*$~"',
+                                            vowels = 'aeiouE3',
+                                            tones = '',
+                                            combiners = '',
+                                            merge_vowels = merge_vowels#rcParams['merge_vowels']
+                                            )
                                         )
-                                    )
-                        tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
-                        tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
+                            tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
+                            tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
 
-                        D[idx] = [
-                                lang,
-                                item,
-                                entry,
-                                tokens.split(' '),
-                                loan
-                                ]
-                        idx += 1
+                            D[idx] = [
+                                    lang,
+                                    item,
+                                    entry,
+                                    tokens.split(' '),
+                                    loan
+                                    ]
+                            idx += 1
     D[0] = ['doculect','concept','counterpart','tokens','known_borrowings']
     D['meta'] = meta
 

@@ -20,4 +20,5 @@ def test_read_asjp():
     data = read_asjp(p, family="CELTIC", classification="wls_gen")
 
     lex = LexStat(data)
-    assert len(lex) == 202
+    assert len(lex) == 249
+    

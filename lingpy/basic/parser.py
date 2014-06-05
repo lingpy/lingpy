@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2013-11-13 09:01
+# modified : 2014-05-24 11:02
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-13"
+__date__="2014-05-24"
 
 import os
 import pickle
@@ -88,8 +88,9 @@ class QLCParser(object):
                 self.filename = rcParams['filename']
             internal_import = True
             
-            # make check for correct input
-            tmp_keys = [k for k in input_data if type(k) == int and k != 0]
+            # make check for correct input, there was a bug with a wrong
+            # evaluation which is hopefully fixed by now
+            tmp_keys = [k for k in input_data if type(k) == int] 
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
                 raise ValueError("[!] Wrong input format!")
 

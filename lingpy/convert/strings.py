@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-10-08 11:38
-# modified : 2013-12-18 17:25
+# modified : 2014-06-05 09:11
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-12-18"
+__date__="2014-06-05"
 
 import codecs
 from ..settings import rcParams
@@ -213,6 +213,7 @@ def matrix2dst(
         taxa = None,
         stamp = '',
         filename = '',
+        taxlen = '10'
      ):
     """
     Convert matrix to dst-format.
@@ -222,7 +223,8 @@ def matrix2dst(
 
     out = ' {0}\n'.format(len(taxa))
     for i,taxon in enumerate(taxa):
-        out += '{0:10}'.format(taxon)[0:11]
+        dummy = '{0:'+taxlen+'}'
+        out += dummy.format(taxon)[0:11]+' '
         out += ' '.join(['{0:2f}'.format(d) for d in
             matrix[i]])
         out += '\n'
