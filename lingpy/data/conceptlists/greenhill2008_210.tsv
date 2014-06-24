@@ -1,0 +1,242 @@
+NUMBER	GLOSS	OMEGAWIKI
+1	hand	5616
+2	left	1499731
+3	right	7026
+4	leg/foot	5665
+4	leg/foot	5672
+5	to walk	6054
+6	road/path	3258
+6	road/path	4382
+7	to come	6056
+8	to turn	6526
+9	to swim	6050
+10	dirty	5483
+11	dust	1009
+12	skin	1505751
+12	skin	3430
+13	back	5648
+14	belly	5516
+15	bone	5983
+16	intestines	950344
+17	liver	5476
+18	breast	5992
+19	shoulder	6186
+20	to know, be knowledgeable	6004
+21	to think	6309
+21	to think	6021
+22	to fear	6025
+23	blood	411
+24	head	5527
+25	neck	5823
+26	hair	446278
+27	nose	5471
+28	to breathe	5998
+29	to sniff, smell	1511046
+29	to sniff, smell	6520
+30	mouth	332000
+31	tooth	5946
+32	tongue	5440
+33	to laugh	5876
+34	to cry	7709
+35	to vomit	5617
+36	to spit	6051
+37	to eat	5827
+38	to chew	1510493
+39	to cook	479132
+40	to drink	5991
+41	to bite	5993
+42	to suck	6027
+43	ear	5510
+44	to hear	5999
+45	eye	5511
+46	to see	6003
+47	to yawn	441371
+48	to sleep	6519
+49	to lie down	1425860
+50	to dream	8448
+51	to sit	6022
+52	to stand	6053
+53	person/human being	333730
+54	man/male	6397
+54	man/male	6396
+55	woman/female	4165
+55	woman/female	6393
+56	child	7413
+56	child	568
+57	husband	5432
+58	wife	5429
+59	mother	5463
+60	father	5464
+61	house	5517
+62	thatch/roof	1506073
+62	thatch/roof	344031
+63	name	5995
+64	to say	6075
+65	rope	5465
+66	to tie up, fasten	844574
+66	to tie up, fasten	475820
+67	to sew	6073
+68	needle	5951
+69	to hunt	6046
+70	to shoot	522875
+71	to stab, pierce	6045
+71	to stab, pierce	1511162
+72	to hit	6044
+73	to steal	336072
+74	to kill	6023
+75	to die, be dead	6245
+75	to die, be dead	6660
+76	to live, be alive	478515
+76	to live, be alive	6028
+77	to scratch	6047
+78	to cut, hack	6043
+79	stick/wood	5662
+79	stick/wood	741520
+80	to split	6048
+81	sharp	5987
+82	dull, blunt	1511061
+83	to work	471303
+84	to plant	619975
+85	to choose	7084
+86	to grow	154737
+86	to grow	619975
+87	to swell	6454
+88	to squeeze	6017
+89	to hold	6060
+90	to dig	6024
+91	to buy	8061
+92	to open, uncover	513017
+92	to open, uncover	480525
+93	to pound, beat	1510937
+93	to pound, beat	6855
+94	to throw	6072
+95	to fall	5622
+96	dog	966
+97	bird	400
+98	egg	340828
+99	feather	5436
+100	wing	5528
+101	to fly	6052
+102	rat	6233
+103	meat/flesh	2300
+103	meat/flesh	1539792
+104	fat/grease	5624
+104	fat/grease	1510501
+105	tail	5468
+106	snake	3388
+107	worm (earthworm)	5466
+108	louse	1510400
+108	louse	1510396
+109	mosquito	630453
+110	spider	3588
+111	fish	1460
+112	rotten	7031
+113	branch	6343
+114	leaf	2124
+115	root	3269
+116	flower	1487
+117	fruit	6280
+118	grass	1675
+119	earth/soil	2063
+119	earth/soil	5481
+120	stone	3633
+121	sand	3305
+122	water	4118
+123	to flow	961244
+124	sea	6154
+125	salt	5599
+126	lake	2061
+127	woods/forest	4168
+127	woods/forest	1533
+128	sky	7039
+129	moon	5729
+130	star	6041
+131	cloud	623
+132	fog	1502
+133	rain	3100
+134	thunder	509787
+135	lightning	6811
+136	wind	4160
+137	to blow	1375415
+137	to blow	1375451
+138	warm	5485
+139	cold	5639
+140	dry	5989
+140	dry	1542663
+140	dry	7277
+141	wet	7027
+142	heavy	5451
+143	fire	1446
+144	to burn	6039
+144	to burn	1299599
+145	smoke	3451
+146	ashes	264
+147	black	1341728
+148	white	5825
+149	red	1333710
+150	yellow	6031
+151	green	6032
+152	small	5509
+153	big	5437
+154	short	6746
+155	long	5438
+156	thin	5990
+157	thick	5503
+158	narrow	5566
+159	wide	5502
+160	painful, sick	496633
+160	painful, sick	7800
+161	shy, ashamed	155571
+162	old	5482
+163	new	5484
+164	good	443659
+165	bad, evil	5650
+166	correct, true	7026
+166	correct, true	6816
+167	night	5486
+168	day	5533
+169	year	5478
+170	when?	5493
+171	to hide	161806
+172	to climb	479387
+173	at	6078
+174	in, inside	6077
+175	above	7064
+176	below	6199
+177	this	5458
+178	that	1149393
+179	near	869106
+180	far	5997
+181	where?	5492
+182	I	5450
+183	thou	5459
+184	he/she	5454
+184	he/she	1505714
+184	he/she	7667
+185	we	5455
+186	you	5456
+187	they	352331
+188	what?	5491
+189	who?	5490
+190	other	1406403
+191	all	1173416
+192	and	6464
+193	if	6076
+194	how?	5494
+195	no, not	5568
+195	no, not	5495
+196	to count	6026
+197	One	6244
+198	Two	6248
+199	Three	156096
+200	Four	6253
+201	Five	156104
+202	Six	7003
+203	Seven	7004
+204	Eight	7005
+205	Nine	6193
+206	Ten	6312
+207	Twenty	7013
+208	Fifty	7019
+209	One Hundred	6685
+210	One Thousand	7755

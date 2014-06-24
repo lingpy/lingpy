@@ -1,0 +1,436 @@
+ID	HAUSA	ENGLISH	OMEGAWIKI
+1	ɗaya	one	6244
+2	biyu	two	6248
+3	ukù	three	156096
+4	huɗu	four	6253
+5	bìyar	five	156104
+6	shidà	six	7003
+7	bakwài	seven	7004
+8	takwàs	eight	7005
+9	tarà	nine	6193
+10	gōmà	ten	6312
+11	gōmà shā̂ ɗaya	eleven	7006
+12	gōmà shā̂ biyu	twelve	7007
+13	gōmà shā̂ ukù	thirteen	7008
+14	gōmà shā̂ takwàs	eighteen	7014
+15	gōmà shā̂ tarà	nineteen	7015
+16	àshìrin	twenty	7013
+17	àshìrin dà ɗaya	twenty one	7046
+18	àshìrin dà huɗu	twenty four	7049
+19	àshìrin dà bìyar	twenty five	7050
+20	tàlā̀tin	thirty	7017
+21	àrbà'in	forty	7018
+22	hàmsin	fifty	7019
+23	sìttin	sixty	7020
+24	sàbà'in	seventy	7021
+25	tàmā̀nin	eighty	7022
+26	tàsà'in	ninety	7023
+27	ɗàri	one hundred	6685
+28	ùbā	father	5464
+29	uwā	mother	5463
+30	ɗā	son	6634
+31	'yā	daughter	5881
+32	ɗan'uwā	brother	5541
+33	'yar'uwā	sister	5544
+34	kā̀kā	grandparent	1510376
+35	kâi	head	5527
+36	gāshī̀	hair	446278
+37	ƙwaƙwalwā	brains	6504
+38	fuskā̀	face	6410
+39	hancī̀	nose	5471
+40	kûnnē	ear	5510
+41	idṑ	eye	5511
+42	kumā̀tū	cheeks	7034
+43	haɓā̀	chin	6306
+44	gēmù	beard	333455
+45	bā̀kī	mouth	332000
+46	lēɓḕ	lip	154710
+47	harshḕ	tongue	5440
+48	haƙōrī	tooth	5946
+49	wuyā̀	neck	5823
+50	ƙìrjī	chest	6532
+51	mā̀mā	woman's breast	5992
+52	kā̀fadā̀	shoulder	6186
+53	hannū	arm	6894
+54	yātsā̀	finger	5675
+55	ƙafā̀	leg	5665
+56	cinyā̀	thigh	348189
+57	gwīwā̀	knee	5918
+58	jìkī	body	6179
+59	fātā̀	skin	1507419
+60	nāmā̀	flesh	1539792
+61	gìndī	buttocks	356264
+62	tsulìyā	anus	853880
+63	bùrā	penis	5473
+64	dūrī̀	vagina	7685
+65	gwaiwā	testicles	348064
+66	cikī̀	stomach	352530
+67	cībìyā	navel	7690
+68	hanjī	intestines	950344
+69	zūcìyā	heart	5475
+70	hantā̀	liver	5476
+71	ƙōdā̀	kidney	155634
+72	haƙàrƙarī	ribs	348225
+73	hū̀hū	lungs	334158
+74	jinī	blood	411
+75	ƙàshī	bone	5983
+76	jījìyā	vein	8471
+77	fitsarī	urine	160433
+78	kāshī	faeces	332125
+79	gùmī	sweat	1250941
+80	miyau, yau	saliva	6259
+81	muryā̀	voice	5899
+82	sūnā	name	5995
+83	mùtûm	person	333730
+84	mijī̀	man	6397
+85	màcè	woman	4165
+86	yārṑ	boy	5905
+87	yārinyā̀	girl	6752
+88	jinjìrī	baby	5642
+89	tsōhō	old man	1526622
+90	tsōhuwā	old woman	385678
+91	sarkī	king	6303
+92	bāwā̀	slave	350300
+93	Allā̀	God	871639
+94	bōkā	native doctor	1511147
+95	māgànī	medicine	5919
+96	bā̀ƙō	guest	7254
+97	àbōkī	friend	5793
+98	kiɗī̀	drumming	1200507
+99	fàrautā̀	hunting	6046
+100	sāƙā̀	weaving	1280854
+101	maƙḕrī	blacksmith	430574
+102	ƙīrā̀	smithing	1507103
+103	sātā̀	stealing	336072
+104	ruwā	water	4118
+105	girgijḕ	cloud	623
+106	kṑgī	river	3253
+107	tafkī̀	lake	2061
+108	rāɓā	dew	921645
+109	hayāƙī	smoke	6968
+110	hazō	fog	1502
+111	hùntūrū̀	harmattan	1542657
+112	iskā̀	wind	4160
+113	hadarī̀	storm	3635
+114	tsāwā	thunder	509787
+115	wàlƙiyā	lightning	6811
+116	samā̀	sky	7039
+117	rānā	sun	5850
+118	watā̀	moon	5729
+119	tàurarṑ	star	6041
+120	darē	night	5486
+121	sāfē	morning	5840
+122	màràicē	evening	6671
+123	shḕkarā̀	year	5478
+124	dā̀munā	rainy season	1542669
+125	rānī	dry season	1542663
+126	wutā	fire	1446
+127	gawàyī	charcoal	535
+128	tṑkā	ashes	264
+129	itā̀cē	tree	3854
+130	itā̀cē	wood	741520
+131	ganyē	leaf	2124
+132	ɓāwō	bark	5439
+133	irī̀	seed	3361
+134	kūkā̀	baobab tree	428797
+135	maɗā̀cī	mahogany tree	1542685
+136	tsāmiyā	tamarind	1073190
+137	kaɗanyā̀	shea nut tree	1542675
+138	ƙayā̀	thorn	1243793
+139	cìyāwā̀	grass	1675
+140	dutsḕ	mountain	2421
+141	dutsḕ	stone	3633
+142	ƙasā	ground	2063
+143	yā̀shī	sand	3305
+144	ƙùrā	dust	1009
+145	tàɓō	mud	2428
+146	kurmī̀	forest	1533
+147	dājī̀	the bush	6933
+148	gàrī	town	5974
+149	gidā	compound	155053
+150	ɗākī̀	hut	691328
+151	ƙōfā̀	doorway	6430
+152	hanyā̀	road	3258
+153	gōnā	farm	1410
+154	fartanyā̀	hoe	1506109
+155	gā̀tarī	axe	333200
+156	làujē	sickle	1510850
+157	ƙarfḕ	iron	2024
+158	nāmàn dājī̀	wild animal	4150
+159	zākī̀	lion	5961
+160	kūrā	hyena	736876
+161	giwā	elephant	5643
+162	dā̀misā̀	leopard	503381
+163	birī̀	monkey	5870
+164	gwaggṑ	baboon	541654
+165	bàrēwā	gazelle	1018466
+166	gā̀dā	duiker	808314
+167	zōmō	rabbit	501465
+168	zā̀bō	guinea fowl	1542693
+169	ɓērā	rat	6233
+170	mùzūrū	wild cat	5446
+171	ƙadangarḕ	lizard	2189
+172	macī̀jī	snake	3388
+173	mēsā̀	python	642111
+174	kùnkurū	turtle	1200609
+175	kwā̀ɗō	frog	1570
+176	kùrēgē	squirrel	666598
+177	jēmāgḕ	bat	7344
+178	kùnāmā̀	scorpion	636601
+179	hàwainìyā	chameleon	640095
+180	tsūtsā̀	worm	5466
+181	ƙudā	fly	6261
+182	saurō	mosquito	630453
+183	gizṑ	spider	3588
+184	kwârkwatā̀	louse	1510396
+185	gàrā	termite	3747
+186	sūrì	anthill	808465
+187	fā̀rā	locust	349672
+188	sānìyā	cow	432006
+189	sā̂	bull	432142
+190	àkwiyā̀	goat	6257
+191	bùnsurū	he-goat	1505730
+192	tunkìyā	sheep	5819
+193	rā̀gō	ram	5855
+194	dōkī̀	horse	1780
+195	jā̀kī	donkey	8030
+196	kā̀zā	hen	6311
+197	zàkarā̀	rooster	6308
+198	kàrē	dog	966
+199	kyânwā	cat	5446
+200	tsuntsū	bird	400
+201	kurciyā	dove	7890
+202	shirwā̀	kite	1510384
+203	ùngùlū	vulture	531741
+204	fiffikḕ	wing	5528
+205	ƙwai	egg	340828
+206	kàhō	horn	401769
+207	wutsiyā̀	tail	5468
+208	àbinci	food	1505
+209	tuwō	mush	1521277
+210	miyā̀	sauce	1275504
+211	kùnū	gruel	518406
+212	nāmā̀	meat	2300
+213	kīfī	fish	1460
+214	gā̀rī	flour	6539
+215	madarā	milk	1166811
+216	gishirī	salt	5599
+217	bàrkṑnō	pepper	5960
+218	wākē	beans	355931
+219	kubḕwā	okra	704948
+220	dāwā̀	guinea corn	1510873
+221	màiwā	millet	397763
+222	gyàɗā	groundnuts	161168
+223	mâi	oil	6195
+224	rōgṑ	cassava	395385
+225	dōyā̀	yam	1526651
+226	dànkalī̀	sweet potato	1336889
+227	kàbēwā̀	melon	157304
+228	zumā̀	honey	404630
+229	sàndā	stick	5662
+230	māshī̀	spear	408915
+231	takṑbī	sword	6350
+232	tā̀barmā	mat (tabarma)	1405241
+233	zānā	mat (zana)	1405241
+234	bàkā	bow	427040
+235	kibiyā̀	arrow	420887
+236	kwàrī	quiver	1106980
+237	wuƙā	knife	5873
+238	igiyā̀	rope	5465
+239	ƙwaryā	calabash	1526657
+240	tukunyā	cooking pot	6086
+241	kaskō	small pot	6086
+242	ràndā	large water pot	6086
+243	tū̀lū	small water pot	6086
+244	àbù	thing	339816
+245	kāyā	load	691664
+246	yā̀rē	language	5713
+247	aikī̀	work	4228
+248	yāƙī̀	war	3990
+249	barcī	sleep	6519
+250	mafarkī	dream	8448
+251	râi	life	1419171
+252	mutuwā̀	death	387598
+253	cīwṑ	sickness	941
+254	tā̀rī	cough	373675
+255	zàzzàɓī	fever	6347
+256	gyàmbō, mīkī̀	ulcer	535033
+257	ƙurjī	pimple	745597
+258	gàjiyā̀	fatigue	503432
+259	yunwā̀	hunger	8037
+260	ƙishirwā	thirst	359542
+261	inuwā̀	shadow	5966
+262	gàskiyā	truth	6708
+263	ƙaryā	lie	161769
+264	wurī	place	337267
+265	lōkàcī	time	3779
+266	rāmī̀	hole	6857
+267	jirgī	boat	7774
+268	kā̀suwā	market	2276
+269	kuɗī	money	6408
+270	rī̀gā	man's robe	1543020
+271	zanḕ	woman's bodycloth	1543026
+272	farī	white	5825
+273	baƙī	black	1341728
+274	jā	red	1333710
+275	kōrḕ	green	6032
+276	rā̀wayā̀	yellow	6031
+277	shūɗī̀	blue	357132
+278	haskē	light	2158
+279	duhū̀	darkness	335607
+280	nauyī	heaviness	5451
+281	bàbbā	large	5437
+282	ƙàramī	small	5509
+283	dà yawā̀	many	5423
+284	dukà	all	1173416
+285	taurī	hardness	8173
+286	laushī	softness	7907
+287	daidai	correct	7026
+288	zāƙī	sweetness	336426
+289	ɗācī	bitterness	375671
+290	tsāmī	sourness	838324
+291	dōgō	long	5438
+292	gàjērē	short	6746
+293	dà kyâu	good	443659
+294	mūgū̀	evil	1098473
+295	sābō	new	5484
+296	tsōhō	old	5482
+297	fādī	wideness	5502
+298	dauɗā̀	dirt	1057993
+299	tsabtā̀	cleanness	335501
+300	ƙibā̀	fatness	5624
+301	sī̀rīrī̀	thin	5990
+302	tsàdā	expensiveness	6036
+303	àràhā	inexpensiveness	8184
+304	kusa	near	869106
+305	nīsa	far	5997
+306	zāfī	hotness	5637
+307	sanyī	coldness	5639
+308	ƙarfī	strength	1410993
+309	màkāfṑ	blind man	1542706
+310	kurmā	deaf man	1542714
+311	yâu	today	5630
+312	jiyà	yesterday	525186
+313	gṑbe	tomorrow	5808
+314	ìnā	where?	5492
+315	yàushè	when?	5493
+316	mḕ	what?	5491
+317	wā̀	who?	5490
+318	yā̀yā̀	how?	5494
+319	nawà	how many?	353440
+320	nân	here	1287831
+321	cân	there	858309
+322	wannàn	this	5458
+323	wancàn	that	1149393
+324	cikī	inside	6571
+325	wàje	outside	342558
+326	à kâi	atop	1108044
+327	ƙàrƙashī	under	6199
+328	tsàkānī	between	334412
+329	dāma	right	436024
+330	hagu	left	1499731
+331	arḕwa	north	6550
+332	kudù	south	6542
+333	gabàs	east	8131
+334	yâmma	west	7537
+335	àkwai àbinci	there is	6480
+336	bābù àbinci	there is not	5495
+337	yā ci	eat	5827
+338	yā shā	drink	5991
+339	yā haɗìyē	swallow	380335
+340	yā yi	do	351006
+341	yā tàfi	go	334831
+342	yā zō	come	6056
+343	yā kōmà	return	159011
+344	yā shìga	go in	341348
+345	yā fìta	go out	480460
+346	yā gudù	run	6323
+347	yā hau	mount	335553
+348	yā ganī	see	6003
+349	yā ji	hear	5999
+350	yā ji (wārī)	smell	6520
+351	yā taɓā̀	touch	8232
+352	yā ɗanɗànā	taste	1051228
+353	yā bugā̀	hit	6044
+354	yā gōgḕ	rub	6062
+355	yā kashḕ	kill	6023
+356	yā jā	pull	6071
+357	yā tūrḕ	push	6068
+358	yā ɗaukā̀	lift	156785
+359	yā ajìyē	put down	429615
+360	yā kwântā	lie down	1425860
+361	yā hūtā̀	rest	1366972
+362	yā gàji	be tired	7117
+363	yā būɗḕ	open	513017
+364	yā rufḕ	close	448880
+365	yā binnḕ	bury	702018
+366	yā tārā̀	gather	1022541
+367	yā rakà shi	accompany	638652
+368	yā ƙōnḕ	burn	6039
+369	yā dafā̀	cook	479132
+370	yā gasā̀	roast	903088
+371	yā sōyā̀	fry	425934
+372	yā tàfasā̀	boil	347033
+373	yā fàɗā	speak	6656
+374	yā tàmbayā̀	ask	5717
+375	yā amsā̀	answer	5610
+376	yā ƙi	refuse	1103325
+377	yā murɗḕ	twist	1541116
+378	yā sā̀rā	chop	1329931
+379	yā yankā̀	cut	6043
+380	yā yāgḕ	tear	704859
+381	yā ginā̀	build	7714
+382	yā sā̂ (tufāfī̀)	dress	351289
+383	yā tūɓḕ (tufāfī̀)	undress	710500
+384	yā shiryā̀	arrange	 6432
+385	yā ɓōyḕ	hide	161806
+386	yā sā̀tā	steal	336072
+387	yā tàimàkē shì	help	830463
+388	yā fāɗī̀	fall	5622
+389	yā sanī̀	know	6004
+390	yā tunā̀	remember	335793
+391	yā mântā	forget	6328
+392	yā haƙā̀	dig	6024
+393	yā kṑyā	learn	157124
+394	yā rabā̀	divide	486237
+395	yā hūdā̀	pierce	1511162
+396	yā matsà (lḕmū)	squeeze	6017
+397	yā riƙḕ	hold	6060
+398	yā kṑrā	drive away	340699
+399	yā kāmā̀	seize	335306
+400	yā bā shì	give	6059
+401	yā cī̀zā	bite	5993
+402	yā hàrbā	shoot	522875
+403	yā sàyi wuƙā	buy	8061
+404	yā sayar dà shī	sell	6439
+405	yā kirā	call	470997
+406	yā zaunā̀	sit	6022
+407	yā tāshì	stand up	630856
+408	tā haifù	give birth	541498
+409	yā jirā	wait for	6530
+410	yā mutù	die	6245
+411	yā bī shì	follow	471020
+412	yā jēfā̀	throw	6072
+413	yā ƙērā̀	forge	1507103
+414	yā ƙārā̀	increase	447326
+415	yā gāmā̀	finish	7146
+416	yā sōmā̀	begin	7451
+417	yā cikà shi	fill	962533
+418	yā nūnā̀	show	446099
+419	yā būshḕ	dry up	7277
+420	yā ɗinkā̀	sew	6073
+421	yā fī shì	surpass	1525871
+422	yā ɗaurḕ	tie	844574
+423	yā kwancḕ	untie	1510931
+424	yā ɗūrā̀	pour	621011
+425	yā shārḕ	sweep	1466959
+426	yā hūrā̀	blow	1375415
+427	yā jiƙā̀ shi	moisten	1061652
+428	yā sāmù	obtain	334733
+429	yā saƙā̀	weave	1280854
+430	tā kitsḕ	plait	703135
+431	yā fashḕ	break in pieces	333586
+432	yā karyḕ	(stick) snapped	1542724
+433	yā tsinkḕ	(rope) broke	1542733
+434	yā wankḕ	wash	6069
+

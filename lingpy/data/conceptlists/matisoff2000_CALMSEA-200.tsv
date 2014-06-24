@@ -1,0 +1,237 @@
+NUMBER	GLOSS	OMEGAWIKI
+1	belly (exterior)	5516
+2	blood	411
+3	bone	5983
+4	ear/hear	5510
+4	ear/hear	5999
+5	egg	340828
+6	eye	5511
+7	fat/grease	5624
+7	fat/grease	1510501
+8	foot	5672
+9	guts	5824
+10	hair (head)	446278
+11	hair (body)	1399403
+12	hand/arm	5616
+12	hand/arm	6894
+13	head	5527
+14	heart	5475
+15	horn	5981
+16	liver	5476
+17	mouth	332000
+18	neck	5823
+19	nose	5471
+20	skin/bark	3430
+20	skin/bark	5439
+21	spit	6051
+22	tail	5468
+23	tongue	5440
+24	tooth	5946
+25	wing	5528
+26	nail/claw	156863
+26	nail/claw	828398
+27	finger/toe	5675
+27	finger/toe	5969
+28	palm	528656
+29	penis	5473
+30	vagina or breast/milk	2358
+30	vagina or breast/milk	7685
+30	vagina or breast/milk	5992
+31	brain	6504
+32	navel	7690
+33	shit	332137
+34	piss	160433
+35	sweat	1250835
+36	snot	1417428
+37	vomit	5617
+38	marrow	7679
+39	breath/life	370376
+39	breath/life	1419171
+40	person/human being	333730
+41	thou	5459
+42	I	5450
+43	child/son	7413
+43	child/son	6634
+44	grandchild (nephew)	6624
+45	son-in-law	454216
+46	name	5995
+47	peas, beans	355931
+48	poison [antifood]	2847
+49	mushroom/fungus	2444
+50	liquor	358484
+51	plantain/banana	1511168
+51	plantain/banana	369665
+51a	medicine/juice	5919
+51a	medicine/juice	6249
+51b	rice (in fields)	395506
+51c	rice (cooked)	538459
+52	meat/animal	2300
+52	meat/animal	194
+53	bird	400
+54	dog	966
+55	fish	1460
+56	louse	1510396
+57	snake	3388
+58	frog	1570
+59	insect, bug, vermin	1959
+59	insect, bug, vermin	441
+59	insect, bug, vermin	3962
+60	bee	325
+61	dove	7890
+62	monkey	5870
+63	pig	5836
+64	fowl	1505737
+65	otter	1031630
+66	horse	1780
+67	ant	160271
+68	bear	7552
+68a	leech	412005
+68b	water leech	412005
+69	rat/rodent	6233
+69	rat/rodent	3268
+70	ashes	264
+71	cloud	623
+72	earth	2063
+73	fire	1446
+74	flower	1487
+75	fruit	6280
+76	grass	1675
+77	leaf	2124
+78	moon	5729
+79	mountain	2421
+80	rain	3100
+81	river/valley	3253
+81	river/valley	3938
+82	road	3258
+83	root	3269
+84	salt	5599
+85	sky	7039
+86	smoke	3451
+87	star	6041
+88	stick	5662
+89	stone	3633
+90	sun/day	5477
+90	sun/day	5850
+91	tree/wood	3854
+91	tree/wood	741520
+92	water	4118
+93	wind	4160
+94	branch	6343
+95	silver	3424
+96	bamboo	848903
+97	shade/shadow	5966
+98	joint	NA
+99	thorn (prick)	1243793
+100	night	5486
+101	iron	2024
+102	field	1425
+102a	swidden	1541112
+102b	irrigated paddy field	1296409
+103	arrow	420887
+104	needle	5951
+105	house	5517
+106	bow	427040
+107	boat	7774
+108	mortar	1454028
+109	village	3968
+110	left side	1499731
+111	right side	436024
+112	far	5997
+113	near	869106
+114	year	5478
+115	twenty/score	7013
+116	one	6244
+117	seven	7004
+118	ten	6312
+119	hundred	6685
+120	two	6248
+121	three	156096
+122	four	6253
+123	five	156104
+124	six	7003
+125	eight	7005
+126	nine	6193
+127	(be) many (v.)	1541108
+128	be born	474983
+129	sleep/lie down	1425860
+129	sleep/lie down	6519
+130	weep	7709
+131	laugh	5876
+132	die	6245
+133	awaken	6557
+134	cough	373675
+135	stand	6053
+136	sit	6022
+137	fall (from a height)	5622
+138	climb, ascend	479387
+138	climb, ascend	335553
+139	descend	980418
+140	fly	6261
+141	hide	161806
+142	run/flee	6323
+142	run/flee	414377
+143	emerge	465364
+144	fear/frighten	6025
+144	fear/frighten	1504545
+145	know	6004
+146	ashamed	823950
+147	forget	6328
+148	dream	8448
+149	see	6003
+150	smell	6521
+151	thin	5990
+152	old	5482
+153	alive	6028
+154	ill	7800
+155	fat	5624
+156	itchy	1312191
+157	full	6040
+158	long/tall	5438
+158	long/tall	335942
+159	sweet	336426
+160	cold	5639
+161	bitter	375671
+162	sour	838324
+163	red	1333710
+164	heavy	5451
+165	warm	5485
+166	round	5984
+167	ripe/well-cooked	1378364
+168	soft (to touch)	7907
+169	white	5825
+170	black	1341728
+171	thick	5503
+172	new	5484
+173	sharp	5987
+174	lightweight	452743
+175	eat	5827
+176	drink	5991
+177	give	6059
+178	tie	844574
+179	steal	336072
+180	lick	1510483
+181	bite	5993
+182	scratch (scrape)	6047
+183	cook/boil	347033
+183	cook/boil	479132
+184	grind	441895
+185	wash	6069
+186	dig	6024
+187	let go; set free; loosen	476248
+187	let go; set free; loosen	853143
+188	extinguish	1255943
+189	blow	1375415
+190	buy	8061
+191	sew	6073
+192	kill	6023
+193	weave	1280854
+194	rub	6062
+195	squeeze	6017
+196	shoot	522875
+197	kick	500899
+198	sell	6439
+199	put, place	429615
+200	drive/hunt	6046
+200a	burn	6039
+200a	burn	1299599
+200b	cut	6043

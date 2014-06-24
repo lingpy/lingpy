@@ -1,0 +1,182 @@
+NUMBER	GLOSS	CHINESE	OMEGAWIKI
+1	sun	太阳	5850
+2	moon	月亮	5729
+3	star	星星	6041
+4	thunder	打雷	509787
+5	lightning	闪电	6811
+6	rain	下雨	5523
+7	snow	下雪	5525
+8	hail	冰雹	1187180
+9	freeze	结冰	6042
+10	blow	刮风	1375415
+11	rainbow	虹	7041
+12	Dragon Boat Festival	端午节	1273978
+13	Mid-autumn Festival	中秋节	1273978
+14	New Year's Eve	除夕	5484
+15	this year	今年	NA
+16	next year	明年	NA
+17	last year	去年	NA
+18	tomorrow	明天	5808
+19	yesterday	昨天	525186
+20	today	今天	5630
+21	sunday	星期天	6993
+22	wheat	麦子	466721
+23	broad bean	蚕豆	355931
+24	sunflower	向日葵	894122
+25	spinach	菠菜	420508
+26	cabbage	卷心菜	344475
+27	tomato	西红柿	423688
+28	aubergine	茄子	507273
+29	sweet potato	白薯	1336889
+30	potato	土豆	160661
+31	pumpkin	南瓜	366683
+32	pig	猪	5836
+33	male pig	公猪	5868
+34	female pig	母猪	5871
+35	rooster	公鸡	6308
+36	chicken	母鸡	5778
+37	sparrow	麻雀	7891
+38	mouse	老鼠	6237
+39	bedbug	臭虫	880112
+40	house	房子	5517
+41	flat	房间
+42	window	窗户	5932
+43	doorsills	门坎	1395615
+44	toilet	厕所	1444087
+45	kitchen	厨房
+46	chimney	烟囱	569
+47	table	桌子	7196
+48	stairs	楼梯
+49	head	头	5527
+50	forehead	额头	1241509
+51	face	脸	6410
+52	nose	鼻子	5471
+53	neck	脖子	5823
+54	left hand	左手	NA
+55	right hand	右手	NA
+56	fist	拳头	615259
+57	forefinger	手指	158386
+58	fingernail	指甲	5529
+59	knee	膝盖	5918
+60	leg	腿	5665
+61	father	爸爸	5464
+62	mother	妈妈	5463
+63	grandfather	祖父	5953
+64	grandmother	祖母	6247
+65	uncle (fathers's elder brother)	伯父	936030
+66	aunt (wife of father's elder brother)	伯母	5591
+67	uncle (father's younger brother)	叔父	936030
+68	aunt (wife of father's younger brother)	叔母	5591
+69	maternal grandfather	祖父	5953
+70	maternal grandmother	外祖母	6247
+71	uncle (mother's brother)	舅舅	936024
+72	aunt (wife of mother's brother)	舅母	5591
+73	husband	丈夫	5432
+74	wife	妻子	5429
+75	son	儿子	6634
+76	daughter	女儿	5881
+77	breakfast	早饭	5787
+78	lunch	午饭	343542
+79	supper	晚饭	7654
+80	noodles	面条	419869
+81	steamed bun (Mantou)	馒头	NA
+82	steamed stuffed bun (Baozi)	包子	NA
+83	dumpling won ton (Huntun)	馄饨	NA
+84	vinegar	醋	423392
+85	soya sauce	酱油	909894
+86	salt	盐	5599
+87	chopsticks	筷子	941235
+88	spoon	勺子	5944
+89	man	男人	6397
+90	woman	女人	4165
+91	boy	男孩子	5905
+92	girl	女孩子	6752
+93	old man	老人	1526622
+94	doctor	医生	161474
+95	cook	厨师	479132
+96	beggar	乞丐	853288
+97	nurse	保姆	479578
+98	become sick	病了	7800
+99	catch a cold	伤风	1178541
+100	have diarrhoea	泻肚	NA
+101	lame person	瘸子	1510490
+102	humpback	驼背	NA
+103	die	死了	6245
+104	go to the doctor	看病	NA
+105	I	我	5450
+106	thou	你	5459
+107	he	他	5454
+108	we	我们	5455
+!
+109	you	你们	5456
+110	they	他们	352331
+111	we (inclusive)	咱们	496905
+112	self	自己	NA
+113	who	谁	5490
+114	what	什么	5491
+115	here	这里	1287831
+116	there	那里	858309
+117	where	哪里	5492
+118	this	这个	5458
+119	that	那个	1149393
+120	what kind of	哪一个	NA
+121	how	怎么样	5494
+122	classifier (person)	位	NA
+123	classifier (pair)	双	NA
+124	classifier (pillow)	床	NA
+125	classifier (vehicle)	辆	NA
+126	classifier (cow)	头	NA
+127	classifier (pig)	口	NA
+128	a while	会	NA
+129	one time	下	NA
+130	on	上面	7064
+131	under	下面	6199
+132	left	左边	1499731
+133	right	右边	436024
+134	in the middle	当中	475332
+135	inside	里面	6571
+136	outside	外面	342558
+137	sweet	甜	336426
+138	sour	酸	838324
+139	salty	咸	475116
+140	light	淡	1502678
+141	fat	胖	5624
+142	thin	瘦	5990
+143	cold	冷	5639
+144	hot	热	5637
+145	well smelling	香	1511050
+146	stinky	臭	1089734
+147	thick	粗	5503
+148	tiny	细	NA
+149	long	长	5438
+150	short	短	6746
+151	dirty	脏	5483
+152	clean	干净	335501
+153	cheap	便宜	8184
+154	just (just came)	刚	NA
+155	just (just appropriate)	刚	NA
+156	just right	正好	7026
+157	and	和	6464
+158	only	只	6485
+159	from	从	334719
+160	instead of	替	NA
+161	take	拿	7077
+162	on purpose	故意	NA
+163	one	一	6244
+164	two	二	6248
+165	three	三	156096
+166	four	四	6253
+167	five	五	156104
+168	six	六	7003
+169	seven	七	7004
+170	eight	八	7005
+171	nine	九	6193
+172	ten	十	6312
+173	eleven	十一	7006
+174	twelve	十二	7007
+175	twenty	二十	7013
+176	twenty one	二十一	7046
+177	first	第一	338524
+178	second	第二	5958
+179	two miles	两里	6248
+180	two ounces	二两	6248
