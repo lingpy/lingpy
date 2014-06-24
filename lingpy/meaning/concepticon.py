@@ -35,7 +35,11 @@ class Concepticon(object):
         D['base'][0] = header
         for line in concepticon[1:]:
             D['base'][line[0]] = line[1:]
-            
+        
+        
+        # create an artificial id for those entries which don't have one yet
+        artid = -1
+
         for l in [lst for lst in lists if 'concepticon' not in lst]:
             
             curlist = csv2list(l)
@@ -47,7 +51,11 @@ class Concepticon(object):
 
             D[name] = {}
             for line in curlist[1:]:
-                D[name][line[-1]] = line[:-1]
+                if line[-1] == 'NA':
+                    D[name][str(artid)] = line[:-1]
+                    artid -= 1
+                else:
+                    D[name][line[-1]] = line[:-1]
             
             D[name][0] = header
     
@@ -88,7 +96,9 @@ class Concepticon(object):
         """
         
         kw = dict(
-                mode = 'intersection'
+                mode = 'intersection',
+                output = None,
+                filename = 'output',
                 )
         kw.update(keywords)
 
@@ -124,6 +134,9 @@ class Concepticon(object):
             elif kw['mode'] == 'difference':
                 if len([1 for x in out[k] if x != '-']) == listlen:
                     del out[k]
+            else:
+                pass
+            
         return out
 
                     
