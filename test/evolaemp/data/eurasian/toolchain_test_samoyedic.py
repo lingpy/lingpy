@@ -7,7 +7,7 @@ print("Loaded " + str(len(lex.concept)) + " concepts in " + str(len(lex.language
 
 lex.get_scorer()
 
-lex.cluster(method='lexstat', threshold=0.6)
+lex.cluster(method='lexstat', threshold=0.5)
 
 lex.calculate('tree', ref='lexstatid', tree_calc='neighbor')
 
