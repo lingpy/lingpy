@@ -22,12 +22,12 @@ import shutil
 from three2two import run3to2,run3to3
 
 # check whether a build directory is available
-if not os.path.isdir('lingpy_build') and 'install' in sys.argv:
+if not os.path.isdir('lingpy_build') and 'install' in sys.argv or 'develop' in sys.argv:
     os.mkdir('lingpy_build')
     os.mkdir(os.path.join('lingpy_build','lingpy'))
 
 # check for install and organize the manifest.in-file
-if 'install' in sys.argv:
+if 'install' in sys.argv or 'develop':
     m = open('manifest_build.in','r').read()
 else:
     m = open('manifest_dist.in','r').read()
@@ -56,7 +56,7 @@ if sys.version_info >= (3,):
     this_version = "3"
 
     # import lingpy from lingpy_build folder
-    if 'install' in sys.argv:
+    if 'install' in sys.argv or 'develop' in sys.argv:
         pkg_location = 'lingpy_build'
         pkgname = 'lingpy'
         pkg_dir = {'':'lingpy_build'}
@@ -83,7 +83,7 @@ else:
         rc(schema='asjp')
 
 # set up extension modules
-if 'install' in sys.argv or 'bdist_egg' in sys.argv:
+if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
     if this_version == "3":
 
         if with_c:
@@ -152,7 +152,7 @@ setup(
 
 # remove the build directory in order to prevent that it leads to confusion
 # when installing lingpy in both the py2 and the py3 version
-if 'install' in sys.argv:
+if 'install' in sys.argv or 'develop' in sys.argv:
     try:
         print("[i] Removing the build directory.")
         shutil.rmtree('lingpy_build')
