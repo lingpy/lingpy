@@ -54,17 +54,25 @@ def build_data(lexstat, l1, l2, u, v):
             sequences1[""] = True
             sequences2[""] = True
         elif seqLength == 1:
-            for seq in data.sigma1.keys():
-                sequences1[seq] = True
-            for seq in data.sigma2.keys():
-                sequences2[seq] = True 
+            for seq1 in data.sigma1.keys():
+                sequences1[seq1] = True
+            for seq2 in data.sigma2.keys():
+                sequences2[seq2] = True            
         else:
             for (word1, word2) in data.pairs:
                 for i in range(0,len(word1) - seqLength):
                     sequences1[".".join(word1[i:i+seqLength])] = True
-                for i in range(0,len(word2) - seqLength):
-                    sequences2[".".join(word2[i:i+seqLength])] = True
-    data.sigma0 = list(product(sequences1, sequences2))
+                for j in range(0,len(word2) - seqLength):
+                    sequences2[".".join(word2[j:j+seqLength])] = True
+    #data.sigma0 = list(product(sequences1, sequences2))
+    pairs0 = dict()
+    for seqLength1 in range(u,v+1):
+        for seqLength2 in range(u,v+1):
+            for (word1, word2) in data.pairs:
+                for i in range(0,len(word1) - seqLength1 + 1):
+                    for j in range(0,len(word2) - seqLength2 + 1):
+                        pairs0[(".".join(word1[i:i+seqLength1]),".".join(word2[j:j+seqLength2]))] = True  
+    data.sigma0 = pairs0.keys()
     #print(data.sigma0)
     print("(" + str(u) + "," + str(v) + ")-Model contains " + str(len(data.sigma0)) + " possible correspondences.")
     return data
