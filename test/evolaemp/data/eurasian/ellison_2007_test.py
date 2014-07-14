@@ -27,7 +27,7 @@ def build_data(lexstat, l1, l2, u, v):
     data.u = u
     data.v = v
     #STEP 1: extract the candidate pairs from the LexStat object
-    for concept in lex.concept[0:2]:
+    for concept in lex.concept[0:100]:
         entryIdxs = lex.get_list(concept=concept, flat=True)
         for iIdx in range(len(entryIdxs)):
             i = entryIdxs[iIdx]
@@ -71,24 +71,29 @@ def build_data(lexstat, l1, l2, u, v):
 
 #mapping variables to their indices in the hypothesis vector used during optimization
 class HypothesisVariableIndex:
-    f0 = dict() #generative model of the proto language, ndexed by correspondences
+    f0 = dict() #generative model of the proto language, idexed by correspondences
     f1 = dict() #generative model of the first observed language, indexed by segments
     f2 = dict() #generative model of the second observed language, indexed by segments
     c = dict() #cognacy judgment variables
+    #f0start, f1start, f2start, cstart for the additional indices
 
 def build_random_hypothesis(data):
     #FIRST STEP: build the variable index
     hypothesis_index = HypothesisVariableIndex()
     varIndex = 0
+    hypothesis_index.f0start = varIndex
     for symbol in data.sigma0:
         hypothesis_index.f0[symbol] = varIndex
         varIndex += 1
+    hypothesis_index.f1start = varIndex
     for symbol in data.sigma1:
         hypothesis_index.f1[symbol] = varIndex
         varIndex += 1
+    hypothesis_index.f2start = varIndex
     for symbol in data.sigma2:
         hypothesis_index.f2[symbol] = varIndex
         varIndex += 1
+    hypothesis_index.cstart = varIndex   
     for pair in data.pairs:
         hypothesis_index.c["".join(pair[0]) + "\t" + "".join(pair[1])] = varIndex
         varIndex += 1
@@ -96,13 +101,13 @@ def build_random_hypothesis(data):
     #TODO: initialize f1 and f2 with observed segment distributions, c with string-based similarity?
     #for now: start with uniform distribution over f parameters, random cognacy judgments
     hypothesis_vector = zeros(varIndex)
-    uniform_prob_f0 = 1.0 / size(data.sigma0)
+    uniform_prob_f0 = 1.0 / len(data.sigma0)
     for index in hypothesis_index.f0.values():
         hypothesis_vector[index] = uniform_prob_f0
-    uniform_prob_f1 = 1.0 / size(data.sigma1)
+    uniform_prob_f1 = 1.0 / len(data.sigma1)
     for index in hypothesis_index.f1.values():
         hypothesis_vector[index] = uniform_prob_f1
-    uniform_prob_f2 = 1.0 / size(data.sigma2)
+    uniform_prob_f2 = 1.0 / len(data.sigma2)
     for index in hypothesis_index.f2.values():
         hypothesis_vector[index] = uniform_prob_f2
     for index in hypothesis_index.c.values():
@@ -123,9 +128,14 @@ def make_eval_likelihood(data, index):
             
             cogProb = hypothesis_vector[index.c["".join(word1) + "\t" + "".join(word2)]]
             pairScore = cognateScore * cogProb + nonCognateScore * (1.0 - cogProb)
+            if pairScore == 0.0:
+                #print("logScore = " + str(logScore))
+                print("likelihood = " + str(0.0))
+                return 0.0
             logScore += log(pairScore) #product over all pairs
-        print("logScore = " + str(logScore))
-        return -exp(logScore)
+        print("logLikelihood = " + str(logScore))
+        #print("likelihood = " + str(exp(logScore)))
+        return -logScore #exp(logScore) might have been to small!
     return eval_likelihood
 
 #use this to compute P1 and P2
@@ -176,8 +186,14 @@ def word_pair_probability(u, v, word1, word2, startIndex1, startIndex2, correspo
         return totalProbability
         
 def print_hypothesis_summary(index, hypothesis):
+    print("Most likely sound correspondences:")
+    def key_func(key):
+        #print("key_func(" + str(key) + " -> " + str(index.f0[key]) + ") = " + str(hypothesis[index.f0[key]]))
+        return hypothesis[index.f0[key]]
+    for pair in sorted(index.f0.keys(),key=key_func):
+        print(str(pair) + "\t" + str(hypothesis[index.f0[pair]]))
     print("Cognate scores:")
-    for pair in index.c.keys():
+    for pair in sorted(index.c.keys(), key= lambda x: hypothesis[index.c[x]]):
         print(pair + "\t" + str(hypothesis[index.c[pair]]))
 
 #here comes the test program
@@ -186,11 +202,14 @@ for i in range(10):
     (index, hypothesis) = build_random_hypothesis(data)
     f = make_eval_likelihood(data, index)
     print(f(hypothesis))
-print([(0,1) for i in range(size(hypothesis))])
-result = optimize.fmin_l_bfgs_b(f, hypothesis, approx_grad=True, bounds=[(0,1) for i in range(size(hypothesis))])
-print(result[0])
+equality_constraints = []
+equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
+equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f1start:index.f2start]) - 1)
+equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f2start:index.cstart]) - 1)
+result = optimize.fmin_slsqp(f, hypothesis, eqcons=equality_constraints, bounds=[(0,1) for i in range(size(hypothesis))])
+print(result)
 #result = optimize.fmin_cg(f, hypothesis)
-print_hypothesis_summary(index, result[0])
+print_hypothesis_summary(index, result)
 #print(f(result))
 
 #alternative that generates all sequences:
