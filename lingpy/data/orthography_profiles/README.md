@@ -1,6 +1,8 @@
 Orthography Profiles
 --------------------
 
+Note that Unicode normalization form NFC files are located in the folder NFC. Files in this directory are Unicode NFD.
+
 Orthography profiles can be a combination of two files:
 
 1. orthography profile - a document-specific specification of grapheme clusters (Unicode grapheme clusters)
