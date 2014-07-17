@@ -27,7 +27,7 @@ def build_data(lexstat, l1, l2, u, v):
     data.u = u
     data.v = v
     #STEP 1: extract the candidate pairs from the LexStat object
-    for concept in lex.concept[0:100]:
+    for concept in lex.concept[0:3]:
         entryIdxs = lex.get_list(concept=concept, flat=True)
         for iIdx in range(len(entryIdxs)):
             i = entryIdxs[iIdx]
@@ -84,6 +84,7 @@ class HypothesisVariableIndex:
     f2 = dict() #generative model of the second observed language, indexed by segments
     c = dict() #cognacy judgment variables
     #f0start, f1start, f2start, cstart for the additional indices
+    #TODO: variable occurrence map to speed up computation of gradient
 
 def build_random_hypothesis(data):
     #FIRST STEP: build the variable index
@@ -105,21 +106,57 @@ def build_random_hypothesis(data):
     for pair in data.pairs:
         hypothesis_index.c["".join(pair[0]) + "\t" + "".join(pair[1])] = varIndex
         varIndex += 1
-    #TODO: sample dirichlet distribution without pseudo-observations?
-    #TODO: initialize f1 and f2 with observed segment distributions, c with string-based similarity?
-    #for now: start with uniform distribution over f parameters, random cognacy judgments
+    
     hypothesis_vector = zeros(varIndex)
-    uniform_prob_f0 = 1.0 / len(data.sigma0)
-    for index in hypothesis_index.f0.values():
-        hypothesis_vector[index] = uniform_prob_f0
-    uniform_prob_f1 = 1.0 / len(data.sigma1)
+    
+    #for random initialization of f0, sample a dirichlet distribution with a number of pseudo-observations for self-substitution
+    alphas0 = ones(hypothesis_index.f1start)
+    for pair in data.sigma0:
+        if pair[0] == pair[1]:
+            alphas0[hypothesis_index.f0[pair]] = 6
+    initial_distribution_f0 = random.mtrand.dirichlet(alphas0)
+    for i in range(hypothesis_index.f1start):
+        hypothesis_vector[i] = initial_distribution_f0[i]
+    
+    #for random initialization f1 and f2, sample dirichlet distribution with observed segment numbers
+    #  count segment occurrences in f1 and f2 (one pseudo-observation for each)
+    #TODO: the segment counting should perhaps be done already while initializing the data
+    segment_count1 = dict((symbol,1) for symbol in data.sigma1)
+    segment_count2 = dict((symbol,1) for symbol in data.sigma2)
+    for pair in data.pairs:
+        for char1 in pair[0]:
+            segment_count1[char1] += 1
+        for char2 in pair[1]:
+            segment_count2[char2] += 1
+    alphas1 = zeros(hypothesis_index.f2start - hypothesis_index.f1start)
+    alphas2 = zeros(hypothesis_index.cstart - hypothesis_index.f2start)
+    for char1 in segment_count1.keys():
+        alphas1[hypothesis_index.f1[char1] - hypothesis_index.f1start] = segment_count1[char1]
+    for char2 in segment_count2.keys():
+        alphas2[hypothesis_index.f2[char2] - hypothesis_index.f2start] = segment_count2[char2]
+    initial_distribution_f1 = random.mtrand.dirichlet(alphas1)
+    initial_distribution_f2 = random.mtrand.dirichlet(alphas2) 
     for index in hypothesis_index.f1.values():
-        hypothesis_vector[index] = uniform_prob_f1
-    uniform_prob_f2 = 1.0 / len(data.sigma2)
+        hypothesis_vector[index] = initial_distribution_f1[index - hypothesis_index.f1start]
     for index in hypothesis_index.f2.values():
-        hypothesis_vector[index] = uniform_prob_f2
-    for index in hypothesis_index.c.values():
-        hypothesis_vector[index] = random.random()
+        hypothesis_vector[index] = initial_distribution_f2[index - hypothesis_index.f2start]
+        
+    #initialize c (cognate probabilities) via normalized edit distance (TODO: better string-based similarity implemented elsewhere in LingPy)?
+    for i in range(len(data.pairs)):
+        hypothesis_vector[hypothesis_index.cstart + i] = 1 - align.pairwise.edit_dist(data.pairs[i][0],data.pairs[i][1],normalized=True)
+
+#OLD VERSION (uniform distributions over segments)    
+#     uniform_prob_f0 = 1.0 / len(data.sigma0)
+#     for index in hypothesis_index.f0.values():
+#         hypothesis_vector[index] = uniform_prob_f0    
+#     uniform_prob_f1 = 1.0 / len(data.sigma1)
+#     for index in hypothesis_index.f1.values():
+#         hypothesis_vector[index] = uniform_prob_f1
+#     uniform_prob_f2 = 1.0 / len(data.sigma2)
+#     for index in hypothesis_index.f2.values():
+#         hypothesis_vector[index] = uniform_prob_f2
+#     for index in hypothesis_index.c.values():
+#         hypothesis_vector[index] = random.random()
     return (hypothesis_index, hypothesis_vector)
 
 def make_eval_likelihood(data, index):     
@@ -145,6 +182,13 @@ def make_eval_likelihood(data, index):
         #print("likelihood = " + str(exp(logScore)))
         return -logScore #exp(logScore) might have been to small!
     return eval_likelihood
+
+def make_approximate_gradient(data, index):
+    def approximate_gradient(hypothesis_vector):
+        #TODO: compute all the gradient values, reuse as many computations as possible
+        #CONSIDER: fixed epsilon? some more useful strategy?
+        pass
+    return approximate_gradient
 
 #use this to compute P1 and P2
 def word_probability(word, alphabet_index, hypothesis):
@@ -209,6 +253,7 @@ data = build_data(lex, "Nenets", "Nganasan", 0,1)
 for i in range(10):
     (index, hypothesis) = build_random_hypothesis(data)
     f = make_eval_likelihood(data, index)
+    print_hypothesis_summary(index, hypothesis)
     print(f(hypothesis))
 equality_constraints = []
 equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
