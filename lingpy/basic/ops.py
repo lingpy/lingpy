@@ -428,6 +428,7 @@ def wl2qlc(
                 outs = msa2str(v,wordlist=True)
                 out += outs
                 out += "</msa>\n"
+
     if distances and 'distances' not in keywords['ignore']:
         out += '\n# DISTANCES\n<dst>\n'
         out += distances+'</dst>\n'

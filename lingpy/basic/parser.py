@@ -341,7 +341,7 @@ class QLCParser(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input("[?] Datatype <{entry}> has already been produced, do you want to override? (y/n) ".format(entry=entry))
+            answer = input("[?] Column <{entry}> already exists, do you want to override? (y/n) ".format(entry=entry))
             if answer.lower() in ['y','yes','j']:
                 keywords['override'] = True
                 self.add_entries(entry,source,function,**keywords)

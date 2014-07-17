@@ -918,7 +918,34 @@ class Wordlist(QLCParser):
         """
         
         if self._alias[source] == 'doculect':
-            clean_taxnames(self,self._alias[source],f)
+            clean_taxnames(self, self._alias[source], f)
+
+    def _msa2col(
+            self,
+            ref='cogid'
+            ):
+        """
+        Add alignments to column (space-separated) in order to make it easy to
+        parse them in the wordlist editor.
+        """
+        tmp = {}
+        for key,msa in self.msa['cogid'].items():
+            for i,idx in enumerate(msa['ID']):
+                try:
+                    tmp[idx] = ' '.join(msa['alignment'][i])
+                except KeyError:
+                    print("[!] There are no alignments in your data.  Aborting...")
+                    return
+        missing = [idx for idx in self if idx not in tmp]
+        for m in missing:
+            try:
+                tmp[m] = self[m,'tokens']
+            except:
+                print("[!] There are no tokens in your data. Aborting...")
+                return
+
+        self.add_entries('alignment', tmp, lambda x: x)
+        
 
     def _output(
             self,
@@ -937,22 +964,22 @@ class Wordlist(QLCParser):
 
         # add the default parameters, they will be checked against the keywords
         defaults = {
-                'cols'      : False,
-                'distances' : False,
-                'entries'   : ("concept","counterpart"),
-                'entry'     : 'concept',
-                'fileformat': fileformat,
-                'filename'  : rcParams['filename'],
-                'formatter' : 'concept',
-                'meta'      : self._meta,
-                'missing'   : 0,
-                'ref'       : 'cogid',
-                'rows'      : False,
-                'subset'    : False, # setup a subset of the data,
-                'taxa'      : 'taxa',
-                'threshold' : 0.6, # threshold for flat clustering
-                'tree_calc' : 'neighbor',
-                'loans' : False
+                'cols'       : False,
+                'distances'  : False,
+                'entries'    : ("concept","counterpart"),
+                'entry'      : 'concept',
+                'fileformat' : fileformat,
+                'filename'   : rcParams['filename'],
+                'formatter'  : 'concept',
+                'loans'      : False,
+                'meta'       : self._meta,
+                'missing'    : 0,
+                'ref'        : 'cogid',
+                'rows'       : False,
+                'subset'     : False, # setup a subset of the data,
+                'taxa'       : 'taxa',
+                'threshold'  : 0.6, # threshold for flat clustering
+                'tree_calc'  : 'neighbor',
                 }
             
         # compare with keywords and add missing ones
@@ -995,7 +1022,7 @@ class Wordlist(QLCParser):
                         )
         
         # csv-output
-        if fileformat in ['csv','qlc']:
+        if fileformat in ['csv','qlc','tsv']:
             if fileformat == 'csv':
                 print(rcParams['W_deprecation'].format('csv','qlc'))
             
