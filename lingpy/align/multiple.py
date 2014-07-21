@@ -825,9 +825,9 @@ class Multiple(object):
                 alm_lst.append(alms)
 
                 # debug
-                for alm in alms:
-                    print(' '.join([self._get(x,'_classes') for x in alm]))
-                print('')
+                #for alm in alms:
+                #    print(' '.join([self._get(x,'_classes') for x in alm]))
+                #print('')
 
         else:
             for row in self.tree_matrix:

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2014-05-24 11:02
+# modified : 2014-07-21 15:54
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-05-24"
+__date__="2014-07-21"
 
 import os
 import pickle
@@ -514,6 +514,12 @@ class QLCParser(object):
         """
 
         t = Tokenizer(orthography_profile)
+        
+        # @JML just adding a debug routine here, since otherwise the
+        # orthoprofile does not give a warning whether a profile was actually
+        # found or not 
+        if not hasattr(t, 'mappings'):
+            raise ValueError("The orthography profile you selected is not available!")
 
         # else just return a Unicode grapheme clusters parse
         if target == 'tokens':

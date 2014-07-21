@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-05-24 11:30
+# modified : 2014-07-21 15:57
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-05-24"
+__date__="2014-07-21"
 
 # external imports
 import re
@@ -338,6 +338,13 @@ def wl2qlc(
     """
     Write the basic data of a wordlist to file.
     """
+    defaults = dict(
+            ignore = ['taxa', 'doculects', 'json']
+            )
+    for k in defaults:
+        if k not in keywords:
+            keywords[k] = defaults[k]
+
     formatter = formatter.upper()
 
     defaults = dict(
