@@ -6,6 +6,7 @@ from lingpy import *
 import copy
 
 from itertools import product
+from time import clock
 
 lex = LexStat('samoyedic.csv')
 
@@ -13,8 +14,10 @@ langs = lex.language
 
 print("Loaded " + str(len(lex.concept)) + " concepts in " + str(len(langs)) + " languages: " + ", ".join(langs));
 
-verbose = False
+verbose = True
 spill_guts = False
+
+min_prob = 0.0000000000000000001 #pseudo-probability used to circumvent illegal parameter values that are caused by rounding errors 
 
 class Data:
     sigma0 = [] #alphabet of correspondences in the proto language model
@@ -22,6 +25,10 @@ class Data:
     sigma2 = dict() #alphabet of segments in first observed language
     pairs = [] #cognate candidate pairs (lists of IPA tokens]
     #added information: u and v (upper and lower boundaries for correspondence length
+    #variable occurrence maps to speed up computation of gradient
+    sigma0_to_pairs = dict()
+    sigma1_to_pairs = dict()
+    sigma2_to_pairs = dict()
     
 def build_data(lexstat, l1, l2, u, v):
     data = Data()
@@ -35,7 +42,7 @@ def build_data(lexstat, l1, l2, u, v):
             for jIdx in range(len(entryIdxs)):
                 j = entryIdxs[jIdx]
                 if lex[i][3] == l1 and lex[j][3] == l2:
-                    if align.pairwise.edit_dist(lex[i][4],lex[j][4],normalized=True) < 0.5:
+                    if align.pairwise.edit_dist(lex[i][4],lex[j][4],normalized=True) < 0.8:
                         word1 = copy.copy(lex[i][4])
                         word2 = copy.copy(lex[j][4])
                         word1.append("#")
@@ -43,37 +50,51 @@ def build_data(lexstat, l1, l2, u, v):
                         data.pairs.append((word1, word2))
                         for segment in word1:
                             data.sigma1[segment] = True
+                            if segment in data.sigma1_to_pairs:
+                                data.sigma1_to_pairs[segment].add(len(data.pairs) - 1)
+                            else:
+                                data.sigma1_to_pairs[segment] = set({len(data.pairs) - 1})
                         for segment in word2:
                             data.sigma2[segment] = True
+                            if segment in data.sigma2_to_pairs:
+                                data.sigma2_to_pairs[segment].add(len(data.pairs) - 1)
+                            else:
+                                data.sigma2_to_pairs[segment] = set({len(data.pairs) - 1})
     print(str(len(data.pairs)) + " candidate pairs extracted for " + l1 + " and " + l2)
     print(l1 + " alphabet contains " + str(len(data.sigma1)) + " segments")
     print(l2 + " alphabet contains " + str(len(data.sigma2)) + " segments")
     #STEP 2: generate the alphabet of possible sound correspondences
-    sequences1 = dict()
-    sequences2 = dict()
-    for seqLength in range(u,v+1):
-        if seqLength == 0:
-            sequences1[""] = True
-            sequences2[""] = True
-        elif seqLength == 1:
-            for seq1 in data.sigma1.keys():
-                sequences1[seq1] = True
-            for seq2 in data.sigma2.keys():
-                sequences2[seq2] = True            
-        else:
-            for (word1, word2) in data.pairs:
-                for i in range(0,len(word1) - seqLength):
-                    sequences1[".".join(word1[i:i+seqLength])] = True
-                for j in range(0,len(word2) - seqLength):
-                    sequences2[".".join(word2[j:j+seqLength])] = True
+    #sequences1 = dict()
+    #sequences2 = dict()
+    #for seqLength in range(u,v+1):
+    #    if seqLength == 0:
+    #        sequences1[""] = True
+    #        sequences2[""] = True
+    #    elif seqLength == 1:
+    #        for seq1 in data.sigma1.keys():
+    #            sequences1[seq1] = True
+    #        for seq2 in data.sigma2.keys():
+    #            sequences2[seq2] = True            
+    #    else:
+    #        for (word1, word2) in data.pairs:
+    #            for i in range(0,len(word1) - seqLength):
+    #                sequences1[".".join(word1[i:i+seqLength])] = True
+    #            for j in range(0,len(word2) - seqLength):
+    #                sequences2[".".join(word2[j:j+seqLength])] = True
     #data.sigma0 = list(product(sequences1, sequences2))
     pairs0 = dict()
     for seqLength1 in range(u,v+1):
         for seqLength2 in range(u,v+1):
-            for (word1, word2) in data.pairs:
+            for pairIndex in range(len(data.pairs)):
+                (word1, word2) = data.pairs[pairIndex]
                 for i in range(0,len(word1) - seqLength1 + 1):
                     for j in range(0,len(word2) - seqLength2 + 1):
-                        pairs0[(".".join(word1[i:i+seqLength1]),".".join(word2[j:j+seqLength2]))] = True  
+                        correspondence = (".".join(word1[i:i+seqLength1]),".".join(word2[j:j+seqLength2]))
+                        pairs0[correspondence] = True  
+                        if correspondence in data.sigma0_to_pairs:
+                            data.sigma0_to_pairs[correspondence].add(pairIndex)
+                        else:
+                            data.sigma0_to_pairs[correspondence] = set({pairIndex})
     data.sigma0 = pairs0.keys()
     #print(data.sigma0)
     print("(" + str(u) + "," + str(v) + ")-Model contains " + str(len(data.sigma0)) + " possible correspondences.")
@@ -86,7 +107,7 @@ class HypothesisVariableIndex:
     f2 = dict() #generative model of the second observed language, indexed by segments
     c = dict() #cognacy judgment variables
     #f0start, f1start, f2start, cstart for the additional indices
-    #TODO: variable occurrence map to speed up computation of gradient
+
 
 def build_random_hypothesis(data):
     #FIRST STEP: build the variable index
@@ -108,7 +129,6 @@ def build_random_hypothesis(data):
     for pair in data.pairs:
         hypothesis_index.c["".join(pair[0]) + "\t" + "".join(pair[1])] = varIndex
         varIndex += 1
-    
     hypothesis_vector = zeros(varIndex)
     
     #for random initialization of f0, sample a dirichlet distribution with a number of pseudo-observations for self-substitution
@@ -166,7 +186,7 @@ def make_eval_likelihood(data, index):
         logScore = 0.0
         for (word1, word2) in data.pairs:          
             cognateScore = word_pair_probability(data.u, data.v, word1, word2, 0, 0, index.f0, hypothesis_vector, dict())
-            if verbose:
+            if spill_guts:
                 print("word_pair_probability(" + "".join(word1) + "," + "".join(word2) + ") = " + str(cognateScore))
             
             word1Score = word_probability(word1, index.f1, hypothesis_vector)
@@ -175,10 +195,13 @@ def make_eval_likelihood(data, index):
             
             cogProb = hypothesis_vector[index.c["".join(word1) + "\t" + "".join(word2)]]
             pairScore = cognateScore * cogProb + nonCognateScore * (1.0 - cogProb)
-            if pairScore == 0.0:
-                #print("logScore = " + str(logScore))
-                print("likelihood = " + str(0.0))
-                return 0.0
+            if pairScore <= 0.0:
+               if cogProb > 1.0:
+                 pairScore = cognateScore
+               if cogProb <= 0.0:
+                 pairScore = nonCognateScore
+               #else:
+               #    print("Invalid pairScore value " + str(pairScore) + " for pair " + str((word1, word2)) + ": (" + str(cognateScore) + "*" + str(cogProb) + "+" + str(nonCognateScore)+ "*" + str(1.0 - cogProb))
             logScore += log(pairScore) #product over all pairs
         #print("logLikelihood = " + str(logScore))
         #print("likelihood = " + str(exp(logScore)))
@@ -187,42 +210,85 @@ def make_eval_likelihood(data, index):
     return eval_likelihood
 
 def make_approximate_gradient(data, index, epsilon):
-    def eval_likelihood(hypothesis_vector):
-        logScore = 0.0
-        for (word1, word2) in data.pairs:          
-            cognateScore = word_pair_probability(data.u, data.v, word1, word2, 0, 0, index.f0, hypothesis_vector, dict())
-            if verbose:
-                print("word_pair_probability(" + "".join(word1) + "," + "".join(word2) + ") = " + str(cognateScore))
-            
-            word1Score = word_probability(word1, index.f1, hypothesis_vector)
-            word2Score = word_probability(word2, index.f2, hypothesis_vector)
-            nonCognateScore = word1Score * word2Score #non-cognates are generated independently
-            
-            cogProb = hypothesis_vector[index.c["".join(word1) + "\t" + "".join(word2)]]
-            pairScore = cognateScore * cogProb + nonCognateScore * (1.0 - cogProb)
-            if pairScore == 0.0:
-                #print("logScore = " + str(logScore))
-                print("likelihood = " + str(0.0))
-                return 0.0
-            logScore += log(pairScore) #product over all pairs
-        #print("logLikelihood = " + str(logScore))
-        #print("likelihood = " + str(exp(logScore)))
-        #return -logScore #exp(logScore) might have been to small!
-        return -logScore
+    direct_likelihood = make_eval_likelihood(data, index)
+    def compute_pair_likelihood(pairIndex, hypothesis_vector):
+        if spill_guts:
+            print("  compute_pair_likelihood(" + str(pairIndex) + "->" + str(data.pairs[pairIndex]) + ")")
+        (word1, word2) = data.pairs[pairIndex]
+        cognateScore = word_pair_probability(data.u, data.v, word1, word2, 0, 0, index.f0, hypothesis_vector, dict())     
+        word1Score = word_probability(word1, index.f1, hypothesis_vector)
+        word2Score = word_probability(word2, index.f2, hypothesis_vector)
+        nonCognateScore = word1Score * word2Score #non-cognates are generated independently     
+        cogProb = hypothesis_vector[index.c["".join(word1) + "\t" + "".join(word2)]]
+        pairScore = cognateScore * cogProb + nonCognateScore * (1.0 - cogProb)
+        if pairScore <= 0.0:
+           if cogProb > 1.0:
+              return log(cognateScore)
+           if cogProb <= 0.0:
+              return log(nonCognateScore)
+           #else:
+           #   print("Invalid pairScore value " + str(pairScore) + " for pair " + str((word1, word2)) + ": (" + str(cognateScore) + "*" + str(cogProb) + "+" + str(nonCognateScore)+ "*" + str(1.0 - cogProb))
+        else:        
+           return log(pairScore) 
+    def compute_pair_likelihoods(hypothesis_vector):
+        pair_logscores = list()
+        for i in range(len(data.pairs)):           
+           pair_logscores.append(compute_pair_likelihood(i,hypothesis_vector))
+        return pair_logscores
     def approximate_gradient(hypothesis_vector):
-        #TODO: compute all the gradient values, reuse as many computations as possible
+        t = clock()
+        #compute all the gradient values, reuse as many computations as possible
         #CONSIDER: fixed epsilon? some more useful strategy?
-        hypothesis_likelihood = eval_likelihood(hypothesis_vector)
+        pair_likelihoods = compute_pair_likelihoods(hypothesis_vector)
+        hypothesis_likelihood = sum(pair_likelihoods) #product over all pairs
         result = zeros(len(hypothesis_vector))
-        modified_hypothesis_vector = numcopy(hypothesis_vector)
-        for varIndex in range(len(hypothesis_vector)):
-            if varIndex > 0:
-                modified_hypothesis_vector[varIndex - 1] -= epsilon
+        for correspondence in data.sigma0:
+            modified_hypothesis_vector = numcopy(hypothesis_vector)
+            varIndex = index.f0[correspondence]
             modified_hypothesis_vector[varIndex] += epsilon
-            modified_hypothesis_likelihood = eval_likelihood(modified_hypothesis_vector)
-            estimated_derivative_value = (modified_hypothesis_likelihood - hypothesis_likelihood)/epsilon
-            result[varIndex] = estimated_derivative_value
-            print("Gradient component: " + str(varIndex) + ": " + str(result[varIndex]))
+            hypothesis_likelihood_change = 0.0
+            for i in data.sigma0_to_pairs[correspondence]:
+                hypothesis_likelihood_change += (compute_pair_likelihood(i, modified_hypothesis_vector) - pair_likelihoods[i])
+            estimated_derivative_value = hypothesis_likelihood_change/epsilon
+            result[varIndex] = -estimated_derivative_value
+            if verbose:
+                print("Gradient component: " + str(correspondence) + " [" + str(varIndex) + "]: " + str(result[varIndex]) + " (" + str(len(data.sigma0_to_pairs[correspondence])) + " pairs recomputed)")
+            #print("Direct gradient   : " + str(correspondence) + " [" + str(varIndex) + "]: " + str((direct_likelihood(modified_hypothesis_vector) - direct_likelihood(hypothesis_vector))/epsilon))
+        for segment in data.sigma1:
+            modified_hypothesis_vector = numcopy(hypothesis_vector)
+            varIndex = index.f1[segment]
+            modified_hypothesis_vector[varIndex] += epsilon
+            hypothesis_likelihood_change = 0.0
+            for i in data.sigma1_to_pairs[segment]:
+                hypothesis_likelihood_change += (compute_pair_likelihood(i, modified_hypothesis_vector) - pair_likelihoods[i])
+            estimated_derivative_value = hypothesis_likelihood_change/epsilon
+            result[varIndex] = -estimated_derivative_value
+            if verbose:
+                print("Gradient component: " + str(segment) + " [" + str(varIndex) + "]: " + str(result[varIndex]) + " (" + str(len(data.sigma1_to_pairs[segment])) + " pairs recomputed)")
+            #print("Direct gradient   : " + str(segment) + " [" + str(varIndex) + "]: " + str((direct_likelihood(modified_hypothesis_vector) - direct_likelihood(hypothesis_vector))/epsilon))
+        for segment in data.sigma2:
+            modified_hypothesis_vector = numcopy(hypothesis_vector)
+            varIndex = index.f2[segment]
+            modified_hypothesis_vector[varIndex] += epsilon
+            hypothesis_likelihood_change = 0.0
+            for i in data.sigma2_to_pairs[segment]:
+                hypothesis_likelihood_change += (compute_pair_likelihood(i, modified_hypothesis_vector) - pair_likelihoods[i])
+            estimated_derivative_value = hypothesis_likelihood_change/epsilon
+            result[varIndex] = -estimated_derivative_value
+            if verbose:
+                print("Gradient component: " + str(segment) + " [" + str(varIndex) + "]: " + str(result[varIndex]) + " (" + str(len(data.sigma2_to_pairs[segment])) + " pairs recomputed)")
+            #print("Direct gradient   : " + str(segment) + " [" + str(varIndex) + "]: " + str((direct_likelihood(modified_hypothesis_vector) - direct_likelihood(hypothesis_vector))/epsilon))
+        for pairIndex in range(len(data.pairs)):
+            modified_hypothesis_vector = numcopy(hypothesis_vector)
+            varIndex = index.cstart + pairIndex
+            modified_hypothesis_vector[varIndex] += epsilon
+            hypothesis_likelihood_change = compute_pair_likelihood(pairIndex, modified_hypothesis_vector) - pair_likelihoods[pairIndex]
+            estimated_derivative_value = hypothesis_likelihood_change/epsilon
+            result[varIndex] = -estimated_derivative_value
+            if verbose:
+                print("Gradient component: " + str(data.pairs[pairIndex]) + " [" + str(varIndex) + "]: " + str(result[varIndex]) + " (1 pair recomputed)")
+            #print("Direct gradient   : " + str(data.pairs[pairIndex]) + " [" + str(varIndex) + "]: " + str((direct_likelihood(modified_hypothesis_vector) - direct_likelihood(hypothesis_vector))/epsilon))
+        print("Gradient approximated in " + str(clock() - t) + " seconds.")
         return result
     return approximate_gradient
 
@@ -230,7 +296,7 @@ def make_approximate_gradient(data, index, epsilon):
 def word_probability(word, alphabet_index, hypothesis):
     score = 1.0
     for symbol in word:
-        score *= hypothesis[alphabet_index[symbol]]
+        score *= max(min_prob, hypothesis[alphabet_index[symbol]])
     return score
 
 def get_prefixes(u,v,word,startIndex):
@@ -255,7 +321,7 @@ def word_pair_probability(u, v, word1, word2, startIndex1, startIndex2, correspo
     if startIndex1 == len(word1)-1 and startIndex2 == len(word2)-1:
         if spill_guts:
             print("  hypothesis[" + str(correspondence_index[("#","#")]) + " = (#,#)] = " + str(hypothesis[correspondence_index[("#","#")]]))
-        return hypothesis[correspondence_index[("#","#")]]
+        return max(min_prob, hypothesis[correspondence_index[("#","#")]])
     else:
         totalProbability = 0
         for prefix1 in get_prefixes(u,v,word1,startIndex1):
@@ -263,7 +329,7 @@ def word_pair_probability(u, v, word1, word2, startIndex1, startIndex2, correspo
                 if len(prefix1) == 0 and len(prefix2) == 0:
                     continue #otherwise infinite recursion
                 else:
-                    branchProbability = hypothesis[correspondence_index[("".join(prefix1),"".join(prefix2))]]
+                    branchProbability = max(min_prob, hypothesis[correspondence_index[("".join(prefix1),"".join(prefix2))]])
                     if spill_guts:        
                         print("  hypothesis[" + str(correspondence_index[("".join(prefix1),"".join(prefix2))]) + " = (" + "".join(prefix1) + "," + "".join(prefix2) + ")] = " + str(branchProbability))
                     branchProbability *= word_pair_probability(u, v, word1, word2, startIndex1 + len(prefix1), startIndex2 + len(prefix2), correspondence_index, hypothesis, intermediate_results)
@@ -286,11 +352,14 @@ def print_hypothesis_summary(index, hypothesis):
 
 #here comes the test program
 data = build_data(lex, "Nenets", "Nganasan", 0,1)
+print("Sampling 10 initial models, log scores: ")
 for i in range(10):
     (index, hypothesis) = build_random_hypothesis(data)
     f = make_eval_likelihood(data, index)
-    print_hypothesis_summary(index, hypothesis)
+    #print_hypothesis_summary(index, hypothesis)
     print(f(hypothesis))
+print("Starting hypothesis: ")   
+print_hypothesis_summary(index, hypothesis)
 fprime = make_approximate_gradient(data, index, 0.001)
 equality_constraints = []
 equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
