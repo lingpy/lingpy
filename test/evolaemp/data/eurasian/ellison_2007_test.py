@@ -1,4 +1,5 @@
 from numpy import *
+from numpy import copy as numcopy
 from scipy import stats
 from scipy import optimize
 from lingpy import *
@@ -27,22 +28,23 @@ def build_data(lexstat, l1, l2, u, v):
     data.u = u
     data.v = v
     #STEP 1: extract the candidate pairs from the LexStat object
-    for concept in lex.concept[0:3]:
+    for concept in lex.concept:
         entryIdxs = lex.get_list(concept=concept, flat=True)
         for iIdx in range(len(entryIdxs)):
             i = entryIdxs[iIdx]
             for jIdx in range(len(entryIdxs)):
                 j = entryIdxs[jIdx]
                 if lex[i][3] == l1 and lex[j][3] == l2:
-                    word1 = copy.copy(lex[i][4])
-                    word2 = copy.copy(lex[j][4])
-                    word1.append("#")
-                    word2.append("#")
-                    data.pairs.append((word1, word2))
-                    for segment in word1:
-                        data.sigma1[segment] = True
-                    for segment in word2:
-                        data.sigma2[segment] = True
+                    if align.pairwise.edit_dist(lex[i][4],lex[j][4],normalized=True) < 0.5:
+                        word1 = copy.copy(lex[i][4])
+                        word2 = copy.copy(lex[j][4])
+                        word1.append("#")
+                        word2.append("#")
+                        data.pairs.append((word1, word2))
+                        for segment in word1:
+                            data.sigma1[segment] = True
+                        for segment in word2:
+                            data.sigma2[segment] = True
     print(str(len(data.pairs)) + " candidate pairs extracted for " + l1 + " and " + l2)
     print(l1 + " alphabet contains " + str(len(data.sigma1)) + " segments")
     print(l2 + " alphabet contains " + str(len(data.sigma2)) + " segments")
@@ -113,7 +115,7 @@ def build_random_hypothesis(data):
     alphas0 = ones(hypothesis_index.f1start)
     for pair in data.sigma0:
         if pair[0] == pair[1]:
-            alphas0[hypothesis_index.f0[pair]] = 6
+            alphas0[hypothesis_index.f0[pair]] = 50
     initial_distribution_f0 = random.mtrand.dirichlet(alphas0)
     for i in range(hypothesis_index.f1start):
         hypothesis_vector[i] = initial_distribution_f0[i]
@@ -135,7 +137,7 @@ def build_random_hypothesis(data):
     for char2 in segment_count2.keys():
         alphas2[hypothesis_index.f2[char2] - hypothesis_index.f2start] = segment_count2[char2]
     initial_distribution_f1 = random.mtrand.dirichlet(alphas1)
-    initial_distribution_f2 = random.mtrand.dirichlet(alphas2) 
+    initial_distribution_f2 = random.mtrand.dirichlet(alphas2)
     for index in hypothesis_index.f1.values():
         hypothesis_vector[index] = initial_distribution_f1[index - hypothesis_index.f1start]
     for index in hypothesis_index.f2.values():
@@ -178,16 +180,50 @@ def make_eval_likelihood(data, index):
                 print("likelihood = " + str(0.0))
                 return 0.0
             logScore += log(pairScore) #product over all pairs
-        print("logLikelihood = " + str(logScore))
+        #print("logLikelihood = " + str(logScore))
         #print("likelihood = " + str(exp(logScore)))
-        return -logScore #exp(logScore) might have been to small!
+        #return -logScore #exp(logScore) might have been to small!
+        return -logScore
     return eval_likelihood
 
-def make_approximate_gradient(data, index):
+def make_approximate_gradient(data, index, epsilon):
+    def eval_likelihood(hypothesis_vector):
+        logScore = 0.0
+        for (word1, word2) in data.pairs:          
+            cognateScore = word_pair_probability(data.u, data.v, word1, word2, 0, 0, index.f0, hypothesis_vector, dict())
+            if verbose:
+                print("word_pair_probability(" + "".join(word1) + "," + "".join(word2) + ") = " + str(cognateScore))
+            
+            word1Score = word_probability(word1, index.f1, hypothesis_vector)
+            word2Score = word_probability(word2, index.f2, hypothesis_vector)
+            nonCognateScore = word1Score * word2Score #non-cognates are generated independently
+            
+            cogProb = hypothesis_vector[index.c["".join(word1) + "\t" + "".join(word2)]]
+            pairScore = cognateScore * cogProb + nonCognateScore * (1.0 - cogProb)
+            if pairScore == 0.0:
+                #print("logScore = " + str(logScore))
+                print("likelihood = " + str(0.0))
+                return 0.0
+            logScore += log(pairScore) #product over all pairs
+        #print("logLikelihood = " + str(logScore))
+        #print("likelihood = " + str(exp(logScore)))
+        #return -logScore #exp(logScore) might have been to small!
+        return -logScore
     def approximate_gradient(hypothesis_vector):
         #TODO: compute all the gradient values, reuse as many computations as possible
         #CONSIDER: fixed epsilon? some more useful strategy?
-        pass
+        hypothesis_likelihood = eval_likelihood(hypothesis_vector)
+        result = zeros(len(hypothesis_vector))
+        modified_hypothesis_vector = numcopy(hypothesis_vector)
+        for varIndex in range(len(hypothesis_vector)):
+            if varIndex > 0:
+                modified_hypothesis_vector[varIndex - 1] -= epsilon
+            modified_hypothesis_vector[varIndex] += epsilon
+            modified_hypothesis_likelihood = eval_likelihood(modified_hypothesis_vector)
+            estimated_derivative_value = (modified_hypothesis_likelihood - hypothesis_likelihood)/epsilon
+            result[varIndex] = estimated_derivative_value
+            print("Gradient component: " + str(varIndex) + ": " + str(result[varIndex]))
+        return result
     return approximate_gradient
 
 #use this to compute P1 and P2
@@ -255,11 +291,12 @@ for i in range(10):
     f = make_eval_likelihood(data, index)
     print_hypothesis_summary(index, hypothesis)
     print(f(hypothesis))
+fprime = make_approximate_gradient(data, index, 0.001)
 equality_constraints = []
 equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
 equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f1start:index.f2start]) - 1)
 equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f2start:index.cstart]) - 1)
-result = optimize.fmin_slsqp(f, hypothesis, eqcons=equality_constraints, bounds=[(0,1) for i in range(size(hypothesis))])
+result = optimize.fmin_slsqp(f, hypothesis, fprime=fprime, eqcons=equality_constraints, iprint=2, bounds=[(0,1) for i in range(size(hypothesis))])
 print(result)
 #result = optimize.fmin_cg(f, hypothesis)
 print_hypothesis_summary(index, result)
