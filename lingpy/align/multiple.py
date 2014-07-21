@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2013-11-18 09:36
+# modified : 2014-07-21 10:42
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-18"
+__date__="2014-07-21"
 
 # thirdparty imports
 import numpy as np
@@ -329,6 +329,11 @@ class Multiple(object):
                         [self.tokens[key] for key in keys]
                         )
                     )
+            if rcParams['debug'] == True:
+                for _i,_sonar in enumerate(self._sonars):
+                    if 0 in _sonar:
+                        print("[WARNING] Sequence {0} contains unrecognized characters!".format(
+                            self.seqs[self.int2ext[_i][0]]))
             self._prostrings = list([prosodic_string(s) for s in self._sonars])
         # do nothing if no arguments are passed
         else:
@@ -661,7 +666,10 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                if rcParams['verbose']: print(rcParams['W_empty_cons'])
+                if rcParams['verbose']: 
+                    print(rcParams['W_empty_cons'])
+                    print(' '.join([str(X) for X in consA]))
+                    print(' '.join([str(X) for X in consB]))
             except:
                 print(rcParams['E_failed_cons'])
                 print(sonarA)
@@ -817,9 +825,9 @@ class Multiple(object):
                 alm_lst.append(alms)
 
                 # debug
-                #for alm in alms:
-                #    print(' '.join([self._get(x,'_classes') for x in alm]))
-                #print('')
+                for alm in alms:
+                    print(' '.join([self._get(x,'_classes') for x in alm]))
+                print('')
 
         else:
             for row in self.tree_matrix:
@@ -862,7 +870,10 @@ class Multiple(object):
                 try:
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
-                    if rcParams['verbose']: print(rcParams['W_empty_cons']) 
+                    if rcParams['verbose']: 
+                        print(rcParams['W_empty_cons'])
+                        print(consensus)
+
                 except:
                     consensus = []
                     print(rcParams['E_failed_cons'])
