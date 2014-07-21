@@ -103,6 +103,9 @@ class Tokenizer(object):
                     'orthography_profiles',
                     orthography_profile
                     )
+                if not os.path.exists(ortho_path+'.prf') and orthography_profile:
+                    raise ValueError("The orthography profile you specified does not exist!")
+                    
 
         # orthography profile processing
         if os.path.isfile(ortho_path+".prf"):
