@@ -1,15 +1,15 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 13:10
-# modified : 2013-12-18 17:25
+# modified : 2014-07-22 13:10
 """
 Module provides basic functions for the reading of text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-12-18"
+__date__="2014-07-22"
 
-
+from ..algorithm.cython import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
@@ -22,6 +22,7 @@ def _list2msa(
         msa_lines,
         ids=False,
         header=True,
+        normalize = False,
         **keywords
         ):
     """
@@ -112,7 +113,31 @@ def _list2msa(
             d["taxa"] += [line[idx].rstrip('.')]
             d["seqs"] += [' '.join([l for l in line[idx+1:] if l != '-'])]
             d["alignment"] += [line[idx+1:]]
+    
+    # normalize the alignment if the option is chosen
+    if normalize:
+        # first check for alms of different length
+        alm_lens = [len(alm) for alm in d['alignment']]
+        if alm_lens.count(1) == len(alm_lens):
+            for i,alm in enumerate(d['alignment']):
+                d['alignment'][i] = alm[0].split(' ')
+                alm_lens[i] = len(d['alignment'][i])
 
+        if len(set(alm_lens)) > 1:
+            max_len = max(alm_lens)
+            for i,alm in enumerate(d['alignment']):
+                new_alm = alm + ['-' for x in range(max_len)]
+                d['alignment'][i] = new_alm[:max_len]
+
+        # then check for alms consisting only of gaps
+        cols = misc.transpose(d['alignment'])
+        idxs = []
+        for i,col in enumerate(cols):
+            if set(col) == set('-'):
+                idxs += [i]
+        for idx in idxs[::-1]:
+            for i,alm in enumerate(d['alignment']):
+                del d['alignment'][i][idx]
     return d
 
 def read_msa(
@@ -120,6 +145,7 @@ def read_msa(
         comment = "#",
         ids = False,
         header = True,
+        normalize = True,
         **keywords
         ):
     """
@@ -156,7 +182,8 @@ def read_msa(
             else:
                 msa_lines += [newlines]
     
-    d = _list2msa(msa_lines, header=header, ids=ids, **keywords)
+    d = _list2msa(msa_lines, header=header, ids=ids, normalize=normalize,
+            **keywords)
 
     return d
     

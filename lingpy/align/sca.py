@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2014-02-18 10:49
+# modified : 2014-07-22 13:16
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -14,7 +14,7 @@ perspective deals with aligned sequences.
 """
 
 __author__="Johann-Mattis List, Johannes Dellert"
-__date__="2014-02-18"
+__date__="2014-07-22"
 
 import numpy as np
 import re
@@ -50,6 +50,11 @@ class MSA(Multiple):
     comment : char (default='#')
         The comment character which, inserted in the beginning of a line,
         prevents that line from being read.
+    normalize : bool (default=True)
+        Normalize the alignment, that is, add gap characters for all sequences
+        which are shorter than the longest sequence, and delete all columns
+        from the alignment in which only gaps occur.
+        
 
     Examples
     --------
@@ -98,6 +103,9 @@ class MSA(Multiple):
                 "breaks"       : rcParams['breaks'],
                 "stress"       : rcParams['stress'],
                 "merge_vowels" : rcParams['merge_vowels'],
+                "ids"          : False,
+                "header"       : True,
+                "normalize"    : True,
                 }
         for k in defaults:
             if k not in keywords:
