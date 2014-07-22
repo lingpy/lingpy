@@ -339,7 +339,7 @@ def wl2qlc(
     Write the basic data of a wordlist to file.
     """
     defaults = dict(
-            ignore = ['taxa', 'doculects', 'json']
+            ignore = ['taxa', 'doculects', 'json', 'msa']
             )
     for k in defaults:
         if k not in keywords:

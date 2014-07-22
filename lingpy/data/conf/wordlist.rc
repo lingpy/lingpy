@@ -5,6 +5,7 @@ doculect	str	language,doculect,dialect,taxon,languages,counterpart_doculect,taxa
 concept	str	gloss,concept,concepts
 iso	str	iso,isocode
 tokens	lambda x:x.split(" ")	tokens,tokenized_counterpart,ipatokens
+alignment	lambda x:x.split(" ")	alignment,alignments
 ipa	str	word,ipa,words
 ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens,tokenized_counterpart,op_tokens
 
