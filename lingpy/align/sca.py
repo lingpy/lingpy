@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2014-07-22 13:16
+# modified : 2014-07-22 13:42
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -22,7 +22,7 @@ import codecs
 import os
 import sys
 
-from ..read.qlc import read_msa
+from ..read.qlc import read_msa, normalize_alignment
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
@@ -786,6 +786,7 @@ class Alignments(Wordlist):
                     d['seqs'] = []
                     d['dataset'] = self.filename
                     d['ID'] = []
+                    d['alignment'] = []
                     if 'concept' in self.header:
                         concept = self[seqids[0],'concept']
                         d['seq_id'] = '{0} ("{1}")'.format(key,concept)
@@ -799,7 +800,42 @@ class Alignments(Wordlist):
                         d['ID'] += [seq]
                         d['taxa'] += [self[seq,'taxa']]
                         d['seqs'] += [self[seq][stridx]]
+                        if 'alignment' in self.header:
+                            d['alignment'] += [self[seq,'alignment']]
+                        else:
+                            d['alignment'] += [string.split(' ')]
+                        d['alignment'] = normalize_alignment(d['alignment'])
+                        
                     self._meta['msa'][ref][key] = d
+
+    def _msa2col(
+            self,
+            ref='cogid'
+            ):
+        """
+        Add alignments to column (space-separated) in order to make it easy to
+        parse them in the wordlist editor.
+        """
+        tmp = {}
+        for key,msa in self.msa['cogid'].items():
+            for i,idx in enumerate(msa['ID']):
+                try:
+                    tmp[idx] = ' '.join(msa['alignment'][i])
+                except KeyError:
+                    print("[!] There are no alignments in your data.  Aborting...")
+                    return
+        missing = [idx for idx in self if idx not in tmp]
+        for m in missing:
+            if 'tokens' in self.header:
+                tmp[m] = self[m,'tokens']
+            elif 'ipa' in self.header:
+                tmp[m] = ipa2tokens(self[m,'ipa'])
+            elif 'alignment' in self.header:
+                tmp[m] = self[m,'alignment']
+            else:
+                raise ValueError("There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) in your data.")
+
+        self.add_entries('alignment', tmp, lambda x: x)
 
     def align(
             self,
@@ -1061,6 +1097,8 @@ class Alignments(Wordlist):
                         f.write(msa_string)
                         f.close()
         
+        self._msa2col(kw['ref'])
+        
         if not rcParams['verbose'] and rcParams['_sverb']: 
             if control_char < rcParams['_sverb_tbar_len']:
                 sys.stdout.write(
@@ -1068,6 +1106,7 @@ class Alignments(Wordlist):
                             )
             sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
             sys.stdout.flush()
+
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
         """
@@ -1337,7 +1376,7 @@ class Alignments(Wordlist):
                 filename = rcParams['filename'],
                 style = "id",
                 defaults = False,
-                confidence = False
+                confidence = False,
                 )
         kw.update(keywords)
         if kw['defaults']: return kw

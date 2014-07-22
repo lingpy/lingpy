@@ -919,34 +919,7 @@ class Wordlist(QLCParser):
         
         if self._alias[source] == 'doculect':
             clean_taxnames(self, self._alias[source], f)
-
-    def _msa2col(
-            self,
-            ref='cogid'
-            ):
-        """
-        Add alignments to column (space-separated) in order to make it easy to
-        parse them in the wordlist editor.
-        """
-        tmp = {}
-        for key,msa in self.msa['cogid'].items():
-            for i,idx in enumerate(msa['ID']):
-                try:
-                    tmp[idx] = ' '.join(msa['alignment'][i])
-                except KeyError:
-                    print("[!] There are no alignments in your data.  Aborting...")
-                    return
-        missing = [idx for idx in self if idx not in tmp]
-        for m in missing:
-            try:
-                tmp[m] = self[m,'tokens']
-            except:
-                print("[!] There are no tokens in your data. Aborting...")
-                return
-
-        self.add_entries('alignment', tmp, lambda x: x)
-        
-
+    
     def _output(
             self,
             fileformat,

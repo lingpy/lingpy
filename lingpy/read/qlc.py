@@ -17,6 +17,38 @@ import json
 import codecs
 import os
 
+def normalize_alignment(alignment):
+    """
+    Function normalizes an alignment.
+
+    Normalization here means that columns consisting only of gaps will be
+    deleted, and all sequences will be stretched to equal length by adding
+    additional gap characters in the end of smaller sequences.
+    """
+
+    # first check for alms of different length
+    alm_lens = [len(alm) for alm in alignment]
+    if alm_lens.count(1) == len(alm_lens):
+        for i,alm in enumerate(alignment):
+            alignment[i] = alm[0].split(' ')
+            alm_lens[i] = len(alignment[i])
+
+    if len(set(alm_lens)) > 1:
+        max_len = max(alm_lens)
+        for i,alm in enumerate(alignment):
+            new_alm = alm + ['-' for x in range(max_len)]
+            alignment[i] = new_alm[:max_len]
+
+    # then check for alms consisting only of gaps
+    cols = misc.transpose(alignment)
+    idxs = []
+    for i,col in enumerate(cols):
+        if set(col) == set('-'):
+            idxs += [i]
+    for idx in idxs[::-1]:
+        for i,alm in enumerate(alignment):
+            del alignment[i][idx]
+    return alignment
 
 def _list2msa(
         msa_lines,
@@ -116,28 +148,8 @@ def _list2msa(
     
     # normalize the alignment if the option is chosen
     if normalize:
-        # first check for alms of different length
-        alm_lens = [len(alm) for alm in d['alignment']]
-        if alm_lens.count(1) == len(alm_lens):
-            for i,alm in enumerate(d['alignment']):
-                d['alignment'][i] = alm[0].split(' ')
-                alm_lens[i] = len(d['alignment'][i])
+        d['alignment'] = normalize_alignment(d['alignment'])
 
-        if len(set(alm_lens)) > 1:
-            max_len = max(alm_lens)
-            for i,alm in enumerate(d['alignment']):
-                new_alm = alm + ['-' for x in range(max_len)]
-                d['alignment'][i] = new_alm[:max_len]
-
-        # then check for alms consisting only of gaps
-        cols = misc.transpose(d['alignment'])
-        idxs = []
-        for i,col in enumerate(cols):
-            if set(col) == set('-'):
-                idxs += [i]
-        for idx in idxs[::-1]:
-            for i,alm in enumerate(d['alignment']):
-                del d['alignment'][i][idx]
     return d
 
 def read_msa(
