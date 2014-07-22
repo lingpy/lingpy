@@ -14,7 +14,7 @@ langs = lex.language
 
 print("Loaded " + str(len(lex.concept)) + " concepts in " + str(len(langs)) + " languages: " + ", ".join(langs));
 
-verbose = True
+verbose = False
 spill_guts = False
 
 min_prob = 0.0000000000000000001 #pseudo-probability used to circumvent illegal parameter values that are caused by rounding errors 
@@ -42,7 +42,7 @@ def build_data(lexstat, l1, l2, u, v):
             for jIdx in range(len(entryIdxs)):
                 j = entryIdxs[jIdx]
                 if lex[i][3] == l1 and lex[j][3] == l2:
-                    if align.pairwise.edit_dist(lex[i][4],lex[j][4],normalized=True) < 0.8:
+                    if align.pairwise.edit_dist(lex[i][4],lex[j][4],normalized=True) < 0.6:
                         word1 = copy.copy(lex[i][4])
                         word2 = copy.copy(lex[j][4])
                         word1.append("#")
@@ -360,7 +360,8 @@ for i in range(10):
     print(f(hypothesis))
 print("Starting hypothesis: ")   
 print_hypothesis_summary(index, hypothesis)
-fprime = make_approximate_gradient(data, index, 0.001)
+fprime = make_approximate_gradient(data, index, sqrt(finfo(float).eps)) #use epsilon from finite difference approximation
+print("Gradient check: " + str(optimize.check_grad(f,fprime,hypothesis)))
 equality_constraints = []
 equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
 equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f1start:index.f2start]) - 1)
