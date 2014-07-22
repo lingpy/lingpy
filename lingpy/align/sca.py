@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Johannes Dellert
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2014-07-22 13:42
+# modified : 2014-07-22 13:46
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -803,7 +803,11 @@ class Alignments(Wordlist):
                         if 'alignment' in self.header:
                             d['alignment'] += [self[seq,'alignment']]
                         else:
-                            d['alignment'] += [string.split(' ')]
+                            if type(string) == str:
+                                d['alignment'] += [string.split(' ')]
+                            else:
+                                d['alignment'] += [string]
+                                
                         d['alignment'] = normalize_alignment(d['alignment'])
                         
                     self._meta['msa'][ref][key] = d
