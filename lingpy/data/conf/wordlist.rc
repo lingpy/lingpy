@@ -35,3 +35,10 @@ customid	int	customid
 makroid	int	makroid
 mikroid	int	mikroid
 mikro_entries	lambda x: [int(i) for i in x.split(" ")]	mikro_entries
+
+# New namespaces for partial cognacy
+clusterid	int	clusterid
+clusterformat	lambda x: [int(i) for i in x.split(" ")]	clusterformat
+morphemes	lambda x: x.split(" ")	morphemes
+palignment	lambda x: x.split(" ")	pca,palignment,partial_cognate_alignment
+pcogsets	lambda x: [int(i) for i in x.split(" ")]	partial_cognate_sets,pcogset,pcs
