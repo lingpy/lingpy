@@ -349,6 +349,18 @@ def print_hypothesis_summary(index, hypothesis):
     print("Cognate scores:")
     for pair in sorted(index.c.keys(), key= lambda x: hypothesis[index.c[x]]):
         print(pair + "\t" + str(hypothesis[index.c[pair]]))
+        
+def build_equality_constraints_prime(index,hypothesis):
+    def equality_constraints_prime(hypothesis):
+        result = zeros((3,size(hypothesis)))
+        for i in range(index.f1start):
+            result[0][i] = sum(hypothesis[0:index.f1start]) - hypothesis[i]
+        for i in range(index.f1start,index.f2start):
+            result[1][i] = sum(hypothesis[index.f1start:index.f2start]) - hypothesis[i]
+        for i in range(index.f2start,index.cstart):
+            result[2][i] = sum(hypothesis[index.f2start:index.cstart]) - hypothesis[i]
+        return result
+    return equality_constraints_prime
 
 #here comes the test program
 data = build_data(lex, "Nenets", "Nganasan", 0,1)
@@ -360,13 +372,15 @@ for i in range(10):
     print(f(hypothesis))
 print("Starting hypothesis: ")   
 print_hypothesis_summary(index, hypothesis)
-fprime = make_approximate_gradient(data, index, sqrt(finfo(float).eps)) #use epsilon from finite difference approximation
-print("Gradient check: " + str(optimize.check_grad(f,fprime,hypothesis)))
+fprime = make_approximate_gradient(data, index, 0.0001)
+#fprime = make_approximate_gradient(data, index, sqrt(finfo(float).eps)) #use epsilon from finite difference approximation
+#print("Gradient check: " + str(optimize.check_grad(f,fprime,hypothesis)))
 equality_constraints = []
 equality_constraints.append(lambda hypothesis : sum(hypothesis[0:index.f1start]) - 1)
 equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f1start:index.f2start]) - 1)
 equality_constraints.append(lambda hypothesis : sum(hypothesis[index.f2start:index.cstart]) - 1)
-result = optimize.fmin_slsqp(f, hypothesis, fprime=fprime, eqcons=equality_constraints, iprint=2, bounds=[(0,1) for i in range(size(hypothesis))])
+equality_constraints_prime = build_equality_constraints_prime(index,hypothesis)
+result = optimize.fmin_slsqp(f, hypothesis, fprime=fprime, eqcons=equality_constraints, fprime_eqcons=equality_constraints_prime, iprint=2, bounds=[(0,1) for i in range(size(hypothesis))])
 print(result)
 #result = optimize.fmin_cg(f, hypothesis)
 print_hypothesis_summary(index, result)
