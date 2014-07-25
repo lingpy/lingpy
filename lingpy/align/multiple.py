@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2014-07-21 10:42
+# modified : 2014-07-23 22:57
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-07-21"
+__date__="2014-07-23"
 
 # thirdparty imports
 import numpy as np
@@ -2367,6 +2367,7 @@ def mult_align(
         gop = -1,
         scale = 0.5,
         tree_calc = 'upgma',
+        scoredict = False,
         pprint = False
         ):
     """
@@ -2400,14 +2401,17 @@ def mult_align(
     
 
     """
-
+    if not scoredict:
+        scoredict = {}
+        
     m = Multiple(seqs)
     m.prog_align(
             classes=False,
             sonar = False,
             gop = gop,
             tree_calc = tree_calc,
-            scale = scale
+            scale = scale,
+            scoredict = scoredict
             )
     if pprint:
         print(m)

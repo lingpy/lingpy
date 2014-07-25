@@ -253,7 +253,7 @@ def read_qlc(
         elif line.startswith('@'):
             key = line[1:line.index(':')]
             value = line[line.index(':')+1:].strip()
-            if key not in ['tree']:
+            if key not in ['tree','json']:
                 if key not in meta:
                     meta[key] = value
                 else:
@@ -267,6 +267,10 @@ def read_qlc(
             else:
                 if key == 'tree':
                     meta["tree"] = cg.LoadTree(treestring=value)
+                if key == 'json':
+                    jsonpairs = json.loads(value)
+                    for j1,j2 in jsonpairs.items():
+                        meta[j1] = j2
         
         # line starts with complex stuff
         elif line.startswith('<'):

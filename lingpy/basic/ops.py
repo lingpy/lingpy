@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-07-21 15:57
+# modified : 2014-07-25 15:43
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-07-21"
+__date__="2014-07-25"
 
 # external imports
 import re
@@ -339,7 +339,7 @@ def wl2qlc(
     Write the basic data of a wordlist to file.
     """
     defaults = dict(
-            ignore = ['taxa', 'doculects', 'json', 'msa']
+            ignore = ['taxa', 'doculects', 'msa']
             )
     for k in defaults:
         if k not in keywords:
@@ -419,10 +419,11 @@ def wl2qlc(
     if taxa and keywords['taxa']:
         out += '\n# TAXA\n<taxa>\n'+taxa+'\n</taxa>\n'
     if jsonpairs and 'json' not in keywords['ignore']:
-        out += '\n# JSON\n'
-        out += "<json>\n"
-        out += json.dumps(jsonpairs,indent=4)
-        out += '\n</json>\n'
+        out += "@json: "+json.dumps(jsonpairs)+'\n'
+        #out += '\n# JSON\n'
+        #out += "<json>\n"
+        #out += json.dumps(jsonpairs,indent=4)
+        #out += '\n</json>\n'
     if msapairs and 'msa' not in keywords['ignore']:
         for ref in msapairs:
             out += "\n# MSA reference: {0}\n".format(ref)
