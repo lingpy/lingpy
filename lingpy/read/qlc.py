@@ -9,7 +9,7 @@ Module provides basic functions for the reading of text files in QLC format.
 __author__="Johann-Mattis List"
 __date__="2014-07-22"
 
-from ..algorithm.cython import misc
+from ..algorithm import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
