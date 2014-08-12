@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2014-04-28 21:04
+# modified : 2014-08-12 14:35
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-04-28"
+__date__="2014-08-12"
 
 # builtin
 import random
@@ -1749,7 +1749,7 @@ class LexStat(Wordlist):
     
     def get_distances(
             self,
-            method='lexstat',
+            method='sca',
             mode = 'overlap',
             gop = -2,
             scale = 0.5,
