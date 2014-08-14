@@ -2127,6 +2127,37 @@ class PhyloNode(TreeNode):
                 update_result()
         return result+result.T, tip_order
 
+    def compareByPartitions(self, other, debug=False):
+        
+        # get all tree nodes
+        nodesA = self.getNodesDict()
+        nodesB = other.getNodesDict()
+        
+        # define function to return all partitions as sets of taxa
+        def get_partitions(nodes,root):
+            
+            partitions = []
+            for node,tree in nodes.items():
+
+                tmp_taxa = tuple(sorted(tree.taxa))
+                tmp_other =  tuple(sorted([t for t in root.taxa if t not in
+                    tmp_taxa]))
+                partitions += [tuple(sorted([tmp_taxa,tmp_other]))]
+                
+            return set(partitions)
+
+        partA = get_partitions(nodesA,self)
+        partB = get_partitions(nodesB,other)
+
+        if debug:
+            print(sorted(partA))
+            print(sorted(partB))
+            print(partA.symmetric_difference(partB))
+
+        return len(partA.symmetric_difference(partB))
+            
+        
+    
     #def compareByTipDistances(self, other, sample=None, dist_f=distance_from_r,\
     #        shuffle_f=shuffle):
     #    """Compares self to other using tip-to-tip distance matrices.
