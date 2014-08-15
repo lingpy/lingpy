@@ -44,6 +44,7 @@ else:
     rcParams['cmodules'] = True
 
 from .clustering import *
+from ._tree import _TreeDist as TreeDist
 
 # define squareform for global lingpy-applications
 squareform = misc.squareform
