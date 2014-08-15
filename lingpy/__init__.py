@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Steven Moran
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 14:05
-# modified : 2013-04-04 22:48
+# modified : 2014-08-15 13:39
 """
 LingPy package for quantitative tasks in historical linguistics.
 
@@ -25,13 +25,13 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 """
 
 __author__="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert"
-__date__="2013-04-04"
+__date__="2014-08-15"
 
 # import settings
 from .settings import rc
 
 # general imports
-from .basic import Wordlist, Dictionary
+from .basic import Wordlist, Dictionary, Tree
 
 # import converts
 # from .convert import *
@@ -52,7 +52,7 @@ from .sequence import ipa2tokens, tokens2class, prosodic_string, \
         prosodic_weights, class2tokens, pid, sampa2uni
 
 # import thirdparty modules
-from .thirdparty import LoadTree as Tree
+#from .thirdparty import LoadTree as Tree
 
 # import lexstat
 from .compare.lexstat import LexStat
