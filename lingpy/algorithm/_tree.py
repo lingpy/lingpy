@@ -1,8 +1,8 @@
 '''
 Created on Feb 28, 2012
 
-@author: rarakar
-Computes the Generalized RF distance, RF-distance and NOrmalized RF-distance
+@author: PhyloStar
+Computes the Generalized RF distance, RF-distance and Normalized RF-distance
 
 Modified and adapted to LingPy style on 2014-08-15 by Johann-Mattis List
 '''
