@@ -31,7 +31,7 @@ __date__="2014-08-15"
 from .settings import rc
 
 # general imports
-from .basic import Wordlist, Dictionary, Tree
+from .basic import Wordlist, Dictionary, Tree, Workflow
 
 # import converts
 # from .convert import *

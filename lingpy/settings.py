@@ -42,7 +42,7 @@ lexstat = dict(
         lexstat_scoring_method = 'shuffle',
         lexstat_ratio          = (2,1),
         lexstat_vscale         = 0.5,
-        lexstat_threshold      = 0.7,
+        lexstat_threshold      = 0.3,
         lexstat_cluster_method = 'upgma',
         lexstat_preprocessing_method = 'sca',
         lexstat_preprocessing_threshold = 0.7
@@ -142,7 +142,8 @@ rcParamsUpd = dict(
         sonority_consensus_warning = '[WARNING] Sonority profile consensus could not be calculated!',
         deprecation_warning        = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
         missing_module             = "[WARNING] Module '{0}' could not be loaded. Some methods may not work properly.",
-        test_path                  = os.path.join(rcParams['_path'], 'tests', 'test_data', '')
+        test_path                  = os.path.join(rcParams['_path'], 'tests', 'test_data', ''),
+        template_path              = os.path.join(rcParams['_path'], 'data', 'templates','')
         )
 rcParams.update(rcParamsUpd)
 

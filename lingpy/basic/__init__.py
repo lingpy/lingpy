@@ -17,3 +17,4 @@ __date__="2013-07-12"
 from .wordlist import Wordlist
 from .dictionary import Dictionary
 from .tree import Tree
+from .workflow import Workflow

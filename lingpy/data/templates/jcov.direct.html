@@ -1,0 +1,85 @@
+<html>
+<head>
+  <title>jCoV</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <style>
+    {STYLE}
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" id="brand" href="#">jCoV</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="#">ABOUT</a></li>
+          <!--<li><a href="#">HELP</a></li>-->
+          <li><a href="" onclick="event.preventDefault();JCOV.togglePanel('correspondences');" id="correspondences_toggle">CORRS <span class="glyphicon glyphicon-ok"></span></a></li>
+          <li><a href="" onclick="event.preventDefault();JCOV.togglePanel('cognates');" id="cognates_toggle">COGS <span class="glyphicon glyphicon-ok"></span></a></li>
+        </ul>
+        <div class="form-group navbar-form navbar-left">
+          <input type="text" onkeyup="JCOV.filterData(event,this);" id="filter_data" class="form-control" placeholder="Filter concepts">
+          <span id="concept_selector" class="btn btn-default btn-sm" style="padding:8xp"></span>
+          <span id="language_selector" class="btn btn-default btn-sm" style="padding:8xp"></span>
+          <span id="sound_selector" class="btn btn-default btn-sm" style="padding:8xp"></span>
+          <span id="settings_selector" class="btn btn-default btn-sm" style="padding:8xp">
+            <select class="multiselect" id="selectorz" multiple>
+              <option id="hec" value="hide_empty_corrs" selected>Hide empty correspondences</option>
+              <option id="halm" value="reduce_alignments" selected>Hide empty columns in alignments</option>
+              <option id="ref" value="refresh">Constantly refresh the data</option>
+            </select>
+          </span>
+          <input type="number" value="2" title="Minimal number of sound correspondences" id="minoccs" class="form-control" style="width:60px" />
+          <button type="submit" onclick="JCOV.doIt(function(){{JCOV.resetSelection();}});" class="btn btn-default" style="padding:8px"><span class="glyphicon glyphicon-refresh"></span></button>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="http://github.com/dighl/jcov/">GitHub</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+  <div id="main">
+  <!-- Group of sortable handes -->
+  <div id="handles">
+    <!-- display of sound correspondences -->
+    <div id="correspondences" class="sortables bg-info">
+      <div class="header data" id="correspondence_header"></div>
+      <div id="correspondence_data" class="data">
+      </div>
+    </div>
+    <!-- display of cognate sets -->
+    <div name="cognates" id="cognates" class="sortables bg-info">
+      <div id="cognates_header" class="header data"></div>
+      <div id="cognates_data" class="data"></div>
+    </div>
+  </div>
+  </div>
+  <div id="popup_background" class="popup_background">
+    <!--<span class="popup_message"><span class="glyphicon glyphicon-repeat"></span></span>-->
+  </div>
+  <script type="text/javascript" async>
+    {VENDOR}
+  </script>
+  <script type="text/javascript" async>
+    {DIGHL}
+  </script>
+  <script type="text/javascript" async>
+    {CORRS}
+  </script>
+  <script type="text/javascript" async>
+    {JCOV}
+  </script>
+
+</body>
+</html>
