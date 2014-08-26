@@ -821,7 +821,7 @@ class Alignments(Wordlist):
         parse them in the wordlist editor.
         """
         tmp = {}
-        for key,msa in self.msa['cogid'].items():
+        for key,msa in self.msa[ref].items():
             for i,idx in enumerate(msa['ID']):
                 try:
                     tmp[idx] = ' '.join(msa['alignment'][i])
