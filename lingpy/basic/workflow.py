@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-08-25 12:58
-# modified : 2014-08-25 12:58
+# modified : 2014-08-26 08:19
 """
 Package provides generic workflow modules for LingPy.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-08-25"
+__date__="2014-08-26"
 
 import json
 import codecs
@@ -86,7 +86,7 @@ class Workflow(object):
 
         # reset filename if it is not defined
         if not kw['outfile']:
-            kw['outfile'] = self.lex.filename
+            kw['outfile'] = self.lex.filename+'_lingpy'
 
         # check for traditional lexstat analysis
         if kw['cognate_method'] == 'lexstat':
@@ -167,7 +167,7 @@ class Workflow(object):
                 txt += 'WLS = '+json.dumps(wl)+';\n'
                 txt += 'GlossId = '+json.dumps(gloss2id)+';\n'
                 txt += 'IdGloss = '+json.dumps(id2gloss)+';\n'
-                txt += 'FILE = "'+self.infile+'";\n'
+                txt += 'FILE = "'+kw['outfile']+'.tsv";\n'
                 
                 tpath = rcParams['template_path']
 
