@@ -821,7 +821,7 @@ class Alignments(Wordlist):
         parse them in the wordlist editor.
         """
         tmp = {}
-        for key,msa in self.msa['cogid'].items():
+        for key,msa in self.msa[ref].items():
             for i,idx in enumerate(msa['ID']):
                 try:
                     tmp[idx] = ' '.join(msa['alignment'][i])
@@ -1101,7 +1101,7 @@ class Alignments(Wordlist):
                         f.write(msa_string)
                         f.close()
         
-        self._msa2col(kw['ref'])
+        self._msa2col(ref=kw['ref'])
         
         if not rcParams['verbose'] and rcParams['_sverb']: 
             if control_char < rcParams['_sverb_tbar_len']:

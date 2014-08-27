@@ -252,3 +252,100 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
 
     return jsond
 
+def get_correspondences(alms, ref='lexstatid'):
+    """
+    Compute sound correspondences for a given set of aligned cognates.
+    """
+    
+    # store all values for average scores
+    values = []
+
+    # store all correspondences
+    corrs = {}
+
+    # store occurrences
+    occs = {} 
+
+    for key,msa in alms.msa[ref].items():
+        
+        # get basic stuff
+        idxs = msa['ID']
+        taxa = msa['taxa']
+        concept = cgi.escape(alms[idxs[0],'concept'], True)
+
+        # get numerical representation of alignments
+        if 'numbers' in alms.header:
+            alignment = [class2tokens(
+                alms[idxs[i], 'numbers'],
+                msa['alignment'][i]) for i in range(len(idxs))]
+        else:
+            alignment = msa['alignment']
+        
+        # create new array for confidence
+        character_matrix = []
+
+        # iterate over each taxon
+        for i,taxon in enumerate(taxa):
+            idx = alms.taxa.index(taxon)+1
+
+            # get the numerical sequence
+            nums = alignment[i]
+            
+            # store confidences per line
+            confidences = []
+
+            # store chars per line
+            chars = []
+
+            # iterate over the sequence
+            for j,num in enumerate(nums):
+
+                col = [alm[j] for alm in alignment]
+                
+                count = 0
+
+                # get the char
+                if num != '-':
+                    charA = taxa[i]+'.'+msa['alignment'][i][j]+'.'+num.split('.')[2]
+                    chars += [charA]
+                    try:
+                        occs[charA] += [concept]
+                    except:
+                        occs[charA] = [concept]
+                else:
+                    chars += ['-']
+                    
+                for k,numB in enumerate(col):
+                    if k != i:
+                        if num == '-' and numB == '-':
+                            pass
+                        else:
+                            if numB != '-' and num != '-':
+                                # get the second char
+                                charB = taxa[k]+'.'+msa['alignment'][k][j]+'.'+numB.split('.')[2]
+                                
+                                try:
+                                    corrs[charA][charB] += 1
+                                except:
+                                    try:
+                                        corrs[charA][charB] = 1
+                                    except:
+                                        corrs[charA] = {charB : 1}
+
+                            gaps = False
+                            if num == '-' and numB != '-':
+                                numA = str(idx)+'.X.-'
+                                gaps = True
+                            elif numB == '-' and num != '-':
+                                numB = str(alms.taxa.index(taxa[k]))+'.X.-'
+                                numA = num
+                                gaps = True
+                            else:
+                                numA = num
+                            
+            character_matrix += [chars]
+
+        # append confidence matrix to alignments
+        alms.msa[ref][key]['_charmat'] = character_matrix
+
+    return corrs,occs
