@@ -22,7 +22,7 @@ from ..convert.strings import matrix2dst, pap2nex, pap2csv
 from ..settings import rcParams
 from .parser import QLCParser
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc
+        wl2qlc, triple2tsv, tsv2triple
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
@@ -959,6 +959,9 @@ class Wordlist(QLCParser):
         for key in defaults:
             if key not in keywords:
                 keywords[key] = defaults[key]
+
+        if fileformat in ['triple','triples','triples.tsv']:
+            tsv2triple(self, keywords['filename']+'.'+fileformat)
 
         if fileformat in ['paps.nex','paps.csv']:
             paps = self.get_paps(
