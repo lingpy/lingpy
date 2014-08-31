@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-07-25 15:43
+# modified : 2014-08-31 10:45
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-07-25"
+__date__="2014-08-31"
 
 # external imports
 import re
@@ -515,3 +515,65 @@ def wl2csv(
     
     print("[WARNING] wl2csv is deprecated")
     return wl2qlc(header,data,filename,formatter,**keywords)
+
+
+def tsv2triple(wordlist, outfile):
+    """
+    Function converts a wordlist to a triple data structure.
+
+    Notes
+    -----
+    The basic values of which the triples consist are:
+      * ID (the ID in the TSV file)
+      * COLUMN (the column in the TSV file)
+      * VALUE (the entry in the TSV file)
+    """
+    
+    tstore = []
+    for head in wordlist.header:
+        for key in wordlist:
+            tstore += [(key,head.upper(),wordlist[key,head])]
+
+    with open(outfile, 'w') as f:
+        for a,b,c in tstore:
+            if type(c) == list:
+                c = ' '.join([str(x) for x in c])
+            if c != '-':
+                f.write('{0}\t{1}\t{2}\n'.format(a, b, c))
+
+def triple2tsv(infile):
+    """
+    Function reads in a triple file and converts it to a tabular data structure.
+    """
+    
+    D = {}
+    idxs = set([])
+    cols = set([])
+
+    with open(infile) as f:
+        for line in f:
+            a,b,c = line.strip().split('\t')
+            try:
+                D[a][b] = c
+            except KeyError:
+                try:
+                    D[a] = {b:c}
+                except KeyError:
+                    D = {a:{b:c}}
+
+            idxs.add(a)
+            cols.add(b)            
+    
+    idxs = sorted(idxs)
+    cols = sorted(cols)
+    table = [[col for col in cols] for idx in idxs]
+    
+    for i,idx in enumerate(idxs):
+        for j,col in enumerate(cols):
+            try:
+                table[i][j] = D[idx][col]
+            except:
+                pass
+    
+    return [["ID"]+cols]+table
+
