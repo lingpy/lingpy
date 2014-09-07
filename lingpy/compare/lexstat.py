@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2014-08-12 14:35
+# modified : 2014-08-25 13:35
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-08-12"
+__date__="2014-08-25"
 
 # builtin
 import random
@@ -969,7 +969,7 @@ class LexStat(Wordlist):
             ratio                   = rcParams['lexstat_ratio'],
             vscale                  = rcParams['lexstat_vscale'],
             runs                    = rcParams['lexstat_runs'],
-            threshold               = rcParams['lexstat_threshold'],
+            #threshold               = rcParams['lexstat_threshold'],
             modes                   = rcParams['lexstat_modes'],
             factor                  = rcParams['align_factor'],
             restricted_chars        = rcParams['restricted_chars'],
@@ -998,7 +998,7 @@ class LexStat(Wordlist):
                 ratio = kw['ratio'],
                 vscale = kw['vscale'],
                 runs = kw['runs'],
-                threshold = kw['threshold'],
+                threshold = kw['preprocessing_threshold'],
                 modestring = modestring,
                 factor = kw['factor'],
                 restricted_chars = kw['restricted_chars'],
@@ -1392,7 +1392,7 @@ class LexStat(Wordlist):
     def cluster(
             self,
             method = 'sca',
-            cluster_method='single',
+            cluster_method='upgma',
             threshold = 0.3,
             scale = 0.5,
             factor = 0.3,

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-08-31 10:45
+# modified : 2014-09-03 17:20
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-08-31"
+__date__="2014-09-03"
 
 # external imports
 import re
@@ -531,6 +531,9 @@ def tsv2triple(wordlist, outfile):
     
     tstore = []
     for head in wordlist.header:
+        if rcParams['debug']:
+            print('DEBUG: tsv2triple: '+head)
+            
         for key in wordlist:
             tstore += [(key,head.upper(),wordlist[key,head])]
 

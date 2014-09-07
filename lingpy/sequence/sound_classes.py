@@ -469,6 +469,22 @@ def prosodic_string(
                 }
         return ''.join([conv[x] for x in pstring])
 
+    elif _output == 'CcV':
+        conv = {
+                "A":"C",
+                "B":"C",
+                "C":"C",
+                "M":"c",
+                "L":"c",
+                "N":"c",
+                "X":"V",
+                "Y":"V",
+                "Z":"V",
+                "T":"T",
+                "_":"_",
+                }
+        return ''.join([conv[x] for x in pstring])
+
     elif _output:
         return pstring
 
