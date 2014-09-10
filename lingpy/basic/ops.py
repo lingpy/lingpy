@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-09-03 17:20
+# modified : 2014-09-10 18:46
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-09-03"
+__date__="2014-09-10"
 
 # external imports
 import re
@@ -345,6 +345,9 @@ def wl2qlc(
         if k not in keywords:
             keywords[k] = defaults[k]
 
+    if keywords['ignore'] == 'all':
+        keywords['ignore'] = ['taxa', 'doculects', 'msa', 'json']
+
     formatter = formatter.upper()
 
     defaults = dict(
@@ -544,7 +547,7 @@ def tsv2triple(wordlist, outfile):
             if c != '-':
                 f.write('{0}\t{1}\t{2}\n'.format(a, b, c))
 
-def triple2tsv(infile):
+def triple2tsv(infile, output="table"):
     """
     Function reads in a triple file and converts it to a tabular data structure.
     """
@@ -569,14 +572,28 @@ def triple2tsv(infile):
     
     idxs = sorted(idxs)
     cols = sorted(cols)
-    table = [[col for col in cols] for idx in idxs]
+    table = [[0] + [col for col in cols] for idx in idxs]
     
     for i,idx in enumerate(idxs):
+        table[i][0] = idx
         for j,col in enumerate(cols):
             try:
-                table[i][j] = D[idx][col]
+                table[i][j+1] = D[idx][col]
             except:
                 pass
     
-    return [["ID"]+cols]+table
+    output_table = [["ID"] + cols]+table
+
+    if output in ['wordlist', 'dict']:
+        wlD = {}
+        for line in table:
+            wlD[int(line[0])] = line[1:]
+        wlD[0] = cols 
+
+        return wlD
+    
+    else:
+        return output_table
+
+
 
