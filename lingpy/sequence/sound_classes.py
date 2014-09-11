@@ -417,10 +417,16 @@ def prosodic_string(
         elif a >= b >= c or c == 8:
 
             # check for word final
-            if c == 9:
+            if c == 9 and b != 7:
                 pstring += 'N'
+            elif c == 9 and b == 7:
+                pstring += 'Z'
             else:
-                pstring += 'L'
+                if first:
+                    first = False
+                    pstring += 'A'
+                else:
+                    pstring += 'L'
 
         # ascending
         elif b < c or a > b <= c or a < b <= c:
@@ -432,7 +438,10 @@ def prosodic_string(
                 if c == 9:
                     pstring += 'N'
                 else:
-                    pstring = pstring[:-1]+pstring[-1].replace('L','M')+'B'
+                    if pstring[-1] != 'A':
+                        pstring = pstring[:-1]+pstring[-1].replace('L','M')+'B'
+                    else:
+                        pstring += 'C'
             else:
                 pstring += 'C'
         
