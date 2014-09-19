@@ -41,7 +41,6 @@ def read_dst(
     """
     if os.path.isfile(filename):
         f = open(filename)
-        f = open(filename)
     else:
         f = filename.split('\n') # XXX temporary solution
         #print("[!] Could not find the file {0}!".format(filename))
