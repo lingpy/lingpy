@@ -45,7 +45,7 @@ from .align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dist, \
 from .data import Model
 
 # import reading routine
-from .read import csv2list, csv2dict
+from .read import csv2list, csv2dict, star2qlc
 
 # import sequence routines
 from .sequence import ipa2tokens, tokens2class, prosodic_string, \

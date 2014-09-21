@@ -149,7 +149,7 @@ def csv2multidict(
     Function reads a csv-file into a multi-dimensional dictionary structure.
     """
     mdict = {}
-    tsv = csv2list(filename, comment, sep)
+    tsv = csv2list(filename, comment=comment, sep=sep)
     header = tsv[0]
     for line in tsv[1:]:
         mdict[line[0]] = dict(zip(header[1:], line[1:]))
