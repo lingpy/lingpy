@@ -35,7 +35,7 @@ def star2qlc(filename, debug=False):
         for line in data[1:]:
             if len(line) != len(header):
                 print("[!] Error for item {0} with length {1}, expected {2}.".format(
-                    line[0:2],
+                    '/'.join(line[0:2]),
                     len(line),
                     len(header)))
                 error = True
