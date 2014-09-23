@@ -15,15 +15,35 @@ from ..settings import rcParams
 from ..sequence.sound_classes import ipa2tokens
 from .csv import csv2list
 
-def star2qlc(filename):
+def star2qlc(filename, debug=False):
     """
     Converts a file directly output from starling to LingPy-QLC format.
     """
 
     data = csv2list(filename)
 
+    # check for strange chars in data due to notepad errors
+    data[0][0] = data[0][0].replace('\ufeff','')
+
     # get the header
     header = data[0]
+
+    # debugging
+    if debug:
+        error = False
+        print("[i] Header line has length {0}.".format(len(header)))
+        for line in data[1:]:
+            if len(line) != len(header):
+                print("[!] Error for item {0} with length {1}, expected {2}.".format(
+                    line[0:2],
+                    len(line),
+                    len(header)))
+                error = True
+        if error:
+            print("[!] Errors were found, aborting function call.")
+            return
+        else:
+            print("[i] Everything went fine, carrying on with function call.")
 
     # search for '#' char in header
     cognates = False
