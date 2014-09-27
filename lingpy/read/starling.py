@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-09-21 09:06
-# modified : 2014-09-21 09:06
+# modified : 2014-09-27 09:16
 """
 Basic parser for Starling data.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-09-21"
+__date__="2014-09-27"
 
 import codecs
 import os
@@ -50,6 +50,7 @@ def star2qlc(filename, debug=False):
     for h in header:
         if '#' in h:
             cognates = True
+
     # determine language names in header   
     taxa = []
     for i in range(len(header)-1):
@@ -78,12 +79,24 @@ def star2qlc(filename, debug=False):
     
     idx = 1
     cognate_counter = 0
+    current_concept = ''
+    cognate_sets = []
     for line in data[2:]:
         
         gloss = line[wrdIdx]
-        gnum = line[numIdx]
         
-        cognate_sets = []
+        gnum = line[numIdx]
+
+        # switch to next cognate set if there is a switch in concepts
+        if current_concept != gloss and len(cognate_sets) != 0:
+            max_cog = max(cognate_sets)
+            cognate_counter = max_cog 
+            cognate_sets = []
+            current_concept = gloss
+        else:
+            if debug:
+                print(gloss,current_concept,cognate_counter)       
+
         for i in range(lngIdx,len(header),2):
             word = line[i]
             
@@ -97,9 +110,11 @@ def star2qlc(filename, debug=False):
             cogid = int(line[i+1]) 
 
             if cogid != 0 and word:
-            
-                cogid = cogid + cognate_counter
-
+                
+                if cogid > 0:
+                    cogid = cogid + cognate_counter
+                else:
+                    pass
 
                 # append cognate sets, essential for raising the counter
                 cognate_sets += [int(cogid)]
@@ -108,10 +123,16 @@ def star2qlc(filename, debug=False):
 
                 D[idx] = [taxon,gloss,gnum,word,ortho,ipa,cogid]
                 idx += 1
-            
+        
 
-        max_cog = max(cognate_sets)
-        cognate_counter = max_cog + 1
+
+    # re-iterate through data and reassign cognate sets with negative ids
+    for k in D:
+        cogid = D[k][-1]
+        if cogid < 0:
+            cogid = -cognate_counter
+            cognate_counter += 1
+            D[k][-1] = cogid
 
     D[0] = ['DOCULECT','CONCEPT','GLOSSID','WORDINSOURCE','ORTHOGRAPHY','IPA','COGID']
 
