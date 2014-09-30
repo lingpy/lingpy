@@ -27,7 +27,7 @@ class Tokenizer(object):
     ----------
 
     orthography_profile : string (default = None)
-        Filename (without extension) of the a document source-specific orthography profile and rules file.
+        Filename of the a document source-specific orthography profile and rules file.
 
     Notes
     -----
@@ -45,7 +45,7 @@ class Tokenizer(object):
     input string example: uubo uubo
     output string example: uu b o # uu b o
 
-    See also the test_orthography script in lingpy/scripts/orthography/
+    See also the tokenizer examples in lingpy/scripts/tokenize
 
     Additionally, the Tokenizer provides functionality to transform graphemes 
     into associated character(s) specified in additional columns in the orthography 
@@ -81,6 +81,19 @@ class Tokenizer(object):
     <space> <n> <space> second vowel, e.g.:
 
     ([a|á|e|é|i|í|o|ó|u|ú])(n)(\s)([a|á|e|é|i|í|o|ó|u|ú]), \1 \2 \4
+
+    Examples
+    --------
+
+    >>> from lingpy.sequence.tokenizer import *
+    >>> t = Tokenizer("test.prf")
+    >>> word = "baach"
+    >>> print(t.characters(word))
+    b a a c h
+    >>> print(t.graphemes(word))
+    b aa ch
+	>>> print(t.transform(word, "ipa"))
+	b aː tʃ    
 
     """
 
@@ -146,9 +159,7 @@ class Tokenizer(object):
             print()
     
     def _init_profile(self, f):
-        """
-        Process and initialize data structures given an orthography profile.
-        """
+        # Process and initialize data structures given an orthography profile.
         f = codecs.open(f, "r", "utf-8")
         line_count = 0
         for line in f:
@@ -201,9 +212,7 @@ class Tokenizer(object):
 
 
     def _init_rules(self, f):
-        """
-        Process the orthography rules file.
-        """
+        # Process the orthography rules file.
         rules_file = codecs.open(f, "r", 'utf-8')
 
         # compile the orthography rules
@@ -256,9 +265,6 @@ class Tokenizer(object):
 
     def grapheme_clusters(self, string):
         """
-        See: Unicode Standard Annex #29: UNICODE TEXT SEGMENTATION
-        http://www.unicode.org/reports/tr29/
-
         Given a string as input, return a space-delimited string of Unicode graphemes using the "\X" regular expression.
 
         Parameters
@@ -275,6 +281,9 @@ class Tokenizer(object):
         Notes
         -----
         Input is first normalized according to Normalization Ford D(ecomposition).
+
+        See: Unicode Standard Annex #29: UNICODE TEXT SEGMENTATION
+        http://www.unicode.org/reports/tr29/
         """
 
         # init the regex Unicode grapheme cluster match
@@ -436,6 +445,17 @@ class Tokenizer(object):
         """
         Convenience function that first tokenizes a string into orthographic profile-
         specified graphemes and then applies the orthography profile rules.
+
+        Parameters
+        ----------
+        string : str
+            The input string to be transformed.
+
+        Returns
+        -------
+        result : str
+            Result of the transformation.
+
         """
         return self.rules(self.transform(string))
 
@@ -499,20 +519,29 @@ class Tokenizer(object):
         Given a string tokenized into characters, return a characters
         tokenized string where each character missing from the orthography 
         profile is replaced with a question mark <?>.
+
+        Parameters
+        ----------
+        string : str
+            A character tokenized string.
+
+        Returns
+        -------
+        result : str
+            Result of the tokenization.
+
         """
-        output = []
+        result = []
         chars = char_tokenized_string.split()
         for char in chars:
             if not char in self.op_graphemes:
-                output.append("?")
+                result.append("?")
             else:
-                output.append(char)
-        return " ".join(output)
+                result.append(char)
+        return " ".join(result)
 
     def tokenize_ipa(self, string):
-        """
-        Experimental method for tokenizing IPA.
-        """
+        # Experimental method for tokenizing IPA.
         string = unicodedata.normalize("NFD", string)
         grapheme_clusters = self.grapheme_clusters(string)
         result = self.combine_modifiers(grapheme_clusters)
