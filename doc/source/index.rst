@@ -38,9 +38,9 @@ Python Library for Historical Linguistics
     <col class="field-name" />
     <col class="field-body" />
     <tbody valign="top">
-    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.3</td>
+    <tr class="field-odd field"><th class="field-name">Release:</th><td class="field-body">2.4.alpha</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">June 5, 2014</td>
+    <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">September 30, 2014</td>
     </tr>
     <tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body">J.-M. List, S. Moran, P. Bouda, and J. Dellert </td>
     </tr>

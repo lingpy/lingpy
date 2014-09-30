@@ -6,7 +6,6 @@ lingpy.sequence.generate.MCBasic
 .. autoclass:: MCBasic
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods

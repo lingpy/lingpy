@@ -6,7 +6,6 @@ lingpy.sequence.tokenizer.Tokenizer
 .. autoclass:: Tokenizer
 
    
-   .. automethod:: __init__
 
    
    .. rubric:: Methods

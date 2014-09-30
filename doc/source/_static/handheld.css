@@ -1,24 +1,15 @@
 @import url("default.css");
 div.document{
-  max-width:1000px;
+  max-width:720px;
   padding-right: 0px;
 }
 div.documentwrapper {
     float: left;
     width: 100%;
-    max-width:750px;
-}
-div.bodywrapper {
-  float: left;
-  width: 100%;
-  max-width: 750px;
 }
 div.related {
-  max-width:1000px;
+  max-width:720px;
   padding-right: 0px;
-}
-img.logo {
-  z-index: 20;
 }
 
 div.body h1,
@@ -66,34 +57,7 @@ table.citation {
 
 /* sphinx sidebar */
 div.sphinxsidebar {
-    margin-left: -50%;
-}
-
-div.sphinxsidebar a {
-    color: white;
-}
-div.sphinxsidebar {
-    float: right;
-}
-
-div.sphinxsidebar h3 {
-    color: #ffffff;
-    font-size: 1.4em;
-    font-weight: normal;
-    margin: 0;
-    padding: 0;
-}
-
-div.sphinxsidebar h3 a {
-    color: #ffffff;
-}
-
-div.sphinxsidebar h4 {
-    color: #ffffff;
-    font-size: 1.3em;
-    font-weight: normal;
-    margin: 5px 0 0 0;
-    padding: 0;
+  display: none;
 }
 
 th.field-name {
@@ -112,12 +76,12 @@ div.genindex-jumpbox a{
 /* footer */
 #footer {
 	overflow: hidden;
-  max-width: 1000px;
+  max-width: 720px;
   clear:both;
   padding: 10px;
-	font-size: 0.8em;
+	font-size: 1.1em;
 	background-color: white;
-	color: black; 
+	color: black; //#e32f2f;
 }
 #footer p {
 	text-align:center;
@@ -135,28 +99,16 @@ div.genindex-jumpbox a{
 
 div.fleft {
   float: left;
-  display: inline;
-  max-width:120px;
-  padding-right: 10px;
+  display: table-cell;
+  max-width:150px;
 }
 div.fright{
   float:right;
-  display:inline;
-  max-width:100px;
-  padding-left: 10px;
+  display:table-cell;
+  max-width:150px;
 }
 div.fcenter{
-  display: inline;
-  max-width:425px;
-  text-align: center;
-  overflow: none;
   float: left;
-}
-div.fcenter p{
-  max-width: 425px;
-}
-
-div.section {
-  text-align: justify;
-  max-width: 750px;
+  display: table-cell;
+  max-width:500px;
 }
