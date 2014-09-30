@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 13:10
-# modified : 2014-07-22 13:10
+# modified : 2014-09-30 09:41
 """
 Module provides basic functions for the reading of text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-07-22"
+__date__="2014-09-30"
 
 from ..algorithm import misc
 from .csv import csv2list
@@ -433,14 +433,15 @@ def read_qlc(
     # for the moment)
     try:
         i = 1
-        for line in data[1:]:
+        for j,line in enumerate(data[1:]):
             if local_id:
                 d[int(line[0])] = line[1:]
             else:
                 d[i] = line
                 i += 1
-    except:
-        raise Exception("Error processing line:\n" + line)
+    except ValueError as e:
+        raise Exception("Error processing line {0}:\n".format(j) +
+                str(data[1:][j])+'\nOriginal error message: '+str(e))
 
     # assign the header to d[0]
     if local_id:

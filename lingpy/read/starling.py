@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-09-21 09:06
-# modified : 2014-09-27 09:16
+# modified : 2014-09-30 09:41
 """
 Basic parser for Starling data.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-09-27"
+__date__="2014-09-30"
 
 import codecs
 import os
@@ -15,10 +15,14 @@ from ..settings import rcParams
 from ..sequence.sound_classes import ipa2tokens
 from .csv import csv2list
 
-def star2qlc(filename, debug=False):
+def star2qlc(filename, clean_taxnames=False, debug=False):
     """
     Converts a file directly output from starling to LingPy-QLC format.
     """
+    if not clean_taxnames:
+        cleant = lambda x: x
+    else:
+        cleant = clean_taxnames
 
     data = csv2list(filename)
 
@@ -119,7 +123,7 @@ def star2qlc(filename, debug=False):
                 # append cognate sets, essential for raising the counter
                 cognate_sets += [int(cogid)]
                 
-                taxon = header[i]
+                taxon = cleant(header[i])
 
                 D[idx] = [taxon,gloss,gnum,word,ortho,ipa,cogid]
                 idx += 1
