@@ -36,7 +36,7 @@ class EvalMSA(object):
     Most of the scores which can be calculated with help of this class are standard
     evaluation scores in evolutionary biology. For a close description on how
     these scores are calculated, see, for example, :evobib:`Thompson1999`,
-    :evobib:`List2012`, and :evobib:`Rosenberg2009b.
+    :evobib:`List2012`, and :evobib:`Rosenberg2009b`.
 
     See also
     --------
