@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2014-02-07 13:01
+# modified : 2014-10-02 09:25
 """
 Tree-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2014-02-07"
+__date__="2014-10-02"
 
 # basic imports
 import os
@@ -347,13 +347,16 @@ class PhyBo(Wordlist):
     paps : string (default="pap")
         Name of the column that stores the specific cognate IDs consisting
         of an arbitrary integer key and a key for the concept.
-    cognates : string (default="cogid")
-        Name of the column that stores the general cognate ids.
-    verbose : bool (default=False)
-        Handle verbose output.
+    ref : string (default="cogid")
+        Name of the column that stores the general cognate ids (the
+        "reference" of the analysis).
     tree_calc : {'neighbor','upgma'} (default='neighbor')
         Select the algorithm to be used for the tree calculation if no tree is
         passed with the file.
+    missing : int (default=-1)
+        Specify how missing data should be handled. If set to -1, missing data
+        can account for both presence or absence of a cognate set in the given
+        language. If set to 0, missing data is treated as absence.
     degree : int (default=100)
         The degree which is chosen for the projection of the tree layout.
     """
@@ -2247,7 +2250,7 @@ class PhyBo(Wordlist):
 
         if glm not in self.acs:
             self.get_AVSD(glm,**keywords)
-        elif force:
+        elif keywords['force']:
             self.get_AVSD(glm,**keywords)
         
         f = codecs.open(
@@ -3539,7 +3542,8 @@ class PhyBo(Wordlist):
 
         # plot the stats if this is defined in the settings
         if plot_dists:
-
+            
+            if rcParams['verbose']: print("[i] Plotting distributions.")
             # specify latex
             mpl.rc('text',usetex=keywords['usetex'])
                         
@@ -5615,292 +5619,296 @@ class PhyBo(Wordlist):
                 flat=True,
                 entry='pap'
                 ) if p not in self.singletons]))
+
+            if len(paps) <= 0:
+                if rcParams['verbose']: print("[WARNING] No entries for concept {0} could be found, skipping the plot.".format(concept))
+            else:
             
-            # get the number of paps in order to get the right colors
-            cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
-            colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
-                    range(len(paps))])
-            
-            # get the wedges for the paps
-            wedges = {}
-            linsp = np.linspace(0,360,len(paps)+1)
-            for i,pap in enumerate(paps):
-                theta1,theta2 = linsp[i],linsp[i+1]
-                wedges[pap] = (theta1,theta2)
-            
-            legendEntriesA = []
-            legendTextA = []
-            
-            # add stuff for the legend
-            for pap in paps:
-                w = mpl.patches.Wedge(
+                # get the number of paps in order to get the right colors
+                cfunc = np.array(np.linspace(10,256,len(paps)),dtype='int')
+                colors = dict([(paps[i],mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
+                        range(len(paps))])
+                
+                # get the wedges for the paps
+                wedges = {}
+                linsp = np.linspace(0,360,len(paps)+1)
+                for i,pap in enumerate(paps):
+                    theta1,theta2 = linsp[i],linsp[i+1]
+                    wedges[pap] = (theta1,theta2)
+                
+                legendEntriesA = []
+                legendTextA = []
+                
+                # add stuff for the legend
+                for pap in paps:
+                    w = mpl.patches.Wedge(
+                            (0,0),
+                            1,
+                            wedges[pap][0],
+                            wedges[pap][1],
+                            facecolor = colors[pap],
+                            zorder = 1,
+                            linewidth=2,
+                            edgecolor='black'
+                            )
+                    legendEntriesA += [w]
+                    if keywords['cognates']:
+                        idx = [x[0] for x in self.etd[pap] if x != 0][0]
+                        legendTextA += [self[idx,keywords['cognates']]]
+                    else:
+                        legendTextA += [pap]
+
+                # second legend explains evolution
+                legendEntriesB = []
+                legendTextB = []
+                p = mpl.patches.Wedge(
                         (0,0),
                         1,
-                        wedges[pap][0],
-                        wedges[pap][1],
-                        facecolor = colors[pap],
-                        zorder = 1,
+                        0,
+                        360,
+                        facecolor='0.5',
                         linewidth=2,
-                        edgecolor='black'
+                        edgecolor='black',
                         )
-                legendEntriesA += [w]
-                if keywords['cognates']:
-                    idx = [x[0] for x in self.etd[pap] if x != 0][0]
-                    legendTextA += [self[idx,keywords['cognates']]]
-                else:
-                    legendTextA += [pap]
+                legendEntriesB += [p]
+                legendTextB += ['Loss Event']
+                p, = plt.plot(0,0,'--',color='black',linewidth=2)
+                legendEntriesB += [p]
+                legendTextB += ['Gain Event']
 
-            # second legend explains evolution
-            legendEntriesB = []
-            legendTextB = []
-            p = mpl.patches.Wedge(
-                    (0,0),
-                    1,
-                    0,
-                    360,
-                    facecolor='0.5',
-                    linewidth=2,
-                    edgecolor='black',
-                    )
-            legendEntriesB += [p]
-            legendTextB += ['Loss Event']
-            p, = plt.plot(0,0,'--',color='black',linewidth=2)
-            legendEntriesB += [p]
-            legendTextB += ['Gain Event']
+                # overwrite stuff
+                plt.plot(0,0,'o',markersize=2,zorder=2,color='white')
 
-            # overwrite stuff
-            plt.plot(0,0,'o',markersize=2,zorder=2,color='white')
-
-            # iterate over the paps and append states to the graph
-            for pap in paps:
-                
-                # get the graph with the model
-                gls = self.gls[glm][pap][0]
-                g = gls2gml(
-                        gls,
-                        self.tgraph,
-                        self.tree,
-                        filename = ''
-                        )
-
-                # iterate over the graph
-                for n,d in g.nodes(data=True):
+                # iterate over the paps and append states to the graph
+                for pap in paps:
                     
-                    # add the node if necessary
-                    if n not in graph:
-                        graph.add_node(n)
-                    
-                    # add a pap-dictionary if it's not already there
-                    if 'pap' not in graph.node[n]:
-                        graph.node[n]['pap'] = {}
-
-                    # add data
-                    graph.node[n]['pap'][pap] = d['state']
-            
-            # create the figure
-            fig = plt.figure(figsize=keywords['figsize'])
-            figsp = fig.add_subplot(111)
-            figsp.axes.get_xaxis().set_visible(False)
-            figsp.axes.get_yaxis().set_visible(False)
-
-            plt.axis('equal')
-
-            xvals = []
-            yvals = []
-
-            # iterate over edges first
-            for nA,nB in g.edges():
-                gA = g.node[nA]['graphics']
-                gB = g.node[nB]['graphics']
-                xA,yA = gA['x'],gA['y']
-                xB,yB = gB['x'],gB['y']
-
-                plt.plot(
-                        [xA,xB],
-                        [yA,yB],
-                        '-',
-                        color = 'black',
-                        linewidth=keywords['edgewidth']
-                        )
-
-            # now iterate over the nodes
-            for n,d in graph.nodes(data=True):
-                cpaps = d['pap']
-                states = list(cpaps.values())
-                x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
-
-                # get z-value which serves as zorder attribute
-                try:
-                    z = 6 * len(self.tree.getConnectingEdges('root',n))
-                except:
-                    z = 0
-
-                xvals += [x]
-                yvals += [y]
-                
-                # plot the default marker
-                plt.plot(
-                        x,
-                        y,
-                        'o',
-                        markersize=5,
-                        color='black',
-                        zorder=50
-                        )
-                # check for origins in cpaps
-                if 'O' in cpaps.values():
-                    w = mpl.patches.Wedge(
-                            (x,y),
-                            keywords['radius']+keywords['outer_radius'],
-                            0,
-                            360,
-                            facecolor='white',
-                            zorder = 57+z,
-                            linewidth=2.5,
-                            linestyle = 'dashed',
+                    # get the graph with the model
+                    gls = self.gls[glm][pap][0]
+                    g = gls2gml(
+                            gls,
+                            self.tgraph,
+                            self.tree,
+                            filename = ''
                             )
-                    figsp.add_artist(w)
-                elif 'o' in cpaps.values():
-                    w = mpl.patches.Wedge(
-                            (x,y),
-                            keywords['radius']+keywords['outer_radius'],
-                            0,
-                            360,
-                            facecolor='white',
-                            zorder = 56+z,
-                            linewidth=2.5,
-                            linestyle='solid',
-                            )
-                    figsp.add_artist(w)
-                
-                if 'L' in cpaps.values() and 'O' in cpaps.values():
-                    w = mpl.patches.Wedge(
-                            (x,y),
-                            keywords['radius']+keywords['outer_radius'],
-                            0,
-                            360,
-                            facecolor='0.5',
-                            zorder = 58+z,
-                            linewidth = 2.5,
-                            edgecolor='black',
-                            linestyle = 'dashed'
-                            )
-                    figsp.add_artist(w)
 
-                elif "L" in cpaps.values():
-                    w = mpl.patches.Wedge(
-                            (x,y),
-                            keywords['radius']+keywords['outer_radius'],
-                            0,
-                            360,
-                            facecolor='0.5',
-                            zorder = 59+z,
-                            linewidth = 2.5,
-                            edgecolor='black',
-                            )
-                    figsp.add_artist(w)
-
-                # plot all wedges
-                for pap in cpaps:
-                    
-                    theta1,theta2 = wedges[pap]
-                    color = colors[pap]
-
-                    # check for characteristics of this pap
-                    if cpaps[pap] == 'L':
-
-                        w = mpl.patches.Wedge(
-                                (x,y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor= color,
-                                zorder = 61+z,
-                                alpha = 0.25,
-                                linewidth = 2,
-                                edgecolor='black',
-                                linestyle = 'dotted'
-                                )
-                        figsp.add_artist(w)
+                    # iterate over the graph
+                    for n,d in g.nodes(data=True):
                         
-                    elif cpaps[pap] == 'o':
+                        # add the node if necessary
+                        if n not in graph:
+                            graph.add_node(n)
+                        
+                        # add a pap-dictionary if it's not already there
+                        if 'pap' not in graph.node[n]:
+                            graph.node[n]['pap'] = {}
 
+                        # add data
+                        graph.node[n]['pap'][pap] = d['state']
+                
+                # create the figure
+                fig = plt.figure(figsize=keywords['figsize'])
+                figsp = fig.add_subplot(111)
+                figsp.axes.get_xaxis().set_visible(False)
+                figsp.axes.get_yaxis().set_visible(False)
+
+                plt.axis('equal')
+
+                xvals = []
+                yvals = []
+
+                # iterate over edges first
+                for nA,nB in g.edges():
+                    gA = g.node[nA]['graphics']
+                    gB = g.node[nB]['graphics']
+                    xA,yA = gA['x'],gA['y']
+                    xB,yB = gB['x'],gB['y']
+
+                    plt.plot(
+                            [xA,xB],
+                            [yA,yB],
+                            '-',
+                            color = 'black',
+                            linewidth=keywords['edgewidth']
+                            )
+
+                # now iterate over the nodes
+                for n,d in graph.nodes(data=True):
+                    cpaps = d['pap']
+                    states = list(cpaps.values())
+                    x,y = g.node[n]['graphics']['x'],g.node[n]['graphics']['y']
+
+                    # get z-value which serves as zorder attribute
+                    try:
+                        z = 6 * len(self.tree.getConnectingEdges('root',n))
+                    except:
+                        z = 0
+
+                    xvals += [x]
+                    yvals += [y]
+                    
+                    # plot the default marker
+                    plt.plot(
+                            x,
+                            y,
+                            'o',
+                            markersize=5,
+                            color='black',
+                            zorder=50
+                            )
+                    # check for origins in cpaps
+                    if 'O' in cpaps.values():
                         w = mpl.patches.Wedge(
                                 (x,y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder = 61+z,
-                                linewidth = 2,
-                                edgecolor='black'
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='white',
+                                zorder = 57+z,
+                                linewidth=2.5,
+                                linestyle = 'dashed',
                                 )
                         figsp.add_artist(w)
-
-                    elif cpaps[pap] == 'O':
-
+                    elif 'o' in cpaps.values():
                         w = mpl.patches.Wedge(
                                 (x,y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder = 61+z,
-                                linewidth = 2,
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='white',
+                                zorder = 56+z,
+                                linewidth=2.5,
+                                linestyle='solid',
+                                )
+                        figsp.add_artist(w)
+                    
+                    if 'L' in cpaps.values() and 'O' in cpaps.values():
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='0.5',
+                                zorder = 58+z,
+                                linewidth = 2.5,
                                 edgecolor='black',
                                 linestyle = 'dashed'
                                 )
                         figsp.add_artist(w)
 
+                    elif "L" in cpaps.values():
+                        w = mpl.patches.Wedge(
+                                (x,y),
+                                keywords['radius']+keywords['outer_radius'],
+                                0,
+                                360,
+                                facecolor='0.5',
+                                zorder = 59+z,
+                                linewidth = 2.5,
+                                edgecolor='black',
+                                )
+                        figsp.add_artist(w)
 
-                # add number for node
-                if n in self.taxa:
-                    plt.text(
-                            x,
-                            y,
-                            n,
-                            size = keywords['textsize'],
-                            verticalalignment='baseline',
-                            backgroundcolor='white',
-                            horizontalalignment='center',
-                            fontweight = 'bold',
-                            color='black',
-                            bbox = dict(
-                                facecolor='white',
-                                boxstyle='square,pad=0.25',
-                                ec="none",
-                                alpha = 1
-                                ),
-                            zorder = 300
-                            )
-                    
+                    # plot all wedges
+                    for pap in cpaps:
+                        
+                        theta1,theta2 = wedges[pap]
+                        color = colors[pap]
+
+                        # check for characteristics of this pap
+                        if cpaps[pap] == 'L':
+
+                            w = mpl.patches.Wedge(
+                                    (x,y),
+                                    keywords['radius'],
+                                    theta1,
+                                    theta2,
+                                    facecolor= color,
+                                    zorder = 61+z,
+                                    alpha = 0.25,
+                                    linewidth = 2,
+                                    edgecolor='black',
+                                    linestyle = 'dotted'
+                                    )
+                            figsp.add_artist(w)
+                            
+                        elif cpaps[pap] == 'o':
+
+                            w = mpl.patches.Wedge(
+                                    (x,y),
+                                    keywords['radius'],
+                                    theta1,
+                                    theta2,
+                                    facecolor=color,
+                                    zorder = 61+z,
+                                    linewidth = 2,
+                                    edgecolor='black'
+                                    )
+                            figsp.add_artist(w)
+
+                        elif cpaps[pap] == 'O':
+
+                            w = mpl.patches.Wedge(
+                                    (x,y),
+                                    keywords['radius'],
+                                    theta1,
+                                    theta2,
+                                    facecolor=color,
+                                    zorder = 61+z,
+                                    linewidth = 2,
+                                    edgecolor='black',
+                                    linestyle = 'dashed'
+                                    )
+                            figsp.add_artist(w)
+
+
+                    # add number for node
+                    if n in self.taxa:
+                        plt.text(
+                                x,
+                                y,
+                                n,
+                                size = keywords['textsize'],
+                                verticalalignment='baseline',
+                                backgroundcolor='white',
+                                horizontalalignment='center',
+                                fontweight = 'bold',
+                                color='black',
+                                bbox = dict(
+                                    facecolor='white',
+                                    boxstyle='square,pad=0.25',
+                                    ec="none",
+                                    alpha = 1
+                                    ),
+                                zorder = 300
+                                )
+                        
 
 
 
-            plt.xlim((min(xvals)-10,max(xvals)+10))
-            plt.ylim((min(yvals)-10,max(yvals)+10))
+                plt.xlim((min(xvals)-10,max(xvals)+10))
+                plt.ylim((min(yvals)-10,max(yvals)+10))
 
-            legend1 = plt.legend(legendEntriesA,legendTextA,loc='upper right',numpoints=1)
-            plt.legend(legendEntriesB,legendTextB,loc='lower right')
-            figsp.add_artist(legend1)
+                legend1 = plt.legend(legendEntriesA,legendTextA,loc='upper right',numpoints=1)
+                plt.legend(legendEntriesB,legendTextB,loc='lower right')
+                figsp.add_artist(legend1)
 
-            plt.subplots_adjust(
-                    left= keywords['left'],
-                    right= keywords['right'],
-                    top= keywords['top'],
-                    bottom= keywords['bottom']
+                plt.subplots_adjust(
+                        left= keywords['left'],
+                        right= keywords['right'],
+                        top= keywords['top'],
+                        bottom= keywords['bottom']
+                        )
+
+
+                plt.savefig(
+                    os.path.join(
+                        folder,
+                        'items',
+                        '{0}-{1}'.format(self.dataset,glm),
+                        concept.replace('/','_')+'.'+fileformat
+                        )
                     )
-
-
-            plt.savefig(
-                os.path.join(
-                    folder,
-                    'items',
-                    '{0}-{1}'.format(self.dataset,glm),
-                    concept.replace('/','_')+'.'+fileformat
-                    )
-                )
-            plt.clf()
+                plt.close()
 
         # return the graph
         return 
