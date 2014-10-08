@@ -4169,6 +4169,13 @@ class PhyBo(Wordlist):
             Specify the taxon labels that should be included in the plot. 
 
         """
+        # add azim and the other params
+        kw = dict(
+                azim = 220,
+                elev = 22
+                )
+        kw.update(keywords)
+
         # check for correct glm
         if not glm and hasattr(self,'best_model'):
             glm = self.best_model
@@ -4405,7 +4412,7 @@ class PhyBo(Wordlist):
                     zorder = zorder + 200 #120 # * x + 100 * y
                     )
 
-        figsp.view_init(azim=180+40,elev=22)
+        figsp.view_init(azim=kw['azim'],elev=kw['elev'])
         figsp.set_ylim(min(yvals),max(yvals))
         figsp.set_xlim(min(xvals),max(xvals))
         figsp.set_zlim(min(zvals),max(zvals))

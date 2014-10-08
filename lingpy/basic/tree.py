@@ -29,7 +29,10 @@ class Tree(PhyloNode):
         # this is an absolutely nasty hack, but it helps us to maintain
         # lingpy-specific aspects of cogent's trees and allows us to include
         # them in our documentation
-        tmp = LoadTree(tree)
+        if type(tree) == str:
+            tmp = LoadTree(treestring=tree)
+        else:
+            tmp = LoadTree(tree)
         for key,val in tmp.__dict__.items():
             self.__dict__[key] = val
 
@@ -63,5 +66,16 @@ class Tree(PhyloNode):
             return self.compareByPartitions(other, debug=debug)
         else:
             raise ValueError("[!] The distance you defined is not available.")
-    
+        
+    def getDistanceToRoot(self, node):
+
+        subtree = self.getNodeMatchingName(node)
+        parent = ''
+        counter = 0
+        while parent != self.Name:
+            parent = subtree.Parent.Name
+            subtree = self.getNodeMatchingName(parent)
+            counter += 1
+
+        return counter
 
