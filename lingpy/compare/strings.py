@@ -59,7 +59,8 @@ def ldn_swap(a,b):
 	return float(m[la][lb])/float(max(la,lb))
 
 def bidist1(a, b):
-	"""Computes bigram-based similarity: The binary version.
+	"""Computes bigram-based distance. The binary version.
+	Checks if two bigrams are equal or not.
 	"""
 	pad_symbol = "-"
 	n = 2
@@ -92,7 +93,8 @@ def bidist1(a, b):
 	return float(m[la][lb]) / float(max(la, lb))
 
 def tridist1(a, b):
-	"""Computes trigram-based similarity: The binary version.
+	"""Computes trigram-based distance: The binary version.
+	Checks if two trigrams are equal or not.
 	"""
 	pad_symbol = "-"
 	n = 3
@@ -125,7 +127,8 @@ def tridist1(a, b):
 	return float(m[la][lb]) / float(max(la, lb))
 
 def bidist2(a, b):
-	"""computes bi-sim the positional version
+	"""Computes bigram based distance. The comprehensive version of the
+	bigram distance.
 	"""
 	pad_symbol = "-"
 	n = 2
@@ -140,8 +143,7 @@ def bidist2(a, b):
 	s_a = [tuple(s_a[i:i+n]) for i in range(count)]
 	count = max(0, len(s_b) - n + 1)
 	s_b = [tuple(s_b[i:i+n]) for i in range(count)]
-#	print s_a
-#	print s_b
+
 	m = [];la = len(s_a);lb = len(s_b)
 	for i in range(0,la):
 		m.append([])
@@ -153,7 +155,7 @@ def bidist2(a, b):
 			s=m[i-1][j-1]
 			dis = 0.0
 			dis = len([k for k in s_a[i-1] if k not in s_b[j-1]])/2.0
-			dis = dis/2.0			
+			#dis = dis/2.0			
 			if (s_a[i-1]!=s_b[j-1]): s = s + dis 
 			m[i][j]=min(m[i][j-1]+1,m[i-1][j]+1,s)
 	la = la - 1;lb = lb - 1
@@ -164,7 +166,8 @@ def bidist2(a, b):
 	return float(m[la][lb]) / float(max(la, lb))
 
 def tridist2(a, b):
-	"""computes bi-sim the positional version
+	"""Computes bigram based distance. The comprehensive version of the
+	bigram distance.
 	"""
 	pad_symbol = "-"
 	n = 3
@@ -192,18 +195,19 @@ def tridist2(a, b):
 			s=m[i-1][j-1]
 			dis = 0.0
 			dis = len([k for k in s_a[i-1] if k not in s_b[j-1]])/3.0
-			dis = dis/3.0			
+			#dis = dis/3.0			
 			if (s_a[i-1]!=s_b[j-1]): s = s + dis 
 			m[i][j]=min(m[i][j-1]+1,m[i-1][j]+1,s)
 	la = la - 1;lb = lb - 1
-#	print a, b, m[la][lb]
-#	print m
+
 	if UNNORM:
 		return float(m[la][lb])
 	return float(m[la][lb]) / float(max(la, lb))
 
 def bidist3(a, b):
-	"""computes bi-sim the positional version
+	"""Computes bigram based distance. Computes the positional version of the
+	bigrams. Assigns a partial distance between two bigrams based on positional
+	similarity of bigrams.
 	"""
 	pad_symbol = "-"
 	n = 2
@@ -243,7 +247,9 @@ def bidist3(a, b):
 	return float(m[la][lb]) / float(max(la, lb))
 
 def tridist3(a, b):
-	"""computes bi-sim the positional version
+	"""Computes trigram based distance. Computes the positional version of the
+	trigrams. Assigns a partial distance between two trigrams based on positional
+	similarity of trigrams.
 	"""
 	pad_symbol = "-"
 	n = 3
@@ -308,7 +314,7 @@ def dice(a, b):
 	return 1.0 - (float(2.0 * overlap) / float(total))
 
 def lcs(a, b):
-	"""Computes the longest common subsequence measure.
+	"""Computes the longest common subsequence between two strings.
 	"""
 	m = [];la = len(a) + 1;lb = len(b) + 1
 	for i in range(0, la):
@@ -327,7 +333,7 @@ def lcs(a, b):
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def bisim1(a, b):
-	"""computes bi-sim the binary version
+	"""computes the binary version of bigram similarity.
 	"""
 	pad_symbol = "-"
 	n = 2
@@ -342,9 +348,7 @@ def bisim1(a, b):
 	s_a = [tuple(s_a[i:i+n]) for i in range(count)]
 	count = max(0, len(s_b) - n + 1)
 	s_b = [tuple(s_b[i:i+n]) for i in range(count)]
-#	print s_a
-#	print s_b
-	
+
 	for i in range(0, la):
 		m.append([])
 		for j in range(0, lb):m[i].append(0)
@@ -355,13 +359,13 @@ def bisim1(a, b):
 			if (s_a[i - 1] == s_b[j - 1]):m[i][j] = m[i - 1][j - 1] + 1
 			else:m[i][j] = max(m[i][j - 1], m[i - 1][j])
 	la = la - 1;lb = lb - 1
-	#print a, b, m[la][lb]
+
 	if UNNORM:
 		return float(max(la, lb)) - float(m[la][lb])
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def trisim1(a, b):
-	"""computes tri-sim the binary version
+	"""Computes the binary version of trigram similarity.
 	"""
 	pad_symbol = "-"
 	n = 3
@@ -376,9 +380,7 @@ def trisim1(a, b):
 	s_a = [tuple(s_a[i:i+n]) for i in range(count)]
 	count = max(0, len(s_b) - n + 1)
 	s_b = [tuple(s_b[i:i+n]) for i in range(count)]
-#	print s_a
-#	print s_b
-	
+
 	for i in range(0, la):
 		m.append([])
 		for j in range(0, lb):m[i].append(0)
@@ -389,14 +391,14 @@ def trisim1(a, b):
 			if (s_a[i - 1] == s_b[j - 1]):m[i][j] = m[i - 1][j - 1] + 1
 			else:m[i][j] = max(m[i][j - 1], m[i - 1][j])
 	la = la - 1;lb = lb - 1
-	#print a, b, m[la][lb]
+
 	if UNNORM:
 		return float(max(la, lb)) - float(m[la][lb])
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def bisim2(a, b):
-	"""computes bi-sim the comprehensive version. Simply computes the
-	number of common 1-grams between two n-grams 
+	"""Computes bigram similarity "the comprehensive version". Computes the
+	number of common 1-grams between two n-grams.
 	"""
 #	print a , b
 	pad_symbol = "-"
@@ -430,8 +432,10 @@ def bisim2(a, b):
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def trisim2(a, b):
-	"""computes bi-sim the comprehensive version. Simply computes the
-	number of common 1-grams between two n-grams 
+	"""Computes tri-sim "the comprehensive version". Simply computes the
+	number of common 1-grams between two n-grams instead of calling LCS as should
+	be done in @Kondrak:2005 paper. Note that the LCS for a trigram can be computed
+	in O(n) time if we asssume that list lookup is in constant time.
 	"""
 #	print a , b
 	pad_symbol = "-"
@@ -447,8 +451,7 @@ def trisim2(a, b):
 	s_b = list(s_b)
 	count = max(0, len(s_b) - n + 1)
 	s_b = [tuple(s_b[i:i+n]) for i in range(count)]
-#	print s_a
-#	print s_b
+
 	for i in range(0, la):
 		m.append([])
 		for j in range(0, lb):m[i].append(0)
@@ -459,14 +462,14 @@ def trisim2(a, b):
 			sim = len([k for k in s_a[i-1] if k in s_b[j-1]])/3.0
 			m[i][j] = max(m[i][j - 1], m[i - 1][j], m[i - 1][j - 1] + sim)
 	la = la - 1;lb = lb - 1
-	#print a, b, m[la][lb]
+	
 	if UNNORM:
 		return float(max(la, lb)) - float(m[la][lb])
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def bisim3(a, b):
-	"""computes bi-sim the positional version. Simply computes the
-	number of matching 1-grams in each position 
+	"""Computes bi-sim the positional version. The partial similarity between two
+	bigrams is defined as the number of matching 1-grams at each position.
 	"""
 	pad_symbol = "-"
 	n = 2
@@ -504,8 +507,8 @@ def bisim3(a, b):
 	return 1.0 - (float(m[la][lb]) / float(max(la, lb)))
 
 def trisim3(a, b):
-	"""computes tri-sim the positional version. Simply computes the
-	number of matching 1-grams in each position 
+	"""Computes tri-sim the "positional version". Simply computes the
+	number of matching 1-grams in each position.
 	"""
 	pad_symbol = "-"
 	n = 3
@@ -520,9 +523,7 @@ def trisim3(a, b):
 	s_b = list(s_b)
 	count = max(0, len(s_b) - n + 1)
 	s_b = [tuple(s_b[i:i+n]) for i in range(count)]
-#	print s_a
-#	print s_b
-	
+
 	for i in range(0, la):
 		m.append([])
 		for j in range(0, lb):m[i].append(0)
@@ -537,7 +538,7 @@ def trisim3(a, b):
 			sim = sim/3.0			
 			m[i][j] = max(m[i][j - 1], m[i - 1][j], m[i - 1][j - 1] + sim)
 	la = la - 1;lb = lb - 1
-	#print a, b, m[la][lb]
+	
 	print m
 	if UNNORM:
 		return float(max(la, lb)) - float(m[la][lb])
@@ -569,7 +570,7 @@ def jcd(a, b):
 
 def jcdn(a, b):
 	"""
-	Computes the trigram-based jaccard index
+	Computes the bigram and trigram-based jaccard index
 	"""
 	la = len(a) - 1;lb = len(b) - 1
 	overlap = 0
@@ -611,7 +612,7 @@ def prefix(a,b):
 	pref = 0
 	for i in range(minl):
 		if a[i] == b[i]:
-				pref += 1
+			pref += 1
 	if UNNORM:
 		return float(maxl) - float(pref)
 	return 1.0 - (float(pref)/float(maxl))
@@ -677,7 +678,7 @@ def ident(a,b):
 	return 1.0 - float(overlap)
 
 def xxdice(a,b):
-	"""Returns the XXDice between two strings.
+	"""Returns the XXDice between two strings. From @Brew:1996
 	"""
 	la = len(a) - 1;lb = len(b) - 1
 	overlap = 0
