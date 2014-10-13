@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-15 21:41
-# modified : 2014-09-10 18:46
+# modified : 2014-09-11 16:59
 """
 Module provides basic operations on Wordlist-Objects.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-09-10"
+__date__="2014-09-11"
 
 # external imports
 import re
@@ -391,8 +391,11 @@ def wl2qlc(
                     msapairs[ref][a] = b
         elif k == 'distances':
             distances = matrix2dst(v,meta['taxa'])
-        elif k == 'taxa' and k not in keywords['ignore']:
-            taxa = '\n'.join(meta['taxa'])
+        elif k in ['taxa', 'doculect', 'taxon', 'doculects']: # and k not in keywords['ignore']:
+            # we need to find a better solution here, since it is not nice to
+            # have taxa written to json again and again
+            pass
+            #taxa = '\n'.join(meta['taxa'])
         elif k == 'trees' and k not in keywords['ignore']:
             trees = ''
             for key,value in v.items():
@@ -540,12 +543,15 @@ def tsv2triple(wordlist, outfile):
         for key in wordlist:
             tstore += [(key,head.upper(),wordlist[key,head])]
 
-    with open(outfile, 'w') as f:
-        for a,b,c in tstore:
-            if type(c) == list:
-                c = ' '.join([str(x) for x in c])
-            if c != '-':
-                f.write('{0}\t{1}\t{2}\n'.format(a, b, c))
+    if outfile:
+        with open(outfile, 'w') as f:
+            for a,b,c in tstore:
+                if type(c) == list:
+                    c = ' '.join([str(x) for x in c])
+                if c != '-':
+                    f.write('{0}\t{1}\t{2}\n'.format(a, b, c))
+    else:
+        return tstore
 
 def triple2tsv(infile, output="table"):
     """

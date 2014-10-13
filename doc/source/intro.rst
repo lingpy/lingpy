@@ -60,8 +60,8 @@ Additionally, please cite the library in its current state along with the versio
 .. raw:: html
 
    <ul>
-   <li> List, Johann-Mattis, Steven Moran, Peter Bouda & Johannes Dellert (2013): LingPy. Python
-   Library for Automatic Tasks in Historical Linguistics. Version 2.2 (Uploaded on 2013-11-22). URL:
+   <li> List, Johann-Mattis, Steven Moran, Peter Bouda, Johannes Dellert & Taraka Rama (2014): LingPy. Python
+   Library for Automatic Tasks in Historical Linguistics. Version 2.4.dev (Uploaded on 2014-10-13). URL:
    <a href="http://lingpy.org">http://www.lingpy.org</a>.
    </li>
    </ul>

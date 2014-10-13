@@ -11,7 +11,7 @@ __date__="2014-08-15"
 
 from ..thirdparty.cogent import LoadTree,PhyloNode
 from ..algorithm import TreeDist
-
+import random
 
 class Tree(PhyloNode):
     """
@@ -35,6 +35,8 @@ class Tree(PhyloNode):
             tmp = LoadTree(tree)
         for key,val in tmp.__dict__.items():
             self.__dict__[key] = val
+
+        self._edge_len = len(self.getNodeNames()) - 1
 
     def get_distance(self, other, distance='grf', debug=False):
         """
@@ -78,4 +80,34 @@ class Tree(PhyloNode):
             counter += 1
 
         return counter
+    
+    def getTransitionMatrix(self):
+        """
+        Return a matrix with two columns for each node in the tree.
+
+        """
+        matrix = []
+        for name,node in self.getNodesDict().items():
+            if node.Parent:
+                matrix += [[name, node.Parent.Name]]
+
+        return matrix
+    
+    def createTransitionMatrix(self, states, tmat, random=True):
+        
+        # get number of states
+        unique_states = sorted(set(states))
+        
+        max_state = max(states)
+
+        matrix = []
+        counter = 0
+        for i in range(self._edge_len):
+            if tmat[i][0] in self.taxa:
+                matrix += [states[counter]]
+                counter += 1
+            else:
+                matrix += [[randint(0,max_state),randint(0,max_state)]]
+        return matrix
+
 
