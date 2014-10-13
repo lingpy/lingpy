@@ -1,35 +1,38 @@
-evaluate Package
-================
+lingpy.evaluate package
+=======================
 
-:mod:`evaluate` Package
------------------------
+Submodules
+----------
 
-.. automodule:: lingpy.evaluate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`acd` Module
------------------
+lingpy.evaluate.acd module
+--------------------------
 
 .. automodule:: lingpy.evaluate.acd
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`alr` Module
------------------
+lingpy.evaluate.alr module
+--------------------------
 
 .. automodule:: lingpy.evaluate.alr
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`apa` Module
------------------
+lingpy.evaluate.apa module
+--------------------------
 
 .. automodule:: lingpy.evaluate.apa
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: lingpy.evaluate
+    :members:
+    :undoc-members:
+    :show-inheritance:

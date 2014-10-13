@@ -1,19 +1,22 @@
-linkcomm Package
-================
+lingpy.thirdparty.linkcomm package
+==================================
 
-:mod:`linkcomm` Package
------------------------
+Submodules
+----------
 
-.. automodule:: lingpy.thirdparty.linkcomm
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`link_clustering` Module
------------------------------
+lingpy.thirdparty.linkcomm.link_clustering module
+-------------------------------------------------
 
 .. automodule:: lingpy.thirdparty.linkcomm.link_clustering
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: lingpy.thirdparty.linkcomm
+    :members:
+    :undoc-members:
+    :show-inheritance:

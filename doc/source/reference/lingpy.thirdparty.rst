@@ -1,13 +1,5 @@
-thirdparty Package
-==================
-
-:mod:`thirdparty` Package
--------------------------
-
-.. automodule:: lingpy.thirdparty
-    :members:
-    :undoc-members:
-    :show-inheritance:
+lingpy.thirdparty package
+=========================
 
 Subpackages
 -----------
@@ -17,3 +9,10 @@ Subpackages
     lingpy.thirdparty.cogent
     lingpy.thirdparty.linkcomm
 
+Module contents
+---------------
+
+.. automodule:: lingpy.thirdparty
+    :members:
+    :undoc-members:
+    :show-inheritance:

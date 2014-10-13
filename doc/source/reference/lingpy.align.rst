@@ -1,35 +1,38 @@
-align Package
-=============
+lingpy.align package
+====================
 
-:mod:`align` Package
---------------------
+Submodules
+----------
 
-.. automodule:: lingpy.align
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`multiple` Module
-----------------------
+lingpy.align.multiple module
+----------------------------
 
 .. automodule:: lingpy.align.multiple
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`pairwise` Module
-----------------------
+lingpy.align.pairwise module
+----------------------------
 
 .. automodule:: lingpy.align.pairwise
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`sca` Module
------------------
+lingpy.align.sca module
+-----------------------
 
 .. automodule:: lingpy.align.sca
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: lingpy.align
+    :members:
+    :undoc-members:
+    :show-inheritance:

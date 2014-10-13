@@ -1,29 +1,5 @@
-LingPy Package
+lingpy package
 ==============
-
-:mod:`lingpy` Package
----------------------
-
-.. automodule:: lingpy.__init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_settings` Module
------------------------
-
-.. automodule:: lingpy._settings
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`settings` Module
-----------------------
-
-.. automodule:: lingpy.settings
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Subpackages
 -----------
@@ -38,8 +14,29 @@ Subpackages
     lingpy.data
     lingpy.evaluate
     lingpy.meaning
+    lingpy.model
+    lingpy.plugins
     lingpy.read
     lingpy.sequence
     lingpy.tests
     lingpy.thirdparty
 
+Submodules
+----------
+
+lingpy.settings module
+----------------------
+
+.. automodule:: lingpy.settings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lingpy
+    :members:
+    :undoc-members:
+    :show-inheritance:

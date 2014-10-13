@@ -1,13 +1,5 @@
-tests Package
-=============
-
-:mod:`tests` Package
---------------------
-
-.. automodule:: lingpy.tests
-    :members:
-    :undoc-members:
-    :show-inheritance:
+lingpy.tests package
+====================
 
 Subpackages
 -----------
@@ -18,4 +10,13 @@ Subpackages
     lingpy.tests.basic
     lingpy.tests.compare
     lingpy.tests.meaning
+    lingpy.tests.read
+    lingpy.tests.thirdparty
 
+Module contents
+---------------
+
+.. automodule:: lingpy.tests
+    :members:
+    :undoc-members:
+    :show-inheritance:

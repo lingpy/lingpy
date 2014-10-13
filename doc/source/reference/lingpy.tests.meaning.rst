@@ -1,19 +1,22 @@
-meaning Package
-===============
+lingpy.tests.meaning package
+============================
 
-:mod:`meaning` Package
-----------------------
+Submodules
+----------
 
-.. automodule:: lingpy.tests.meaning
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`test_concepts` Module
----------------------------
+lingpy.tests.meaning.test_concepts module
+-----------------------------------------
 
 .. automodule:: lingpy.tests.meaning.test_concepts
     :members:
     :undoc-members:
     :show-inheritance:
 
+
+Module contents
+---------------
+
+.. automodule:: lingpy.tests.meaning
+    :members:
+    :undoc-members:
+    :show-inheritance:

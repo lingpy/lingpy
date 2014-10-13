@@ -1,37 +1,5 @@
-algorithm Package
-=================
-
-:mod:`algorithm` Package
-------------------------
-
-.. automodule:: lingpy.algorithm
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`clustering` Module
-------------------------
-
-.. automodule:: lingpy.algorithm.clustering
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`distance` Module
-----------------------
-
-.. automodule:: lingpy.algorithm.distance
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`extra` Module
--------------------
-
-.. automodule:: lingpy.algorithm.extra
-    :members:
-    :undoc-members:
-    :show-inheritance:
+lingpy.algorithm package
+========================
 
 Subpackages
 -----------
@@ -40,3 +8,38 @@ Subpackages
 
     lingpy.algorithm.cython
 
+Submodules
+----------
+
+lingpy.algorithm.clustering module
+----------------------------------
+
+.. automodule:: lingpy.algorithm.clustering
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.algorithm.distance module
+--------------------------------
+
+.. automodule:: lingpy.algorithm.distance
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.algorithm.extra module
+-----------------------------
+
+.. automodule:: lingpy.algorithm.extra
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lingpy.algorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:

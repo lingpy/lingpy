@@ -1,59 +1,62 @@
-cython Package
-==============
+lingpy.algorithm.cython package
+===============================
 
-:mod:`cython` Package
----------------------
+Submodules
+----------
 
-.. automodule:: lingpy.algorithm.cython
+lingpy.algorithm.cython.calign module
+-------------------------------------
+
+.. automodule:: lingpy.algorithm.cython.calign
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`_calign` Module
----------------------
+lingpy.algorithm.cython.cluster module
+--------------------------------------
 
-.. automodule:: lingpy.algorithm.cython._calign
+.. automodule:: lingpy.algorithm.cython.cluster
     :members:
     :undoc-members:
     :show-inheritance:
 
-:mod:`_cluster` Module
-----------------------
-
-.. automodule:: lingpy.algorithm.cython._cluster
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_malign` Module
----------------------
-
-.. automodule:: lingpy.algorithm.cython._malign
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_misc` Module
--------------------
-
-.. automodule:: lingpy.algorithm.cython._misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`_talign` Module
----------------------
-
-.. automodule:: lingpy.algorithm.cython._talign
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-:mod:`compilePYX` Module
-------------------------
+lingpy.algorithm.cython.compilePYX module
+-----------------------------------------
 
 .. automodule:: lingpy.algorithm.cython.compilePYX
     :members:
     :undoc-members:
     :show-inheritance:
 
+lingpy.algorithm.cython.malign module
+-------------------------------------
+
+.. automodule:: lingpy.algorithm.cython.malign
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.algorithm.cython.misc module
+-----------------------------------
+
+.. automodule:: lingpy.algorithm.cython.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.algorithm.cython.talign module
+-------------------------------------
+
+.. automodule:: lingpy.algorithm.cython.talign
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: lingpy.algorithm.cython
+    :members:
+    :undoc-members:
+    :show-inheritance:
