@@ -30,9 +30,13 @@ class Tree(PhyloNode):
         # lingpy-specific aspects of cogent's trees and allows us to include
         # them in our documentation
         if type(tree) == str:
-            tmp = LoadTree(treestring=tree)
+            if tree[-4:] not in ['.nwk','.txt']: 
+                tmp = LoadTree(treestring=tree)
+            else:
+                tmp = LoadTree(tree)
         else:
             tmp = LoadTree(tree)
+            
         for key,val in tmp.__dict__.items():
             self.__dict__[key] = val
 
