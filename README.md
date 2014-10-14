@@ -1,6 +1,6 @@
 # LingPy
 
-Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen).
+Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg).
 
 LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also try to provide basic functionality for Python 2.
 
@@ -189,6 +189,23 @@ such as PyCogent (http://pycogent.org/) of which we included some parts in the t
 
 * Basemap: https://github.com/matplotlib/basemap/
 
+## Creating the Documentation
+
+Creating our documentation is not straightforward at the moment. The problem here is that Sphinx, the tool we use to produce documentation is not bugfree in Python3 versions.
+
+Currently, documentation is created using the following steps:
+
+* whenever code is added to LingPy, the contributors add documentation inline in their code, following the style also used in other projects such as SciPy, NumPy, and Networkx.
+* the general website structure is added around the code, you can find its content by browsing the lingpy/doc/sources/ directory.
+* before compiling the code, we create a full reference containing links to all code in LingPy, using the sphinx-apidoc command:
+
+  ```
+  $ cd lingpy/ # got to relevenant main folder of lingpy
+  $ sphinx-apidoc -o doc/sources/reference/ lingpy
+  ```
+  
+  This creates specific documentation for all the LingPy package, structured with respect to the modules in LingPy.
+* run the sphinx build as described on the sphinx website at http://sphinx-doc.org.
 
 
 
