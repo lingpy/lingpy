@@ -1163,7 +1163,8 @@ class LexStat(Wordlist):
                 return_distance  = False,
                 gop              = -2,
                 distance         = True,
-                defaults         = False
+                defaults         = False,
+                return_raw       = False
                 )
         kw.update(keywords)
         if kw['defaults']: return kw
@@ -1240,7 +1241,10 @@ class LexStat(Wordlist):
             scoreB = almB
 
         scores = ['{0:.2f}'.format(scorer[a,b]) for a,b in zip(scoreA,scoreB)]
-
+        
+        if kw['return_raw']:
+            return almA, almB, d
+        
         almA = class2tokens(self[idxA,'tokens'],almA)
         almB = class2tokens(self[idxB,'tokens'],almB)
         if kw['pprint']:
@@ -1254,6 +1258,7 @@ class LexStat(Wordlist):
         
         if kw['return_distance']:
             return d
+        return almA,almB,d
     
     def _get_matrices(
             self,
