@@ -14,7 +14,7 @@ __author__="Johann-Mattis List"
 __date__="2013-11-21"
 
 
-
+import unicodedata
 from pickle import dump
 import os
 import codecs
@@ -39,7 +39,9 @@ def _import_sound_classes(filename):
     infile = codecs.open(filename,'r','utf-8')
     data = []
     for line in infile:
-        data.append(line.strip().split(' : '))
+        data.append(
+                unicodedata.normalize('NFC', line.strip()).split(' : ')
+                )
 
     sc_dict = {}
     for el1,el2 in data:
@@ -49,6 +51,7 @@ def _import_sound_classes(filename):
     
     for key in sc_dict.keys():
         for value in sc_dict[key]:
+            print(value,key)
             sc_repl_dict[value] = key
 
     return sc_repl_dict
@@ -611,7 +614,13 @@ def compile_dvt(path=''):
             'r',
             'utf-8'
             ).read().replace('\n','')
-
+    
+    # normalize stuff
+    diacritics = unicodedata.normalize("NFC", diacritics)
+    vowels = unicodedata.normalize("NFC", vowels)
+    vowels = ''.join([v for v in vowels if v not in diacritics])
+    tones = unicodedata.normalize("NFC", tones)
+    
     dvt = (diacritics,vowels,tones)
 
     outfile = open(os.path.join(path,'dvt.bin'),'wb')

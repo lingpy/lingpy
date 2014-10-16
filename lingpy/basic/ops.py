@@ -13,6 +13,7 @@ __date__="2014-09-11"
 import re
 import json
 import codecs
+import unicodedata
 
 # internal imports
 from ..settings import rcParams
@@ -502,7 +503,7 @@ def wl2qlc(
         out += '\n'
 
     f = codecs.open(filename +'.'+ keywords['fileformat'],'w','utf-8')
-    f.write(out)
+    f.write(unicodedata.normalize("NFC", out))
     if "stamp" in keywords:
         f.write(keywords['stamp'])
     f.close()
@@ -545,11 +546,13 @@ def tsv2triple(wordlist, outfile):
 
     if outfile:
         with open(outfile, 'w') as f:
+            out = ''
             for a,b,c in tstore:
                 if type(c) == list:
                     c = ' '.join([str(x) for x in c])
                 if c != '-':
-                    f.write('{0}\t{1}\t{2}\n'.format(a, b, c))
+                    out += '{0}\t{1}\t{2}\n'.format(a, b, c)
+            f.write(unicodedata.normalize("NFC", out))
     else:
         return tstore
 

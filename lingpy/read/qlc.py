@@ -16,6 +16,7 @@ from ..thirdparty import cogent as cg
 import json
 import codecs
 import os
+import unicodedata
 
 def normalize_alignment(alignment):
     """
@@ -234,7 +235,7 @@ def read_qlc(
     meta = {}
 
     # read lines from infile
-    lines = inf.readlines()
+    lines = [unicodedata.normalize("NFC",l) for l in inf.readlines()]
 
     inf.close()
 

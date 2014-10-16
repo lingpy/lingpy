@@ -9,7 +9,6 @@ Module for handling sequence models.
 __author__="Johann-Mattis List"
 __date__="2014-01-16"
 
-
 import re
 from pickle import load
 import os
