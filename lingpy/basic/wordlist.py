@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2014-08-31 12:30
+# modified : 2014-10-18 09:37
 """
 This module provides a basic class for the handling of word lists.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-08-31"
+__date__="2014-10-18"
 
 import os
 import sys
@@ -1317,7 +1317,7 @@ class Wordlist(QLCParser):
         out_string = ''
     
         # iterate over the dictionary and start to fill the string
-        for key in sorted(out):
+        for key in sorted(out, key=lambda x: str(x).lower()):
             
             # write key to file
             out_string += key[1]
