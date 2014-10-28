@@ -10,8 +10,12 @@
 import os, types
 import numpy.testing
 
-from qlc.ngram import ngrams_from_graphemes,\
-    words_ngrams_matrix_for_graphemes_list
+try:
+    from qlc.ngram import ngrams_from_graphemes,\
+        words_ngrams_matrix_for_graphemes_list
+    QLC = True
+except ImportError:
+    QLC = False
 
 class testNgram(numpy.testing.TestCase):
     """
@@ -19,6 +23,8 @@ class testNgram(numpy.testing.TestCase):
     """
     
     def test_ngrams_from_graphemes(self):
+        if not QLC:
+            return
         test_word = "ababc"
         test_word_ngrams = ["ab","ba","ab","bc"]
         resulting_ngrams = ngrams_from_graphemes(test_word)
@@ -26,6 +32,8 @@ class testNgram(numpy.testing.TestCase):
             assert(ngram in test_word_ngrams)
         
     def test_words_ngrams_matrix_for_graphemes_list(self):
+        if not QLC:
+            return
         test_list_words = ["abab","cdab","abcdcd","cd"]
         resulting_matrix = \
             words_ngrams_matrix_for_graphemes_list(test_list_words)

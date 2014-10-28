@@ -17,23 +17,6 @@ from setuptools import setup, find_packages,Extension
 import sys
 import os
 import os.path
-import shutil
-
-from three2two import run3to2,run3to3
-
-# check whether a build directory is available
-if not os.path.isdir('lingpy_build') and 'install' in sys.argv or 'develop' in sys.argv:
-    os.mkdir('lingpy_build')
-    os.mkdir(os.path.join('lingpy_build','lingpy'))
-
-# check for install and organize the manifest.in-file
-if 'install' in sys.argv or 'develop':
-    m = open('manifest_build.in','r').read()
-else:
-    m = open('manifest_dist.in','r').read()
-f = open('MANIFEST.in','w')
-f.write(m)
-f.close()
 
 
 # check for specific features
@@ -54,33 +37,12 @@ pkg_location = '.'
 if sys.version_info >= (3,):
     extra['use_2to3'] = False
     this_version = "3"
-
-    # import lingpy from lingpy_build folder
-    if 'install' in sys.argv or 'develop' in sys.argv:
-        pkg_location = 'lingpy_build'
-        pkgname = 'lingpy'
-        pkg_dir = {'':'lingpy_build'}
-        run3to3()
-        sys.path = ['lingpy_build'] + sys.path
-        from lingpy import *
-        rc(schema='asjp')
-    
 else:
     # make a specific directory for lingpy2
     this_version = "2"
 
-    run3to2()
-    pkgname = 'lingpy'
-
-
-    # import lingpy2 to compile the data
-    if 'install' in sys.argv:
-        # replace manifest path
-        pkg_location = 'lingpy_build'
-        pkg_dir = {'':'lingpy_build'}
-        sys.path = ['lingpy_build'] + sys.path
-        from lingpy import *
-        rc(schema='asjp')
+from lingpy import *
+rc(schema='asjp')
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
@@ -129,7 +91,8 @@ setup(
         version = thisversion,
         packages = find_packages(pkg_location),
         package_dir = pkg_dir,
-        install_requires = ['numpy'],
+        install_requires = ['numpy', 'six'],
+        tests_require=['nltk'],
         author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [
@@ -149,16 +112,4 @@ setup(
         exclude_package_data = {}, #{'':["*.bin"]},
         **extra
         )
-
-# remove the build directory in order to prevent that it leads to confusion
-# when installing lingpy in both the py2 and the py3 version
-if 'install' in sys.argv or 'develop' in sys.argv:
-    try:
-        print("[i] Removing the build directory.")
-        shutil.rmtree('lingpy_build')
-        shutil.rmtree('build') 
-        print("[i] Done.")
-    except:
-        print("[i] Failed to remove build directory.")
-    print("[i] LingPy was successfully installed on your system.")
 

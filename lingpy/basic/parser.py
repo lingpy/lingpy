@@ -13,6 +13,8 @@ import os
 import pickle
 import codecs
 
+from six import text_type as str
+
 from ..settings import rcParams
 from ..read.qlc import read_qlc
 
