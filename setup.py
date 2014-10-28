@@ -92,7 +92,7 @@ setup(
         packages = find_packages(pkg_location),
         package_dir = pkg_dir,
         install_requires = ['numpy', 'six'],
-        tests_require=['nltk'],
+        tests_require=['nltk', 'nose', 'coverage'],
         author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [

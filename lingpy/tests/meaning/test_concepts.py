@@ -26,7 +26,7 @@ class TestConceptComparerSpanishStem:
     def setup(self):
         try:
     	    self.cm = lingpy.meaning.concepts.ConceptComparerSpanishStem()
-        except LookupError:
+        except (LookupError, NameError):
             self.cm = None
 
     def test_compare_to_concept(self):
