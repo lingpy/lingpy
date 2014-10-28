@@ -41,6 +41,7 @@ else:
     # make a specific directory for lingpy2
     this_version = "2"
 
+# some initialization
 from lingpy import *
 rc(schema='asjp')
 
