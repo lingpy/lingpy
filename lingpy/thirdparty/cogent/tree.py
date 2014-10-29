@@ -36,6 +36,8 @@ from operator import or_
 #from cogent.util.misc import InverseDict
 from random import shuffle
 
+from six import text_type
+
 __author__ = "Gavin Huttley, Peter Maxwell and Rob Knight"
 __copyright__ = "Copyright 2007-2011, The Cogent Project"
 __credits__ = ["Gavin Huttley", "Peter Maxwell", "Rob Knight",
@@ -947,7 +949,7 @@ class TreeNode(object):
                     if top_node.Name is None:
                         name = ''
                     else:
-                        name = str(top_node.Name)
+                        name = text_type(top_node.Name)
                         if escape_name and not (name.startswith("'") and \
                                                 name.endswith("'")):
                             if re.search("""[]['"(),:;_]""", name):
