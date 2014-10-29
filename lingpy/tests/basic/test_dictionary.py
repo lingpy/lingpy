@@ -49,4 +49,4 @@ class TestDictionary(TestCase):
     def test_tokenize(self):
         self.dictionary.tokenize()
         tuples = self.dictionary.get_tuples(['head', 'tokens'])
-        #self.assertEqual(tuples[0], ('aa', ['a', 'a']))
+        self.assertEqual(tuples[0], ('aa', ['a', 'a']))
