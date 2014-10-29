@@ -9,6 +9,9 @@ This script tests various SCA routines.
 __author__="Johann-Mattis List"
 __date__="2013-03-07"
 
+import os
+
+import lingpy
 from lingpy import *
 
 # define a set of qlc-strings
@@ -64,15 +67,15 @@ pw.align(pprint=True,distance=True)
 
 
 # load sca-file
-msa = SCA('data/test.msq')
+data_dir = os.path.join(os.path.dirname(lingpy.__file__), '..', 'test', 'data')
+msa = SCA(os.path.join(data_dir, 'test.msq'))
 msa.lib_align()
 print("")
 print("Multiple alignment with MSA from text-file.")
 print("Writing result to file.")
-msa.output('msa',filename='data/test_out')
+msa.output('msa',filename=os.path.join(data_dir, 'test_out'))
 
 print("")
-print("Testing pairwise alignment using SCA.")
-psa = SCA('data/test.psq')
-psa.align(pprint=True,distance=True)
-
+#print("Testing pairwise alignment using SCA.")
+#psa = SCA(os.path.join(data_dir, 'test.psq'))
+#psa.align(pprint=True,distance=True)

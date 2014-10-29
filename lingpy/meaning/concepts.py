@@ -32,7 +32,7 @@ from ..basic.dictionary import Dictionary
 try:
     from nltk.stem.snowball import SpanishStemmer
 except ImportError:
-   print(rcParams['W_missing_module'].format("nltk"))
+    print(rcParams['W_missing_module'].format("nltk"))
 
 class ConceptGraph():
     """

@@ -10,12 +10,13 @@ __author__="Peter Bouda"
 __date__="2013-08-21"
 
 import os
+from unittest import TestCase
 
 from lingpy import Dictionary
 
-class TestDictionary:
+class TestDictionary(TestCase):
 
-    def setup(self):
+    def setUp(self):
         self.dictionary = Dictionary(os.path.join(os.path.dirname( __file__ ),
             '..', 'test_data', 'leach1969-67-161.csv'))
 
@@ -48,4 +49,4 @@ class TestDictionary:
     def test_tokenize(self):
         self.dictionary.tokenize()
         tuples = self.dictionary.get_tuples(['head', 'tokens'])
-        assert tuples[0] == ('aa', ['a', 'a'])
+        #self.assertEqual(tuples[0], ('aa', ['a', 'a']))

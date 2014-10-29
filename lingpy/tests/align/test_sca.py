@@ -100,4 +100,5 @@ class TestAlignments(object):
             assert True
 
         except:
+            raise
             assert False

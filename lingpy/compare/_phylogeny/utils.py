@@ -1,3 +1,8 @@
+# *-* coding: utf-8 *-*
+# These lines were automatically added by the 3to2-conversion.
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-25 11:47

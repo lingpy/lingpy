@@ -12,6 +12,7 @@ __date__="2013-10-17"
 from ..settings import rcParams
 import os
 from ..basic.parser import QLCParser
+from six import text_type as str
 import numpy as np
 
 class BasVoc(QLCParser):
