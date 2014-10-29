@@ -6,14 +6,14 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:27
-# modified : 2014-05-11 12:47
+# modified : 2014-10-09 16:19
 """
 Module provides various methods for the handling of sound classes.
 
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-05-11"
+__date__="2014-10-09"
 
 # lingpy imports
 from ..settings import rcParams
@@ -963,6 +963,43 @@ def trigrams(sequence):
                 seq+['$','$']
                 )
             )
+
+def fourgrams(sequence):
+    """
+    Convert a given sequence into a sequence of trigrams.
+    """
+    if ' ' in sequence:
+        seq = sequence.split(' ')
+    else:
+        seq = list(sequence)
+
+    return list(
+            zip(
+                ['#','#','#']+seq,
+                ['#','#']+seq+['$'],
+                ['#']+seq+['$','$'],
+                seq+['$','$','$']
+                )
+            )
+
+def get_n_ngrams(sequence, ngram=4):
+    """
+    convert a given sequence into a sequence of ngrams.
+    """
+
+    if ' ' in sequence:
+        seq = sequence.split(' ')
+    else:
+        seq = list(sequence)
+
+    
+    tobezipped = []
+    for i in range(ngram):
+        prefix = (ngram-i-1) * ['#']
+        postfix = i * ['$']
+        tobezipped += [tuple(prefix + seq + postfix)]
+    
+    return list(zip(*tobezipped))[ngram-1:]
 
 def pgrams(sequence, **keywords):
     """
