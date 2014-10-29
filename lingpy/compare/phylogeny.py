@@ -22,6 +22,14 @@ import codecs
 import re
 import sys
 
+# python 2.7 compatibility: see http://stackoverflow.com/a/21368622
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
+from six import text_type
+
 # thirdparty imports
 import numpy as np
 
@@ -507,11 +515,14 @@ class PhyBo(Wordlist):
         else: #not hasattr(self,'tree'):
             self._meta['tree'] = cg.LoadTree(tree)
             if rcParams["verbose"]: print("[i] Loaded the tree.")
-        
+
+        if isinstance(self.tree, text_type):
+            self.tree = cg.LoadTree(treestring=self.tree)
+
         # if no good topology is given, create it automatically, using
         # the radial layout function
         gTpl = radial_layout(
-                str(self.tree),
+                self.tree,
                 filename='',
                 degree=keywords['degree'],
                 change= keywords['change'],
