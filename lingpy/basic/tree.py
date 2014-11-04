@@ -1,17 +1,60 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-08-15 13:11
-# modified : 2014-08-15 13:11
+# modified : 2014-11-04 09:04
 """
 Basic module for the handling of language trees.
 """
 
 __author__="Johann-Mattis List, Taraka Rama"
-__date__="2014-08-15"
+__date__="2014-11-04"
 
 from ..thirdparty.cogent import LoadTree,PhyloNode
 from ..algorithm import TreeDist
 import random
+
+
+def _star_tree(taxa_list):
+    """
+    Initialize a star tree for the random tree function.
+    """
+
+    return "("+ ",".join(taxa_list)+");"
+
+def random_tree(taxa):
+    """
+    Create a random tree from a list of taxa.
+
+    Parameters
+    ----------
+    
+    taxa : list
+        The list containing the names of the taxa from which the tree will be
+        created.
+
+    Returns
+    -------
+    tree_string : str
+        A string representation of the random tree in Newick format.
+
+    Todo
+    ----
+    Modify the function in such a way that it can also create trees with branch
+    lengths.
+
+    """
+    taxa_list = [t for t in taxa]
+    random.shuffle(taxa_list)
+    while(len(taxa_list)  > 1):
+        ulti_elem = str(taxa_list.pop())
+        penulti_elem = str(taxa_list.pop())
+        taxa_list.insert(0,"("+penulti_elem+","+ulti_elem+")")
+        random.shuffle(taxa_list)
+        
+    taxa_list.append(";")
+
+    return "".join(taxa_list)
+
 
 class Tree(PhyloNode):
     """
@@ -19,8 +62,10 @@ class Tree(PhyloNode):
 
     Parameters
     ----------
-    tree : {str file}
-        A string or a file containing trees in NEWICK format.
+    tree : {str file list}
+        A string or a file containing trees in Newick format. As an
+        alternative, you can also simply pass a list containing taxon names. In
+        that case, a random tree will be created from the list of taxa.
         
     """
 
@@ -35,7 +80,10 @@ class Tree(PhyloNode):
             else:
                 tmp = LoadTree(tree)
         else:
-            tmp = LoadTree(tree)
+            if type(tree) == list:
+                tmp = LoadTree(treestring=random_tree(tree))
+            else:
+                tmp = LoadTree(tree)
             
         for key,val in tmp.__dict__.items():
             self.__dict__[key] = val
