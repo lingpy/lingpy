@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Peter Bouda
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-09 16:28
-# modified : 2013-11-07 13:01
+# modified : 2014-11-05 23:38
 """
 Setup-Script for LingPy
 """
 
 __author__="Johann-Mattis List,Peter Bouda"
-__date__="2013-11-07"
+__date__="2014-11-05"
 
 
 import distribute_setup
@@ -40,13 +40,21 @@ if sys.version_info >= (3,):
 else:
     # make a specific directory for lingpy2
     this_version = "2"
-
-from lingpy import *
-rc(schema='asjp')
+try:
+    from lingpy import *
+    rc(schema='asjp')
+except ValueError:
+    from glob import glob
+    tmp_path = os.path.split(os.path.abspath(__file__))[0]
+    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
+    for binary_file in binary_files:
+        os.remove(binary_file)
+    from lingpy import *
+    rc(schema='asjp')
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
-    if this_version == "3":
+    if True: #this_version == "3":
 
         if with_c:
             extension_path = ['lingpy','algorithm','cython']
@@ -95,7 +103,7 @@ setup(
 		'numpy', 
 		'six',
 		'networkx',
-		'regex',
+		#'regex',
 		#'matplotlib',
 		#'scipy',
 	],
@@ -117,6 +125,21 @@ setup(
             },
         include_package_data = True,
         exclude_package_data = {}, #{'':["*.bin"]},
+        package_data = {'':
+            [
+                'data/ipa/sampa.csv',
+                'data/orthography_profiles/*.prf',
+                'tests/test_data/*.csv',
+                'tests/test_data/*.qlc',
+                'tests/test_data/*.msq',
+                'tests/test_data/*.msa',
+                'data/conceptlists/*.tsv',
+                'data/conf/*.rc',
+                'data/models/*/converter',
+                'data/models/*/INFO',
+                'data/models/*/matrix',
+                'data/models/*/scorer'
+                ]},
         **extra
         )
 
