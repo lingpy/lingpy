@@ -1,17 +1,78 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-08-15 13:11
-# modified : 2014-08-15 13:11
+# modified : 2014-11-04 09:04
 """
 Basic module for the handling of language trees.
 """
 
 __author__="Johann-Mattis List, Taraka Rama"
-__date__="2014-08-15"
+__date__="2014-11-04"
 
 from ..thirdparty.cogent import LoadTree,PhyloNode
 from ..algorithm import TreeDist
 import random
+
+
+def _star_tree(taxa_list):
+    """
+    Initialize a star tree for the random tree function.
+    """
+
+    return "("+ ",".join(taxa_list)+");"
+
+def random_tree(taxa, branch_lengths=False):
+    """
+    Create a random tree from a list of taxa.
+
+    Parameters
+    ----------
+    
+    taxa : list
+        The list containing the names of the taxa from which the tree will be
+        created.
+    branch_lengths : bool (default=False)
+        When set to *True*, a random tree with random branch lengths will be
+        created with the branch lengths being in order of the maximum number of
+        the total number of internal branches.
+
+    Returns
+    -------
+    tree_string : str
+        A string representation of the random tree in Newick format.
+
+    """
+    # clone the list in order to avoid that lists used outside the function
+    # suffer from modifications
+    taxa_list = [t for t in taxa]
+
+    random.shuffle(taxa_list)
+    
+    if not branch_lengths:
+        while(len(taxa_list)  > 1):
+            ulti_elem = str(taxa_list.pop())
+            penulti_elem = str(taxa_list.pop())
+            taxa_list.insert(0,"("+penulti_elem+","+ulti_elem+")")
+            random.shuffle(taxa_list)
+            
+        taxa_list.append(";")
+        return "".join(taxa_list)
+
+    else:
+        brlen_taxa_list = []
+        nbr = 2*len(taxa_list)-3
+        for taxon in taxa_list:
+            brlen_taxa_list.append(str(taxon)+":"+'{0:.2f}'.format(random.uniform(1,nbr)))
+        while(len(brlen_taxa_list) > 1):
+            ulti_elem = str(brlen_taxa_list.pop())
+            penulti_elem = str(brlen_taxa_list.pop())
+            if len(brlen_taxa_list) > 0:
+                brlen_taxa_list.insert(0,"("+penulti_elem+","+ulti_elem+")"+":"+'{0:.2f}'.format(random.uniform(0,nbr)))
+            else:
+                brlen_taxa_list.insert(0,"("+penulti_elem+","+ulti_elem+")")
+            random.shuffle(brlen_taxa_list)
+        brlen_taxa_list.append(";")
+        return "".join(brlen_taxa_list)
 
 class Tree(PhyloNode):
     """
@@ -19,13 +80,21 @@ class Tree(PhyloNode):
 
     Parameters
     ----------
-    tree : {str file}
-        A string or a file containing trees in NEWICK format.
+    tree : {str file list}
+        A string or a file containing trees in Newick format. As an
+        alternative, you can also simply pass a list containing taxon names. In
+        that case, a random tree will be created from the list of taxa.
+    
+    branch_lengths : bool (default=False)
+        When set to *True*, and a list of taxa is passed instead of a Newick
+        string or a file containing a Newick string, a random tree with random
+        branch lengths will be created with the branch lengths being in order
+        of the maximum number of the total number of internal branches.
         
     """
 
-    def __init__(self, tree):
-        
+    def __init__(self, tree, **keywords):
+
         # this is an absolutely nasty hack, but it helps us to maintain
         # lingpy-specific aspects of cogent's trees and allows us to include
         # them in our documentation
@@ -35,7 +104,10 @@ class Tree(PhyloNode):
             else:
                 tmp = LoadTree(tree)
         else:
-            tmp = LoadTree(tree)
+            if type(tree) == list:
+                tmp = LoadTree(treestring=random_tree(tree, **keywords))
+            else:
+                tmp = LoadTree(tree)
             
         for key,val in tmp.__dict__.items():
             self.__dict__[key] = val
