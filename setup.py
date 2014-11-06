@@ -107,7 +107,7 @@ setup(
 		#'matplotlib',
 		#'scipy',
 	],
-        tests_require=['nltk', 'nose', 'coverage'],
+        tests_require=['regex', 'nltk', 'nose', 'coverage'],
         author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
         author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
         keywords = [
