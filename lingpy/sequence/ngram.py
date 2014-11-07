@@ -1,3 +1,4 @@
+# *-* coding: utf-8 *-*
 """
 This module provides some basic ngram functions, such as parsing QLC-string formatted strings into ngrams sequences and generating unigram models for intial orthography profiles.
 """
@@ -13,11 +14,12 @@ import unicodedata
 
 from ..sequence import Tokenizer
 
-def character_model(list):
+
+def character_model(list, test=False):
     """
     Method counts characters and their frequences given a list of words.
     """
-    segments_hash = collections.defaultdict(int)
+    segments = collections.Counter()
     segment_count = 0
 
     for word in list:
@@ -25,16 +27,17 @@ def character_model(list):
 
         for char in word:
             segment_count += 1
-            segments_hash[segment] += 1            
+            segments.update(char)
 
-    # sort the hash set by values (frequencies of unigrams)
-    segments_sorted = sorted(segments_hash.items(), key=operator.itemgetter(1), reverse=True)
-    
-    print("Character"+"\t"+"Count"+"\t"+"Frequency") 
-    for segment in segments_sorted:
-        segment, count = segment[0], segment[1]
-        frequency = segments_hash[segment]/segment_count
-        print(segment+"\t"+str(count)+"\t"+str(frequency))
+    res = []
+    if not test:  # pragma: no cover
+        print("Character"+"\t"+"Count"+"\t"+"Frequency")
+    for segment, count in segments.most_common():
+        res.append((segment, count, count/segment_count))
+        if not test:  # pragma: no cover
+            print(segment+"\t"+str(count)+"\t"+str(count/segment_count))
+    return res
+
 
 def unigram_model(list):
     """
@@ -237,16 +240,3 @@ def words_ngrams_matrix_for_graphemes_list(graphemes_list, n=1):
             matrix[i][j] = ngrams_counts[i][ngram]
 
     return matrix
-        
-if __name__ == '__main__':
-    # NgramTest().run()
-    # tuple = ('#', 'h', 'a', 'd', 'ɯ', '#')
-    graphemes = ('#', 'h', '#')
-    # string = "#h#"
-    print()
-    print("ngrams_from_graphemes, tuple:", ngrams_from_graphemes(graphemes, 1))
-    print()
-
-#    from lingpy.sequence import tokenizer
-#    t = tokenizer.tokenizer()
-#    unigram_model(t)

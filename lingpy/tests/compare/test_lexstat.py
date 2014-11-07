@@ -9,30 +9,21 @@ Test lexstat module.
 __author__="Johann-Mattis List"
 __date__="2013-11-12"
 
-import os
+import unittest
 from lingpy import LexStat
-from lingpy.settings import rcParams
+from lingpy.tests.util import test_data
 
-class TestLexStat:
 
-    def setup(self):
+class TestLexStat(unittest.TestCase):
 
-        self.lex = LexStat(
-                os.path.join(
-                    rcParams['_path'],
-                    'tests',
-                    'test_data',
-                    'KSL.qlc'
-                    )
-                )
+    def setUp(self):
+        self.lex = LexStat(test_data('KSL.qlc'))
 
     def test_get_scorer(self):
-            
         self.lex.get_scorer()
         assert hasattr(self.lex,"cscorer") == True
 
     def test_cluster(self):
-        
         self.lex.get_scorer()
         self.lex.cluster(method="lexstat", threshold=0.7)
         self.lex.cluster(method="edit-dist", threshold=0.7)
@@ -43,10 +34,4 @@ class TestLexStat:
                 self.lex.header) == True
     
     def test_align_pairs(self):
-
-        try:
-            self.lex.align_pairs('English', 'German', method='sca')
-            assert True
-        except:
-            assert False
-        
+        self.lex.align_pairs('English', 'German', method='sca')
