@@ -91,15 +91,29 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
 else:
     extension_modules = []
 
-requires = [
-    'numpy',
-    'six',
-    'networkx',
-    'appdirs',
-    #'regex',
-    #'matplotlib',
-    #'scipy',
-]
+if sys.version_info >= (3,4):
+    
+    requires = [
+        'numpy',
+        'six',
+        'networkx',
+        'appdirs',
+        #'regex',
+        #'matplotlib',
+        #'scipy',
+    ]
+else:
+    requires = [
+        'numpy',
+        'six',
+        'networkx',
+        'appdirs',
+        'pathlib'
+        #'regex',
+        #'matplotlib',
+        #'scipy',
+    ]
+    
 if sys.version_info < (3, 4):
     requires.append('pathlib')
 
@@ -143,6 +157,12 @@ setup(
             'data/models/*/INFO',
             'data/models/*/matrix',
             'data/models/*/scorer',
+            'data/models/dvt/diacritics',
+            'data/models/dvt/vowels',
+            'data/models/dvt/tones',
+            'data/models/dvt_el/diacritics',
+            'data/models/dvt_el/vowels',
+            'data/models/dvt_el/tones',
         ]
     },
     **extra)
