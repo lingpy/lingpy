@@ -14,6 +14,7 @@ import pickle
 import codecs
 
 from six import text_type as str
+from six import string_types
 
 from ..settings import rcParams
 from ..read.qlc import read_qlc
@@ -37,7 +38,7 @@ class QLCParser(object):
         loaded = False
 
         # check for existing cache-directory
-        if type(filename) == str:
+        if isinstance(filename, string_types):
             if os.path.isdir('__lingpy__'):
                 # check for file extension
                 if filename[-3:].lower() in ['qlc','csv']:
@@ -84,7 +85,7 @@ class QLCParser(object):
         internal_import = False
 
         # check whether it's a dictionary from which we load
-        if type(filename) == dict:
+        if isinstance(filename, dict):
             input_data = filename
             if 'filename' not in input_data:
                 self.filename = rcParams['filename']
@@ -117,10 +118,10 @@ class QLCParser(object):
                 self.filename = filename
         
         # raise an error otherwise
-        elif type(filename) == str:
+        elif isinstance(filename, string_types):
             raise IOError("[ERROR] Input file '{0}' does not exist.".format(filename))
         else:
-            raise TypeError("[ERROR] Unrecognized type for 'filename' arguemnt: {0}".format(type(filename).__name__))
+            raise TypeError("[ERROR] Unrecognized type for 'filename' argument: {0}".format(type(filename).__name__))
 
         # load the configuration file
         if not conf:

@@ -185,5 +185,3 @@ class Tree(PhyloNode):
             else:
                 matrix += [[randint(0,max_state),randint(0,max_state)]]
         return matrix
-
-
