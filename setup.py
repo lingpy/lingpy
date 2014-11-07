@@ -91,27 +91,11 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
 else:
     extension_modules = []
 
-if sys.version_info >= (3,4):
-    
-    requires = [
-        'numpy',
-        'six',
-        'networkx',
-        'appdirs',
-        #'regex',
-        #'matplotlib',
-        #'scipy',
-    ]
-else:
-    requires = [
-        'numpy',
-        'six',
-        'networkx',
-        'appdirs',
-        'pathlib'
-        #'regex',
-        #'matplotlib',
-        #'scipy',
+requires = [
+    'numpy',
+    'six',
+    'networkx',
+    'appdirs'
     ]
     
 if sys.version_info < (3, 4):
