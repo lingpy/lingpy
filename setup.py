@@ -41,7 +41,7 @@ else:
     # make a specific directory for lingpy2
     this_version = "2"
 try:
-    from lingpy import *
+    from lingpy.settings import *
     rc(schema='asjp')
 except ValueError:
     from glob import glob
@@ -49,7 +49,7 @@ except ValueError:
     binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
     for binary_file in binary_files:
         os.remove(binary_file)
-    from lingpy import *
+    from lingpy.settings import *
     rc(schema='asjp')
 
 # set up extension modules
