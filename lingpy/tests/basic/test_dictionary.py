@@ -13,12 +13,13 @@ import os
 from unittest import TestCase
 
 from lingpy import Dictionary
+from lingpy.tests.util import test_data
+
 
 class TestDictionary(TestCase):
 
     def setUp(self):
-        self.dictionary = Dictionary(os.path.join(os.path.dirname( __file__ ),
-            '..', 'test_data', 'leach1969-67-161.csv'))
+        self.dictionary = Dictionary(test_data('leach1969-67-161.csv'))
 
     def test___getitem__(self):
         item = self.dictionary[1]
