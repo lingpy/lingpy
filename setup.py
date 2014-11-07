@@ -55,32 +55,31 @@ except ValueError:
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
     if True: #this_version == "3":
-
         if with_c:
             extension_path = ['lingpy','algorithm','cython']
             extension_prefix = os.path.join(*extension_path)
             extension_modules = [
-                        Extension(
-                            os.path.join('.'.join(extension_path),'calign'),
-                            [os.path.join(extension_prefix,'calign.c')]
-                            ),
-                        Extension(
-                             os.path.join('.'.join(extension_path),'malign'),
-                            [os.path.join(extension_prefix,'malign.c')]
-                            ),
-                        Extension(
-                            os.path.join('.'.join(extension_path),'talign'),
-                            [os.path.join(extension_prefix,'talign.c')]
-                            ),
-                        Extension(
-                            os.path.join('.'.join(extension_path),'cluster'),
-                            [os.path.join(extension_prefix,'cluster.c')]
-                            ),
-                        Extension(
-                            os.path.join('.'.join(extension_path),'misc'),
-                            [os.path.join(extension_prefix,'misc.c')]
-                            ),
-                        ]
+                Extension(
+                    os.path.join('.'.join(extension_path),'calign'),
+                    [os.path.join(extension_prefix,'calign.c')]
+                    ),
+                Extension(
+                     os.path.join('.'.join(extension_path),'malign'),
+                    [os.path.join(extension_prefix,'malign.c')]
+                    ),
+                Extension(
+                    os.path.join('.'.join(extension_path),'talign'),
+                    [os.path.join(extension_prefix,'talign.c')]
+                    ),
+                Extension(
+                    os.path.join('.'.join(extension_path),'cluster'),
+                    [os.path.join(extension_prefix,'cluster.c')]
+                    ),
+                Extension(
+                    os.path.join('.'.join(extension_path),'misc'),
+                    [os.path.join(extension_prefix,'misc.c')]
+                    ),
+                ]
         else:
             extension_modules = []
 
@@ -92,54 +91,58 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
 else:
     extension_modules = []
 
+requires = [
+    'numpy',
+    'six',
+    'networkx',
+    'appdirs',
+    #'regex',
+    #'matplotlib',
+    #'scipy',
+]
+if sys.version_info < (3, 4):
+    requires.append('pathlib')
+
 # make global name of this version
 thisversion = "2.4.dev"
 setup(
-        name = pkgname,
-        version = thisversion,
-        packages = find_packages(pkg_location),
-        package_dir = pkg_dir,
-        install_requires = [
-		'numpy', 
-		'six',
-		'networkx',
-		#'regex',
-		#'matplotlib',
-		#'scipy',
-	],
-        tests_require=['regex', 'nltk', 'nose', 'coverage'],
-        author = "Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
-        author_email = "mattis.list@uni-marburg.de,steven.moran@lmu.de",
-        keywords = [
-            "historical linguistics", 
-            "sequence alignment",
-            "computational linguistics"
-            ],
-        url = "http://lingpy.org",
-        description = "Python library for automatic tasks in historical linguistics",
-        license = "gpl-3.0",
-        platforms = ["unix","linux","windows"],
-        ext_modules=extension_modules,
-        extras_require = {
-            "borrowing" : ["matplotlib","networkx","scipy"]
-            },
-        include_package_data = True,
-        exclude_package_data = {}, #{'':["*.bin"]},
-        package_data = {'':
-            [
-                'data/ipa/sampa.csv',
-                'data/orthography_profiles/*.prf',
-                'tests/test_data/*.csv',
-                'tests/test_data/*.qlc',
-                'tests/test_data/*.msq',
-                'tests/test_data/*.msa',
-                'data/conceptlists/*.tsv',
-                'data/conf/*.rc',
-                'data/models/*/converter',
-                'data/models/*/INFO',
-                'data/models/*/matrix',
-                'data/models/*/scorer'
-                ]},
-        **extra
-        )
-
+    name=pkgname,
+    version=thisversion,
+    packages=find_packages(pkg_location),
+    package_dir=pkg_dir,
+    install_requires=requires,
+    tests_require=['regex', 'nltk', 'nose', 'coverage'],
+    author="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
+    author_email="mattis.list@uni-marburg.de,steven.moran@lmu.de",
+    keywords=[
+        "historical linguistics",
+        "sequence alignment",
+        "computational linguistics"
+    ],
+    url="http://lingpy.org",
+    description="Python library for automatic tasks in historical linguistics",
+    license="gpl-3.0",
+    platforms=["unix", "linux", "windows"],
+    ext_modules=extension_modules,
+    extras_require={
+        "borrowing": ["matplotlib", "networkx", "scipy"]
+    },
+    include_package_data=True,
+    exclude_package_data={},  #{'':["*.bin"]},
+    package_data={
+        '': [
+            'data/ipa/sampa.csv',
+            'data/orthography_profiles/*.prf',
+            'tests/test_data/*.csv',
+            'tests/test_data/*.qlc',
+            'tests/test_data/*.msq',
+            'tests/test_data/*.msa',
+            'data/conceptlists/*.tsv',
+            'data/conf/*.rc',
+            'data/models/*/converter',
+            'data/models/*/INFO',
+            'data/models/*/matrix',
+            'data/models/*/scorer',
+        ]
+    },
+    **extra)

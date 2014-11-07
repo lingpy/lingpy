@@ -16,6 +16,7 @@ import codecs
 from six import text_type as str
 from six import string_types
 
+from lingpy import cache
 from ..settings import rcParams
 from ..read.qlc import read_qlc
 
@@ -27,50 +28,22 @@ class QLCParser(object):
     Basic class for the handling of text files in QLC format.
 
     """
-    def __init__(
-            self,
-            filename,
-            conf = '',
-            **keywords
-            ):
-        
-        # set the loaded var
-        loaded = False
+    def __init__(self, filename, conf='', **keywords):
+        assert filename
 
-        # check for existing cache-directory
-        if isinstance(filename, string_types):
-            if os.path.isdir('__lingpy__'):
-                # check for file extension
-                if filename[-3:].lower() in ['qlc','csv']:
-                    # split path in case it is over multiple dirs
-                    fn = os.path.split(filename)[1]
-                    path = os.path.join('__lingpy__',fn[:-3]+'bin')
-                else:
-                    path = ''
-                if os.path.isfile(path):
-                    if rcParams['verbose']: print("[i] Loading pickled object.")
-                    # open the infile
-                    infile = open(path,'rb')
+        if isinstance(filename, string_types) and cache.path(filename).exists():
+            if rcParams['verbose']:
+                print("[i] Loading pickled object.")
 
-                    # load the dictionary
-                    d = pickle.load(infile)
+            # set the attributes
+            for key, val in cache.load(filename).items():
+                setattr(self, key, val)
 
-                    # close the infile
-                    infile.close()
-
-                    # set the attributes
-                    for key,val in d.items():
-                        setattr(self,key,val)
-                    
-                    # reset the class attribute
-                    self._class = dict([(key,eval(value)) for key,value in
-                        self._class_string.items()])
-                    
-                    loaded = True
-                else:
-                    loaded = False
-        if not loaded:
-            self._init_first(filename,conf)        
+            # reset the class attribute
+            self._class = dict(
+                [(key, eval(value)) for key, value in self._class_string.items()])
+        else:
+            self._init_first(filename, conf)
 
     def _init_first(
             self,
@@ -282,44 +255,33 @@ class QLCParser(object):
 
         return iter([key for key in self._data.keys()])
 
-    def _pickle(self):
+    def _pickle(self, filename):
         """
         Store the current data in a pickled object.
         """
-        if not os.path.isdir('__lingpy__'):
-            os.mkdir('__lingpy__')
-        
-        # get the rest of the filename, important for cases in which a user
-        # loads a wordlist inside a folder without having cded into it.
-        fn = os.path.split(self.filename)[1]
-
-        path = os.path.join('__lingpy__',fn+'.bin')
-        out = open(path,'wb')
         d = {}
-        for key,value in self.__dict__.items():
-            if key not in  [
-                    '_class',
-                    ]:
+        for key, value in self.__dict__.items():
+            if key not in ['_class']:
                 d[key] = value
         d['__date__'] = rcParams['timestamp']
-        pickle.dump(d,out)
-        out.close()
+        cache.dump(d, filename or self.filename)
 
-    def pickle(self):
+    def pickle(self, filename=None):
         """
         Store a dump of the data in a binary file.
 
         Notes
         -----
-        The function creates a folder ``__lingpy__`` on your system containing a
-        binary file called ``FILENAME.bin`` with ``FILENAME`` corresponding to
-        the name of the original CSV-file. Instantiating the same
+        The function stores a binary file called ``FILENAME.bin`` with ``FILENAME``
+        corresponding to the name of the original CSV-file in the
+        `user cache dir <https://github.com/ActiveState/appdirs#some-example-output>`_
+        for lingpy on your system. Instantiating the same
         :py:class:`~lingpy.basic.wordlist.Wordlist` instance again will first
         check for already compiled binary files and, if they are there, load
         them instead of the CSV-file.
         """
 
-        self._pickle()
+        self._pickle(filename)
 
     def _add_entries(
             self,
