@@ -1,18 +1,20 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2014-10-02 09:25
+# modified : 2014-11-07 11:03
+# Future imports for compatibility 
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
+
 """
-Tree-based detection of borrowings in lexicostatistical wordlists.
+Phylogeny-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2014-10-02"
+__date__="2014-11-07"
+
 
 # basic imports
 import os
@@ -665,50 +667,6 @@ class PhyBo(Wordlist):
                     else:
                         for c in add2scenario:
                             scenario += [(c.Name,1)]
-                                #scenario += [(child.Name,1)]
-
-                ## get the children
-                #childA,childB = tmp_tree.Children
-
-                ## get lowest common ancestor
-                #subA = childA.lowestCommonAncestor([p for p in presents if p in
-                #    childA.getTipNames()])
-                #subB = childB.lowestCommonAncestor([p for p in presents if p in
-                #    childB.getTipNames()])
-
-                ## check for tip names in subtrees
-                #if subA.Children:
-                #    subAnames = subA.getTipNames()
-                #else:
-                #    if childA.Name in presents:
-                #        subAnames = [childA.Name]
-                #    else:
-                #        subAnames = []
-                #if subB.Children:
-                #    subBnames = subB.getTipNames()
-                #else:
-                #    if childB.Name in presents:
-                #        subBnames = [childB.Name]
-                #    else:
-                #        subBnames = []
-
-                #commons = subAnames + subBnames
-
-                ## check for identity, if the tips are identical, stop the iteration
-                #if set(tmp_names) == set(commons):
-                #    scenario += [(tmp_tree.lowestCommonAncestor(presents).Name,1)]
-
-                ## if they are not, append the subtrees to the queue
-                #else:
-                #    if subA.Children:
-                #        queue += [[subA,counter+1]]
-                #    else:
-                #        scenario += [(subA.Name,1)]
-                #    
-                #    if subB.Children:
-                #        queue += [[subB,counter+1]]
-                #    else:
-                #        scenario += [(subB.Name,1)]
 
         # TODO fill the scenario with gaps
         output = []
@@ -760,24 +718,6 @@ class PhyBo(Wordlist):
                         for i,state in enumerate(states):
                             if state == 0:
                                 output += [(children[i].Name,0)]
-
-                    #nA,nB = node.Children
-
-                    ## get the states
-                    #stateA = d[nA.Name]
-                    #stateB = d[nB.Name]
-
-                    ## compare the states
-                    #if stateA == 1 and stateB == 1:
-                    #    d[node.Name] = 1
-                    #elif stateA == 0 and stateB == 0:
-                    #    d[node.Name] = 0
-                    #else:
-                    #    d[node.Name] = 1
-                    #    if stateA == 0:
-                    #        output += [(nA.Name,0)]
-                    #    elif stateB == 0:
-                    #        output += [(nB.Name,0)]
 
         return output
 
@@ -1184,7 +1124,27 @@ class PhyBo(Wordlist):
         Parameters
         ----------
         mode : string (default="weighted")
-            Select between "weighted" and "restriction".
+            Select between "weighted", "restriction" and "topdown". The three
+            modes refer to the following frameworks:
+
+            * "weighted" refers to the weighted parsimony framework described in
+              :evobib:`List2014b` and :evobib:`List2014a`. 
+              Weights are
+              specified with help of a ratio for the scoring of gain and loss
+              events. The ratio can be defined with help of the *ratio*
+              keyword.
+            * "restrictino" refers to a simple method in which only a 
+              specific amount of gain events
+              is allowed. The maximally allowed number of gain events can be
+              defined with help of the *restriction* keyword.
+            * "topdown" refers to the top-down method outlined in
+              :evobib:`Dagan2007` and first applied to linguistic data in
+              :evobib:`Nelson-Sathi2011`. This method also defines a maximal
+              number of gain events, but in contrast to the "restriction"
+              approach, it starts from the top of the tree and stops if the
+              maximal number of restrictions has been reached. The maximally
+              allowed number of gain events can, again, be specified with help
+              of the *restriction* keyword.
         ratio : tuple (default=(1,1))
             If "weighted" mode is selected, define the ratio between the
             weights for gains and losses.
@@ -1196,6 +1156,31 @@ class PhyBo(Wordlist):
             separate file in GML-format.
         tar : bool (default=False)
             If set to c{True}, the GML-files will be added to a compressed tar-file.
+        gpl : int (default=1)
+            Specifies the maximal number of gains per lineage. This parameter
+            specifies how cases should be handled in which a character is first
+            gained, then lost, and then gained again. By setting this parameter
+            to 1 (the default setting), such cases are prohibited, since only
+            one gain per lineage is allowed. 
+        missing_data : int (default=0)
+            Currently, we offer two ways to handle missing data. The first case
+            just treats missing data in the same way in which the absence of a
+            character is handled and can be evoked by setting this parameter to
+            0. The second case will treat missing data as either absent or
+            present characters, based on how well each option coincides with
+            the overall evolutionary scenario. This behaviour can be evoked by
+            setting this parameter to -1.
+        push_gains: bool (default=True)
+            In bottom-up calculations, there will often be multiple scenarios
+            upon which only one is selected by the method. In order to define
+            consistent criteria for scenario selection, we follow
+            :evobib:`Mirkin2003` in allowing to force the algorithm to prefer 
+            those scenarios in which gains are pushed to the leaves. This
+            behaviour is handle by this parameter. Setting it to *True* will
+            force the algorithm to push gain events to the leaves of the tree.
+            Setting it to *False* will force it to prefer those scenarios where
+            the gains are closer to the root.
+
 
         """
         if mode not in ['weighted','w','r','restriction','t','topdown']:
