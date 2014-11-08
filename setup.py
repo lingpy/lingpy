@@ -41,7 +41,7 @@ else:
     # make a specific directory for lingpy2
     this_version = "2"
 try:
-    from lingpy import *
+    from lingpy.settings import *
     rc(schema='asjp')
 except ValueError:
     from glob import glob
@@ -49,7 +49,7 @@ except ValueError:
     binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
     for binary_file in binary_files:
         os.remove(binary_file)
-    from lingpy import *
+    from lingpy.settings import *
     rc(schema='asjp')
 
 # set up extension modules
@@ -95,11 +95,9 @@ requires = [
     'numpy',
     'six',
     'networkx',
-    'appdirs',
-    #'regex',
-    #'matplotlib',
-    #'scipy',
-]
+    'appdirs'
+    ]
+    
 if sys.version_info < (3, 4):
     requires.append('pathlib')
 
@@ -143,6 +141,12 @@ setup(
             'data/models/*/INFO',
             'data/models/*/matrix',
             'data/models/*/scorer',
+            'data/models/dvt/diacritics',
+            'data/models/dvt/vowels',
+            'data/models/dvt/tones',
+            'data/models/dvt_el/diacritics',
+            'data/models/dvt_el/vowels',
+            'data/models/dvt_el/tones',
         ]
     },
     **extra)

@@ -15,9 +15,15 @@ import codecs
 from six import text_type as str
 from six import string_types
 
-from lingpy import cache
 from ..settings import rcParams
 from ..read.qlc import read_qlc
+
+# nasty hack to avoid that missing pathlib throws an error upon installation
+# will change it later to more proper style
+try:
+    from lingpy import cache
+except:
+    print(rcParams['W_missing_module'].format('pathlib'))
 
 from ..sequence.tokenizer import Tokenizer
 
