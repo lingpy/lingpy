@@ -10,7 +10,6 @@ __author__="Johann-Mattis List"
 __date__="2014-07-22"
 
 import os
-import pickle
 import codecs
 
 from six import text_type as str
@@ -28,32 +27,14 @@ class QLCParser(object):
     Basic class for the handling of text files in QLC format.
 
     """
-    def __init__(self, filename, conf='', **keywords):
-        assert filename
+    @staticmethod
+    def unpickle(filename):
+        return cache.load(filename)
 
-        if isinstance(filename, string_types) and cache.path(filename).exists():
-            if rcParams['verbose']:
-                print("[i] Loading pickled object.")
-
-            # set the attributes
-            for key, val in cache.load(filename).items():
-                setattr(self, key, val)
-
-            # reset the class attribute
-            self._class = dict(
-                [(key, eval(value)) for key, value in self._class_string.items()])
-        else:
-            self._init_first(filename, conf)
-
-    def _init_first(
-            self,
-            filename,
-            conf
-            ):
+    def __init__(self, filename, conf=''):
         """
         Parse data regularly if the data has not been loaded from a pickled version.
         """
-
         # try to load the data
         internal_import = False
 
@@ -85,10 +66,7 @@ class QLCParser(object):
         # or whether the data is an actual file
         elif os.path.isfile(filename):
             input_data = read_qlc(filename)
-            if filename[-3:].lower() in ['csv','qlc']:
-                self.filename = filename[:-4]
-            else:
-                self.filename = filename
+            self.filename = filename
         
         # raise an error otherwise
         elif isinstance(filename, string_types):
@@ -255,33 +233,60 @@ class QLCParser(object):
 
         return iter([key for key in self._data.keys()])
 
-    def _pickle(self, filename):
-        """
-        Store the current data in a pickled object.
-        """
-        d = {}
-        for key, value in self.__dict__.items():
-            if key not in ['_class']:
-                d[key] = value
-        d['__date__'] = rcParams['timestamp']
-        cache.dump(d, filename or self.filename)
-
     def pickle(self, filename=None):
         """
-        Store a dump of the data in a binary file.
+        Store the QLCParser instance in a pickle file.
 
         Notes
         -----
-        The function stores a binary file called ``FILENAME.bin`` with ``FILENAME``
-        corresponding to the name of the original CSV-file in the
+        The function stores a binary file called ``FILENAME.pkl`` with ``FILENAME``
+        corresponding to the name of the original file in the
         `user cache dir <https://github.com/ActiveState/appdirs#some-example-output>`_
-        for lingpy on your system. Instantiating the same
-        :py:class:`~lingpy.basic.wordlist.Wordlist` instance again will first
-        check for already compiled binary files and, if they are there, load
-        them instead of the CSV-file.
+        for lingpy on your system.
+        To restore the instance from the pickle call
+        :py:method:`~lingpy.basic.parser.QLCParser.unpickle`.
         """
+        cache.dump(self, filename or self.filename)
 
-        self._pickle(filename)
+    def add_entries(
+            self,
+            entry,
+            source,
+            function,
+            override=False,
+            **keywords
+    ):
+        """
+        Add new entry-types to the word list by modifying given ones.
+
+        Parameters
+        ----------
+        entry : string
+            A string specifying the name of the new entry-type to be added to the
+            word list.
+
+        source : string
+            A string specifying the basic entry-type that shall be modified. If
+            multiple entry-types shall be used to create a new entry, they
+            should be passed in a simple string separated by a comma.
+
+        function : function
+            A function which is used to convert the source into the target
+            value.
+
+        keywords : {dict}
+            A dictionary of keywords that are passed as parameters to the
+            function.
+
+        Notes
+        -----
+        This method can be used to add new entry-types to the data by
+        converting given ones. There are a lot of possibilities for adding new
+        entries, but the most basic procedure is to use an existing entry-type
+        and to modify it with help of a function.
+
+        """
+        self._add_entries(entry, source, function, override=override, **keywords)
 
     def _add_entries(
             self,
@@ -290,11 +295,7 @@ class QLCParser(object):
             function,
             override=False,
             **keywords
-            ):
-        """
-        Add new entry-types to the word list by modifying given ones.
-
-        """
+    ):
         # check for emtpy entries etc.
         if not entry:
             print("[i] Entry was not properly specified!")
@@ -424,46 +425,6 @@ class QLCParser(object):
 
                     # add
                     self[key][rIdx] = t
-
-    def add_entries(
-            self,
-            entry,
-            source,
-            function,
-            override=False,
-            **keywords
-            ):
-        """
-        Add new entry-types to the word list by modifying given ones.
-
-        Parameters
-        ----------
-        entry : string
-            A string specifying the name of the new entry-type to be added to the
-            word list.
-
-        source : string
-            A string specifying the basic entry-type that shall be modified. If
-            multiple entry-types shall be used to create a new entry, they
-            should be passed in a simple string separated by a comma.
-
-        function : function
-            A function which is used to convert the source into the target
-            value.
-
-        keywords : {dict}
-            A dictionary of keywords that are passed as parameters to the
-            function.
-
-        Notes
-        -----
-        This method can be used to add new entry-types to the data by
-        converting given ones. There are a lot of possibilities for adding new
-        entries, but the most basic procedure is to use an existing entry-type
-        and to modify it with help of a function.
-
-        """
-        self._add_entries(entry, source, function, override, **keywords)
 
     def _tokenize(
             self,

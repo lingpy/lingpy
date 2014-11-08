@@ -17,11 +17,7 @@ DIR = Path(user_cache_dir('lingpy'))
 def path(filename):
     if not isinstance(filename, Path):
         filename = Path(filename)
-
-    if filename.suffix.lower() in ['.qlc', '.csv']:
-        filename = Path(filename.stem + '.bin')
-
-    return DIR.joinpath(filename.name)
+    return DIR.joinpath(filename.name + '.pkl')
 
 
 def load(filename):

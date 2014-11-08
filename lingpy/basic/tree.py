@@ -169,11 +169,7 @@ class Tree(PhyloNode):
 
         return matrix
     
-    def createTransitionMatrix(self, states, tmat, random=True):
-        
-        # get number of states
-        unique_states = sorted(set(states))
-        
+    def createTransitionMatrix(self, states, tmat):
         max_state = max(states)
 
         matrix = []
@@ -183,5 +179,5 @@ class Tree(PhyloNode):
                 matrix += [states[counter]]
                 counter += 1
             else:
-                matrix += [[randint(0,max_state),randint(0,max_state)]]
+                matrix += [[random.randint(0, max_state), random.randint(0, max_state)]]
         return matrix

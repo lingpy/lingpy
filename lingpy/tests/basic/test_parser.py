@@ -16,7 +16,7 @@ class TestParser(TestCase):
 
         filename = 'lingpy_test.qlc'
         self.parser.pickle(filename=filename)
-        from_cache = QLCParser(filename)
+        from_cache = QLCParser.unpickle(filename)
         self.assertEqual(self.parser.header, from_cache.header)
         os.remove(str(path(filename)))
 
