@@ -134,6 +134,7 @@ class Model(object):
                     )
         else:
             new_path = os.path.join(path,model)
+
         self.name = model
         # check for converter
         if not os.path.isfile(os.path.join(new_path,'converter.bin')):

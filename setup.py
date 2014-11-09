@@ -40,17 +40,7 @@ if sys.version_info >= (3,):
 else:
     # make a specific directory for lingpy2
     this_version = "2"
-try:
-    from lingpy.settings import *
-    rc(schema='asjp')
-except ValueError:
-    from glob import glob
-    tmp_path = os.path.split(os.path.abspath(__file__))[0]
-    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
-    for binary_file in binary_files:
-        os.remove(binary_file)
-    from lingpy.settings import *
-    rc(schema='asjp')
+
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
@@ -150,3 +140,17 @@ setup(
         ]
     },
     **extra)
+
+if 'sdist' not in sys.argv:
+    from glob import glob
+    tmp_path = os.path.split(os.path.abspath(__file__))[0]
+    print(tmp_path)
+    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
+    for binary_file in binary_files:
+        print(binary_file)
+        os.remove(binary_file)
+    
+    sys.path = sorted(sys.path, reverse=True)
+    from lingpy import *
+    rc(schema = 'asjp')
+    print("[i] LingPy was successfully installed on your system.")
