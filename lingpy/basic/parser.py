@@ -1,4 +1,4 @@
-# author   : Johann-Mattis List
+# author   : Johann-Mattis List, Robert Forkel
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
 # modified : 2014-07-22 13:49
@@ -6,7 +6,7 @@
 Basic parser for text files in QLC format.
 """
 
-__author__="Johann-Mattis List"
+__author__="Johann-Mattis List, Robert Forkel"
 __date__="2014-07-22"
 
 import os

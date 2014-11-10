@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-08 17:30
-# modified : 2013-11-21 12:48
+# modified : 2014-11-10 09:56
 """
 Module for the derivation of sound class models.
 
@@ -16,7 +16,7 @@ access when loading the library, the models are compiled and stored in binary
 files.
 """
 __author__="Johann-Mattis List"
-__date__="2013-11-21"
+__date__="2014-11-10"
 
 
 import unicodedata
@@ -509,9 +509,6 @@ def compile_model(
     
     # dump the data
     cache.dump(sound_classes, model+'.converter')
-    #outfile = open(os.path.join(new_path,'converter.bin'),'wb')
-    #dump(sound_classes,outfile)
-    #outfile.close()
     print("... successfully created the converter.")
 
     # try to load the scoring function or the score tree
@@ -526,7 +523,6 @@ def compile_model(
         score_dict = _make_scoring_dictionary(score_tree)
 
         # make score_dict a ScoreDict instance
-
         chars = sorted(set([s[0] for s in score_dict.keys()]))
         matrix = [[0 for i in range(len(chars))] for j in
                 range(len(chars))]
@@ -550,11 +546,7 @@ def compile_model(
         f.close()
     
     if scorer:
-        # dump the data
         cache.dump(scorer, model+'.scorer')
-        #outfile = open(os.path.join(new_path,'scorer.bin'),'wb')
-        #dump(scorer,outfile)
-        #outfile.close()
         print("... successfully created the scorer.")
     else:
         print("... no scoring dictionary defined.")
@@ -624,6 +616,8 @@ def compile_dvt(path=''):
             ).read().replace('\n','')
     
     # normalize stuff
+    # TODO: this is potentially dangerous and it is important to decide whether
+    # TODO: switching to NFD might not be a better choice
     diacritics = unicodedata.normalize("NFC", diacritics)
     vowels = unicodedata.normalize("NFC", vowels)
     vowels = ''.join([v for v in vowels if v not in diacritics])
@@ -634,11 +628,7 @@ def compile_dvt(path=''):
     if path in ['evolaemp', 'el']:
         cache.dump(dvt, 'dvt_el')
     else:
-        print('dumpling')
         cache.dump(dvt, 'dvt')
-    #outfile = open(os.path.join(path,'dvt.bin'),'wb')
-    #dump(dvt,outfile)
-    #outfile.close()
 
     if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
 

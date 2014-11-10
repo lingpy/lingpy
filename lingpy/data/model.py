@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 23:14
-# modified : 2014-01-16 08:32
+# modified : 2014-11-10 09:57
 """
 Module for handling sequence models.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-01-16"
+__date__="2014-11-10"
 
 import re
 from pickle import load
@@ -24,6 +24,7 @@ from ..algorithm import misc
 from ..read import *
 from ..convert import *
 from .. import cache
+from ..compat import FileNotFoundError
 
 class Model(object):
     """
@@ -151,9 +152,8 @@ class Model(object):
         elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
             try:
                 self.scorer = cache.load(model+'.scorer')
-            except:
+            except FileNotFoundError:
                 pass
-
         # if none of the above fits, leave it
         else: 
             pass
