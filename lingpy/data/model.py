@@ -24,7 +24,7 @@ from ..algorithm import misc
 from ..read import *
 from ..convert import *
 from .. import cache
-from ..compat import FileNotFoundError
+from .. import compat
 
 class Model(object):
     """
@@ -152,7 +152,7 @@ class Model(object):
         elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
             try:
                 self.scorer = cache.load(model+'.scorer')
-            except FileNotFoundError:
+            except compat.FileNotFoundError:
                 pass
         # if none of the above fits, leave it
         else: 
