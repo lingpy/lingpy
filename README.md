@@ -1,6 +1,6 @@
 # LingPy
 
-Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg).
+Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), Robert Forkel ([Max Planck Institute for Evolutionary Anthropology](http://www.eva.mpg.de/)).
 
 LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also try to provide basic functionality for Python 2.
 
@@ -11,7 +11,7 @@ For a brief overview, see slides from Euroscipy 2012: (http://hprints.org/hprint
 
 Other relevant work related to the development of the library and research using it, include:
 
-* List, J. M. Forthcoming. Sequence comparison in historical linguistics. PhD dissertation, University of Düsseldorf.
+* List, J. M. 2014. [Sequence comparison in historical linguistics](http://sequencecomparison.github.io). Düsseldorf University Press: Düsseldorf.
 * List, J. M. 2012a. Multiple sequence alignment in historical linguistics: a sound class based approach. In Proceedings of Console IXX.
 * List, J. M. 2012b. SCA: Phonetic alignment based on sound classes. In New Directions in logic, language, and computation. Slavkovik, M. and D Lassiter (Eds.). Springer.
 * Prokic, J. and S. Moran. 2012. Black box approaches to genealogical classification and their shortcomings. To appear in Comparing Approaches to Measuring Linguistic Differences, Lars Borin and Anju Saxena (eds). Mouton De Gruyter. 
