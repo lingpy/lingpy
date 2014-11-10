@@ -24,11 +24,7 @@ from ..algorithm import misc
 from ..read import *
 from ..convert import *
 from .. import cache
-
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
+from ..compat import FileNotFoundError
 
 class Model(object):
     """
