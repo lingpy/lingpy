@@ -1,4 +1,4 @@
-# author   : Johann-Mattis List, Peter Bouda
+# author   : Johann-Mattis List, Peter Bouda, Robert Forkel
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-09-09 16:28
 # modified : 2014-11-05 23:38
@@ -6,7 +6,7 @@
 Setup-Script for LingPy
 """
 
-__author__="Johann-Mattis List,Peter Bouda"
+__author__="Johann-Mattis List, Peter Bouda, Robert Forkel"
 __date__="2014-11-05"
 
 
@@ -36,48 +36,36 @@ pkg_location = '.'
 
 if sys.version_info >= (3,):
     extra['use_2to3'] = False
-    this_version = "3"
-else:
-    # make a specific directory for lingpy2
-    this_version = "2"
-
 
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
-    if True: #this_version == "3":
-        if with_c:
-            extension_path = ['lingpy','algorithm','cython']
-            extension_prefix = os.path.join(*extension_path)
-            extension_modules = [
-                Extension(
-                    os.path.join('.'.join(extension_path),'calign'),
-                    [os.path.join(extension_prefix,'calign.c')]
-                    ),
-                Extension(
-                     os.path.join('.'.join(extension_path),'malign'),
-                    [os.path.join(extension_prefix,'malign.c')]
-                    ),
-                Extension(
-                    os.path.join('.'.join(extension_path),'talign'),
-                    [os.path.join(extension_prefix,'talign.c')]
-                    ),
-                Extension(
-                    os.path.join('.'.join(extension_path),'cluster'),
-                    [os.path.join(extension_prefix,'cluster.c')]
-                    ),
-                Extension(
-                    os.path.join('.'.join(extension_path),'misc'),
-                    [os.path.join(extension_prefix,'misc.c')]
-                    ),
-                ]
-        else:
-            extension_modules = []
-
+    if with_c:
+        extension_path = ['lingpy','algorithm','cython']
+        extension_prefix = os.path.join(*extension_path)
+        extension_modules = [
+            Extension(
+                os.path.join('.'.join(extension_path),'calign'),
+                [os.path.join(extension_prefix,'calign.c')]
+                ),
+            Extension(
+                 os.path.join('.'.join(extension_path),'malign'),
+                [os.path.join(extension_prefix,'malign.c')]
+                ),
+            Extension(
+                os.path.join('.'.join(extension_path),'talign'),
+                [os.path.join(extension_prefix,'talign.c')]
+                ),
+            Extension(
+                os.path.join('.'.join(extension_path),'cluster'),
+                [os.path.join(extension_prefix,'cluster.c')]
+                ),
+            Extension(
+                os.path.join('.'.join(extension_path),'misc'),
+                [os.path.join(extension_prefix,'misc.c')]
+                ),
+            ]
     else:
-
         extension_modules = []
-
-
 else:
     extension_modules = []
 
@@ -91,8 +79,9 @@ requires = [
 if sys.version_info < (3, 4):
     requires.append('pathlib')
 
-# make global name of this version
+# make global name of this version for convenience of modifying it
 thisversion = "2.4.dev"
+
 setup(
     name=pkgname,
     version=thisversion,
@@ -100,8 +89,8 @@ setup(
     package_dir=pkg_dir,
     install_requires=requires,
     tests_require=['regex', 'nltk', 'nose', 'coverage'],
-    author="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert",
-    author_email="mattis.list@uni-marburg.de,steven.moran@lmu.de",
+    author="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Robert Forkel",
+    author_email="mattis.list@uni-marburg.de",
     keywords=[
         "historical linguistics",
         "sequence alignment",
@@ -116,7 +105,7 @@ setup(
         "borrowing": ["matplotlib", "networkx", "scipy"]
     },
     include_package_data=True,
-    exclude_package_data={},  #{'':["*.bin"]},
+    exclude_package_data={}, 
     package_data={
         '': [
             'data/ipa/sampa.csv',
@@ -140,16 +129,3 @@ setup(
         ]
     },
     **extra)
-
-#if 'sdist' not in sys.argv:
-#    from glob import glob
-#    tmp_path = os.path.split(os.path.abspath(__file__))[0]
-#    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
-#    for binary_file in binary_files:
-#        print(binary_file)
-#        os.remove(binary_file)
-#    
-#    sys.path = sorted(sys.path, reverse=True)
-#    from lingpy import *
-#    rc(schema = 'asjp')
-#    print("[i] LingPy was successfully installed on your system.")
