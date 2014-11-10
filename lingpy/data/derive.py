@@ -19,66 +19,52 @@ __author__="Johann-Mattis List"
 __date__="2014-11-10"
 
 
-import unicodedata
-from pickle import dump
 import os
-import codecs
 
-# lingpy imports
 from ..settings import rcParams
 from ..algorithm import misc
 from ..convert.strings import scorer2str
 from ..read import *
 from .. import cache
+from .. import util
 
 try:
     import networkx as nx
 except ImportError:
     print(rcParams['W_missing_module'].format("networkx"))
 
+
+def _read(filename, normalize=None):
+    res = {}
+    for line in util.read_text_file(filename, normalize=normalize, lines=True):
+        k, v = line.strip().split(' : ')
+        res[k] = v.split(', ')
+    return res
+
+
 def _import_sound_classes(filename):
     """
     Function imports individually defined sound classes from a text file and 
     creates a replacement dictionary from these sound classes.
     """
-
-    infile = codecs.open(filename,'r','utf-8')
-    data = []
-    for line in infile:
-        data.append(
-                unicodedata.normalize('NFC', line.strip()).split(' : ')
-                )
-
-    sc_dict = {}
-    for el1,el2 in data:
-        sc_dict[el1] = el2.split(', ')
-
     sc_repl_dict = {}
-    
-    for key in sc_dict.keys():
-        for value in sc_dict[key]:
+    for key, values in _read(filename, normalize='NFC').items():
+        for value in values:
             if rcParams['debug']: print(value,key)
             sc_repl_dict[value] = key
 
     return sc_repl_dict
+
 
 def _import_score_tree(filename):
     """
     Function imports score trees for a given range of sound classes and
     converts them into a graph.
     """
-    infile = codecs.open(filename,'r','utf-8')
     graph = nx.DiGraph()
-    data = []
-    for line in infile:
-        data.append(line.strip().split(' : '))
-    score_tree = {}
-    for el1,el2 in data:
-        score_tree[el1] = el2.split(', ')
-    for key in score_tree.keys():
-        graph.add_node(key, val=score_tree[key][0])
-    for key in score_tree.keys():
-        for value in score_tree[key][1:]:
+    for key, values in _read(filename).items():
+        graph.add_node(key, val=values[0])
+        for value in values[1:]:
             if value != '-':
                 node,weight = value.split(':')
                 graph.add_edge(key,node,weight=int(weight))
@@ -383,16 +369,12 @@ def _export_score_dict(score_dict):
 
     @todo: This function can be better ported to another file.
     """
-    
     letters = list(set([key[0] for key in score_dict.keys()]))
-    outfile = codecs.open('score_dict.csv','w','utf-8')
-    outfile.write('\t'+'\t'.join(letters)+'\n')
-    for letter1 in letters:
-        outfile.write(letter1)
-        for letter2 in letters:
-            outfile.write('\t' + str(score_dict[(letter1,letter2)]))
-        outfile.write('\n')
-    outfile.close()
+    rows = [['+'] + letters]
+    for l1 in letters:
+        rows.append([l1] + [str(score_dict[(l1, l2)]) for l2 in letters])
+    util.write_text_file('score_dict.csv', '\n'.join('\t'.join(row) for row in rows))
+
 
 def compile_model(
         model,
@@ -541,10 +523,8 @@ def compile_model(
         scorer = misc.ScoreDict(chars,matrix)
         
         # create the matrix file
-        f = codecs.open(os.path.join(new_path,'matrix'),'w','utf-8')
-        f.write(scorer2str(scorer))
-        f.close()
-    
+        util.write_text_file(os.path.join(new_path,'matrix'), scorer2str(scorer))
+
     if scorer:
         cache.dump(scorer, model+'.scorer')
         print("... successfully created the scorer.")
@@ -577,7 +557,6 @@ def compile_dvt(path=''):
     lingpy.data.model.Model
     lingpy.data.derive.compile_model
     """
-    
     print("[i] Compiling diacritics and vowels...")
 
     # get the path to the models
@@ -596,34 +575,20 @@ def compile_dvt(path=''):
                 'dvt_el'
                 )
     else:
-        pass
+        file_path = path
 
-    diacritics = codecs.open(
-            os.path.join(file_path,'diacritics'),
-            'r',
-            'utf-8'
-            ).read().replace('\n','').replace('-','')
-    vowels = codecs.open(
-            os.path.join(file_path,'vowels'),
-            'r',
-            'utf-8'
-            ).read().replace('\n','')
+    def _read_string(name):
+        # normalize stuff
+        # TODO: this is potentially dangerous and it is important to decide whether
+        # TODO: switching to NFD might not be a better choice
+        return util.read_text_file(
+            os.path.join(file_path, name), normalize='NFC').replace('\n', '')
 
-    tones = codecs.open(
-            os.path.join(file_path,'tones'),
-            'r',
-            'utf-8'
-            ).read().replace('\n','')
-    
-    # normalize stuff
-    # TODO: this is potentially dangerous and it is important to decide whether
-    # TODO: switching to NFD might not be a better choice
-    diacritics = unicodedata.normalize("NFC", diacritics)
-    vowels = unicodedata.normalize("NFC", vowels)
-    vowels = ''.join([v for v in vowels if v not in diacritics])
-    tones = unicodedata.normalize("NFC", tones)
-    
-    dvt = (diacritics,vowels,tones)
+    diacritics = _read_string('diacritics').replace('-', '')
+    vowels = ''.join([v for v in _read_string('vowels') if v not in diacritics])
+    tones = _read_string('tones')
+
+    dvt = (diacritics, vowels, tones)
     
     if path in ['evolaemp', 'el']:
         cache.dump(dvt, 'dvt_el')
@@ -631,4 +596,3 @@ def compile_dvt(path=''):
         cache.dump(dvt, 'dvt')
 
     if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
-
