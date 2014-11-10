@@ -24,12 +24,6 @@ import codecs
 import re
 import sys
 
-# python 2.7 compatibility: see http://stackoverflow.com/a/21368622
-try:
-    FileNotFoundError
-except NameError:
-    FileNotFoundError = IOError
-
 from six import text_type
 
 # thirdparty imports
@@ -40,6 +34,7 @@ from ._phylogeny.utils import *
 from ._phylogeny._settings import rcParams
 from ..align.multiple import Multiple
 from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
+from ..compat import FileNotFoundError
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
