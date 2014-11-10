@@ -70,9 +70,8 @@ else:
     extension_modules = []
 
 requires = [
-    'numpy',
-    'six',
     'networkx',
+    'six',
     'appdirs'
     ]
     
@@ -126,6 +125,7 @@ setup(
             'data/models/dvt_el/diacritics',
             'data/models/dvt_el/vowels',
             'data/models/dvt_el/tones',
+            'data/swadesh/swadesh.qlc',
         ]
     },
     **extra)
