@@ -29,6 +29,7 @@ from ..settings import rcParams
 from ..algorithm import misc
 from ..convert.strings import scorer2str
 from ..read import *
+from .. import cache
 
 try:
     import networkx as nx
@@ -56,7 +57,7 @@ def _import_sound_classes(filename):
     
     for key in sc_dict.keys():
         for value in sc_dict[key]:
-            print(value,key)
+            if rcParams['debug']: print(value,key)
             sc_repl_dict[value] = key
 
     return sc_repl_dict
@@ -507,9 +508,10 @@ def compile_model(
     sound_classes = _import_sound_classes(os.path.join(new_path,'converter'))
     
     # dump the data
-    outfile = open(os.path.join(new_path,'converter.bin'),'wb')
-    dump(sound_classes,outfile)
-    outfile.close()
+    cache.dump(sound_classes, model+'.converter')
+    #outfile = open(os.path.join(new_path,'converter.bin'),'wb')
+    #dump(sound_classes,outfile)
+    #outfile.close()
     print("... successfully created the converter.")
 
     # try to load the scoring function or the score tree
@@ -549,9 +551,10 @@ def compile_model(
     
     if scorer:
         # dump the data
-        outfile = open(os.path.join(new_path,'scorer.bin'),'wb')
-        dump(scorer,outfile)
-        outfile.close()
+        cache.dump(scorer, model+'.scorer')
+        #outfile = open(os.path.join(new_path,'scorer.bin'),'wb')
+        #dump(scorer,outfile)
+        #outfile.close()
         print("... successfully created the scorer.")
     else:
         print("... no scoring dictionary defined.")
@@ -587,14 +590,14 @@ def compile_dvt(path=''):
 
     # get the path to the models
     if not path:
-        path = os.path.join(
+        file_path = os.path.join(
                 rcParams['_path'],
                 'data',
                 'models',
                 'dvt'
                 )
     elif path in ['evolaemp','el']:
-        path = os.path.join(
+        file_path = os.path.join(
                 rcParams['_path'],
                 'data',
                 'models',
@@ -604,18 +607,18 @@ def compile_dvt(path=''):
         pass
 
     diacritics = codecs.open(
-            os.path.join(path,'diacritics'),
+            os.path.join(file_path,'diacritics'),
             'r',
             'utf-8'
             ).read().replace('\n','').replace('-','')
     vowels = codecs.open(
-            os.path.join(path,'vowels'),
+            os.path.join(file_path,'vowels'),
             'r',
             'utf-8'
             ).read().replace('\n','')
 
     tones = codecs.open(
-            os.path.join(path,'tones'),
+            os.path.join(file_path,'tones'),
             'r',
             'utf-8'
             ).read().replace('\n','')
@@ -627,10 +630,15 @@ def compile_dvt(path=''):
     tones = unicodedata.normalize("NFC", tones)
     
     dvt = (diacritics,vowels,tones)
-
-    outfile = open(os.path.join(path,'dvt.bin'),'wb')
-    dump(dvt,outfile)
-    outfile.close()
+    
+    if path in ['evolaemp', 'el']:
+        cache.dump(dvt, 'dvt_el')
+    else:
+        print('dumpling')
+        cache.dump(dvt, 'dvt')
+    #outfile = open(os.path.join(path,'dvt.bin'),'wb')
+    #dump(dvt,outfile)
+    #outfile.close()
 
     if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
 

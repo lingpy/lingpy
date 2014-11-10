@@ -23,6 +23,7 @@ except ImportError:
 from ..algorithm import misc
 from ..read import *
 from ..convert import *
+from .. import cache
 
 class Model(object):
     """
@@ -136,19 +137,22 @@ class Model(object):
             new_path = os.path.join(path,model)
 
         self.name = model
-        # check for converter
-        if not os.path.isfile(os.path.join(new_path,'converter.bin')):
-            compile_model(model,path)
-        
-        self.converter = load(open(os.path.join(new_path,'converter.bin'),'rb'))
 
-        # check for scorer
+        # try to load the converter
+        try:
+            self.converter = cache.load(model+'.converter')
+        except: 
+            compile_model(model,path)
+            self.converter = cache.load(model+'.converter')
         
         # give always preference to scorer matrix files
         if os.path.isfile(os.path.join(new_path,'matrix')):
             self.scorer = read_scorer(os.path.join(new_path,'matrix'))
         elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
-            self.scorer = load(open(os.path.join(new_path,'scorer.bin'),'rb'))
+            try:
+                self.scorer = cache.load(model+'.scorer')
+            except:
+                pass
 
         # if none of the above fits, leave it
         else: 
@@ -221,29 +225,16 @@ def load_dvt(path=''):
     """
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
-    if not path:
-        pathx = os.path.join(
-                rcParams['_path'],
-                'data',
-                'models',
-                'dvt',
-                'dvt.bin'
-                )
-    elif path in ['el','evolaemp']:
-        pathx = os.path.join(
-                rcParams['_path'],
-                'data',
-                'models',
-                'dvt_el',
-                'dvt.bin'
-                )
+    # check for specific evolaemp path which sues asjp alphabet instead of IPA
+    if path in ['el','evolaemp']:
+        fn = 'dvt_el'
     else:
-        pass
+        fn = 'dvt'
     
     try:
-        dvt = load(open(pathx,'rb'))
+        dvt = cache.load(fn)
     except:
         compile_dvt(path)
-        dvt = load(open(pathx,'rb'))
+        dvt = cache.load(fn) 
     
     return dvt

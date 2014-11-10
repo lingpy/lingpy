@@ -141,16 +141,15 @@ setup(
     },
     **extra)
 
-if 'sdist' not in sys.argv:
-    from glob import glob
-    tmp_path = os.path.split(os.path.abspath(__file__))[0]
-    print(tmp_path)
-    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
-    for binary_file in binary_files:
-        print(binary_file)
-        os.remove(binary_file)
-    
-    sys.path = sorted(sys.path, reverse=True)
-    from lingpy import *
-    rc(schema = 'asjp')
-    print("[i] LingPy was successfully installed on your system.")
+#if 'sdist' not in sys.argv:
+#    from glob import glob
+#    tmp_path = os.path.split(os.path.abspath(__file__))[0]
+#    binary_files = glob(os.path.join(tmp_path,'lingpy','data','models','*','*.bin'))
+#    for binary_file in binary_files:
+#        print(binary_file)
+#        os.remove(binary_file)
+#    
+#    sys.path = sorted(sys.path, reverse=True)
+#    from lingpy import *
+#    rc(schema = 'asjp')
+#    print("[i] LingPy was successfully installed on your system.")
