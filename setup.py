@@ -70,8 +70,8 @@ else:
     extension_modules = []
 
 requires = [
-    #'networkx',
-    #'numpy',
+    'networkx',
+    'numpy',
     'six',
     'appdirs'
     ]
@@ -80,7 +80,7 @@ if sys.version_info < (3, 4):
     requires.append('pathlib')
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.4.2.dev"
+thisversion = "2.4.dev"
 
 setup(
     name=pkgname,
