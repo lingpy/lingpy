@@ -304,7 +304,7 @@ class NumpyDocString(object):
             elif section.startswith('.. index::'):
                 self['index'] = self._parse_index(section, content)
             elif section == 'See Also':
-                print(content)
+                #print(content)
                 self['See Also'] = self._parse_see_also(content)
             else:
                 self[section] = content

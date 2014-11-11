@@ -8,8 +8,8 @@ Functions
 
 .. autosummary::
 
-   ~lingpy.meaning.concept.spanish_swadesh_list
-   ~lingpy.meaning.concept.extract_component_as_wordlist
+   ~lingpy.meaning.concepts.spanish_swadesh_list
+   ~lingpy.meaning.concepts.extract_component_as_wordlist
 
 Classes
 -------

@@ -36,9 +36,7 @@ all LingPy modules:
        for this purpose.
 
 
-.. autofunction::
-
-    lingpy.settings.rc
+.. autofunction:: lingpy.settings.rc
 
 """
 

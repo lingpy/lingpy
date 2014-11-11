@@ -244,7 +244,7 @@ class QLCParser(object):
         `user cache dir <https://github.com/ActiveState/appdirs#some-example-output>`_
         for lingpy on your system.
         To restore the instance from the pickle call
-        :py:method:`~lingpy.basic.parser.QLCParser.unpickle`.
+        :py:meth:`~lingpy.basic.parser.QLCParser.unpickle`.
         """
         cache.dump(self, filename or self.filename)
 

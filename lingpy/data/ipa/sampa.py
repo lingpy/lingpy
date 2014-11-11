@@ -1,8 +1,12 @@
+import types
 
 from ...settings import *
 
 try:
     import regex as re
+    if not isinstance(re, types.ModuleType):
+        # this is the case when creating the docs!
+        raise ImportError
 except ImportError:
     import re
     print(rcParams['W_missing_module'].format('regex'))

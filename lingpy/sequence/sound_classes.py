@@ -304,7 +304,7 @@ def prosodic_string(
     """
     Create a prosodic string of the sonority profile of a sequence.
 
-    Paremeters
+    Parameters
     ----------
 
     seq : list

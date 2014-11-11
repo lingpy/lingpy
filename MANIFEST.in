@@ -4,4 +4,5 @@ recursive-include lingpy *.c *.pyx *.md
 recursive-include lingpy *.html *.css
 recursive-include lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
 include lingpy/data/swadesh/*.txt
+include lingpy/data/swadesh/*.qlc
 include lingpy/data/ipa/sampa.csv

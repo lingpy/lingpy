@@ -15,7 +15,7 @@ It will:
 .. [1] http://projects.scipy.org/numpy/wiki/CodingStyleGuidelines#docstring-standard
 
 """
-
+from six import text_type
 import sphinx
 
 if sphinx.__version__ < '1.0.1':
@@ -23,7 +23,6 @@ if sphinx.__version__ < '1.0.1':
 
 import os, re, pydoc
 from docscrape_sphinx import get_doc_object, SphinxDocString
-print("bla")
 
 from sphinx.util.compat import Directive
 import inspect
@@ -41,7 +40,7 @@ def mangle_docstrings(app, what, name, obj, options, lines,
         lines[:] = title_re.sub('', "\n".join(lines)).split("\n")
     else:
         doc = get_doc_object(obj, what, "\n".join(lines), config=cfg)
-        lines[:] = str(doc).split("\n")
+        lines[:] = text_type(doc).split("\n")
 
     if app.config.numpydoc_edit_link and hasattr(obj, '__name__') and \
            obj.__name__:

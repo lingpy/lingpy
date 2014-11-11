@@ -109,6 +109,7 @@ setup(
     package_data={
         '': [
             'data/ipa/sampa.csv',
+            'data/swadesh/swadesh.qlc',
             'data/orthography_profiles/*.prf',
             'tests/test_data/*.csv',
             'tests/test_data/*.qlc',

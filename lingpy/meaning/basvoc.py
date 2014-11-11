@@ -28,52 +28,52 @@ class BasVoc(QLCParser):
     --------
     Load a BasVoc object without arguments in order to get the default object::
     
-    >>> from lingpy.meaning import BasVoc
-    >>> concepticon = BasVoc()
+        >>> from lingpy.meaning import BasVoc
+        >>> concepticon = BasVoc()
     
-    Alternatively, load a pre-compiled object from LingPy:
+    Alternatively, load a pre-compiled object from LingPy::
     
-    >>> from lingpy.meaning import concepticon
+        >>> from lingpy.meaning import concepticon
     
     Retrieve all original words in Jachontov's list concept list::
     
-    >>> concepticon.get_list('jachontov','number','item')
-    [['94', 'water'],
-     ['25', 'eye'],
-     ['45', 'know'],
-     ['86', 'this'],
-     ['84', 'tail'],
-     ['87', 'thou'],
-     ['28', 'fire'],
-     ['89', 'tooth'],
-     ['63', 'one'],
-     ['32', 'full'],
-     ['59', 'new'],
-     ['42', 'I'],
-     ['96', 'what'],
-     ['82', 'sun'],
-     ['61', 'nose'],
-     ['37', 'hand'],
-     ['18', 'dog'],
-     ['24', 'egg'],
-     ['81', 'stone'],
-     ['88', 'tongue'],
-     ['54', 'moon'],
-     ['108', 'wind'],
-     ['98', 'who'],
-     ['104', 'salt'],
-     ['50', 'louse'],
-     ['91', 'two'],
-     ['29', 'fish'],
-     ['21', 'ear'],
-     ['41', 'horn'],
-     ['9', 'blood'],
-     ['17', 'die'],
-     ['110', 'year'],
-     ['57', 'name'],
-     ['10', 'bone'],
-     ['33', 'give']]
-    
+        >>> concepticon.get_list('jachontov','number','item')
+        [['94', 'water'],
+         ['25', 'eye'],
+         ['45', 'know'],
+         ['86', 'this'],
+         ['84', 'tail'],
+         ['87', 'thou'],
+         ['28', 'fire'],
+         ['89', 'tooth'],
+         ['63', 'one'],
+         ['32', 'full'],
+         ['59', 'new'],
+         ['42', 'I'],
+         ['96', 'what'],
+         ['82', 'sun'],
+         ['61', 'nose'],
+         ['37', 'hand'],
+         ['18', 'dog'],
+         ['24', 'egg'],
+         ['81', 'stone'],
+         ['88', 'tongue'],
+         ['54', 'moon'],
+         ['108', 'wind'],
+         ['98', 'who'],
+         ['104', 'salt'],
+         ['50', 'louse'],
+         ['91', 'two'],
+         ['29', 'fish'],
+         ['21', 'ear'],
+         ['41', 'horn'],
+         ['9', 'blood'],
+         ['17', 'die'],
+         ['110', 'year'],
+         ['57', 'name'],
+         ['10', 'bone'],
+         ['33', 'give']]
+
     """
 
     def __init__(

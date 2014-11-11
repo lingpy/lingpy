@@ -1,5 +1,0 @@
-numpy
-regex
-networkx
-matplotlib
-scipy

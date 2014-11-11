@@ -217,7 +217,7 @@ class Pairwise(object):
         factor : float (default = 0.3)
             The factor by which matches in identical prosodic position are
             increased.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             The restricted chars that function as an indicator of syllable or
             morpheme breaks for secondary alignment, see :evobib:`List2012c`
             for details.

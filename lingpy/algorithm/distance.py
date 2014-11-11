@@ -48,7 +48,7 @@ def jaccard(set1, set2):
     dividing the difference of the sizes of the union and the intersection 
     of two sets by the size of the union:
 
-    J(A,B) = 1 - J(A,B) = |A ∪ B| - |A ∩ B| / |A ∪ B|
+    J(A,B) = 1 - J(A,B) = \|A ∪ B\| - \|A ∩ B\| / \|A ∪ B\|
 
     Parameters
     ----------
