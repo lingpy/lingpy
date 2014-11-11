@@ -31,7 +31,7 @@ class BasVoc(QLCParser):
     >>> from lingpy.meaning import BasVoc
     >>> concepticon = BasVoc()
     
-    Alternatively, load a pre-compiled object from LingPy:
+    Alternatively, load a pre-compiled object from LingPy::
     
     >>> from lingpy.meaning import concepticon
     

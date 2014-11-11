@@ -84,7 +84,7 @@ def get_gls(
     """
     Calculate a gain-loss scenario. 
 
-    Paremeters
+    Parameters
     ----------
     paps : list
         A list containing the presence-absence patterns for all leaves of the

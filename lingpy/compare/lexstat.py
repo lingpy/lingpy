@@ -1131,8 +1131,8 @@ class LexStat(Wordlist):
         """
         Align all or some words of a given pair of languages.
 
-        Paramters
-        ---------
+        Parameters
+        ----------
         idxA,idxB : {int, str}
             Use an integer to refer to the words by their unique internal ID,
             use language names to select all words for a given language.

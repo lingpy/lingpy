@@ -884,7 +884,7 @@ class Wordlist(QLCParser):
         """
         Renumber a given set of string identifiers by replacing the ids by integers.
         
-        Paremeters
+        Parameters
         ----------
         source : str
             The source column to be manipulated.
