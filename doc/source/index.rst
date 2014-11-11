@@ -42,8 +42,13 @@ Python Library for Historical Linguistics
     </tr>
     <tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">October 13, 2014</td>
     </tr>
-    <tr class="field-even field"><th class="field-name">Authors:</th><td class="field-body">J.-M. List, S. Moran, P. Bouda, J. Dellert, and Taraka Rama </td>
+    <tr class="field-even field">
+      <th class="field-name">Authors:</th>
+      <td class="field-body">J.-M. List, S. Moran, P. Bouda, J. Dellert, Taraka Rama, and R. Forkel</td>
     </tr>
+    <tr class="field-even field">
+      <th class="field-name">Code:</th>
+      <td class="field-body"><a href="https://github.com/lingpy/lingpy">GitHub</a></td>
     </tr>
     </tbody>
     </table></td></tr>
@@ -51,5 +56,4 @@ Python Library for Historical Linguistics
    </tbody>
    </table>
   <br><br>
-
 

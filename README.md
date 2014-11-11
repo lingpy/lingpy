@@ -1,6 +1,8 @@
 # LingPy
 
-Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), Robert Forkel ([Max Planck Institute for Evolutionary Anthropology](http://www.eva.mpg.de/)).
+[![Build Status](https://travis-ci.org/lingpy/lingpy.svg?branch=master)](https://travis-ci.org/lingpy/lingpy)
+
+Authors: Johann-Mattis List, Steven Moran, Peter Bouda (Research Unit: [Quantitative Language Comparison](http://www.quanthistling.info/), University of Marburg), and Johannes Dellert (Research Unit: [EVOLAEMP](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html), University of Tübingen), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for Evolutionary Anthropology](http://www.eva.mpg.de/)).
 
 LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also try to provide basic functionality for Python 2.
 
@@ -25,59 +27,34 @@ $ cd lingpy
 $ python setup.py install
 ```
 
-Depending on which version of Python you have, these commands will either install the regular Python3 version of LingPy, or a Python2 version will be compiled automatically. In order to use the library, open Python2 or Python3 in your terminal and import LingPy as follows:
+In order to use the library, open Python2 or Python3 in your terminal and import LingPy as follows:
 ```python
 >>> from lingpy import *
 ```
 Note that, although this should now work withouth problems, there is a certain chance that you will need superuser rights the first time you use LingPy. During this first step (which should now already be handled by the setup-script), LingPy compiles some data and stores it as binary pickled objects. Once this has been done, superuser rights are no longer needed.
 
-## Setup for Development Version (Python3)
 
-To use the library in its pre-setup.py stage, git clone the library and put the library's "lingpy/lingpy" folder in your path (or Python path).
+## Contributing
 
-Alternatively (this is the recommended way!), you can make a symlink in your Python3 site-packages folder called "lingpy" and link it to "lingpy/lingpy". For example:
+LingPy development follows the model and workflow outlined here https://gun.io/blog/how-to-github-fork-branch-and-pull-request/
 
-  1. Start the Python interpreter (make sure you are using Python 3)
 
-     ```bash
-     $ python
-     ```
+### Setup for Development Version
 
-  2. At the prompt, locate the site-packages folder:
-
-     ```python
-     >>> import sys
-     >>> print(sys.path)
-     ['', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2', '/opt/local/Library/Frameworks/Python.framework/Versions/3.2/lib/python3.2/site-packages']
-     ```
-
-  3. Create the symlink (you may need sudo):
-
-     ```bash
-     ln -s /path/to/lingpy/lingpy /path/to/site-packages/symlink
-     ```
-
-  4. Test in interpreter:
-
-     ```bash
-     $ python
-     ```
-
-     ```python
-     >>> import lingpy
-     ```
-
-Note that we recommend to name the symlink differently if you want to use the regular LingPy version and the development version at the same time. All you have to do for this is to change the target name of the symbolic link (use, for example "lingpyd"). Having done so, you can use both the regular version that can be installed with the setup script, and the development version, even in the same scripts:
-```python
->>> from lingpyd import futurestuff
->>> from lingpy import stablestuff
+To install LingPy to hack on it, fork the repository, open a terminal and type:
+```bash
+$ git clone https://github.com/<your-github-user>/lingpy/
+$ cd lingpy
+$ python setup.py develop
 ```
+This will just put a symlink to the source code (i.e. to the ``lingpy`` package in the repository clone) in your python site-packages; thus you will be able edit the sources in the git clone and import the altered code just as the regular python package.
 
-## Coding Conventions
+
+### Coding Conventions
 
 In order to keep the code transparent even for multiple contributors, we opt for the following conventions.
 
-### Importing Modules
+#### Importing Modules
 
 When importing external Python modules, try to avoid 
 
@@ -113,7 +90,7 @@ Builtin-modules should be imported "as is", without using aliases.
 
 Please make sure to minimize wildcard imports in your code! Wildcard imports are useful in quick-and-dirty scripting, but not in general-purpose libraries. They make it more difficult to trace errors, and can also dramatically increase namespaces. If we load a specific module, we should always know what we want from this module (be it internal or external).
 
-### Template for Scripts
+#### Template for Scripts
 The first lines of the scripts in which we write the modules should more or less confirm to the following template:
 
 ```python
@@ -138,19 +115,22 @@ __date__="2013-07-10"
 - The commented line of author, email, etc. is not necessarily required, yet it may turn out usefull to keep a tracker on creation and modification of scripts, and text editors, such as VIM, modify such parts automatically.
 - Nevertheless, we should always provide author and date in Python style, just for being able to track down who has done what, and to help people using the library and running into bugs knowing whom to contact.
 
-### Writing tests
+#### Writing tests
 
 For our tests we use the [nose library](https://nose.readthedocs.org/en/latest/). To run the tests just enter the `lingpy` directory and call `nosetests` or `nosetests.exe` on the command line. *Please do not commit any changes without all tests running without failure or error.*
 
-All our tests are in a directory `tests` within the `lingpy` directory (the latter we will call "source directory" from now on). The `tests` directory mirrors the folder structure of the source directory, i.e. for each directory in the source directory there is a directory in the `tests` directory. For each Python source file in the source directory there is a test file with a prefix "test_". For example, the tests for the module `basic.dictionary`, which has its source in `basic/dictionary.py`, are located in `tests/basic/test_dictionary.py`. Within the test files there is a class defined for each class in the original source files, with a prefix "Test". For example, there is a class `TestDictionary` defined in `test_dictionary.py`, as there is a class `Dictionary` in `dictionary.py`. For each method of a class the test class has a method with the prefix "test_". For example, the method `tokenize()` of the `Dictionary` class is tested with the method `test_tokenize()` of the test class. You may implement a method `setup()` in the test class to initialize the class you want to test, to load data or do other things that are common for all tests. As an example here is one of the tests of the `Dictionary` class:
+All our tests are in a directory `tests` within the `lingpy` directory (the latter we will call "source directory" from now on). The `tests` directory mirrors the folder structure of the source directory, i.e. for each directory in the source directory there is a directory in the `tests` directory. For each Python source file in the source directory there is a test file with a prefix "test_". For example, the tests for the module `basic.dictionary`, which has its source in `basic/dictionary.py`, are located in `tests/basic/test_dictionary.py`. Within the test files there is a class defined for each class in the original source files, with a prefix "Test". For example, there is a class `TestDictionary` defined in `test_dictionary.py`, as there is a class `Dictionary` in `dictionary.py`. For each method of a class the test class has a method with the prefix "test_". For example, the method `tokenize()` of the `Dictionary` class is tested with the method `test_tokenize()` of the test class. You may implement a method `setUp()` in the test class to initialize the class you want to test, to load data or do other things that are common for all tests. As an example here is one of the tests of the `Dictionary` class:
 
 ```python
+import unittest
 
-class TestDictionary:
+from lingpy.tests.util import test_data
 
-    def setup(self):
-        self.dictionary = Dictionary(os.path.join(os.path.dirname( __file__ ),
-            '..', 'test_data', 'leach1969-67-161.csv'))
+
+class TestDictionary(unittest.TestCase):
+
+    def setUp(self):
+        self.dictionary = Dictionary(test_data('leach1969-67-161.csv'))
 
     def test_tokenize(self):
         self.dictionary.tokenize()
@@ -160,7 +140,7 @@ class TestDictionary:
 
 If all the prefixes are used correctly, then nose will automatically find and execute all the tests.
 
-## Dependencies
+### Dependencies
 
 Generally, we try to avoid too many dependencies for the creation of LingPy. Without certain modules, however, it 
 is difficult to get along without third party libraries. In order to minimize the dependencies,
@@ -174,24 +154,22 @@ party libraries:
 Furthermore, we may conduct temporary forks of libraries that are needed for certain tasks but are not yet available in Python3, 
 such as PyCogent (http://pycogent.org/) of which we included some parts in the thirdparty module.
 
-### Indispensable Libraries
+#### Indispensable Libraries
 
 * NumPy: http://numpy.org/
 * Regex: http://pypi.python.org/pypi/regex
 
-### Recommended Libraries
+#### Recommended Libraries
 
 * SciPy: http://scipy.org/
 * Networkx: http://networkx.github.com/
 * Matplotlib: http://matplotlib.org/
 
-### Specific Libraries
+#### Specific Libraries
 
 * Basemap: https://github.com/matplotlib/basemap/
 
-## Creating the Documentation
-
-Creating our documentation is not straightforward at the moment. The problem here is that Sphinx, the tool we use to produce documentation is not bugfree in Python3 versions.
+### Creating the Documentation
 
 Currently, documentation is created using the following steps:
 
@@ -205,9 +183,9 @@ Currently, documentation is created using the following steps:
   ```
   
   This creates specific documentation for all the LingPy package, structured with respect to the modules in LingPy.
-* run the sphinx build as described on the sphinx website at http://sphinx-doc.org.
-
-
-
-
+* run the sphinx build as described on the sphinx website at http://sphinx-doc.org, e.g. on Linux or Mac OSX running
+  ```bash
+  $ cd doc
+  $ make html
+  ```
 
