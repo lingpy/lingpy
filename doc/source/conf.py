@@ -16,7 +16,15 @@ import sys, os
 
 import mock
 
-MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'networkx']
+MOCK_MODULES = [
+    'numpy', 
+    'scipy', 
+    'matplotlib', 
+    'networkx',
+    'numpy.testing',
+    'scipy.spatial.distance',
+    'scipy.cluster.hierarchy',
+    'scipy.stats']
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.Mock()
 
