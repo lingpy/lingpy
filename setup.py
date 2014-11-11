@@ -70,7 +70,7 @@ else:
     extension_modules = []
 
 requires = [
-    #'numpy',
+    'numpy',
     'six',
     'networkx',
     'appdirs'
