@@ -184,7 +184,8 @@ Currently, documentation is created using the following steps:
   
   This creates specific documentation for all the LingPy package, structured with respect to the modules in LingPy.
 * run the sphinx build as described on the sphinx website at http://sphinx-doc.org, e.g. on Linux or Mac OSX running
-  ```bash
+
+  ```
   $ cd doc
   $ make html
   ```
