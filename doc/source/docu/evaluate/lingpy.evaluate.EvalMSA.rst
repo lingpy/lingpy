@@ -1,7 +1,7 @@
 lingpy.evaluate.EvalMSA
 =======================
 
-.. currentmodule:: lingpy.evaluate
+.. currentmodule:: lingpy.evaluate.apa
 
 .. autoclass:: EvalMSA
 

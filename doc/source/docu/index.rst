@@ -67,7 +67,6 @@ Evaluation
    evaluate/acd
    evaluate/alr
    evaluate/apa
-   test/lingpy
 
 What's Next?
 ------------

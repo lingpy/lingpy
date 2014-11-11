@@ -367,12 +367,12 @@ class TreeNode(object):
                 stack.extend(curr.Children[::-1])   #20% faster than reversed    
     def postorder(self, include_self=True):
         """Performs postorder iteration over tree.
-        
+ 
         This is somewhat inelegant compared to saving the node and its index
         on the stack, but is 30% faster in the average case and 3x faster in
         the worst case (for a comb tree).
 
-        Zongzhi Liu's slower but more compact version is:
+        Zongzhi Liu's slower but more compact version is::
 
         def postorder_zongzhi(self):
             stack = [[self, 0]]
