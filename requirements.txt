@@ -1,8 +1,0 @@
-six
-pathlib
-appdirs
-regex
-numpy
-networkx
-matplotlib
-scipy
