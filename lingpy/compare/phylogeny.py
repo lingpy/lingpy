@@ -34,7 +34,7 @@ from ._phylogeny.utils import *
 from ._phylogeny._settings import rcParams
 from ..align.multiple import Multiple
 from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
-from ..compat import FileNotFoundError
+from .. import compat
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
@@ -415,7 +415,7 @@ class PhyBo(Wordlist):
             print(rcParams['W_deprecation'].format('csv','qlc'))
             infile = self.dataset+'.csv'
         else:
-            raise FileNotFoundError("The input file could not be found.")
+            raise compat.FileNotFoundError("The input file could not be found.")
         Wordlist.__init__(self,infile,row='concept',col='doculect')
         
         if rcParams["verbose"]: print("[i] Loaded the wordlist file.")
