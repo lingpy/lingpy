@@ -17,8 +17,11 @@ import sys, os
 import mock
 
 MOCK_MODULES = [
+    'regex',
+    'nltk',
     'numpy', 
     'scipy', 
+    'lingpy.plugins',
     'matplotlib', 
     'networkx',
     'numpy.testing',
