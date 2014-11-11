@@ -22,6 +22,7 @@ MOCK_MODULES = [
     'numpy', 
     'scipy', 
     'lingpy.plugins',
+    'lingpy.algorithm.extra',
     'matplotlib', 
     'networkx',
     'numpy.testing',
