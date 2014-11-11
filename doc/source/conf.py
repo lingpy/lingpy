@@ -24,6 +24,8 @@ MOCK_MODULES = [
     'lingpy.plugins',
     'lingpy.algorithm.extra',
     'matplotlib', 
+    'matplotlib.pyplot',
+    'mpl_toolkits',
     'mpl_toolkits.mplot3d',
     'mpl_toolkits.basemap',
     'networkx',
