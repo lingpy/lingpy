@@ -32,6 +32,17 @@ from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
+from .. import util
+
+
+def _write_file(filename, content, ext=None):
+    if ext:
+        filename = filename + '.' + ext
+    util.write_text_file(filename, content)
+
+    # display file-write-message
+    if rcParams['verbose']:
+        print(rcParams['M_file_written'].format(filename))
 
 
 class Wordlist(QLCParser):
@@ -969,7 +980,7 @@ class Wordlist(QLCParser):
         if fileformat in ['triple','triples','triples.tsv']:
             tsv2triple(self, keywords['filename']+'.'+fileformat)
 
-        if fileformat in ['paps.nex','paps.csv']:
+        elif fileformat in ['paps.nex','paps.csv']:
             paps = self.get_paps(
                     ref=keywords['ref'],
                     entry=keywords['entry'],
@@ -990,21 +1001,19 @@ class Wordlist(QLCParser):
                         )
         
         # simple printing of taxa
-        if fileformat == 'taxa':
+        elif fileformat == 'taxa':
             if hasattr(self,'taxa'):
                 out = ''
                 for taxon in self.taxa:
                     out += taxon + '\n'
-                f = codecs.open(keywords['filename'] + '.taxa','w','utf-8')
-                f.write(out)
-                f.close()
+                util.write_text_file(keywords['filename'] + '.taxa', out)
             else:
                 raise ValueError(
                         "[i] Taxa are not available."
                         )
         
         # csv-output
-        if fileformat in ['csv','qlc','tsv']:
+        elif fileformat in ['csv','qlc','tsv']:
             if fileformat == 'csv':
                 print(rcParams['W_deprecation'].format('csv','qlc'))
             
@@ -1078,32 +1087,20 @@ class Wordlist(QLCParser):
                         )
         
         # output dst-format (phylip)
-        if fileformat == 'dst':
-
+        elif fileformat == 'dst':
             # check for distances as keyword
             if 'distances' not in self._meta:
                 self._meta['distances'] = wl2dst(self,**keywords)
             
             # write data to file
-            filename = keywords['filename']
-            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
             out = matrix2dst(
                     self._meta['distances'],
                     self.taxa,
                     stamp=keywords['stamp']
                     )
-            f.write(out)
-            f.close()
-
-            # display file-write-message
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-        
+            _write_file(keywords['filename'], out, fileformat)
         # output tre-format (newick)
-        if fileformat in ['tre','nwk']: #,'cluster','groups']:
-            
-            # XXX bad line, just for convenience at the moment
-            filename = keywords['filename']
-            
+        elif fileformat in ['tre','nwk']: #,'cluster','groups']:
             if 'tree' not in self._meta:
             
                 # check for distances
@@ -1125,16 +1122,9 @@ class Wordlist(QLCParser):
             else:
                 tree = self._meta['tree']
 
-            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
-            f.write('{0}'.format(tree))
-            f.close()
+            _write_file(keywords['filename'], '{0}'.format(tree), fileformat)
 
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-
-        if fileformat in ['cluster','groups']:
-
-            filename = keywords['filename']
-            
+        elif fileformat in ['cluster','groups']:
             if 'distances' not in self._meta:
                 
                 self._meta['distances'] = wl2dst(self) # check for keywords
@@ -1145,47 +1135,42 @@ class Wordlist(QLCParser):
                         self._meta['distances'],
                         self.taxa
                         )
+            lines = []
+            for taxon, group in sorted(self._meta['groups'].items(), key=lambda x: x[0]):
+                lines.append('{0}\t{1}'.format(taxon, group))
+            _write_file(keywords['filename'], '\n'.join(lines), fileformat)
 
-            f = codecs.open(filename+'.'+fileformat,'w','utf-8')
-            for taxon,group in sorted(self._meta['groups'].items(),key=lambda x:x[0]):
-                f.write('{0}\t{1}\n'.format(taxon,group))
-            f.close()
-
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-
-        if fileformat in ['starling','star.csv']:
-
+        elif fileformat in ['starling','star.csv']:
             # make lambda inline for data-check
             l = lambda x: ['-' if x == 0 else x][0]
 
-            fileformat = 'starling_'+keywords['entry']+'.csv'
-
-            f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
+            lines = []
             if 'cognates' not in keywords:
-                f.write('ID\tConcept\t'+'\t'.join(self.taxa)+'\n')
-                for i,concept in enumerate(self.concepts):
-                    lines = self.get_list(row=concept,entry=keywords['entry'])
-                    for line in lines:
-                        f.write(str(i+1)+'\t'+concept+'\t'+'\t'.join([l(t) for t in line])+'\n')
+                lines.append('ID\tConcept\t'+'\t'.join(self.taxa))
+                for i, concept in enumerate(self.concepts):
+                    for line in self.get_list(row=concept,entry=keywords['entry']):
+                        lines.append(
+                            str(i+1)+'\t'+concept+'\t'+'\t'.join([l(t) for t in line]))
             else:
-                f.write('ID\tConcept\t'+'\t'.join(['{0}\t COG'.format(t) for t
-                    in self.taxa])+'\n')
-                for i,concept in enumerate(self.concepts):
-                    lines = self.get_list(row=concept,entry=keywords['entry'])
+                lines.append(
+                    'ID\tConcept\t'+'\t'.join(['{0}\t COG'.format(t) for t in self.taxa]))
+                for i, concept in enumerate(self.concepts):
                     cogs = self.get_list(row=concept,entry=keywords['cognates'])
-                    for j,line in enumerate(lines):
-                        f.write(str(i+1)+'\t'+concept+'\t')
-                        f.write('\t'.join('{0}\t{1}'.format(l(a),b) for a,b in
-                            zip(line,cogs[j]))+'\n')
-            f.close()
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+                    for j,line in enumerate(self.get_list(row=concept,entry=keywords['entry'])):
+                        part = '\t'.join('{0}\t{1}'.format(l(a),b) for a,b in zip(line,cogs[j]))
+                        lines.append(str(i+1)+'\t'+concept+'\t'+part)
 
-        if fileformat == 'separated':
+            _write_file(
+                keywords['filename'],
+                '\n'.join(lines),
+                'starling_' + keywords['entry'] + '.csv')
+
+        elif fileformat == 'separated':
             if not os.path.isdir(keywords['filename']):
                 os.mkdir(keywords['filename'])
 
             for l in self.cols:
-                f = codecs.open('{0}/{1}.tsv'.format(keywords['filename'],l),'w','utf-8')
+                lines = []
                 for key in self.get_list(col=l,flat=True):
                     line = [key]
                     for entry in keywords['entries']:
@@ -1194,12 +1179,11 @@ class Wordlist(QLCParser):
                             tmp = ' '.join([str(x) for x in tmp])
                         
                         line += [tmp]
-                    f.write(
-                            '\t'.join(
-                                '{0}'.format(x) for x in line
-                                )+'\n'
-                            )
-                f.close()
+                    lines.append('\t'.join('{0}'.format(x) for x in line))
+                _write_file(
+                    '{0}/{1}.tsv'.format(keywords['filename'], l),
+                    '\n'.join(lines),
+                    'tsv')
 
     def output(
             self,
@@ -1369,25 +1353,10 @@ class Wordlist(QLCParser):
                     tmp = pointer[idx-1][0]
                     del pointer[idx]
     
-        # load the template
-        if template:
-            tmpl = codecs.open(template,'r','utf-8').read()
-        else:
-            tmpl = '{0}'
-        
-        # open outfile
-        f = codecs.open(keywords['filename']+'.'+fileformat,'w','utf-8')
         if fileformat == 'tex':
-            f.write(tmpl.format(out_string.replace('_',r'\_')))
-        else:
-            f.write(tmpl.format(out_string))
-        f.close()
-        if rcParams['verbose']: 
-            print(
-                    rcParams['M_file_written'].format(
-                        keywords['filename']+'.'+fileformat
-                        )
-                )
+            out_string = out_string.replace('_', r'\_')
+        tmpl = util.read_text_file(template) if template else '{0}'
+        _write_file(keywords['filename'], tmpl.format(out_string), fileformat)
 
     def export(
             self,

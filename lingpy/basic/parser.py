@@ -10,7 +10,6 @@ __author__="Johann-Mattis List, Robert Forkel"
 __date__="2014-07-22"
 
 import os
-import codecs
 
 from six import text_type as str
 from six import string_types
@@ -18,6 +17,7 @@ from six import string_types
 from ..settings import rcParams
 from ..read.qlc import read_qlc
 from .. import cache
+from .. import util
 
 from ..sequence.tokenizer import Tokenizer
 
@@ -79,11 +79,8 @@ class QLCParser(object):
             conf = os.path.join(rcParams['_path'],'data','conf','qlc.rc')
 
         # read the file defined by its path in conf
-        rcf = codecs.open(conf,'r','utf-8')
-        tmp = [line.strip('\n\r').split('\t') for line in rcf if not
-                line.startswith('#') and line.strip('\n\r')]
-        rcf.close()
-        
+        tmp = [line.split('\t') for line in util.read_config_file(conf)]
+
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
         self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}

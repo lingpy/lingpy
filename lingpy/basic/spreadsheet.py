@@ -8,7 +8,6 @@ __date__="2013-07"
 # external imports
 import sys 
 import copy
-import codecs
 import operator
 import unicodedata
 import collections
@@ -22,6 +21,7 @@ from ..settings import rcParams
 from ..sequence.ngram import *
 from ..read.csv import *
 from ..convert import *
+from .. import util
 
 
 class Spreadsheet:
@@ -230,22 +230,15 @@ class Spreadsheet:
                 print("[i] There is no blacklist specified at the follow file path location. Proceeding without blacklist.")
             return
 
-        blacklist_file = codecs.open(self.blacklist, "r", "utf-8")
         # loop through the blacklist file and compile the regexes
         rules = []
         replacements = []
-        for line in blacklist_file:
-            line = line.strip()
-            # skip any comments
-            if line.startswith("#") or line == "":
-                continue
-            line = unicodedata.normalize("NFD", line)
+        for line in util.read_config_file(self.blacklist, normalize='NFD'):
             rule, replacement = line.split(",,,") # black list regexes must be triple-comma delimited
             rule = rule.strip() # just in case there's trailing whitespace
             replacement = replacement.strip() # because there's probably trailing whitespace!
             rules.append(re.compile(rule))
             replacements.append(replacement)
-        blacklist_file.close()
 
         # blacklist the spreadsheet data - don't skip the header row, since
         # this may also contain blacklist information (as in Matthias' case)

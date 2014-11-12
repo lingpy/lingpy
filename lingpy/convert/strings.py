@@ -5,6 +5,7 @@
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
+from __future__ import unicode_literals
 
 __author__="Johann-Mattis List"
 __date__="2014-06-05"
