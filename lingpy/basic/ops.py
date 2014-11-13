@@ -5,20 +5,23 @@
 """
 Module provides basic operations on Wordlist-Objects.
 """
+from __future__ import unicode_literals, print_function, absolute_import, division
 
 __author__="Johann-Mattis List"
 __date__="2014-09-11"
 
 # external imports
-import re
 import json
-import codecs
 import unicodedata
+
+from six import text_type
 
 # internal imports
 from ..settings import rcParams
 from ..convert.strings import matrix2dst, scorer2str, msa2str, pap2nex, pap2csv
 from ..algorithm import clustering
+from .. import util
+
 
 def wl2dst(
         wl, # wordlist object
@@ -381,7 +384,7 @@ def wl2qlc(
 
     for k,v in meta.items():
         # simple key-value-pairs
-        if type(v) in [str,int] or k == "tree":
+        if type(v) in [text_type,int] or k == "tree":
             kvpairs[k] = v
         elif k == 'msa' and k not in keywords['ignore']:
             # go a level deeper, checking for keys
@@ -485,7 +488,7 @@ def wl2qlc(
                 formatter = line[idx]
 
         # add the key 
-        out += str(key)
+        out += text_type(key)
         
         # add the rest of the values
         for value in line:
@@ -493,22 +496,20 @@ def wl2qlc(
                 try:
                     out += '\t'+' '.join(value)
                 except:
-                    out += '\t'+' '.join([str(v) for v in value])
+                    out += '\t'+' '.join([text_type(v) for v in value])
             elif type(value) == int:
-                out += '\t'+str(value)
+                out += '\t'+text_type(value)
             elif type(value) == float:
                 out += '\t{0:.4f}'.format(value)
             else:
                 out += '\t'+value
         out += '\n'
 
-    f = codecs.open(filename +'.'+ keywords['fileformat'],'w','utf-8')
-    f.write(unicodedata.normalize("NFC", out))
-    if "stamp" in keywords:
-        f.write(keywords['stamp'])
-    f.close()
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+keywords['fileformat']))
-
+    path = filename + '.' + keywords['fileformat']
+    util.write_text_file(
+        path, unicodedata.normalize("NFC", out) + keywords.get('stamp', ''))
+    if rcParams['verbose']:
+        print(rcParams['M_file_written'].format(path))
     return                 
 
 def wl2csv(
@@ -524,7 +525,7 @@ def wl2csv(
     return wl2qlc(header,data,filename,formatter,**keywords)
 
 
-def tsv2triple(wordlist, outfile):
+def tsv2triple(wordlist, outfile=None):
     """
     Function converts a wordlist to a triple data structure.
 
@@ -545,14 +546,13 @@ def tsv2triple(wordlist, outfile):
             tstore += [(key,head.upper(),wordlist[key,head])]
 
     if outfile:
-        with open(outfile, 'w') as f:
-            out = ''
-            for a,b,c in tstore:
-                if type(c) == list:
-                    c = ' '.join([str(x) for x in c])
-                if c != '-':
-                    out += '{0}\t{1}\t{2}\n'.format(a, b, c)
-            f.write(unicodedata.normalize("NFC", out))
+        out = ''
+        for a, b, c in tstore:
+            if type(c) == list:
+                c = ' '.join([text_type(x) for x in c])
+            if c != '-':
+                out += '{0}\t{1}\t{2}\n'.format(a, b, c)
+        util.write_text_file(outfile, out, normalize='NFC')
     else:
         return tstore
 
@@ -565,19 +565,18 @@ def triple2tsv(infile, output="table"):
     idxs = set([])
     cols = set([])
 
-    with open(infile) as f:
-        for line in f:
-            a,b,c = line.strip().split('\t')
+    for line in util.read_text_file(infile, lines=True):
+        a,b,c = line.strip().split('\t')
+        try:
+            D[a][b] = c
+        except KeyError:
             try:
-                D[a][b] = c
+                D[a] = {b:c}
             except KeyError:
-                try:
-                    D[a] = {b:c}
-                except KeyError:
-                    D = {a:{b:c}}
+                D = {a:{b:c}}
 
-            idxs.add(a)
-            cols.add(b)            
+        idxs.add(a)
+        cols.add(b)
     
     idxs = sorted(idxs)
     cols = sorted(cols)
@@ -603,6 +602,3 @@ def triple2tsv(infile, output="table"):
     
     else:
         return output_table
-
-
-

@@ -10,12 +10,13 @@ __author__="Johann-Mattis List"
 __date__="2014-08-26"
 
 import json
-import codecs
 
 from ..settings import rcParams
 from ..align.sca import Alignments
 from ..align._align.confidence import *
 from ..compare.lexstat import LexStat
+from .. import util
+
 
 class Workflow(object):
     """
@@ -85,8 +86,7 @@ class Workflow(object):
         self.lex = LexStat(self.infile, **kw)
 
         # reset filename if it is not defined
-        if not kw['outfile']:
-            kw['outfile'] = self.lex.filename+'_lingpy'
+        kw['outfile'] = kw['outfile'] or self.lex.filename + '_lingpy'
 
         # check for traditional lexstat analysis
         if kw['cognate_method'] == 'lexstat':
@@ -104,10 +104,8 @@ class Workflow(object):
         
         # align the data
         self.alms = Alignments(self.lex,**kw)
-        if kw['cognate_method'] == 'lexstat':
-            kw['scoredict'] = self.lex.cscorer
-        else:
-            kw['scoredict'] = self.lex.bscorer
+        kw['scoredict'] = self.lex.cscorer \
+            if kw['cognate_method'] == 'lexstat' else self.lex.bscorer
 
         self.alms.align(
                 method = kw['align_method'],
@@ -171,31 +169,15 @@ class Workflow(object):
                 
                 tpath = rcParams['template_path']
 
-                if 'remote' in kw['export']:
-                    template = codecs.open(tpath+'jcov.remote.html','r','utf-8')
-                else:
-                    template = codecs.open(tpath+'jcov.direct.html','r','utf-8')
-                
-                content = template.read()
-                
-                # load the other templates
-                style = codecs.open(tpath+'jcov.css','r','utf-8')
-                vendor = codecs.open(tpath+'jcov.vendor.js','r','utf-8')
-                jcov = codecs.open(tpath+'jcov.js','r','utf-8')
-                dighl = codecs.open(tpath+'jcov.dighl.js','r','utf-8')
+                tname = 'jcov.{0}.html'.format(
+                    'remote' if 'remote' in kw['export'] else 'direct')
+                content = util.read_text_file(tpath + tname)
 
-                out = codecs.open(kw['outfile']+'.html','w','utf-8')
-                out.write(content.format(
-                    CORRS=txt,
-                    JCOV=jcov.read(),
-                    STYLE=style.read(),
-                    VENDOR=vendor.read(),
-                    DIGHL=dighl.read()
-                    ))
-                out.close()
-                dighl.close()
-                vendor.close()
-                style.close()
-                jcov.close()
-                template.close()
-
+                util.write_text_file(
+                    kw['outfile'] + '.html',
+                    content.format(
+                        CORRS=txt,
+                        JCOV=util.read_text_file(tpath + 'jcov.js'),
+                        STYLE=util.read_text_file(tpath + 'jcov.css'),
+                        VENDOR=util.read_text_file(tpath + 'jcov.vendor.js'),
+                        DIGHL=util.read_text_file(tpath + 'jcov.dighl.js')))

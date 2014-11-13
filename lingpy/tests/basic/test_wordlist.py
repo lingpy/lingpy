@@ -125,30 +125,10 @@ class TestWordlist:
                 'test'
                 )
         
-        try:
-            self.wordlist.output('taxa', filename=fn)
-            assert True
-        except:
-            assert False
-        try:
-            self.wordlist.output('tre', filename=fn)
-            assert True
-        except:
-            assert False
-        try:
-            self.wordlist.output('dst', filename=fn)
-            assert True
-        except:
-            assert False
-        try:
-            self.wordlist.output('starling', filename=fn, ref='word')
-            assert True
-        except:
-            assert False
-        try:
-            self.wordlist.output('paps.nex', filename=fn)
-            self.wordlist.output('paps.csv', filename=fn)
-            assert True
-        except:
-            assert False
+        self.wordlist.output('taxa', filename=fn)
+        self.wordlist.output('tre', filename=fn)
+        self.wordlist.output('dst', filename=fn)
+        self.wordlist.output('starling', filename=fn, ref='word')
+        self.wordlist.output('paps.nex', filename=fn)
+        self.wordlist.output('paps.csv', filename=fn)
 
