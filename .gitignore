@@ -9,3 +9,4 @@ __pycache__
 /doc/out
 /lingpy/data/models/*/*.bin
 /generated/
+/lingpy/plugins/

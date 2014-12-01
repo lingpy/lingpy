@@ -1,8 +1,26 @@
 include distribute_setup.py 
-recursive-include lingpy *.msa *.msq *.csv *.rc *.prf *.rules *.qlc *.tex *.tsv *.js
+recursive-include lingpy *.msa
+recursive-include lingpy *.msq
+recursive-include lingpy *.csv
+recursive-include lingpy *.rc
+recursive-include lingpy *.prf
+recursive-include lingpy *.rules
+recursive-include lingpy *.qlc
+recursive-include lingpy *.tex
+recursive-include lingpy *.tsv
+recursive-include lingpy *.js
 recursive-include lingpy *.c *.pyx *.md
 recursive-include lingpy *.html *.css
-recursive-include lingpy *.bin INFO converter score cons_score scorer vows_score diacritics tones vowels matrix
+recursive-include lingpy INFO
+recursive-include lingpy converter
+recursive-include lingpy score
+recursive-include lingpy cons_score
+recursive-include lingpy scorer
+recursive-include lingpy vows_score
+recursive-include lingpy diacritics
+recursive-include lingpy tones
+recursive-include lingpy vowels
+recursive-include lingpy matrix
 include lingpy/data/swadesh/*.txt
 include lingpy/data/swadesh/*.qlc
 include lingpy/data/ipa/sampa.csv

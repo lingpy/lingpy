@@ -16,6 +16,7 @@ import sys, os
 
 import mock
 
+<<<<<<< HEAD
 MOCK_MODULES = [
     'regex',
     'nltk',
@@ -41,6 +42,7 @@ MOCK_MODULES = [
     'scipy.spatial.distance',
     'scipy.cluster.hierarchy',
     'scipy.stats']
+
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.MagicMock()
 

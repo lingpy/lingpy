@@ -70,9 +70,9 @@ else:
     extension_modules = []
 
 requires = [
+    'networkx',
     'numpy',
     'six',
-    'networkx',
     'appdirs'
     ]
     
@@ -131,6 +131,8 @@ setup(
             'data/templates/*.js',
             'data/templates/*.css',
             'data/templates/*.tex',
+            'data/swadesh/swadesh.qlc',
         ]
     },
-    **extra)
+    **extra
+    )
