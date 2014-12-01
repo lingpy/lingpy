@@ -169,7 +169,10 @@ class Pairwise(object):
             if k not in keywords:
                 keywords[k] = defaults[k]
         
-        self.model = keywords['model']
+        if type(keywords['model']) == str:
+            self.model = rcParams[keywords['model']]
+        else:
+            self.model = keywords['model']
         
         self.classes = []
         for clA,clB in map(
@@ -342,7 +345,8 @@ def pw_align(
         scale = 0.5,
         scorer = False,
         mode = 'global',
-        distance = False
+        distance = False,
+        **keywords
         ):
     """
     Align two sequences in various ways.

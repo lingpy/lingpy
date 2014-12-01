@@ -453,7 +453,8 @@ def msa2html(
             css = False,
             js = False,
             compact = False,
-            class_sort = True
+            class_sort = True,
+            write_to_file = True
             )
     for k in defaults:
         if k not in keywords:
@@ -627,12 +628,15 @@ def msa2html(
         html = re.sub(r'\s+',r' ',html)
         html = html.replace('> ','>')
         html = html.replace(' >','>')
-
-    # check, whether the outfile already exists
-    outf = codecs.open(filename,'w','utf-8')
-    outf.write(html)
-    outf.close()
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename))
+    
+    if keywords['write_to_file']:
+        # check, whether the outfile already exists
+        outf = codecs.open(filename,'w','utf-8')
+        outf.write(html)
+        outf.close()
+        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename))
+    else:
+        return html
 
 def string2html(
         taxon,
