@@ -29,7 +29,9 @@ class QLCParser(object):
     """
     @staticmethod
     def unpickle(filename):
-        return cache.load(filename)
+        obj = cache.load(filename)
+        obj._recreate_class_attribute()
+        return obj
 
     def __init__(self, filename, conf=''):
         """
@@ -168,6 +170,10 @@ class QLCParser(object):
         for key in [k for k in input_data if type(k) != int]:
             self._meta[key] = input_data[key]
 
+    def _recreate_class_attribute(self):
+        """run `eval` on the string representations."""
+        self._class = {key: eval(value) for key, value in self._class_string.items()}
+
     def __getitem__(self,idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -243,7 +249,12 @@ class QLCParser(object):
         To restore the instance from the pickle call
         :py:meth:`~lingpy.basic.parser.QLCParser.unpickle`.
         """
+        # we reset the _class attribute, because it may contain unpicklable stuff, like
+        # `eval`ed lambdas.
+        self._class = {}
         cache.dump(self, filename or self.filename)
+        # after pickling we have to recreate the attribute.
+        self._recreate_class_attribute()
 
     def add_entries(
             self,
