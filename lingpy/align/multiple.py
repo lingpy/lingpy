@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2014-07-23 22:57
+# modified : 2014-11-28 21:03
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-07-23"
+__date__="2014-11-28"
 
 # thirdparty imports
 import numpy as np
@@ -930,16 +930,16 @@ class Multiple(object):
             * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
         
-        gop : int (default=-5)
+        gop : int (default=-2)
             The gap opening penalty (GOP) used in the analysis.
 
-        scale : float (default=0.6)
+        scale : float (default=0.5)
             The factor by which the penalty for the extension of gaps (gap
             extension penalty, GEP) shall be decreased. This approach is
             essentially inspired by the exension of the basic alignment
             algorithm for affine gap penalties :evobib:`Gotoh1982`.
 
-        factor : float (default=1)
+        factor : float (default=0.3)
             The factor by which the initial and the descending position shall
             be modified.
 
@@ -954,7 +954,7 @@ class Multiple(object):
             for constructing one based on the input similarities. The use of this
             option makes the tree_calc option irrelevant. 
 
-        gap_weight : float (default=0)
+        gap_weight : float (default=0.5)
             The factor by which gaps in aligned columns contribute to the
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
@@ -984,6 +984,12 @@ class Multiple(object):
                 gap_weight       = rcParams['align_gap_weight']
                 )
         kw.update(keywords)
+
+
+        # fixing a but to avoid that defining models as string will yield an
+        # error
+        if not hasattr(kw['model'],'name'):
+            kw['model'] = rcParams[kw['model']]
         
         # define the model for convenience
         model = kw['model']
@@ -1147,6 +1153,11 @@ class Multiple(object):
                 sonars           = False,
                 )
         kw.update(keywords)
+
+        # fixing a but to avoid that defining models as string will yield an
+        # error
+        if not hasattr(kw['model'],'name'):
+            kw['model'] = rcParams[kw['model']]
 
         # create a string with the current parameters
         params = [
