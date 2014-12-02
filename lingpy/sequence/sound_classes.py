@@ -6,18 +6,17 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 13:27
-# modified : 2014-10-09 16:19
+# modified : 2014-12-02 21:12
 """
 Module provides various methods for the handling of sound classes.
 
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-10-09"
+__date__="2014-12-02"
 
 # lingpy imports
 from ..settings import rcParams
-#from ..data import *
 from ..data.ipa.sampa import reXS,xs
 
 def ipa2tokens(
@@ -361,7 +360,7 @@ def prosodic_string(
         return ''
 
     # check for the right string
-    if type(string[0]) != int:
+    if not isinstance(string[0], int):
         
         # get the sonority profile
         sstring = [9] + [int(t) for t in tokens2class(
@@ -1007,7 +1006,7 @@ def pgrams(sequence, **keywords):
     """
     if ' ' in sequence:
         seq = sequence.split(' ')
-    elif type(sequence) == str:
+    elif isinstance(sequence, str):
         seq = ipa2tokens(sequence)
     else:
         seq = list(sequence)

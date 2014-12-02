@@ -2,7 +2,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-14 00:21
-# modified : 2014-10-18 09:37
+# modified : 2014-12-02 21:10
 """
 This module provides a basic class for the handling of word lists.
 """
@@ -11,7 +11,7 @@ from __future__ import division
 from __future__ import unicode_literals
 
 __author__="Johann-Mattis List"
-__date__="2014-10-18"
+__date__="2014-12-02"
 
 import os
 import sys
@@ -111,13 +111,13 @@ class Wordlist(QLCParser):
             
             basic_rows = sorted(
                     set(
-                        [self._data[k][rowIdx] for k in self._data if k != 0 and type(k) == int]
+                        [self._data[k][rowIdx] for k in self._data if k != 0 and isinstance(k, int)]
                         ),
                     key = lambda x: x.lower()
                     )
             basic_cols = sorted(
                     set(
-                        [self._data[k][colIdx] for k in self._data if k != 0 and type(k) == int]
+                        [self._data[k][colIdx] for k in self._data if k != 0 and isinstance(k, int)]
                         ),
                     key = lambda x: x.lower()
                     )
@@ -1039,11 +1039,11 @@ class Wordlist(QLCParser):
             else:
                 cols,rows = keywords['cols'],keywords['rows']
 
-                if type(cols) not in [list,tuple,bool]:
+                if not isinstance(cols, (list, tuple, bool)):
                     raise ValueError(
                             "[i] Argument 'cols' should be list or tuple."
                             )
-                if type(rows) not in [dict,bool]:
+                if not isinstance(rows, (dict,bool)):
                     raise ValueError(
                             "[i] Argument 'rows' should be a dictionary."
                             )
@@ -1175,7 +1175,7 @@ class Wordlist(QLCParser):
                     line = [key]
                     for entry in keywords['entries']:
                         tmp = self[key,entry]
-                        if type(tmp) == list:
+                        if isinstance(tmp, list):
                             tmp = ' '.join([str(x) for x in tmp])
                         
                         line += [tmp]
@@ -1329,13 +1329,13 @@ class Wordlist(QLCParser):
                 idx = max(pointer.keys())
 
                 # check for type of current point
-                if type(tmp) == dict:
+                if isinstance(tmp, dict):
                     
                     if pointer[idx][1]:
                         next_key = pointer[idx][1].pop()
                         out_string += next_key[1]
                         tmp = pointer[idx][0][next_key]
-                        if type(tmp) == dict:
+                        if isinstance(tmp, dict):
                             pointer[idx+1] = [tmp,sorted(tmp.keys())]
                         else:
                             pointer[idx+1] = [tmp,tmp]

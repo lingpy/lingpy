@@ -124,7 +124,7 @@ class MSA(Multiple):
         # initialization checks first, whether we are dealing with msa-files or
         # with other, unaligned, sequence files and starts the
         # loading-procedures accordingly
-        if type(infile) == dict:
+        if isinstance(infile, dict):
             self._init_dict(infile,**keywords)
         else:
             if infile.endswith('.msa') or infile.endswith('.msq'):
@@ -810,7 +810,7 @@ class Alignments(Wordlist):
                         if 'alignment' in self.header:
                             d['alignment'] += [self[seq,'alignment']]
                         else:
-                            if type(string) == str:
+                            if isinstance(string, str):
                                 d['alignment'] += [string.split(' ')]
                             else:
                                 d['alignment'] += [string]
@@ -1479,7 +1479,7 @@ def SCA(
             keywords[k] = defaults[k]
    
     # check for datatype
-    if type(infile) == dict:
+    if isinstance(infile, dict):
         parent = MSA(infile,**keywords)
     else:
         if infile[-4:] in ['.msa','.msq']:
@@ -1637,7 +1637,7 @@ def get_consensus(
     # check for classes
     if classes:
         # if classes are passed as array, we use this array as is
-        if type(classes) == list:
+        if isinstance(classes, list):
             pass
         # if classes is a Model-object
         elif hasattr(msa,'ipa2cls'):

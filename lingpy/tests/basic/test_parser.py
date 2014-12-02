@@ -32,9 +32,12 @@ class TestParser(TestCase):
 
     def test_add_entries(self):
         # shouldn't this raise an exception?
-        self.parser.add_entries('', 'taxon', lambda t: t.lower())
-
+        self.assertRaises(ValueError, self.parser.add_entries, '', 'taxon',
+            lambda t: t.lower())
+            
         # shouldn't this call work?
         #self.parser.add_entries('lTaxon', 'taxon', lambda t: t.lower(), override=True)
 
         self.parser.add_entries('lTaxon', 'taxon', lambda t: t.lower())
+
+        assert 'ltaxon' in self.parser.entries

@@ -1,13 +1,18 @@
+# *-* coding: utf-8 *-*
+# These lines were automatically added by the 3to2-conversion.
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-06 16:41
-# modified : 2014-11-28 21:03
+# modified : 2014-12-02 21:00
 """
 Module provides classes and functions for multiple alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-11-28"
+__date__="2014-12-02"
 
 # thirdparty imports
 import numpy as np
@@ -42,7 +47,7 @@ class Multiple(object):
             **keywords
             ):
         # store input sequences, check whether tokens or strings are passed
-        if type(seqs[0]) == list:
+        if isinstance(seqs[0], (list, tuple)):
             self.seqs = [' '.join(s) for s in seqs]
             self.tokens = [s for s in seqs]
         else:
@@ -138,8 +143,8 @@ class Multiple(object):
         """
         Return specified values.
         """
-        if type(idx) == tuple:
-            if type(idx[0]) == slice:
+        if isinstance(idx, tuple):
+            if isinstance(idx[0], slice):
                 return [x[idx[1]] for x in self.alm_matrix[idx[0]]]
             else:
                 try:

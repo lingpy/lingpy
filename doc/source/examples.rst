@@ -76,7 +76,7 @@ Set up a couple of languages::
   
 Define a distance matrix::
 
-  >>> distances = cluster.squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
+  >>> distances = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
 
 Carry out a Neighbor-Joining cluster analysis::
 
