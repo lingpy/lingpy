@@ -393,7 +393,7 @@ def pw_align(
     """
 
     # check whether the sequences are lists
-    if isinstance(seqA, (text_type, tuple)):
+    if isinstance(seqA, (text_type, tuple, str)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -538,7 +538,7 @@ def edit_dist(
 
     """
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
+    if isinstance(seqA, (text_type, tuple, str)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -604,7 +604,7 @@ def sw_align(
     """
 
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
+    if isinstance(seqA, (text_type, tuple, str)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -667,7 +667,7 @@ def we_align(
     """
 
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)): 
+    if isinstance(seqA, (text_type, tuple, str)): 
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -725,7 +725,7 @@ def turchin(
     else:
         raise ValueError("[!] No valid model instance selected.")
 
-    if isinstance(seqA, text_type):
+    if isinstance(seqA, (text_type, str)):
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
         
