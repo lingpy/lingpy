@@ -17,6 +17,13 @@ from ..algorithm import malign
 from ..algorithm import calign
 from ..algorithm import talign
 
+
+# handle unicode type in python2 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 class Pairwise(object):
     """
     Basic class for the handling of pairwise sequence alignments (PSA).
@@ -385,7 +392,7 @@ def pw_align(
     """
 
     # check whether the sequences are lists
-    if type(seqA) == str or type(seqA) == tuple:
+    if type(seqA) == str or type(seqA) == tuple or type(seqA):
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
@@ -469,7 +476,7 @@ def nw_align(
 
     """
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == tuple:
+    if type(seqA) in [str, tuple, unicode]: 
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
@@ -529,7 +536,7 @@ def edit_dist(
 
     """
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == tuple:
+    if type(seqA) in [str, tuple, unicode]:
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
@@ -595,7 +602,7 @@ def sw_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == tuple:
+    if type(seqA) in [str, tuple, unicode]: 
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
@@ -658,7 +665,7 @@ def we_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) == str or type(seqA) == tuple:
+    if type(seqA) in [str, tuple, unicode]: 
         seqA = list(seqA)
         seqB = list(seqB)
     elif type(seqA) != list:
@@ -716,7 +723,7 @@ def turchin(
     else:
         raise ValueError("[!] No valid model instance selected.")
 
-    if type(seqA) == str:
+    if type(seqA) in [str, unicode]:
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
         

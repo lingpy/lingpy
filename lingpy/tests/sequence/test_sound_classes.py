@@ -1,4 +1,8 @@
 # *-* coding: utf-8 *-* 
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
+
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-12-02 15:49
@@ -81,8 +85,11 @@ def test_get_all_ngrams():
 def test_sampa2uni():
 
     seq = 'tʰɔxtər'
-    
-    assert sampa2uni('t_hOxt@r') == seq
+    sampa = eval('"'+sampa2uni('t_hOxt@r')+'"')
+    #sampa2 = sampa2uni('t_hOxt@r')
+
+    # we need this to capture differences in behaviour between py2 and py3
+    assert sampa == seq #or sampa2 == seq
 
 def bigrams():
 
