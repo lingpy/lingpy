@@ -1,7 +1,12 @@
+# *-* coding: utf-8 *-*
+# These lines were automatically added by the 3to2-conversion.
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-05 17:50
-# modified : 2014-12-02 21:03
+# modified : 2014-12-02 22:17
 """
 Module provides classes and functions for pairwise alignment analyses.
 """
@@ -392,8 +397,8 @@ def pw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
-        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
-    
+        raise ValueError("Input should be tuple, list, or string.")
+
     if distance:
         distance = 1
     else:
@@ -477,7 +482,7 @@ def nw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
-        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
+        raise ValueError("Input should be tuple, list, or string.")
     if not scorer:
         scorer = {}
         for a in seqA:
@@ -537,7 +542,7 @@ def edit_dist(
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
-        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
+        raise ValueError("Input should be tuple, list, or string.")
     
     if restriction in ['cv','consonant-vowel']:
         
@@ -603,7 +608,7 @@ def sw_align(
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
-        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
+        raise ValueError("Input should be tuple, list, or string.")
     if not scorer:
         scorer = {}
         for a in seqA:
@@ -665,8 +670,8 @@ def we_align(
     if isinstance(seqA, (text_type, tuple)): 
         seqA = list(seqA)
         seqB = list(seqB)
-    elif isinstance(seqA, list):
-        raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
+    elif not isinstance(seqA, list):
+        raise ValueError("Input should be tuple, list, or string.")
 
     if not scorer:
         scorer = {}
