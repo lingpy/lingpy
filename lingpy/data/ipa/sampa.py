@@ -1,6 +1,7 @@
 import types
 
 from ...settings import *
+from lingpy import log
 
 try:
     import regex as re
@@ -9,7 +10,7 @@ try:
         raise ImportError
 except ImportError:
     import re
-    print(rcParams['W_missing_module'].format('regex'))
+    log.missing_module('regex')
 
 import sys
 import os

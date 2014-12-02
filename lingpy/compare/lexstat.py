@@ -22,6 +22,7 @@ from itertools import combinations_with_replacement
 from math import factorial
 
 # thirdparty
+from six.moves import input
 import numpy as np
 
 # thirdparty modules
@@ -163,7 +164,8 @@ class LexStat(Wordlist):
                     out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
                 out.close()
                 if not kw["apply_checks"]:
-                    answer = input(rcParams['Q_errors_in_data'])
+                    answer = input(
+                        "[?] There were errors in the input data. Do you want to exclude them? (y/n)")
                 else:
                     answer = "y"
 
@@ -189,8 +191,8 @@ class LexStat(Wordlist):
                 else:
                     return
             else:
-                print(rcParams['M_no_errors_in_data'])
-            
+                self.log.info("No obvious errors found in the data.")
+
         # sonority profiles
         if not "sonars" in self.header:
             self.add_entries(
@@ -513,9 +515,7 @@ class LexStat(Wordlist):
             for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                 progress.update()
                 tA, tB = self.taxa[i], self.taxa[j]
-
-                if rcParams['verbose']:
-                    print(rcParams["M_alignments"].format(tA,tB))
+                self.log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
                 corrdist[tA,tB] = {}
                 for mode,gop,scale in kw['modes']:
@@ -673,9 +673,8 @@ class LexStat(Wordlist):
                 for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                     progress.update()
                     tA, tB = self.taxa[i], self.taxa[j]
-
-                    if rcParams['verbose']:
-                        print(rcParams["M_random_alignments"].format(tA,tB))
+                    self.log.info(
+                        "Calculating random alignments for pair {0} / {1}.".format(tA, tB))
 
                     corrdist[tA,tB] = {}
                     for mode,gop,scale in kw['modes']:
@@ -723,9 +722,8 @@ class LexStat(Wordlist):
                 for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                     progress.update()
                     tA, tB = self.taxa[i], self.taxa[j]
-
-                    if rcParams['verbose']:
-                        print(rcParams["M_random_alignments"].format(tA,tB))
+                    self.log.info(
+                        "Calculating random alignments for pair {0} / {1}.".format(tA, tB))
 
                     corrdist[tA,tB] = {}
 
@@ -907,17 +905,22 @@ class LexStat(Wordlist):
 
         # check for existing attributes
         if hasattr(self,'cscorer') and not kw['force']:
-            print(rcParams['W_identical_scorer'])
-            return 
+            self.log.warn(
+                "An identical scoring function has already been calculated, force "
+                "recalculation by setting 'force' to 'True'.")
+            return
 
         # check for attribute
         if hasattr(self,'params') and not kw['force']:
             if 'cscorer' in self.params:
                 if self.params['cscorer'] == params:
-                    print(rcParams['W_identical_scorer'])
+                    self.log.warn(
+                        "An identical scoring function has already been calculated, force "
+                        "recalculation by setting 'force' to 'True'.")
                     return
             else:
-                if rcParams['verbose']: print(rcParams['W_overwrite_scorer'])
+                self.log.warn(
+                    "A different scoring function has already been calculated, overwriting previous settings.")
 
         # store parameters
         self.params = {'cscorer':params }
@@ -1747,11 +1750,6 @@ class LexStat(Wordlist):
             if 'scorer' not in kw:
                 kw['scorer'] = self.rscorer
             out = scorer2str(kw['scorer'])
-            f = codecs.open(kw['filename']+'.'+fileformat,'w','utf-8')
-            f.write(out)
-            f.close()
-            if rcParams['verbose']: print(rcParams['M_file_written'].format(kw['filename']+'.'+fileformat))
-
+            util.write_text_file(kw['filename'] + '.' + fileformat, out)
         else:
             self._output(fileformat,**kw)
-  

@@ -16,6 +16,8 @@ __date__="2013-10-19"
 
 import codecs
 from ..settings import rcParams
+from .. import log
+
 
 def bcubes(
         lex,
@@ -553,8 +555,6 @@ def diff(
         #f.write('F-Score:   {0:.4f}\n'.format(hf))
         #f.write('#\n')
         f.close()
-        print(rcParams['M_file_written'].format(filename+'.diff'))
-
+        log.file_written(filename + '.diff')
     else:
         return ((bp,br,bf),(pp,pr,pf))
-    

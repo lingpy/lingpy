@@ -36,33 +36,34 @@ from ..align.multiple import Multiple
 from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
 from .. import compat
 from .. import util
+from .. import log
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 except ImportError:
-    print(rcParams['W_missing_module'].format('matplotlib'))
+    log.missing_module('matplotlib')
 
 # import 3d-stuff
 try:
     from mpl_toolkits.mplot3d import Axes3D
 except:
-    print(rcParams['W_missing_module'].format('mplot3d'))
+    log.missing_module('matplotlib')
 
 # import the geoplot module
 try:
     import mpl_toolkits.basemap as bmp
 except ImportError:
-    print(rcParams['W_missing_module'].format('basemap'))
+    log.missing_module('basemap')
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].format('networkx'))
+    log.missing_module('networkx')
 try:
     import scipy as sp
 except:
-    print(rcParams['W_missing_module'].format('scipy'))
+    log.missing_module('scipy')
 
 from ._phylogeny.polygon import getConvexHull
 
@@ -398,7 +399,7 @@ class PhyBo(Wordlist):
 
         # check for cognates
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
@@ -413,7 +414,7 @@ class PhyBo(Wordlist):
         if os.path.isfile(self.dataset+'.qlc'):
             infile = self.dataset+'.qlc'
         elif os.path.isfile(self.dataset+'.csv'):
-            print(rcParams['W_deprecation'].format('csv','qlc'))
+            log.deprecated('csv','qlc')
             infile = self.dataset+'.csv'
         else:
             raise compat.FileNotFoundError("The input file could not be found.")
@@ -4028,8 +4029,7 @@ class PhyBo(Wordlist):
         # save the figure
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-
+        log.file_written(filename + '.' + fileformat)
         return
 
     def plot_MLN_3d(
@@ -4963,9 +4963,8 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+        log.file_written(filename + '.' + fileformat)
 
-    
     def plot_concepts(
             self,
             concept,

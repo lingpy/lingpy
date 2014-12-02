@@ -40,6 +40,7 @@ from .pairwise import Pairwise
 from ..algorithm import misc
 from ._align import confidence
 from .. import util
+from .. import log
 
 
 class MSA(Multiple):
@@ -739,7 +740,7 @@ class Alignments(Wordlist):
         
         # check for reference / cognates
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
         
         # change ref to rcParams
@@ -1173,7 +1174,7 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
 
         # switch ref
@@ -1318,7 +1319,7 @@ class Alignments(Wordlist):
         filename = kw['filename']
 
         if 'cognates' in kw:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = kw['cognates']
 
         if ref != rcParams['ref']:

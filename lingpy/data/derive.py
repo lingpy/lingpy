@@ -27,11 +27,12 @@ from ..convert.strings import scorer2str
 from ..read import *
 from .. import cache
 from .. import util
+from .. import log
 
 try:
     import networkx as nx
 except ImportError:
-    print(rcParams['W_missing_module'].format("networkx"))
+    log.missing_module('networkx')
 
 
 def _read(filename, normalize=None):

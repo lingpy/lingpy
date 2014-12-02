@@ -1,5 +1,6 @@
 # imports
 from ...settings import rcParams
+from lingpy import log
 
 import numpy as np
 
@@ -7,18 +8,20 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib.patches as mplPatches
 except:
-    print("[i] Import of Matplotlib failed. Scripts might not work.")
-
+    log.missing_module('matplotlib')
 
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].format('networkx'))
-    
+    log.missing_module('networkx')
+
 from .convex_hull import *
 
-# code for intersection taken from http://stackoverflow.com/questions/3252194/numpy-and-line-intersections
+
 def perp( a ) :
+    """
+    code for intersection taken from http://stackoverflow.com/questions/3252194/numpy-and-line-intersections
+    """
     b = np.empty_like(a)
     b[0] = -a[1]
     b[1] = a[0]

@@ -22,6 +22,7 @@ from ..sequence.ngram import *
 from ..read.csv import *
 from ..convert import *
 from .. import util
+from .. import log
 
 
 class Spreadsheet:
@@ -465,7 +466,7 @@ class Spreadsheet:
         # use wl2csv to convert if fileformat is 'qlc'
         if fileformat in ['qlc','csv']:
             if fileformat == 'csv':
-                print(rcParams['W_deprecation'].format('csv','qlc'))
+                log.deprecated('csv','qlc')
             wl2csv(
                     self.header,
                     self._data,

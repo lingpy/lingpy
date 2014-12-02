@@ -20,6 +20,8 @@ from ..algorithm import misc
 from ..thirdparty.cogent import LoadTree
 from ..sequence.sound_classes import *
 from ..settings import rcParams
+from .. import log
+
 
 class Multiple(object):
     """
@@ -41,6 +43,7 @@ class Multiple(object):
             seqs,
             **keywords
             ):
+        self.log = log.get_logger()
         # store input sequences, check whether tokens or strings are passed
         if type(seqs[0]) == list:
             self.seqs = [' '.join(s) for s in seqs]
@@ -666,12 +669,12 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                if rcParams['verbose']: 
-                    print(rcParams['W_empty_cons'])
+                self.log.warn("There are emtpy segments in the consensus.")
+                if rcParams['verbose']:
                     print(' '.join([str(X) for X in consA]))
                     print(' '.join([str(X) for X in consB]))
             except:
-                print(rcParams['E_failed_cons'])
+                self.log.error("Failed to compute the consensus string.")
                 print(sonarA)
                 print(sonarB)
                 print(almsA[0])
@@ -870,13 +873,13 @@ class Multiple(object):
                 try:
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
-                    if rcParams['verbose']: 
-                        print(rcParams['W_empty_cons'])
+                    self.log.warn("There are emtpy segments in the consensus.")
+                    if rcParams['verbose']:
                         print(consensus)
 
                 except:
                     consensus = []
-                    print(rcParams['E_failed_cons'])
+                    self.log.error("Failed to compute the consensus string.")
             self._sonority_consensus = consensus
 
 

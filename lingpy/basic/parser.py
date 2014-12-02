@@ -18,6 +18,7 @@ from ..settings import rcParams
 from ..read.qlc import read_qlc
 from .. import cache
 from .. import util
+from .. import log
 
 from ..sequence.tokenizer import Tokenizer
 
@@ -30,13 +31,15 @@ class QLCParser(object):
     @staticmethod
     def unpickle(filename):
         obj = cache.load(filename)
-        obj._recreate_class_attribute()
+        obj._recreate_unpicklables()
         return obj
 
     def __init__(self, filename, conf=''):
         """
         Parse data regularly if the data has not been loaded from a pickled version.
         """
+        self.log = log.get_logger()
+
         # try to load the data
         internal_import = False
 
@@ -170,8 +173,9 @@ class QLCParser(object):
         for key in [k for k in input_data if type(k) != int]:
             self._meta[key] = input_data[key]
 
-    def _recreate_class_attribute(self):
+    def _recreate_unpicklables(self):
         """run `eval` on the string representations."""
+        self.log = log.get_logger()
         self._class = {key: eval(value) for key, value in self._class_string.items()}
 
     def __getitem__(self,idx):
@@ -252,9 +256,10 @@ class QLCParser(object):
         # we reset the _class attribute, because it may contain unpicklable stuff, like
         # `eval`ed lambdas.
         self._class = {}
+        self.log = None
         cache.dump(self, filename or self.filename)
         # after pickling we have to recreate the attribute.
-        self._recreate_class_attribute()
+        self._recreate_unpicklables()
 
     def add_entries(
             self,
