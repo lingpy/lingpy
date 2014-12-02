@@ -477,12 +477,12 @@ def nw_align(
 
     """
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
-
+    if isinstance(seqA, (text_type, tuple, str)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
+    
     if not scorer:
         scorer = {}
         for a in seqA:
