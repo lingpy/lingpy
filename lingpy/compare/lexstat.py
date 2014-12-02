@@ -1051,7 +1051,7 @@ class LexStat(Wordlist):
         kw.update(keywords)
         if kw['defaults']: return kw
 
-        if isinstance(idxA, text_type):
+        if isinstance(idxA, (text_type, tuple)):
             if isinstance(idxA, tuple):
                 idxsA = self.get_dict(col=idxA[0])[idxA[1]]
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]

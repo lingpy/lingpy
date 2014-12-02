@@ -1,7 +1,7 @@
 # author   : Johann-Mattis List, Robert Forkel
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2014-12-02 21:11
+# modified : 2014-12-02 21:29
 """
 Basic parser for text files in QLC format.
 """
@@ -306,8 +306,7 @@ class QLCParser(object):
     ):
         # check for emtpy entries etc.
         if not entry:
-            print("[i] Entry was not properly specified!")
-            return
+            raise ValueError('Entry was not properly specified.')
         
         # check for override stuff, this causes otherwise an error message
         if entry not in self.header and override:
@@ -343,7 +342,7 @@ class QLCParser(object):
             self.header[name] = self._header[name]
 
             # modify the entries attribute
-            self.entries = sorted(set(self.entries + [entry]))
+            self.entries = sorted(set(self.entries + [entry.lower()]))
             
             # check for multiple entries (separated by comma)
             if ',' in source:

@@ -1039,11 +1039,11 @@ class Wordlist(QLCParser):
             else:
                 cols,rows = keywords['cols'],keywords['rows']
 
-                if not isinstance(cols, (list, tuple, bool):
+                if not isinstance(cols, (list, tuple, bool)):
                     raise ValueError(
                             "[i] Argument 'cols' should be list or tuple."
                             )
-                if not isinstance(rows, (dict,bool)]:
+                if not isinstance(rows, (dict,bool)):
                     raise ValueError(
                             "[i] Argument 'rows' should be a dictionary."
                             )
