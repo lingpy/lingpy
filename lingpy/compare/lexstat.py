@@ -18,6 +18,8 @@ __date__="2014-08-25"
 import random
 import codecs
 import sys
+from itertools import combinations_with_replacement
+from math import factorial
 
 # thirdparty
 import numpy as np
@@ -39,6 +41,8 @@ from ..algorithm import clustering
 from ..algorithm import calign
 from ..algorithm import talign
 from ..algorithm import misc
+from .. import util
+
 
 class LexStat(Wordlist):
     """
@@ -495,9 +499,7 @@ class LexStat(Wordlist):
         corrdist = {}
 
         if kw['preprocessing']:
-            if kw['ref'] in self.header:
-                pass
-            else:
+            if kw['ref'] not in self.header:
                 self.cluster(
                         method=kw['preprocessing_method'],
                         threshold=kw['preprocessing_threshold'],
@@ -506,118 +508,86 @@ class LexStat(Wordlist):
                         ref=kw['ref']
                         )
 
-        # semi-verbose output of taskbars and the like
-        # define a score-bar that shows how far the work is processed
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(self.rows)
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' CORRESPONDENCE CALCULATION '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
+        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+        with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
+            for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+                progress.update()
+                tA, tB = self.taxa[i], self.taxa[j]
 
-        
-        for i,tA in enumerate(self.taxa):
-            for j,tB in enumerate(self.taxa):
-                if i <= j:
-                    if rcParams['verbose']: print(rcParams["M_alignments"].format(tA,tB))
-                    elif rcParams['_sverb']:
-                        if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                            sys.stdout.write(task_char)
-                            sys.stdout.flush()
-                            control_char += len(task_char)
-                        task_count += 1   
+                if rcParams['verbose']:
+                    print(rcParams["M_alignments"].format(tA,tB))
 
-                    corrdist[tA,tB] = {}
-                    for mode,gop,scale in kw['modes']:
-                        
-                        # XXX this is where we should add the new function for
-                        # subsets of swadesh lists XXX 
-                        # this can be easily done by first checking for a
-                        # sublist parameter and then getting all the numbers in
-                        # a temporary variable "pairs" for all cases where this
-                        # subset is defined, all that needs to be done is to
-                        # provide an extra function that creates a
-                        # subset-variable or hash in which for all language
-                        # pairs the subset is defined. 
-                        if kw['subset']:
-                            pairs = [pair for pair in self.pairs[tA,tB] if \
-                                    pair in self.subsets[tA,tB]]
-                        else:
-                            pairs = self.pairs[tA,tB]
+                corrdist[tA,tB] = {}
+                for mode,gop,scale in kw['modes']:
+                    # XXX this is where we should add the new function for
+                    # subsets of swadesh lists XXX
+                    # this can be easily done by first checking for a
+                    # sublist parameter and then getting all the numbers in
+                    # a temporary variable "pairs" for all cases where this
+                    # subset is defined, all that needs to be done is to
+                    # provide an extra function that creates a
+                    # subset-variable or hash in which for all language
+                    # pairs the subset is defined.
+                    if kw['subset']:
+                        pairs = [pair for pair in self.pairs[tA,tB] if \
+                                pair in self.subsets[tA,tB]]
+                    else:
+                        pairs = self.pairs[tA,tB]
 
-                        if kw['preprocessing']: 
-                            numbers = [self[pair,"numbers"] for pair in pairs \
-                                    if self[pair, kw['ref']][0] == self[pair, 
-                                        kw['ref']][1]]
-                            weights = [self[pair,"weights"] for pair in pairs \
-                                    if self[pair, kw['ref']][0] == self[pair, 
-                                        kw['ref']][1]]
-                            prostrings = [self[pair,"prostrings"] for pair in
-                                    pairs if self[pair, kw['ref']][0] ==  self[pair, 
-                                        kw['ref']][1]]
-                            corrs,included = calign.corrdist(
-                                    10.0,
-                                    numbers,
-                                    weights,
-                                    prostrings,
-                                    gop,
-                                    scale,
-                                    kw['factor'],
-                                    self.bscorer,
-                                    mode,
-                                    kw['restricted_chars']
-                                    )
+                    if kw['preprocessing']:
+                        numbers = [self[pair,"numbers"] for pair in pairs \
+                                if self[pair, kw['ref']][0] == self[pair,
+                                    kw['ref']][1]]
+                        weights = [self[pair,"weights"] for pair in pairs \
+                                if self[pair, kw['ref']][0] == self[pair,
+                                    kw['ref']][1]]
+                        prostrings = [self[pair,"prostrings"] for pair in
+                                pairs if self[pair, kw['ref']][0] ==  self[pair,
+                                    kw['ref']][1]]
+                        corrs,included = calign.corrdist(
+                                10.0,
+                                numbers,
+                                weights,
+                                prostrings,
+                                gop,
+                                scale,
+                                kw['factor'],
+                                self.bscorer,
+                                mode,
+                                kw['restricted_chars']
+                                )
+                    else:
+                        numbers = [self[pair,"numbers"] for pair in pairs]
+                        weights = [self[pair,"weights"] for pair in pairs]
+                        prostrings = [self[pair,"prostrings"] for pair in
+                                pairs]
+                        corrs,included = calign.corrdist(
+                                kw['preprocessing_threshold'],
+                                numbers,
+                                weights,
+                                prostrings,
+                                gop,
+                                scale,
+                                kw['factor'],
+                                self.bscorer,
+                                mode,
+                                kw['restricted_chars']
+                                )
 
-                        else:    
-                            numbers = [self[pair,"numbers"] for pair in pairs]
-                            weights = [self[pair,"weights"] for pair in pairs]
-                            prostrings = [self[pair,"prostrings"] for pair in
-                                    pairs]
-                            corrs,included = calign.corrdist(
-                                    kw['preprocessing_threshold'],
-                                    numbers,
-                                    weights,
-                                    prostrings,
-                                    gop,
-                                    scale,
-                                    kw['factor'],
-                                    self.bscorer,
-                                    mode,
-                                    kw['restricted_chars']
-                                    )
+                    self._included[tA,tB] = included
 
-                        self._included[tA,tB] = included
-
-                        # change representation of gaps
-                        for a,b in list(corrs.keys()):
-                            # XXX check for bias XXX
-                            d = corrs[a,b]
-                            if a == '-':
-                                a = str(i+1)+'.X.-'
-                            elif b == '-':
-                                b = str(j+1)+'.X.-'
-                            try:
-                                corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                            except:
-                                corrdist[tA,tB][a,b] = d / len(kw['modes'])
-
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
+                    # change representation of gaps
+                    for a,b in list(corrs.keys()):
+                        # XXX check for bias XXX
+                        d = corrs[a,b]
+                        if a == '-':
+                            a = str(i+1)+'.X.-'
+                        elif b == '-':
+                            b = str(j+1)+'.X.-'
+                        try:
+                            corrdist[tA,tB][a,b] += d / len(kw['modes'])
+                        except:
+                            corrdist[tA,tB][a,b] = d / len(kw['modes'])
 
         return corrdist
 
@@ -644,7 +614,10 @@ class LexStat(Wordlist):
             method = 'markov'
         else:
             method = 'shuffle'
-        
+
+        corrdist = {}
+        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+
         if method == 'markov':
             seqs = {}
             pros = {}
@@ -656,265 +629,167 @@ class LexStat(Wordlist):
                     kw['runs']
                     )
 
-            # semi-verbose output of taskbars and the like
-            # define a score-bar that shows how far the work is processed
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                task_len = len(self.cols)
-                if task_len >= rcParams['_sverb_tbar_len']:
-                    task_char = rcParams['_sverb_tchar']
-                    task_step = task_len / rcParams['_sverb_tbar_len']
-                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-                else:
-                    task_range = list(range(task_len))
-                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-                task_string = ' SEQUENCE GENERATION '.center(
-                        rcParams['_sverb_tbar_len'],
-                        rcParams['_sverb_fchar']
-                        )
-                task_string = '|' + task_string + '|'
-                sys.stdout.write(task_string+'\r|')
-                task_count = 0
-                control_char = 0
+            with util.ProgressBar('SEQUENCE GENERATION', len(self.taxa)) as progress:
+                for i, taxon in enumerate(self.taxa):
+                    progress.update()
+                    if rcParams['verbose']:
+                        print("[i] Analyzing taxon {0}.".format(taxon))
 
+                    tokens = self.get_list(col=taxon, entry="tokens", flat=True)
+                    prostrings = self.get_list(col=taxon, entry="prostrings", flat=True)
+                    m = MCPhon(tokens,True,prostrings)
+                    words = []
+                    j = 0
+                    k = 0
+                    while j < kw['rands']:
+                        s = m.get_string(new=False)
+                        if s in words:
+                            k += 1
+                        elif k < kw['limit']:
+                            j += 1
+                            words += [s]
+                        else:
+                            j += 1
+                            words += [s]
 
-            for i,taxon in enumerate(self.taxa):
-                if rcParams['verbose']: print("[i] Analyzing taxon {0}.".format(taxon))
-                elif rcParams['_sverb']:
-                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                        sys.stdout.write(task_char)
-                        sys.stdout.flush()
-                        control_char += len(task_char)
-                    task_count += 1   
+                    seqs[taxon] = []
+                    pros[taxon] = []
+                    weights[taxon] = []
 
-                tokens = self.get_list(
-                        col=taxon,
-                        entry="tokens",
-                        flat=True
-                        )
-                prostrings = self.get_list(
-                        col=taxon,
-                        entry="prostrings",
-                        flat=True
-                        )
-                m = MCPhon(tokens,True,prostrings)
-                words = []
-                j = 0
-                k = 0
-                while j < kw['rands']:
-                    s = m.get_string(new=False)
-                    if s in words:
-                        k += 1
-                    elif k < kw['limit']:
-                        j += 1
-                        words += [s]
-                    else:
-                        j += 1
-                        words += [s]
-                
-                seqs[taxon] = []
-                pros[taxon] = []
-                weights[taxon] = []
-
-                for w in words:
-                    cls = tokens2class(w.split(' '),self.model)
-                    pros[taxon] += [prosodic_string(w.split(' '))]
-                    weights[taxon] += [prosodic_weights(pros[taxon][-1])]
-                    seqs[taxon] += [['{0}.{1}'.format(
-                        c,
-                        p
-                        ) for c,p in zip(
-                            cls,
-                            [self._transform[pr] for pr in pros[taxon][-1]]
-                            )
-                        ]]
-
-            if not rcParams['verbose'] and rcParams['_sverb']: 
-                if control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(
-                            (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
+                    for w in words:
+                        cls = tokens2class(w.split(' '),self.model)
+                        pros[taxon] += [prosodic_string(w.split(' '))]
+                        weights[taxon] += [prosodic_weights(pros[taxon][-1])]
+                        seqs[taxon] += [['{0}.{1}'.format(
+                            c,
+                            p
+                            ) for c,p in zip(
+                                cls,
+                                [self._transform[pr] for pr in pros[taxon][-1]]
                                 )
-                sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
-                sys.stdout.flush()
+                            ]]
 
+            with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
+                for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+                    progress.update()
+                    tA, tB = self.taxa[i], self.taxa[j]
 
+                    if rcParams['verbose']:
+                        print(rcParams["M_random_alignments"].format(tA,tB))
 
-            # semi-verbose output of taskbars and the like
-            # define a score-bar that shows how far the work is processed
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                task_len = len(self.pairs)
-                if task_len >= rcParams['_sverb_tbar_len']:
-                    task_char = rcParams['_sverb_tchar']
-                    task_step = task_len / rcParams['_sverb_tbar_len']
-                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-                else:
-                    task_range = list(range(task_len))
-                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
-                        rcParams['_sverb_tbar_len'],
-                        rcParams['_sverb_fchar']
-                        )
-                task_string = '|' + task_string + '|'
-                sys.stdout.write(task_string+'\r|')
-                task_count = 0
-                control_char = 0
-           
-            corrdist = {}
-            for i,tA in enumerate(self.taxa):
-                for j,tB in enumerate(self.taxa):
-                    if i <= j:
-                        if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
-                        elif rcParams['_sverb']:
-                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                                sys.stdout.write(task_char)
-                                sys.stdout.flush()
-                                control_char += len(task_char)
-                            task_count += 1   
-                            corrdist[tA,tB] = {}
-                            
-                        corrdist[tA,tB] = {}
-                        for mode,gop,scale in kw['modes']:
-                            numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
-                            gops = [(weights[tA][x],weights[tB][y]) for x,y in sample]
-                            prostrings = [(pros[tA][x],pros[tB][y]) for x,y in sample]
+                    corrdist[tA,tB] = {}
+                    for mode,gop,scale in kw['modes']:
+                        numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
+                        gops = [(weights[tA][x],weights[tB][y]) for x,y in sample]
+                        prostrings = [(pros[tA][x],pros[tB][y]) for x,y in sample]
 
-                            corrs,included = calign.corrdist(
-                                    10.0,
-                                    numbers,
-                                    gops,
-                                    prostrings,
-                                    gop,
-                                    scale,
-                                    kw['factor'],
-                                    self.rscorer,
-                                    mode,
-                                    kw['restricted_chars']
-                                    )
-                                     
-                            # change representation of gaps
-                            for a,b in list(corrs.keys()):
+                        corrs,included = calign.corrdist(
+                                10.0,
+                                numbers,
+                                gops,
+                                prostrings,
+                                gop,
+                                scale,
+                                kw['factor'],
+                                self.rscorer,
+                                mode,
+                                kw['restricted_chars']
+                                )
 
-                                # get the correspondence count
-                                d = corrs[a,b] * self._included[tA,tB] / included # XXX check XXX * len(self.pairs[tA,tB]) / runs
+                        # change representation of gaps
+                        for a,b in list(corrs.keys()):
+                            # get the correspondence count
+                            d = corrs[a,b] * self._included[tA,tB] / included # XXX check XXX * len(self.pairs[tA,tB]) / runs
 
-                                # check for gaps
-                                if a == '-':
-                                    a = 'X.-'
-                                elif b == '-':
-                                    b = 'X.-'
-                                
-                                a = str(i+1)+'.'+a
-                                b = str(j+1)+'.'+b
+                            # check for gaps
+                            if a == '-':
+                                a = 'X.-'
+                            elif b == '-':
+                                b = 'X.-'
 
-                                # append to overall dist
-                                try:
-                                    corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                                except:
-                                    corrdist[tA,tB][a,b] = d / len(kw['modes'])
+                            a = str(i+1)+'.'+a
+                            b = str(j+1)+'.'+b
+
+                            # append to overall dist
+                            try:
+                                corrdist[tA,tB][a,b] += d / len(kw['modes'])
+                            except:
+                                corrdist[tA,tB][a,b] = d / len(kw['modes'])
 
         # use shuffle approach otherwise
         else:
-            # semi-verbose output of taskbars and the like
-            # define a score-bar that shows how far the work is processed
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                task_len = len(self.pairs)
-                if task_len >= rcParams['_sverb_tbar_len']:
-                    task_char = rcParams['_sverb_tchar']
-                    task_step = task_len / rcParams['_sverb_tbar_len']
-                    task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-                else:
-                    task_range = list(range(task_len))
-                    task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-                task_string = ' RANDOM CORRESPONDENCE CALCULATION '.center(
-                        rcParams['_sverb_tbar_len'],
-                        rcParams['_sverb_fchar']
-                        )
-                task_string = '|' + task_string + '|'
-                sys.stdout.write(task_string+'\r|')
-                task_count = 0
-                control_char = 0
+            tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+            with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
+                for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+                    progress.update()
+                    tA, tB = self.taxa[i], self.taxa[j]
 
-            corrdist = {}
-            for i,tA in enumerate(self.taxa):
-                for j,tB in enumerate(self.taxa):
-                    if i <= j:
-                        if rcParams['verbose']: print(rcParams["M_random_alignments"].format(tA,tB))
-                        elif rcParams['_sverb']:
-                            if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                                sys.stdout.write(task_char)
-                                sys.stdout.flush()
-                                control_char += len(task_char)
-                            task_count += 1   
-                            corrdist[tA,tB] = {}
+                    if rcParams['verbose']:
+                        print(rcParams["M_random_alignments"].format(tA,tB))
 
-                        # get the number pairs etc.
-                        numbers = [self[pair,'numbers'] for pair in
-                                self.pairs[tA,tB]]
-                        gops = [self[pair,'weights'] for pair in
-                                self.pairs[tA,tB]]
-                        prostrings = [self[pair,'prostrings'] for pair in
-                                self.pairs[tA,tB]]
+                    corrdist[tA,tB] = {}
 
-                        try:
-                            sample = random.sample(
-                                    [(x,y) for x in range(len(numbers)) for y in
-                                        range(len(numbers))],
-                                    kw['runs']
-                                    )
-                        # handle exception of sample is larger than population
-                        except ValueError:
-                            sample = [(x,y) for x in range(len(numbers)) for y
-                                    in range(len(numbers))]
-                        
-                        # get an index that will be repeatedly changed
-                        #indices = list(range(len(numbers)))
+                    # get the number pairs etc.
+                    numbers = [self[pair,'numbers'] for pair in
+                            self.pairs[tA,tB]]
+                    gops = [self[pair,'weights'] for pair in
+                            self.pairs[tA,tB]]
+                    prostrings = [self[pair,'prostrings'] for pair in
+                            self.pairs[tA,tB]]
 
-                        for mode,gop,scale in kw['modes']:
-                            nnums = [(numbers[s[0]][0],numbers[s[1]][1]) for
-                                    s in sample]
-                            ggops = [(gops[s[0]][0],gops[s[1]][1]) for s in
-                                    sample]
-                            ppros = [(prostrings[s[0]][0],prostrings[s[1]][1]) for s in
-                                    sample]
+                    try:
+                        sample = random.sample(
+                                [(x,y) for x in range(len(numbers)) for y in
+                                    range(len(numbers))],
+                                kw['runs']
+                                )
+                    # handle exception of sample is larger than population
+                    except ValueError:
+                        sample = [(x,y) for x in range(len(numbers)) for y
+                                in range(len(numbers))]
 
-                            corrs,included = calign.corrdist(
-                                    10.0,
-                                    nnums,
-                                    ggops,
-                                    ppros,
-                                    gop,
-                                    scale,
-                                    kw['factor'],
-                                    self.bscorer,
-                                    mode,
-                                    kw['restricted_chars']
-                                    )
-                                     
-                            # change representation of gaps
-                            for a,b in list(corrs.keys()):
+                    # get an index that will be repeatedly changed
+                    #indices = list(range(len(numbers)))
 
-                                # get the correspondence count
-                                d = corrs[a,b] * self._included[tA,tB] / included #XXX check XXX* len(self.pairs[tA,tB]) / runs
+                    for mode,gop,scale in kw['modes']:
+                        nnums = [(numbers[s[0]][0],numbers[s[1]][1]) for
+                                s in sample]
+                        ggops = [(gops[s[0]][0],gops[s[1]][1]) for s in
+                                sample]
+                        ppros = [(prostrings[s[0]][0],prostrings[s[1]][1]) for s in
+                                sample]
 
-                                # check for gaps
-                                if a == '-':
-                                    a = str(i+1)+'.X.-'
+                        corrs,included = calign.corrdist(
+                                10.0,
+                                nnums,
+                                ggops,
+                                ppros,
+                                gop,
+                                scale,
+                                kw['factor'],
+                                self.bscorer,
+                                mode,
+                                kw['restricted_chars']
+                                )
 
-                                elif b == '-':
-                                    b = str(j+1)+'.X.-'
-                                
-                                # append to overall dist
-                                try:
-                                    corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                                except:
-                                    corrdist[tA,tB][a,b] = d / len(kw['modes'])
+                        # change representation of gaps
+                        for a,b in list(corrs.keys()):
 
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
-            sys.stdout.flush()
+                            # get the correspondence count
+                            d = corrs[a,b] * self._included[tA,tB] / included #XXX check XXX* len(self.pairs[tA,tB]) / runs
+
+                            # check for gaps
+                            if a == '-':
+                                a = str(i+1)+'.X.-'
+
+                            elif b == '-':
+                                b = str(j+1)+'.X.-'
+
+                            # append to overall dist
+                            try:
+                                corrdist[tA,tB][a,b] += d / len(kw['modes'])
+                            except:
+                                corrdist[tA,tB][a,b] = d / len(kw['modes'])
 
         return corrdist
 
@@ -1544,26 +1419,6 @@ class LexStat(Wordlist):
                 **kw
                 )
 
-        # semi-verbose output of taskbars and the like
-        # define a score-bar that shows how far the work is processed
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(self.rows)
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' SEQUENCE CLUSTERING '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
-
         # check for full consideration of basic t
         if kw['guess_threshold'] and kw['gt_mode'] == 'average':
             thresholds = []
@@ -1590,67 +1445,53 @@ class LexStat(Wordlist):
                                 for i in range(len(pairs)//5)]
                         DR += dx #[sum(dx)/len(dx)]
             threshold = sum(DR) / len(DR)
-        
-        # iterate over the matrices
-        for concept,indices,matrix in matrices:
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1           
-            
-            # check for keyword to guess the threshold
-            if kw['guess_threshold'] and kw['gt_mode'] == 'item':
-                t = clustering.best_threshold(
+
+        with util.ProgressBar('SEQUENCE CLUSTERING', len(self.rows)) as progress:
+            for concept,indices,matrix in matrices:
+                progress.update()
+
+                # check for keyword to guess the threshold
+                if kw['guess_threshold'] and kw['gt_mode'] == 'item':
+                    t = clustering.best_threshold(
                         matrix,
                         kw['gt_trange']
                         )
-            # considering new function here JML
-            elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
-                for idx in indices:
-                    pass
-            else:
-                t = threshold
+                # considering new function here JML
+                elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
+                    for idx in indices:
+                        pass
+                else:
+                    t = threshold
 
-            c = fclust(matrix,t)
+                c = fclust(matrix,t)
             
-            # specific clustering for fuzzy methods, currently not yet
-            # supported
-            if cluster_method in ['fuzzy']: #['link_communities','lc','lcl']:
-                clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
-                tests = []
-                for clrx in clusters:
-                    for x in clrx:
-                        tests += [x]
-                k = max(tests)
-                for idxA,idxB in zip(indices,clusters):
-                    clr[idxA] = idxB
+                # specific clustering for fuzzy methods, currently not yet
+                # supported
+                if cluster_method in ['fuzzy']: #['link_communities','lc','lcl']:
+                    clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
+                    tests = []
+                    for clrx in clusters:
+                        for x in clrx:
+                            tests += [x]
+                    k = max(tests)
+                    for idxA,idxB in zip(indices,clusters):
+                        clr[idxA] = idxB
                     
-            else:
-                # extract the clusters
-                clusters = [c[i]+k for i in range(len(matrix))]
+                else:
+                    # extract the clusters
+                    clusters = [c[i]+k for i in range(len(matrix))]
 
-                # reassign the "k" value
-                k = max(clusters)
+                    # reassign the "k" value
+                    k = max(clusters)
             
-                # add values to cluster dictionary
-                for idxA,idxB in zip(indices,clusters):
-                    clr[idxA] = idxB
+                    # add values to cluster dictionary
+                    for idxA,idxB in zip(indices,clusters):
+                        clr[idxA] = idxB
         
         if 'override' in kw:
             override = kw['override']
         else:
             override = False
-        
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                        )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'  \r')
-            sys.stdout.flush()
-
 
         # assign ids
         if not ref:
@@ -1669,7 +1510,6 @@ class LexStat(Wordlist):
 
         # assign thresholds to parameters
         self._current_threshold = threshold
-
 
 
     def get_random_distances(

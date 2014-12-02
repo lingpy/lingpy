@@ -35,6 +35,7 @@ from ._phylogeny._settings import rcParams
 from ..align.multiple import Multiple
 from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
 from .. import compat
+from .. import util
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
@@ -1228,52 +1229,26 @@ class PhyBo(Wordlist):
         # make a temporary hash in order to decrease the number of calls to the
         # algorithm
         cogDict = {}
-        
-        # semi-verbose output
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(self.cogs)
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' GAIN-LOSS-MAPPING ({0}) '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    ).format(glm)
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
 
         skip,nonskip = 0,0
-        for cog in self.cogs:
-
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1  
-        
-            # check whether cog has already been calculated
-            cogTuple = tuple(self.paps[cog])
-            if cogTuple in cogDict:
-                skip += 1
-                if rcParams["verbose"]: print("[i] Skipping already calculated pattern for COG {0}...".format(cog))
-                self.gls[glm][cog] = cogDict[cogTuple]
-            else:
-                nonskip += 1
-                if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog))
-                
-                # check for singletons
-                if sum([x for x in self.paps[cog] if x == 1]) == 1:
-                    gls = [(self.taxa[self.paps[cog].index(1)],1)]
+        with util.ProgressBar('GAIN-LOSS-MAPPING ({0})'.format(glm), len(self.cogs)) as progress:
+            for cog in self.cogs:
+                # check whether cog has already been calculated
+                cogTuple = tuple(self.paps[cog])
+                if cogTuple in cogDict:
+                    skip += 1
+                    if rcParams["verbose"]: print("[i] Skipping already calculated pattern for COG {0}...".format(cog))
+                    self.gls[glm][cog] = cogDict[cogTuple]
                 else:
-                    if mode == 'weighted':
-                        gls = get_gls(
+                    nonskip += 1
+                    if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog))
+                
+                    # check for singletons
+                    if sum([x for x in self.paps[cog] if x == 1]) == 1:
+                        gls = [(self.taxa[self.paps[cog].index(1)],1)]
+                    else:
+                        if mode == 'weighted':
+                            gls = get_gls(
                                 self.paps[cog],
                                 self.taxa,
                                 self.tree,
@@ -1283,8 +1258,8 @@ class PhyBo(Wordlist):
                                 missing_data = keywords['missing_data']
                                 )
 
-                    if mode == 'restriction':
-                        gls = self._get_GLS(
+                        if mode == 'restriction':
+                            gls = self._get_GLS(
                                 self.paps[cog],
                                 r = restriction,
                                 mode = 'r',
@@ -1293,25 +1268,18 @@ class PhyBo(Wordlist):
                                 missing_data = keywords['missing_data']
                                 )
 
-                    if mode == 'topdown':
-                        gls = self._get_GLS_top_down(
+                        if mode == 'topdown':
+                            gls = self._get_GLS_top_down(
                                 self.paps[cog],
                                 mode = restriction,
                                 missing_data = keywords['missing_data']
                                 )
-                noo = sum([t[1] for t in gls])
+                    noo = sum([t[1] for t in gls])
                 
-                self.gls[glm][cog] = (gls,noo)
+                    self.gls[glm][cog] = (gls,noo)
                 
-                # append new results to cogDict
-                cogDict[cogTuple] = (gls,noo)
-
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
+                    # append new results to cogDict
+                    cogDict[cogTuple] = (gls,noo)
 
         # append scenario to gls
         if rcParams["verbose"]: print("[i] Successfully calculated Gain-Loss-Scenarios.")
@@ -2362,222 +2330,189 @@ class PhyBo(Wordlist):
         # create MST graph
         gMST = nx.Graph()
 
+        with util.ProgressBar('MLN-REONSTRUCTION', len(scenarios)) as progress:
+            for cog,(gls,noo) in scenarios.items():
+                progress.update()
+                ile[cog] = []
 
-        # semi-verbose output
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(scenarios)
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' MLN-REONSTRUCTION '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
+                # get the origins
+                oris = [x[0] for x in gls if x[1] == 1]
 
-        for cog,(gls,noo) in scenarios.items():
-
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1 
+                # create a graph of weights
+                gWeights = nx.Graph()
             
-            ile[cog] = []
-
-            # get the origins
-            oris = [x[0] for x in gls if x[1] == 1]
-
-            # create a graph of weights
-            gWeights = nx.Graph()
-            
-            # calculate majority-rule edges
-            if method in ['majority_rule','mr']:
-                # iterate over nodes
-                for i,nodeA in enumerate(oris):
-                    for j,nodeB in enumerate(oris):
-                        if i < j:
-                            w = gPrm.edge[nodeA][nodeB]['weight']
-                            gWeights.add_edge(
+                # calculate majority-rule edges
+                if method in ['majority_rule','mr']:
+                    # iterate over nodes
+                    for i,nodeA in enumerate(oris):
+                        for j,nodeB in enumerate(oris):
+                            if i < j:
+                                w = gPrm.edge[nodeA][nodeB]['weight']
+                                gWeights.add_edge(
                                     nodeA,
                                     nodeB,
                                     weight=w
                                     )
-            elif method in ['tree_distance','td']:
-                for i,nodeA in enumerate(oris):
-                    for j,nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = len(
+                elif method in ['tree_distance','td']:
+                    for i,nodeA in enumerate(oris):
+                        for j,nodeB in enumerate(oris):
+                            if i < j:
+                                try:
+                                    w = len(
                                         self.tree.getConnectingEdges(
                                             nodeA,
                                             nodeB
                                             )
                                         )
-                            except ValueError:
-                                if 'root' in (nodeA,nodeB):
-                                    w = len(
+                                except ValueError:
+                                    if 'root' in (nodeA,nodeB):
+                                        w = len(
                                             self.tree.getConnectingEdges(
                                                 nodeB,
                                                 nodeA
                                                 )
                                             )
-                                else:
-                                    wA = len(
+                                    else:
+                                        wA = len(
                                             self.tree.getConnectingEdges(
                                                 'root',
                                                 nodeA
                                                 )
                                             )
-                                    wB = len(
+                                        wB = len(
                                             self.tree.getConnectingEdges(
                                                 'root',
                                                 nodeB
                                                 )
                                             )
-                                    w = wA + wB
+                                        w = wA + wB
 
-                            gWeights.add_edge(
+                                gWeights.add_edge(
                                     nodeA,
                                     nodeB,
                                     weight = w
                                     )
-            elif method in ['betweenness_centrality','bc']:
-                bc = nx.edge_betweenness_centrality(
+                elif method in ['betweenness_centrality','bc']:
+                    bc = nx.edge_betweenness_centrality(
                         gPrm,normalized=True,
                         weight='weight'
                         )
-                for i,nodeA in enumerate(oris):
-                    for j,nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = bc[nodeA,nodeB]
-                            except KeyError:
-                                w = bc[nodeB,nodeA]
-                            # be careful with zero division
-                            #if w == 0:
-                            #    w = 0.1
+                    for i,nodeA in enumerate(oris):
+                        for j,nodeB in enumerate(oris):
+                            if i < j:
+                                try:
+                                    w = bc[nodeA,nodeB]
+                                except KeyError:
+                                    w = bc[nodeB,nodeA]
+                                # be careful with zero division
+                                #if w == 0:
+                                #    w = 0.1
 
-                            gWeights.add_edge(
+                                gWeights.add_edge(
                                     nodeA,
                                     nodeB,
                                     weight = int(100 * (1 - w)) #int(1000 / w)
                                     )
-            elif method in ['central_node','cn']:
+                elif method in ['central_node','cn']:
 
-                # get the weighted degrees for the primary graph
-                degrees = gPrm.degree(weight='weight')
+                    # get the weighted degrees for the primary graph
+                    degrees = gPrm.degree(weight='weight')
 
-                # get the maximum degree
-                max_deg = sorted(
+                    # get the maximum degree
+                    max_deg = sorted(
                         degrees,
                         key=lambda x:degrees[x],
                         reverse=True
                         )[0]
 
-                # add all nodes as simple 
-                for i,nodeA in enumerate(oris):
-                    for j,nodeB in enumerate(oris):
-                        if i < j:
-                            if max_deg in [nodeA,nodeB]:
-                                w = 0
-                            else:
-                                w = 10
+                    # add all nodes as simple
+                    for i,nodeA in enumerate(oris):
+                        for j,nodeB in enumerate(oris):
+                            if i < j:
+                                if max_deg in [nodeA,nodeB]:
+                                    w = 0
+                                else:
+                                    w = 10
                             
-                            gWeights.add_edge(
+                                gWeights.add_edge(
                                     nodeA,
                                     nodeB,
                                     weight = w
                                     )
 
-            # if the graph is not empty
-            if gWeights:
+                # if the graph is not empty
+                if gWeights:
 
-                # check for identical weights and change them according to
-                # tree-distance
-                tmp_weights = {}
-                for a,b,d in gWeights.edges(data=True):
-                    try:
-                        tmp_weights[int(d['weight'])] += [(a,b)]
-                    except:
-                        tmp_weights[int(d['weight'])] = [(a,b)]
+                    # check for identical weights and change them according to
+                    # tree-distance
+                    tmp_weights = {}
+                    for a,b,d in gWeights.edges(data=True):
+                        try:
+                            tmp_weights[int(d['weight'])] += [(a,b)]
+                        except:
+                            tmp_weights[int(d['weight'])] = [(a,b)]
                 
-                if method in ['mr','majority_rule']:
-                    # check for identical weights and calculate the tree distance
-                    for w in tmp_weights:
-                        elist = tmp_weights[w]
+                    if method in ['mr','majority_rule']:
+                        # check for identical weights and calculate the tree distance
+                        for w in tmp_weights:
+                            elist = tmp_weights[w]
                         
-                        # check whether there are more identical weights
-                        if len(elist) > 1:
+                            # check whether there are more identical weights
+                            if len(elist) > 1:
                             
-                            # if so, order all stuff according to branch
-                            # length, we need try-except statement for
-                            # branchdistances here, since cogent does not
-                            # calculate distances to the root and back
-                            branches = []
-                            for a,b in elist:
-                                try:
-                                    branch_distance = len(self.tree.getConnectingEdges(a,b))
-                                    branches += [(a,b,branch_distance)]
-                                except:
-                                    if 'root' in (a,b):
-                                        branch_distance = len(
+                                # if so, order all stuff according to branch
+                                # length, we need try-except statement for
+                                # branchdistances here, since cogent does not
+                                # calculate distances to the root and back
+                                branches = []
+                                for a,b in elist:
+                                    try:
+                                        branch_distance = len(self.tree.getConnectingEdges(a,b))
+                                        branches += [(a,b,branch_distance)]
+                                    except:
+                                        if 'root' in (a,b):
+                                            branch_distance = len(
                                                 self.tree.getConnectingEdges(b,a)
                                                 )
-                                        branches += [(a,b,branch_distance)]
-                                    else:
-                                        bdA = len(
+                                            branches += [(a,b,branch_distance)]
+                                        else:
+                                            bdA = len(
                                                 self.tree.getConnectingEdges('root',a)
                                                 )
-                                        bdB = len(
+                                            bdB = len(
                                                 self.tree.getConnectingEdges('root',b)
                                                 )
-                                        branches += [(a,b,bdA+bdB)]
+                                            branches += [(a,b,bdA+bdB)]
 
-                            # now change the weights according to the order
-                            scaler = 1 / len(branches)
-                            minus = 1 - scaler
-                            branches = sorted(branches,key=lambda x:(x[2],x[1],x[0]),reverse=True)
-                            for a,b,d in branches:
-                                gWeights.edge[a][b]['weight'] += minus
-                                minus -= scaler
+                                # now change the weights according to the order
+                                scaler = 1 / len(branches)
+                                minus = 1 - scaler
+                                branches = sorted(branches,key=lambda x:(x[2],x[1],x[0]),reverse=True)
+                                for a,b,d in branches:
+                                    gWeights.edge[a][b]['weight'] += minus
+                                    minus -= scaler
                     
-                    # change maximum weights to distance weights
-                    for a,b,d in sorted(gWeights.edges(data=True),key=lambda x:x[2]['weight']):
-                        w = d['weight']
-                        gWeights.edge[a][b]['weight'] = int(1000 / w) ** 2
+                        # change maximum weights to distance weights
+                        for a,b,d in sorted(gWeights.edges(data=True),key=lambda x:x[2]['weight']):
+                            w = d['weight']
+                            gWeights.edge[a][b]['weight'] = int(1000 / w) ** 2
                 
-                # calculate the MST
-                mst = nx.minimum_spanning_tree(gWeights,weight='weight')
+                    # calculate the MST
+                    mst = nx.minimum_spanning_tree(gWeights,weight='weight')
                 
-                # assign the MST-weights to gMST
-                for nodeA,nodeB in mst.edges():
-                    try:
-                        gMST.edge[nodeA][nodeB]['weight'] += 1
-                        gMST.edge[nodeA][nodeB]['cogs'] += [cog]
-                    except:
-                        gMST.add_edge(
+                    # assign the MST-weights to gMST
+                    for nodeA,nodeB in mst.edges():
+                        try:
+                            gMST.edge[nodeA][nodeB]['weight'] += 1
+                            gMST.edge[nodeA][nodeB]['cogs'] += [cog]
+                        except:
+                            gMST.add_edge(
                                 nodeA,
                                 nodeB,
                                 weight=1,
                                 cogs=[cog]
                                 )
-                    ile[cog]+= [(nodeA,nodeB)]
-
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
+                        ile[cog]+= [(nodeA,nodeB)]
 
         # load data for nodes into new graph
         for node,data in gTpl.nodes(data=True):
@@ -3431,43 +3366,12 @@ class PhyBo(Wordlist):
     
         # now calculate the rest of the distributions
         if rcParams["verbose"]: print("[i] Calculating the Ancestral Vocabulary Distributions...")
-        # semi-verbose output
-        elif rcParams['_sverb']:
-            task_len = len(self.gls)
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' ANCESTRAL VOCABULARY DISTRIBUTIONS '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0  
 
         modes = list(self.gls.keys())
-        for m in modes:       
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1             
-            
-            self.get_AVSD(m,**keywords)
-
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
-
+        with util.ProgressBar('ANCESTRAL VOCABULARY DISTRIBUTIONS', len(modes)) as progress:
+            for m in modes:
+                progress.update()
+                self.get_AVSD(m,**keywords)
 
         # compare the distributions using mannwhitneyu
         if rcParams["verbose"]: print("[i] Comparing the distributions...")
@@ -4473,92 +4377,69 @@ class PhyBo(Wordlist):
         # calculate all resulting edges, using convex hull as
         # approximation 
         geoGraph = nx.Graph()
-        
-        # semi-verbose output
-        if rcParams['_sverb'] and not rcParams['verbose']:
-            task_len = len(graph.edges())
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' MINIMAL SPATIAL NETWORK '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0  
 
-        for nA,nB,d in graph.edges(data=True):
+        edges = graph.edges(data=True)
+        with util.ProgressBar('MINIMAL SPATIAL NETWORK', len(edges)) as progress:
+            for nA,nB,d in edges:
+                progress.update()
 
-            if not rcParams['verbose'] and rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1   
+                # get the labels
+                lA = graph.node[nA]['label']
+                lB = graph.node[nB]['label']
             
-            # get the labels
-            lA = graph.node[nA]['label']
-            lB = graph.node[nB]['label']
-            
-            # first check, whether edge is horizontal
-            if d['label'] == 'horizontal':
+                # first check, whether edge is horizontal
+                if d['label'] == 'horizontal':
                 
-                # if both labels occur in taxa, it is simple
-                if lA in taxa and lB in taxa:
-                    try:
-                        geoGraph.edge[lA][lB]['weight'] += d['weight']
-                        geoGraph.edge[lA][lB]['cogs'] += ','+d['cogs']
-                    except:
-                        geoGraph.add_edge(lA,lB,weight=d['weight'],cogs=d['cogs'])
-                elif not external_edges:
-                    # if only one in taxa, we need the convex hull for that node
-                    if lA in taxa or lB in taxa:
+                    # if both labels occur in taxa, it is simple
+                    if lA in taxa and lB in taxa:
+                        try:
+                            geoGraph.edge[lA][lB]['weight'] += d['weight']
+                            geoGraph.edge[lA][lB]['cogs'] += ','+d['cogs']
+                        except:
+                            geoGraph.add_edge(lA,lB,weight=d['weight'],cogs=d['cogs'])
+                    elif not external_edges:
+                        # if only one in taxa, we need the convex hull for that node
+                        if lA in taxa or lB in taxa:
 
-                        # check which node is in taxa
-                        if lA in taxa:
-                            this_label = lA
-                            other_nodes = tree.getNodeMatchingName(lB).getTipNames()
-                            other_label = lB
-                        elif lB in taxa:
-                            this_label = lB
-                            other_nodes = tree.getNodeMatchingName(lA).getTipNames()
-                            other_label = lA
+                            # check which node is in taxa
+                            if lA in taxa:
+                                this_label = lA
+                                other_nodes = tree.getNodeMatchingName(lB).getTipNames()
+                                other_label = lB
+                            elif lB in taxa:
+                                this_label = lB
+                                other_nodes = tree.getNodeMatchingName(lA).getTipNames()
+                                other_label = lA
 
-                        # first, get all the cogs
-                        cogs = d['cogs'].split(',')
+                            # first, get all the cogs
+                            cogs = d['cogs'].split(',')
 
-                        # iterate over all cogs now
-                        for cog in cogs:
+                            # iterate over all cogs now
+                            for cog in cogs:
 
-                            # check whether the nodes have the respective cognate
-                            # and take only those that have it
-                            new_other_nodes = []
-                            for other_node in other_nodes:
-                                paps = self.get_list(
+                                # check whether the nodes have the respective cognate
+                                # and take only those that have it
+                                new_other_nodes = []
+                                for other_node in other_nodes:
+                                    paps = self.get_list(
                                         col = other_node,
                                         entry = 'pap',
                                         flat = True
                                         )
-                                if cog in paps and other_node != this_label:
-                                    new_other_nodes += [other_node]
+                                    if cog in paps and other_node != this_label:
+                                        new_other_nodes += [other_node]
 
-                            # get the convex points of others
-                            these_coords = [(round(coords[t][0],5),round(coords[t][1],5)) for t in
+                                # get the convex points of others
+                                these_coords = [(round(coords[t][0],5),round(coords[t][1],5)) for t in
                                     new_other_nodes]
-                            hulls = getConvexHull(these_coords,polygon=False)
+                                hulls = getConvexHull(these_coords,polygon=False)
     
-                            # get the hull with the minimal euclidean distance
-                            distances = []
-                            for hull in hulls:
-                                distances.append(np.linalg.norm(np.array(hull) - np.array(coords[this_label])))
-                            this_hull = hulls[distances.index(min(distances))]
-                            other_label = new_other_nodes[
+                                # get the hull with the minimal euclidean distance
+                                distances = []
+                                for hull in hulls:
+                                    distances.append(np.linalg.norm(np.array(hull) - np.array(coords[this_label])))
+                                this_hull = hulls[distances.index(min(distances))]
+                                other_label = new_other_nodes[
                                     these_coords.index(
                                         (
                                             round(this_hull[0],5),
@@ -4567,77 +4448,69 @@ class PhyBo(Wordlist):
                                         )
                                     ]
 
-                            # append the edge to the graph
-                            try:
-                                geoGraph.edge[this_label][other_label]['weight'] += 1
-                                geoGraph.edge[this_label][other_label]['cogs'] += ','+cog
-
-                            except:
-                                geoGraph.add_edge(this_label,other_label,weight=1,cogs=cog)
+                                # append the edge to the graph
+                                try:
+                                    geoGraph.edge[this_label][other_label]['weight'] += 1
+                                    geoGraph.edge[this_label][other_label]['cogs'] += ','+cog
+                                except:
+                                    geoGraph.add_edge(this_label,other_label,weight=1,cogs=cog)
                         
-                    elif deep_nodes:
-                        # get the taxa of a and b
-                        taxA = tree.getNodeMatchingName(lA).getTipNames()
-                        taxB = tree.getNodeMatchingName(lB).getTipNames()
+                        elif deep_nodes:
+                            # get the taxa of a and b
+                            taxA = tree.getNodeMatchingName(lA).getTipNames()
+                            taxB = tree.getNodeMatchingName(lB).getTipNames()
 
-                        # get the cogs
-                        cogs = d['cogs'].split(',')
+                            # get the cogs
+                            cogs = d['cogs'].split(',')
 
-                        # iterate over the cogs
-                        for cog in cogs:
-                            newtaxA = []
-                            newtaxB = []
+                            # iterate over the cogs
+                            for cog in cogs:
+                                newtaxA = []
+                                newtaxB = []
 
-                            # get the lists
-                            for t in taxA:
-                                paps = self.get_list(
+                                # get the lists
+                                for t in taxA:
+                                    paps = self.get_list(
                                         col = t,
                                         entry = 'pap',
                                         flat = False
                                         )
-                                if cog in paps:
-                                    newtaxA += [t]
-                            for t in taxB:
-                                paps = self.get_list(
+                                    if cog in paps:
+                                        newtaxA += [t]
+                                for t in taxB:
+                                    paps = self.get_list(
                                         col = t,
                                         entry = 'pap',
                                         flat = False
                                         )
-                                if cog in paps:
-                                    newtaxB += [t]
+                                    if cog in paps:
+                                        newtaxB += [t]
     
-                            # get the convex points
-                            coordsA = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxA]
-                            coordsB = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxB]
-                            hullsA = getConvexHull(coordsA,polygon=False)
-                            hullsB = getConvexHull(coordsB,polygon=False)
+                                # get the convex points
+                                coordsA = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxA]
+                                coordsB = [(round(coords[t][0],5),round(coords[t][1],5)) for t in newtaxB]
+                                hullsA = getConvexHull(coordsA,polygon=False)
+                                hullsB = getConvexHull(coordsB,polygon=False)
     
-                            # get the closest points
-                            distances = []
-                            hulls = []
-                            for i,hullA in enumerate(hullsA):
-                                for j,hullB in enumerate(hullsB):
-                                    distances.append(np.linalg.norm(np.array(hullA)-np.array(hullB)))
-                                    hulls.append((hullA,hullB))
-                            minHulls = hulls[distances.index(min(distances))]
+                                # get the closest points
+                                distances = []
+                                hulls = []
+                                for i,hullA in enumerate(hullsA):
+                                    for j,hullB in enumerate(hullsB):
+                                        distances.append(np.linalg.norm(np.array(hullA)-np.array(hullB)))
+                                        hulls.append((hullA,hullB))
+                                minHulls = hulls[distances.index(min(distances))]
                             
-                            labelA = newtaxA[coordsA.index((round(minHulls[0][0],5),round(minHulls[0][1],5)))]
-                            labelB = newtaxB[coordsB.index((round(minHulls[1][0],5),round(minHulls[1][1],5)))]
+                                labelA = newtaxA[coordsA.index((round(minHulls[0][0],5),round(minHulls[0][1],5)))]
+                                labelB = newtaxB[coordsB.index((round(minHulls[1][0],5),round(minHulls[1][1],5)))]
                             
-                            # append the edge to the graph
-                            try:
-                                geoGraph.edge[labelA][labelB]['weight'] += 1
-                                geoGraph.edge[labelA][labelB]['cogs'] += ','+cog
-                            except:
-                                geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
+                                # append the edge to the graph
+                                try:
+                                    geoGraph.edge[labelA][labelB]['weight'] += 1
+                                    geoGraph.edge[labelA][labelB]['cogs'] += ','+cog
+                                except:
+                                    geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
 
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'      \r')
-        
         # write stats to file
         f = codecs.open(
                 os.path.join(self.dataset+'_phybo','taxa-msn-'+glm+'.stats'),
