@@ -12,7 +12,7 @@ import io
 
 from pathlib import Path
 from appdirs import user_config_dir
-from six import text_type
+from six import text_type, PY3
 from six.moves.configparser import RawConfigParser
 
 
@@ -21,12 +21,21 @@ DIR = Path(user_config_dir('lingpy'))
 
 class Config(RawConfigParser):
     def __init__(self, name, default=None, **kw):
+        """Initialization.
+
+        :param name: Basename for the config file (suffix .ini will be appended).
+        :param default: Default content of the config file.
+        """
         self.name = name
         self.default = default
         config_dir = kw.pop('config_dir', None) or text_type(DIR)
         RawConfigParser.__init__(self, kw, allow_no_value=True)
         if self.default:
-            self.readfp(io.BytesIO(self.default))
+            if PY3:
+                fp = io.StringIO(self.default)
+            else:
+                fp = io.BytesIO(self.default.encode('utf8'))
+            self.readfp(fp)
 
         cfg_path = os.path.join(config_dir, name + '.ini')
         if os.path.exists(cfg_path):

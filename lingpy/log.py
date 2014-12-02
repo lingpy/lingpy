@@ -10,7 +10,7 @@ from six import text_type
 from lingpy.config import Config
 
 
-LOGGING = b"""
+LOGGING = """
 [loggers]
 keys = root, lingpy
 
@@ -62,7 +62,7 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
             fname = text_type(cfg.path)
         else:
             with NamedTemporaryFile(delete=False) as fp:
-                fp.write(LOGGING)
+                fp.write(LOGGING.encode('utf8'))
                 fname = fp.name
                 remove = True
         fileConfig(fname, disable_existing_loggers=False)

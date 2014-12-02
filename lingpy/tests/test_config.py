@@ -31,7 +31,7 @@ option = 12
         self.assertEqual(cfg.get('section', 'option'), '12')
 
     def test_default(self):
-        cfg = self._make_one(default=b"""\
+        cfg = self._make_one(default="""\
 [section2]
 option2 = 7
 """)
