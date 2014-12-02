@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List, Robert Forkel
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 12:25
-# modified : 2014-07-22 13:49
+# modified : 2014-12-02 21:11
 """
 Basic parser for text files in QLC format.
 """
 
 __author__="Johann-Mattis List, Robert Forkel"
-__date__="2014-07-22"
+__date__="2014-12-02"
 
 import os
 
@@ -49,7 +49,7 @@ class QLCParser(object):
             
             # make check for correct input, there was a bug with a wrong
             # evaluation which is hopefully fixed by now
-            tmp_keys = [k for k in input_data if type(k) == int] 
+            tmp_keys = [k for k in input_data if isinstance(k, int)] 
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
                 raise ValueError("[!] Wrong input format!")
 
@@ -411,7 +411,7 @@ class QLCParser(object):
 
             # if the source is a dictionary, this dictionary will be directly added to the
             # original data-storage of the wordlist
-            elif type(source) == dict:
+            elif isinstance(source, dict):
                 
                 for key in self:
                     s = source[key]

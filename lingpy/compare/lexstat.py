@@ -20,6 +20,8 @@ import codecs
 import sys
 from itertools import combinations_with_replacement
 from math import factorial
+from six import text_type
+
 
 # thirdparty
 import numpy as np
@@ -1049,8 +1051,8 @@ class LexStat(Wordlist):
         kw.update(keywords)
         if kw['defaults']: return kw
 
-        if type(idxA) in [tuple,str]:
-            if type(idxA) == tuple:
+        if isinstance(idxA, text_type):
+            if isinstance(idxA, tuple):
                 idxsA = self.get_dict(col=idxA[0])[idxA[1]]
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]
                 for i,idxA in enumerate(idxsA):

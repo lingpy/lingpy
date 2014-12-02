@@ -2,7 +2,7 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-01-21 13:00
-# modified : 2014-11-07 11:03
+# modified : 2014-12-02 21:14
 # Future imports for compatibility 
 from __future__ import print_function
 from __future__ import division
@@ -13,7 +13,7 @@ Phylogeny-based detection of borrowings in lexicostatistical wordlists.
 """
 
 __author_="Johann-Mattis List"
-__date__="2014-11-07"
+__date__="2014-12-02"
 
 
 # basic imports
@@ -3092,7 +3092,7 @@ class PhyBo(Wordlist):
                 nodeB
                 )
         # check for entryB
-        if type(entries) == str:
+        if isinstance(entries, text_type):
             entries = entries.split(',')
 
         # get the graph locally for convenience

@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-05 17:50
-# modified : 2013-03-05 17:50
+# modified : 2014-12-02 21:03
 """
 Module provides classes and functions for pairwise alignment analyses.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-03-05"
+__date__="2014-12-02"
 
 # modules
 #from ..data import *
@@ -17,12 +17,8 @@ from ..algorithm import malign
 from ..algorithm import calign
 from ..algorithm import talign
 
-
-# handle unicode type in python2 
-try:
-    unicode
-except NameError:
-    unicode = str
+# py2/3 compatibility
+from six import text_type
 
 class Pairwise(object):
     """
@@ -176,7 +172,7 @@ class Pairwise(object):
             if k not in keywords:
                 keywords[k] = defaults[k]
         
-        if type(keywords['model']) == str:
+        if isinstance(keywords['model'], text_type):
             self.model = rcParams[keywords['model']]
         else:
             self.model = keywords['model']
@@ -392,10 +388,10 @@ def pw_align(
     """
 
     # check whether the sequences are lists
-    if type(seqA) == str or type(seqA) == tuple or type(seqA):
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
-    elif type(seqA) != list:
+    elif not isinstance(seqA, list):
         raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     
     if distance:
@@ -476,10 +472,11 @@ def nw_align(
 
     """
     # check whether the sequences are tuples
-    if type(seqA) in [str, tuple, unicode]: 
+    if isinstance(seqA, (text_type, tuple)):
+
         seqA = list(seqA)
         seqB = list(seqB)
-    elif type(seqA) != list:
+    elif not isinstance(seqA, list):
         raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     if not scorer:
         scorer = {}
@@ -536,10 +533,10 @@ def edit_dist(
 
     """
     # check whether the sequences are tuples
-    if type(seqA) in [str, tuple, unicode]:
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
-    elif type(seqA) != list:
+    elif not isinstance(seqA, list):
         raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     
     if restriction in ['cv','consonant-vowel']:
@@ -602,10 +599,10 @@ def sw_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) in [str, tuple, unicode]: 
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
-    elif type(seqA) != list:
+    elif not isinstance(seqA, list):
         raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
     if not scorer:
         scorer = {}
@@ -665,10 +662,10 @@ def we_align(
     """
 
     # check whether the sequences are tuples
-    if type(seqA) in [str, tuple, unicode]: 
+    if isinstance(seqA, (text_type, tuple)): 
         seqA = list(seqA)
         seqB = list(seqB)
-    elif type(seqA) != list:
+    elif isinstance(seqA, list):
         raise ValueError(rcParams['input_error'].format("tuple, list, or string"))
 
     if not scorer:
@@ -723,7 +720,7 @@ def turchin(
     else:
         raise ValueError("[!] No valid model instance selected.")
 
-    if type(seqA) in [str, unicode]:
+    if isinstance(seqA, text_type):
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
         
