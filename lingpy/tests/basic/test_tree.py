@@ -14,16 +14,16 @@ def test_random_tree():
     assert str(t1) != str(t2)
     assert ':' in str(t2) and ':' not in str(t1)
 
-class TestTree(TestCase):
+class TestTree(object):
 
-    def test_init(self):
-        from lingpy.basic.tree import Tree
+    def setup(self):
 
         self.tree = Tree('((a,b),(c,d),e)')
 
         assert sorted(self.tree.taxa) == list('abcde')
     
     def test_getDistanceToRoot(self):
+
         
         assert self.tree.getDistanceToRoot('a') == 2
 
