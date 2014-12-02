@@ -1050,12 +1050,10 @@ class LexStat(Wordlist):
         kw.update(keywords)
         if kw['defaults']: return kw
         
-        print(repr(idxA), type(idxA))
         if isinstance(idxA, (text_type, tuple)):
             if isinstance(idxA, tuple):
                 idxsA = self.get_dict(col=idxA[0])[idxA[1]]
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]
-                print(idxsA, idxsB)
                 for i,indexA in enumerate(idxsA):
                     for j,indexB in enumerate(idxsB):
                         self.align_pairs(indexA,indexB,**kw)
@@ -1076,7 +1074,6 @@ class LexStat(Wordlist):
                             )
             return
         
-        print(idxA,repr(idxA), 'bla')
         # assign the distance value
         distance = 1 if kw['distance'] else 0
 
