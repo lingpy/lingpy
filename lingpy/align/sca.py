@@ -39,6 +39,8 @@ from .multiple import Multiple
 from .pairwise import Pairwise
 from ..algorithm import misc
 from ._align import confidence
+from .. import util
+
 
 class MSA(Multiple):
     """
@@ -970,94 +972,58 @@ class Alignments(Wordlist):
                     ]
                 )
 
-        # define a score-bar that shows how far the work is processed
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(self.msa[kw['ref']])
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' ALIGNMENTS '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
+        with util.ProgressBar('ALIGNMENTS', len(self.msa[kw['ref']])) as progress:
+            for key,value in sorted(
+                    self.msa[kw['ref']].items(),
+                    key=lambda x:x[0]
+            ):
+                if rcParams['verbose']:
+                    print("[i] Analyzing cognate set number {0}.".format(key))
 
-        for key,value in sorted(
-                self.msa[kw['ref']].items(),
-                key=lambda x:x[0]
-                ):
-            if rcParams['verbose']: print("[i] Analyzing cognate set number {0}.".format(key))
-            elif rcParams['_sverb']:
-                if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                    sys.stdout.write(task_char)
-                    sys.stdout.flush()
-                    control_char += len(task_char)
-                task_count += 1
-            
-            # check for scorer keyword
-            if not kw['scoredict']:
-                m = SCA(
-                        value,
-                        **kw
-                        )
-            else:
-                # get the tokens 
-                numbers = [self[idx,'numbers'] for idx in value['ID']]
-                if kw['sonar']:
-                    sonars = [self[idx,'sonars'] for idx in value['ID']]
+                # check for scorer keyword
+                if not kw['scoredict']:
+                    m = SCA(value, **kw)
                 else:
-                    sonars = False
-                value['seqs'] = numbers
-                m = SCA(
-                        value,
-                        **kw
-                        )
-
-                kw['sonars'] = sonars
-                kw['classes'] = False
+                    # get the tokens
+                    numbers = [self[idx,'numbers'] for idx in value['ID']]
+                    if kw['sonar']:
+                        sonars = [self[idx,'sonars'] for idx in value['ID']]
+                    else:
+                        sonars = False
+                    value['seqs'] = numbers
+                    m = SCA(value, **kw)
+                    kw['sonars'] = sonars
+                    kw['classes'] = False
             
-            if kw['method'] == 'progressive':
-                m.prog_align(**kw)
-                        
-            elif kw['method'] == 'library':
-                m.lib_align(**kw)
+                if kw['method'] == 'progressive':
+                    m.prog_align(**kw)
+                elif kw['method'] == 'library':
+                    m.lib_align(**kw)
 
-            if kw['iteration']:
-                m.iterate_clusters(0.5)
-                m.iterate_orphans()
-                m.iterate_similar_gap_sites()
+                if kw['iteration']:
+                    m.iterate_clusters(0.5)
+                    m.iterate_orphans()
+                    m.iterate_similar_gap_sites()
 
-            if kw['swap_check']:
-                m.swap_check()
+                if kw['swap_check']:
+                    m.swap_check()
 
-            # convert back to external format, if scoredict is set
-            if kw['scoredict']:
-                for i,alm in enumerate(m.alm_matrix):
-                    tk = self[m.ID[i],'tokens']
-                    new_tk = class2tokens(tk,alm)
-                    m.alm_matrix[i] = new_tk
+                # convert back to external format, if scoredict is set
+                if kw['scoredict']:
+                    for i,alm in enumerate(m.alm_matrix):
+                        tk = self[m.ID[i],'tokens']
+                        new_tk = class2tokens(tk,alm)
+                        m.alm_matrix[i] = new_tk
 
-            self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
-            self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
-            self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
-                    m.dataset,
-                    m.seq_id,
-                    rcParams['timestamp'],
-                    params
-                    )
+                self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
+                self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
+                self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
+                    m.dataset, m.seq_id, rcParams['timestamp'], params)
 
-
-            if kw['output']:
-                if kw['style'] in ['plain', 'msa']:
-                    try:                        
-                        m.output(
+                if kw['output']:
+                    if kw['style'] in ['plain', 'msa']:
+                        try:
+                            m.output(
                                 'msa',
                                 filename='{0}-msa/{1}-{2}'.format(
                                     self.filename,
@@ -1065,9 +1031,9 @@ class Alignments(Wordlist):
                                     key
                                     )
                                 )
-                    except:
-                        os.mkdir('{0}-msa'.format(self.filename))
-                        m.output(
+                        except:
+                            os.mkdir('{0}-msa'.format(self.filename))
+                            m.output(
                                 'msa',
                                 filename='{0}-msa/{1}-{2}'.format(
                                     self.filename,
@@ -1075,13 +1041,13 @@ class Alignments(Wordlist):
                                     key
                                     )
                                 )
-                elif kw['style'] in ['with_id', 'id']:
-                    msa_string = msa2str(
+                    elif kw['style'] in ['with_id', 'id']:
+                        msa_string = msa2str(
                             self._meta['msa'][kw['ref']][key],
                             wordlist=True
                             )
-                    try:
-                        f = codecs.open(
+                        try:
+                            f = codecs.open(
                                 '{0}-msa/{1}-{2}'.format(
                                     self.filename,
                                     m.dataset,
@@ -1090,11 +1056,11 @@ class Alignments(Wordlist):
                                 'w',
                                 'utf-8'
                                 )
-                        f.write(msa_string)
-                        f.close()
-                    except:
-                        os.mkdir('{0}-msa'.format(self.filename))
-                        f = codecs.open(
+                            f.write(msa_string)
+                            f.close()
+                        except:
+                            os.mkdir('{0}-msa'.format(self.filename))
+                            f = codecs.open(
                                 '{0}-msa/{1}-{2}'.format(
                                     self.filename,
                                     m.dataset,
@@ -1103,19 +1069,10 @@ class Alignments(Wordlist):
                                 'w',
                                 'utf-8'
                                 )
-                        f.write(msa_string)
-                        f.close()
+                            f.write(msa_string)
+                            f.close()
         
         self._msa2col(ref=kw['ref'])
-        
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
-            sys.stdout.flush()
-
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
         """
@@ -1232,63 +1189,37 @@ class Alignments(Wordlist):
             print("[!] No alignments could be found, You should carry out"
                     " an alignment analysis first!")
             return
-        
-        # define a score-bar that shows how far the work is processed
-        if not rcParams['verbose'] and rcParams['_sverb']:
-            task_len = len(self.msa[ref])
-            if task_len >= rcParams['_sverb_tbar_len']:
-                task_char = rcParams['_sverb_tchar']
-                task_step = task_len / rcParams['_sverb_tbar_len']
-                task_range = [int(x+0.5) for x in np.arange(0, task_len, task_step)] 
-            else:
-                task_range = list(range(task_len))
-                task_char = rcParams['_sverb_tchar'] * int(rcParams['_sverb_tbar_len'] / task_len+0.5)
-            task_string = ' CONSENSUS '.center(
-                    rcParams['_sverb_tbar_len'],
-                    rcParams['_sverb_fchar']
-                    )
-            task_string = '|' + task_string + '|'
-            sys.stdout.write(task_string+'\r|')
-            task_count = 0
-            control_char = 0
-
 
         # go on with the analysis
         cons_dict = {}
-        for cog in self.etd[ref]:
-
+        with util.ProgressBar('CONSENSUS', len(self.etd[ref])) as progress:
+            for cog in self.etd[ref]:
+                progress.update()
             
-            if cog in self.msa[ref]:
-                if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
-                elif rcParams['_sverb']:
-                    if task_count in task_range and control_char < rcParams['_sverb_tbar_len']:
-                        sys.stdout.write(task_char)
-                        sys.stdout.flush()
-                        control_char += len(task_char)
-                    task_count += 1
+                if cog in self.msa[ref]:
+                    if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
 
-                
-                # temporary solution for sound-class integration
-                if classes == True:
-                    classes = []
-                    if weights:
-                        keywords['weights'] = prosodic_weights(
+                    # temporary solution for sound-class integration
+                    if classes == True:
+                        classes = []
+                        if weights:
+                            keywords['weights'] = prosodic_weights(
                                 prosodic_string(
                                     self.msa[ref][cog]['_sonority_consensus']
                                     )
                                 )
-                    else:
-                        keywords['weights'] = [1.0 for i in range(len(self.msa[ref][cog]['alignment']))]
+                        else:
+                            keywords['weights'] = [1.0 for i in range(len(self.msa[ref][cog]['alignment']))]
 
-                    for alm in self.msa[ref][cog]['alignment']:
-                        cls = [c for c in tokens2class(
+                        for alm in self.msa[ref][cog]['alignment']:
+                            cls = [c for c in tokens2class(
                                 alm,
                                 keywords['model']
                                 ) if c != '0']
-                        cls = class2tokens(cls,alm)
-                        classes += [cls]
+                            cls = class2tokens(cls,alm)
+                            classes += [cls]
 
-                    cons = get_consensus(
+                        cons = get_consensus(
                             self.msa[ref][cog]['alignment'],
                             classes = misc.transpose(classes),
                             tree = tree,
@@ -1297,9 +1228,9 @@ class Alignments(Wordlist):
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
-                    classes = True
-                else:
-                    cons = get_consensus(
+                        classes = True
+                    else:
+                        cons = get_consensus(
                             self.msa[ref][cog]['alignment'],
                             classes = classes,
                             tree = tree,
@@ -1308,30 +1239,18 @@ class Alignments(Wordlist):
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
-                self.msa[ref][cog]["consensus"] = cons
+                    self.msa[ref][cog]["consensus"] = cons
 
-            # if there's no msa for a given cognate set, this set is a
-            # singleton
-            else:
-                cons = self[[k[0] for k in self.etd[ref][cog] if k != 0][0],counterpart]
+                # if there's no msa for a given cognate set, this set is a
+                # singleton
+                else:
+                    cons = self[[k[0] for k in self.etd[ref][cog] if k != 0][0],counterpart]
             
-            # add consensus to dictionary
-            cons_dict[cog] = cons        
+                # add consensus to dictionary
+                cons_dict[cog] = cons
 
-        if not rcParams['verbose'] and rcParams['_sverb']: 
-            if control_char < rcParams['_sverb_tbar_len']:
-                sys.stdout.write(
-                        (rcParams['_sverb_tbar_len'] - control_char) * rcParams['_sverb_tchar']
-                            )
-            sys.stdout.write('|\r'+rcParams['_sverb_tbar_len'] * ' '+'     \r')
-            sys.stdout.flush()
-        
         # add the entries
-        self.add_entries(
-                consensus,
-                ref,
-                lambda x:cons_dict[x] 
-                )
+        self.add_entries(consensus, ref, lambda x: cons_dict[x])
 
     def output(
             self,
