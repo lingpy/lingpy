@@ -1567,7 +1567,7 @@ class PhyBo(Wordlist):
             if rcParams["verbose"]:
                 print("[i] Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
                 print("For recalculation, set 'force' to True.")
-                return
+            return
 
         # get acs with help of utils
         acs,dst = get_acs(self,glm,**keywords)
