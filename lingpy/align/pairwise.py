@@ -361,7 +361,7 @@ def pw_align(
 
     Parameters
     ----------
-    seqA, seqB : {str, list, tuple}
+    seqA, seqB : {text_type, list, tuple}
         The input strings. These should be iterables, so you can use tuples,
         lists, or strings.
     scorer : dict (default=False)
@@ -393,7 +393,7 @@ def pw_align(
     """
 
     # check whether the sequences are lists
-    if isinstance(seqA, (text_type, tuple, str)):
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -477,7 +477,7 @@ def nw_align(
 
     """
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple, str)):
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -538,7 +538,7 @@ def edit_dist(
 
     """
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple, str)):
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -604,7 +604,7 @@ def sw_align(
     """
 
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple, str)):
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
@@ -667,7 +667,7 @@ def we_align(
     """
 
     # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple, str)): 
+    if isinstance(seqA, (text_type, tuple)):
         seqA = list(seqA)
         seqB = list(seqB)
     elif not isinstance(seqA, list):
