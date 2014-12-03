@@ -17,6 +17,8 @@ from collections import deque
 # internal
 from ..settings import rcParams
 from ..thirdparty import cogent as cg
+from .. import util
+
 
 def _nwk_format(taxon):
     """
@@ -183,12 +185,8 @@ def xml2nwk(
     
     if not filename:
         return newick_string
-    else:
-        f = codecs.open(filename+'.nwk','w','utf-8')
-        f.write(newick_string)
-        f.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
-        return
+    util.write_text_file(filename + '.nwk', newick_string)
+    return
 
 
 def nwk2guidetree(

@@ -11,14 +11,25 @@ __date__="2013-07-17"
 
 import codecs
 from ..settings import rcParams
+from .. import log
+from .. import util
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].format("networkx"))
+    log.missing_module('networkx')
 
 import numpy as np
 
 from ..thirdparty import cogent as cg
+
+
+def _graph_or_file(graph, filename):
+    if filename:
+        util.write_text_file(
+            filename + '.gml', ''.join(line + '\n' for line in nx.generate_gml(graph)))
+        return
+    return graph
+
 
 def gls2gml(
         gls,
@@ -121,15 +132,9 @@ def gls2gml(
             pass
         #if 'label' not in data:
         g.add_edge(edgeA,edgeB,**data)
-    
-    if filename:
-        f = codecs.open(filename+'.gml','w','utf-8')
-        for line in nx.generate_gml(g):
-            f.write(line+'\n')
-        f.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
-    
-    return g
+
+    return _graph_or_file(g, filename)
+
 
 def nwk2gml(
         treefile,
@@ -186,16 +191,8 @@ def nwk2gml(
         if parent:
             graph.add_edge(parent.Name,node)
 
-    if filename:
-        f = codecs.open(filename+'.gml','w','utf-8')
-        for line in nx.generate_gml(graph):
-            f.write(line+'\n')
-        f.close()
+    return _graph_or_file(graph, filename)
 
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
-        return
-    else:
-        return graph
 
 def radial_layout(
         treestring,
@@ -391,13 +388,6 @@ def radial_layout(
 
         # don't forget the label
         d['label'] = n
-        
-    if filename:
-        f = codecs.open(filename+'.gml','w','utf-8')
-        for line in nx.generate_gml(graph):
-            f.write(line+'\n')
-        f.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.gml'))
 
-    return graph
+    return _graph_or_file(graph, filename)
 

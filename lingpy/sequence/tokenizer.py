@@ -17,12 +17,13 @@ import unicodedata
 
 # basic lingpy imports
 from ..settings import rcParams
+from .. import log
 
 try:
     import regex as re
 except ImportError:
     import re
-    print(rcParams['W_missing_module'].format('regex'))
+    log.missing_module('regex')
 
 class Tokenizer(object):
     """

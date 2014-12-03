@@ -25,6 +25,7 @@ import re
 from ..settings import rcParams
 from ..read.qlc import read_msa
 from ..sequence.sound_classes import pid, token2class, tokens2class, ipa2tokens
+from .. import util
 
 import numpy as np
 
@@ -369,17 +370,12 @@ def alm2html(
             css = css,
             **keywords
             )
-
-    out = codecs.open(filename+'.html','w','utf-8')
-    out.write(html)
-    out.close()
-
+    util.write_text_file(filename + '.html', html)
     if show:
         url = 'file://'+os.path.abspath(os.curdir)+'/'+filename+'.html'
         webbrowser.open(url)
-
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.html'))
     return
+
 
 def msa2html(
         msa,
@@ -631,10 +627,7 @@ def msa2html(
     
     if keywords['write_to_file']:
         # check, whether the outfile already exists
-        outf = codecs.open(filename,'w','utf-8')
-        outf.write(html)
-        outf.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename))
+        util.write_text_file(filename, html)
     else:
         return html
 
@@ -806,10 +799,7 @@ def msa2tex(
     if not filename:
         filename = 'lingpy-{0}'
 
-    out = codecs.open(filename+'.tex','w','utf-8')
-    out.write(tex)
-    out.close()
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.tex'))
+    util.write_text_file(filename + '.tex', tex)
 
 
 def tokens2html(

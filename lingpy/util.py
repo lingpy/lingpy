@@ -22,8 +22,10 @@ def write_text_file(path, content, normalize=None):
     :content: The text content to be written.
     :param normalize: If not `None` a valid unicode normalization mode must be passed.
     """
+    log = get_logger()
     with io.open(_str_path(path), 'w', encoding='utf8') as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
+    log.info("Data has been written to file <{0}>.".format(_str_path(path)))
 
 
 def read_text_file(path, normalize=None, lines=False):

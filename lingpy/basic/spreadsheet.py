@@ -22,6 +22,7 @@ from ..sequence.ngram import *
 from ..read.csv import *
 from ..convert import *
 from .. import util
+from .. import log
 
 
 class Spreadsheet:
@@ -128,11 +129,11 @@ class Spreadsheet:
         # first row must be the header in the input; TODO: add more functionality
         header = spreadsheet[0] 
 
-        if rcParams['verbose']: print(header[0:10])
-        
+        log.info('%s' % header[0:10])
+
         for i, cell in enumerate(header):
             cell = cell.strip()
-            if rcParams['verbose']: print(cell)
+            log.info('%s' % cell)
             if cell == self.meanings:
                 concept_id = i
             if self.language_id in cell:
@@ -163,8 +164,7 @@ class Spreadsheet:
             for j in range(0, len(self.matrix[i])):
                 normalized_cell = unicodedata.normalize("NFD", self.matrix[i][j])
                 if not normalized_cell == self.matrix[i][j]:
-                    if rcParams['debug']:
-                        print("[i] Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
+                    log.debug("Cell at <"+self.matrix[i][j]+"> ["+str(i)+","+str(j)+"] not in Unicode NFD. Normalizing.")
                     self.matrix[i][j] = normalized_cell
     
     def _prepare(self, full_rows = False):
@@ -226,8 +226,7 @@ class Spreadsheet:
 
         """
         if not os.path.isfile(self.blacklist):
-            if rcParams['verbose']:
-                print("[i] There is no blacklist specified at the follow file path location. Proceeding without blacklist.")
+            log.warn("There is no blacklist specified at the follow file path location. Proceeding without blacklist.")
             return
 
         # loop through the blacklist file and compile the regexes
@@ -252,9 +251,8 @@ class Spreadsheet:
                 for k in range(0, len(rules)):
                     match = rules[k].search(self.matrix[i][j])
                     if not match == None:
-                        match = re.sub(rules[k], replacements[k], self.matrix[i][j])                
-                        if rcParams['debug']:                    
-                            print("[i] Replacing ["+str(i)+","+str(j)+"] <"+self.matrix[i][j]+"> with <"+match+">.")
+                        match = re.sub(rules[k], replacements[k], self.matrix[i][j])
+                        log.debug("Replacing ["+str(i)+","+str(j)+"] <"+self.matrix[i][j]+"> with <"+match+">.")
                         self.matrix[i][j] = match.strip()
 
     def pprint(self, matrix, delimit="\t"):
@@ -303,7 +301,7 @@ class Spreadsheet:
                 continue
             # make sure rows aren't longer than the header row
             if len(self.matrix[i]) > len(header):
-                print("[i] You have a row (\#"+str(i)+") that is longer than your header. Exiting.")
+                log.error("You have a row (\#"+str(i)+") that is longer than your header. Exiting.")
                 sys.exit(1)
 
             # process each cell for chars, graphemes, words and store the results
@@ -311,8 +309,7 @@ class Spreadsheet:
                 cell = self.matrix[i][j].strip()
                 if cell == "":
                     # TODO: integrate global verbosity
-                    if rcParams['verbose']:
-                        print("[i] Missing cell")
+                    log.info("Missing cell")
                     continue
                 # unicode characters
                 for char in cell:
@@ -465,7 +462,7 @@ class Spreadsheet:
         # use wl2csv to convert if fileformat is 'qlc'
         if fileformat in ['qlc','csv']:
             if fileformat == 'csv':
-                print(rcParams['W_deprecation'].format('csv','qlc'))
+                log.deprecated('csv','qlc')
             wl2csv(
                     self.header,
                     self._data,

@@ -13,12 +13,14 @@ __date__="2014-06-05"
 import codecs
 from ..settings import rcParams
 from ..algorithm import misc
+from .. import log
+from .. import util
 
 try:
     import regex as re
 except ImportError:
     import re
-    print(rcParams['W_missing_module'].format('regex'))
+    log.missing_module('regex')
 
 
 def scorer2str(
@@ -281,20 +283,11 @@ def pap2nex(
                 missing,
                 matrix
                 )
-    else:
-        f = codecs.open(filename+'.nex','w')
-        f.write(
-                out.format(
-                    len(taxa),
-                    len(paps),
-                    missing,
-                    matrix
-                    )
-                )
-        f.close()
-        
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.nex'))
-        return
+    util.write_text_file(
+        filename + '.nex',
+        out.format(len(taxa), len(paps), missing, matrix))
+    return
+
 
 def pap2csv(
         taxa,
@@ -314,11 +307,5 @@ def pap2csv(
     
     if not filename:
         return out
-    else:
-        f = codecs.open(filename+'.csv','w',"utf-8")
-        f.write(out)
-        f.close()
-
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.csv'))
-        
-        return
+    util.write_text_file(filename + '.csv', out)
+    return
