@@ -6,14 +6,15 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-12 11:56
-# modified : 2014-08-25 13:35
+# modified : 2014-12-02 21:57
 """
 LexStat algorithm for automatic cognate detection.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-08-25"
+__date__="2014-12-02"
 
+from six import text_type
 # builtin
 import random
 import codecs
@@ -1051,14 +1052,14 @@ class LexStat(Wordlist):
                 )
         kw.update(keywords)
         if kw['defaults']: return kw
-
-        if type(idxA) in [tuple,str]:
-            if type(idxA) == tuple:
+        
+        if isinstance(idxA, (text_type, tuple)):
+            if isinstance(idxA, tuple):
                 idxsA = self.get_dict(col=idxA[0])[idxA[1]]
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]
-                for i,idxA in enumerate(idxsA):
-                    for j,idxB in enumerate(idxsB):
-                        self.align_pairs(idxA,idxB,**kw)
+                for i,indexA in enumerate(idxsA):
+                    for j,indexB in enumerate(idxsB):
+                        self.align_pairs(indexA,indexB,**kw)
 
             else:
                 if not concept:
@@ -1075,7 +1076,7 @@ class LexStat(Wordlist):
                             **kw
                             )
             return
-
+        
         # assign the distance value
         distance = 1 if kw['distance'] else 0
 
