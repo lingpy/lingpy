@@ -21,7 +21,6 @@ import os
 # internal imports
 from ._settings import rcParams
 from .data.model import Model, load_dvt
-from . import log
 
 # load diacritics, vowels, tones
 diacritics, vowels, tones = load_dvt()
