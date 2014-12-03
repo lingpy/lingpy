@@ -1,9 +1,0 @@
-networkx
-numpy
-six
-appdirs
-
-[borrowing]
-matplotlib
-networkx
-scipy
