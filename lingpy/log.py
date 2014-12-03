@@ -27,14 +27,14 @@ handlers = console
 
 [logger_lingpy]
 # a level of WARN is equivalent to lingpy's defaults of verbose=False, debug=False
-level = WARN
+level = INFO
 handlers =
 qualname = lingpy
 
 [handler_console]
 class = StreamHandler
 args = (sys.stderr,)
-level = NOTSET
+level = WARNING
 formatter = generic
 
 [formatter_generic]

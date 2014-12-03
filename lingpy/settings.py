@@ -21,6 +21,7 @@ import os
 # internal imports
 from ._settings import rcParams
 from .data.model import Model, load_dvt
+from .log import info as log_info
 
 # load diacritics, vowels, tones
 diacritics, vowels, tones = load_dvt()
@@ -265,4 +266,4 @@ def rc(rval=None, **keywords):
             rcParams[alias[key]] = keywords[key]
         else:
             rcParams[key] = keywords[key]
-    log.info("Successfully changed parameters.")
+    log_info("Successfully changed parameters.")
