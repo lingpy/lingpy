@@ -27,11 +27,12 @@ from ..convert.strings import scorer2str
 from ..read import *
 from .. import cache
 from .. import util
+from .. import log
 
 try:
     import networkx as nx
 except ImportError:
-    print(rcParams['W_missing_module'].format("networkx"))
+    log.missing_module('networkx')
 
 
 def _read(filename, normalize=None):
@@ -50,7 +51,7 @@ def _import_sound_classes(filename):
     sc_repl_dict = {}
     for key, values in _read(filename, normalize='NFC').items():
         for value in values:
-            if rcParams['debug']: print(value,key)
+            log.info('%s' % ((value, key),))
             sc_repl_dict[value] = key
 
     return sc_repl_dict
@@ -144,7 +145,6 @@ def _find_dir_path(
                                 shortest_paths[node].keys():
                             if len(path) <= current_path_length:
                                 current_path_length = len(path)
-                                #print current_path_length
                                 current_path = path
                                 break
                 if current_path != []:
@@ -471,8 +471,7 @@ def compile_model(
     compile_dvt
 
     """
-     
-    print("[i] Compiling model <"+model+">...")
+    log.info("Compiling model <"+model+">...")
     # get the path to the models
     if not path:
         new_path = os.path.join(
@@ -483,15 +482,15 @@ def compile_model(
                 )
     else:
         new_path = os.path.join(path,model)
-    
-    if rcParams['debug']: print("Model-Path:",new_path)
+
+    log.debug("Model-Path: %s" % new_path)
 
     # load the sound classes
     sound_classes = _import_sound_classes(os.path.join(new_path,'converter'))
     
     # dump the data
     cache.dump(sound_classes, model+'.converter')
-    print("... successfully created the converter.")
+    log.info("... successfully created the converter.")
 
     # try to load the scoring function or the score tree
     scorer = False
@@ -527,11 +526,12 @@ def compile_model(
 
     if scorer:
         cache.dump(scorer, model+'.scorer')
-        print("... successfully created the scorer.")
+        log.info("... successfully created the scorer.")
     else:
-        print("... no scoring dictionary defined.")
+        log.info("... no scoring dictionary defined.")
 
-    print("[i] Model <"+model+"> was compiled successfully.")
+    log.info("Model <" + model + "> was compiled successfully.")
+
 
 def compile_dvt(path=''):
     """
@@ -557,7 +557,7 @@ def compile_dvt(path=''):
     lingpy.data.model.Model
     lingpy.data.derive.compile_model
     """
-    print("[i] Compiling diacritics and vowels...")
+    log.info("Compiling diacritics and vowels...")
 
     # get the path to the models
     if not path:
@@ -595,4 +595,4 @@ def compile_dvt(path=''):
     else:
         cache.dump(dvt, 'dvt')
 
-    if rcParams['verbose']: print("[i] Diacritics and sound classes were successfully compiled.")
+    log.info("Diacritics and sound classes were successfully compiled.")

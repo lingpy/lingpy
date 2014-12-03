@@ -28,11 +28,13 @@ import zipfile
 # basic lingpy imports
 from ..settings import rcParams
 from ..basic.dictionary import Dictionary
+from .. import log
 
 try:
     from nltk.stem.snowball import SpanishStemmer
 except ImportError:
-    print(rcParams['W_missing_module'].format("nltk"))
+    log.missing_module('nltk')
+
 
 class ConceptGraph():
     """

@@ -17,6 +17,8 @@ import codecs
 from ..settings import rcParams
 from ..align.sca import PSA,MSA
 from ..algorithm import misc
+from .. import log
+
 
 class EvalMSA(object):
     """
@@ -760,6 +762,4 @@ class EvalPSA(object):
                     '\t'.join(t2),
                     ))
         out.close()
-        if rcParams['verbose']:
-            print(rcParams['M_file_written'].format(keywords['filename']))
-
+        log.file_written(keywords['filename'])

@@ -4,6 +4,7 @@ import os
 import logging
 from logging.config import fileConfig
 from tempfile import NamedTemporaryFile
+import warnings
 
 from six import text_type
 
@@ -71,6 +72,33 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
     return _logger
 
 
+def info(msg):
+    get_logger().info(msg)
+
+
+def warn(msg):
+    get_logger().warn(msg)
+
+
+def debug(msg):
+    get_logger().debug(msg)
+
+
+def error(msg, **kw):
+    get_logger().error(msg, **kw)
+
+
 def file_written(fname, logger=None):
     logger = logger or get_logger()
     logger.info("Data has been written to file <{0}>.".format(fname))
+
+
+def deprecated(old, new):
+    warnings.warn(
+        "Use of '{0}' is deprecated, use '{1}' instead.".format(old, new),
+        DeprecationWarning)
+
+
+def missing_module(name, logger=None):
+    logger = logger or get_logger()
+    logger.warn("Module '{0}' could not be loaded. Some methods may not work properly.".format(name))

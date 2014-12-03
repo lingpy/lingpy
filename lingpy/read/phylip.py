@@ -10,13 +10,14 @@ __author__="Johann-Mattis List"
 __date__="2013-08-19"
 
 from ..settings import *
+from .. import log
 
 try:
     import regex as re
 except ImportError:
     import re
-    print(rcParams['W_missing_module'].format('regex'))
-    
+    log.missing_module('regex')
+
 import os
 
 from ..algorithm import misc

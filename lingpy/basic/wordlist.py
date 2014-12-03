@@ -33,16 +33,13 @@ from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
 from .. import util
+from .. import log
 
 
 def _write_file(filename, content, ext=None):
     if ext:
         filename = filename + '.' + ext
     util.write_text_file(filename, content)
-
-    # display file-write-message
-    if rcParams['verbose']:
-        print(rcParams['M_file_written'].format(filename))
 
 
 class Wordlist(QLCParser):
@@ -1015,8 +1012,8 @@ class Wordlist(QLCParser):
         # csv-output
         elif fileformat in ['csv','qlc','tsv']:
             if fileformat == 'csv':
-                print(rcParams['W_deprecation'].format('csv','qlc'))
-            
+                log.deprecated('csv','qlc')
+
             # get the header line
             header = sorted(
                     [s for s in set(self._alias.values()) if s in self._header],

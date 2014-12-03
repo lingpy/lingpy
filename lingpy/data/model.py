@@ -15,10 +15,11 @@ import os
 import codecs
 
 from .._settings import rcParams
+from .. import log
 try:
     from .derive import compile_model, compile_dvt
 except ImportError:
-    print(rcParams['W_missing_module'].format("networkx"))
+    log.missing_module('networkx')
 
 from ..algorithm import misc
 from ..read import *

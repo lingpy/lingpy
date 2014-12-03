@@ -40,6 +40,7 @@ from .pairwise import Pairwise
 from ..algorithm import misc
 from ._align import confidence
 from .. import util
+from .. import log
 
 
 class MSA(Multiple):
@@ -520,9 +521,7 @@ class PSA(Pairwise):
                         )
                 i += 4
             except:
-                print("[!] Line {0} of the data is probablyb miscoded.".format(
-                    i+1
-                    ))
+                log.warn("Line {0} of the data is probably miscoded.".format(i+1))
                 i += 1
 
         Pairwise.__init__(
@@ -573,7 +572,7 @@ class PSA(Pairwise):
                 self.pairs.append((seqA,seqB))
                 i += 4
             except:
-                print("[!] Line "+str(i+1)+" of the data is probably miscoded.")
+                log.warn("Line "+str(i+1)+" of the data is probably miscoded.")
 
         self.pair_num = len(self.pairs)
 
@@ -739,7 +738,7 @@ class Alignments(Wordlist):
         
         # check for reference / cognates
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
         
         # change ref to rcParams
@@ -770,11 +769,9 @@ class Alignments(Wordlist):
                 try:
                     stridx = self.header[keywords['strings']]
                 except:
-                    print(
-                            "[i] No valid source for strings could be found."
-                            )
+                    log.warn("No valid source for strings could be found.")
             else:
-                print("[i] No valid source for strings could be found.")
+                log.warn("No valid source for strings could be found.")
                 return 
 
         # create the alignments by assembling the ids of all sequences
@@ -833,7 +830,7 @@ class Alignments(Wordlist):
                 try:
                     tmp[idx] = ' '.join(msa['alignment'][i])
                 except KeyError:
-                    print("[!] There are no alignments in your data.  Aborting...")
+                    log.error("There are no alignments in your data.  Aborting...")
                     return
         missing = [idx for idx in self if idx not in tmp]
         for m in missing:
@@ -977,8 +974,7 @@ class Alignments(Wordlist):
                     self.msa[kw['ref']].items(),
                     key=lambda x:x[0]
             ):
-                if rcParams['verbose']:
-                    print("[i] Analyzing cognate set number {0}.".format(key))
+                log.info("Analyzing cognate set number {0}.".format(key))
 
                 # check for scorer keyword
                 if not kw['scoredict']:
@@ -1092,9 +1088,7 @@ class Alignments(Wordlist):
         """
         
         corrs = confidence.get_confidence(self, scorer, ref, gap_weight)
-        if rcParams['verbose']:
-            print("[i] Successfully calculated confidence values for alignments.")
-        
+        log.info("Successfully calculated confidence values for alignments.")
         return corrs
 
     def __len__(self):
@@ -1173,7 +1167,7 @@ class Alignments(Wordlist):
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
 
         # switch ref
@@ -1186,8 +1180,9 @@ class Alignments(Wordlist):
         # check for existing alignments
         test = list(self.msa[ref].keys())[0]
         if 'alignment' not in self.msa[ref][test]:
-            print("[!] No alignments could be found, You should carry out"
-                    " an alignment analysis first!")
+            log.error(
+                "No alignments could be found, You should carry out"
+                " an alignment analysis first!")
             return
 
         # go on with the analysis
@@ -1197,7 +1192,7 @@ class Alignments(Wordlist):
                 progress.update()
             
                 if cog in self.msa[ref]:
-                    if rcParams['verbose']: print("[i] Analyzing cognate set number '{0}'...".format(cog))
+                    log.debug("Analyzing cognate set number '{0}'...".format(cog))
 
                     # temporary solution for sound-class integration
                     if classes == True:
@@ -1318,7 +1313,7 @@ class Alignments(Wordlist):
         filename = kw['filename']
 
         if 'cognates' in kw:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = kw['cognates']
 
         if ref != rcParams['ref']:
@@ -1691,7 +1686,6 @@ def get_consensus(
                 # half the weight of gaps
                 if '-' in tmpA:
                     tmpA['-'] = tmpA['-'] * keywords['gap_scale']
-                    #print(tmp['-'],keywords['gap_scale'])               
 
                 # get max
                 chars = [(c,n) for c,n in sorted(
@@ -1774,25 +1768,18 @@ def get_consensus(
         if taxa:
             all_taxa = [leaf.Name for leaf in tree.tips()]
             taxon_to_id = dict({(str(all_taxa[i]),i) for i in range(0,len(all_taxa))})
-            #print(taxon_to_id)
             tree = tree.deepcopy()
             for leaf in tree.tips():
                 leaf.Name = str(taxon_to_id[leaf.Name])
-            #print(tree)
-            #print(taxa)
             newIndices = [taxon_to_id[str(taxon)] for taxon in taxa]
-            #print(newIndices)
             tree = subGuideTree(tree,newIndices)
-            #print(tree)
             #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
-            #print(indexMap)
             #for leaf in tree.tips():
             #    leaf.Name = str(indexMap[int(leaf.Name)])
         #otherwise, the leaves of the guide trees are expected to have integer IDs
         #print("\nWrite partial alignments and sizes into the tree:")
         for node in tree.postorder():
             if node.isTip():
-                #print(node.Name)
                 node.alignment = [matrix[int(node.Name)]]
                 node.size = 1
             else:
@@ -1971,7 +1958,7 @@ def get_consensus(
                         reconstruct_by_sankoff(node.Children[1], node.sankoffPointers[i][char][1])
                 reconstruct_by_sankoff(tree, reconChar)
         else:
-            print("ERROR: Unknown reconstruction method: " + recon_alg)
+            log.error("Unknown reconstruction method: " + recon_alg)
         #printTree(tree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
         cons = "".join(tree.reconstructed)
 
@@ -1979,8 +1966,6 @@ def get_consensus(
         return cons
     else:
         return [c for c in cons if c != '-'] #cons.replace('-','')
-
-
 
 
 #.. File Formats

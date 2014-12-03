@@ -16,15 +16,16 @@ __date__="2013-11-22"
 
 
 from ...settings import rcParams
+from lingpy import log
 
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].format('networkx'))
+    log.missing_module('networkx')
 try:
     import scipy.stats as sps
 except:
-    print(rcParams['W_missing_module'].format('scipy'))
+    log.missing_module('scipy')
 
 from ._settings import rcParams
 

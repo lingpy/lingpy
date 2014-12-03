@@ -21,6 +21,7 @@ from ..settings import rcParams
 from ..convert.strings import matrix2dst, scorer2str, msa2str, pap2nex, pap2csv
 from ..algorithm import clustering
 from .. import util
+from .. import log
 
 
 def wl2dst(
@@ -35,6 +36,7 @@ def wl2dst(
     """
     Function converts wordlist to distance matrix.
     """
+    logger = log.get_logger()
     # check for taxon attribute
     taxa = getattr(wl,taxa)
 
@@ -79,7 +81,9 @@ def wl2dst(
                     try:
                         score = 1 - shared / (wl.height - missing)
                     except ZeroDivisionError:
-                        print(rcParams['E_zero_division'].format(taxA,taxB))
+                        logger.exception(
+                            "Zero-division error encountered in '{0}' and '{1}'.".format(
+                               taxA, taxB))
                         score = 1.0
                 
                  
@@ -123,7 +127,9 @@ def wl2dst(
                     try:
                         score = 1 - shared / (wl.height - missing)
                     except ZeroDivisionError:
-                        print(rcParams['E_zero_division'].format(taxA,taxB))
+                        logger.exception(
+                            "Zero-division error encountered in '{0}' and '{1}'.".format(
+                                taxA, taxB))
                         score = 1.0
                  
                 distances[i][j] = score
@@ -229,7 +235,8 @@ def renumber(wordlist,source,target=''):
     # add stuff to meta
     wordlist._meta[source+'2'+target] = converter
 
-    if rcParams['verbose']: print("[i] Successfully renumbered {0}.".format(source))
+    log.info("Successfully renumbered {0}.".format(source))
+
 
 def clean_taxnames(
         wordlist,
@@ -275,6 +282,7 @@ def calculate_data(
 
 
     """
+    logger = log.get_logger()
     defaults = dict(
             distances = False,
             tree_calc = "upgma",
@@ -306,7 +314,7 @@ def calculate_data(
         else:
             distances = wordlist._meta['distances']
         if 'tree' in wordlist._meta and not keywords['force']:
-            print(rcParams['W_force'].format('Reference tree'))
+            logger.warn("Reference tree has already been calculated, force overwrite by setting 'force' to 'True'.")
             return
         wordlist._meta['tree'] = clustering.matrix2tree(
                 distances,
@@ -321,7 +329,7 @@ def calculate_data(
         else:
             distances = wordlist._meta['distances']
         if 'groups' in wordlist._meta and not keywords['force']:
-            print(rcParams['W_force'].format('Distance matrix'))
+            logger.warn("Distance matrix has already been calculated, force overwrite by setting 'force' to 'True'.")
             return
         wordlist._meta['groups'] = clustering.matrix2groups(
                 keywords['threshold'],
@@ -329,9 +337,9 @@ def calculate_data(
                 these_taxa,
                 keywords['cluster_method']
                 )
+    log.info("Successfully calculated {0}.".format(data))
 
-    if rcParams['verbose']: print("[i] Successfully calculated {0}.".format(data))
-        
+
 def wl2qlc(
         header,
         data,
@@ -508,9 +516,7 @@ def wl2qlc(
     path = filename + '.' + keywords['fileformat']
     util.write_text_file(
         path, unicodedata.normalize("NFC", out) + keywords.get('stamp', ''))
-    if rcParams['verbose']:
-        print(rcParams['M_file_written'].format(path))
-    return                 
+    return
 
 def wl2csv(
         header,
@@ -520,8 +526,7 @@ def wl2csv(
         verbose = True,
         **keywords
         ):
-    
-    print("[WARNING] wl2csv is deprecated")
+    log.deprecated('wl2csv', '')
     return wl2qlc(header,data,filename,formatter,**keywords)
 
 
@@ -539,9 +544,7 @@ def tsv2triple(wordlist, outfile=None):
     
     tstore = []
     for head in wordlist.header:
-        if rcParams['debug']:
-            print('DEBUG: tsv2triple: '+head)
-            
+        log.debug('tsv2triple: ' + head)
         for key in wordlist:
             tstore += [(key,head.upper(),wordlist[key,head])]
 

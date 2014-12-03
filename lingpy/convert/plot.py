@@ -16,23 +16,24 @@ import codecs
 import webbrowser
 
 from ..settings import rcParams
+from .. import log
 
 import numpy as np
 
 try:
     import networkx as nx
 except ImportError:
-    print(rcParams['W_missing_module'].format('networkx'))
+    log.missing_module('networkx')
 try:
     import matplotlib.pyplot as plt
     import matplotlib as mpl
 except:
-    print(rcParams['W_missing_module'].format('matplotlib'))
+    log.missing_module('matplotlib')
 
 try:
     import scipy.cluster.hierarchy as sch
 except:
-    print(rcParams['W_missing_module'].format('scipy'))
+    log.missing_module('scipy')
 
 from ..thirdparty import cogent as cg
 
@@ -212,7 +213,8 @@ def plot_gls(
             filename + '.'+fileformat
             )
     plt.clf()
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+    log.file_written(filename + '.' + fileformat)
+
 
 def plot_tree(
         treestring,
@@ -421,7 +423,8 @@ def plot_tree(
 
     plt.savefig(filename + '.' + fileformat)
     plt.clf()
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+    log.file_written(filename + '.' + fileformat)
+
 
 def plot_concept_evolution(
         scenarios,
@@ -888,7 +891,8 @@ def plot_concept_evolution(
 
     plt.savefig(filename + '.'+fileformat)
     plt.clf()
-    if rcParams['verbose']: print(rcParams['M_file_written'].foramt(filename+'.'+fileformat))
+    log.file_written(filename + '.' + fileformat)
+
 
 def plot_heatmap(
         wordlist,
@@ -1208,8 +1212,6 @@ def plot_heatmap(
             )
     plt.savefig(filename + '.' + fileformat)
     
-    if rcParams['verbose']: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-    
     f = open(filename+'.matrix','w')
     for i,t in enumerate(taxa):
         f.write('{0:20}'.format(t))
@@ -1220,7 +1222,4 @@ def plot_heatmap(
                 f.write('\t{0:.2f}'.format(c))
         f.write('\n')
     f.close()
-
-            
-
-
+    log.file_written(filename + '.' + fileformat)

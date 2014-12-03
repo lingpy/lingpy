@@ -9,7 +9,7 @@ Module provides general clustering functions for LingPy.
 __author__="Johann-Mattis List"
 __date__="2014-02-25"
 
-import codecs
+from six import text_type
 
 from . import misc
 try:
@@ -21,6 +21,8 @@ from ..thirdparty import linkcomm as lc
 from ..thirdparty import cogent as cg
 
 from ..settings import rcParams
+from .. import log
+from .. import util
 
 # thirdparty modules
 import numpy as np
@@ -28,7 +30,8 @@ import numpy as np
 try:
     import networkx as nx
 except ImportError:
-    if rcParams['verbose']: print(rcParams['W_missing_module'].format('networkx'))
+    log.missing_module('networkx')
+
 
 def flat_upgma(threshold,matrix,taxa=None,revert=False):
     """
@@ -350,7 +353,7 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     try:
         g = nx.Graph()
     except NameError:
-        print(rcParams['W_missing_module'].format('networkx'))
+        log.missing_module('networkx')
         return
 
     for taxon in taxa: g.add_node(taxon)
@@ -445,12 +448,9 @@ def matrix2tree(
     
     if not filename:
         return tree
-    else:
-        out = codecs.open(filename+'.nwk','w','utf-8')
-        out.write(str(tree))
-        out.close()
-        if rcParams['verbose']: print(rcParams['M_file_written'].format(filename,'nwk'))
-    
+    util.write_text_file(filename + '.nwk', text_type(tree))
+
+
 def matrix2groups(
         threshold,
         matrix,

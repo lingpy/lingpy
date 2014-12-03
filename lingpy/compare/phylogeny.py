@@ -36,33 +36,34 @@ from ..align.multiple import Multiple
 from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
 from .. import compat
 from .. import util
+from .. import log
 
 # mpl is only used for specific plots, we can therefor make a safe import
 try:
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 except ImportError:
-    print(rcParams['W_missing_module'].format('matplotlib'))
+    log.missing_module('matplotlib')
 
 # import 3d-stuff
 try:
     from mpl_toolkits.mplot3d import Axes3D
 except:
-    print(rcParams['W_missing_module'].format('mplot3d'))
+    log.missing_module('matplotlib')
 
 # import the geoplot module
 try:
     import mpl_toolkits.basemap as bmp
 except ImportError:
-    print(rcParams['W_missing_module'].format('basemap'))
+    log.missing_module('basemap')
 try:
     import networkx as nx
 except:
-    print(rcParams['W_missing_module'].format('networkx'))
+    log.missing_module('networkx')
 try:
     import scipy as sp
 except:
-    print(rcParams['W_missing_module'].format('scipy'))
+    log.missing_module('scipy')
 
 from ._phylogeny.polygon import getConvexHull
 
@@ -177,7 +178,7 @@ def get_gls(
 
     # start iteration over outmost layer
     for i in sorted(distances,reverse=True):
-        if rcParams['debug']: print("[D] Calculating Layer {0}...".format(i))
+        log.debug("Calculating Layer {0}...".format(i))
 
         # iterate over all nodes in the layer
         for node in distances[i]:
@@ -191,10 +192,8 @@ def get_gls(
                 # get the nodes' children
                 names = [n.Name for n in tree_node.Children]
                 children = [scenarios[n] for n in names]
+                log.debug("... current node {0} ({1})".format(node,names))
 
-
-                if rcParams['debug']: print("... current node {0} ({1})".format(node,names))
-                
                 # get all possible combinations
                 combinations = itertools.product(*children)
 
@@ -225,16 +224,14 @@ def get_gls(
                         
                         # append the new combined stuff to the dictionary
                         new_nodes += [(1,new_stories)]
-                        
-                        if rcParams['debug']: print("...... 1 nodes:",new_nodes[-1])
+                        log.debug("...... 1 nodes: %s" % (new_nodes[-1],))
 
                     # combine states if they evaluate to 0
                     elif s0 + sM == sL:
                         
                         # append the new combined stuff to the dictionary
                         new_nodes += [(0,new_stories)]
-
-                        if rcParams['debug']: print("...... 0 nodes:",new_nodes[-1])
+                        log.debug("...... 0 nodes: %s" % (new_nodes[-1],))
 
                     # if the both evaluate to -1, also combine them
                     elif sM == sL:
@@ -257,8 +254,8 @@ def get_gls(
                         new_nodes += [(1,new_storiesB)]
                         new_nodes += [(0,new_storiesA)]
                         
-                        if rcParams['debug']: print("...... 01 nodes:",new_nodes[-2])
-                        if rcParams['debug']: print("...... 01 nodes:",new_nodes[-1])
+                        log.debug("...... 01 nodes: %s" % (new_nodes[-2],))
+                        log.debug("...... 01 nodes: %s" % (new_nodes[-1],))
 
             
                 # evaluate the scenarios for consistency reasons,
@@ -326,9 +323,10 @@ def get_gls(
 
     # select the scenario with the hightest number of gains, if push-gains
     # option is set to true
-    if rcParams['debug']:
-        print([x for x in tree.getNodeMatchingName(root).getTipNames() if x not
-            in states1])
+    log.debug(
+        '%s' % (
+            [x for x in tree.getNodeMatchingName(root).getTipNames()
+             if x not in states1],))
 
     if push_gains:
         winner = sorted(
@@ -398,7 +396,7 @@ class PhyBo(Wordlist):
 
         # check for cognates
         if 'cognates' in keywords:
-            print(rcParams['W_deprecation'].format('cognates','ref'))
+            log.deprecated('cognates','ref')
             ref = keywords['cognates']
 
         # store the name of the dataset and the identifier for paps
@@ -413,13 +411,13 @@ class PhyBo(Wordlist):
         if os.path.isfile(self.dataset+'.qlc'):
             infile = self.dataset+'.qlc'
         elif os.path.isfile(self.dataset+'.csv'):
-            print(rcParams['W_deprecation'].format('csv','qlc'))
+            log.deprecated('csv','qlc')
             infile = self.dataset+'.csv'
         else:
             raise compat.FileNotFoundError("The input file could not be found.")
         Wordlist.__init__(self,infile,row='concept',col='doculect')
         
-        if rcParams["verbose"]: print("[i] Loaded the wordlist file.")
+        log.info("Loaded the wordlist file.")
 
         # check for glossid
         if 'glid' not in self.entries:
@@ -448,15 +446,14 @@ class PhyBo(Wordlist):
                      ref+',glid',
                      f
                      )
- 
-            if rcParams["verbose"]: print("[i] Created entry PAP.")
+            log.info("Created entry PAP.")
          
         # get the paps and the etymological dictionary
         if not hasattr(self,'paps'):
             self.paps = self.get_paps(ref=paps,missing=keywords['missing'])
             self.etd = self.get_etymdict(ref=paps)
 
-        if rcParams["verbose"]: print("[i] Created the PAP matrix.")
+        log.info("Created the PAP matrix.")
 
         # get a list of concepts corresponding to the cogs and get the
         # singletons to be excluded from the calculation
@@ -484,8 +481,7 @@ class PhyBo(Wordlist):
             
             # create a list of keys for faster access when iterating
             self.cogs = [k for k in self.pap2con if k not in self.singletons]
-
-            if rcParams["verbose"]: print("[i] Excluded singletons.")
+            log.info("Excluded singletons.")
 
         # summarize the cognate sets under their common concept
 
@@ -506,13 +502,13 @@ class PhyBo(Wordlist):
                             ref=ref,
                             tree_calc=tree_calc,
                             )
-                    if rcParams["verbose"]: print("[i] Tree-file was not found, creating it now...")
+                    log.info("Tree-file was not found, creating it now...")
                 # XXX TODO
         
         # if it is explicitly defined, try to load that file
         else: #not hasattr(self,'tree'):
             self._meta['tree'] = cg.LoadTree(tree)
-            if rcParams["verbose"]: print("[i] Loaded the tree.")
+            log.info("Loaded the tree.")
 
         if isinstance(self.tree, text_type):
             self.tree = cg.LoadTree(treestring=self.tree)
@@ -526,8 +522,7 @@ class PhyBo(Wordlist):
                 change= keywords['change'],
                 start = keywords['start']
                 )
-        
-        if rcParams["verbose"]: print("[i] Calculated radial layout for the tree. ")
+        log.info("Calculated radial layout for the tree. ")
         
         self.tgraph = gTpl
         
@@ -569,13 +564,11 @@ class PhyBo(Wordlist):
                     self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1
                     ]
                 )
-
-        if rcParams['debug']: print("[i] Subtree is {0}.".format(str(tree)))
+        log.debug("Subtree is {0}.".format(text_type(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
-
-        if rcParams['debug']: print("[i] Nodes are {0}.".format(','.join(nodes)))
+        log.debug("Nodes are {0}.".format(','.join(nodes)))
         
         if mode == 1:
             return [(tree.Name,1)]
@@ -768,12 +761,11 @@ class PhyBo(Wordlist):
                     ]
                 )
 
-        if rcParams['debug']: print("[i] Subtree is {0}.".format(str(tree)))
+        log.debug("Subtree is {0}.".format(text_type(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
-
-        if rcParams['debug']: print("[D] Nodes are {0}.".format(','.join(nodes)))
+        log.debug("Nodes are {0}.".format(','.join(nodes)))
 
         # calculate the initial restriction value (maximal weight). This is roughly
         # spoken simply the minimal value of either all events being counted as
@@ -793,7 +785,7 @@ class PhyBo(Wordlist):
         maxG = sum([1 for x in nodes if paps[taxa.index(x)] in (1,-1)])
         maxL = sum([1 for x in nodes if paps[taxa.index(x)] in (0,-1)])
 
-        if rcParams['debug']: print("[D] Initial restriction threshold is {0}.".format(RST))
+        log.debug("Initial restriction threshold is {0}.".format(RST))
 
         # get the first state of all nodes and store the state in the
         # dictionary. note that we start from two distinct scenarios: one
@@ -823,12 +815,12 @@ class PhyBo(Wordlist):
                 tree.nontips()+[tree],key=lambda x:len(x.tips())
                 )
 
-        if rcParams['debug']: search_space = 0
-        if rcParams['debug']: print('[D] The Pap to be analysed:',', '.join(dbpaps))
+        search_space = 0
+        log.debug('The Pap to be analysed: %s' % ', '.join(dbpaps))
 
         # join the nodes successively
         for i,node in enumerate(ordered_nodes):
-            if rcParams['debug']: print('[D] Node to be joined in this run:',str(node))
+            log.debug('Node to be joined in this run: %s' % node)
            
 
             # when dealing with multifurcating trees, we have to store all
@@ -849,8 +841,7 @@ class PhyBo(Wordlist):
             # combine the histories of the items if all have the same value,
             # therefore, we first get the states in a simple list
             for cross in crossp:
-
-                if rcParams['debug']: search_space += 1
+                search_space += 1
 
                 states = [x[0] for x in cross]
                 stories = [x[1] for x in cross]
@@ -878,8 +869,8 @@ class PhyBo(Wordlist):
                 else:
                     rst = abs(RST)
 
-                if rcParams['debug']: print("... MaxG / MaxL / rst: {0} / {1} / {2}.".format(maxGain,maxLoss,rst))
-                #if rcParams['debug']: print("... Stories:",stories)
+                log.debug("... MaxG / MaxL / rst: {0} / {1} / {2}.".format(maxGain,maxLoss,rst))
+                #log.debug("... Stories: %s" % stories)
                 
                 # combine the histories
                 new_stories = []
@@ -905,7 +896,7 @@ class PhyBo(Wordlist):
                         else:
                             weight = gl.count(1) + 1 # we need to add 1 here
                     
-                    if rcParams['debug']: print("... state,weight:",gl,weight)    
+                    log.debug("... state,weight: %s %s" % (gl,weight))
                     # when combining two gains, make sure that the allowed
                     # amount of gains per lineage will not be overwritten by
                     # the combination of new gains
@@ -927,7 +918,7 @@ class PhyBo(Wordlist):
                 # are also included
                 elif states_0 + states_m == states_len:
                     gl = [k[1] for k in new_stories]
-                    if rcParams['debug']: print("... state is 1",gl)
+                    log.debug("... state is 1 %s" % gl)
                     
                     if mode == 'w':
                         weight = gl.count(1) * r[0] + gl.count(0) * r[1]
@@ -937,7 +928,7 @@ class PhyBo(Wordlist):
                         else:
                             weight = gl.count(1)
 
-                    if rcParams['debug']: print("... state,weight:",gl,weight)  
+                    log.debug("... state,weight: %s %s" % (gl,weight))
                         
                     if weight <= rst:
                         if mode == 'w':
@@ -948,8 +939,7 @@ class PhyBo(Wordlist):
 
                 # if states are both missing 
                 elif states_m == states_len:
-                    
-                    if rcParams['debug']: print("... all states are missing")
+                    log.debug("... all states are missing")
                         
                     if mode == 'w':
                         newNodes.append((-1,new_stories,maxGain,maxLoss-1))
@@ -959,7 +949,7 @@ class PhyBo(Wordlist):
 
                 # if the states are not identical, we check for both scenarios
                 else:
-                    if rcParams['debug']: print("... states are different.")
+                    log.debug("... states are different.")
 
                     # first scenario (tmpA) assumes origin, that is, for each node
                     # that has a 1, we add an origin to new_stories, same is
@@ -1014,7 +1004,7 @@ class PhyBo(Wordlist):
                         newNodes += [newNodeB]
                         
                 d[node.Name] = newNodes
-                if rcParams['debug']: print("... Possible scenarios for '{0}': {1}".format(node.Name,len(d[node.Name])))
+                log.debug("... Possible scenarios for '{0}': {1}".format(node.Name,len(d[node.Name])))
         
         # try to find the best scenario by counting the ratio of gains and losses.
         # the key idea here is to reduce the number of possible scenarios according
@@ -1029,14 +1019,14 @@ class PhyBo(Wordlist):
         # convert the specific format of the d[tree.Name] to simple format
         gls_list = []
         for first,last,mg,ml in d[tree.Name]:
-            if rcParams['debug']: print(first,last)
+            log.debug('%s %s' % (first,last))
             if first == 1:
                 gls_list.append([(tree.Name,first)]+last)
             else:
                 gls_list.append(last)
 
-        if rcParams['debug']: print("[D] Number of inferred scenarios:",len(d[tree.Name]))
-        if rcParams['debug']: print("[D] Number of decisions:",search_space)
+        log.debug("Number of inferred scenarios: %s" % len(d[tree.Name]))
+        log.debug("Number of decisions: %s" % search_space)
 
         # the tracer stores all scores
         tracer = []
@@ -1211,9 +1201,7 @@ class PhyBo(Wordlist):
         
         # check for previous analyses
         if glm in self.gls and not keywords['force']:
-            if rcParams["verbose"]:
-                print("[i] Gain-loss scenario {0} has already been calculated.  For recalculation, set 'force' to 'True'.".format(glm))
-                        
+            log.info("Gain-loss scenario {0} has already been calculated.  For recalculation, set 'force' to 'True'.".format(glm))
             return
         
         # create statistics for this run
@@ -1237,11 +1225,11 @@ class PhyBo(Wordlist):
                 cogTuple = tuple(self.paps[cog])
                 if cogTuple in cogDict:
                     skip += 1
-                    if rcParams["verbose"]: print("[i] Skipping already calculated pattern for COG {0}...".format(cog))
+                    log.debug("Skipping already calculated pattern for COG {0}...".format(cog))
                     self.gls[glm][cog] = cogDict[cogTuple]
                 else:
                     nonskip += 1
-                    if rcParams["verbose"]: print("[i] Calculating GLS for COG {0}...".format(cog))
+                    log.debug("Calculating GLS for COG {0}...".format(cog))
                 
                     # check for singletons
                     if sum([x for x in self.paps[cog] if x == 1]) == 1:
@@ -1282,7 +1270,7 @@ class PhyBo(Wordlist):
                     cogDict[cogTuple] = (gls,noo)
 
         # append scenario to gls
-        if rcParams["verbose"]: print("[i] Successfully calculated Gain-Loss-Scenarios.")
+        log.info("Successfully calculated Gain-Loss-Scenarios.")
         
         # write the results to file
         # make the folder for the data to store the stats
@@ -1447,30 +1435,22 @@ class PhyBo(Wordlist):
         except:
             pass
         
-        if rcParams["verbose"]: print("[i] Writing GLS data to file... ")
-        
-        # write gls-data to folder
-        f = codecs.open(
-                os.path.join(
-                    folder,
-                    'gls',
-                    '{0}-{1}.gls'.format(self.dataset,glm)
-                    ),
-                'w',
-                'utf-8'
-                )
-        f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
+        log.info("Writing GLS data to file... ")
+
+        lines = ['PAP\tGainLossScenario\tNumberOfOrigins']
         for cog in sorted(self.gls[glm]):
             gls,noo = self.gls[glm][cog]
-            f.write(
-                    "{0}\t".format(cog)+','.join(
-                        ["{0}:{1}".format(a,b) for a,b in gls]
-                        ) + '\t'+str(noo)+'\n'
-                    )
-        f.close()
-        
+            lines.append(
+                "{0}\t".format(cog)+','.join(
+                    ["{0}:{1}".format(a,b) for a,b in gls]
+                ) + '\t' + text_type(noo)
+            )
+        util.write_text_file(
+            os.path.join(folder, 'gls', '{0}-{1}.gls'.format(self.dataset,glm)),
+            ''.join(line + '\n' for line in lines))
+
         # print out average number of origins
-        if rcParams["verbose"]: print("[i] Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
+        log.info("Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
 
         # write statistics to stats file
         try:
@@ -1478,28 +1458,21 @@ class PhyBo(Wordlist):
         except:
             pass
 
-        f = codecs.open(
-                os.path.join(
-                    folder,
-                    'stats',
-                    '{0}-{1}'.format(self.dataset,glm)
-                    ),
-                'w',
-                'utf-8'
-                )
-        f.write('Number of PAPs (total): {0}\n'.format(len(self.paps)))
-        f.write('Number of PAPs (non-singletons): {0}\n'.format(len(self.gls[glm])))
-        f.write('Number of Singletons: {0}\n'.format(len(self.singletons)))
-        f.write('Average Number of Origins: {0:.2f}\n'.format(self.stats[glm]['ano']))
-        f.write('Maximum Number of Origins: {0}\n'.format(self.stats[glm]['mno']))
-        f.write('Mode: {0}\n'.format(mode))
+        lines = [
+            'Number of PAPs (total): {0}'.format(len(self.paps)),
+            'Number of PAPs (non-singletons): {0}'.format(len(self.gls[glm])),
+            'Number of Singletons: {0}'.format(len(self.singletons)),
+            'Average Number of Origins: {0:.2f}'.format(self.stats[glm]['ano']),
+            'Maximum Number of Origins: {0}'.format(self.stats[glm]['mno']),
+            'Mode: {0}'.format(mode),
+        ]
         if mode == 'weighted':
-            f.write('Ratio: {0[0]} / {0[1]}\n'.format(ratio))
+            lines.append('Ratio: {0[0]} / {0[1]}'.format(ratio))
         elif mode == 'restriction':
-            f.write('Restriction: {0}\n'.format(restriction))
-
-        f.close()
-
+            lines.append('Restriction: {0}'.format(restriction))
+        util.write_text_file(
+            os.path.join(folder, 'stats', '{0}-{1}'.format(self.dataset,glm)),
+            ''.join(line + '\n' for line in lines))
         return
 
     def get_CVSD(
@@ -1539,9 +1512,7 @@ class PhyBo(Wordlist):
                 [self.pap2con[p] for p in paps]))
             dists += [forms]# / concepts]
         self.dists['contemporary'] = dists
-
-        if rcParams["verbose"]: print("[i] Calculated the distributions for contemporary taxa.")
-        
+        log.info("Calculated the distributions for contemporary taxa.")
         return 
 
     def get_AVSD(
@@ -1564,10 +1535,9 @@ class PhyBo(Wordlist):
         # check for already calculated glm
         # check for previous analyses
         if glm in self.dists and not keywords['force'] and glm != 'mixed':
-            if rcParams["verbose"]:
-                print("[i] Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
-                print("For recalculation, set 'force' to True.")
-                return
+            log.info("Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
+            log.info("For recalculation, set 'force' to True.")
+            return
 
         # get acs with help of utils
         acs,dst = get_acs(self,glm,**keywords)
@@ -1701,8 +1671,7 @@ class PhyBo(Wordlist):
         #->            except:
         #->                self.acs[glm][node] = [(c,m,p)]
 
-        if rcParams["verbose"]: print("[i] Calculated the distributions for ancestral taxa.")
-
+        log.info("Calculated the distributions for ancestral taxa.")
         return
 
     def plot_ACS(
@@ -2140,6 +2109,7 @@ class PhyBo(Wordlist):
 
             # if tar is chosen, put it into a tarfile
             if tar:
+                # FIXME: the code below is not portable to windows systems!
                 os.system(
                         'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
                             self.dataset,
@@ -2169,7 +2139,7 @@ class PhyBo(Wordlist):
         except:
             pass
         
-        if rcParams["verbose"]: print("[i] Writing GLS data to file... ")
+        log.info("Writing GLS data to file... ")
         
         # write gls-data to folder
         f = codecs.open(
@@ -2570,77 +2540,44 @@ class PhyBo(Wordlist):
                         )
         # transfer node data
 
-        # verbose output
-        if rcParams["verbose"]: print("[i] Writing graph to file...")
+        log.info("Writing graph to file...")
 
-        # write the graph to file
-        f = codecs.open(
-                os.path.join(
-                    self.dataset+'_phybo',
-                    'mln-'+glm+'.gml'
-                    ),
-                'w',
-                'utf-8'
-                )
-        for line in nx.generate_gml(gOut):
-            f.write(line+'\n')
-        f.close()
+        def _write_file(name, lines):
+            util.write_text_file(
+                os.path.join(self.dataset + '_phybo', name),
+                ''.join(line + '\n' for line in lines))
+
+        _write_file('mln-' + glm + '.gml', nx.generate_gml(gOut))
 
         # write the inferred borrowing events (ILS, inferred lateral event) 
         # between all taxa to file
-        # verbose output
-        if rcParams["verbose"]: print("[i] Writing Inferred Lateral Events to file...")
+        log.info("Writing Inferred Lateral Events to file...")
 
-        f = codecs.open(
-                os.path.join(
-                    self.dataset+'_phybo',
-                    'ile-'+glm+'.csv'
-                    ),
-                'w',
-                'utf-8'
-                )
+        lines = []
         for cog,events in ile.items():
             if events:
-                f.write(
-                        cog+'\t'+','.join(
-                            ['{0}:{1}'.format(a,b) for a,b in events]
-                            )+'\n'
-                        )
-        f.close()
+                lines.append(
+                    cog+'\t'+','.join(
+                        ['{0}:{1}'.format(a,b) for a,b in events]
+                    )
+                )
+        _write_file('ile-' + glm + '.csv', lines)
 
         # create file name for node labels (cytoscape output)
-        f = codecs.open(
-                os.path.join(
-                    self.dataset+'_phybo',
-                    'node.label.NA'
-                    ),
-                'w',
-                'utf-8'
-                )
-        f.write("node.label (class=java.lang.String)\n")
+        lines = ["node.label (class=java.lang.String)"]
         for taxon in taxa:
-            f.write('{0} = {1}\n'.format(taxon,taxon))
-        f.close()
+            lines.append('{0} = {1}'.format(taxon,taxon))
+        _write_file('node.label.NA', lines)
 
         # add gOut to graphattributes
         self.graph[glm] = gOut
 
         # write stats to file
-        f = codecs.open(
-                os.path.join(
-                    self.dataset+'_phybo',
-                    'taxa-'+glm+'.stats'
-                    ),
-                'w',
-                'utf-8'
-                )
-        
         # get the degree
         nodes = tree.getNodeNames()
 
         dgr,wdgr = [],[]
         for taxon in nodes:
-            
             horizontals = [g for g in gOut[taxon] if 'weight' in gOut[taxon][g]]
             
             dgr.append(len(horizontals))
@@ -2651,38 +2588,26 @@ class PhyBo(Wordlist):
                 key=lambda x:x[1],
                 reverse=True
                 )
+        lines = []
         for n,d,w in sorted_nodes:
-            f.write(
-                    '{0}\t{1}\t{2}\t{3}\n'.format(
-                        n,
-                        str(tree.getNodeMatchingName(n)),
-                        d,
-                        w
-                        )
-                    )
-        f.close()
+            lines.append(
+                '{0}\t{1}\t{2}\t{3}'.format(
+                    n, text_type(tree.getNodeMatchingName(n)), d, w))
+        _write_file('taxa-' + glm + '.stats', lines)
 
-        if rcParams["verbose"]: print("[i] Wrote node degree distributions to file.")
+        log.info("Wrote node degree distributions to file.")
 
         # write edge distributions
-        f = codecs.open(
-                os.path.join(
-                    self.dataset+'_phybo',
-                    'edge-'+glm+'.stats'
-                    ),
-                'w',
-                'utf-8'
-                )
-        edges = []
         edges = [g for g in gOut.edges(data=True) if 'weight' in g[2]]
 
+        lines = []
         for nA,nB,d in sorted(
                 edges,
                 key=lambda x: x[2]['weight'],
                 reverse = True
                 ):
-            f.write(
-                    '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
+            lines.append(
+                    '{0}\t{1}\t{2}\t{3}\t{4}\t{5}'.format(
                         nA,
                         nB,
                         d['weight'],
@@ -2691,8 +2616,8 @@ class PhyBo(Wordlist):
                         tree.getNodeMatchingName(nB)
                         )
                     )
-        f.close()
-        if rcParams["verbose"]: print("[i] Wrote edge-weight distributions to file.")
+        _write_file('edge-'+glm+'.stats', lines)
+        log.info("Wrote edge-weight distributions to file.")
         
         # write specific links of taxa to file
         try:
@@ -2735,8 +2660,7 @@ class PhyBo(Wordlist):
                         concept
                         ))
             f.close()
-        if rcParams["verbose"]: print("[i] Wrote list of edges per taxa to file.")
-
+        log.info("Wrote list of edges per taxa to file.")
         return 
 
     def get_PDC(
@@ -4028,8 +3952,7 @@ class PhyBo(Wordlist):
         # save the figure
         plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
         plt.clf()
-        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
-
+        log.file_written(filename + '.' + fileformat)
         return
 
     def plot_MLN_3d(
@@ -4963,9 +4886,8 @@ class PhyBo(Wordlist):
 
         plt.savefig(filename+'.'+fileformat)
         plt.clf()
-        if rcParams["verbose"]: print(rcParams['M_file_written'].format(filename+'.'+fileformat))
+        log.file_written(filename + '.' + fileformat)
 
-    
     def plot_concepts(
             self,
             concept,
