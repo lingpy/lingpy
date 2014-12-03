@@ -8,7 +8,7 @@ import warnings
 
 from six import text_type
 
-from lingpy.config import Config
+from .config import Config
 
 
 LOGGING = """
