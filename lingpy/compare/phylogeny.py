@@ -1535,9 +1535,6 @@ class PhyBo(Wordlist):
         # check for already calculated glm
         # check for previous analyses
         if glm in self.dists and not keywords['force'] and glm != 'mixed':
-            if rcParams["verbose"]:
-                print("[i] Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
-                print("For recalculation, set 'force' to True.")
             log.info("Gain-loss scenario {0} has already been calculated. For recalculation, set 'force' to 'True'.".format(glm))
             log.info("For recalculation, set 'force' to True.")
             return
@@ -2215,11 +2212,15 @@ class PhyBo(Wordlist):
             The dictionary key for the gain-loss-model.
         threshold : int (default=1)
             The threshold used to exclude edges.
-        verbose : bool (default=False)
-            Set to c{True} for verbose output.
-        colormap : {None matplotlib.cm}
-            A :py:class:`matplotlib.colormap` instance. If set to c{None}, this
-            defaults to :py:class:`~matplotlib.cm.jet`.
+        method  : str (default='mr')
+            Select the method for MLN calculation. Choose between:
+            * "mr": majority-rule, multiple links are resolved by selecting
+              those which occur most frequently
+            * "td": tree-distance, multiple links are resolved by selecting
+              those which are closest on the tree
+            * "bc": betweenness-centrality, multiple links are resolved by
+              selecting those which have the highest betweenness centrality
+            
         """
 
         #if not colormap:
@@ -2294,11 +2295,8 @@ class PhyBo(Wordlist):
                                     weight=1
                                     )
 
-        # verbose output
-        if rcParams["verbose"]: print("[i] Calculated primary graph.")
-        
-        # verbose output
-        if rcParams["verbose"]: print("[i] Inferring lateral edges...")
+        log.info("[i] Calculated primary graph.")
+        log.info("[i] Inferring lateral edges...")
             
         # create MST graph
         gMST = nx.Graph()
@@ -2746,7 +2744,7 @@ class PhyBo(Wordlist):
             
             paps.append((key,noo))
         
-        if rcParams["verbose"]: print("[i] Retrieved patchy distributions.")
+        log.info("[i] Retrieved patchy distributions.")
 
         # get the index for the paps in the wordlist
         papIdx = self.header['pap']
@@ -2779,7 +2777,7 @@ class PhyBo(Wordlist):
         # self.output('csv',filename=self.dataset+'_phybo/wl-'+glm)
         # XXX change later
 
-        if rcParams["verbose"]: print("[i] Updated the wordlist.")
+        log.info("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
         f = codecs.open(
@@ -2823,7 +2821,7 @@ class PhyBo(Wordlist):
             else:
                 f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1,a2,a3,b,len(l),float(b)/len(l)))
         f.close()
-        if rcParams["verbose"]: print("[i] Wrote stats on paps to file.")
+        log.info("[i] Wrote stats on paps to file.")
 
         # write stats on concepts
         f = codecs.open(
@@ -2858,7 +2856,7 @@ class PhyBo(Wordlist):
             sum([cstats[c][2] for c in cstats]) / len(cstats)
             ))
         f.close()
-        if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
+        log.info("[i] Wrote stats on concepts to file.")
        
         # write alternative stats on concepts including information of
         # singletons (excluding them may bias the results)
@@ -2908,7 +2906,7 @@ class PhyBo(Wordlist):
             ))
 
         f.close()
-        if rcParams["verbose"]: print("[i] Wrote stats on concepts to file.")
+        log.info("[i] Wrote stats on concepts to file.")
         
         # store params in attribute stats
         self.stats["CONCEPTS"] = dict(
@@ -3032,7 +3030,7 @@ class PhyBo(Wordlist):
         try:
             edge = graph.edge[nodeA][nodeB]
         except:
-            if rcParams["verbose"]: print(warning)
+            log.info(warning)
             return
 
         # check the edge
@@ -3040,7 +3038,7 @@ class PhyBo(Wordlist):
             if edge['label'] == 'horizontal':
                 cogs = edge['cogs'].split(',')
             else:
-                if self.verbose: print(warning)
+                log.info(warning)
                 return
         else:
             cogs = edge['cogs'].split(',')
@@ -3162,15 +3160,11 @@ class PhyBo(Wordlist):
             
             You can also define your own mix of models.
 
-        verbose : bool (default = False)
-            If set to c{True}, be verbose when carrying out the analysis.
         usetex : bool (default=True)
             Specify whether you want to use LaTeX to render plots.
         mixed : bool (default=False)
             If set to c{True}, calculate a mixed model by selecting the best
             model for each item separately.
-        verbose : bool (default=False)
-            Set to c{True} for verbose output.
         output_gml : bool (default=False)
             Set to c{True} in order to output every gain-loss-scenario in
             GML-format.
@@ -3240,7 +3234,7 @@ class PhyBo(Wordlist):
         # carry out the various analyses
         for mode,params in runs:
             if mode == 'weighted':
-                if rcParams["verbose"]: print(
+                log.info(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and ratio {0[0]}:{0[1]}...".format(params)
                                 )
@@ -3256,7 +3250,7 @@ class PhyBo(Wordlist):
                         missing_data = keywords["missing_data"],
                         )
             elif mode == 'restriction':
-                if rcParams["verbose"]: print(
+                log.info(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -3272,7 +3266,7 @@ class PhyBo(Wordlist):
                         missing_data = keywords["missing_data"]
                         )
             elif mode == 'topdown':
-                if rcParams["verbose"]: print(
+                log.info(
                         "[i] Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
@@ -3287,12 +3281,12 @@ class PhyBo(Wordlist):
     
         # calculate the different distributions
         # start by calculating the contemporary distributions
-        if rcParams["verbose"]: print("[i] Calculating the Contemporary Vocabulary Distributions...")
+        log.info("[i] Calculating the Contemporary Vocabulary Distributions...")
         self.get_CVSD()
         
     
         # now calculate the rest of the distributions
-        if rcParams["verbose"]: print("[i] Calculating the Ancestral Vocabulary Distributions...")
+        log.info("[i] Calculating the Ancestral Vocabulary Distributions...")
 
         modes = list(self.gls.keys())
         with util.ProgressBar('ANCESTRAL VOCABULARY DISTRIBUTIONS', len(modes)) as progress:
@@ -3301,7 +3295,7 @@ class PhyBo(Wordlist):
                 self.get_AVSD(m,**keywords)
 
         # compare the distributions using mannwhitneyu
-        if rcParams["verbose"]: print("[i] Comparing the distributions...")
+        log.info("[i] Comparing the distributions...")
         
         zp_vsd = []
         for m in modes:
@@ -3326,7 +3320,7 @@ class PhyBo(Wordlist):
 
         # calculate mixed model
         if mixed:
-            if rcParams["verbose"]: print("[i] Calculating the mixed model...")
+            log.info("[i] Calculating the mixed model...")
             self.get_IVSD(
                     output_plot=output_plot,
                     output_gml=output_gml,
@@ -3349,7 +3343,7 @@ class PhyBo(Wordlist):
                 zp_vsd.append((vsd[0], vsd[1]))
 
         # write results to file
-        if rcParams["verbose"]: print("[i] Writing stats to file.")
+        log.info("[i] Writing stats to file.")
         f = codecs.open(
                 os.path.join(self.dataset+'_phybo',self.dataset+'.stats'),
                 'w',
@@ -3370,7 +3364,7 @@ class PhyBo(Wordlist):
         # plot the stats if this is defined in the settings
         if plot_dists:
             
-            if rcParams['verbose']: print("[i] Plotting distributions.")
+            log.info("[i] Plotting distributions.")
             # specify latex
             mpl.rc('text',usetex=keywords['usetex'])
                         
@@ -3473,7 +3467,7 @@ class PhyBo(Wordlist):
                     )
             plt.clf()
             
-            if rcParams["verbose"]: print("[i] Plotted the distributions.")
+            log.info("[i] Plotted the distributions.")
 
         # carry out further analyses if this is specified
         if full_analysis:
@@ -3534,8 +3528,6 @@ class PhyBo(Wordlist):
             Select the format of the output plot.
         threshold : int (default=1)
             Select the threshold for drawing lateral edges.
-        verbose : bool (default = False)
-            If set to c{True}, be verbose when carrying out the analysis.
         usetex : bool (default=True)
             Specify whether you want to use LaTeX to render plots.
         colormap : {None matplotlib.cm}
@@ -3984,8 +3976,6 @@ class PhyBo(Wordlist):
             Select the format of the output plot.
         threshold : int (default=1)
             Select the threshold for drawing lateral edges.
-        verbose : bool (default = False)
-            If set to c{True}, be verbose when carrying out the analysis.
         usetex : bool (default=True)
             Specify whether you want to use LaTeX to render plots.
         colormap : {None matplotlib.cm}
@@ -4574,8 +4564,6 @@ class PhyBo(Wordlist):
             except:
                 raise ValueError('[!] Configuration is not specified!')
 
-        #if rcParams["verbose"]: LoadDataMessage('configuration')
-
         # overwrite configuration from keywords
         for k in keywords:
             conf[k] = keywords[k]
@@ -4952,22 +4940,13 @@ class PhyBo(Wordlist):
             pass
         else:
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
-        # check for color, add functionality for colors later XXX
-        #if 'colors' in self.entries:
-        #    pass
-        #else:
-        #    colors = dict([(k,v) for k,v in csv2list(self.dataset,'colors')])
 
-        #if rcParams["verbose"]: LoadDataMessage('coordinates','groups','colors').message('loaded')
-        
         # load the rc-file XXX add internal loading later
         try:
             conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
         except:
             pass # XXX add fallback later
         
-        #if rcParams["verbose"]: LoadDataMessage('configuration')
-                
         # get the paps
         these_taxa = {}
         for taxon in taxa:
@@ -5318,9 +5297,9 @@ class PhyBo(Wordlist):
         
         ppc = sum([1 for g in gains if g > 1]) / len(gains)
         
-        if rcParams["verbose"]:
-            print('Number of Origins: {0:.2f}'.format(noo))
-            print('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
+        log.info('Number of Origins: {0:.2f}'.format(noo))
+        log.info('Percentage of Patchy Cognates: {0:.2f}'.format(ppc))
+        
         if not filename:
             return noo,ppc
         else:
@@ -5398,7 +5377,7 @@ class PhyBo(Wordlist):
         
         # start with the analysis
         for concept in concepts:
-            if rcParams["verbose"]: print("[i] Plotting concept '{0}'...".format(concept))
+            log.info("[i] Plotting concept '{0}'...".format(concept))
             
             # switch backend, depending on whether tex is used or not
             backend = mpl.get_backend()
@@ -5422,7 +5401,7 @@ class PhyBo(Wordlist):
                 ) if p not in self.singletons]))
 
             if len(paps) <= 0:
-                if rcParams['verbose']: print("[WARNING] No entries for concept {0} could be found, skipping the plot.".format(concept))
+                log.info("[WARNING] No entries for concept {0} could be found, skipping the plot.".format(concept))
             else:
             
                 # get the number of paps in order to get the right colors
