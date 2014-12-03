@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 """
 Testing multiple module.
 """
+from __future__ import unicode_literals
 
 __author__="Johann-Mattis List"
 __date__="2014-12-02"
