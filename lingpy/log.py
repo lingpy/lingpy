@@ -72,6 +72,22 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
     return _logger
 
 
+def info(msg):
+    get_logger().info(msg)
+
+
+def warn(msg):
+    get_logger().warn(msg)
+
+
+def debug(msg):
+    get_logger().debug(msg)
+
+
+def error(msg, **kw):
+    get_logger().error(msg, **kw)
+
+
 def file_written(fname, logger=None):
     logger = logger or get_logger()
     logger.info("Data has been written to file <{0}>.".format(fname))

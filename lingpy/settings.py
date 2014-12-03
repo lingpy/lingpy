@@ -222,6 +222,8 @@ def rc(rval=None, **keywords):
     [i] Successfully changed parameters.
     
     """
+    from lingpy import log
+
     if rval:
         return rcParams[rval]
     
@@ -263,7 +265,4 @@ def rc(rval=None, **keywords):
             rcParams[alias[key]] = keywords[key]
         else:
             rcParams[key] = keywords[key]
-    if rcParams['verbose']:
-        print("[i] Successfully changed parameters.")
-
-
+    log.info("Successfully changed parameters.")

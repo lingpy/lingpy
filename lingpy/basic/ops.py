@@ -235,7 +235,8 @@ def renumber(wordlist,source,target=''):
     # add stuff to meta
     wordlist._meta[source+'2'+target] = converter
 
-    if rcParams['verbose']: print("[i] Successfully renumbered {0}.".format(source))
+    log.info("Successfully renumbered {0}.".format(source))
+
 
 def clean_taxnames(
         wordlist,
@@ -336,9 +337,9 @@ def calculate_data(
                 these_taxa,
                 keywords['cluster_method']
                 )
+    log.info("Successfully calculated {0}.".format(data))
 
-    if rcParams['verbose']: print("[i] Successfully calculated {0}.".format(data))
-        
+
 def wl2qlc(
         header,
         data,
@@ -525,8 +526,7 @@ def wl2csv(
         verbose = True,
         **keywords
         ):
-    
-    print("[WARNING] wl2csv is deprecated")
+    log.deprecated('wl2csv', '')
     return wl2qlc(header,data,filename,formatter,**keywords)
 
 
@@ -544,9 +544,7 @@ def tsv2triple(wordlist, outfile=None):
     
     tstore = []
     for head in wordlist.header:
-        if rcParams['debug']:
-            print('DEBUG: tsv2triple: '+head)
-            
+        log.debug('tsv2triple: ' + head)
         for key in wordlist:
             tstore += [(key,head.upper(),wordlist[key,head])]
 

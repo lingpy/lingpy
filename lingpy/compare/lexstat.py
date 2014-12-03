@@ -633,8 +633,7 @@ class LexStat(Wordlist):
             with util.ProgressBar('SEQUENCE GENERATION', len(self.taxa)) as progress:
                 for i, taxon in enumerate(self.taxa):
                     progress.update()
-                    if rcParams['verbose']:
-                        print("[i] Analyzing taxon {0}.".format(taxon))
+                    self.log.info("Analyzing taxon {0}.".format(taxon))
 
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
                     prostrings = self.get_list(col=taxon, entry="prostrings", flat=True)
@@ -1176,7 +1175,7 @@ class LexStat(Wordlist):
             
             # check for scorer
             if not hasattr(self,'cscorer'):
-                print("[i] No correspondence-scorer has been specified.")
+                self.log.warn("No correspondence-scorer has been specified.")
                 return
             
             # define the function with help of lambda
@@ -1253,7 +1252,7 @@ class LexStat(Wordlist):
             concepts = [concept]
 
         for c in sorted(concepts):
-            if rcParams['verbose']: print("[i] Analyzing words for concept <{0}>.".format(c))
+            self.log.info("Analyzing words for concept <{0}>.".format(c))
 
             indices = self.get_list(
                     row=c,
@@ -1685,7 +1684,7 @@ class LexStat(Wordlist):
                             try:
                                 d = function(pA,pB)
                             except:
-                                print("Zero-Warning")
+                                self.log.error("Zero-Warning")
                                 d = 1.0
                             distances += [d]
                         D += [sum(distances) / len(distances)]
