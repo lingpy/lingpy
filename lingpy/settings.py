@@ -222,7 +222,7 @@ def rc(rval=None, **keywords):
     [i] Successfully changed parameters.
     
     """
-    from lingpy import log
+    from . import log
 
     if rval:
         return rcParams[rval]

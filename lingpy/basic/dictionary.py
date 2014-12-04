@@ -1,3 +1,8 @@
+# *-* coding: utf-8 *-*
+# These lines were automatically added by the 3to2-conversion.
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 # author   : Peter Bouda
 # email    : pbouda@cidles.eu
 # created  : 2013-06-06 11:57

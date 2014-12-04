@@ -1,3 +1,7 @@
+# *-* coding: utf-8 *-*
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2014-12-02 15:37
@@ -5,7 +9,6 @@
 """
 Testing multiple module.
 """
-from __future__ import unicode_literals
 
 __author__="Johann-Mattis List"
 __date__="2014-12-02"
