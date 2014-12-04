@@ -18,11 +18,7 @@ __date__="2014-12-02"
 
 # basic imports
 import os
-import json
 import itertools
-import codecs
-import re
-import sys
 
 from six import text_type
 
@@ -33,36 +29,38 @@ import numpy as np
 from ._phylogeny.utils import *
 from ._phylogeny._settings import rcParams
 from ..align.multiple import Multiple
-from ..convert.plot import plot_tree, plot_gls, plot_concept_evolution
+from ..convert.plot import plot_tree
 from .. import compat
 from .. import util
 from .. import log
 
 # mpl is only used for specific plots, we can therefor make a safe import
-try:
+try:  # pragma: no cover
     import matplotlib as mpl
     import matplotlib.pyplot as plt
-except ImportError:
+except:
     log.missing_module('matplotlib')
 
 # import 3d-stuff
-try:
+try:  # pragma: no cover
     from mpl_toolkits.mplot3d import Axes3D
 except:
     log.missing_module('matplotlib')
 
 # import the geoplot module
-try:
+try:  # pragma: no cover
     import mpl_toolkits.basemap as bmp
 except ImportError:
+    bmp = None
     log.missing_module('basemap')
-try:
+try:  # pragma: no cover
     import networkx as nx
 except:
     log.missing_module('networkx')
-try:
+try:  # pragma: no cover
     import scipy as sp
 except:
+    sp = None
     log.missing_module('scipy')
 
 from ._phylogeny.polygon import getConvexHull
@@ -328,18 +326,9 @@ def get_gls(
             [x for x in tree.getNodeMatchingName(root).getTipNames()
              if x not in states1],))
 
-    if push_gains:
-        winner = sorted(
-                winners[min(winners)],
-                key = lambda x: [y[1] for y in x].count(1)
-                )
-    else:
-        winner = sorted(
-                winners[min(winners)],
-                key = lambda x: [y[1] for y in x].count(0)
-                )
-
-    return winner[0]
+    return sorted(
+        winners[min(winners)],
+        key=lambda x: [y[1] for y in x].count(1 if push_gains else 0))[0]
 
 
 class PhyBo(Wordlist):
@@ -380,6 +369,7 @@ class PhyBo(Wordlist):
             paps = 'pap',
             ref = 'cogid',
             tree_calc = 'neighbor',
+            output_dir=None,
             **keywords
             ):
         # TODO check for keywords, allow to load trees, etc.
@@ -391,32 +381,28 @@ class PhyBo(Wordlist):
                 'start' : 0
                 }
         for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            keywords.setdefault(k, defaults[k])
 
         # check for cognates
         if 'cognates' in keywords:
             log.deprecated('cognates','ref')
             ref = keywords['cognates']
 
-        # store the name of the dataset and the identifier for paps
-        if dataset[-4:] in ['.qlc','.csv']:
-            self.dataset = dataset[:-4]
-        else:
-            self.dataset = dataset
-
+        # store the basename of the dataset without suffix and the identifier for paps
+        self._dataset_dir = os.path.dirname(os.path.abspath(dataset))
+        self._output_dir = output_dir or self._dataset_dir
+        dataset_name = os.path.basename(dataset)
+        self.dataset = dataset_name[:-4] if dataset_name[-4:] in ['.qlc', '.csv'] else dataset_name
         self._pap_string = paps
 
         # open csv-file of the data and store it as a word list attribute
-        if os.path.isfile(self.dataset+'.qlc'):
-            infile = self.dataset+'.qlc'
-        elif os.path.isfile(self.dataset+'.csv'):
-            log.deprecated('csv','qlc')
-            infile = self.dataset+'.csv'
+        if os.path.isfile(dataset):
+            if dataset.endswith('.csv'):
+                log.deprecated('csv', 'qlc')
         else:
             raise compat.FileNotFoundError("The input file could not be found.")
-        Wordlist.__init__(self,infile,row='concept',col='doculect')
-        
+        Wordlist.__init__(self, dataset, row='concept', col='doculect')
+
         log.info("Loaded the wordlist file.")
 
         # check for glossid
@@ -488,10 +474,7 @@ class PhyBo(Wordlist):
         # Load the tree, if it is not defined, assume that the treefile has the
         # same name as the dataset
         if not tree:
-            if hasattr(self, 'tree'):
-                pass
-            else:
-                #elif not tree and not hasattr(self,'tree'):
+            if not hasattr(self, 'tree'):
                 # try to load the tree first
                 try:
                     self.tree = cg.LoadTree(dataset+'.tre')
@@ -530,6 +513,38 @@ class PhyBo(Wordlist):
         for a in ['stats','gls','dists','graph','acs']:
             if not hasattr(self,a):
                 setattr(self,a,{})
+
+    def _output_path(self, *comps, **kw):
+        """A path within the output directory for the dataset.
+
+        Note: All intermediate directories will be created unless a keyword argument
+        mkdir=False is passed.
+
+        :param comps: path components relative to the output directory.
+        :return: the path.
+        """
+        subdir = os.path.basename(self.dataset) + '_phybo'
+        path = os.path.join(self._output_dir, subdir, *comps)
+        if kw.get('mkdir', True):
+            dirname = os.path.dirname(path)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
+        return path
+
+    def _write_file(self, name, content, log=True):
+        """Write a file to the dataset-specific output directory.
+
+        :param name: Name of the file to be written relative to the output directory.
+        :param content: Content to be written.
+        :param log: Flag signalling whether there should be log output or not.
+        """
+        util.write_text_file(self._output_path(name), content, log=log)
+
+    def _config(self):
+        try:
+            return compat.jsonload(self.dataset + '.json')
+        except:
+            return {}
 
     def _get_GLS_top_down(
             self,
@@ -1273,60 +1288,16 @@ class PhyBo(Wordlist):
         log.info("Successfully calculated Gain-Loss-Scenarios.")
         
         # write the results to file
-        # make the folder for the data to store the stats
-        folder = self.dataset+'_phybo'
-        try:
-            os.mkdir(folder)
-        except:
-            pass       
-        
         # if output of gls is chosen, load the gml-graph
         if output_gml:
-
-            # make the directory for the files
-            try:
-                os.mkdir(os.path.join(folder,'gml'))
-            except FileExistsError:
-                pass
-
-            # make next directory
-            try:
-                os.mkdir(
-                        os.path.join(
-                            folder,
-                            'gml',
-                            '{0}-{1}'.format(self.dataset,glm)
-                            )
-                        )
-            except FileExistsError:
-                pass
-
-            # make the folder for png
-            try:
-                os.mkdir(
-                        os.path.join(
-                            folder,
-                            'gml',
-                            '{0}-{1}-figures'.format(self.dataset,glm),
-                            )
-                        )
-            except FileExistsError:
-                pass
-
             # store the graph
             for cog in self.cogs:
                 gls = self.gls[glm][cog][0]
                 g = gls2gml(
-                        gls,
-                        self.tgraph,
-                        self.tree,
-                        filename = os.path.join(
-                            folder,
-                            'gml',
-                            '{0}-{1}'.format(self.dataset,glm),
-                            cog
-                            )
-                        )
+                    gls,
+                    self.tgraph,
+                    self.tree,
+                    filename=self._output_path('gml', '{0}-{1}'.format(self.dataset, glm), cog))
 
                 # if plot of gml is chose
                 if output_plot:
@@ -1398,14 +1369,8 @@ class PhyBo(Wordlist):
                     
                     #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
                     plt.savefig(
-                            os.path.join(
-                                folder,
-                                'gml',
-                                '{0}-{1}-figures'.format(self.dataset,glm),
-                                cog,
-                                '.png'
-                                )
-                            )
+                        self._output_path(
+                            'gml', '{0}-{1}-figures'.format(self.dataset,glm), cog, '.png'))
                     plt.clf()
 
             # if tar is chosen, put it into a tarfile
@@ -1429,12 +1394,6 @@ class PhyBo(Wordlist):
         self.stats[glm]['restriction'] = restriction
 
         # store statistics and gain-loss-scenarios in textfiles
-        # create folder for gls-data
-        try:
-            os.mkdir(os.path.join(folder,'gls'))
-        except:
-            pass
-        
         log.info("Writing GLS data to file... ")
 
         lines = ['PAP\tGainLossScenario\tNumberOfOrigins']
@@ -1445,19 +1404,13 @@ class PhyBo(Wordlist):
                     ["{0}:{1}".format(a,b) for a,b in gls]
                 ) + '\t' + text_type(noo)
             )
-        util.write_text_file(
-            os.path.join(folder, 'gls', '{0}-{1}.gls'.format(self.dataset,glm)),
-            ''.join(line + '\n' for line in lines))
+        self._write_file(
+            os.path.join('gls', '{0}-{1}.gls'.format(self.dataset, glm)), lines)
 
         # print out average number of origins
         log.info("Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
 
         # write statistics to stats file
-        try:
-            os.mkdir(os.path.join(folder,'stats'))
-        except:
-            pass
-
         lines = [
             'Number of PAPs (total): {0}'.format(len(self.paps)),
             'Number of PAPs (non-singletons): {0}'.format(len(self.gls[glm])),
@@ -1470,9 +1423,8 @@ class PhyBo(Wordlist):
             lines.append('Ratio: {0[0]} / {0[1]}'.format(ratio))
         elif mode == 'restriction':
             lines.append('Restriction: {0}'.format(restriction))
-        util.write_text_file(
-            os.path.join(folder, 'stats', '{0}-{1}'.format(self.dataset,glm)),
-            ''.join(line + '\n' for line in lines))
+        self._write_file(
+            os.path.join('stats', '{0}-{1}'.format(self.dataset, glm)), lines)
         return
 
     def get_CVSD(
@@ -1751,14 +1703,10 @@ class PhyBo(Wordlist):
 
         # check for filename in keywords
         if not 'filename' in keywords:
-            keywords['filename'] = os.path.join(self.dataset+'_phybo',glm+'_acs')
+            keywords['filename'] = self._output_path(glm+'_acs')
 
         # plot the tree
-        plot_tree(
-                str(self.tree),
-                no_labels = True,
-                **keywords
-                )
+        plot_tree(self.tree, no_labels = True, **keywords)
 
     def get_IVSD(
             self,
@@ -1970,46 +1918,8 @@ class PhyBo(Wordlist):
         self.get_AVSD('mixed', **kw)
         
         # write the results to file
-        # make the folder for the data to store the stats
-        folder = self.dataset+'_phybo'
-        try:
-            os.mkdir(folder)
-        except:
-            pass       
-        
         # if output of gls is chosen, load the gml-graph
         if output_gml:
-
-            # make the directory for the files
-            try:
-                os.mkdir(os.path.join(folder,'gml'))
-            except:
-                pass
-
-            # make next directory
-            try:
-                os.mkdir(
-                        os.path.join(
-                            folder,
-                            'gml',
-                            '{0}-{1}'.format(self.dataset,"mixed")
-                            )
-                        )
-            except:
-                pass
-
-            # make the folder for png
-            try:
-                os.mkdir(
-                        os.path.join(
-                            folder,
-                            'gml',
-                            '{0}-{1}-figures'.format(self.dataset,"mixed"),
-                            )
-                        )
-            except:
-                pass
-
             # store the graph
             for cog in self.cogs:
                 gls = self.gls["mixed"][cog][0]
@@ -2017,8 +1927,7 @@ class PhyBo(Wordlist):
                         gls,
                         self.tgraph,
                         self.tree,
-                        filename = os.path.join(
-                            folder,
+                        filename =self._output_path(
                             'gml',
                             '{0}-{1}'.format(
                                 self.dataset,
@@ -2098,13 +2007,10 @@ class PhyBo(Wordlist):
                     
                     #plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
                     plt.savefig(
-                            os.path.join(
-                                folder,
-                                'gml',
-                                '{0}-{1}-figures'.format(self.dataset,'mixed'),
-                                cog+'.'+kw['fileformat']
-                                )
-                            )
+                        self._output_path(
+                            'gml',
+                            '{0}-{1}-figures'.format(self.dataset,'mixed'),
+                            cog + '.' + kw['fileformat']))
                     plt.clf()
 
             # if tar is chosen, put it into a tarfile
@@ -2133,35 +2039,22 @@ class PhyBo(Wordlist):
         self.stats['mixed_concepts'] = mixed_concepts
 
         # store statistics and gain-loss-scenarios in textfiles
-        # create folder for gls-data
-        try:
-            os.mkdir(os.path.join(folder,'gls'))
-        except:
-            pass
-        
         log.info("Writing GLS data to file... ")
         
         # write gls-data to folder
-        f = codecs.open(
-                os.path.join(
-                    folder,
-                    'gls',
-                    '{0}-{1}.gls'.format(self.dataset,"mixed")
-                    ),
-                'w',
-                'utf-8'
-                )
-        f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
-        for cog in sorted(self.gls["mixed"]):
-            gls,noo = self.gls["mixed"][cog]
-            f.write(
+        with util.TextFile(
+            self._output_path('gls', '{0}-{1}.gls'.format(self.dataset, "mixed")),
+            log=False
+        ) as f:
+            f.write('PAP\tGainLossScenario\tNumberOfOrigins\n')
+            for cog in sorted(self.gls["mixed"]):
+                gls,noo = self.gls["mixed"][cog]
+                f.write(
                     "{0}\t".format(cog)+','.join(
                         ["{0}:{1}".format(a,b) for a,b in gls]
                         ) + '\t'+str(noo)+'\n'
                     )
-        f.close()
-
-        return 
+        return
 
     def get_ACS(
             self,
@@ -2175,7 +2068,7 @@ class PhyBo(Wordlist):
         defaults = dict(
                 proto = False,
                 force = False,
-                filename = os.path.join(self.dataset+'_phybo','acs-'+glm),
+                filename = self._output_path('acs-'+glm),
                 fileformat = 'csv'
                 )
         for k in defaults:
@@ -2186,16 +2079,11 @@ class PhyBo(Wordlist):
             self.get_AVSD(glm,**keywords)
         elif keywords['force']:
             self.get_AVSD(glm,**keywords)
-        
-        f = codecs.open(
-                keywords['filename']+'.'+keywords['fileformat'],
-                'w',
-                'utf-8'
-                )
-        for key in sorted(self.acs[glm].keys(),key=lambda x:len(x)):
-            for c,m,p in sorted(self.acs[glm][key],key=lambda x:x[1]):
-                f.write('{0}\t{1}\t{2}\t{3}\n'.format(key,c,m,p))
-        f.close()
+
+        with util.TextFile(keywords['filename']+'.'+keywords['fileformat']) as f:
+            for key in sorted(self.acs[glm].keys(),key=lambda x:len(x)):
+                for c,m,p in sorted(self.acs[glm][key],key=lambda x:x[1]):
+                    f.write('{0}\t{1}\t{2}\t{3}\n'.format(key,c,m,p))
 
     def get_MLN(
             self,
@@ -2295,8 +2183,8 @@ class PhyBo(Wordlist):
                                     weight=1
                                     )
 
-        log.info("[i] Calculated primary graph.")
-        log.info("[i] Inferring lateral edges...")
+        log.info("Calculated primary graph.")
+        log.info("Inferring lateral edges...")
             
         # create MST graph
         gMST = nx.Graph()
@@ -2525,7 +2413,7 @@ class PhyBo(Wordlist):
             data['graphics'] = {}
             #data['graphics']['fill'] = color
             #data['graphics']['width'] = w * scale
-            data['cogs'] = ','.join([str(i) for i in data['cogs']])
+            data['cogs'] = ','.join([text_type(i) for i in data['cogs']])
             data['label'] = 'horizontal'
 
             # check for threshold
@@ -2542,33 +2430,25 @@ class PhyBo(Wordlist):
         # transfer node data
 
         log.info("Writing graph to file...")
-
-        def _write_file(name, lines):
-            util.write_text_file(
-                os.path.join(self.dataset + '_phybo', name),
-                ''.join(line + '\n' for line in lines))
-
-        _write_file('mln-' + glm + '.gml', nx.generate_gml(gOut))
+        self._write_file('mln-' + glm + '.gml', nx.generate_gml(gOut))
 
         # write the inferred borrowing events (ILS, inferred lateral event) 
         # between all taxa to file
         log.info("Writing Inferred Lateral Events to file...")
 
-        lines = []
-        for cog,events in ile.items():
-            if events:
-                lines.append(
-                    cog+'\t'+','.join(
-                        ['{0}:{1}'.format(a,b) for a,b in events]
-                    )
-                )
-        _write_file('ile-' + glm + '.csv', lines)
+        with util.TextFile(self._output_path('ile-' + glm + '.csv')) as f:
+            for cog,events in ile.items():
+                if events:
+                    f.write(
+                        cog + '\t' + ','.join(
+                            ['{0}:{1}'.format(a,b) for a,b in events]
+                        ) + '\n')
 
         # create file name for node labels (cytoscape output)
         lines = ["node.label (class=java.lang.String)"]
         for taxon in taxa:
             lines.append('{0} = {1}'.format(taxon,taxon))
-        _write_file('node.label.NA', lines)
+        self._write_file('node.label.NA', lines)
 
         # add gOut to graphattributes
         self.graph[glm] = gOut
@@ -2594,7 +2474,7 @@ class PhyBo(Wordlist):
             lines.append(
                 '{0}\t{1}\t{2}\t{3}'.format(
                     n, text_type(tree.getNodeMatchingName(n)), d, w))
-        _write_file('taxa-' + glm + '.stats', lines)
+        self._write_file('taxa-' + glm + '.stats', lines)
 
         log.info("Wrote node degree distributions to file.")
 
@@ -2617,50 +2497,37 @@ class PhyBo(Wordlist):
                         tree.getNodeMatchingName(nB)
                         )
                     )
-        _write_file('edge-'+glm+'.stats', lines)
+        self._write_file('edge-'+glm+'.stats', lines)
         log.info("Wrote edge-weight distributions to file.")
         
-        # write specific links of taxa to file
-        try:
-            os.mkdir(os.path.join(self.dataset+'_phybo','taxa-'+glm))
-        except:
-            pass
-
         for taxon in self.taxa:
-            f = codecs.open(
-                    os.path.join(self.dataset+'_phybo','taxa-'+glm,taxon+'.csv'),
-                    'w',
-                    'utf-8'
-                    )
-            keys = [n for n in gOut[taxon] if gOut[taxon][n]['label'] == 'horizontal']
-            for key in sorted(keys,key=lambda x:gOut[taxon][x]['weight']):
-                for cog in sorted(gOut[taxon][key]['cogs'].split(',')):
-                    tmp = [x for x in self.etd[cog] if x != 0]
-                    idx = [x[0] for x in tmp][0]
-                    concept = self[idx,'concept']
+            with util.TextFile(
+                self._output_path(os.path.join('taxa-' + glm, taxon + '.csv')), log=False
+            ) as f:
+                keys = [n for n in gOut[taxon] if gOut[taxon][n]['label'] == 'horizontal']
+                for key in sorted(keys,key=lambda x:gOut[taxon][x]['weight']):
+                    for cog in sorted(gOut[taxon][key]['cogs'].split(',')):
+                        tmp = [x for x in self.etd[cog] if x != 0]
+                        idx = [x[0] for x in tmp][0]
+                        concept = self[idx,'concept']
                     
-                    proto = cog
+                        proto = cog
                     
-                    # get the index of the current entry in its dictionary
-                    # representation
-                    idx = self.get_dict(col=taxon,entry='pap')[concept]
-                    idx = idx.index(cog)
+                        # get the index of the current entry in its dictionary
+                        # representation
+                        idx = self.get_dict(col=taxon,entry='pap')[concept]
+                        idx = idx.index(cog)
                     
-                    # get its real index
-                    idx = self.get_dict(col=taxon)[concept][idx]
+                        # get its real index
+                        idx = self.get_dict(col=taxon)[concept][idx]
 
-                    # include entries specified in keywords XXX modify later
-                    # for customization
-                    for entry in ['ipa','proto']:
-                        if entry in self.header:
-                            proto += '\t'+self[idx,entry]
+                        # include entries specified in keywords XXX modify later
+                        # for customization
+                        for entry in ['ipa','proto']:
+                            if entry in self.header:
+                                proto += '\t'+self[idx,entry]
 
-                    f.write('{0}\t{1}\t{2}\n'.format(
-                        key,
-                        proto,
-                        concept
-                        ))
-            f.close()
+                        f.write('{0}\t{1}\t{2}\n'.format(key, proto, concept))
         log.info("Wrote list of edges per taxa to file.")
         return 
 
@@ -2780,133 +2647,101 @@ class PhyBo(Wordlist):
         log.info("[i] Updated the wordlist.")
 
         # write ranking of concepts to file
-        f = codecs.open(
-                os.path.join(self.dataset + '_phybo','paps-'+glm+'.stats'),
-                'w',
-                'utf-8'
-                )
-        if 'proto' in self.entries:
-            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\tPROTO\n')
-        else:
-            f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\n')
-        concepts = {}
-        for a,b in sorted(paps,key=lambda x:x[1],reverse=True):
-            
-            a1,a2 = a.split(':')
-            a3 = self._id2gl[int(a2)]
-
-            # check for number of occurrences
-            l = [k for k in self.etd[a] if k != 0]
-            
-            # append three vals: number of origins, number of words, and the
-            # number of origins per number of words
-            try:
-                concepts[a3] += [(b,len(l),b/len(l))]
-            except:
-                concepts[a3] = [(b,len(l),b/len(l))]
-            
-
-            # check for proto
+        with util.TextFile(self._output_path('paps-' + glm + '.stats')) as f:
             if 'proto' in self.entries:
-                proto = self[[k[0] for k in l][0],'proto']
-                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\t{6}\n'.format(
-                    a1,
-                    a2,
-                    a3,
-                    b,
-                    len(l),
-                    b / float(len(l)),
-                    proto,
-                    ))
+                f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\tPROTO\n')
             else:
-                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1,a2,a3,b,len(l),float(b)/len(l)))
-        f.close()
-        log.info("[i] Wrote stats on paps to file.")
+                f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\n')
+            concepts = {}
+            for a,b in sorted(paps,key=lambda x:x[1],reverse=True):
+                a1,a2 = a.split(':')
+                a3 = self._id2gl[int(a2)]
+
+                # check for number of occurrences
+                l = [k for k in self.etd[a] if k != 0]
+            
+                # append three vals: number of origins, number of words, and the
+                # number of origins per number of words
+                try:
+                    concepts[a3] += [(b,len(l),b/len(l))]
+                except:
+                    concepts[a3] = [(b,len(l),b/len(l))]
+
+                # check for proto
+                if 'proto' in self.entries:
+                    proto = self[[k[0] for k in l][0],'proto']
+                    f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\t{6}\n'.format(
+                        a1, a2, a3, b, len(l), b / float(len(l)), proto))
+                else:
+                    f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1,a2,a3,b,len(l),float(b)/len(l)))
+        log.info("Wrote stats on paps to file.")
 
         # write stats on concepts
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo','concepts-'+glm+'.stats'),
-                'w',
-                'utf-8'
-                )
-        f.write('CONCEPT\tORIGINS\tREFLEXES\tORI/REF\n')
+        with util.TextFile(self._output_path('concepts-' + glm + '.stats')) as f:
+            f.write('CONCEPT\tORIGINS\tREFLEXES\tORI/REF\n')
         
-        cstats = {}
-        for key in concepts:
+            cstats = {}
+            for key in concepts:
+                # get origins per concept
+                oriperc = sum([c[0] for c in concepts[key]]) / len(concepts[key])
             
-            # get origins per concept
-            oriperc = sum([c[0] for c in concepts[key]]) / len(concepts[key])
+                # get patchy cognate sets per number of words
+                patchyperw = sum([c[2] for c in concepts[key]]) / len(concepts[key])
+
+                # get the number of words per concept
+                numperc = sum([c[1] for c in concepts[key]]) / len(concepts[key])
             
-            # get patchy cognate sets per number of words
-            patchyperw = sum([c[2] for c in concepts[key]]) / len(concepts[key])
+                cstats[key] = (oriperc,numperc,patchyperw)
+                #concepts[key] = sum(concepts[key])/len(concepts[key])
 
-            # get the number of words per concept
-            numperc = sum([c[1] for c in concepts[key]]) / len(concepts[key])
-            
-            cstats[key] = (oriperc,numperc,patchyperw)
-            #concepts[key] = sum(concepts[key])/len(concepts[key])
+            for a,b in sorted(cstats.items(),key=lambda x:x[1][2],reverse=True):
+                f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\n'.format(a,b[0],b[1],b[2]))
 
-        for a,b in sorted(cstats.items(),key=lambda x:x[1][2],reverse=True):
-            f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\n'.format(a,b[0],b[1],b[2]))
-
-        # write average to file
-        f.write('TOTAL\t{0:.2f}\t{1:.2f}\t{2:.2f}\n'.format(
-            sum([cstats[c][0] for c in cstats]) / len(cstats),
-            sum([cstats[c][1] for c in cstats]) / len(cstats),
-            sum([cstats[c][2] for c in cstats]) / len(cstats)
+            # write average to file
+            f.write('TOTAL\t{0:.2f}\t{1:.2f}\t{2:.2f}\n'.format(
+                sum([cstats[c][0] for c in cstats]) / len(cstats),
+                sum([cstats[c][1] for c in cstats]) / len(cstats),
+                sum([cstats[c][2] for c in cstats]) / len(cstats)
             ))
-        f.close()
-        log.info("[i] Wrote stats on concepts to file.")
+        log.info("Wrote stats on concepts to file.")
        
         # write alternative stats on concepts including information of
         # singletons (excluding them may bias the results)
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo','cognates-'+glm+'.stats'),
-                'w',
-                'utf-8'
-                )
-        f.write('CONCEPT\tCOGNATES\tPATCHIES\tREFLEXES\tPCR\n')
+        with util.TextFile(self._output_path('cognates-' + glm + '.stats')) as f:
+            f.write('CONCEPT\tCOGNATES\tPATCHIES\tREFLEXES\tPCR\n')
 
-        concepts = {}
-        for pap in self.etd:
+            concepts = {}
+            for pap in self.etd:
+                gloss = self.pap2con[pap]
+                idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
+                patchies = [self[idx,'patchy'] for idx in idxs]
+                cogs = [self[idx,self._pap_string] for idx in idxs]
+                reflexes = len(patchies)
+                patchies = len(set(patchies))
+                cogs = len(set(cogs))
+                try:
+                    concepts[gloss] += [(cogs,patchies,reflexes)]
+                except:
+                    concepts[gloss] = [(cogs,patchies,reflexes)]
 
-            gloss = self.pap2con[pap]
-            idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
-            patchies = [self[idx,'patchy'] for idx in idxs]
-            cogs = [self[idx,self._pap_string] for idx in idxs]
-            reflexes = len(patchies)
-            patchies = len(set(patchies))
-            cogs = len(set(cogs))
-            try:
-                concepts[gloss] += [(cogs,patchies,reflexes)]
-            except:
-                concepts[gloss] = [(cogs,patchies,reflexes)]
-
-        for key,value in concepts.items():
-            concepts[key] = (
+            for key,value in concepts.items():
+                concepts[key] = (
                     sum([v[0] for v in value]),
                     sum([v[1] for v in value]),
                     sum([v[2] for v in value])
                     )
         
-        for k,(c,p,r) in sorted(concepts.items(),key=lambda x:x[1][2],reverse=True): 
-            f.write('{0}\t{1}\t{2}\t{3}\t{4:.2f}\n'.format(k,c,p,r,(p-c+1)/r)) 
-        # write mean
+            for k,(c,p,r) in sorted(concepts.items(),key=lambda x:x[1][2],reverse=True):
+                f.write('{0}\t{1}\t{2}\t{3}\t{4:.2f}\n'.format(k,c,p,r,(p-c+1)/r))
+            # write mean
+            mc = sum([x[0] for x in concepts.values()]) / len(concepts)
+            mp = sum([x[1] for x in concepts.values()]) / len(concepts)
+            mr = sum([x[2] for x in concepts.values()]) / len(concepts)
 
-        mc = sum([x[0] for x in concepts.values()]) / len(concepts)
-        mp = sum([x[1] for x in concepts.values()]) / len(concepts)
-        mr = sum([x[2] for x in concepts.values()]) / len(concepts)
+            f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\t{4:.2f}\n'.format(
+                "MEAN", mc, mp, mr, (mp-mc+1)/mr))
 
-        f.write('{0}\t{1:.2f}\t{2:.2f}\t{3:.2f}\t{4:.2f}\n'.format(
-            "MEAN",
-            mc,
-            mp,
-            mr,
-            (mp-mc+1)/mr
-            ))
-
-        f.close()
-        log.info("[i] Wrote stats on concepts to file.")
+        log.info("Wrote stats on concepts to file.")
         
         # store params in attribute stats
         self.stats["CONCEPTS"] = dict(
@@ -2952,53 +2787,40 @@ class PhyBo(Wordlist):
         
         if keywords["aligned_output"]:
             # write stuff to alm-file
-            f = codecs.open(
-                    os.path.join(self.dataset+'_phybo',self.dataset+'-'+glm+'.alm.patchy'),
-                    'w',
-                    'utf-8'
-                    )
-            for concept in sorted(tmp.keys()):
+            with util.TextFile(
+                self._output_path(self.dataset + '-' + glm + '.alm.patchy'), log=False
+            ) as f:
+                for concept in sorted(tmp.keys()):
+                    f.write('# Basic Concept: "{0}"\n\n'.format(concept))
                 
-                f.write('# Basic Concept: "{0}"\n\n'.format(concept))
-                
-                for pap in sorted(tmp[concept].keys()):
+                    for pap in sorted(tmp[concept].keys()):
+                        f.write('## Cognate-Set: "{0}"\n'.format(pap))
 
-                    f.write('## Cognate-Set: "{0}"\n'.format(pap))
-
-                    words = []
-                    langs = []
-                    patchies = []
+                        words = []
+                        langs = []
+                        patchies = []
                     
-                    for patchy in sorted(tmp[concept][pap].keys()):
-                        
-                        # get words and languages
-                        words += [t[1].replace("ˈ",'') for t in tmp[concept][pap][patchy]]
-                        langs += [t[0] for t in tmp[concept][pap][patchy]]
+                        for patchy in sorted(tmp[concept][pap].keys()):
+                            # get words and languages
+                            words += [t[1].replace("ˈ",'') for t in tmp[concept][pap][patchy]]
+                            langs += [t[0] for t in tmp[concept][pap][patchy]]
             
-                        patchies += [patchy[-1] for i in
+                            patchies += [patchy[-1] for i in
                                 range(len(tmp[concept][pap][patchy]))]
                     
-                    msa = Multiple(words)
-                    # XXX add for different alignment algorithm later XXX
-                    msa.prog_align()
-                    alms = msa.alm_matrix
+                        msa = Multiple(words)
+                        # XXX add for different alignment algorithm later XXX
+                        msa.prog_align()
+                        alms = msa.alm_matrix
             
-                    # get formatter for languages
-                    formatter = max([len(lang) for lang in langs])
+                        # get formatter for languages
+                        formatter = max([len(lang) for lang in langs])
             
-                    for i,word in enumerate(words):
-                        
-                        string = '{0:'+str(formatter)+'}\t{1}\t|\t{2}\t|\t[{3}]\n'
-                        f.write(string.format(
-                            langs[i],
-                            patchies[i],
-                            '\t'.join(alms[i]),
-                            word
-                            ))
+                        for i,word in enumerate(words):
+                            string = '{0:' + text_type(formatter) + '}\t{1}\t|\t{2}\t|\t[{3}]\n'
+                            f.write(string.format(langs[i], patchies[i], '\t'.join(alms[i]), word))
+                        f.write('\n')
                     f.write('\n')
-                f.write('\n')
-            
-            f.close()
 
     def get_edge(
             self,
@@ -3012,7 +2834,7 @@ class PhyBo(Wordlist):
         Return the edge data for a given gain-loss model.
         """
         # define a warning message 
-        warning = "[!] No edge between {0} and {1} could be found".format(
+        warning = "No edge between {0} and {1} could be found".format(
                 nodeA,
                 nodeB
                 )
@@ -3125,10 +2947,7 @@ class PhyBo(Wordlist):
                             )
                         ]
             except:
-                print("[!] Error encountered in cognate {0}.".format(
-                    self.pap2con[cog]
-                    )
-                    )
+                self.log.error("Error encountered in cognate {0}.".format(self.pap2con[cog]))
         return output
 
     def analyze(
@@ -3235,7 +3054,7 @@ class PhyBo(Wordlist):
         for mode,params in runs:
             if mode == 'weighted':
                 log.info(
-                        "[i] Analysing dataset with mode {0} ".format(mode)+\
+                        "Analysing dataset with mode {0} ".format(mode)+\
                                 "and ratio {0[0]}:{0[1]}...".format(params)
                                 )
 
@@ -3251,7 +3070,7 @@ class PhyBo(Wordlist):
                         )
             elif mode == 'restriction':
                 log.info(
-                        "[i] Analysing dataset with mode {0} ".format(mode)+\
+                        "Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
                 
@@ -3267,7 +3086,7 @@ class PhyBo(Wordlist):
                         )
             elif mode == 'topdown':
                 log.info(
-                        "[i] Analysing dataset with mode {0} ".format(mode)+\
+                        "Analysing dataset with mode {0} ".format(mode)+\
                                 "and restriction {0}...".format(params)
                                 )
                 self.get_GLS(
@@ -3281,12 +3100,12 @@ class PhyBo(Wordlist):
     
         # calculate the different distributions
         # start by calculating the contemporary distributions
-        log.info("[i] Calculating the Contemporary Vocabulary Distributions...")
+        log.info("Calculating the Contemporary Vocabulary Distributions...")
         self.get_CVSD()
         
     
         # now calculate the rest of the distributions
-        log.info("[i] Calculating the Ancestral Vocabulary Distributions...")
+        log.info("Calculating the Ancestral Vocabulary Distributions...")
 
         modes = list(self.gls.keys())
         with util.ProgressBar('ANCESTRAL VOCABULARY DISTRIBUTIONS', len(modes)) as progress:
@@ -3295,7 +3114,7 @@ class PhyBo(Wordlist):
                 self.get_AVSD(m,**keywords)
 
         # compare the distributions using mannwhitneyu
-        log.info("[i] Comparing the distributions...")
+        log.info("Comparing the distributions...")
         
         zp_vsd = []
         for m in modes:
@@ -3320,7 +3139,7 @@ class PhyBo(Wordlist):
 
         # calculate mixed model
         if mixed:
-            log.info("[i] Calculating the mixed model...")
+            log.info("Calculating the mixed model...")
             self.get_IVSD(
                     output_plot=output_plot,
                     output_gml=output_gml,
@@ -3343,15 +3162,11 @@ class PhyBo(Wordlist):
                 zp_vsd.append((vsd[0], vsd[1]))
 
         # write results to file
-        log.info("[i] Writing stats to file.")
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo',self.dataset+'.stats'),
-                'w',
-                'utf-8'
-                )
-        f.write("Mode\tANO\tMNO\tVSD_z\tVSD_p\n")
-        for i in range(len(zp_vsd)):
-            f.write(
+        log.info("Writing stats to file.")
+        with util.TextFile(self._output_path(self.dataset + '.stats')) as f:
+            f.write("Mode\tANO\tMNO\tVSD_z\tVSD_p\n")
+            for i in range(len(zp_vsd)):
+                f.write(
                     '{0}\t{1:.2f}\t{2}\t{3}\n'.format(
                         modes[i],
                         self.stats[modes[i]]['ano'],
@@ -3359,12 +3174,11 @@ class PhyBo(Wordlist):
                         '{0[0]}\t{0[1]:.4f}'.format(zp_vsd[i])
                         )
                     )
-        f.close()
 
         # plot the stats if this is defined in the settings
         if plot_dists:
             
-            log.info("[i] Plotting distributions.")
+            log.info("Plotting distributions.")
             # specify latex
             mpl.rc('text',usetex=keywords['usetex'])
                         
@@ -3459,15 +3273,10 @@ class PhyBo(Wordlist):
             plt.subplots_adjust(bottom=0.2)
 
             # save the figure
-            plt.savefig(
-                    os.path.join(
-                        self.dataset+'_phybo',
-                        'vsd.'+keywords['fileformat']
-                        )
-                    )
+            plt.savefig(self._output_path('vsd.' + keywords['fileformat']))
             plt.clf()
             
-            log.info("[i] Plotted the distributions.")
+            log.info("Plotted the distributions.")
 
         # carry out further analyses if this is specified
         if full_analysis:
@@ -3482,7 +3291,7 @@ class PhyBo(Wordlist):
             if plot_mln:
                 self.plot_MLN(
                         self.best_model,
-                        filename=os.path.join(self.dataset+'_phybo','mln-'+glm),
+                        filename=self._output_path('mln-'+glm),
                         threshold = keywords['threshold'],
                         fileformat = keywords['fileformat'],
                         usetex = keywords['usetex'],
@@ -3491,7 +3300,7 @@ class PhyBo(Wordlist):
             if plot_msn:
                 self.plot_MSN(
                         self.best_model,
-                        filename=os.path.join(self.dataset+'_phybo','msn-'+glm),
+                        filename=self._output_path('msn-'+glm),
                         fileformat=keywords['fileformat'],
                         threshold = keywords['threshold'],
                         only = keywords['only'],
@@ -3626,11 +3435,8 @@ class PhyBo(Wordlist):
                 labels[taxon] = keywords['labels'][taxon]
 
         # try to load the configuration file
-        try:
-            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
-        except:
-            conf = {}
-        
+        conf = self._config()
+
         # create a dictionary for all nodes 
         node_dict = {}
 
@@ -3911,11 +3717,11 @@ class PhyBo(Wordlist):
         cbar.set_label('Inferred Links')
         cbar.ax.set_yticklabels(
                 [
-                    str(min(weights)),
+                    text_type(min(weights)),
                     '',
-                    str(int(max(weights) / 2)),
+                    text_type(int(max(weights) / 2)),
                     '',
-                    str(max(weights))
+                    text_type(max(weights))
                     ]
                 )
 
@@ -4022,11 +3828,8 @@ class PhyBo(Wordlist):
             keywords['width'] = 10
 
         # try to load the configuration file
-        try:
-            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
-        except:
-            conf = {}
-        
+        conf = self._config()
+
         # check for 'taxon.labels' in conf
         if taxon_labels in conf: #XXX change later
             tfunc = lambda x:conf[taxon_labels][x]
@@ -4428,53 +4231,37 @@ class PhyBo(Wordlist):
                                     geoGraph.add_edge(labelA,labelB,weight=1,cogs=cog)
 
         # write stats to file
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo','taxa-msn-'+glm+'.stats'),
-                'w',
-                'utf-8'
-                )
-        # get the degree
-        nodes = tree.getTipNames()
+        with util.TextFile(self._output_path('taxa-msn-' + glm + '.stats')) as f:
+            # get the degree
+            nodes = tree.getTipNames()
 
-        dgr,wdgr = [],[]
-        for taxon in nodes:
+            dgr,wdgr = [],[]
+            for taxon in nodes:
+                horizontals = [g for g in geoGraph[taxon] if 'weight' in geoGraph[taxon][g]]
             
-            horizontals = [g for g in geoGraph[taxon] if 'weight' in geoGraph[taxon][g]]
-            
-            dgr.append(len(horizontals))
-            wdgr.append(sum([geoGraph[taxon][g]['weight'] for g in horizontals]))
+                dgr.append(len(horizontals))
+                wdgr.append(sum([geoGraph[taxon][g]['weight'] for g in horizontals]))
 
-        sorted_nodes = sorted(
+            sorted_nodes = sorted(
                 zip(nodes,dgr,wdgr),
                 key=lambda x:x[1],
                 reverse=True
                 )
-        for n,d,w in sorted_nodes:
-            f.write(
+            for n,d,w in sorted_nodes:
+                f.write(
                     '{0}\t{1}\t{2}\t{3}\n'.format(
-                        n,
-                        str(tree.getNodeMatchingName(n)),
-                        d,
-                        w
-                        )
-                    )
-        f.close()
-        
-        # write edge distributions
-        f = codecs.open(
-                os.path.join(self.dataset+'_phybo','edge-msn-'+glm+'.stats'),
-                'w',
-                'utf-8'
-                )
-        edges = []
-        edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
+                        n, text_type(tree.getNodeMatchingName(n)), d, w))
 
-        for nA,nB,d in sorted(
+        # write edge distributions
+        with util.TextFile(self._output_path('edge-msn-' + glm + '.stats')) as f:
+            edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
+
+            for nA,nB,d in sorted(
                 edges,
                 key=lambda x: x[2]['weight'],
                 reverse = True
-                ):
-            f.write(
+            ):
+                f.write(
                     '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
                         nA,
                         nB,
@@ -4484,7 +4271,6 @@ class PhyBo(Wordlist):
                         tree.getNodeMatchingName(nB)
                         )
                     )
-        f.close()
 
         try:
             self.geograph[glm] = geoGraph
@@ -4556,9 +4342,8 @@ class PhyBo(Wordlist):
                 )
 
         # load the rc-file XXX add internal loading later
-        try:
-            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
-        except:
+        conf = self._config()
+        if not conf:
             try:
                 conf = self._meta['conf']
             except:
@@ -4942,11 +4727,8 @@ class PhyBo(Wordlist):
             groups = dict([(k,v) for k,v in csv2list(self.dataset,'groups')])
 
         # load the rc-file XXX add internal loading later
-        try:
-            conf = json.load(codecs.open(self.dataset+'.json','r','utf-8'))
-        except:
-            pass # XXX add fallback later
-        
+        conf = self._config()
+
         # get the paps
         these_taxa = {}
         for taxon in taxa:
@@ -5098,67 +4880,18 @@ class PhyBo(Wordlist):
         """
         Plot the inferred scenarios for a given model.
         """
-        kw = dict(
-                fileformat = 'png'
-                )
+        kw = dict(fileformat = 'png')
         kw.update(keywords)
-        
-        # make folder variable
-        folder = self.dataset+'_phybo'
 
-        # make the directory for the files
-        try:
-            os.mkdir(os.path.join(folder,'gml'))
-        except:
-            pass
-
-        # make next directory
-        try:
-            os.mkdir(
-                    os.path.join(
-                        folder,
-                        'glm',
-                        '{0}-{1}'.format(
-                            self.dataset,
-                            glm
-                            )
-                        )
-                    )
-        except:
-            pass
-
-        # make the folder for png
-        try:
-            os.mkdir(
-                    os.path.join(
-                        folder,
-                        'glm',
-                        '{0}-{1}-figures'.format(
-                            self.dataset,
-                            glm
-                            )
-                        )
-                    )
-        except:
-            pass
-        
         # store the graph
         for cog in self.cogs:
             gls = self.gls[glm][cog][0]
             g = gls2gml(
-                    gls,
-                    self.tgraph,
-                    self.tree,
-                    filename = os.path.join(
-                        folder,
-                        'gml',
-                        '{0}-{1}'.format(
-                            self.dataset,
-                            glm
-                            ),
-                        cog
-                        ),
-                    )
+                gls,
+                self.tgraph,
+                self.tree,
+                filename=self._output_path(
+                    'gml', '{0}-{1}'.format(self.dataset, glm), cog))
 
             # if plot of gml is chosen
             nodes = []
@@ -5262,13 +4995,12 @@ class PhyBo(Wordlist):
                                 )
             
             plt.savefig(
-                    os.path.join(
-                        folder,
-                        'gml',
-                        '{0}-{1}-figures'.format(self.dataset,glm),
-                        '{0}-{1}.'.format(self.pap2con[cog],cog)+kw['fileformat']
-                        )
-                    )
+                self._output_path(
+                    'gml',
+                    '{0}-{1}-figures'.format(self.dataset,glm),
+                    '{0}-{1}.'.format(self.pap2con[cog],cog)+kw['fileformat']
+                )
+            )
             plt.clf()
     
     def get_stats(
@@ -5302,14 +5034,9 @@ class PhyBo(Wordlist):
         
         if not filename:
             return noo,ppc
-        else:
-            f = codecs.open(
-                    os.path.join(self.dataset+'_phybo',filename),
-                    'w',
-                    'utf-8'
-                    )
-            f.write('Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,ppc))
-            f.close()
+        self._write_file(
+            filename,
+            'Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,ppc))
 
     def plot_concept_evolution(
             self,
@@ -5351,33 +5078,12 @@ class PhyBo(Wordlist):
         else:
             concepts = [i for i in self.concepts if i == concept]
 
-        # make folder variable
-        folder = self.dataset+'_phybo'
-
-        # make the directory for the files
-        try:
-            os.mkdir(os.path.join(folder,'items'))
-        except:
-            pass
-
-        # make next directory
-        try:
-            os.mkdir(
-                    os.path.join(
-                        folder,
-                        'items',
-                        '{0}-{1}'.format(self.dataset,glm)
-                        )
-                    )
-        except:
-            pass
-            
         # XXX customize later XXX
         colormap = keywords['colormap']
         
         # start with the analysis
         for concept in concepts:
-            log.info("[i] Plotting concept '{0}'...".format(concept))
+            log.info("Plotting concept '{0}'...".format(concept))
             
             # switch backend, depending on whether tex is used or not
             backend = mpl.get_backend()
@@ -5401,7 +5107,7 @@ class PhyBo(Wordlist):
                 ) if p not in self.singletons]))
 
             if len(paps) <= 0:
-                log.info("[WARNING] No entries for concept {0} could be found, skipping the plot.".format(concept))
+                log.warn("No entries for concept {0} could be found, skipping the plot.".format(concept))
             else:
             
                 # get the number of paps in order to get the right colors
@@ -5661,9 +5367,6 @@ class PhyBo(Wordlist):
                                     ),
                                 zorder = 300
                                 )
-                        
-
-
 
                 plt.xlim((min(xvals)-10,max(xvals)+10))
                 plt.ylim((min(yvals)-10,max(yvals)+10))
@@ -5679,15 +5382,13 @@ class PhyBo(Wordlist):
                         bottom= keywords['bottom']
                         )
 
-
                 plt.savefig(
-                    os.path.join(
-                        folder,
+                    self._output_path(
                         'items',
                         '{0}-{1}'.format(self.dataset,glm),
                         concept.replace('/','_')+'.'+fileformat
-                        )
                     )
+                )
                 plt.close()
 
         # return the graph

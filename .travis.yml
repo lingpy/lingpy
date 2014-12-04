@@ -22,6 +22,7 @@ before_install:
 install:
 - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
 - pip install regex
+- pip install mock
 - pip install coverage
 - pip install coveralls
 - python setup.py install

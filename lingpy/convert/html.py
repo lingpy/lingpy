@@ -22,10 +22,13 @@ import webbrowser
 import json
 import re
 
+from six import text_type
+
 from ..settings import rcParams
 from ..read.qlc import read_msa
 from ..sequence.sound_classes import pid, token2class, tokens2class, ipa2tokens
 from .. import util
+from .. import log
 
 import numpy as np
 
@@ -99,19 +102,12 @@ def alm2html(
     lingpy.convert.html.msa2tex
 
     """
-    defaults = dict(
-            json = "",
-            labels = {},
-            )
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
-            
+    util.setdefaults(keywords, json="", labels={})
+
     # open the infile
-    try:
-        data = codecs.open(infile, "r", "utf-8").read()
-    except:
-        data = codecs.open(infile+'.alm', "r", "utf-8").read()
+    if not os.path.exists(infile):
+        infile = infile + '.alm'
+    data = util.read_text_file(infile)
 
     # create the outfile
     if not filename:
@@ -119,71 +115,15 @@ def alm2html(
     
     # read in the templates
     path = os.path.join(rcParams['_path'],'data','templates')
-    
-    if main_template:
-        html = codecs.open(main_template,'r','utf-8').read()
-    else:
-        html = codecs.open(
-                os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'templates',
-                    'alm2html.html'
-                    ),
-                'r',
-                'utf-8'
-                ).read()
-    
-    if table_template:
-        table = codecs.open(table_template,'r','utf-8').read()
-    else:
-        if not confidence:
-            table = codecs.open(
-                    os.path.join(
-                        rcParams['_path'],
-                        'data',
-                        'templates',
-                        'alm2html.table.html'
-                        ),
-                    'r',
-                    'utf-8'
-                    ).read()
-        else:
-            table = codecs.open(
-                    os.path.join(
-                        rcParams['_path'],
-                        'data',
-                        'templates',
-                        'alm2html.table.js.html'
-                        ),
-                    'r',
-                    'utf-8'
-                    ).read()
-    
-    # load css
-    css = codecs.open(
-            os.path.join(
-                rcParams['_path'],
-                'data',
-                'templates',
-                'alm.css'
-                ),
-            'r',
-            'utf-8'
-            ).read()
-    
-    # load js
-    js = codecs.open(
-            os.path.join(
-                rcParams['_path'],
-                'data',
-                'templates',
-                'alm.js'
-                ),
-            'r',
-            'utf-8'
-            ).read()
-    
+    html = util.read_text_file(main_template or os.path.join(path, 'alm2html.html'))
+    if not table_template:
+        table_template = os.path.join(
+            path,
+            'alm2html.table.js.html' if confidence else 'alm2html.table.html')
+    table = util.read_text_file(table_template)
+    css = util.read_text_file(os.path.join(path, 'alm.css'))
+    js = util.read_text_file(os.path.join(path, 'alm.js'))
+
     # define a label function for the taxa
     label = lambda x: keywords['labels'][x] if x in keywords['labels'] else x
 
@@ -194,23 +134,15 @@ def alm2html(
     blocks = data.split('\n\n')
 
     # retrieve the dataset
-    if not dataset:
-        dataset = blocks[0]
+    dataset = dataset or blocks[0]
 
-    # iterate over the rest of the blocks and store the data in a dictionary
-    cogs = {}
-    
     # create the outstring
     tmp_str = ''
 
     for block in blocks[1:]:
         lines = block.split('\n')
-        
-        m = []
-        confs = []
-        for l in lines:
-            m.append(l.split('\t'))
-        
+        m = [l.split('\t') for l in lines]
+
         # create colordict for different colors
         dc = len(set([l[0] for l in m]))
         
@@ -443,19 +375,17 @@ def msa2html(
     --------
     lingpy.convert.html.alm2html
     """
-    defaults = dict(
-            pid_mode = 1,
-            stress = rcParams['stress'],
-            css = False,
-            js = False,
-            compact = False,
-            class_sort = True,
-            write_to_file = True
-            )
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
-    
+    util.setdefaults(
+        keywords,
+        pid_mode=1,
+        stress=rcParams['stress'],
+        css=False,
+        js=False,
+        compact=False,
+        class_sort=True,
+        write_to_file=True,
+    )
+
     # while alm-format can be read from the text-file without problems,
     # msa-format should be loaded first (once this is already provided), the
     # loss in speed won't matter much, since output of data is not a daily task
@@ -463,27 +393,16 @@ def msa2html(
     path = os.path.join(rcParams['_path'],'data','templates')
 
     # load templates
-    if not template:
-        html = codecs.open(os.path.join(path,'msa2html.html'),'r','utf-8').read()
-    elif template == 'js':
-        html = codecs.open(os.path.join(path, 'msa2html.js.html'), 'r',
-                'utf-8').read()
-    else:
-        html = codecs.open(template,'r','utf-8').read()
+    template = template or os.path.join(path,'msa2html.html')
+    if template == 'js':
+        template = os.path.join(path, 'msa2html.js.html')
+    html = util.read_text_file(template)
+    css = util.read_text_file(keywords['css'] or os.path.join(path, 'msa.css'))
+    js = util.read_text_file(keywords['js'] or os.path.join(path,'msa.js'))
 
-    if not keywords['css']:
-        css = codecs.open(os.path.join(path,'msa.css'), 'r', 'utf-8').read()
-    else:
-        css = codecs.open(keywords['css'], 'r', 'utf-8').read()
-
-    if not keywords['js']:
-        js = codecs.open(os.path.join(path,'msa.js'), 'r', 'utf-8').read()
-    else:
-        js = codecs.open(keywords['js'], 'r', 'utf-8').read()
-    
     # treat the msa-object as a file and try to load the file if this is the
     # case
-    if type(msa) == str:
+    if isinstance(msa, text_type):
         msa = read_msa(msa, **keywords)
     else:
         raise ValueError('[!] No filename specified.')
@@ -631,6 +550,7 @@ def msa2html(
     else:
         return html
 
+
 def string2html(
         taxon,
         string,
@@ -688,6 +608,7 @@ def string2html(
 
     return out
 
+
 def msa2tex(
         infile,
         template = '',
@@ -700,12 +621,7 @@ def msa2tex(
     Convert an MSA to a tabular representation which can easily be used in
     LaTeX documents.
     """
-    defaults = dict(
-            pid_mode = 1
-            )
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
+    util.setdefaults(keywords, pid_mode=1)
 
     # while alm-format can be read from the text-file without problems,
     # msa-format should be loaded first (once this is already provided), the
@@ -718,10 +634,7 @@ def msa2tex(
     msa = read_msa(infile)
 
     ## load templates
-    if not template:
-        tex = codecs.open(path,'r','utf-8').read()
-    else:
-        tex = codecs.open(template,'r','utf-8').read()
+    tex = util.read_text_file(template or path)
 
     # calculate pid score, if it is not passed as argument
     if 'pid_score' not in keywords:
@@ -850,40 +763,28 @@ def tokens2html(
     return out+'</table>'
 
 
-def psa2html(filename, **keywords):
+def psa2html(filename, **kw):
     """
     Function converts a PSA-file into colored html-format.
     """
+    util.setdefaults(
+        kw,
+        template=False,
+        css=False,
+        comment='#',
+        filename=filename.replace('.psa', '.html'),
+        compact=True)
 
-    kw = dict(
-            template = False,
-            css = False,
-            comment = '#',
-            filename = filename.replace('.psa','.html'),
-            compact = True
-            )
-    kw.update(keywords)
-    
     path = os.path.join(rcParams['_path'],'data','templates')
-    
-    if not kw['template']:
-        template = codecs.open(os.path.join(path, 'psa.html'), 'r',
-                'utf-8').read()
-    else:
-        template = codecs.open(kw['template'], 'r', 'utf-8').read()
 
-    if not kw['css']:
-        css = codecs.open(os.path.join(path, 'psa.css'), 'r',
-                'utf-8').read()
-    else:
-        css = codecs.open(kw['css'], 'r', 'utf-8').read()
+    template = util.read_text_file(kw['template'] or os.path.join(path, 'psa.html'))
+    css = util.read_text_file(kw['css'] or os.path.join(path, 'psa.css'))
 
-    raw_data = codecs.open(filename, 'r', 'utf-8')
     data = []
-    for line in raw_data:
+    for line in util.read_text_file(filename, lines=True):
         if not line.startswith(kw['comment']):
-            data += [line.strip()]
-    
+            data.append(line.strip())
+
     seq_ids = []
     pairs = []
     taxa = []
@@ -919,14 +820,10 @@ def psa2html(filename, **keywords):
                     )
             i += 4
         except:
-            print("[!] Line {0} of the data is probablyb miscoded.".format(
-                i+1
-                ))
+            log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
             i += 1
 
-    
     def get_classes(alm):
-
         classes = []
         residue = '<div class="residue {1}">{0}</div>'
         for j,char in enumerate(alm):
@@ -946,7 +843,6 @@ def psa2html(filename, **keywords):
         return ''.join(classes)
     
     tr = '<tr class="psa">{0}</tr>'
-
 
     out = '<table>\n' #codecs.open(kw['filename'], 'w', 'utf-8')
     for i,(a,b,c) in enumerate(alignments):
@@ -974,10 +870,7 @@ def psa2html(filename, **keywords):
     
     out += '</table>'
     
-    html = template.format(
-            alignments = out,
-            css = css
-            )
+    html = template.format(alignments=out, css=css)
 
     if kw['compact']:
         html = html.replace('\n',' ')
@@ -985,8 +878,4 @@ def psa2html(filename, **keywords):
         html = html.replace('> ','>')
         html = html.replace(' >','>')
 
-    with codecs.open(kw['filename'], 'w', 'utf-8') as f:
-        f.write(html)
-    
-        
-       
+    util.write_text_file(kw['filename'], html)

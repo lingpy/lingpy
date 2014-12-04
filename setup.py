@@ -88,7 +88,7 @@ setup(
     packages=find_packages(pkg_location),
     package_dir=pkg_dir,
     install_requires=requires,
-    tests_require=['regex', 'nltk', 'nose', 'coverage'],
+    tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
     author="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Robert Forkel",
     author_email="mattis.list@uni-marburg.de",
     keywords=[
