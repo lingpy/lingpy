@@ -25,8 +25,7 @@ from ..thirdparty import cogent as cg
 
 def _graph_or_file(graph, filename):
     if filename:
-        util.write_text_file(
-            filename + '.gml', ''.join(line + '\n' for line in nx.generate_gml(graph)))
+        util.write_text_file(filename + '.gml', nx.generate_gml(graph))
         return
     return graph
 
@@ -35,8 +34,8 @@ def gls2gml(
         gls,
         graph,
         tree,
-        filename = '',
-        verbose = True
+        filename='',
+        verbose=True
         ):
     """
     Create GML-representation of a given gain-loss-scenario (GLS).
@@ -138,8 +137,8 @@ def gls2gml(
 
 def nwk2gml(
         treefile,
-        filename = '',
-        verbose = True
+        filename='',
+        verbose=True
         ):
     """
     Function converts a tree in newick format to a network in gml-format.
@@ -390,4 +389,3 @@ def radial_layout(
         d['label'] = n
 
     return _graph_or_file(graph, filename)
-

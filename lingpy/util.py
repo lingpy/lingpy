@@ -1,4 +1,4 @@
-from __future__ import division
+from __future__ import division, unicode_literals
 import sys
 import io
 import unicodedata
@@ -15,17 +15,38 @@ def _str_path(path):
     return text_type(path) if isinstance(path, Path) else path
 
 
-def write_text_file(path, content, normalize=None):
+def write_text_file(path, content, normalize=None, log=True):
     """Write a text file encoded in utf-8.
 
     :param path: File-system path of the file.
     :content: The text content to be written.
     :param normalize: If not `None` a valid unicode normalization mode must be passed.
     """
-    log = get_logger()
+    if not isinstance(content, text_type):
+        content = lines_to_text(content)
     with io.open(_str_path(path), 'w', encoding='utf8') as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
-    log.info("Data has been written to file <{0}>.".format(_str_path(path)))
+    if log:
+        get_logger().info("Data has been written to file <{0}>.".format(_str_path(path)))
+
+
+def lines_to_text(lines):
+    return ''.join(line if line.endswith('\n') else line + '\n' for line in lines)
+
+
+class TextFile(object):
+    def __init__(self, path, log=True):
+        self.path = path
+        self.log = log
+        self.fp = io.open(_str_path(path), 'w', encoding='utf8')
+
+    def __enter__(self):
+        return self.fp
+
+    def __exit__(self, type, value, traceback):
+        self.fp.close()
+        if self.log:
+            get_logger().info("Data has been written to file <{0}>.".format(_str_path(self.path)))
 
 
 def read_text_file(path, normalize=None, lines=False):
@@ -69,7 +90,7 @@ class ProgressBar(object):
         self.log = get_logger().getEffectiveLevel() <= logging.INFO
         self.title = title
         self.cols = cols
-        self.step = self.cols / task_count
+        self.step = cols if not task_count else self.cols / task_count
         # number of columns we have already written:
         self.written = 0
         # number of tasks
