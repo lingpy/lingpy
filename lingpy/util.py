@@ -117,3 +117,13 @@ class ProgressBar(object):
                 sys.stdout.write(to_write)
                 sys.stdout.flush()
             self.written += len(to_write)
+
+
+def setdefaults(d, **kw):
+    """Shortcut for a common idiom, setting multiple default values at once.
+
+    :param d: Dictionary to be updated.
+    :param kw: Dictionary with default values.
+    """
+    for k, v in kw.items():
+        d.setdefault(k, v)

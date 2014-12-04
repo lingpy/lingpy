@@ -9,31 +9,31 @@ Test the SCA module.
 __author__="Johann-Mattis List"
 __date__="2013-11-12"
 
-import os
-import unittest
-from lingpy import Alignments
-from lingpy.settings import rcParams
+
+from six import text_type
+
+from lingpy import Alignments, MSA
 import lingpy as lp
+from lingpy.tests.util import test_data, WithTempDir
 
-class TestAlignments(object):
 
-    def setup(self):
+class TestMSA(WithTempDir):
+    def test_output(self):
+        msa = MSA(test_data('harry.msa'))
+        msa.merge = {}  # well. it is a list, but the code apparently wants a dict ...
+        fname = text_type(self.tmp_path('test'))
+        for fmt in 'msa psa msq html tex'.split():
+            msa.output(fileformat=fmt, filename=fname)
 
-        self.alm = Alignments(
-                os.path.join(
-                    rcParams['_path'],
-                    'tests',
-                    'test_data',
-                    'KSL2.qlc'
-                    ),
-                loans=False
-                )
+
+class TestAlignments(WithTempDir):
+    def setUp(self):
+        WithTempDir.setUp(self)
+        self.alm = Alignments(test_data('KSL2.qlc'), loans=False)
     
     def test_ipa2tokens(self):
-        
         # iterate over the keys
         for key in self.alm: #.get_list(language="Turkish",flat=True):
-
             ipa = self.alm[key, 'ipa']
             tokensA = self.alm[key, 'tokensa'].split(' ')
             tokensB = self.alm[key, 'tokensb'].split(' ')
@@ -44,13 +44,11 @@ class TestAlignments(object):
             assert tokensB == new_tokensB
 
     def test_align(self):
-        
         # align all sequences using standard params
         self.alm.align()
 
         # iterate and align using the multiple function
         for key,value in self.alm.msa['cogid'].items():
-
             # first compare simple alignments
             msaA = lp.SCA(value)
             msaB = lp.Multiple(value['seqs'])
@@ -65,8 +63,6 @@ class TestAlignments(object):
             assert msaA == msaB
 
     def test_get_consensus(self):
-
-        
         # align all sequences using standard params
         self.alm.align()
         self.alm.get_consensus(consensus="consensus")
@@ -83,22 +79,8 @@ class TestAlignments(object):
                                 flat=True
                                 )
                                 ]
+
     def test_output(self):
-       
-        fn = os.path.join(
-                rcParams['_path'],
-                'tests',
-                'output',
-                'test'
-                )
-        try:
-            self.alm.align()
-            self.alm.output('qlc', filename=fn)
-            
-            self.alm.output('html', filename=fn)
-
-            assert True
-
-        except:
-            raise
-            assert False
+        self.alm.align()
+        self.alm.output('qlc', filename=text_type(self.tmp_path('test')))
+        self.alm.output('html', filename=text_type(self.tmp_path('test')))
