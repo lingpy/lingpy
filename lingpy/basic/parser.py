@@ -13,6 +13,7 @@ import os
 
 from six import text_type as str
 from six import string_types
+from six.moves import input
 
 from ..settings import rcParams
 from ..read.qlc import read_qlc
