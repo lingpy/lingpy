@@ -4,6 +4,8 @@ import io
 import unicodedata
 from math import ceil
 import logging
+import os
+from tempfile import NamedTemporaryFile
 
 from pathlib import Path
 from six import text_type
@@ -11,8 +13,33 @@ from six import text_type
 from lingpy.log import get_logger
 
 
-def _str_path(path):
-    return text_type(path) if isinstance(path, Path) else path
+class TemporaryPath(object):
+    def __init__(self, suffix=''):
+        fp = NamedTemporaryFile(suffix=suffix)
+        self.name = fp.name
+        fp.close()
+
+    def __enter__(self):
+        return self.name
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if os.path.exists(self.name):
+            os.remove(self.name)
+
+
+def _str_path(path, mkdir=False):
+    """Get a file-system path as text_type, suitable for passing into io.open.
+
+    :param path: A fs path either as Path instance or as text_type.
+    :param mkdir: If True, create the directories within the path.
+    :return: The path as text_type.
+    """
+    res = text_type(path) if isinstance(path, Path) else path
+    if mkdir:
+        dirname = os.path.dirname(res)
+        if dirname and not os.path.exists(dirname):
+            os.makedirs(dirname)
+    return res
 
 
 def write_text_file(path, content, normalize=None, log=True):
@@ -24,7 +51,7 @@ def write_text_file(path, content, normalize=None, log=True):
     """
     if not isinstance(content, text_type):
         content = lines_to_text(content)
-    with io.open(_str_path(path), 'w', encoding='utf8') as fp:
+    with io.open(_str_path(path, mkdir=True), 'w', encoding='utf8') as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
     if log:
         get_logger().info("Data has been written to file <{0}>.".format(_str_path(path)))
@@ -38,7 +65,7 @@ class TextFile(object):
     def __init__(self, path, log=True):
         self.path = path
         self.log = log
-        self.fp = io.open(_str_path(path), 'w', encoding='utf8')
+        self.fp = io.open(_str_path(path, mkdir=True), 'w', encoding='utf8')
 
     def __enter__(self):
         return self.fp

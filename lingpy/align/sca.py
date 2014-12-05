@@ -27,6 +27,8 @@ import codecs
 import os
 import sys
 
+from six import text_type
+
 from ..read.qlc import read_msa, normalize_alignment
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
@@ -177,37 +179,23 @@ class MSA(Multiple):
         This function is only useful when an ``msa``-file with already
         conducted alignment analyses was loaded.
         """
-        defaults = dict(
-                model = rcParams['sca'],
-                stress = rcParams['stress']
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
+        util.setdefaults(keywords, model=rcParams['sca'], stress=rcParams['stress'])
         self.classes = []
         
         self.model = keywords['model']
 
         # redefine the sequences of the Multiple class
-        class_strings = [tokens2class(
-            seq.split(' '),
-            self.model,
-            stress=keywords['stress']) for seq in self.seqs]
-        
+        class_strings = [
+            tokens2class(seq.split(' '), self.model, stress=keywords['stress'])
+            for seq in self.seqs]
+
         # define the scoring dictionaries according to the methods
         aligned_seqs = [alm for alm in self.alm_matrix]
         for i in range(len(aligned_seqs)):
-            self.classes.append(
-                    list(
-                        ''.join(
-                            class2tokens(
-                                class_strings[i],
-                                aligned_seqs[i]
-                                )
-                            ).replace('-','X')
-                        )
-                    )
+            self.classes.append(list(
+                ''.join(
+                    class2tokens(class_strings[i], aligned_seqs[i])).replace('-', 'X')))
+
     def output(
             self,
             fileformat = 'msa',
@@ -242,157 +230,134 @@ class MSA(Multiple):
             not.
 
         """
-        defaults = dict(
-                wordlist = False,
-                timestamp = False
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-                
-        if not filename:
-            filename = self.infile
+        util.setdefaults(keywords, wordlist=False, timestamp=False)
 
-        # define the outfile and check, whether it already exists
-        outfile = filename + '.' + fileformat
+        if fileformat in ['html', 'tex']:
+            with util.TemporaryPath(suffix='.msa') as tmp:
+                self.output(
+                    fileformat='msa',
+                    filename=os.path.splitext(tmp)[0],
+                    sorted_seqs=sorted_seqs,
+                    unique_seqs=unique_seqs)
+                if 'filename' not in keywords:
+                    keywords['input_file'] = os.path.split(self.infile)[1]
+                    keywords['filename'] = filename
 
-        # create a specific format string in order to receive taxa of equal
-        # length
+                getattr(html, 'msa2' + fileformat)(tmp, **keywords)
+                return
+
+        # create a specific format string in order to receive taxa of equal length
         mtax = max([len(t) for t in self.taxa])
         txf = '{0:.<'+str(mtax)+'}'
         
-        if fileformat not in ['html', 'tex']:
-            out = codecs.open(outfile,'w','utf-8')
-
+        with util.TextFile((filename or self.infile) + '.' + fileformat) as out:
             # start writing data to file
             out.write(self.dataset+'\n')
 
-        if fileformat in ['msq','msa']:
-            out.write(self.seq_id+'\n')
+            if fileformat in ['msq','msa']:
+                out.write(self.seq_id+'\n')
 
-        if not sorted_seqs or fileformat == 'psa':
-            for i,taxon in enumerate(self.taxa):
-                if fileformat == 'msq':
-                    out.write(txf.format(taxon)+'\t'+self.seqs[i]+'\n')
-                elif fileformat == 'msa':
-                    out.write(txf.format(taxon)+'\t')
-                    out.write('\t'.join(self.alm_matrix[i])+'\n')
-                elif fileformat == 'psa':
-                    if not hasattr(self,'alignments'):
-                        self.get_pairwise_alignments(new_calc=False)
-                    else:
-                        pass
-                    for j,taxonB in enumerate(self.taxa):
-                        if i < j:
-                            try:
-                                almA,almB,score = self.alignments[i,j]
-                            except:
-                                almB,almA,score = self.alignments[j,i]
+            if not sorted_seqs or fileformat == 'psa':
+                for i,taxon in enumerate(self.taxa):
+                    if fileformat == 'msq':
+                        out.write(txf.format(taxon)+'\t'+self.seqs[i]+'\n')
+                    elif fileformat == 'msa':
+                        out.write(txf.format(taxon)+'\t')
+                        out.write('\t'.join(self.alm_matrix[i])+'\n')
+                    elif fileformat == 'psa':
+                        if not hasattr(self,'alignments'):
+                            self.get_pairwise_alignments(new_calc=False)
+                        else:
+                            pass
+                        for j,taxonB in enumerate(self.taxa):
+                            if i < j:
+                                try:
+                                    almA,almB,score = self.alignments[i,j]
+                                except:
+                                    almB,almA,score = self.alignments[j,i]
                             
-                            out.write('{0} ({1}, {2})\n'.format(
-                                self.seq_id,
-                                taxon,
-                                taxonB))
-                            out.write(txf.format(taxon)+'\t')
-                            out.write('\t'.join(almA)+'\n')
-                            out.write(txf.format(taxonB)+'\t')
-                            out.write('\t'.join(almB)+'\n')
-                            out.write('{0} {1:.2f}\n\n'.format(
-                                self.comment,
-                                score))
-        elif sorted_seqs:
+                                out.write('{0} ({1}, {2})\n'.format(
+                                    self.seq_id,
+                                    taxon,
+                                    taxonB))
+                                out.write(txf.format(taxon)+'\t')
+                                out.write('\t'.join(almA)+'\n')
+                                out.write(txf.format(taxonB)+'\t')
+                                out.write('\t'.join(almB)+'\n')
+                                out.write('{0} {1:.2f}\n\n'.format(
+                                    self.comment,
+                                    score))
+            elif sorted_seqs:
+                if fileformat == 'msa':
+                    alms = ['\t'.join(alm) for alm in self.alm_matrix]
+                else:
+                    alms = [seq for seq in self.seqs]
+            
+                if not unique_seqs:
+                    taxalms = zip(self.taxa,alms)
+                    taxalms = sorted(taxalms,key=lambda x:x[1])
+            
+                elif unique_seqs:
+                    uniqs = sorted([x[0] for x in self.uniseqs.values()])
+                    taxa = [self.taxa[x] for x in uniqs]
+                    alms = [alms[x] for x in uniqs]
+                    taxalms = zip(taxa,alms)
+                    taxalms = sorted(taxalms,key=lambda x:x[1])
+
+                for taxon,alm in taxalms:
+                    if fileformat not in ['html', 'tex']:
+                        out.write(txf.format(taxon)+'\t'+alm+'\n')
+
             if fileformat == 'msa':
-                alms = ['\t'.join(alm) for alm in self.alm_matrix]
-            else:
-                alms = [seq for seq in self.seqs]
-            
-            if not unique_seqs:
-                taxalms = zip(self.taxa,alms)
-                taxalms = sorted(taxalms,key=lambda x:x[1])
-            
-            elif unique_seqs:
-                uniqs = sorted([x[0] for x in self.uniseqs.values()])
-                taxa = [self.taxa[x] for x in uniqs]
-                alms = [alms[x] for x in uniqs]
-                taxalms = zip(taxa,alms)
-                taxalms = sorted(taxalms,key=lambda x:x[1])
+                if hasattr(self,'local'):
+                    if self.local:
+                        out.write(txf.format("LOCAL")+'\t')
+                        tmp = ['.'] * len(self.alm_matrix[0])
+                        for i in self.local:
+                            tmp[i] = '*'
+                        out.write('\t'.join(tmp)+'\n')
 
-            for taxon,alm in taxalms:
-                out.write(txf.format(taxon)+'\t'+alm+'\n')
+                if hasattr(self,'swaps'):
+                    if self.swaps:
+                        out.write(txf.format('SWAPS')+'\t')
+                        tmp = ['.'] * len(self.alm_matrix[0])
+                        for i in self.swaps:
+                            tmp[i[0]] = '+'
+                            tmp[i[1]] = '-'
+                            tmp[i[2]] = '+'
+                        out.write('\t'.join(tmp)+'\n')
+                if hasattr(self,'merge'):
+                    if len(set(self.merge.values())) < len(set(self.merge.keys())):
+                        out.write(txf.format('MERGE')+'\t')
+                        tmp = ['.'] * len(self.alm_matrix[0])
+                        start = False
+                        before = 1
+                        for k in sorted(self.merge):
+                            if self.merge[k] == before and not start:
+                                tmp[k-1] = '<'
+                                start = True
+                            if self.merge[k] == before and start:
+                                tmp[k] = '-'
+                            if self.merge[k] != before and start:
+                                start = False
+                                tmp[k-1] = '>'
+                                before += 1
+                            elif self.merge[k] != before and not start:
+                                before += 1
+                        out.write('\t'.join(tmp)+'\n')
+                if hasattr(self,'proto'):
+                    out.write(txf.format('PROTO')+'\t')
+                    out.write('\t'.join(self.proto)+'\n')
+                if hasattr(self,'consensus'):
+                    out.write(txf.format("CONSE")+'\t')
+                    out.write('\t'.join(self.consensus)+'\n')
 
-
-        if fileformat == 'msa':
-            if hasattr(self,'local'):
-                if self.local:
-                    out.write(txf.format("LOCAL")+'\t')
-                    tmp = ['.'] * len(self.alm_matrix[0])
-                    for i in self.local:
-                        tmp[i] = '*'
-                    out.write('\t'.join(tmp)+'\n')
-
-            if hasattr(self,'swaps'):
-                if self.swaps:
-                    out.write(txf.format('SWAPS')+'\t')
-                    tmp = ['.'] * len(self.alm_matrix[0])
-                    for i in self.swaps:
-                        tmp[i[0]] = '+'
-                        tmp[i[1]] = '-'
-                        tmp[i[2]] = '+'
-                    out.write('\t'.join(tmp)+'\n')
-            if hasattr(self,'merge'):
-                if len(set(self.merge.values())) < len(set(self.merge.keys())):
-                    out.write(txf.format('MERGE')+'\t')
-                    tmp = ['.'] * len(self.alm_matrix[0])
-                    start = False
-                    before = 1
-                    for k in sorted(self.merge):
-                        if self.merge[k] == before and not start:
-                            tmp[k-1] = '<'
-                            start = True
-                        if self.merge[k] == before and start:
-                            tmp[k] = '-'
-                        if self.merge[k] != before and start:
-                            start = False
-                            tmp[k-1] = '>'
-                            before += 1
-                        elif self.merge[k] != before and not start:
-                            before += 1
-                    out.write('\t'.join(tmp)+'\n')
-            if hasattr(self,'proto'):
-                out.write(txf.format('PROTO')+'\t')
-                out.write('\t'.join(self.proto)+'\n')
-            if hasattr(self,'consensus'):
-                out.write(txf.format("CONSE")+'\t')
-                out.write('\t'.join(self.consensus)+'\n')
-
-
-
-        if fileformat in ['html','tex']:
-            self.output('msa', '.tmp', sorted_seqs, unique_seqs)
-            if 'filename' not in keywords:
-                keywords['input_file'] = os.path.split(self.infile)[1]
-                keywords['filename'] = filename
-
-            if fileformat == 'html':
-                html.msa2html('.tmp.msa', **keywords)
-            elif fileformat == 'tex':
-                html.msa2tex('.tmp.msa', **keywords)
-            try:
-                os.remove('.tmp.msa')
-            except:
-                pass
-        
-        if fileformat not in ['html','tex'] and keywords['timestamp']:
-            try:
-                out.write('# Created using LingPy-2.2\n')
+            if keywords['timestamp']:
+                out.write('# Created using LingPy\n')
                 if hasattr(self,'params'):
                     out.write('# Parameters: '+self.params+'\n')
                 out.write('# Created: {0}\n'.format(rcParams['timestamp']))
-            except:
-                pass
-            out.close()
-        elif fileformat not in ['html', 'tex']:
-            out.close()
+
 
 class PSA(Pairwise):
     """
@@ -432,155 +397,83 @@ class PSA(Pairwise):
             infile,
             **keywords
             ):
-        
-        # set the defaults
-        defaults = {
-                'comment':rcParams['comment'],
-                "diacritics" : rcParams['diacritics'],
-                "vowels":rcParams['vowels'],
-                "tones":rcParams['tones'],
-                "combiners":rcParams['combiners'],
-                "breaks":rcParams['breaks'],
-                "stress":rcParams["stress"],
-                "merge_vowels" : rcParams['merge_vowels']
-                }
-
-        # check for keywords
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
+        util.setdefaults(
+            keywords,
+            comment=rcParams['comment'],
+            diacritics=rcParams['diacritics'],
+            vowels=rcParams['vowels'],
+            tones=rcParams['tones'],
+            combiners=rcParams['combiners'],
+            breaks=rcParams['breaks'],
+            stress=rcParams["stress"],
+            merge_vowels=rcParams['merge_vowels'],
+        )
         # add comment-char
         self.comment = keywords['comment']
 
+        self.infile, suffix = os.path.splitext(os.path.basename(infile))
+
+        # import the data from the input file
+        data = []
+        if not suffix and os.path.exists(infile + '.psq'):
+            infile = infile + '.psq'
+
+        for line in util.read_text_file(infile, lines=True):
+            if not line.startswith(self.comment):
+                data.append(line.strip())
+
+        # set the first parameters
+        # delete the first line of the data, since they are no longer needed
+        self.dataset = data.pop(0)
+
+        # append the other lines of the data, they consist of triplets,
+        # separated by double line breaks
+        self.taxa = []
+        self.pairs = []
+        self.seq_ids = []
+
         # check the ending of the infile
-        if infile.endswith('.psa'):
-            self._init_psa(infile,**keywords)
+        if suffix == '.psa':
+            self.alignments = []
+            handle_data = self._handle_psa_data
         else:
-            self._init_seq(infile,**keywords)
-
-    def _init_psa(
-            self,
-            infile,
-            **keywords
-            ):
-        """
-        Load a ``psa``-file.
-        """
-        # import the data from the input file
-        self.infile = infile.split('/')[-1].replace('.psa','')
-
-        data = []
-        try:
-            raw_data = codecs.open(infile+'.psa','r','utf-8')
-        except:
-            raw_data = codecs.open(infile,'r','utf-8')
-
-        for line in raw_data:
-            if not line.startswith(self.comment):
-                data.append(line.strip())
-
-        # set the first parameters
-        self.dataset = data[0]
-        
-        # delete the first line of the data, since they are no longer needed
-        del data[0]
-
-        # append the other lines of the data, they consist of triplets,
-        # separated by double line breaks
-        self.taxa = []
-        self.pairs = []
-        self.seq_ids = []
-        self.alignments = []
+            handle_data = self._handle_seq_data
 
         i = 0
         while i <= len(data) - 3:
             try:
                 self.seq_ids.append(data[i])
-                
-                datA = data[i+1].split('\t')
-                datB = data[i+2].split('\t')
-                
-                taxonA = datA[0]
-                taxonB = datB[0]
-                almA = datA[1:]
-                almB = datB[1:]
-                
-                self.taxa.append((taxonA,taxonB))
-                self.pairs.append(
-                        (
-                            '.'.join([k for k in almA if k != '-']),
-                            '.'.join([k for k in almB if k != '-'])
-                            )
-                        )
-                self.alignments.append(
-                        (
-                            [str(a) for a in almA],
-                            [str(b) for b in almB],
-                            0)
-                        )
-                i += 4
-            except:
-                log.warn("Line {0} of the data is probably miscoded.".format(i+1))
-                i += 1
-
-        Pairwise.__init__(
-                self,
-                self.pairs,
-                **keywords
-                )
-
-    def _init_seq(
-            self,
-            infile,
-            **keywords
-            ):
-        """
-        Load a ``psq``-file.
-        """
-        # import the data from the input file
-        self.infile = infile.split('/')[-1].replace('.psq','')
-
-        data = []
-        try:
-            raw_data = codecs.open(infile+'.psq','r','utf-8')
-        except:
-            raw_data = codecs.open(infile,'r','utf-8')
-
-        for line in raw_data:
-            if not line.startswith(self.comment):
-                data.append(line.strip())
-
-        # set the first parameters
-        self.dataset = data[0]
-        
-        # delete the first line of the data, since they are no longer needed
-        del data[0]
-
-        # append the other lines of the data, they consist of triplets,
-        # separated by double line breaks
-        self.taxa = []
-        self.pairs = []
-        self.seq_ids = []
-        i = 0
-        while i <= len(data) - 3:
-            try:
-                self.seq_ids.append(data[i])
-                taxonA,seqA = data[i+1].split('\t')
-                taxonB,seqB = data[i+2].split('\t')
-                self.taxa.append((taxonA.strip('.'),taxonB.strip('.')))
-                self.pairs.append((seqA,seqB))
+                handle_data(data, i)
                 i += 4
             except:
                 log.warn("Line "+str(i+1)+" of the data is probably miscoded.")
+                i += 1
 
         self.pair_num = len(self.pairs)
+        Pairwise.__init__(self, self.pairs, **keywords)
 
-        Pairwise.__init__(
-                self,
-                self.pairs,
-                **keywords
-                )
+    def _handle_psa_data(self, data, i):
+        """
+        Load a ``psa``-file.
+        """
+        almA = data[i + 1].split('\t')
+        almB = data[i + 2].split('\t')
+        taxonA = almA.pop(0)
+        taxonB = almB.pop(0)
+
+        dot_join = lambda iter: '.'.join([k for k in iter if k != '-'])
+        self.taxa.append((taxonA, taxonB))
+        self.pairs.append((dot_join(almA), dot_join(almB)))
+        self.alignments.append(([str(a) for a in almA], [str(b) for b in almB], 0))
+
+    def _handle_seq_data(self, data, i):
+        """
+        Load a ``psq``-file.
+        """
+        taxonA,seqA = data[i+1].split('\t')
+        taxonB,seqB = data[i+2].split('\t')
+        self.taxa.append((taxonA.strip('.'),taxonB.strip('.')))
+        self.pairs.append((seqA,seqB))
 
     def output(
             self,
@@ -604,93 +497,79 @@ class PSA(Pairwise):
             the infile will be taken by default.
 
         """
-        defaults = dict(
-                gop = -2,
-                model = rcParams['sca'],
-                transform = rcParams['align_transform'],
-                scores = False
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
-        if not filename:
-            filename = self.infile
+        util.setdefaults(
+            keywords,
+            gop=-2,
+            model=rcParams['sca'],
+            transform=rcParams['align_transform'],
+            scores=False)
+        filename = filename or self.infile
 
         # define the outfile and check, whether it already exists
         outfile = filename + '.' + fileformat
         # check whether outfile already exists
-        try:
-            tmp = codecs.open(outfile,'r','utf-8')
-            tmp.close()
+        if os.path.isfile(outfile):
             outfile = filename + '_out.' + fileformat
-        except:
-            pass
 
-        # open output file
-        out = codecs.open(outfile,'w','utf-8')
-
-        # if data is simple, just write simple data to file
-        if fileformat == 'psq':
-            out.write(self.dataset + '\n')
-            for i,(a,b) in enumerate(self.pairs):
-                out.write(self.seq_ids[i]+'\n')
+        with util.TextFile(outfile) as out:
+            # if data is simple, just write simple data to file
+            if fileformat == 'psq':
+                out.write(self.dataset + '\n')
+                for i,(a,b) in enumerate(self.pairs):
+                    out.write(self.seq_ids[i]+'\n')
                 
-                # determine longest taxon in order to create a format string
-                # for taxa of equal length
-                mtax = max([len(t) for t in self.taxa[i]])
-                txf = '{0:.<'+str(mtax)+'}'
+                    # determine longest taxon in order to create a format string
+                    # for taxa of equal length
+                    mtax = max([len(t) for t in self.taxa[i]])
+                    txf = '{0:.<'+str(mtax)+'}'
 
-                out.write(txf.format(self.taxa[i][0])+'\t'+a+'\n')
-                out.write(txf.format(self.taxa[i][1])+'\t'+b+'\n\n')
-            out.close()
+                    out.write(txf.format(self.taxa[i][0])+'\t'+a+'\n')
+                    out.write(txf.format(self.taxa[i][1])+'\t'+b+'\n\n')
 
-        # if data is psa-format
-        elif fileformat == 'psa':
-            out.write(self.dataset + '\n')
-            for i,(a,b,c) in enumerate(self.alignments):
-                out.write(self.seq_ids[i]+'\n')
+            # if data is psa-format
+            elif fileformat == 'psa':
+                out.write(self.dataset + '\n')
+                for i,(a,b,c) in enumerate(self.alignments):
+                    out.write(self.seq_ids[i]+'\n')
                 
-                # determine longest taxon in order to create a format string
-                # for taxa of equal length
-                mtax = max([len(t) for t in self.taxa[i]])
-                txf = '{0:.<'+str(mtax)+'}'
+                    # determine longest taxon in order to create a format string
+                    # for taxa of equal length
+                    mtax = max([len(t) for t in self.taxa[i]])
+                    txf = '{0:.<'+str(mtax)+'}'
                 
-                out.write(txf.format(self.taxa[i][0])+'\t'+'\t'.join(a)+'\n')
-                out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
+                    out.write(txf.format(self.taxa[i][0])+'\t'+'\t'.join(a)+'\n')
+                    out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
                 
-                if keywords['scores']:
-                    # get partial alignment scores
-                    scores = []
-                    idxA,idxB = 0,0
-                    proA = self.weights[i][0] 
-                    proB = self.weights[i][1]
+                    if keywords['scores']:
+                        # get partial alignment scores
+                        scores = []
+                        idxA,idxB = 0,0
+                        proA = self.weights[i][0]
+                        proB = self.weights[i][1]
 
-                    for x,y in zip(a,b):
-                        if '-' not in (x,y):
-                            try:
-                                scores += [self.model(x,y)]
-                            except:
-                                self._set_model(model=keywords['model'])
-                            idxA += 1
-                            idxB += 1
-
-                        else:
-                            if x == '-':
-                                scores += [keywords['gop'] * proB[idxB]]
-                                idxB += 1
-                            elif y == '-':
-                                scores += [keywords['gop'] * proA[idxA]]
+                        for x,y in zip(a,b):
+                            if '-' not in (x,y):
+                                try:
+                                    scores += [self.model(x,y)]
+                                except:
+                                    self._set_model(model=keywords['model'])
                                 idxA += 1
+                                idxB += 1
+                            else:
+                                if x == '-':
+                                    scores += [keywords['gop'] * proB[idxB]]
+                                    idxB += 1
+                                elif y == '-':
+                                    scores += [keywords['gop'] * proA[idxA]]
+                                    idxA += 1
 
-                            
-                    out.write(
+                        out.write(
                             txf.format(self.comment)+'\t'+'\t'.join(
                                 ['{0:.2f}'.format(s) for s in scores]
                                 )+'\t{0:.2f}\n'.format(sum(scores))
                             )
-                out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
-            out.close()
+                    out.write('{0} {1:.2f}'.format(self.comment,c)+'\n\n')
+
 
 class Alignments(Wordlist):
     """
@@ -731,11 +610,13 @@ class Alignments(Wordlist):
             conf = '',
             ref = 'cogid', 
             loans = True,
+            _interactive=True,
             **keywords
             ):
         # initialize the wordlist
         Wordlist.__init__(self,infile,row,col,conf)
-        
+        self._interactive = _interactive
+
         # check for reference / cognates
         if 'cognates' in keywords:
             log.deprecated('cognates','ref')
@@ -952,7 +833,7 @@ class Alignments(Wordlist):
         kw.update(keywords)
         if kw['defaults']: return kw
 
-        if str(kw['model']) == kw['model']:
+        if text_type(kw['model']) == kw['model']:
             kw['model'] = rcParams[kw['model']]
 
         # create a params attribute
@@ -974,7 +855,7 @@ class Alignments(Wordlist):
                     self.msa[kw['ref']].items(),
                     key=lambda x:x[0]
             ):
-                log.info("Analyzing cognate set number {0}.".format(key))
+                log.debug("Analyzing cognate set number {0}.".format(key))
 
                 # check for scorer keyword
                 if not kw['scoredict']:
@@ -1017,57 +898,14 @@ class Alignments(Wordlist):
                     m.dataset, m.seq_id, rcParams['timestamp'], params)
 
                 if kw['output']:
+                    filename = '{0}-msa/{1}-{2}'.format(self.filename, m.dataset, key)
                     if kw['style'] in ['plain', 'msa']:
-                        try:
-                            m.output(
-                                'msa',
-                                filename='{0}-msa/{1}-{2}'.format(
-                                    self.filename,
-                                    m.dataset,
-                                    key
-                                    )
-                                )
-                        except:
-                            os.mkdir('{0}-msa'.format(self.filename))
-                            m.output(
-                                'msa',
-                                filename='{0}-msa/{1}-{2}'.format(
-                                    self.filename,
-                                    m.dataset,
-                                    key
-                                    )
-                                )
+                        m.output('msa', filename=filename)
                     elif kw['style'] in ['with_id', 'id']:
-                        msa_string = msa2str(
-                            self._meta['msa'][kw['ref']][key],
-                            wordlist=True
-                            )
-                        try:
-                            f = codecs.open(
-                                '{0}-msa/{1}-{2}'.format(
-                                    self.filename,
-                                    m.dataset,
-                                    key
-                                    ),
-                                'w',
-                                'utf-8'
-                                )
-                            f.write(msa_string)
-                            f.close()
-                        except:
-                            os.mkdir('{0}-msa'.format(self.filename))
-                            f = codecs.open(
-                                '{0}-msa/{1}-{2}'.format(
-                                    self.filename,
-                                    m.dataset,
-                                    key
-                                    ),
-                                'w',
-                                'utf-8'
-                                )
-                            f.write(msa_string)
-                            f.close()
-        
+                        util.write_text_file(
+                            filename,
+                            msa2str(self._meta['msa'][kw['ref']][key], wordlist=True))
+
         self._msa2col(ref=kw['ref'])
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
@@ -1102,29 +940,23 @@ class Alignments(Wordlist):
         """
         Make an HTML plot of the aligned data.
         """
-        defaults = dict(
-                title = 'LexStat - Automatic Cognate Judgments',
-                shorttitle = "LexStat",
-                dataset = self.filename,
-                show = False,
-                filename = self.filename,
-                ref = rcParams['ref'],
-                confidence = False
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        util.setdefaults(
+            keywords,
+            title = 'LexStat - Automatic Cognate Judgments',
+            shorttitle = "LexStat",
+            dataset = self.filename,
+            show = False,
+            filename = self.filename,
+            ref = rcParams['ref'],
+            confidence = False)
 
-        self.output('alm',ref=keywords['ref'],filename='.tmp',
+        with util.TemporaryPath(suffix='.alm') as tmp:
+            self.output(
+                'alm',
+                ref=keywords['ref'],
+                filename=os.path.splitext(tmp)[0],
                 confidence=keywords['confidence'])
-        html.alm2html(
-                '.tmp.alm',
-                **keywords
-                )
-        try:
-            os.remove('.tmp.alm')
-        except:
-            pass
+            html.alm2html(tmp, **keywords)
 
     def get_consensus(
             self,
@@ -1155,15 +987,8 @@ class Alignments(Wordlist):
             converted to sound-class strings.
         
         """
-        # determine defaults
-        defaults = dict(
-                model     = rcParams['sca'],
-                gap_scale = 1.0,
-                ref       = rcParams['ref'],
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        util.setdefaults(
+            keywords, model=rcParams['sca'], gap_scale=1.0, ref=rcParams['ref'])
 
         # check for deprecated "cognates"
         if 'cognates' in keywords:
@@ -1245,7 +1070,8 @@ class Alignments(Wordlist):
                 cons_dict[cog] = cons
 
         # add the entries
-        self.add_entries(consensus, ref, lambda x: cons_dict[x])
+        self.add_entries(
+            consensus, ref, lambda x: cons_dict[x], override=not self._interactive)
 
     def output(
             self,
@@ -1398,51 +1224,17 @@ class Alignments(Wordlist):
                                     ]
                                 )+'\n'
 
-            f = codecs.open(filename + '.' + fileformat,'w','utf-8')
-            f.write(out)
-            f.close()
+            util.write_text_file(filename + '.' + fileformat, out)
 
         if fileformat == 'msa':
-            if kw['style'] in ['id', 'with_id']:
-                wordlist = True
-            else:
-                wordlist = False
+            for key,value in sorted(self.msa[kw['ref']].items(), key=lambda x:x[0]):
+                util.write_text_file(
+                    os.path.join(
+                        '{0}-msa'.format(self.filename),
+                        '{1}-{2}.msa'.format(value['dataset'], key)),
+                    msa2str(value, wordlist=kw['style'] in ['id', 'with_id']),
+                    log=False)
 
-            for key,value in sorted(
-                    self.msa[kw['ref']].items(),
-                    key=lambda x:x[0]
-                    ):
-                
-                msa_string = msa2str(
-                        value,
-                        wordlist=wordlist
-                        )
-                try:
-                    f = codecs.open(
-                            '{0}-msa/{1}-{2}.msa'.format(
-                                self.filename,
-                                value['dataset'],
-                                key
-                                ),
-                            'w',
-                            'utf-8'
-                            )
-                    f.write(msa_string)
-                    f.close()
-
-                except:
-                    os.mkdir('{0}-msa'.format(self.filename))
-                    f = codecs.open(
-                            '{0}-msa/{1}-{2}.msa'.format(
-                                self.filename,
-                                value['dataset'],
-                                key
-                                ),
-                            'w',
-                            'utf-8'
-                            )
-                    f.write(msa_string)
-                    f.close()
 
 def SCA(
         infile,
@@ -1456,35 +1248,28 @@ def SCA(
     This method checks for the type of an alignment object and returns an
     alignment object of the respective type.
     """
+    util.setdefaults(
+        keywords,
+        comment=rcParams['comment'], #'#',
+        diacritics=rcParams['diacritics'], #None,
+        vowels=rcParams['vowels'], #None,
+        tones=rcParams['tones'], #None,
+        combiners=rcParams['combiners'], #'\u0361\u035c',
+        breaks=rcParams['breaks'], #'.-',
+        stress=rcParams['stress'], #"ˈˌ'",
+        merge_vowels=rcParams['merge_vowels'], #True
+    )
 
-    # set the defaults
-    defaults = {
-            'comment'      : rcParams['comment'], #'#',
-            "diacritics"   : rcParams['diacritics'], #None,
-            "vowels"       : rcParams['vowels'], #None,
-            "tones"        : rcParams['tones'], #None,
-            "combiners"    : rcParams['combiners'], #'\u0361\u035c',
-            "breaks"       : rcParams['breaks'], #'.-',
-            "stress"       : rcParams['stress'], #"ˈˌ'",
-            "merge_vowels" : rcParams['merge_vowels'], #True
-            }
-    # check for keywords
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
-   
     # check for datatype
     if isinstance(infile, dict):
         parent = MSA(infile,**keywords)
     else:
-        if infile[-4:] in ['.msa','.msq']:
-            parent = MSA(infile,**keywords)
-        elif infile[-4:] in ['.psq','psa']:
-            parent = PSA(infile,**keywords)
-        elif infile[-4:] in ['.csv','.tsv']:
-            parent = Alignments(infile,**keywords)
+        cls_map = dict(msa=MSA, msq=MSA, psq=PSA, psa=PSA, csv=Alignments, tsv=Alignments)
+        # lookup class by file extension:
+        parent = cls_map[os.path.splitext(infile)[1][-3:]](infile, **keywords)
 
     return parent
+
 
 def get_consensus(
         msa,
@@ -1553,31 +1338,24 @@ def get_consensus(
                                 return 0.1
                         else:
                             return 0.1
-    defaults = dict(
-            model = rcParams['sca'],
-            gap_scale = 1.0,
-            mode = 'majority',
-            gap_score = -10,
-            weights = [1 for i in range(len(msa[0]))],
-            rep_weights = rep_weights,
-            local = False
-            )
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
-    
+    util.setdefaults(
+        keywords,
+        model = rcParams['sca'],
+        gap_scale = 1.0,
+        mode = 'majority',
+        gap_score = -10,
+        weights = [1 for i in range(len(msa[0]))],
+        rep_weights = rep_weights,
+        local = False)
+
     # stores the consensus string
     cons = []
 
     # transform the matrix
-    if hasattr(msa,'alm_matrix'):
-        matrix = misc.transpose(msa.alm_matrix)
-    else:
-        matrix = misc.transpose(msa)
+    matrix = misc.transpose(getattr(msa, 'alm_matrix', msa))
 
     # check for local peaks
     if keywords['local']:
-        
         if keywords['local'] == 'peaks':
             # calculate a local index
             peaks = []
@@ -1766,12 +1544,12 @@ def get_consensus(
         matrix = misc.transpose(matrix)
         #if the taxa are defined, extract the sub-guidetree accordingly
         if taxa:
-            all_taxa = [leaf.Name for leaf in tree.tips()]
-            taxon_to_id = dict({(str(all_taxa[i]),i) for i in range(0,len(all_taxa))})
+            taxon_to_id = {text_type(name): i for i, name in
+                           enumerate(leaf.Name for leaf in tree.tips())}
             tree = tree.deepcopy()
             for leaf in tree.tips():
-                leaf.Name = str(taxon_to_id[leaf.Name])
-            newIndices = [taxon_to_id[str(taxon)] for taxon in taxa]
+                leaf.Name = text_type(taxon_to_id[leaf.Name])
+            newIndices = [taxon_to_id[text_type(taxon)] for taxon in taxa]
             tree = subGuideTree(tree,newIndices)
             #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
             #for leaf in tree.tips():
@@ -1962,10 +1740,7 @@ def get_consensus(
         #printTree(tree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
         cons = "".join(tree.reconstructed)
 
-    if gaps:
-        return cons
-    else:
-        return [c for c in cons if c != '-'] #cons.replace('-','')
+    return cons if gaps else [c for c in cons if c != '-'] #cons.replace('-','')
 
 
 #.. File Formats
@@ -2074,5 +1849,3 @@ def get_consensus(
 #..         Russian     v    -    l    a    d    i    m    i    r    -
 #..         SWAPS..     .    +    -    +    .    .    .    .    .    .
 #..         LOCAL..     *    *    *    .    *    *    *    *    *    .
-
-
