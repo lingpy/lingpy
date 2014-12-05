@@ -3,10 +3,10 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List, Johannes Dellert
+# author   : Johann-Mattis List, Johannes Dellert, Robert Forkel
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-03-07 20:07
-# modified : 2014-07-22 13:46
+# modified : 2014-12-05 14:47
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -18,8 +18,8 @@ perspective deals with aligned sequences.
 
 """
 
-__author__="Johann-Mattis List, Johannes Dellert"
-__date__="2014-07-22"
+__author__="Johann-Mattis List, Johannes Dellert, Robert Forkel"
+__date__="2014-12-05"
 
 import numpy as np
 import re
@@ -669,7 +669,10 @@ class Alignments(Wordlist):
                     d = {}
                     d['taxa'] = []
                     d['seqs'] = []
-                    d['dataset'] = self.filename
+                    d['dataset'] = os.path.split(
+                            os.path.splitext(
+                                self.filename
+                                )[0])[1]
                     d['ID'] = []
                     d['alignment'] = []
                     if 'concept' in self.header:
@@ -741,8 +744,6 @@ class Alignments(Wordlist):
             Set to c{True} in order to use iterative refinement methods.
         swap_check : bool (default=False)
             Set to c{True} in order to carry out a swap-check.
-        output : bool (default=False)
-            Set to c{True} in order to write all alignments to file.
         model : { 'dolgo', 'sca', 'asjp' }
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
@@ -897,15 +898,6 @@ class Alignments(Wordlist):
                 self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
                     m.dataset, m.seq_id, rcParams['timestamp'], params)
 
-                if kw['output']:
-                    filename = '{0}-msa/{1}-{2}'.format(self.filename, m.dataset, key)
-                    if kw['style'] in ['plain', 'msa']:
-                        m.output('msa', filename=filename)
-                    elif kw['style'] in ['with_id', 'id']:
-                        util.write_text_file(
-                            filename,
-                            msa2str(self._meta['msa'][kw['ref']][key], wordlist=True))
-
         self._msa2col(ref=kw['ref'])
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
@@ -1006,7 +998,7 @@ class Alignments(Wordlist):
         test = list(self.msa[ref].keys())[0]
         if 'alignment' not in self.msa[ref][test]:
             log.error(
-                "No alignments could be found, You should carry out"
+                "No alignments could be found. You should carry out"
                 " an alignment analysis first!")
             return
 
@@ -1083,10 +1075,17 @@ class Alignments(Wordlist):
 
         Parameters
         ----------
-        fileformat : {"qlc", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv" "html"}
+        fileformat : {"qlc", "msa", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv" "html"}
             The format that is written to file. This corresponds to the file
             extension, thus 'csv' creates a file in csv-format, 'dst' creates
-            a file in Phylip-distance format, etc. 
+            a file in Phylip-distance format, etc. Specific output is created
+            for the formats "html" and "msa":
+
+            * "msa" will create a folder containing all alignments of all
+              cognate sets in "msa"-format
+            * "html" will create html-output in which words are sorted
+              according to meaning, cognate set, and all cognate words are
+              aligned
         filename : str
             Specify the name of the output file (defaults to a filename that
             indicates the creation date).
@@ -1118,6 +1117,11 @@ class Alignments(Wordlist):
         threshold : float (default=0.6)
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
+
+        style : str (default="id")
+            If "msa" is chosen as output format, this will write the alignments
+            for each msa-file in a specific format in which the first column
+            contains a direct reference to the word via its ID in the wordlist.
         
         """
         kw = dict(
@@ -1230,8 +1234,8 @@ class Alignments(Wordlist):
             for key,value in sorted(self.msa[kw['ref']].items(), key=lambda x:x[0]):
                 util.write_text_file(
                     os.path.join(
-                        '{0}-msa'.format(self.filename),
-                        '{1}-{2}.msa'.format(value['dataset'], key)),
+                        '{0}-msa'.format(value['dataset']),
+                        '{0}-{1}.msa'.format(value['dataset'], key)),
                     msa2str(value, wordlist=kw['style'] in ['id', 'with_id']),
                     log=False)
 
