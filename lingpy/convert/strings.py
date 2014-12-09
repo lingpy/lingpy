@@ -78,7 +78,7 @@ def msa2str(msa, wordlist=False, comment="#",
     meta = ''
     
     # define global vars for alignment and taxa for convenience
-    if wordlist or type(msa) == dict:
+    if wordlist or isinstance(msa, dict):
         taxa = msa['taxa']
         alms = msa['alignment']
     else:
@@ -112,20 +112,19 @@ def msa2str(msa, wordlist=False, comment="#",
     # if wordlist ist set to True, don't write the header line and put the
     # after comment
     if wordlist:
-
-        formatter = max([len(t) for t in msa['taxa']])
-        #body += '# ' +msa['seq_id']+'\n'
+        # get formatter
+        formatter = max([len(t) for t in msa['taxa']+['COLUMNID']])
         for a,b,c in zip(msa['ID'], taxa, alms):
             body += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
             body += '\t'.join(c)+'\n'
         alm_len = len(c)
 
-    elif type(msa) == dict:
+    elif isinstance(msa, dict):
         # get formatter
         formatter = max([len(t) for t in msa['taxa']])
         body += msa['dataset']+'\n'
         body += msa['seq_id']+'\n'
-        for a,b in zip(taxa, alms): #,msa['alignment']):
+        for a,b in zip(taxa, alms): 
             body += a.ljust(formatter,'.')+'\t'
             body += '\t'.join(b)+'\n'
         alm_len = len(b)
@@ -216,30 +215,68 @@ def matrix2dst(
         taxa = None,
         stamp = '',
         filename = '',
-        taxlen = '10'
+        taxlen = 10,
+        comment = '#'
      ):
     """
     Convert matrix to dst-format.
+
+    Parameters
+    ----------
+    taxa : {None, list}
+        List of taxon names corresponding to the distances. Make sure that you
+        only use alphanumeric characters and the understroke for assigning the
+        taxon names. Especially avoid the usage of brackets, since this will
+        confuse many phylogenetic programs.
+    stamp : str (default='')
+        Convenience stamp passed as a comment that can be used to indicate how
+        the matrix was created.
+    filename : str
+        If you specify a filename, the data will be written to file.
+    taxlen : int (default=10)
+        Indicate how long the taxon names are allowed to be. The Phylip package
+        only allows taxon names consisting of maximally 10 characters. Other
+        packages, however, allow more. If Phylip compatibility is not important
+        for you and you just want to allow for as long taxon names as possible,
+        set this value to 0.
+    comment : str (default = '#')
+        The comment character to be used when adding additional information in
+        the "stamp".
+    
+    Returns
+    -------
+    output : {str or file}
+        Depending on your settings, this function returns a string in DST
+        (=Phylip) format, or a file containing the string.
+        
     """
     if not taxa:
-        taxa = ['t_{0}'.format(i) for i in range(len(matrix))]
+        taxa = ['t_{0}'.format(i+1) for i in range(len(matrix))]
 
     out = ' {0}\n'.format(len(taxa))
     for i,taxon in enumerate(taxa):
-        dummy = '{0:'+taxlen+'}'
-        out += dummy.format(taxon)[0:11]+' '
-        out += ' '.join(['{0:2f}'.format(d) for d in
+
+        # check for zero-taxlen
+        if taxlen == 0:
+            dummy = '{0}\t'
+            idx = len(taxon)
+            joinchar = '\t' # normally in Phylip this is a space
+        else:
+            dummy = '{0:'+str(taxlen)+'}'
+            idx = taxlen+1
+            joinchar = ' '
+
+        out += dummy.format(taxon)[:idx]+joinchar
+        out += joinchar.join(['{0:.2f}'.format(d) for d in
             matrix[i]])
         out += '\n'
     if stamp:
-        out += '# {0}'.format(stamp)
+        out += '{1} {0}'.format(stamp, comment)
     if not filename:
         return out
     else:
-        f = codecs.open(filename+'.dst','w','utf-8')
-        f.write(out)
-        f.close()
-        if rcParams['verbose']: print(rcParams['fw'].format('dst')) # (filename,'dst'))
+        util.write_text_file(filename+'.dst',out)
+        log.info('File has been written to {0}'.format(filename+'.dst'))
 
 def pap2nex(
         taxa,
@@ -249,6 +286,22 @@ def pap2nex(
         ):
     """
     Function converts a list of paps into nexus file format.
+
+    Parameters
+    ----------
+    taxa : list
+        List of taxa.
+    paps : {list, dict}
+        A two-dimensional list with the first dimension being identical to the
+        number of taxa and the second dimension being identical to the number
+        of paps. If a dictionary is passed, each key represents a given pap.
+        The following two structures will thus be treated identically::
+            
+          >>> paps = [[1,0],[1,0],[1,0]] # two languages, three paps
+          >>> paps = {1:[1,0], 2:[1,0], 3:[1,0]} # two languages, three paps
+    
+    missing : {str, int} (default=0)
+        Indicate how missing characters are represented in the original data.    
 
     """
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
@@ -262,9 +315,9 @@ def pap2nex(
     try:
         paps.keys()
         new_paps = []
-        for key in paps:
+        for key in sorted(paps):
             new_paps.append(paps[key])
-    except:
+    except AttributeError:
         new_paps = paps
 
     # create the matrix
@@ -273,7 +326,7 @@ def pap2nex(
     for i,taxon in enumerate(taxa):
         tmp = '{0:XXX} '
         matrix += tmp.replace('XXX',str(maxTax)).format(taxon)
-        matrix += ''.join([str(line[i]) for line in new_paps])
+        matrix += ''.join([str(itm[i]) for itm in new_paps])
         matrix += '\n'
     
     if not filename:
@@ -297,9 +350,9 @@ def pap2csv(
     """
     Write paps created by the Wordlist class to a csv-file.
     """
-
+    
     out = "ID\t"+'\t'.join(taxa)+'\n'
-    for key in sorted(paps,key=lambda x: int(re.sub(r'[^0-9]+','',str(x)))):
+    for key in sorted(paps, key=lambda x: int(re.sub(r'[^0-9]+','',str(x)))):
         out += '{0}\t{1}\n'.format(
             key,
             '\t'.join(str(i) for i in paps[key])
@@ -309,3 +362,5 @@ def pap2csv(
         return out
     util.write_text_file(filename + '.csv', out)
     return
+
+

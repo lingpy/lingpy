@@ -420,11 +420,14 @@ def prosodic_string(
         # check for descending position
         elif a >= b >= c or c == 8:
 
-            # check for word final
+            # check for word final consonant
             if c == 9 and b != 7:
                 pstring += 'N'
+            
+            # check for word final vowel
             elif c == 9 and b == 7:
                 pstring += 'Z'
+            
             else:
                 if first:
                     first = False

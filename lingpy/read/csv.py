@@ -1,13 +1,13 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-10-24 15:24
+# modified : 2014-12-08 13:58
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-24"
+__date__="2014-12-08"
 
 import codecs
 import os
