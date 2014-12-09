@@ -132,8 +132,6 @@ END;"""
     outA = pap2nex(taxa, papsA)
     outB = pap2nex(taxa, papsB)
     
-    alm = lingpy.align.pairwise.nw_align(repr(nex), repr(outB))
-
     assert nex == outA and nex == outB
 
 def test_pap2csv():
