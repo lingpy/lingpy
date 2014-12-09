@@ -24,6 +24,7 @@ __date__="2013-11-12"
 
 import os
 import unittest
+from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
@@ -33,27 +34,58 @@ from lingpy import rc
 
 def test_ipa2tokens():
 
-    seq = 'tʰɔxtər'
+    seq = 'ˈtʲʰoɔːix_tərp͡f¹¹'
 
     assert len(ipa2tokens(seq)) != len(list(seq))
 
+    seq = 'ʰto͡i'
+    
+    assert len(ipa2tokens(seq)) == 2
+
+    seq = 'th o x t a'
+    
+    assert len(ipa2tokens(seq)) == len(seq.split(' '))
+
+    seq = '# b l a #'
+    
+    assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
+
 def test_token2class():
 
-    seq = 'tʰ ɔ x t ə r'.split(' ')
+    seq = 'tʰ ɔ x ˈth ə r A'.split(' ')
 
     assert token2class(seq[0], rc('dolgo')) == 'T'
+    assert token2class(seq[3], 'dolgo') == 'T'
+    assert token2class(seq[-1], 'dolgo') == '0'
 
 def test_tokens2class():
 
-    seq = 'tʰ ɔ x t ə r'.split(' ')
+    seq = 'tʰ ɔ x ˈth ə r A ˈI'.split(' ')
 
-    assert tokens2class(seq, rc('dolgo')) == list('TVKTVR')
+    assert tokens2class(seq, 'dolgo') == list('TVKTVR00')
+
+    assert_raises(ValueError, tokens2class, 'b  l'.split(' '), 'dolgo')
 
 def test_prosodic_string():
 
     seq = 'tʰ ɔ x t ə r'.split(' ')
 
     assert prosodic_string(seq) == 'AXMBYN'
+    
+    seq = 'th o x ¹ t e'.split(' ')
+
+    assert prosodic_string(seq) == 'AXLTBZ'
+
+    seq = 'th o x _ th o x'.split(' ')
+
+    assert prosodic_string(seq) == 'AXN_AXN'
+
+    assert not prosodic_string('')
+
+    # test for line breaks and starting with vowel
+    # this is an issue in the algorithm itself!
+    #seq = 'th o x t a _ th o'.split(' ')
+    #assert prosodic_string(seq) == 'AXMBZ_AXLN'
 
 def test_prosodic_weights():
 
@@ -68,6 +100,7 @@ def test_class2tokens():
     tokens = 'tʰ ɔ x t ə r'.split(' ')
 
     out = class2tokens(classes, tokens)
+
     assert out[1] == '-' and out[-2] == '-'
 
 def test_pid():
@@ -79,32 +112,41 @@ def test_check_tokens():
     assert check_tokens('th o x T e r'.split(' '))[0] == (3,'T')
 
 def test_get_all_ngrams():
-
-    assert get_all_ngrams('ab') == ['ab', 'a', 'b']
+    
+    f = get_all_ngrams('ab')
+    assert f == ['ab', 'a', 'b']
 
 def test_sampa2uni():
 
     seq = 'tʰɔxtər'
     sampa = eval('"'+sampa2uni('t_hOxt@r')+'"')
-    #sampa2 = sampa2uni('t_hOxt@r')
-
-    # we need this to capture differences in behaviour between py2 and py3
     assert sampa == seq #or sampa2 == seq
 
-def bigrams():
+def test_bigrams():
+    
+    f = bigrams('ab')
+    assert f[0] == ('#','a') and f[-1] == ('b','$')
 
-    assert bigrams('ab')[0] == ('#','a') and bigrams('ab')[-1] == ('b','$')
+def test_trigrams():
 
-def trigrams():
+    assert trigrams('ab')[0] == ('#', '#' ,'a') and trigrams('ab')[-1] == ('b','$', '$')
 
-    assert bigrams('ab')[0] == ('#', '#' ,'a') and bigrams('ab')[-1] == ('b','$', '$')
+def test_fourgrams():
+    
+    f = fourgrams('ab')
+    print(f)
 
-def fourgrams():
+    assert f[0] == ('#','#','#','a')
+    assert f[-1] == ('b','$','$','$')
 
-    assert fourgrams('ab')[0] == ('#','#','#','a')
-    assert fourgrams('ab')[-1] == ('a','$','$','$')
+def test_get_n_ngrams():
+    
+    f = get_n_ngrams('ma',5)
+
+    assert f[0] == ('m','a','$','$','$')
 
 def test_pgrams():
-
-    assert pgrams('ab')[0] == ('a','X')
-    assert pgrams('ab')[-1] == ('b','N')
+    
+    f = pgrams('ab')
+    assert f[0] == ('a','X')
+    assert f[-1] == ('b','N')

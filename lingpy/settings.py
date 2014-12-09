@@ -6,13 +6,13 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-17 10:40
-# modified : 2013-11-23 09:20
+# modified : 2014-12-07 13:32
 """
 Module handels all global parameters used in a LingPy session.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-11-23"
+__date__="2014-12-07"
 
 # builtin imports
 from datetime import datetime,date
@@ -244,6 +244,10 @@ def rc(rval=None, **keywords):
                 rcParams['stress']       = "ˈˌ'"
                 rcParams['merge_vowels'] = True
                 rcParams['basic_orthography'] = 'fuzzy'
+
+                # reset basic model to sca
+                rcParams['model'] = rcParams['sca']
+                
             elif keywords[key] in ['evolaemp','el','asjp']:
                 diacritics,vowels,tones = load_dvt(path='el')
                 rcParams['asjp'] = Model('asjp_el')
@@ -260,6 +264,9 @@ def rc(rval=None, **keywords):
                 rcParams['stress']       = "ˈˌ'"
                 rcParams['merge_vowels'] = False
                 rcParams['basic_orthography'] = 'asjp'
+
+                # reset the basic model to the asjp model
+                rcParams['model'] = rcParams['asjp']
 
         if key in alias:
             rcParams[alias[key]] = keywords[key]
