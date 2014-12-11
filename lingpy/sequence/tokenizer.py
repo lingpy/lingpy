@@ -11,19 +11,21 @@ __author__ = "Steven Moran"
 __date__ = "2010-12-01"
 
 import os
-import sys
+import logging
 import codecs
 import unicodedata
 
 # basic lingpy imports
 from ..settings import rcParams
 from .. import log
+from .. import util
 
 try:
     import regex as re
 except ImportError:
     import re
     log.missing_module('regex')
+
 
 class Tokenizer(object):
     """
@@ -104,32 +106,14 @@ class Tokenizer(object):
     """
 
     def __init__(self, orthography_profile=None):
-        # check various places for orthography profiles
-        ortho_path = ""
-
-        if not orthography_profile == None:
-            # strip possible file extension
-            if orthography_profile.endswith('.prf'):
-                orthography_profile = orthography_profile[:-4]
-
-            # get path and filename of orthography profile
-            if os.path.exists(orthography_profile+".prf") or os.path.exists(orthography_profile+".rules"):
-                ortho_path = orthography_profile
-            else:
-                ortho_path = os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'orthography_profiles',
-                    orthography_profile
-                    )
-                if not os.path.exists(ortho_path+'.prf') and orthography_profile:
-                    raise ValueError("The orthography profile you specified does not exist!")
-                    
+        if orthography_profile and not os.path.exists(orthography_profile):
+            raise ValueError("The orthography profile you specified does not exist!")
+        self.orthography_profile = orthography_profile
+        self.orthography_profile_rules = None
+        self.column_labels = None
 
         # orthography profile processing
-        if os.path.isfile(ortho_path+".prf"):
-            self.orthography_profile = ortho_path+".prf"
-
+        if self.orthography_profile:
             # read in orthography profile and create a trie structure for tokenization
             self.root = createTree(self.orthography_profile)
 
@@ -145,38 +129,22 @@ class Tokenizer(object):
             # process the orthography profiles and rules
             self._init_profile(self.orthography_profile)
 
-        else:
-            self.orthography_profile = None
-            self.column_labels = None
+            rules_path = os.path.splitext(self.orthography_profile)[0] + '.rules'
+            if os.path.isfile(rules_path):
+                self.orthography_profile_rules = rules_path
+                self.op_rules = []
+                self.op_replacements = []
+                self._init_rules(self.orthography_profile_rules)
 
-        # orthography profile rules and replacements
-        if os.path.isfile(ortho_path+".rules"):
-            self.orthography_profile_rules = ortho_path+".rules"
-            self.op_rules = []
-            self.op_replacements = []
-            self._init_rules(self.orthography_profile_rules)
-        else:
-            self.orthography_profile_rules = None
+        log.debug("Orthography profile: %s" % self.orthography_profile)
+        log.debug("Orthography rules: %s" % self.orthography_profile_rules)
+        log.debug("Columns labels: %s" % self.column_labels)
 
-        if rcParams['debug']: 
-            print("[i] Orthography profile: ", self.orthography_profile)
-            print("[i] Orthography rules: ", self.orthography_profile_rules)
-            print("[i] Columns labels: ", self.column_labels)
-            print()
-    
     def _init_profile(self, f):
         # Process and initialize data structures given an orthography profile.
-        f = codecs.open(f, "r", "utf-8")
-        line_count = 0
-        for line in f:
-            line_count += 1
-            line = line.strip()
-
-            # skip any comments in the orthography profile
-            if line.startswith("#") or line == "":
-                continue
-
-            # deal with the columns header -- should always start with "graphemes" as per the orthography profiles specification
+        for line_count, line in enumerate(util.read_config_file(f, normalize='NFD')):
+            # deal with the columns header -- should always start with "graphemes" as per
+            # the orthography profiles specification
             if line.lower().startswith("graphemes"):
                 column_tokens = line.split("\t")
 
@@ -184,9 +152,6 @@ class Tokenizer(object):
                 for column_token in column_tokens:
                     self.column_labels.append(column_token.lower().strip())
                 continue
-
-            # Unicode NFD the line
-            line = unicodedata.normalize("NFD", line)
 
             # split the orthography profile into columns
             tokens = line.split("\t") 
@@ -196,50 +161,34 @@ class Tokenizer(object):
             if not grapheme in self.op_graphemes:
                 self.op_graphemes[grapheme] = 1
             else:
-                raise Exception("You have a duplicate in your orthography profile at: {0}".format(line_count))
+                raise Exception("You have a duplicate in your orthography profile.")
 
             if len(tokens) == 1:
                 continue
 
-            for i in range(0, len(tokens)):
-                token = tokens[i].strip()
+            for i, token in enumerate(tokens):
+                token = token.strip()
                 self.mappings[grapheme, self.column_labels[i].lower()] = token
-
-                if rcParams['debug']: 
-                    print(grapheme, self.column_labels[i].lower())
-
-        f.close()
+                log.debug('%s %s' % (grapheme, self.column_labels[i].lower()))
 
         # print the trie structure if debug mode is on
-        if rcParams['debug']: 
-            print("A graphical representation of your orthography profile in a trie ('*' denotes sentinels):\n")
+        if log.get_logger().getEffectiveLevel() <= logging.INFO:
+            log.debug("A graphical representation of your orthography profile in a tree ('*' denotes sentinels):\n")
             printTree(self.root, "")
             print()
 
-
     def _init_rules(self, f):
         # Process the orthography rules file.
-        rules_file = codecs.open(f, "r", 'utf-8')
-
-        # compile the orthography rules
-        for line in rules_file:
-            line = line.strip()
-
-            # skip any comments
-            if line.startswith("#") or line == "":
-                continue
-
-            line = unicodedata.normalize("NFD", line)
+        for line in util.read_config_file(f, normalize='NFD'):
             rule, replacement = line.split(",")
-            rule = rule.strip() # just in case there's trailing whitespace
-            replacement = replacement.strip() # because there's probably trailing whitespace!
+            rule = rule.strip()  # just in case there's trailing whitespace
+            replacement = replacement.strip()  # because there's probably trailing whitespace!
             self.op_rules.append(re.compile(rule))
             self.op_replacements.append(replacement)
-        rules_file.close()
 
         # check that num rules == num replacements; if not fail
         if len(self.op_rules) != len(self.op_replacements):
-            raise ValueError("[i] Number of inputs does not match number of outputs in the rules file.")
+            raise ValueError("Number of inputs does not match number of outputs in the rules file.")
 
     def characters(self, string):
         """
@@ -342,7 +291,6 @@ class Tokenizer(object):
                 # write problematic stuff to standard error
                 if rcParams['debug']: 
                     print("[i] The string '{0}' does not parse given the specified orthography profile {1}.\n".format(word, self.orthography_profile))
-                    # sys.stderr.write("The string '{0}' could not be tokenized".format(word))
 
             parses.append(parse)
 
@@ -377,14 +325,14 @@ class Tokenizer(object):
         column = column.lower()
 
         # This method can't be called unless an orthography profile was specified.
-        if self.orthography_profile == None:
+        if not self.orthography_profile:
             raise Exception("This method only works when an orthography profile is specified.")
 
         if column == "graphemes":
             return self.graphemes(string)
 
         # if the column label for conversion doesn't exist, return grapheme tokenization
-        if not column in self.column_labels:
+        if column not in self.column_labels:
             return self.graphemes(string)
 
         # first tokenize the input string into orthography profile graphemes
@@ -446,7 +394,6 @@ class Tokenizer(object):
         if not self.orthography_profile and self.orthography_profile_rules:
             return self.rules(self.grapheme_clusters(string))
 
-
     def transform_rules(self, string):
         """
         Convenience function that first tokenizes a string into orthographic profile-
@@ -464,21 +411,6 @@ class Tokenizer(object):
 
         """
         return self.rules(self.transform(string))
-
-        # Handle missing profile case
-        if self.orthography_profile == None:
-            if not self.orthography_profile_rules == None:
-                result = self.rules(string)
-                # print(self.grapheme_clusters(result))
-                return result                
-            else:
-                return self.grapheme_clusters(string)
-
-        # Return at least a Unicode \X tokenization (see wordlist.py, dictionary.py)
-        if not self.orthography_profile:
-            return self.grapheme_clusters(string)
-        else:
-            return self.rules(self.transform(string))
 
     def rules(self, string):
         """
@@ -553,13 +485,6 @@ class Tokenizer(object):
         result = self.combine_modifiers(grapheme_clusters)
         return result
 
-        """
-        # try with the profiles as well
-        t = Tokenizer("../data/orthography_profiles/unicode_ipa.prf")
-        tokens = t.graphemes(string)
-        print(tokens)
-        """
-
     def combine_modifiers(self, string):
         """
         Given a string that is space-delimited on Unicode grapheme cluters, 
@@ -608,54 +533,6 @@ class Tokenizer(object):
 
         return " ".join(r)
 
-
-        """
-        # list of points (decimal) of Unicode Mns that require a closing grapheme
-        # 865 COMBINING DOUBLE INVERTED BREVE
-        # 860 COMBINING DOUBLE BREVE BELOW
-
-        bimodifiers = [860, 865]
-
-        graphemes = string.split()
-        print(graphemes)
-
-        result = []
-        temp = ""
-
-        i = 0
-        while i < len(graphemes)-1:
-            # TODO: catch if the first thing is a modifer
-            print(graphemes[i])
-            for char in graphemes[i]:
-                if unicodedata.category(char) == "Mn":
-                    result.append
-            i += 1
-            continue
-
-            # result.append(graphemes[i])
-
-            if i+1 <= len(graphemes):
-                for char in graphemes[i]:
-                    print(graphemes[i])
-                    if unicodedata.category(graphemes[i]) == "Mn":
-                        # temp = graphemes[i]+graphemes[i+1]+graphemes[i+2]
-                        i = i+2
-                        graphemes.append(temp)
-                        continue
-                result.append(graphemes[i])
-                i += 1
-
-            # unicodedata.category() == "Mn" # Mark, non-spacing characters
-            # if i < len(graphemes) - 1:
-                # check for i+1
-                # if it's combiner, grab it
-                # i++
-                # if char is in bimodifiers
-
-        return " ".join(result)
-
-        """
-        
     def exists_multiple_columns(self):
         """
         Returns boolean of whether multiple columns exist in the orthography profile, e.g. graphemes and IPA and x, etc.
@@ -671,7 +548,6 @@ class Tokenizer(object):
         string = re.sub("\s+", "", string)
         string = string.replace("#", " ")
         return string
-
 
 
 # ---------- Tree node --------
@@ -710,6 +586,7 @@ class TreeNode(object):
     def getChildren(self):
         return self.children
 
+
 # ---------- Util functions ------
 def createTree(file_name):
     # Internal function to add a multigraph starting at node.
@@ -744,6 +621,7 @@ def createTree(file_name):
     f.close()
     return root
 
+
 def printMultigraphs(root, line, result):
     # Base (or degenerate..) case.
     if len(line) == 0:
@@ -768,11 +646,13 @@ def printMultigraphs(root, line, result):
     result += line[:last]+" "
     return printMultigraphs(root, line[last:], result)
 
+
 def getParse(root, line):
     parse = getParseInternal(root, line)
     if len(parse) == 0:
         return ""
     return "# " + parse
+
 
 def getParseInternal(root, line):
     # Base (or degenerate..) case.
@@ -798,6 +678,7 @@ def getParseInternal(root, line):
     # this will be an empty string.
     return parse
 
+
 def printTree(root, path):
     for char, child in root.getChildren().items():
         if child.isSentinel():
@@ -806,5 +687,3 @@ def printTree(root, path):
         printTree(child, path + branch + char)
     if len(root.getChildren()) == 0:
         print(path)
-
-

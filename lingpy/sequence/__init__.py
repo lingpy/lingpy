@@ -1,5 +1,4 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
@@ -18,18 +17,23 @@ __date__="2013-11-04"
 from ..settings import rcParams
 from .sound_classes import *
 from .tokenizer import *
+from ..util import setdefaults, data_path
 
-# define a static tokenizer for the tokenize-function
-_ipa_tokenizer = Tokenizer()
-_asjp_tokenizer = Tokenizer('asjp')
 
-# define function for easy tokenization
+_tokenizers = {}
+
+
+def _get_tokenizer(name=None):
+    if name not in _tokenizers:
+        _tokenizers[name] = Tokenizer(data_path('orthography_profiles', name + '.prf'))
+    return _tokenizers[name]
+
+
 def tokenize(
         sequence,
         orthography=rcParams['basic_orthography'],
         model=False,
-        **keywords
-        ):
+        **keywords):
     """
     Parameters
     ----------
@@ -54,45 +58,22 @@ def tokenize(
     >>> seq = "p͡fyt͡sə"
     >>> tokenize(seq)
     ['p͡f', 'y', 't͡s', 'ə']
-    >>> tokenize(seq,model='sca')
+    >>> tokenize(seq, model='sca')
     ['B', 'Y', 'C', 'E']
 
     """
-    defaults = dict(
-            merge_vowels = True,
-            tokenizer    = False
-            )
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
+    setdefaults(keywords, merge_vowels=True, tokenizer=False)
 
-    # check for appropriate input
-    if orthography not in [
-            'fuzzy_ipa',
-            'plain_ipa',
-            'fuzzy',
-            'plain',
-            'asjp'
-            ] and not keywords['tokenizer']:
-        raise ValueError('[!] Orthography {0} not available.'.format(
-                    orthography)
-                    )
-    
     if keywords['tokenizer']:
         tfunc = lambda x: keywords['tokenizer'].graphemes(x)
-    elif orthography in ['fuzzy','fuzzy_ipa']:
-        tfunc = lambda x: ipa2tokens(x,**keywords)
-    elif orthography in ['plain','plain_ipa']:
-        tfunc = lambda x: _ipa_tokenizer.tokenize_ipa(x).split(' ')
-    elif orthography in ['asjp','asjp_code']:
-        tfunc = lambda x: _asjp_tokenizer.graphemes(x).split(' ')
-
-    if not model:
-        return tfunc(sequence)
+    elif orthography in ['fuzzy', 'fuzzy_ipa']:
+        tfunc = lambda x: ipa2tokens(x, **keywords)
+    elif orthography in ['plain', 'plain_ipa']:
+        tfunc = lambda x: _get_tokenizer().tokenize_ipa(x).split(' ')
+    elif orthography in ['asjp', 'asjp_code']:
+        tfunc = lambda x: _get_tokenizer('asjp').graphemes(x).split(' ')
     else:
-        if model in rcParams:
-            return tokens2class(tfunc(sequence),rcParams[model])
-        else:
-            return tokens2class(tfunc(sequence),model)
+        raise ValueError('Orthography {0} not available.'.format(orthography))
 
-
+    tokens = tfunc(sequence)
+    return token2class(tokens, rcParams.get(model, model)) if model else tokens

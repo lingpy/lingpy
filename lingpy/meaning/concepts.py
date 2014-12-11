@@ -445,7 +445,7 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
     to download the filtered data package, i.e. only the entries that contain
     a word from the Spanish Swadesh list will be used.
 
-    The resultung wordlist will be written to a file.
+    The resulting wordlist will be written to a file.
 
     Parameters
     ----------

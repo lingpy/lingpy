@@ -10,6 +10,7 @@ from tempfile import NamedTemporaryFile
 from pathlib import Path
 from six import text_type
 
+import lingpy
 from lingpy.log import get_logger
 
 
@@ -25,6 +26,10 @@ class TemporaryPath(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if os.path.exists(self.name):
             os.remove(self.name)
+
+
+def data_path(*comps):
+    return os.path.join(os.path.dirname(lingpy.__file__), 'data', *comps)
 
 
 def _str_path(path, mkdir=False):
