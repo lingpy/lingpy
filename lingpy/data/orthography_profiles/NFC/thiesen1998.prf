@@ -1,0 +1,74 @@
+#thiesen1998 orthography profile
+#
+#author: Jelena Prokic
+# OP conventions corrected by Steven Moran
+Graphemes	IPA	Comments
+-	 NULL
+a	 a
+á	 a
+a̱	 a
+á̱	 a
+e	 e
+é	 e
+e̱	 e
+i	 i
+í	 i
+i̱	 i
+í̱	 i
+o	 o
+ó	 o
+o̱	 o
+ó̱	 o
+u	 u
+ú	 u
+u̱	 u
+ú̱	 u
+i̵	 i̵
+ɨ	 i̵	 probably digitalization error should be the same as above
+í̵	 i̵
+i̵̱	 i̵
+ɨ̱	 i̵	 probably digitalization error should be the same as above
+aa	 a:
+áá	 a:
+ee	 e:
+éé	 e:
+ii	 i:
+íí	 i:
+oo	 o:
+óó	 o:
+uu	 u:
+úú	 u:
+i̵i̵	 i̵:
+í̵í̵	 i̵:
+b	 p
+by	 pʲ
+c	 kʰ
+cy	 kʰʲ
+ch	 tʃʰ
+d	 t
+ds	 ts
+dy	 tʲ
+g	 k
+gy	 kʲ
+h	 ʔ
+hy	 ʔʲ
+j	 x
+jy	 xʲ
+k	 kʰ
+ky	 kʰʲ
+ll	 tʃ
+m	 m
+my	 mʲ
+n	 n
+ñ	 nʲ
+p	 pʰ
+py	 pʰʲ
+r	 r
+t	 tʰ
+ts	 tsʰ
+ty	 tʰʲ
+v	 β
+vy	 βʲ
+w	 kʷ
+wy	 kʷʲ
+y	 ʝ

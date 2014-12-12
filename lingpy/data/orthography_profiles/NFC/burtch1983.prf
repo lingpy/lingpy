@@ -1,0 +1,54 @@
+# burtch1983 orthography profile
+#
+# author: Jelena Prokic
+Graphemes	IPA	Comment
+a	 a
+á	 a	 occurs only once in non-parsed entry 'lápiz muìdo jicaì̵ ra'
+aì	 ai
+aì̵	 aɯ
+aì̵è	 aɯɛ
+aì̵ò	 aɯɔ
+b	 b
+c	 k
+ch	 tʃ
+d	 d
+e	 ɛ
+è	 ɛ	 indicates end of diphthong or triphthong; occurs also alone (?)
+eì	 ɛi
+eì̵	 ɛɯ
+f	 ɸ
+g	 g
+i	 i
+ì	 i	 indicates end of diphthong or triphthong; occurs also alone (?)
+iò	 iɔ
+i̵	 ɯ
+ɨ	 ɯ	 typo should be the same as above
+i̵è	 ɯɛ
+ì̵	 ɯ	 indicates end of diphthong or triphthong; occurs also alone (?)
+j	 h
+ll	 dʑ
+m	 m
+n	 n
+ñ	 nʲ
+o	 ɔ
+ó	 ɔ
+oì	 ɔi
+oi̵	 ɔɯ
+p	 p
+qu	 k	 before i and e otherwise c
+r	 ɾ
+s	 s
+t	 t
+u	 u
+uà	 ua
+uè	 uɛ
+uàì̵	 uai
+uèì	 uɛi
+uì	 ui
+uì̵	 uɯ
+v	 β
+z	 θ	 occurs only once in non-parsed entry 'lápiz muìdo jicaì̵ ra'
+-	 NULL
+A	 a
+D	 d
+T	 t
