@@ -6,6 +6,7 @@ from math import ceil
 import logging
 import os
 from tempfile import NamedTemporaryFile
+from functools import partial
 
 from pathlib import Path
 from six import text_type
@@ -28,8 +29,10 @@ class TemporaryPath(object):
             os.remove(self.name)
 
 
-def data_path(*comps):
-    return os.path.join(os.path.dirname(lingpy.__file__), 'data', *comps)
+def lingpy_path(*comps):
+    return os.path.join(os.path.dirname(lingpy.__file__), *comps)
+
+data_path = partial(lingpy_path, 'data')
 
 
 def _str_path(path, mkdir=False):

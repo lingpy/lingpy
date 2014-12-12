@@ -15,6 +15,9 @@ from ..basic.parser import QLCParser
 from six import text_type as str
 import numpy as np
 
+from .. import util
+
+
 class BasVoc(QLCParser):
     """
     Load a comparative collection of Swadesh lists (concepticon).
@@ -76,20 +79,11 @@ class BasVoc(QLCParser):
 
     """
 
-    def __init__(
+    def __init__(self, infile=None, col='list', row='key', conf=None):
+        QLCParser.__init__(
             self,
-            infile='',
-            col='list',
-            row='key',
-            conf=''
-            ):
-        if not conf:
-            conf = os.path.join(rcParams['_path'],'data','conf','swadesh.rc')
-        if not infile:
-            infile = os.path.join(rcParams['_path'],'data','swadesh','swadesh.qlc')
-
-        # initialize the parser
-        QLCParser.__init__(self,infile)
+            infile or util.data_path('swadesh', 'swadesh.qlc'),
+            conf or util.data_path('conf', 'swadesh.rc'))
 
         # get row and key index
         if not hasattr(self,'_rowidx'):
@@ -104,7 +98,7 @@ class BasVoc(QLCParser):
                     set(
                         [self._data[k][rowIdx] for k in self._data if k != 0 and type(k) == int]
                         ),
-                    key = lambda x: x.lower()
+                    key = lambda x: ('%s' % x).lower()
                     )
             basic_cols = sorted(
                     set(

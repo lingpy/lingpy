@@ -21,6 +21,7 @@ import codecs
 import webbrowser
 import json
 import re
+from functools import partial
 
 from six import text_type
 
@@ -60,6 +61,10 @@ def colorRange(
         html.append("#%02x%02x%02x" % rgb[i])
 
     return html
+
+
+template_path = partial(util.data_path, 'templates')
+
 
 def alm2html(
         infile,
@@ -114,15 +119,13 @@ def alm2html(
         filename = rcParams['filename']
     
     # read in the templates
-    path = os.path.join(rcParams['_path'],'data','templates')
-    html = util.read_text_file(main_template or os.path.join(path, 'alm2html.html'))
+    html = util.read_text_file(main_template or template_path('alm2html.html'))
     if not table_template:
-        table_template = os.path.join(
-            path,
+        table_template = template_path(
             'alm2html.table.js.html' if confidence else 'alm2html.table.html')
     table = util.read_text_file(table_template)
-    css = util.read_text_file(os.path.join(path, 'alm.css'))
-    js = util.read_text_file(os.path.join(path, 'alm.js'))
+    css = util.read_text_file(template_path('alm.css'))
+    js = util.read_text_file(template_path('alm.js'))
 
     # define a label function for the taxa
     label = lambda x: keywords['labels'][x] if x in keywords['labels'] else x
@@ -389,16 +392,14 @@ def msa2html(
     # while alm-format can be read from the text-file without problems,
     # msa-format should be loaded first (once this is already provided), the
     # loss in speed won't matter much, since output of data is not a daily task
-    
-    path = os.path.join(rcParams['_path'],'data','templates')
 
     # load templates
-    template = template or os.path.join(path,'msa2html.html')
+    template = template or template_path('msa2html.html')
     if template == 'js':
-        template = os.path.join(path, 'msa2html.js.html')
+        template = template_path('msa2html.js.html')
     html = util.read_text_file(template)
-    css = util.read_text_file(keywords['css'] or os.path.join(path, 'msa.css'))
-    js = util.read_text_file(keywords['js'] or os.path.join(path,'msa.js'))
+    css = util.read_text_file(keywords['css'] or template_path('msa.css'))
+    js = util.read_text_file(keywords['js'] or template_path('msa.js'))
 
     # treat the msa-object as a file and try to load the file if this is the
     # case
@@ -626,15 +627,11 @@ def msa2tex(
     # while alm-format can be read from the text-file without problems,
     # msa-format should be loaded first (once this is already provided), the
     # loss in speed won't matter much, since output of data is not a daily task
-    
-    ## get the path to the templates
-    path = os.path.join(rcParams['_path'],'data','templates','msa.tex')
-
     # load msa
     msa = read_msa(infile)
 
     ## load templates
-    tex = util.read_text_file(template or path)
+    tex = util.read_text_file(template or template_path('msa.tex'))
 
     # calculate pid score, if it is not passed as argument
     if 'pid_score' not in keywords:
@@ -775,10 +772,8 @@ def psa2html(filename, **kw):
         filename=filename.replace('.psa', '.html'),
         compact=True)
 
-    path = os.path.join(rcParams['_path'],'data','templates')
-
-    template = util.read_text_file(kw['template'] or os.path.join(path, 'psa.html'))
-    css = util.read_text_file(kw['css'] or os.path.join(path, 'psa.css'))
+    template = util.read_text_file(kw['template'] or template_path('psa.html'))
+    css = util.read_text_file(kw['css'] or template_path('psa.css'))
 
     data = []
     for line in util.read_text_file(filename, lines=True):

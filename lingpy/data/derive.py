@@ -473,20 +473,12 @@ def compile_model(
     """
     log.info("Compiling model <"+model+">...")
     # get the path to the models
-    if not path:
-        new_path = os.path.join(
-                rcParams['_path'],
-                'data',
-                'models',
-                model
-                )
-    else:
-        new_path = os.path.join(path,model)
+    new_path = lambda *cmps: os.path.join(path or util.data_path('models'), model, *cmps)
 
     log.debug("Model-Path: %s" % new_path)
 
     # load the sound classes
-    sound_classes = _import_sound_classes(os.path.join(new_path,'converter'))
+    sound_classes = _import_sound_classes(new_path('converter'))
     
     # dump the data
     cache.dump(sound_classes, model+'.converter')
@@ -495,10 +487,10 @@ def compile_model(
     # try to load the scoring function or the score tree
     scorer = False
     
-    if os.path.isfile(os.path.join(new_path,'matrix')):
-        scorer = read_scorer(os.path.join(new_path,'matrix'))
-    elif os.path.isfile(os.path.join(new_path,'scorer')):
-        score_tree = _import_score_tree(os.path.join(new_path,'scorer'))
+    if os.path.isfile(new_path('matrix')):
+        scorer = read_scorer(new_path('matrix'))
+    elif os.path.isfile(new_path('scorer')):
+        score_tree = _import_score_tree(new_path('scorer'))
     
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
@@ -522,7 +514,7 @@ def compile_model(
         scorer = misc.ScoreDict(chars,matrix)
         
         # create the matrix file
-        util.write_text_file(os.path.join(new_path,'matrix'), scorer2str(scorer))
+        util.write_text_file(new_path('matrix'), scorer2str(scorer))
 
     if scorer:
         cache.dump(scorer, model+'.scorer')
@@ -561,19 +553,9 @@ def compile_dvt(path=''):
 
     # get the path to the models
     if not path:
-        file_path = os.path.join(
-                rcParams['_path'],
-                'data',
-                'models',
-                'dvt'
-                )
-    elif path in ['evolaemp','el']:
-        file_path = os.path.join(
-                rcParams['_path'],
-                'data',
-                'models',
-                'dvt_el'
-                )
+        file_path = util.data_path('models', 'dvt')
+    elif path in ['evolaemp', 'el']:
+        file_path = util.data_path('models', 'dvt_el')
     else:
         file_path = path
 

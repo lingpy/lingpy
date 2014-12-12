@@ -10,6 +10,7 @@ __author__="Johann-Mattis List"
 __date__="2014-08-26"
 
 import json
+from functools import partial
 
 from ..settings import rcParams
 from ..align.sca import Alignments
@@ -167,17 +168,17 @@ class Workflow(object):
                 txt += 'IdGloss = '+json.dumps(id2gloss)+';\n'
                 txt += 'FILE = "'+kw['outfile']+'.tsv";\n'
                 
-                tpath = rcParams['template_path']
+                tpath = partial(util.data_path, 'templates')
 
                 tname = 'jcov.{0}.html'.format(
                     'remote' if 'remote' in kw['export'] else 'direct')
-                content = util.read_text_file(tpath + tname)
+                content = util.read_text_file(tpath(tname))
 
                 util.write_text_file(
                     kw['outfile'] + '.html',
                     content.format(
                         CORRS=txt,
-                        JCOV=util.read_text_file(tpath + 'jcov.js'),
-                        STYLE=util.read_text_file(tpath + 'jcov.css'),
-                        VENDOR=util.read_text_file(tpath + 'jcov.vendor.js'),
-                        DIGHL=util.read_text_file(tpath + 'jcov.dighl.js')))
+                        JCOV=util.read_text_file(tpath('jcov.js')),
+                        STYLE=util.read_text_file(tpath('jcov.css')),
+                        VENDOR=util.read_text_file(tpath('jcov.vendor.js')),
+                        DIGHL=util.read_text_file(tpath('jcov.dighl.js'))))

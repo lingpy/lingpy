@@ -11,12 +11,9 @@ __date__ = "2013-07-17"
 
 # builtin imports
 from datetime import datetime, date
-import os
 
 # initialize rcParams with filename and timestamp
 rcParams = dict(
-    # set the absolute path to lingpy
-    _path=os.path.split(os.path.abspath(__file__))[0],
     filename='lingpy-' + str(date.today()),
     timestamp=datetime.strftime(datetime.today(),'%Y-%m-%d %H:%M'),
     answer_yes=['y', 'Y', 'j', 'J', 'yes'],

@@ -14,15 +14,14 @@ Test thirdparty modules.
 __author__="Johann-Mattis List"
 __date__="2013-11-20"
 
-import os
 from lingpy.thirdparty.cogent import LoadTree
-from lingpy.settings import rcParams
+from lingpy.tests.util import test_data
+
 
 def test_LoadTree():
     
     # test to load a given tree-file
-    tree = LoadTree(os.path.join(rcParams['_path'], 'tests', 'test_data',
-        'phylogeny.tre'))
+    tree = LoadTree(test_data('phylogeny.tre'))
     
     taxa = sorted(["Beijing", "Changsha", "Chengdu", "Fuzhou",
             "Guangzhou", "Guiyang", "Haerbin", "Haikou", "Hangzhou", "Hefei",

@@ -9,16 +9,12 @@ Test csv-module.
 __author__="Johann-Mattis List"
 __date__="2013-11-23"
 
-from lingpy import rc
-from lingpy.read.csv import *
+from lingpy.read.csv import read_asjp
 from lingpy.compare.lexstat import LexStat
+from lingpy.tests.util import test_data
+
 
 def test_read_asjp():
-
-    p = rc('test_path')+'asjp_test_list.csv'
-    
-    data = read_asjp(p, family="CELTIC", classification="wls_gen")
-
-    lex = LexStat(data)
+    lex = LexStat(read_asjp(
+        test_data('asjp_test_list.csv'), family="CELTIC", classification="wls_gen"))
     assert len(lex) == 249
-    

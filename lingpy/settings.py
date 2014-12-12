@@ -141,24 +141,14 @@ rcParamsUpd = dict(
         tree_calc                  = 'neighbor',
         gop                        = -2,
         ref                        = 'cogid',
-        identical_scorer_warning   = "[i] An identical scoring function has already been calculated, force recalculation by setting 'force' to 'True'.",
-        overwrite_scoring_function = "[i] A different scoring function has already been calculated, overwriting previous settings.",
-        empty_consensus_warning    = '[WARNING] There are empty segments in the consensus!',
-        sonority_consensus_warning = '[WARNING] Sonority profile consensus could not be calculated!',
-        deprecation_warning        = "[WARNING] Use of '{0}' is deprecated, use '{1}' instead.",
-        missing_module             = "[WARNING] Module '{0}' could not be loaded. Some methods may not work properly.",
-        test_path                  = os.path.join(rcParams['_path'], 'tests', 'test_data', ''),
-        template_path              = os.path.join(rcParams['_path'], 'data', 'templates','')
         )
 rcParams.update(rcParamsUpd)
 
 # define aliases for parameters
 kw_base = dict(
     filename = ('filename', 'fn'),
-    M_file_written = ('M_fw',),
     merge_vowels = ('mv',),
     sca = ("model",),
-    _sverb = ("progressbar", "semi_verbose",)
     )
 alias = {}
 for key in kw_base:
@@ -209,12 +199,6 @@ def rc(rval=None, **keywords):
     Import LingPy:
 
     >>> from lingpy import *
-    
-    Have the rc-function return a specific value, such as the path to the
-    test-directory of LingPy:
-
-    >>> rc("test_path")
-    '/usr/lib/python3.3/site-packages/lingpyd/tests/test_data/'
 
     Change basic values. Switch to verbose output, for example:
 

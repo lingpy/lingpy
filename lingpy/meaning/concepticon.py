@@ -9,39 +9,34 @@ This module provides an interface for a concepticon viewer.
 __author__="Johann-Mattis List"
 __date__="2014-06-24"
 
+from functools import partial
+
 from ..settings import rcParams
 from ..read.csv import csv2list
 from glob import glob
 import os
+from .. import util
+from .. import log
+
 
 class Concepticon(object):
 
     def __init__(self):
-        
-        
-        wlpath = os.path.join(
-                rcParams['_path'],
-                'data',
-                'conceptlists'
-                )
+        wlpath = partial(util.data_path, 'conceptlists')
 
-        lists = glob(os.path.join(wlpath,'*.tsv'))
-        
         D = {}
 
-        concepticon = csv2list(os.path.join(wlpath,'concepticon.tsv'))
+        concepticon = csv2list(wlpath('concepticon.tsv'))
         header = [c.lower() for c in concepticon[0]][1:]
         D['base'] = {}
         D['base'][0] = header
         for line in concepticon[1:]:
             D['base'][line[0]] = line[1:]
-        
-        
+
         # create an artificial id for those entries which don't have one yet
         artid = -1
 
-        for l in [lst for lst in lists if 'concepticon' not in lst]:
-            
+        for l in [lst for lst in glob(wlpath('*.tsv')) if 'concepticon' not in lst]:
             curlist = csv2list(l)
 
             # get the header
@@ -77,7 +72,7 @@ class Concepticon(object):
             if len(matches) == 1:
                 return self._dict[matches[0]]
             else:
-                print("[!] Multiple matches could be found: "+', '.join(matches)+'...')
+                log.error("Multiple matches could be found: "+', '.join(matches)+'...')
                 raise
         else:
             return 
@@ -138,5 +133,3 @@ class Concepticon(object):
                 pass
             
         return out
-
-                    

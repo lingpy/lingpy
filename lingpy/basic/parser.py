@@ -82,7 +82,7 @@ class QLCParser(object):
 
         # load the configuration file
         if not conf:
-            conf = os.path.join(rcParams['_path'],'data','conf','qlc.rc')
+            conf = util.data_path('conf', 'qlc.rc')
 
         # read the file defined by its path in conf
         tmp = [line.split('\t') for line in util.read_config_file(conf)]

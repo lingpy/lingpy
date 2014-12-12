@@ -82,19 +82,8 @@ class Wordlist(QLCParser):
     
     """
 
-    def __init__(
-            self,
-            filename,
-            row='concept',
-            col='doculect',
-            conf=''
-            ):
-        # set up basic path for configuration file
-        if not conf:
-            conf = os.path.join(rcParams['_path'],'data','conf','wordlist.rc')
-
-        # initialize the qlc_parser
-        QLCParser.__init__(self,filename,conf)
+    def __init__(self, filename, row='concept', col='doculect', conf=None):
+        QLCParser.__init__(self, filename, conf or util.data_path('conf', 'wordlist.rc'))
         
         # check whether additional data has to be loaded
         if not hasattr(self,'_rowidx'):
