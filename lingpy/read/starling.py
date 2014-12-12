@@ -9,11 +9,11 @@ Basic parser for Starling data.
 __author__="Johann-Mattis List"
 __date__="2014-09-30"
 
-import codecs
-import os
-from ..settings import rcParams
-from ..sequence.sound_classes import ipa2tokens
+import logging
+
 from .csv import csv2list
+from .. import log
+
 
 def star2qlc(filename, clean_taxnames=False, debug=False):
     """
@@ -74,7 +74,7 @@ def star2qlc(filename, clean_taxnames=False, debug=False):
         if prev == 'Word':
             wrdIdx = i
     
-    if rcParams['verbose']:
+    if log.get_level() <= logging.INFO:
         print('starling, indices',lngIdx,numIdx,wrdIdx)
         print('starling, taxa:',taxa)
 

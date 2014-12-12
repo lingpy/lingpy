@@ -1,2 +1,0 @@
-# leach1969 rules file
-([a|á|e|é|i|í|o|ó|u|ú])(n)(\s)([a|á|e|é|i|í|o|ó|u|ú]), \1 \2 \4

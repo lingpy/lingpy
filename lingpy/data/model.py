@@ -26,6 +26,8 @@ from ..read import *
 from ..convert import *
 from .. import cache
 from .. import compat
+from .. import util
+
 
 class Model(object):
     """
@@ -122,22 +124,9 @@ class Model(object):
 
     """
 
-    def __init__(
-            self,
-            model,
-            path = ""
-            ):
-        
-        if not path:
-            new_path = os.path.join(
-                    rcParams['_path'],
-                    'data',
-                    'models',
-                    model
-                    )
-        else:
-            new_path = os.path.join(path,model)
-
+    def __init__(self, model, path =None):
+        new_path = lambda *cmps: \
+            os.path.join(path or util.data_path('models'), model, *cmps)
         self.name = model
 
         # try to load the converter
@@ -148,9 +137,9 @@ class Model(object):
             self.converter = cache.load(model+'.converter')
         
         # give always preference to scorer matrix files
-        if os.path.isfile(os.path.join(new_path,'matrix')):
-            self.scorer = read_scorer(os.path.join(new_path,'matrix'))
-        elif os.path.isfile(os.path.join(new_path,'scorer.bin')):
+        if os.path.isfile(new_path('matrix')):
+            self.scorer = read_scorer(new_path('matrix'))
+        elif os.path.isfile(new_path('scorer.bin')):
             try:
                 self.scorer = cache.load(model+'.scorer')
             except compat.FileNotFoundError:
@@ -162,8 +151,7 @@ class Model(object):
         # read information from the info-file
         self.info = {}
         
-        info = codecs.open(os.path.join(new_path,'INFO'),'r','utf-8').read()
-        
+        info = util.read_text_file(new_path('INFO'))
         data = ['description','compiler','source','date','vowels','tones']
         
         for line in data:

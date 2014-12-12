@@ -28,6 +28,7 @@ import abc
 from .parser import QLCParser
 from ..read.qlc import read_qlc
 from ..settings import rcParams
+from .. import util
 
 
 class Dictionary(QLCParser):
@@ -62,20 +63,10 @@ class Dictionary(QLCParser):
 
     """
 
-    def __init__(
-            self,
-            filename,
-            row='head',
-            col='translation',
-            conf = ''
-            ):
-
-        # set up basic path for configuration file
-        if not conf:
-            conf = os.path.join(rcParams['_path'],'data','conf','dictionary.rc')
-
+    def __init__(self, filename, row='head', col='translation', conf=None):
         # initialize the qlc_parser
-        QLCParser.__init__(self,filename,conf)
+        QLCParser.__init__(
+            self, filename, conf or util.data_path('conf', 'dictionary.rc'))
 
         # build a doculect->iso map for @doculect meta data
         self.doculect2iso = {}

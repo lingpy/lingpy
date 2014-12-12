@@ -35,6 +35,7 @@ import zipfile
 from ..settings import rcParams
 from ..basic.dictionary import Dictionary
 from .. import log
+from .. import util
 
 try:
     from nltk.stem.snowball import SpanishStemmer
@@ -417,15 +418,12 @@ def spanish_swadesh_list(stemmed=True):
     try:
         stemmer = SpanishStemmer(True)
     except:
-        print("[!] Warning, Spanish stemmer could not be loaded!")
-
-    # load swadesh list
-    swadesh_file = os.path.join(rcParams['_path'],'data','swadesh','swadesh_spa.txt')
-
-    swadesh = codecs.open(swadesh_file, "r", "utf-8")
+        log.warn("Spanish stemmer could not be loaded!")
+        return
 
     swadesh_entries = []
-    for line in swadesh:
+    for line in util.read_text_file(
+            util.data_path('swadesh', 'swadesh_spa.txt'), lines=True):
         line = line.strip()
         for e in line.split(","):
             e = e.strip()
@@ -436,6 +434,7 @@ def spanish_swadesh_list(stemmed=True):
                 swadesh_entries.append(e)
     return swadesh_entries
 
+
 def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
     output_file=None, complete=True):
     """
@@ -445,7 +444,7 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
     to download the filtered data package, i.e. only the entries that contain
     a word from the Spanish Swadesh list will be used.
 
-    The resultung wordlist will be written to a file.
+    The resulting wordlist will be written to a file.
 
     Parameters
     ----------
@@ -514,10 +513,8 @@ def extract_component_as_wordlist(component, use_profiles, concepts, iso_pivot,
             print("Adding {0}...".format(f))
             di = Dictionary(f)
             if use_profiles:
-                ortho_path = os.path.join(
-                    rcParams['_path'],
-                    'data', 'orthography_profiles', "{0}.prf".format(
-                        f[:f.index("-")]))
+                ortho_path = util.data_path(
+                    'orthography_profiles', "{0}.prf".format(f[:f.index("-")]))
                 if os.path.exists(ortho_path):
                     if iso_pivot in di.head_iso:
                         di.tokenize(ortho_path, source="translation")

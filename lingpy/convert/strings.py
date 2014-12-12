@@ -10,9 +10,6 @@ from __future__ import unicode_literals
 __author__="Johann-Mattis List"
 __date__="2014-06-05"
 
-import codecs
-from ..settings import rcParams
-from ..algorithm import misc
 from .. import log
 from .. import util
 
@@ -275,8 +272,8 @@ def matrix2dst(
     if not filename:
         return out
     else:
-        util.write_text_file(filename+'.dst',out)
-        log.info('File has been written to {0}'.format(filename+'.dst'))
+        util.write_text_file(filename + '.dst', out)
+
 
 def pap2nex(
         taxa,

@@ -9,6 +9,8 @@ Module provides general clustering functions for LingPy.
 __author__="Johann-Mattis List"
 __date__="2014-02-25"
 
+import logging
+
 from six import text_type
 
 from . import misc
@@ -374,7 +376,8 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
                 [t for t in taxa if t != taxon]
                 )
 
-        if rcParams['verbose']: print(taxon,idx,clusters)
+        if log.get_level() <= logging.INFO:
+            print(taxon,idx,clusters)
 
         for clr in clusters:
             for i,tA in enumerate(clusters[clr]):
@@ -632,11 +635,8 @@ def find_threshold(
             key = lambda x: len(plato[x]),
             reverse = True
             )
-    #return [mint] 
-    if rcParams['verbose']: 
-        print('[i] Found {0} thresholds.'.format(
-            len([p for p in plato if len(plato[p]) > 1])))
-        print('... ',sorted([len(plato[p]) for p in plato],reverse=True))
+    log.info('Found {0} thresholds.'.format(len([p for p in plato if len(plato[p]) > 1])))
+    log.info('... %s' % (sorted([len(plato[p]) for p in plato], reverse=True),))
     # check if first entry is NOT of length 1
     try:
         return [sum(plato[t]) / len(plato[t]) for t in sorted_plato if len(plato[t]) > 1][0]
@@ -910,7 +910,8 @@ def _interprete_matrix(
     """
     Look for attracting nodes in the matrix.
     """
-    if rcParams['debug']: print(matrix)
+    if log.get_level() <= logging.DEBUG:
+        print(matrix)
 
     clusters = []
     flags = len(matrix) * [False]
@@ -1062,7 +1063,8 @@ def mcl(
         for i in range(len(imatrix)):
             imatrix[i][i] = add_self_loops(imatrix[:,i])
 
-    if rcParams['debug']: print("[DEBUG]\n",imatrix)
+    if log.get_level() <= logging.DEBUG:
+        print("[DEBUG]\n",imatrix)
 
     # normalize the matrix
     imatrix = _normalize_matrix(imatrix)
@@ -1085,8 +1087,7 @@ def mcl(
 
         # check for matrix convergence
         if steps >= max_steps or _is_idempotent(imatrix):
-            if rcParams['debug']:
-                print("[DEBUG] Number of steps {0}.".format(steps))
+            log.debug("Number of steps {0}.".format(steps))
             break
     
     # retrieve the clusters

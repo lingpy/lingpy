@@ -6,11 +6,13 @@ from math import ceil
 import logging
 import os
 from tempfile import NamedTemporaryFile
+from functools import partial
 
 from pathlib import Path
 from six import text_type
 
-from lingpy.log import get_logger
+import lingpy
+from lingpy.log import get_logger, get_level
 
 
 class TemporaryPath(object):
@@ -25,6 +27,12 @@ class TemporaryPath(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if os.path.exists(self.name):
             os.remove(self.name)
+
+
+def lingpy_path(*comps):
+    return os.path.join(os.path.dirname(lingpy.__file__), *comps)
+
+data_path = partial(lingpy_path, 'data')
 
 
 def _str_path(path, mkdir=False):
@@ -114,7 +122,7 @@ class ProgressBar(object):
     >>>         pb.update()
     """
     def __init__(self, title, task_count, cols=100):
-        self.log = get_logger().getEffectiveLevel() <= logging.INFO
+        self.log = get_level() <= logging.INFO
         self.title = title
         self.cols = cols
         self.step = cols if not task_count else self.cols / task_count

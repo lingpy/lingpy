@@ -14,6 +14,8 @@ Module provides classes and functions for multiple alignment analyses.
 __author__="Johann-Mattis List"
 __date__="2014-12-02"
 
+import logging
+
 # thirdparty imports
 import numpy as np
 
@@ -337,7 +339,7 @@ class Multiple(object):
                         [self.tokens[key] for key in keys]
                         )
                     )
-            if rcParams['debug'] == True:
+            if log.get_level() <= logging.DEBUG:
                 for _i,_sonar in enumerate(self._sonars):
                     if 0 in _sonar:
                         print("[WARNING] Sequence {0} contains unrecognized characters!".format(
@@ -675,7 +677,7 @@ class Multiple(object):
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
                 self.log.warn("There are emtpy segments in the consensus.")
-                if rcParams['verbose']:
+                if log.get_level() <= logging.INFO:
                     print(' '.join([str(X) for X in consA]))
                     print(' '.join([str(X) for X in consB]))
             except:
@@ -692,8 +694,7 @@ class Multiple(object):
         prosA = prosodic_string(consA)
         prosB = prosodic_string(consB)
 
-        # debug
-        if rcParams['debug'] == 'multiple':
+        if log.get_level() <= logging.DEBUG:
             print(prosA,consA)
             print(prosB,consB)
         
@@ -879,7 +880,7 @@ class Multiple(object):
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
                     self.log.warn("There are emtpy segments in the consensus.")
-                    if rcParams['verbose']:
+                    if log.get_level() <= logging.INFO:
                         print(consensus)
 
                 except:
