@@ -1,16 +1,17 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2013-10-24 15:24
+# modified : 2014-12-08 13:58
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2013-10-24"
+__date__="2014-12-08"
 
 import codecs
 import os
+from ..util import read_text_file
 from ..settings import rcParams
 from ..sequence.sound_classes import ipa2tokens
 import re
@@ -72,7 +73,7 @@ def csv2list(
     l = []
     
     # open the file
-    infile = codecs.open(infile,'r','utf-8')
+    infile = read_text_file(infile, lines=True, normalize="NFC") 
     
     # check for header
     if header:
@@ -90,7 +91,6 @@ def csv2list(
                 l += [cells]
             else:
                 l += [[f(c) for f,c in zip(dtype,cells)]]
-    infile.close()
 
     return l
 
@@ -131,7 +131,7 @@ def csv2dict(
         used as key and the rest of the rows as values.
     """
     
-    l = csv2list(filename,fileformat,dtype,comment,sep,strip_lines,header)
+    l = csv2list(filename, fileformat, dtype, comment, sep, strip_lines, header)
 
     d = {}
 

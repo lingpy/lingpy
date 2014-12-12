@@ -6,13 +6,13 @@ from __future__ import unicode_literals
 # author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
 # created  : 2013-07-25 13:10
-# modified : 2014-09-30 09:41
+# modified : 2014-12-09 10:07
 """
 Module provides basic functions for the reading of text files in QLC format.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-09-30"
+__date__="2014-12-09"
 
 from ..algorithm import misc
 from .csv import csv2list
@@ -121,7 +121,7 @@ def _list2msa(
                     else:
                         pass
                     j += 1
-            elif line[idx] in ['COMPLEX']:
+            elif line[idx] in ['COMPLEX', 'MERGE']:
                 d['merge'] = {}
                 mergeline = [x for x in line[idx+1:]]
                 k = 0
