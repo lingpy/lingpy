@@ -17,7 +17,5 @@ rcParams = dict(
     filename='lingpy-' + str(date.today()),
     timestamp=datetime.strftime(datetime.today(),'%Y-%m-%d %H:%M'),
     answer_yes=['y', 'Y', 'j', 'J', 'yes'],
-    verbose=False,
-    debug=False,
     basic_orthography='fuzzy',
 )

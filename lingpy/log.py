@@ -72,6 +72,10 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
     return _logger
 
 
+def get_level():
+    return get_logger().getEffectiveLevel()
+
+
 def info(msg):
     get_logger().info(msg)
 

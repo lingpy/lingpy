@@ -9,9 +9,13 @@ Module provides methods for the evaluation of automatic linguistic reconstructio
 __author__="Johann-Mattis List"
 __date__="2013-11-12"
 
-from ..settings import rcParams,rc
+import logging
+
+from ..settings import rcParams
 from ..align.pairwise import edit_dist
 from ..sequence.sound_classes import ipa2tokens,tokens2class
+from .. import log
+
 
 def mean_edit_distance(
         wordlist,
@@ -60,15 +64,16 @@ def mean_edit_distance(
         # get only valid numbers for index-search
         idx = [idx[0] for idx in idxs if idx != 0][0]
 
-        if rcParams['debug']: print(idx,idxs)
+        if log.get_level() <= logging.DEBUG:
+            print(idx,idxs)
         
         # get proto and consensus from wordlist
         proto = wordlist[idx,gold]
         consensus = wordlist[idx,test]
 
-        if rcParams['debug']: print(proto,consensus)
-    
-        
+        if log.get_level() <= logging.DEBUG:
+            print(proto,consensus)
+
         if tokens or classes:
             proto = ipa2tokens(proto,**keywords)
             consensus = ipa2tokens(consensus,**keywords)
@@ -85,10 +90,9 @@ def mean_edit_distance(
         distances += [d]
 
     med = sum(distances) / len(distances)
-
-    if rcParams['verbose']: print("MEAN ED: {0:.2f}".format(med))
-
+    log.info("MEAN ED: {0:.2f}".format(med))
     return med
+
 
 def med(
         wordlist,

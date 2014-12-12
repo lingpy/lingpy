@@ -12,7 +12,7 @@ from pathlib import Path
 from six import text_type
 
 import lingpy
-from lingpy.log import get_logger
+from lingpy.log import get_logger, get_level
 
 
 class TemporaryPath(object):
@@ -122,7 +122,7 @@ class ProgressBar(object):
     >>>         pb.update()
     """
     def __init__(self, title, task_count, cols=100):
-        self.log = get_logger().getEffectiveLevel() <= logging.INFO
+        self.log = get_level() <= logging.INFO
         self.title = title
         self.cols = cols
         self.step = cols if not task_count else self.cols / task_count

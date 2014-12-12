@@ -15,7 +15,6 @@ __author__="Johann-Mattis List"
 __date__="2013-11-22"
 
 
-from ...settings import rcParams
 from lingpy import log
 
 try:
@@ -27,7 +26,6 @@ try:
 except:
     log.missing_module('scipy')
 
-from ._settings import rcParams
 
 def tstats(
         wordlist,
@@ -139,13 +137,8 @@ def tstats(
     
     total2 = ipn + tpn
 
-    if rcParams['verbose']:
-        print("Innovations: {0}, {1:.2f}, {2:.2f}".format(
-            inn,ipn,ipn/total2)
-            )
-        print("Transferred: {0}, {1:.2f}, {2:.2f}".format(
-            tra,tpn,tpn/total2)
-            )
+    log.info("Innovations: {0}, {1:.2f}, {2:.2f}".format(inn,ipn,ipn/total2))
+    log.info("Transferred: {0}, {1:.2f}, {2:.2f}".format(tra,tpn,tpn/total2))
 
     if return_dists:
         leaves = []

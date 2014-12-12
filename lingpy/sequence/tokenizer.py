@@ -289,8 +289,7 @@ class Tokenizer(object):
                 # replace characters in string but not in orthography profile with <?>
                 parse = " "+self.find_missing_characters(self.characters(word))
                 # write problematic stuff to standard error
-                if rcParams['debug']: 
-                    print("[i] The string '{0}' does not parse given the specified orthography profile {1}.\n".format(word, self.orthography_profile))
+                log.debug("The string '{0}' does not parse given the specified orthography profile {1}.\n".format(word, self.orthography_profile))
 
             parses.append(parse)
 
@@ -438,14 +437,10 @@ class Tokenizer(object):
         result = unicodedata.normalize("NFD", string)
         for i in range(0, len(self.op_rules)):
             match = self.op_rules[i].search(result)
-            if not match == None:
+            if match:
                 result = re.sub(self.op_rules[i], self.op_replacements[i], result)
-
-                # debug output for rules
-                if rcParams['debug']:
-                    print()
-                    print("[i] Input/output:"+"\t"+string+"\t"+result)
-                    print("[i] Pattern/replacement:"+"\t"+self.op_rules[i].pattern+"\t"+self.op_replacements[i])
+                log.debug("Input/output:"+"\t"+string+"\t"+result)
+                log.debug("Pattern/replacement:"+"\t"+self.op_rules[i].pattern+"\t"+self.op_replacements[i])
 
         # this is incase someone introduces a non-NFD ordered sequence of characters
         # in the orthography profile
