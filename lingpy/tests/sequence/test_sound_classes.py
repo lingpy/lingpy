@@ -2,19 +2,10 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-
-# author   : Johann-Mattis List
+#author   : Johann-Mattis List
 # email    : mattis.list@uni-marburg.de
-# created  : 2014-12-02 15:49
-# modified : 2014-12-02 15:49
-"""
-Test sound class functions.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
-
-# modified : 2013-11-12 12:53
+# created  : 2014-12-15 10:58
+# modified : 2014-12-15 10:58
 """
 Test the SCA module.
 """
@@ -22,6 +13,7 @@ Test the SCA module.
 __author__="Johann-Mattis List"
 __date__="2013-11-12"
 
+from ..util import test_data
 import os
 import unittest
 from nose.tools import assert_raises
@@ -30,7 +22,8 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
         get_n_ngrams, pgrams
 from lingpy import rc
-
+from lingpy import csv2list
+from lingpy.sequence import Tokenizer
 
 def test_ipa2tokens():
 
@@ -49,6 +42,18 @@ def test_ipa2tokens():
     seq = '# b l a #'
     
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
+
+    # now check with all possible data we have so far
+    with open(test_data('test_tokenization.csv')) as tokens:
+        c = 0
+        for line in tokens:
+            a,b = line.strip().split('\t')
+            tks1 = ' '.join(ipa2tokens(a))
+            tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
+
+            # we check for two variants, since we don't know whether vowels are
+            # merged or not in the test data
+            assert tks1 == b or tks2 == b
 
 def test_token2class():
 
