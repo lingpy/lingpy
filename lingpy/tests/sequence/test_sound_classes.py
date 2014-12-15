@@ -44,11 +44,11 @@ def test_ipa2tokens():
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
     # now check with all possible data we have so far
-    tokens = read_text_file(test_data('test_tokenization.csv')).split('\n')[:-1]
+    tokens = read_text_file(test_data('test_tokenization.csv'), lines=True)
     
     c = 0
     for line in tokens:
-        a,b = line.split('\t')
+        a,b = line.strip().split('\t')
         tks1 = ' '.join(ipa2tokens(a))
         tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
 
