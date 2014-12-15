@@ -23,7 +23,7 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         get_n_ngrams, pgrams
 from lingpy import rc
 from lingpy import csv2list
-from lingpy.sequence import Tokenizer
+import codecs
 
 def test_ipa2tokens():
 
@@ -44,7 +44,7 @@ def test_ipa2tokens():
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
     # now check with all possible data we have so far
-    with open(test_data('test_tokenization.csv')) as tokens:
+    with codecs.open(test_data('test_tokenization.csv'), 'r', 'utf-8') as tokens:
         c = 0
         for line in tokens:
             a,b = line.strip().split('\t')
