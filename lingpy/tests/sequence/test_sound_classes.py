@@ -23,7 +23,7 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         get_n_ngrams, pgrams
 from lingpy import rc
 from lingpy import csv2list
-import codecs
+from lingpy.util import read_text_file
 
 def test_ipa2tokens():
 
@@ -44,16 +44,17 @@ def test_ipa2tokens():
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
     # now check with all possible data we have so far
-    with codecs.open(test_data('test_tokenization.csv'), 'r', 'utf-8') as tokens:
-        c = 0
-        for line in tokens:
-            a,b = line.strip().split('\t')
-            tks1 = ' '.join(ipa2tokens(a))
-            tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
+    tokens = read_text_file(test_data('test_tokenization.csv')).split('\n')[:-1]
+    
+    c = 0
+    for line in tokens:
+        a,b = line.split('\t')
+        tks1 = ' '.join(ipa2tokens(a))
+        tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
 
-            # we check for two variants, since we don't know whether vowels are
-            # merged or not in the test data
-            assert tks1 == b or tks2 == b
+        # we check for two variants, since we don't know whether vowels are
+        # merged or not in the test data
+        assert tks1 == b or tks2 == b
 
 def test_token2class():
 
