@@ -1,15 +1,14 @@
 # author   : Johann-Mattis List
 # email    : mattis.list@gmail.com
 # created  : 2013-03-04 17:02
-# modified : 2014-12-08 13:58
+# modified : 2014-12-16 05:28
 """
 Module provides functions for reading csv-files.
 """
 
 __author__="Johann-Mattis List"
-__date__="2014-12-08"
+__date__="2014-12-16"
 
-import codecs
 import os
 from ..util import read_text_file
 from ..settings import rcParams
@@ -121,6 +120,12 @@ def csv2dict(
         ignored.
     sep : string (default = "\t")
         Specify the separator for the CSV-file.
+    strip_lines : bool (default=True)
+        Specify whether empty "cells" in the input file should be preserved. If
+        set to c{False}, each line will be stripped first, and all whitespace
+        will be cleaned. Otherwise, each line will be separated using the
+        specified separator, and no stripping of whitespace will be carried
+        out.
     header : bool (default=False)
         Indicate, whether the data comes along with a header.
 
@@ -162,7 +167,9 @@ def read_csv(
         fileformat = '',
         dtype = None,
         comment = '#',
-        sep = '\t'
+        sep = '\t',
+        strip_lines = True,
+        header = False
         ):
     """
     Very simple function to get quick access to CSV-files.
@@ -182,6 +189,14 @@ def read_csv(
         ignored.
     sep : string (default = "\t")
         Specify the separator for the CSV-file.
+    strip_lines : bool (default=True)
+        Specify whether empty "cells" in the input file should be preserved. If
+        set to c{False}, each line will be stripped first, and all whitespace
+        will be cleaned. Otherwise, each line will be separated using the
+        specified separator, and no stripping of whitespace will be carried
+        out.
+    header : bool (default=False)
+        Indicate, whether the data comes along with a header.
 
     Returns
     -------
@@ -193,7 +208,7 @@ def read_csv(
     This is but an alias for the csv2dict function.
 
     """
-    return csv2dict(filename,fileformat,dtype,comment,sep)
+    return csv2dict(filename,fileformat,dtype,comment,sep,strip_lines,header)
 
 def read_asjp(
         infile,

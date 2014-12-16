@@ -647,6 +647,7 @@ def class2tokens(
 
     gap_char : string (default="-")
         The character which indicates gaps in the output string.
+    
     local : bool (default=False)
         If set to *True* a local alignment with prefix and suffix can be
         converted.
