@@ -12,13 +12,11 @@ __date__="2014-11-07"
 
 
 import os
-from unittest import TestCase
 from collections import defaultdict
 
 from mock import MagicMock, patch
 import lingpy
 from lingpy.compare.phylogeny import PhyBo
-from lingpy.thirdparty.cogent import LoadTree
 from lingpy.tests.util import WithTempDir
 
 

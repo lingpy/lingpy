@@ -10,6 +10,8 @@ __author__="Johann-Mattis List"
 __date__="2014-02-25"
 
 import logging
+from collections import defaultdict
+from itertools import combinations
 
 from six import text_type
 
@@ -22,16 +24,16 @@ except ImportError:
 from ..thirdparty import linkcomm as lc
 from ..thirdparty import cogent as cg
 
-from ..settings import rcParams
 from .. import log
 from .. import util
 
 # thirdparty modules
 import numpy as np
 
-try:
+try:  # pragma: no cover
     import networkx as nx
 except ImportError:
+    nx = None
     log.missing_module('networkx')
 
 
@@ -95,10 +97,8 @@ def flat_upgma(threshold,matrix,taxa=None,revert=False):
     mcl
 
     """
-    if taxa is None:
-        taxa = []
+    return cluster.flat_upgma(threshold, matrix, taxa or [], revert)
 
-    return cluster.flat_upgma(threshold,matrix,taxa,revert)
 
 def flat_cluster(
         method,
@@ -167,10 +167,8 @@ def flat_cluster(
     mcl
 
     """
-    if taxa is None:
-        taxa = []
+    return cluster.flat_cluster(method, threshold, matrix, taxa or [], revert)
 
-    return cluster.flat_cluster(method,threshold,matrix,taxa,revert)
 
 def upgma(
         matrix,
@@ -229,6 +227,7 @@ def upgma(
 
     return cluster.upgma(matrix,taxa,distances)
 
+
 def neighbor(matrix, taxa, distances=True):
     """
     Function clusters data according to the Neighbor-Joining algorithm \
@@ -281,6 +280,7 @@ def neighbor(matrix, taxa, distances=True):
     """
     
     return cluster.neighbor(matrix,taxa,distances)
+
 
 def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     """
@@ -352,11 +352,10 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
     link_clustering
     
     """
-    try:
-        g = nx.Graph()
-    except NameError:
+    if nx is None:
         log.missing_module('networkx')
         return
+    g = nx.Graph()
 
     for taxon in taxa: g.add_node(taxon)
 
@@ -387,23 +386,17 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
                             g.edge[tA][tB]['weight'] += 1
                         except:
                             g.add_edge(tA,tB,weight=1)
-    i = 1
-    out = {}
-    for c in nx.find_cliques(g):
-        out[i] = c
-        i += 1
+    out = {i + 1: c for i, c in enumerate(nx.find_cliques(g))}
 
     if revert:
-        new_out = {}
-        for key,val in out.items():
+        new_out = defaultdict(list)
+        for key, val in out.items():
             for v in val:
-                try:
-                    new_out[v] += [key]
-                except KeyError:
-                    new_out[v] = [key]
+                new_out[v].append(key)
         return new_out
 
     return out
+
 
 def matrix2tree(
         matrix,
@@ -444,10 +437,10 @@ def matrix2tree(
         algorithm = cluster.upgma
     elif tree_calc == 'neighbor':
         algorithm = cluster.neighbor
+    else:
+        raise ValueError(tree_calc)
 
-    newick = algorithm(matrix,taxa,distances)
-
-    tree = cg.LoadTree(treestring=newick)
+    tree = cg.LoadTree(treestring=algorithm(matrix,taxa,distances))
     
     if not filename:
         return tree
@@ -497,6 +490,8 @@ def matrix2groups(
                 matrix,
                 taxa
                 )
+    else:
+        raise ValueError(cluster_method)
     
     mapper = dict(zip(flats,range(1,len(taxa)+1)))
     out = {}
@@ -508,19 +503,7 @@ def matrix2groups(
         else:
             out[taxa[i]] = n
     return out
-        
 
-    groups = [flats[i] for i in range(len(taxa))]
-    
-    # renumber the groups
-    groupset = sorted(set(groups))
-    renum = dict([(i,j+1) for i,j in zip(
-        groupset,
-        range(len(groupset))
-        )])
-    groups = [renum[i] for i in groups]
-
-    return dict(zip(taxa,['G_{0}'.format(g) for g in groups]))
 
 def _get_wad(matrix, threshold, use_log=False):
     """
@@ -531,22 +514,15 @@ def _get_wad(matrix, threshold, use_log=False):
     else:
         log_f = lambda x: x
 
-    degreeDict = {}
+    degreeDict = defaultdict(list)
 
-    for i in range(len(matrix)):
-        for j in range(i+1,len(matrix)):
-            score = matrix[i][j]
-            if score < threshold:
-                deg = log_f(score)
-                try:
-                    degreeDict[i] += [deg]
-                except KeyError:
-                    degreeDict[i] = [deg]
-                try:
-                    degreeDict[j] += [deg]
-                except KeyError:
-                    degreeDict[j] = [deg]
-    
+    for i, j in combinations(range(len(matrix)), 2):
+        score = matrix[i][j]
+        if score < threshold:
+            deg = log_f(score)
+            degreeDict[i].append(deg)
+            degreeDict[j].append(deg)
+
     deg_sum = 0
     for weights in degreeDict.values():
         deg = sum(weights)
@@ -642,19 +618,6 @@ def find_threshold(
         return [sum(plato[t]) / len(plato[t]) for t in sorted_plato if len(plato[t]) > 1][0]
     except:
         return
-        # get the median
-        results = [r[1] for r in alls]
-        if len(results) / 2 != len(results) // 2:
-            median = sorted(results)[(len(results)-1)//2]
-            return alls[results.index(median)][0]
-        else:
-            if results:
-                median1 = sorted(results)[(len(results)-1)//2]
-                median2 = sorted(results)[len(results)//2]
-                r1 = alls[results.index(median1)][0]
-                r2 = alls[results.index(median2)][0]
-                return r1+r2 / 2
-        return            
 
 def link_clustering(
         threshold,
@@ -738,29 +701,29 @@ def link_clustering(
         evaluate = lambda x:True if x > threshold else False
     elif matrix_type == 'weights':
         evaluate = lambda x:False
+    else:
+        raise ValueError(matrix_type)
 
     # get the edges and the adjacency from the thresholds
     edges = set()
     adjacency = dict([(t,set()) for t in taxa])
     weights = {}
 
-    for i,taxA in enumerate(taxa):
-        for j,taxB in enumerate(taxa):
-            if i < j:
-                if evaluate(matrix[i][j]):
-                    edges.add((taxA,taxB))
-                    adjacency[taxA].add(taxB)
-                    adjacency[taxB].add(taxA)
-                elif matrix_type == 'weights':
-                    if matrix[i][j] < threshold:
-                        edges.add((taxA,taxB))
-                        adjacency[taxA].add(taxB)
-                        adjacency[taxB].add(taxA)
-                        edges.add((taxB,taxA))
-                        weights[taxA,taxB] = -np.log2((1-matrix[i][j])**2)
-                    
-    if not weights:
-        weights = None
+    for i, j in combinations(range(len(taxa)), 2):
+        taxA, taxB = taxa[i], taxa[j]
+        if evaluate(matrix[i][j]):
+            edges.add((taxA,taxB))
+            adjacency[taxA].add(taxB)
+            adjacency[taxB].add(taxA)
+        elif matrix_type == 'weights':
+            if matrix[i][j] < threshold:
+                edges.add((taxA,taxB))
+                adjacency[taxA].add(taxB)
+                adjacency[taxB].add(taxA)
+                edges.add((taxB,taxA))
+                weights[taxA,taxB] = -np.log2((1-matrix[i][j])**2)
+
+    weights = weights or None
     
     if edges:
         # initialize the HLC object
@@ -769,38 +732,28 @@ def link_clustering(
         # check for null edges: if they occur, return the clusters directly
         if revert:
             if fuzzy:
-                return dict([(a,[b]) for a,b in zip(taxa,range(len(taxa)))])
+                return {a: [b] for a,b in zip(taxa,range(len(taxa)))}
             else:
-                return dict([(a,b) for a,b in zip(taxa,range(len(taxa)))])
+                return {a: b for a,b in zip(taxa,range(len(taxa)))}
         else:
             if fuzzy:
-                return dict([(a,[b]) for a,b in zip(range(len(taxa)),taxa)])
+                return {a: [b] for a,b in zip(range(len(taxa)),taxa)}
             else:
-                return dict([(a,b) for a,b in zip(range(len(taxa)),taxa)])
+                return {a: b for a,b in zip(range(len(taxa)),taxa)}
 
     # carry out the analyses using defaults for the clustering
-    comms = hlc.single_linkage(threshold=link_threshold,w=weights)
-    edge2cid = comms[0]
+    edge2cid = hlc.single_linkage(threshold=link_threshold,w=weights)[0]
     
     # retrieve all clusterings for the nodes
-    cluster = dict([(t,[]) for t in taxa])
-    
     # retrieve the data
-    clr2nodes = dict()
-    clr2edges = dict()
-    
+    clr2nodes = defaultdict(list)
+    clr2edges = defaultdict(list)
+
     # count the links of 
     for edge,idx in edge2cid.items():
         nodeA,nodeB = edge[0],edge[1]
-
-        try:
-            clr2edges[idx] += [edge]
-        except KeyError:
-            clr2edges[idx] = [edge]
-        try:
-            clr2nodes[idx] += [nodeA,nodeB]
-        except KeyError:
-            clr2nodes[idx] = [nodeA,nodeB]
+        clr2edges[idx].append(edge)
+        clr2nodes[idx].extend([nodeA, nodeB])
 
     for idx in clr2nodes:
         clr2nodes[idx] = sorted(set(clr2nodes[idx]))
@@ -838,19 +791,13 @@ def link_clustering(
         idx += 1
     
     # determine weights for communities to edges
-    node_weights = dict([(t,{}) for t in taxa])
+    node_weights = dict([(t, defaultdict(int)) for t in taxa])
     for c,e in clr2edges.items():
         for nA,nB in e:
             if c in mapper:
                 this_c = mapper[c]
-                try:
-                    node_weights[nA][this_c] += 1
-                except KeyError:
-                    node_weights[nA][this_c] = 1
-                try:
-                    node_weights[nB][this_c] += 1
-                except KeyError:
-                    node_weights[nB][this_c] = 1
+                node_weights[nA][this_c] += 1
+                node_weights[nB][this_c] += 1
 
     # revert stuff first
     cluster = dict([(t,[]) for t in taxa])
@@ -869,22 +816,22 @@ def link_clustering(
                     )
             new_cluster[t] = weighted[0]
         if revert:
-            return dict([(taxa.index(t),c) for t,c in new_cluster.items()])    
-        else:
-            out = dict([(c,[]) for c in set(new_cluster.values())])
-            for t,c in new_cluster.items():
-                out[c] += [t]
+            return dict([(taxa.index(t),c) for t,c in new_cluster.items()])
+
+        out = dict([(c,[]) for c in set(new_cluster.values())])
+        for t,c in new_cluster.items():
+            out[c] += [t]
         return out
             
     if not revert:
         return out
-    else:
-        cluster = dict([(t,[]) for t in taxa])
-        for idx in out:
-            for t in out[idx]:
-                cluster[t] += [idx]
 
-        return cluster
+    cluster = dict([(t,[]) for t in taxa])
+    for idx in out:
+        for t in out[idx]:
+            cluster[t] += [idx]
+
+    return cluster
 
 # the following lines of code are devoted to mcl clustering algorithm
 
@@ -1039,20 +986,17 @@ def mcl(
             logs = lambda x: -np.log(x**2)
         else:
             logs = lambda x: x
+    else:
+        raise ValueError(matrix_type)
 
     # check for threshold
     if threshold:
-        
-        for i in range(len(imatrix)):
-            for j in range(i+1,len(imatrix)):
-                score = imatrix[i][j]
-                if evaluate(score):
-                    imatrix[i][j] = logs(score)
-                    imatrix[j][i] = logs(score)
-                else:
-                    imatrix[i][j] = 0
-                    imatrix[j][i] = 0
-    
+        for i, j in combinations(range(len(imatrix)), 2):
+            score = imatrix[i][j]
+            evaluation = logs(score) if evaluate(score) else 0
+            imatrix[i][j] = evaluation
+            imatrix[j][i] = evaluation
+
     # check for self_loops
     if add_self_loops == True:
         for i in range(len(imatrix)):
@@ -1102,12 +1046,9 @@ def mcl(
                     )
                 )
     
-    clr = {}
+    clr = defaultdict(list)
     for i,t in enumerate(taxa):
-        try:
-            clr[clusters[i]] += [t]
-        except:
-            clr[clusters[i]] = [t]
+        clr[clusters[i]].append(t)
 
     return clr
 
@@ -1124,11 +1065,11 @@ def partition_density(matrix,t):
     # compute cutoff for matrix at t
     m = np.zeros((len(matrix),len(matrix)))
 
-    for i in range(len(matrix)):
-        for j in range(i+1,len(matrix)):
-            if matrix[i][j] < t:
-                m[i][j] = 1
-                m[j][i] = 1
+    for i, j in combinations(range(len(matrix)), 2):
+        if matrix[i][j] < t:
+            m[i][j] = 1
+            m[j][i] = 1
+
     # get the total number of links
     T = sum(m.flatten()) / 2
     
@@ -1136,36 +1077,35 @@ def partition_density(matrix,t):
     nodes = list(range(len(m)))
     idx = 1
     parts = [0 for i in range(len(m))]
-    
-    for i in range(len(m)):
-        for j in range(i+1,len(m)):
-            if m[i][j] == 1:
-                if parts[i] == parts[j] and parts[i] != 0:
-                    pass
-                else:
-                    # most complicated, update all the stuff
-                    if parts[i] > 0 and parts[j] > 0:
-                        
-                        # determine best idx
-                        if parts[i] > parts[j]:
-                            this = parts[j]
-                            other = parts[i]
-                        else:
-                            this = parts[i]
-                            other = parts[j]
-                            
-                        # find all neighbors of the 
-                        idxs = [n for n in nodes if parts[n] == other]
-                        for n in idxs:
-                            parts[n] = this
-                    elif parts[i] == 0 and parts[j] == 0:
-                        parts[i] = idx
-                        parts[j] = idx
-                        idx += 1
-                    elif parts[i] > 0:
-                        parts[j] = parts[i]
-                    elif parts[j] > 0:
-                        parts[i] = parts[j]
+
+    for i, j in combinations(range(len(m)), 2):
+        if m[i][j] == 1:
+            if parts[i] == parts[j] and parts[i] != 0:
+                pass
+            else:
+                # most complicated, update all the stuff
+                if parts[i] > 0 and parts[j] > 0:
+
+                    # determine best idx
+                    if parts[i] > parts[j]:
+                        this = parts[j]
+                        other = parts[i]
+                    else:
+                        this = parts[i]
+                        other = parts[j]
+
+                    # find all neighbors of the
+                    idxs = [n for n in nodes if parts[n] == other]
+                    for n in idxs:
+                        parts[n] = this
+                elif parts[i] == 0 and parts[j] == 0:
+                    parts[i] = idx
+                    parts[j] = idx
+                    idx += 1
+                elif parts[i] > 0:
+                    parts[j] = parts[i]
+                elif parts[j] > 0:
+                    parts[i] = parts[j]
     
     # finish unconnected components
     for i,p in enumerate(parts):
@@ -1188,10 +1128,9 @@ def partition_density(matrix,t):
 
         # get edges
         edges = 0
-        for i in range(len(nodes)):
-            for j in range(i+1,len(nodes)):
-                if m[nodes[i]][nodes[j]] == 1:
-                    edges += 1
+        for i, j in combinations(range(len(nodes)), 2):
+            if m[nodes[i]][nodes[j]] == 1:
+                edges += 1
 
         N = len(nodes)
         M = edges
@@ -1199,7 +1138,6 @@ def partition_density(matrix,t):
         # calculate sum formula
         x = 1
         try:
-
             t = M * (M - (N - x)) / ((N - 1 + x) * ( N -x))
             D += t
         except ZeroDivisionError:
@@ -1267,7 +1205,4 @@ def best_threshold(
         else:
             pass
     return best_t
-    
-    
-        
 

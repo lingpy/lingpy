@@ -38,10 +38,7 @@ except:
     from .cython import _misc as misc
     cmod['misc'] = 1
 
-if cmod:
-    rcParams['cmodules'] = False
-else:
-    rcParams['cmodules'] = True
+rcParams['cmodules'] = not bool(cmod)
 
 from .clustering import *
 from ._tree import _TreeDist as TreeDist
