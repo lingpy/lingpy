@@ -104,6 +104,7 @@ class Tokenizer(object):
 	b aː tʃ    
 
     """
+    grapheme_pattern = re.compile("\X", re.UNICODE)
 
     def __init__(self, orthography_profile=None):
         if orthography_profile and not os.path.exists(orthography_profile):
@@ -242,20 +243,8 @@ class Tokenizer(object):
         """
 
         # init the regex Unicode grapheme cluster match
-        grapheme_pattern = re.compile("\X", re.UNICODE)
-
-        # add boundaries between words
-        string = string.replace(" ", "#")
-
-        # Unicode NDF the string
-        string = unicodedata.normalize("NFD", string)
-
-        result = ""
-        graphemes = grapheme_pattern.findall(string)
-        for grapheme in graphemes:
-            result += grapheme+" "
-        result = result.strip()
-        return result
+        return ' '.join(self.grapheme_pattern.findall(
+            unicodedata.normalize("NFD", string.replace(" ", "#"))))
 
 
     def graphemes(self, string):
@@ -475,10 +464,7 @@ class Tokenizer(object):
 
     def tokenize_ipa(self, string):
         # Experimental method for tokenizing IPA.
-        string = unicodedata.normalize("NFD", string)
-        grapheme_clusters = self.grapheme_clusters(string)
-        result = self.combine_modifiers(grapheme_clusters)
-        return result
+        return self.combine_modifiers(self.grapheme_clusters(string))
 
     def combine_modifiers(self, string):
         """
@@ -493,7 +479,6 @@ class Tokenizer(object):
         .. todo:: check if we need to apply NDF after string is parsed
 
         """
-
         result = []
         graphemes = string.split()
         temp = ""
@@ -502,16 +487,14 @@ class Tokenizer(object):
         for grapheme in reversed(graphemes):
             count -= 1
             if len(grapheme) == 1 and unicodedata.category(grapheme) == "Lm":
-                temp = grapheme+temp
+                temp = grapheme + temp
                 # hack for the cases where a space modifier is the first character in the str
                 if count == 0:
-                    result[-1] = temp+result[-1]
+                    result[-1] = temp + result[-1]
                 continue
 
-            result.append(grapheme+temp)
+            result.append(grapheme + temp)
             temp = ""
-
-        # return " ".join(result[::-1])
 
         # check for tie bars
         segments = result[::-1]

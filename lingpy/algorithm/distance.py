@@ -1,17 +1,18 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
 """
-This module provides functions to caculate basic distance measures.
+This module provides functions to calculate basic distance measures.
 
 """
 __author__ = "Steven Moran"
 __date__ = "2013-2"
 
-import itertools
 import operator
+
+from six.moves import zip_longest
+
 
 def hamming(str1, str2):
     """
@@ -34,9 +35,8 @@ def hamming(str1, str2):
         the hamming distance 
 
     """
-    assert len(str1) == len(str2)
-    ne = operator.ne
-    return sum(map(ne, str1, str2))
+    return sum(operator.ne(*pair) for pair in zip_longest(str1, str2, fillvalue=None))
+
 
 def jaccard(set1, set2):
     """
@@ -64,9 +64,12 @@ def jaccard(set1, set2):
         the Jaccard distance
 
     """
-    assert(type(set1) and type(set2) == set)
+    assert isinstance(set1, set) and isinstance(set2, set)
+    if not set1 and not set2:
+        return 0
     n = len(set1.intersection(set2))
-    return (n/float(len(set1) + len(set2) -n))
+    return n / float(len(set1) + len(set2) - n)
+
 
 def euclidean(p, q):
     """
@@ -76,9 +79,10 @@ def euclidean(p, q):
     sum_of_squares = 0.0
 
     for i in range(len(p)):
-        sum_of_squares += (p[i]-q[i])**2
+        sum_of_squares += (p[i] - q[i]) ** 2
 
-    return (sum_of_squares**0.5)
+    return sum_of_squares ** 0.5
+
 
 def pearson(x, y):
     """
@@ -105,27 +109,4 @@ def pearson(x, y):
 
     return r
     """
-    pass
-
-if __name__=="__main__":
-    print("test Hamming:")
-    str1 = "aaa"
-    str2 = "aba"
-    print("str1 = ", str1)
-    print("str2 = ", str2)
-    print("hamming distances = ", hamming(str1, str2))
-    print()
-
-    print("test Jaccard:")
-    set1 = set("abcd")
-    set2 = set("cdef")
-    print("set1 = ", set1)
-    print("set2 = ", set2)
-    print("jaccard distance = ", jaccard(set1, set2))
-    print()
-
-    print("test euclidean")
-    p = [1,2,3,4]
-    q = [2,3,4,5]
-    print("euclidean = ", euclidean(p, q))
-
+    raise NotImplementedError()
