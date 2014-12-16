@@ -2,28 +2,17 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-#author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-12-15 10:58
-# modified : 2014-12-15 10:58
-"""
-Test the SCA module.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2013-11-12"
-
 from ..util import test_data
-import os
-import unittest
 from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
         get_n_ngrams, pgrams
-from lingpy import rc
-from lingpy import csv2list
-from lingpy.util import read_text_file
+from lingpy import rc, csv2list
+
+"""
+Tests for the SCA module
+"""
 
 def test_ipa2tokens():
 
@@ -44,11 +33,10 @@ def test_ipa2tokens():
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
     # now check with all possible data we have so far
-    tokens = read_text_file(test_data('test_tokenization.csv'), lines=True)
+    tokens = csv2list(test_data('test_tokenization.csv'))
     
-    c = 0
-    for line in tokens:
-        a,b = line.strip().split('\t')
+    for a,b in tokens:
+        
         tks1 = ' '.join(ipa2tokens(a))
         tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
 
