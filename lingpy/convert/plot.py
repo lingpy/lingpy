@@ -1,18 +1,9 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-01-28 11:47
-# modified : 2013-11-13 15:21
 """
 Module provides functions for the transformation of text data into visually appealing format.
  
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-11-13"
-
-import os
 import colorsys
-import codecs
 import webbrowser
 
 from ..settings import rcParams
@@ -46,7 +37,6 @@ def plot_gls(
         treestring,
         degree = 90,
         fileformat = 'pdf',
-        verbose = True,
         **keywords
         ):
     """
@@ -120,7 +110,6 @@ def plot_gls(
     for s in figsp.spines.values():
         s.set_linewidth(keywords['ax_linewidth'])
     
-    #plt.axes(frameon=keywords['frameon'])
     plt.axis('equal')
 
     for nA,nB in graph.edges():
@@ -224,7 +213,7 @@ def plot_tree(
         **keywords
         ):
     """
-    Plot a newick tree to PDF or other graphical formats.
+    Plot a Newick tree to PDF or other graphical formats.
 
     Parameters
     ----------
@@ -289,7 +278,6 @@ def plot_tree(
         plt.switch_backend('pgf')
     elif not keywords['usetex'] and backend != 'TkAgg':
         plt.switch_backend('TkAgg')
-
     
     # get the tree-graph
     graph = radial_layout(
@@ -431,11 +419,20 @@ def plot_concept_evolution(
         tree,
         fileformat = 'pdf',
         degree = 90,
-        verbose = True,
         **keywords
         ):
     """
-    Plot the evolution of 
+    Plot the evolution according to the MLN method of all words for a given concept. 
+    
+    Parameters
+    ----------
+    tree : str
+        A tree representation in Newick format.
+    fileformat : str (default="pdf")
+        A valid fileformat according to Matplotlib.
+    degree : int (default=90)
+        The degree by which the tree is drawn. 360 yields a circular tree, 180
+        yields a tree filling half of the space of a circle.
     """
     
     # make defaults

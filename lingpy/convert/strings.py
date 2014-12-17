@@ -1,14 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-10-08 11:38
-# modified : 2014-06-05 09:11
+from __future__ import unicode_literals
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
-from __future__ import unicode_literals
-
-__author__="Johann-Mattis List"
-__date__="2014-06-05"
 
 from .. import log
 from .. import util

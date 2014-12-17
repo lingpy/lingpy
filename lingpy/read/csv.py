@@ -1,15 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-04 17:02
-# modified : 2014-12-16 05:28
 """
 Module provides functions for reading csv-files.
 """
 
-__author__="Johann-Mattis List"
-__date__="2014-12-16"
-
-import os
 from ..util import read_text_file
 from ..settings import rcParams
 from ..sequence.sound_classes import ipa2tokens
@@ -62,10 +54,6 @@ def csv2list(
         infile = filename+'.'+fileformat
     else:
         infile = filename
-    if not os.path.isfile(infile):
-        raise NameError(
-                "[ERROR] File {0} could not be found.".format(infile)
-                )
 
     if dtype is None: dtype = []
 
@@ -81,7 +69,7 @@ def csv2list(
         idx = -1
 
     for i,line in enumerate(infile):
-        if line.strip() and not line.startswith(comment) and idx != i:
+        if line and not line.startswith(comment) and idx != i:
             if strip_lines:
                 cells = [c.strip() for c in line.strip().split(sep)]
             else:
@@ -160,55 +148,6 @@ def csv2multidict(
         mdict[line[0]] = dict(zip(header[1:], line[1:]))
 
     return mdict
-
-# define some aliases
-def read_csv(
-        filename,
-        fileformat = '',
-        dtype = None,
-        comment = '#',
-        sep = '\t',
-        strip_lines = True,
-        header = False
-        ):
-    """
-    Very simple function to get quick access to CSV-files.
-
-    Parameters
-    ----------
-    filename : str
-        Name of the input file.
-    fileformat : {None str}
-        If not specified the file <filename> will be loaded. Otherwise, the
-        fileformat is interpreted as the specific extension of the input file.
-    dtype : {None list}
-        If not specified, all data will be loaded as strings. Otherwise, a
-        list specifying the data for each line should be provided.
-    comment : string (default="#")
-        Comment character in the begin of a line forces this line to be
-        ignored.
-    sep : string (default = "\t")
-        Specify the separator for the CSV-file.
-    strip_lines : bool (default=True)
-        Specify whether empty "cells" in the input file should be preserved. If
-        set to c{False}, each line will be stripped first, and all whitespace
-        will be cleaned. Otherwise, each line will be separated using the
-        specified separator, and no stripping of whitespace will be carried
-        out.
-    header : bool (default=False)
-        Indicate, whether the data comes along with a header.
-
-    Returns
-    -------
-    l : list
-        A list-representation of the CSV file.
-
-    Notes
-    -----
-    This is but an alias for the csv2dict function.
-
-    """
-    return csv2dict(filename,fileformat,dtype,comment,sep,strip_lines,header)
 
 def read_asjp(
         infile,

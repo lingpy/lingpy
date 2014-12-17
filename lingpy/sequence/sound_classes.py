@@ -1,19 +1,12 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
+# These lines are for py2-py3 compatibility
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-04 13:27
-# modified : 2014-12-02 21:12
+
 """
 Module provides various methods for the handling of sound classes.
-
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
 
 # lingpy imports
 from ..settings import rcParams

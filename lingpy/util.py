@@ -99,7 +99,7 @@ def read_text_file(path, normalize=None, lines=False):
 
     with io.open(_str_path(path), 'r', encoding='utf8') as fp:
         if lines:
-            return [_normalize(line) for line in fp]
+            return [_normalize(line.strip()) for line in fp]
         else:
             return _normalize(fp.read())
 
