@@ -18,7 +18,7 @@ The library in it's current state consist of the following modules:
 
 When loading LingPy in a python session using either the 
 ```python
->>> from lingpy impor t*
+>>> from lingpy import *
 ```
 or the 
 ```python
