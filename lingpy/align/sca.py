@@ -3,10 +3,6 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List, Johannes Dellert, Robert Forkel
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-03-07 20:07
-# modified : 2014-12-05 14:47
 
 """
 Basic module for pairwise and multiple sequence comparison.
@@ -17,9 +13,6 @@ sequence perspective deals with unaligned sequences. The *alignment*
 perspective deals with aligned sequences.
 
 """
-
-__author__="Johann-Mattis List, Johannes Dellert, Robert Forkel"
-__date__="2014-12-05"
 
 import numpy as np
 import re
@@ -420,7 +413,7 @@ class PSA(Pairwise):
 
         for line in util.read_text_file(infile, lines=True):
             if not line.startswith(self.comment):
-                data.append(line.strip())
+                data.append(line)
 
         # set the first parameters
         # delete the first line of the data, since they are no longer needed

@@ -3,17 +3,10 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-10-10 16:31
-# modified : 2014-03-10 20:31
+
 """
 Basic functions for HTML-plots.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-03-10"
-
 
 import os
 import colorsys
@@ -778,7 +771,7 @@ def psa2html(filename, **kw):
     data = []
     for line in util.read_text_file(filename, lines=True):
         if not line.startswith(kw['comment']):
-            data.append(line.strip())
+            data.append(line)
 
     seq_ids = []
     pairs = []

@@ -3,10 +3,6 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-08 17:30
-# modified : 2014-11-10 09:56
 """
 Module for the derivation of sound class models.
 
@@ -15,9 +11,6 @@ All models are defined in simple text files. In order to guarantee their quick
 access when loading the library, the models are compiled and stored in binary
 files.
 """
-__author__="Johann-Mattis List"
-__date__="2014-11-10"
-
 
 import os
 
@@ -34,11 +27,10 @@ try:
 except ImportError:
     log.missing_module('networkx')
 
-
 def _read(filename, normalize=None):
     res = {}
     for line in util.read_text_file(filename, normalize=normalize, lines=True):
-        k, v = line.strip().split(' : ')
+        k, v = line.split(' : ')
         res[k] = v.split(', ')
     return res
 

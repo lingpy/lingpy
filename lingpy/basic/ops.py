@@ -1,14 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-09-15 21:41
-# modified : 2014-09-11 16:59
 """
 Module provides basic operations on Wordlist-Objects.
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
-
-__author__="Johann-Mattis List"
-__date__="2014-09-11"
 
 # external imports
 import json
@@ -569,7 +562,7 @@ def triple2tsv(infile, output="table"):
     cols = set([])
 
     for line in util.read_text_file(infile, lines=True):
-        a,b,c = line.strip().split('\t')
+        a,b,c = line.split('\t')
         try:
             D[a][b] = c
         except KeyError:
