@@ -4,7 +4,7 @@ Module provides functions for reading csv-files.
 
 from ..util import read_text_file
 from ..settings import rcParams
-from ..sequence.sound_classes import ipa2tokens
+from ..sequence.sound_classes import asjp2tokens
 import re
 
 def csv2list(
@@ -238,18 +238,19 @@ def read_asjp(
                                 loan = 0
                             if ' ' in entry:
                                 entry = entry.replace(' ','_')
-                            tokens = ' '.join(
-                                        ipa2tokens(
-                                            entry,
-                                            diacritics = '*$~"',
-                                            vowels = 'aeiouE3',
-                                            tones = '',
-                                            combiners = '',
-                                            merge_vowels = merge_vowels#rcParams['merge_vowels']
-                                            )
-                                        )
-                            tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
-                            tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
+                            tokens = ' '.join(asjp2tokens(entry))
+                            #tokens = ' '.join(
+                            #            ipa2tokens(
+                            #                entry,
+                            #                diacritics = '*$~"',
+                            #                vowels = 'aeiouE3',
+                            #                tones = '',
+                            #                combiners = '',
+                            #                merge_vowels = merge_vowels#rcParams['merge_vowels']
+                            #                )
+                            #            )
+                            #tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
+                            #tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
 
                             D[idx] = [
                                     lang,

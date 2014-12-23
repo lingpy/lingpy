@@ -3,16 +3,6 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-07-25 13:10
-# modified : 2014-12-09 10:07
-"""
-Module provides basic functions for the reading of text files in QLC format.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-12-09"
 
 from ..algorithm import misc
 from .csv import csv2list
@@ -22,7 +12,6 @@ import json
 import os
 import unicodedata
 from ..util import read_text_file
-from ..compat import FileNotFoundError
 
 def normalize_alignment(alignment):
     """
@@ -229,7 +218,7 @@ def read_qlc(
     """
     # read lines from text file
     lines = read_text_file(infile, lines=True, normalize="NFC")
-
+    
     # create data array
     data = []
     meta = {}
@@ -248,7 +237,7 @@ def read_qlc(
         # line starts with key-value @
         elif line.startswith('@'):
             key = line[1:line.index(':')]
-            value = line[line.index(':')+1:]
+            value = line[line.index(':')+1:].strip()
             if key not in ['tree','json']:
                 if key not in meta:
                     meta[key] = value
