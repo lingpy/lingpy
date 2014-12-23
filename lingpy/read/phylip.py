@@ -5,12 +5,7 @@ Module provides functions to read in various formats from the Phylip package.
 from ..settings import *
 from .. import log
 
-try:
-    import regex as re
-except ImportError:
-    import re
-    log.missing_module('regex')
-
+import re
 from ..algorithm import misc
 from .csv import csv2list
 from ..util import read_text_file
