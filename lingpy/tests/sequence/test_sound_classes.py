@@ -32,17 +32,28 @@ def test_ipa2tokens():
     
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
-    # now check with all possible data we have so far
-    tokens = csv2list(test_data('test_tokenization.csv'))
+    # now check with all possible data we have so far, but only on cases where
+    # tokenization doesn't require the merge_vowels = False flag
+    tokens = csv2list(test_data('test_tokenization.tsv'))
     
     for a,b in tokens:
         
-        tks1 = ' '.join(ipa2tokens(a))
-        tks2 = ' '.join(ipa2tokens(a, merge_vowels=False))
+        tks = ' '.join(ipa2tokens(a))
 
         # we check for two variants, since we don't know whether vowels are
         # merged or not in the test data
-        assert tks1 == b or tks2 == b
+        assert tks == b
+
+    # now test on smaller set with unmerged vowels 
+    tokens = csv2list(test_data('test_tokenization_mv.tsv'))
+    
+    for a,b in tokens:
+        
+        tks = ' '.join(ipa2tokens(a, merge_vowels=False))
+
+        # we check for two variants, since we don't know whether vowels are
+        # merged or not in the test data
+        assert tks == b
 
 def test_token2class():
 

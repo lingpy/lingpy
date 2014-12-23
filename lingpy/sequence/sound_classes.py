@@ -9,6 +9,7 @@ Module provides various methods for the handling of sound classes.
 """
 
 # lingpy imports
+import re
 from ..settings import rcParams
 from ..data.ipa.sampa import reXS,xs
 
@@ -170,6 +171,28 @@ def ipa2tokens(
             tone = False
 
     return out
+
+def asjp2tokens(
+        seq,
+        merge_vowels = True
+        ):
+    """
+    """
+    
+    tokens = ' '.join(
+                ipa2tokens(
+                    seq,
+                    diacritics = '*$~"',
+                    vowels = 'aeiouE3',
+                    tones = '',
+                    combiners = '',
+                    merge_vowels = merge_vowels
+                    )
+                )
+    tokens = re.sub(r'([^ ]) ([^ ])~',r'\1\2~',tokens)
+    tokens = re.sub(r'([^ ]) ([^ ]) ([^ ])\$',r'\1\2\3$',tokens)
+
+    return tokens.split(' ')
 
 def token2class(
         token,

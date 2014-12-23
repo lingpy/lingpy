@@ -1,11 +1,11 @@
 @date: 2012-11-23
 @url: http://www.quanthistling.info/data/source/leach1969/dictionary-67-161.html
-@source_title: Vocabulario Ocaina
-@source_author: Leach, Ilo M.
-@source_year: 1969
+@doculect: Castellano, spa, Castellano, Witotoan
 @doculect: Ocaina, oca, Ocaina, Witotoan
 @head_iso: oca
-@doculect: Castellano, spa, Castellano, Witotoan
+@source_author: Leach, Ilo M.
+@source_title: Vocabulario Ocaina
+@source_year: 1969
 @translation_iso: spa
 QLCID	HEAD	HEAD_DOCULECT	TRANSLATION	TRANSLATION_DOCULECT
 leach1969/67/1	aa	Ocaina	venir	Castellano

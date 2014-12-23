@@ -64,8 +64,6 @@ def test_csv2list():
     assert dat3[0][0] == 'This\tis\tthe'
     assert dat4[3][0] == '#I'
 
-    assert_raises(NameError, csv2list, 'xyz.tsv')
-
 def test_csv2dict():
 
     if_path1 = test_data('test_csv.csv')
