@@ -1,17 +1,9 @@
-# author   : Johann-Mattis List, Johannes Dellert
-# email    : mattis.list@gmail.com
-# created  : 2013-04-02 07:01
-# modified : 2013-09-11 16:37
 """
 Functions for tree calculations and working with trees.
 """
 
-__author__="Johann-Mattis List, Johannes Dellert"
-__date__="2013-09-11"
-
 # external
 import xml.dom.minidom as minidom
-import codecs
 from collections import deque
 
 # internal

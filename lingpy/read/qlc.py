@@ -3,25 +3,15 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-07-25 13:10
-# modified : 2014-12-09 10:07
-"""
-Module provides basic functions for the reading of text files in QLC format.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-12-09"
 
 from ..algorithm import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
 import json
-import codecs
 import os
 import unicodedata
+from ..util import read_text_file
 
 def normalize_alignment(alignment):
     """
@@ -190,7 +180,7 @@ def read_msa(
     if 'input_file' not in keywords:
         keywords['input_file'] = infile
 
-    f = codecs.open(infile,'r','utf-8')
+    f = read_text_file(infile, normalize='NFC', lines=True)
     msa_lines = []
     for line in f:
         if line.strip() and not line.startswith(comment):
@@ -205,7 +195,6 @@ def read_msa(
 
     return d
     
-
 def read_qlc(
         infile,
         comment = '#'
@@ -227,22 +216,12 @@ def read_qlc(
         A dictionary with integer keys corresponding to the order of the lines
         of the input file. The header is given 0 as a specific key.
     """
-    # check whether path exists
-    if not os.path.isfile(infile):
-        raise NameError(
-                "[!] File {0} could not be found.".format(infile)
-                )
-
-    inf = codecs.open(infile,'r','utf-8')
+    # read lines from text file
+    lines = read_text_file(infile, lines=True, normalize="NFC")
     
     # create data array
     data = []
     meta = {}
-
-    # read lines from infile
-    lines = [unicodedata.normalize("NFC",l) for l in inf.readlines()]
-
-    inf.close()
 
     # set dtype to false
     dtype = False
@@ -252,7 +231,7 @@ def read_qlc(
         line = lines.pop(0)
 
         # line is empty or starts with hash
-        if line.startswith(comment) or not line.strip():
+        if line.startswith(comment) or not line:
             pass
         
         # line starts with key-value @
@@ -299,7 +278,7 @@ def read_qlc(
                 if line.startswith('</'+dtype+'>'):
                     break
                 else:
-                    tmp += [line.strip()]
+                    tmp += [line]
 
             tmp = '\n'.join(tmp)
 
@@ -325,7 +304,8 @@ def read_qlc(
                 # add the data
                 if not keys:
                     keys["id"] = "1"
-
+                
+                # XXX consider switching to Tree here XXX
                 meta['trees'][keys["id"]] = cg.LoadTree(treestring=tmp)
 
             # csv
@@ -393,7 +373,7 @@ def read_qlc(
                         line = [x.strip().rstrip('.') for x in
                                 l.split('\t')]
                         msad += [line]
-                tmp_msa = _list2msa(msad,header=False,ids=True,**tmp_msa)
+                tmp_msa = _list2msa(msad, header=False, ids=True, **tmp_msa)
 
                 try:
                     meta['msa'][ref][int(keys['id'])] = tmp_msa   
@@ -401,7 +381,7 @@ def read_qlc(
                     meta['msa'][ref][keys['id']] = tmp_msa
             
             elif dtype == 'dst':
-                taxa,matrix = read_dst(tmp)
+                taxa, matrix = read_dst(tmp)
                 new_taxa = sorted(taxa)
                 distances = [[0.0 for line in matrix] for line in matrix]
                 for i,line in enumerate(matrix):
@@ -467,7 +447,3 @@ def read_qlc(
                 
 
     return d
-
-def qlc2dict(infile):
-
-    return read_qlc(infile)

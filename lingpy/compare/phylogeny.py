@@ -1,8 +1,4 @@
 # *-* coding: utf-8 *-*
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-01-21 13:00
-# modified : 2014-12-02 21:14
 # Future imports for compatibility 
 from __future__ import print_function
 from __future__ import division
@@ -11,9 +7,6 @@ from __future__ import unicode_literals
 """
 Phylogeny-based detection of borrowings in lexicostatistical wordlists.
 """
-
-__author_="Johann-Mattis List"
-__date__="2014-12-02"
 
 
 # basic imports
@@ -53,13 +46,13 @@ try:  # pragma: no cover
 except ImportError:
     bmp = None
     log.missing_module('basemap')
-try:  # pragma: no cover
+try:
     import networkx as nx
-except:
+except ImportError:
     log.missing_module('networkx')
-try:  # pragma: no cover
+try:
     import scipy as sp
-except:
+except ImportError:
     sp = None
     log.missing_module('scipy')
 

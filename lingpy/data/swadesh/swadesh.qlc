@@ -1898,7 +1898,7 @@ ID	KEY	GLOSS	CLEAN_GLOSS	LIST	REFERENCE	NUMBER	ITEM	SENSE
 1888	4039	near	near	matisoff	Matisoff1990	113	near	near;shore;to reach;below;middle;side;face;to touch;
 1889	7019	year	year	matisoff	Matisoff1990	114	year	time;year;moon;sun;
 1890	6567	twenty	twenty	matisoff	Matisoff1990	115	twenty/score	twenty;
-1891	7067	score	score	matisoff	Matisoff1990	115	twenty/score	
+1891	7067	score	score	matisoff	Matisoff1990	115	twenty/score	twenty;
 1892	4211	one	one	matisoff	Matisoff1990	116	one	one;front;
 1893	5400	seven	seven	matisoff	Matisoff1990	117	seven	seven;
 1894	6261	ten	ten	matisoff	Matisoff1990	118	ten	ten;many;
@@ -2641,3 +2641,5 @@ ID	KEY	GLOSS	CLEAN_GLOSS	LIST	REFERENCE	NUMBER	ITEM	SENSE
 2626	2161	eye	eye	dolgopolsky	Dolgopolsky1964	7	eye	eye;to see;
 2627	2940	heart	heart	dolgopolsky	Dolgopolsky1964	8	heart	heart;liver;to pierce;breast;middle;
 2628	6437	tooth	tooth	dolgopolsky	Dolgopolsky1964	9	tooth	tooth;root;sharp;
+
+

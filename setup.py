@@ -1,14 +1,6 @@
-# author   : Johann-Mattis List, Peter Bouda, Robert Forkel
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-09-09 16:28
-# modified : 2014-11-05 23:38
 """
 Setup-Script for LingPy
 """
-
-__author__="Johann-Mattis List, Peter Bouda, Robert Forkel"
-__date__="2014-11-05"
-
 
 import distribute_setup
 distribute_setup.use_setuptools()
@@ -17,7 +9,6 @@ from setuptools import setup, find_packages,Extension
 import sys
 import os
 import os.path
-
 
 # check for specific features
 with_c = False
