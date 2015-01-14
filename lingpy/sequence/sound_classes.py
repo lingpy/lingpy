@@ -51,10 +51,25 @@ def ipa2tokens(
         consecutive vowels should not be treated as diphtongs or for diacritics
         that are put before the following letter.
     
-    merge_vowels : bool
+    merge_vowels : bool (default=False)
         Indicate, whether vowels should be merged into diphtongs
         (default=True), or whether each vowel symbol should be considered
         separately.
+
+    merge_geminates : bool (default=False)
+        Indicate, whether identical symbols should be merged into one token, or
+        rather be kept separate.
+
+    excand_nasals : bool (default=False)
+
+    semi_diacritics: str (default='')
+        Indicate which symbols shall be treated as "semi-diacritics", that is,
+        as symbols which can occur on their own, but which eventually, when
+        preceded by a consonant, will form clusters with it. If you want to
+        disable this features, just set the keyword to an empty string.
+    clean_string : bool (default=False)
+        Conduct a rough string-cleaning strategy by which all items between
+        brackets are removed along with the brackets, and 
 
     Returns
     -------
@@ -76,15 +91,22 @@ def ipa2tokens(
     """
     # go for defaults
     kw = dict(
-            vowels = rcParams['vowels'],
-            diacritics = rcParams['diacritics'],
-            tones = rcParams['tones'],
-            combiners = rcParams['combiners'],
             breaks = rcParams['breaks'],
+            combiners = rcParams['combiners'],
+            diacritics = rcParams['diacritics'],
+            expand_nasals = False,
+            merge_geminates = True,
+            merge_vowels = rcParams['merge_vowels'],
+            semi_diacritics = '',
             stress = rcParams['stress'],
-            merge_vowels = rcParams['merge_vowels']
+            tones = rcParams['tones'],
+            vowels = rcParams['vowels'],
+            clean_sequence = False # add this later, not today XXX
             )
     kw.update(keywords)
+    
+    if kw['clean_sequence']:
+        raise ValueError("This part has not yet been implemented!")
 
     # check for pre-tokenized strings
     if ' ' in istring:
@@ -102,8 +124,22 @@ def ipa2tokens(
     tone = False # no tone
     merge = False # no merge command
     start = True # start of unit
+    nasal = False
+    
+    # define nasals and nasal chars and semi_diacritics
+    nasals = 'ãũẽĩõ'
+    nasal_char = "\u0303"
+    semi_diacritics = kw['semi_diacritics']
+    nogos = "_"
+
 
     for char in istring:
+        # check for nasal stack and vowel environment
+        if nasal:
+            if char not in kw['vowels'] and char not in kw['diacritics']:
+                out += [rcParams['nasal_placeholder']]
+                nasal = False
+
         # check for breaks first, since they force us to start anew
         if char in kw['breaks']:
             start = True
@@ -132,6 +168,16 @@ def ipa2tokens(
             if char in kw['vowels']:
                 vowel = True
             merge = False
+
+        # check for nasals in NFC normalization and non-normalizable nasals
+        elif kw['expand_nasals'] and char == nasal_char and vowel:
+            out[-1] += char
+            start = False
+            nasal = True
+
+        # check for weak diacritics
+        elif char in semi_diacritics and not start and not vowel and not tone and out[-1] not in nogos:
+            out[-1] += char
         
         # check for diacritics
         elif char in kw['diacritics']:
@@ -151,6 +197,9 @@ def ipa2tokens(
                 vowel = True
             start = False
             tone = False
+
+            if kw['expand_nasals'] and char in nasals:
+                nasal = True
         
         # check for tones
         elif char in kw['tones']:
@@ -170,6 +219,20 @@ def ipa2tokens(
             start = False
             tone = False
 
+    if nasal:
+        out += [rcParams['nasal_placeholder']]
+
+    if kw['merge_geminates']:
+        new_out = [out[0]]
+        for i in range(len(out) -1):
+            outA = out[i]
+            outB = out[i+1]
+            if outA == outB:
+                new_out[-1] += outB
+            else:
+                new_out += [outB]
+        return new_out
+    
     return out
 
 def asjp2tokens(
