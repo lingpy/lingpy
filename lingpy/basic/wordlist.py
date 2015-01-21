@@ -80,6 +80,7 @@ class Wordlist(QLCParser):
     """
 
     def __init__(self, filename, row='concept', col='doculect', conf=None):
+        
         QLCParser.__init__(self, filename, conf or util.data_path('conf', 'wordlist.rc'))
         
         # check whether additional data has to be loaded
@@ -873,7 +874,8 @@ class Wordlist(QLCParser):
     def renumber(
             self,
             source,
-            target=''
+            target='',
+            override=False
             ):
         """
         Renumber a given set of string identifiers by replacing the ids by integers.
@@ -885,7 +887,11 @@ class Wordlist(QLCParser):
 
         target : str (default='')
             The name of the target colummn. If no name is chosen, the target
-            column will be manipulated by adding "id" to its name.
+            column will be manipulated by adding "id" to the name of the source
+            column.
+
+        override : bool (default=False)
+            Force to overwrite the data if the target column already exists.
 
         Notes
         -----
@@ -896,7 +902,7 @@ class Wordlist(QLCParser):
         or directly as an attribute of the wordlist.
 
         """
-        renumber(self,source,target)
+        renumber(self,source,target,override=override)
 
     def _clean(
             self,
@@ -1154,9 +1160,13 @@ class Wordlist(QLCParser):
                 os.mkdir(keywords['filename'])
 
             for l in self.cols:
-                lines = []
+                if 'ignore_keys' in keywords:
+                    lines = ['']
+                else:
+                    lines = ['ID\t']
+                lines[0] += '\t'.join([x.upper() for x in keywords['entries']])
                 for key in self.get_list(col=l,flat=True):
-                    line = [key]
+                    line = [key] if 'ignore_keys' not in keywords else []
                     for entry in keywords['entries']:
                         tmp = self[key,entry]
                         if isinstance(tmp, list):
@@ -1165,7 +1175,7 @@ class Wordlist(QLCParser):
                         line += [tmp]
                     lines.append('\t'.join('{0}'.format(x) for x in line))
                 _write_file(
-                    '{0}/{1}.tsv'.format(keywords['filename'], l),
+                    '{0}/{1}'.format(keywords['filename'], l),
                     '\n'.join(lines),
                     'tsv')
 

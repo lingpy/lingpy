@@ -130,7 +130,7 @@ def ipa2tokens(
     nasals = 'ãũẽĩõ'
     nasal_char = "\u0303"
     semi_diacritics = kw['semi_diacritics']
-    nogos = "_"
+    nogos = "_◦"
 
 
     for char in istring:

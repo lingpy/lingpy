@@ -651,6 +651,9 @@ class Alignments(Wordlist):
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
             self._meta['msa'] = {ref:{}}
+        if ref not in self._meta['msa']:
+            self._meta['msa'][ref] = {}
+        if not self._meta['msa'][ref]:
             for key,value in self.etd[ref].items():
                 tmp = [x for x in value if x != 0]
                 seqids = []
@@ -689,7 +692,7 @@ class Alignments(Wordlist):
                             else:
                                 d['alignment'] += [string]
                                 
-                        d['alignment'] = normalize_alignment(d['alignment'])
+                    d['alignment'] = normalize_alignment(d['alignment'])
                         
                     self._meta['msa'][ref][key] = d
 
@@ -872,9 +875,10 @@ class Alignments(Wordlist):
                     m.lib_align(**kw)
 
                 if kw['iteration']:
+                    m.iterate_similar_gap_sites()
                     m.iterate_clusters(0.5)
                     m.iterate_orphans()
-                    m.iterate_similar_gap_sites()
+
 
                 if kw['swap_check']:
                     m.swap_check()

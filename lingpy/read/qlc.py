@@ -21,30 +21,41 @@ def normalize_alignment(alignment):
     deleted, and all sequences will be stretched to equal length by adding
     additional gap characters in the end of smaller sequences.
     """
+    # clone the alignment
+    alm_clone = [[x for x in y] for y in alignment]
 
     # first check for alms of different length
-    alm_lens = [len(alm) for alm in alignment]
+    alm_lens = [len(alm) for alm in alm_clone]
     if alm_lens.count(1) == len(alm_lens):
-        for i,alm in enumerate(alignment):
-            alignment[i] = alm[0].split(' ')
-            alm_lens[i] = len(alignment[i])
+        for i,alm in enumerate(alm_clone):
+            alm_clone[i] = alm[0].split(' ')
+            alm_lens[i] = len(alm_clone[i])
 
     if len(set(alm_lens)) > 1:
         max_len = max(alm_lens)
-        for i,alm in enumerate(alignment):
+        for i,alm in enumerate(alm_clone):
             new_alm = alm + ['-' for x in range(max_len)]
-            alignment[i] = new_alm[:max_len]
+            alm_clone[i] = new_alm[:max_len]
 
     # then check for alms consisting only of gaps
-    cols = misc.transpose(alignment)
+    cols = misc.transpose(alm_clone)
     idxs = []
     for i,col in enumerate(cols):
         if set(col) == set('-'):
             idxs += [i]
     for idx in idxs[::-1]:
-        for i,alm in enumerate(alignment):
-            del alignment[i][idx]
-    return alignment
+        for i,alm in enumerate(alm_clone):
+            del alm_clone[i][idx]
+    if alignment != alm_clone:
+        print('modified the alignment')
+        for i in range(len(alignment)):
+            print(' '.join(alignment[i]))
+            print(' '.join(alm_clone[i]))
+            print('')
+        print('')
+        return alm_clone
+    else:
+        return alignment
 
 def _list2msa(
         msa_lines,
