@@ -3351,6 +3351,7 @@ class PhyBo(Wordlist):
         backend = mpl.get_backend()
         if usetex and backend != 'pgf':
             plt.switch_backend('pgf')
+            mpl.rcParams['text.latex.unicode'] = True
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
@@ -3803,6 +3804,8 @@ class PhyBo(Wordlist):
         backend = mpl.get_backend()
         if usetex and backend != 'pgf':
             plt.switch_backend('pgf')
+            mpl.rcParams['text.latex.unicode'] = True
+
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
@@ -4359,6 +4362,7 @@ class PhyBo(Wordlist):
         backend = mpl.get_backend()
         if usetex and backend != 'pgf':
             plt.switch_backend('pgf')
+            mpl.rcParams['text.latex.unicode'] = True
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
@@ -5082,13 +5086,14 @@ class PhyBo(Wordlist):
             backend = mpl.get_backend()
             if keywords['usetex'] and backend != 'pgf':
                 plt.switch_backend('pgf')
+                mpl.rcParams['text.latex.unicode'] = True
             elif not keywords['usetex'] and backend != 'TkAgg':
                 plt.switch_backend('TkAgg')
 
             # check for preamble settings
             if keywords['latex_preamble']:
                 mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
-
+            
             # make a graph
             graph = nx.Graph()
 
