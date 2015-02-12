@@ -3745,7 +3745,7 @@ class PhyBo(Wordlist):
 
 
         # save the figure
-        plt.savefig(filename+'.'+fileformat,bbbox_inches='tight')
+        plt.savefig(filename+'.'+fileformat)
         plt.clf()
         log.file_written(filename + '.' + fileformat)
         return
