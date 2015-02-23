@@ -41,7 +41,7 @@ class Tokenizer(object):
     -----
 
     The Tokenizer reads in an orthography profile and calls a helper 
-    class to build a trie data structure, which stores the possible Unicode 
+    class to build a tree data structure, which stores the possible Unicode 
     character combinations that are specified in the orthography profile 
     and appear in the data source.
 
@@ -115,7 +115,7 @@ class Tokenizer(object):
 
         # orthography profile processing
         if self.orthography_profile:
-            # read in orthography profile and create a trie structure for tokenization
+            # read in orthography profile and create a tree structure for tokenization
             self.root = createTree(self.orthography_profile)
 
             # store column labels from the orthography profile
@@ -172,7 +172,7 @@ class Tokenizer(object):
                 self.mappings[grapheme, self.column_labels[i].lower()] = token
                 log.debug('%s %s' % (grapheme, self.column_labels[i].lower()))
 
-        # print the trie structure if debug mode is on
+        # print the tree structure if debug mode is on
         if log.get_logger().getEffectiveLevel() <= logging.INFO:
             log.debug("A graphical representation of your orthography profile in a tree ('*' denotes sentinels):\n")
             printTree(self.root, "")
@@ -531,7 +531,7 @@ class Tokenizer(object):
 # ---------- Tree node --------
 class TreeNode(object):
     """
-    Private class that creates the trie data structure from the orthography profile for parsing.
+    Private class that creates the tree data structure from the orthography profile for parsing.
     """
 
     def __init__(self, char):
