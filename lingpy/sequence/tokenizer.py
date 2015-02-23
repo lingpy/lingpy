@@ -47,7 +47,7 @@ class Tokenizer(object):
 
     For example, an orthography profile might specify that in source X 
     <uu> is a single grapheme (Unicode parlance: tailored grapheme) and 
-    thererfore it should be chunked as so. Given an orthography profile and 
+    therefore it should be chunked as so. Given an orthography profile and 
     some data to parse, the process would look like this:
 
     input string example: uubo uubo
@@ -104,8 +104,6 @@ class Tokenizer(object):
 	b aː tʃ    
 
     """
-    grapheme_pattern = re.compile("\X", re.UNICODE)
-
     def __init__(self, orthography_profile=None):
         if orthography_profile and not os.path.exists(orthography_profile):
             raise ValueError("The orthography profile you specified does not exist!")
@@ -136,7 +134,15 @@ class Tokenizer(object):
                 self.op_rules = []
                 self.op_replacements = []
                 self._init_rules(self.orthography_profile_rules)
-
+        else:
+            try:
+                import regex as re
+            except ImportError:
+                raise ImportError(
+                    "Please install the `regex` module to use Tokenizer without an orthography_profile."
+                )
+            self.grapheme_pattern = re.compile("\X", re.UNICODE)
+            
         log.debug("Orthography profile: %s" % self.orthography_profile)
         log.debug("Orthography rules: %s" % self.orthography_profile_rules)
         log.debug("Columns labels: %s" % self.column_labels)
