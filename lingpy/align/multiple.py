@@ -676,7 +676,7 @@ class Multiple(object):
                     if k >= 0]) + 0.5) for col in sonarA]
                 consB = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                     if k >= 0]) + 0.5) for col in sonarB]
-                self.log.warn("There are emtpy segments in the consensus.")
+                self.log.warn("There are empty segments in the consensus.")
                 if log.get_level() <= logging.INFO:
                     print(' '.join([str(X) for X in consA]))
                     print(' '.join([str(X) for X in consB]))
@@ -879,7 +879,7 @@ class Multiple(object):
                 try:
                     consensus = [int(sum([k for k in col if k >= 0]) / len([k for k in col
                         if k >= 0]) + 0.5) for col in sonars]
-                    self.log.warn("There are emtpy segments in the consensus.")
+                    self.log.warn("There are empty segments in the consensus.")
                     if log.get_level() <= logging.INFO:
                         print(consensus)
 
