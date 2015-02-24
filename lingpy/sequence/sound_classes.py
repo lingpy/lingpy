@@ -235,6 +235,99 @@ def ipa2tokens(
     
     return out
 
+def syllabify(seq, alignment=False, breakpoints=False):
+    """
+    Carry out a simple syllabification of a sequence, using sonority as a proxy.
+
+    Note
+    ----
+    When analyzing the sequence, we start a new syllable in all cases where we
+    reach a deepest point.
+
+    Returns
+    -------
+    syllable : list
+        A nested list, representing the structure of the syllable.
+    """
+    # check for alignment keyword
+    if alignment:
+
+        if ' ' in seq:
+            seq = seq.split(' ')
+        alm = [x for x in seq]
+        
+        seq = [s for s in seq if s != '-']
+    
+    # we assume we are dealing with tokens if the syllable is a list.
+    if type(seq) == list:
+        listed_seq = [s for s in seq]
+    elif ' ' in seq:
+        listed_seq = seq.split(' ')
+    else:
+        listed_seq = ipa2tokens(seq)
+
+    profile = [0] + [int(i) for i in tokens2class(listed_seq, 'art')] + [0]
+    
+    new_syl = False
+    breaks = []
+    for i in range(1,len(profile)-1):
+        # get the pro-tokens
+        p1,p2,p3 = profile[i-1],profile[i],profile[i+1]
+
+        # get the char
+        char = listed_seq[i-1]
+        
+        # simple rule: we start a new syllable, if p2 is smaller or equal to p1 and p3
+        # is larger than p2
+        if p1 >= p2 < p3:
+            new_syl = True
+
+        # get the char before, after
+        if new_syl:
+            breaks += [rcParams['morpheme_separator'],char]
+            new_syl = False
+        else:
+            breaks += [char]
+    
+    # if the alignment option is chosen, we need to re-assign the gaps to the
+    # current form
+    if alignment:
+        out = []
+        idxA,idxB = 0,0
+        bpoints = []
+        lastbp = 0
+        
+        while idxB < len(alm) and idxA < len(breaks):
+            charA = breaks[idxA]
+            charB = alm[idxB]
+
+            if charA == charB:
+                idxA += 1
+                idxB += 1
+                out += [charA]
+
+            elif charB == '-':
+                idxB += 1
+                out += [charB]
+
+            elif charA == rcParams['morpheme_separator']:
+                idxA += 1
+                out += [charA]
+                bpoints += [(lastbp,len(out)-1)]
+                lastbp = len(out)-1
+
+        bpoints += [(lastbp,len(out))]
+
+        if not breakpoints:
+            return out
+        else:
+            return bpoints
+
+        
+
+
+    return breaks
+
 def asjp2tokens(
         seq,
         merge_vowels = True

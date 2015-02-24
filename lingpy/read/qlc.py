@@ -8,10 +8,64 @@ from ..algorithm import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
+from .. import log
 import json
 import os
 import unicodedata
 from ..util import read_text_file
+
+def reduce_alignment(alignment):
+    """
+    Function reduces a given alignment.
+    
+    Note
+    ----
+    Reduction here means that the output alignment consists only of those parts
+    which have not been marked to be ignored by the user (parts in brackets).
+    It requires that all data is properly coded. If reduction fails, this will
+    throw a warning, and all brackets are simply removed in the output
+    alignment.
+    """
+    
+    # check for bracket indices in all columns
+    cols = misc.transpose(alignment)
+    
+    ignore_indices = []
+    ignore = False
+    for i,col in enumerate(cols):
+        reduced_col = sorted(set(col))
+        
+        if '(' in reduced_col:
+            if len(reduced_col) == 1:
+                ignore_indices += [i] 
+                ignore = True
+            else:
+                ignore = False
+        elif ')' in reduced_col:
+            if len(reduced_col) == 1:
+                ignore_indices += [i]
+                ignore = False
+            else:
+                ignore_indices = []
+        elif ignore:
+            ignore_indices += [i]
+
+    if ignore_indices:
+        new_cols = []
+        for i,col in enumerate(cols):
+            if i not in ignore_indices:
+                new_cols += [col]
+    else:
+        new_cols = cols
+
+    new_alm = misc.transpose(new_cols)
+
+    for i,alm in enumerate(new_alm):
+        for j,char in enumerate(alm):
+            if char in '()':
+                new_alm[i][j] = '-'
+
+    return new_alm
 
 def normalize_alignment(alignment):
     """
@@ -47,12 +101,11 @@ def normalize_alignment(alignment):
         for i,alm in enumerate(alm_clone):
             del alm_clone[i][idx]
     if alignment != alm_clone:
-        print('modified the alignment')
+        lgtxt = '[!] Modified the alignment:\n'
         for i in range(len(alignment)):
-            print(' '.join(alignment[i]))
-            print(' '.join(alm_clone[i]))
-            print('')
-        print('')
+            lgtxt += '[!] '+ ' '.join(alignment[i]) + '->'
+            lgtxt += ' '.join(alm_clone[i]) + '\n'
+        log.warn(lgtxt)
         return alm_clone
     else:
         return alignment

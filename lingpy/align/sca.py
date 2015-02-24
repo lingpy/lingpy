@@ -22,7 +22,7 @@ import sys
 
 from six import text_type
 
-from ..read.qlc import read_msa, normalize_alignment
+from ..read.qlc import read_msa, normalize_alignment, reduce_alignment
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
 from ..convert import html
@@ -695,7 +695,45 @@ class Alignments(Wordlist):
                     d['alignment'] = normalize_alignment(d['alignment'])
                         
                     self._meta['msa'][ref][key] = d
+    
+    def reduce_alignments(self, ref='cogid'):
+        """
+        Function reduces alignments which contain columns that are marked to be \
+                ignored by the user.
 
+        Note
+        ----
+        This function changes the data only internally: All alignments are
+        checked as to whether they contain data that should be ignored. If this
+        is the case, the alignments are then reduced, and stored in a specific
+        item of the alignment string. If the method doesn't find any instances
+        for reduction, it still makes the copies of the alignments in order to
+        guarantee that the alignments with with we want to work are at the same
+        place in the dictionary.
+        """
+        if not 'alignment' in self.header:
+            raise ValueError('[!] No alignments found in your data. You' +\
+                ' carry out an alignment analysis first!')
+
+        # dictionary to add new alignments class afterwards for providing quick
+        # access
+        D = {}
+
+        for k,d in self._meta['msa'][ref].items():
+            
+            ralms = reduce_alignment(d['alignment'])
+            if len(ralms[0]) != len(d['alignment'][0]):
+                log.warn('Found an alignment that could be reduced.')
+            d['_alignment'] = ralms
+            for idx,alm in zip(d['ID'],d['_alignment']):
+                D[idx] = alm
+        for k in self:
+            if k not in D:
+                D[k] = ['']
+        self.add_entries('_alignment', D, lambda x: x)
+
+
+            
     def _msa2col(
             self,
             ref='cogid'

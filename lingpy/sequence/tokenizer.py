@@ -134,6 +134,7 @@ class Tokenizer(object):
                 self.op_rules = []
                 self.op_replacements = []
                 self._init_rules(self.orthography_profile_rules)
+<<<<<<< Updated upstream
         else:
             try:
                 import regex as re
@@ -143,6 +144,7 @@ class Tokenizer(object):
                 )
             self.grapheme_pattern = re.compile("\X", re.UNICODE)
             
+
         log.debug("Orthography profile: %s" % self.orthography_profile)
         log.debug("Orthography rules: %s" % self.orthography_profile_rules)
         log.debug("Columns labels: %s" % self.column_labels)
@@ -285,7 +287,7 @@ class Tokenizer(object):
                 parse = " "+self.find_missing_characters(self.characters(word))
                 # write problematic stuff to standard error
                 log.debug("The string '{0}' does not parse given the specified orthography profile {1}.\n".format(word, self.orthography_profile))
-
+            
             parses.append(parse)
 
         # remove the outter word boundaries

@@ -14,7 +14,6 @@ from six import text_type
 import lingpy
 from lingpy.log import get_logger, get_level
 
-
 class TemporaryPath(object):
     def __init__(self, suffix=''):
         fp = NamedTemporaryFile(suffix=suffix)
