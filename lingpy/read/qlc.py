@@ -8,7 +8,7 @@ from ..algorithm import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
-from .. import log
+from ..log import warn
 import json
 import os
 import unicodedata
@@ -105,7 +105,7 @@ def normalize_alignment(alignment):
         for i in range(len(alignment)):
             lgtxt += '[!] '+ ' '.join(alignment[i]) + '->'
             lgtxt += ' '.join(alm_clone[i]) + '\n'
-        log.warn(lgtxt)
+        warn(lgtxt)
         return alm_clone
     else:
         return alignment
