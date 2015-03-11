@@ -134,7 +134,6 @@ class Tokenizer(object):
                 self.op_rules = []
                 self.op_replacements = []
                 self._init_rules(self.orthography_profile_rules)
-<<<<<<< Updated upstream
         else:
             try:
                 import regex as re
