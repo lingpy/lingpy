@@ -15,11 +15,11 @@ import os
 import codecs
 
 from .._settings import rcParams
-from .. import log
+from ..log import *
 try:
     from .derive import compile_model, compile_dvt
 except ImportError:
-    log.missing_module('networkx')
+    missing_module('networkx')
 
 from ..algorithm import misc
 from ..read import *

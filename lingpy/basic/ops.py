@@ -201,7 +201,7 @@ def wl2dict(
     
     return out
 
-def renumber(wordlist,source,target=''):
+def renumber(wordlist,source,target='', override=False):
     """
     Create numerical identifiers from string identifiers.
     """
@@ -223,7 +223,7 @@ def renumber(wordlist,source,target=''):
     # make converter
     converter = dict(zip(sources,targets))
     
-    wordlist.add_entries(target,source,lambda x:converter[x])
+    wordlist.add_entries(target,source,lambda x:converter[x], override=override)
 
     # add stuff to meta
     wordlist._meta[source+'2'+target] = converter
@@ -560,8 +560,14 @@ def triple2tsv(infile, output="table"):
     D = {}
     idxs = set([])
     cols = set([])
+    
+    if not isinstance(infile, list):
+        lines = util.read_text_file(infile, normalize='NFD', lines=True)
+    else:
+        lines = infile # shallow copy is ok here
 
-    for line in util.read_text_file(infile, lines=True):
+
+    for line in lines: 
         a,b,c = line.split('\t')
         try:
             D[a][b] = c
@@ -576,7 +582,7 @@ def triple2tsv(infile, output="table"):
     
     idxs = sorted(idxs)
     cols = sorted(cols)
-    table = [[0] + [col for col in cols] for idx in idxs]
+    table = [[0] + ['' for col in cols] for idx in idxs]
     
     for i,idx in enumerate(idxs):
         table[i][0] = idx

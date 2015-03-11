@@ -49,10 +49,17 @@ def test_ipa2tokens():
     
     for a,b in tokens:
         
-        tks = ' '.join(ipa2tokens(a, merge_vowels=False))
+        tks = ' '.join(ipa2tokens(a, merge_vowels=False, merge_geminates=False))
 
         # we check for two variants, since we don't know whether vowels are
         # merged or not in the test data
+        assert tks == b
+
+    tokens = csv2list(test_data('test_tokenization_nasals.tsv'))
+    for a,b in tokens:
+        print(tks)
+        tks = ' '.join(ipa2tokens(a, merge_vowels=True, merge_geminates=True,
+            expand_nasals=True, semi_diacritics='h'))
         assert tks == b
 
 def test_token2class():

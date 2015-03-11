@@ -12,7 +12,7 @@ __date__="2014-09-30"
 import logging
 
 from .csv import csv2list
-from .. import log
+from lingpy import log
 
 
 def star2qlc(filename, clean_taxnames=False, debug=False):

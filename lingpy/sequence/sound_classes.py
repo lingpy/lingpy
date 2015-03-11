@@ -51,10 +51,25 @@ def ipa2tokens(
         consecutive vowels should not be treated as diphtongs or for diacritics
         that are put before the following letter.
     
-    merge_vowels : bool
+    merge_vowels : bool (default=False)
         Indicate, whether vowels should be merged into diphtongs
         (default=True), or whether each vowel symbol should be considered
         separately.
+
+    merge_geminates : bool (default=False)
+        Indicate, whether identical symbols should be merged into one token, or
+        rather be kept separate.
+
+    excand_nasals : bool (default=False)
+
+    semi_diacritics: str (default='')
+        Indicate which symbols shall be treated as "semi-diacritics", that is,
+        as symbols which can occur on their own, but which eventually, when
+        preceded by a consonant, will form clusters with it. If you want to
+        disable this features, just set the keyword to an empty string.
+    clean_string : bool (default=False)
+        Conduct a rough string-cleaning strategy by which all items between
+        brackets are removed along with the brackets, and 
 
     Returns
     -------
@@ -76,15 +91,22 @@ def ipa2tokens(
     """
     # go for defaults
     kw = dict(
-            vowels = rcParams['vowels'],
-            diacritics = rcParams['diacritics'],
-            tones = rcParams['tones'],
-            combiners = rcParams['combiners'],
             breaks = rcParams['breaks'],
+            combiners = rcParams['combiners'],
+            diacritics = rcParams['diacritics'],
+            expand_nasals = False,
+            merge_geminates = True,
+            merge_vowels = rcParams['merge_vowels'],
+            semi_diacritics = '',
             stress = rcParams['stress'],
-            merge_vowels = rcParams['merge_vowels']
+            tones = rcParams['tones'],
+            vowels = rcParams['vowels'],
+            clean_sequence = False # add this later, not today XXX
             )
     kw.update(keywords)
+    
+    if kw['clean_sequence']:
+        raise ValueError("This part has not yet been implemented!")
 
     # check for pre-tokenized strings
     if ' ' in istring:
@@ -102,8 +124,22 @@ def ipa2tokens(
     tone = False # no tone
     merge = False # no merge command
     start = True # start of unit
+    nasal = False
+    
+    # define nasals and nasal chars and semi_diacritics
+    nasals = 'ãũẽĩõ'
+    nasal_char = "\u0303"
+    semi_diacritics = kw['semi_diacritics']
+    nogos = "_◦"
+
 
     for char in istring:
+        # check for nasal stack and vowel environment
+        if nasal:
+            if char not in kw['vowels'] and char not in kw['diacritics']:
+                out += [rcParams['nasal_placeholder']]
+                nasal = False
+
         # check for breaks first, since they force us to start anew
         if char in kw['breaks']:
             start = True
@@ -132,6 +168,16 @@ def ipa2tokens(
             if char in kw['vowels']:
                 vowel = True
             merge = False
+
+        # check for nasals in NFC normalization and non-normalizable nasals
+        elif kw['expand_nasals'] and char == nasal_char and vowel:
+            out[-1] += char
+            start = False
+            nasal = True
+
+        # check for weak diacritics
+        elif char in semi_diacritics and not start and not vowel and not tone and out[-1] not in nogos:
+            out[-1] += char
         
         # check for diacritics
         elif char in kw['diacritics']:
@@ -151,6 +197,9 @@ def ipa2tokens(
                 vowel = True
             start = False
             tone = False
+
+            if kw['expand_nasals'] and char in nasals:
+                nasal = True
         
         # check for tones
         elif char in kw['tones']:
@@ -170,7 +219,114 @@ def ipa2tokens(
             start = False
             tone = False
 
+    if nasal:
+        out += [rcParams['nasal_placeholder']]
+
+    if kw['merge_geminates']:
+        new_out = [out[0]]
+        for i in range(len(out) -1):
+            outA = out[i]
+            outB = out[i+1]
+            if outA == outB:
+                new_out[-1] += outB
+            else:
+                new_out += [outB]
+        return new_out
+    
     return out
+
+def syllabify(seq, alignment=False, breakpoints=False):
+    """
+    Carry out a simple syllabification of a sequence, using sonority as a proxy.
+
+    Note
+    ----
+    When analyzing the sequence, we start a new syllable in all cases where we
+    reach a deepest point.
+
+    Returns
+    -------
+    syllable : list
+        A nested list, representing the structure of the syllable.
+    """
+    # check for alignment keyword
+    if alignment:
+
+        if ' ' in seq:
+            seq = seq.split(' ')
+        alm = [x for x in seq]
+        
+        seq = [s for s in seq if s != '-']
+    
+    # we assume we are dealing with tokens if the syllable is a list.
+    if type(seq) == list:
+        listed_seq = [s for s in seq]
+    elif ' ' in seq:
+        listed_seq = seq.split(' ')
+    else:
+        listed_seq = ipa2tokens(seq)
+
+    profile = [0] + [int(i) for i in tokens2class(listed_seq, 'art')] + [0]
+    
+    new_syl = False
+    breaks = []
+    for i in range(1,len(profile)-1):
+        # get the pro-tokens
+        p1,p2,p3 = profile[i-1],profile[i],profile[i+1]
+
+        # get the char
+        char = listed_seq[i-1]
+        
+        # simple rule: we start a new syllable, if p2 is smaller or equal to p1 and p3
+        # is larger than p2
+        if p1 >= p2 < p3:
+            new_syl = True
+
+        # get the char before, after
+        if new_syl:
+            breaks += [rcParams['morpheme_separator'],char]
+            new_syl = False
+        else:
+            breaks += [char]
+    
+    # if the alignment option is chosen, we need to re-assign the gaps to the
+    # current form
+    if alignment:
+        out = []
+        idxA,idxB = 0,0
+        bpoints = []
+        lastbp = 0
+        
+        while idxB < len(alm) and idxA < len(breaks):
+            charA = breaks[idxA]
+            charB = alm[idxB]
+
+            if charA == charB:
+                idxA += 1
+                idxB += 1
+                out += [charA]
+
+            elif charB == '-':
+                idxB += 1
+                out += [charB]
+
+            elif charA == rcParams['morpheme_separator']:
+                idxA += 1
+                out += [charA]
+                bpoints += [(lastbp,len(out)-1)]
+                lastbp = len(out)-1
+
+        bpoints += [(lastbp,len(out))]
+
+        if not breakpoints:
+            return out
+        else:
+            return bpoints
+
+        
+
+
+    return breaks
 
 def asjp2tokens(
         seq,

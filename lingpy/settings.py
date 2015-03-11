@@ -141,6 +141,8 @@ rcParamsUpd = dict(
         tree_calc                  = 'neighbor',
         gop                        = -2,
         ref                        = 'cogid',
+        morpheme_separator         = "◦",
+        nasal_placeholder          = "∼"
         )
 rcParams.update(rcParamsUpd)
 

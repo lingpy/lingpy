@@ -264,6 +264,7 @@ def plot_tree(
             ylimb           = False,
             ylimt           = False,
             rotation_mode='anchor',
+            latex_preamble = False,
             )
     for k in default:
         if k not in keywords:
@@ -276,8 +277,12 @@ def plot_tree(
     backend = mpl.get_backend()
     if keywords['usetex'] and backend != 'pgf':
         plt.switch_backend('pgf')
+        mpl.rcParams['text.latex.unicode'] = True
     elif not keywords['usetex'] and backend != 'TkAgg':
         plt.switch_backend('TkAgg')
+
+    if keywords['latex_preamble']:
+        mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
     
     # get the tree-graph
     graph = radial_layout(

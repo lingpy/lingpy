@@ -8,10 +8,64 @@ from ..algorithm import misc
 from .csv import csv2list
 from .phylip import read_dst,read_scorer
 from ..thirdparty import cogent as cg
+from ..log import warn
 import json
 import os
 import unicodedata
 from ..util import read_text_file
+
+def reduce_alignment(alignment):
+    """
+    Function reduces a given alignment.
+    
+    Note
+    ----
+    Reduction here means that the output alignment consists only of those parts
+    which have not been marked to be ignored by the user (parts in brackets).
+    It requires that all data is properly coded. If reduction fails, this will
+    throw a warning, and all brackets are simply removed in the output
+    alignment.
+    """
+    
+    # check for bracket indices in all columns
+    cols = misc.transpose(alignment)
+    
+    ignore_indices = []
+    ignore = False
+    for i,col in enumerate(cols):
+        reduced_col = sorted(set(col))
+        
+        if '(' in reduced_col:
+            if len(reduced_col) == 1:
+                ignore_indices += [i] 
+                ignore = True
+            else:
+                ignore = False
+        elif ')' in reduced_col:
+            if len(reduced_col) == 1:
+                ignore_indices += [i]
+                ignore = False
+            else:
+                ignore_indices = []
+        elif ignore:
+            ignore_indices += [i]
+
+    if ignore_indices:
+        new_cols = []
+        for i,col in enumerate(cols):
+            if i not in ignore_indices:
+                new_cols += [col]
+    else:
+        new_cols = cols
+
+    new_alm = misc.transpose(new_cols)
+
+    for i,alm in enumerate(new_alm):
+        for j,char in enumerate(alm):
+            if char in '()':
+                new_alm[i][j] = '-'
+
+    return new_alm
 
 def normalize_alignment(alignment):
     """
@@ -21,30 +75,40 @@ def normalize_alignment(alignment):
     deleted, and all sequences will be stretched to equal length by adding
     additional gap characters in the end of smaller sequences.
     """
+    # clone the alignment
+    alm_clone = [[x for x in y] for y in alignment]
 
     # first check for alms of different length
-    alm_lens = [len(alm) for alm in alignment]
+    alm_lens = [len(alm) for alm in alm_clone]
     if alm_lens.count(1) == len(alm_lens):
-        for i,alm in enumerate(alignment):
-            alignment[i] = alm[0].split(' ')
-            alm_lens[i] = len(alignment[i])
+        for i,alm in enumerate(alm_clone):
+            alm_clone[i] = alm[0].split(' ')
+            alm_lens[i] = len(alm_clone[i])
 
     if len(set(alm_lens)) > 1:
         max_len = max(alm_lens)
-        for i,alm in enumerate(alignment):
+        for i,alm in enumerate(alm_clone):
             new_alm = alm + ['-' for x in range(max_len)]
-            alignment[i] = new_alm[:max_len]
+            alm_clone[i] = new_alm[:max_len]
 
     # then check for alms consisting only of gaps
-    cols = misc.transpose(alignment)
+    cols = misc.transpose(alm_clone)
     idxs = []
     for i,col in enumerate(cols):
         if set(col) == set('-'):
             idxs += [i]
     for idx in idxs[::-1]:
-        for i,alm in enumerate(alignment):
-            del alignment[i][idx]
-    return alignment
+        for i,alm in enumerate(alm_clone):
+            del alm_clone[i][idx]
+    if alignment != alm_clone:
+        lgtxt = '[!] Modified the alignment:\n'
+        for i in range(len(alignment)):
+            lgtxt += '[!] '+ ' '.join(alignment[i]) + '->'
+            lgtxt += ' '.join(alm_clone[i]) + '\n'
+        warn(lgtxt)
+        return alm_clone
+    else:
+        return alignment
 
 def _list2msa(
         msa_lines,

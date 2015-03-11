@@ -1,13 +1,7 @@
-# author   : Johann-Mattis List, Robert Forkel
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-07-25 12:25
-# modified : 2014-12-02 21:29
+# *-* coding: utf-8 *-*
 """
 Basic parser for text files in QLC format.
 """
-
-__author__="Johann-Mattis List, Robert Forkel"
-__date__="2014-12-02"
 
 import os
 
@@ -163,8 +157,22 @@ class QLCParser(object):
                 check = []
                 for head,i in heads:
                     if i not in check:
-                        self._data[key][i] = self._class[head](self._data[key][i])
-                        check.append(i)
+                        try:
+                            self._data[key][i] = self._class[head](self._data[key][i])
+                            check.append(i)
+                        except:
+                            warn = 'Problem with row {0} in col {1}, expected' \
+                                    + ' «{4}» as datatype but received «{3}» '\
+                                    + ' (ROW: {2}, entry {5}).'
+                            warn = warn.format(
+                                            key,
+                                            i,
+                                            '|'.join(self._data[key]),
+                                            self._data[key][i],
+                                            self._class[head],
+                                            head
+                                            )
+                            log.warn(warn)
 
         # create entry attribute of the wordlist
         self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
@@ -362,8 +370,10 @@ class QLCParser(object):
                     s = self[key]
 
                     # transform according to the function
-                    t = function(s,idxs)
-
+                    try:
+                        t = function(s,idxs)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
                     # add the stuff to the dictionary
                     self[key].append(t)
 
@@ -373,7 +383,11 @@ class QLCParser(object):
                 
                 for key in self:
                     s = source[key]
-                    t = function(s)
+                    try:
+                        t = function(s)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
+                    
                     self[key].append(t)
             
             else:
@@ -387,8 +401,11 @@ class QLCParser(object):
                     s = self[key][idx]
 
                     # transform s
-                    t = function(s,**keywords)
-
+                    try:
+                        t = function(s,**keywords)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
+                    
                     # add
                     self[key].append(t)
         
@@ -409,7 +426,10 @@ class QLCParser(object):
                     s = self[key]
 
                     # transform according to the function
-                    t = function(s,idxs)
+                    try:
+                        t = function(s,idxs)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
 
                     # add the stuff to the dictionary
                     self[key][rIdx] = t
@@ -420,7 +440,11 @@ class QLCParser(object):
                 
                 for key in self:
                     s = source[key]
-                    t = function(s)
+                    try:
+                        t = function(s)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
+
                     self[key][rIdx] = t
 
             else:
@@ -434,7 +458,10 @@ class QLCParser(object):
                     s = self[key][idx]
 
                     # transform s
-                    t = function(s,**keywords)
+                    try:
+                        t = function(s,**keywords)
+                    except:
+                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
 
                     # add
                     self[key][rIdx] = t

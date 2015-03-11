@@ -3,16 +3,6 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-12 11:56
-# modified : 2014-12-02 21:57
-"""
-LexStat algorithm for automatic cognate detection.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
 
 from six import text_type
 # builtin
@@ -562,6 +552,12 @@ class LexStat(Wordlist):
                         weights = [self[pair,"weights"] for pair in pairs]
                         prostrings = [self[pair,"prostrings"] for pair in
                                 pairs]
+                        #tks = [self[pair, 'tokens'] for pair in pairs]
+                        #for X,(a,b) in enumerate(numbers):
+                        #    print(''.join([x[2] for x in a]))
+                        #    print(''.join([x[2] for x in b]))
+                        #    print(tks[X])
+                        #    print('')
                         corrs,included = calign.corrdist(
                                 kw['preprocessing_threshold'],
                                 numbers,
@@ -847,7 +843,7 @@ class LexStat(Wordlist):
             ratio                   = rcParams['lexstat_ratio'],
             vscale                  = rcParams['lexstat_vscale'],
             runs                    = rcParams['lexstat_runs'],
-            #threshold               = rcParams['lexstat_threshold'],
+            threshold               = rcParams['lexstat_threshold'],
             modes                   = rcParams['lexstat_modes'],
             factor                  = rcParams['align_factor'],
             restricted_chars        = rcParams['restricted_chars'],

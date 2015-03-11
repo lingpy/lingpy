@@ -60,8 +60,10 @@ class TestAlignments(WithTempDir):
             tokensA = self.alm[key, 'tokensa'].split(' ')
             tokensB = self.alm[key, 'tokensb'].split(' ')
 
-            new_tokensA = lp.ipa2tokens(ipa, merge_vowels=True)
-            new_tokensB = lp.ipa2tokens(ipa, merge_vowels=False)
+            new_tokensA = lp.ipa2tokens(ipa, merge_vowels=True,
+                    merge_geminates=False)
+            new_tokensB = lp.ipa2tokens(ipa, merge_vowels=False,
+                    merge_geminates=False)
             assert tokensA == new_tokensA
             assert tokensB == new_tokensB
 

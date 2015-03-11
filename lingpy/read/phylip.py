@@ -3,7 +3,6 @@ Module provides functions to read in various formats from the Phylip package.
 """
 
 from ..settings import *
-from .. import log
 
 import re
 from ..algorithm import misc
