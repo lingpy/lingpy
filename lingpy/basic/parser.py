@@ -117,7 +117,7 @@ class QLCParser(object):
                 self._alias[name.upper()] = name.lower()
                 self._class[name.upper()] = str
 
-        # add emtpy alias for empty strings XXX why was that? I can't remember
+        # add empty alias for empty strings XXX why was that? I can't remember
         # why this was important XXX
         self._alias[''] = ''
 
@@ -317,7 +317,7 @@ class QLCParser(object):
             override=False,
             **keywords
     ):
-        # check for emtpy entries etc.
+        # check for empty entries etc.
         if not entry:
             raise ValueError('Entry was not properly specified.')
         
