@@ -4,7 +4,6 @@ Tests for the read.csv module.
 from six import text_type
 from nose.tools import assert_raises
 from lingpy.read.csv import *
-=======
 
 __author__="Johann-Mattis List"
 __date__="2013-11-23"
