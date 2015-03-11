@@ -1,0 +1,17 @@
+PAP	GainLossScenario	NumberOfOrigins
+12:1	Lanzhou:1,Nanchang:1,edge.9:1,Kunming:0	3
+15:2	Shexian:0,edge.24:0,Suzhou:0,root:1	1
+19:2	Tianjin:0,Zhengzhou:1,edge.5:1,Taiyuan:1	3
+1:1	edge.25:1,edge.30:1,edge.6:1,Jinan:0,Qingdao:0,Nanjing:1,Xi’an:1,Nanning:0	5
+20:3	Lanzhou:1,Haikou:1,edge.6:1,Xiamen:1,Qingdao:0,Nanjing:1,Xi’an:1	6
+21:3	Xining:0,Wuhan:0,Wulumuqi:0,Haerbin:0,Xi’an:0,edge.0:0,edge.5:0,Lanzhou:0,Meixian:1,edge.27:1,Guiyang:0,edge.21:1,Hangzhou:0	3
+22:3	Wuhan:1,Nanchang:1,edge.22:1,edge.29:1,Taibei:0,Huhehaote:1,Shanghai:1,Tunxi:1,Wulumuqi:1,Jinan:1	9
+23:3	Wuhan:0,edge.23:1,edge.10:0,Haerbin:0,edge.13:1,Fuzhou:1,Wenzhou:1,Beijing:0,Haikou:1,Xi’an:0	5
+24:3	Taoyuan:1,Wuhan:1,edge.19:1,Shanghai:0	3
+27:3	Chengdu:1,Jian’ou:1	2
+29:3	Shexian:1,Nanjing:1	2
+2:1	Chengdu:1,edge.10:1,Changsha:1,edge.19:1,Beijing:1,Zhengzhou:1,Yinchuan:1,edge.17:1,Xiamen:1,Hangzhou:0	9
+3:1	Xining:1,Kunming:0,edge.22:1,Jinan:1,edge.19:1,Huhehaote:1,Lanzhou:0,Tunxi:1,edge.2:1,Nanchang:1,edge.9:1,Suzhou:0	9
+5:1	Lanzhou:0,Tianjin:0,edge.3:1,Kunming:1,edge.0:1,Xi’an:0,edge.5:1	4
+8:1	Haikou:1,Nanning:1	2
+9:1	Fuzhou:1,Taibei:1	2
