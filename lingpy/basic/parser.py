@@ -1,3 +1,4 @@
+# *-* coding: utf-8 *-*
 """
 Basic parser for text files in QLC format.
 """
