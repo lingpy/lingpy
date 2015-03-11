@@ -567,7 +567,8 @@ def triple2tsv(infile, output="table"):
         lines = infile # shallow copy is ok here
 
 
-    for a,b,c in lines: 
+    for line in lines: 
+        a,b,c = line.split('\t')
         try:
             D[a][b] = c
         except KeyError:
