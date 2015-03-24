@@ -60,7 +60,7 @@ def ipa2tokens(
         Indicate, whether identical symbols should be merged into one token, or
         rather be kept separate.
 
-    excand_nasals : bool (default=False)
+    expand_nasals : bool (default=False)
 
     semi_diacritics: str (default='')
         Indicate which symbols shall be treated as "semi-diacritics", that is,
@@ -280,7 +280,10 @@ def syllabify(seq, alignment=False, breakpoints=False):
         # simple rule: we start a new syllable, if p2 is smaller or equal to p1 and p3
         # is larger than p2
         if p1 >= p2 < p3:
-            new_syl = True
+            if p3 == 8:
+                new_syl = False
+            else:
+                new_syl = True
 
         # get the char before, after
         if new_syl:

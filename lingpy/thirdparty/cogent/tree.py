@@ -411,6 +411,9 @@ class TreeNode(object):
                     yield curr
                 if curr is self:
                     break
+                # add this line to prevent error if parent is none @LinguList
+                if curr.Parent is None:
+                    break
                 curr = curr.Parent
                 curr_children = curr.Children
                 curr_children_len = len(curr_children)

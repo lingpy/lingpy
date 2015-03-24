@@ -67,11 +67,18 @@ class LexStat(Wordlist):
         * ``V`` for all vowels,
         * ``T`` for all tones, and 
         * ``_`` for word-breaks.
-
+    
     check : bool (default=False)
-        If set to c{True}, the input file will first be checked for errors
+        If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
         file ``errors.log``.
+
+    no_bscorer: bool (default=False)
+        If set to **True**, this will suppress the creation of a
+        language-specific scoring function (which may become quite large and is
+        additional ballast if the method "lexstat" is not used after all. If
+        you use the "lexstat" method, however, this needs to be set to
+        **False**.
 
     Notes
     -----
@@ -93,7 +100,8 @@ class LexStat(Wordlist):
                 'transform'    : rcParams['lexstat_transform'],
                 "check"        : False,
                 "apply_checks" : False,
-                "defaults"     : False
+                "defaults"     : False,
+                "no_bscorer"   : False
                 }
         kw.update(keywords)
         if kw['defaults']: return kw
@@ -303,7 +311,7 @@ class LexStat(Wordlist):
             self._meta['scorer'] = {}
 
         # create a scoring dictionary
-        if not hasattr(self,"bscorer"):
+        if not hasattr(self,"bscorer") and not kw['no_bscorer']:
             matrix = [[0.0 for i in range(len(self.chars))] for j in range(len(self.chars))]
             for i,charA in enumerate(self.chars):
                 for j,charB in enumerate(self.chars):
@@ -326,7 +334,7 @@ class LexStat(Wordlist):
         
             self.bscorer = misc.ScoreDict(self.chars,matrix)
             self._meta['scorer']['bscorer'] = self.bscorer
-        else:
+        elif not kw['no_bscorer']:
             self.bscorer = self._meta['scorer']['bscorer']
 
         # check for rscorer
@@ -1196,8 +1204,8 @@ class LexStat(Wordlist):
         elif method == 'sca':
             # define the function with help of lambda
             function = lambda idxA,idxB: calign.align_pair(
-                    self[idxA,'numbers'],
-                    self[idxB,'numbers'],
+                    ['.'.join(n.split('.')[1:]) for n in self[idxA,'numbers']],
+                    ['.'.join(n.split('.')[1:]) for n in self[idxB,'numbers']],
                     self[idxA,'weights'],
                     self[idxB,'weights'],
                     self[idxA,'prostrings'],
@@ -1205,7 +1213,7 @@ class LexStat(Wordlist):
                     gop,
                     scale,
                     factor,
-                    self.bscorer,
+                    self.rscorer,
                     mode,
                     restricted_chars,
                     1

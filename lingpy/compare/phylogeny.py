@@ -2555,17 +2555,6 @@ class PhyBo(Wordlist):
             # get the tip-taxa for each origin
             tips = []
 
-            # get the losses 
-            #tmp_loss = sorted(
-            #        [x[0] for x in gls if x[1] == 0],
-            #        key = lambda x:len(
-            #            self.tree.getNodeMatchingName(x).getTipNames()
-            #            )
-            #        )
-            #losses = []
-            #
-            #for l in tmp_loss:
-            #    losses += self.tree.getNodeMatchingName(l).getTipNames()
             losses = [a for a,b in zip(self.taxa,self.paps[key]) if b == 0]
 
             tipsofar = []
@@ -2579,14 +2568,6 @@ class PhyBo(Wordlist):
                             ]
                 tipsofar += new_tips[1]
                             
-                #tips += [
-                #        (
-                #            i+1,
-                #            [t for t in self.tree.getNodeMatchingName(
-                #                ori
-                #                ).getTipNames() if t not in losses]
-                #            )
-                #        ]
                 tips += [tuple(new_tips)]
 
             # now, all set of origins with their tips are there, we store them
