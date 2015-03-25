@@ -1,6 +1,6 @@
-from lingpy.tests.util import test_data
-from lingpy.read.csv import *
-from lingpy.meaning.glosses import parse_gloss
+from lingpyd.tests.util import test_data
+from lingpyd.read.csv import *
+from lingpyd.meaning.glosses import parse_gloss, compare_conceptlists
 
 def test_parse_gloss():
 
@@ -9,10 +9,19 @@ def test_parse_gloss():
     for line,target in zip(data,target_list):
         datum = line[1]
         glosses = parse_gloss(datum)
-        for a,b,c,d,e,f in glosses:
-            print(datum,'=>',','.join([x for x in [a,b,c,d,e,f]]),'\t',a)
+        for a,b,c,d,e,f,g,h in glosses:
+            print(datum,'=>',','.join([x for x in [a,b,c,d,e,f,g,h]]),'\t',a)
             assert a == target
 
+def test_conceptlists():
+
+    a,b = compare_conceptlists(test_data('listA.tsv'), test_data('listB.tsv'))
+
+    return a,b
 if __name__ == '__main__':
     test_parse_gloss()
+    out = compare_conceptlists('../test_data/listA.tsv', '../test_data/listB.tsv')
+    
+    for i,line in enumerate(sorted(out, key=lambda x:int(x[-1]))):
+        print(line[4],line[0],line[1],line[2],line[3])
 
