@@ -1,6 +1,6 @@
-from lingpyd.tests.util import test_data
-from lingpyd.read.csv import *
-from lingpyd.meaning.glosses import parse_gloss
+from lingpy.tests.util import test_data
+from lingpy.read.csv import *
+from lingpy.meaning.glosses import parse_gloss
 
 def test_parse_gloss():
 
