@@ -37,6 +37,8 @@ def parse_gloss(gloss, output='list'):
         * the longest constituent, which is identical with the main part if
             there's no whitespace in the main part, otherwise the longest part
             part of the main gloss split by whitespace ("longest_part")
+        * the parts of a gloss, if the constituent contains multiple words
+          ("parts")
         * the original gloss (for the purpose of testing, labelled "gloss")
 
         If "dict" is chosen as output, this returns a list of dictionaries with
@@ -73,6 +75,8 @@ def parse_gloss(gloss, output='list'):
 
     # create output dictionary
     G = []
+
+    gpos = ''
 
     for constituent in constituents:
         if constituent.strip():
@@ -111,11 +115,15 @@ def parse_gloss(gloss, output='list'):
                     ('to','verb'),
                     ]
             pos = ''
-
-            for p,t in pos_markers:
-                if mainpart.startswith(p+' ') and not pos:
-                    mainpart = mainpart[len(p)+1:]
-                    pos = t
+            
+            if gpos:
+                pos = gpos
+            else:
+                for p,t in pos_markers:
+                    if mainpart.startswith(p+' ') and not pos:
+                        mainpart = mainpart[len(p)+1:]
+                        pos = t
+                        gpos = t
             
             # search for strip-off-prefixes
             prefixes = ['be', 'in', 'at']
@@ -124,7 +132,16 @@ def parse_gloss(gloss, output='list'):
                 if mainpart.startswith(p+' ') and not prefix:
                     mainpart = mainpart[len(p)+1:]
                     prefix = p
-            
+
+            # check for a "first part" in case we encounter white space in the
+            # data (and return only the largest string of them)
+            if ' ' in mainpart:
+                parts = mainpart.split(' ')
+                best_part = sorted(parts, key=lambda x: len(x))[-1]
+            else:
+                best_part = mainpart
+                parts = [mainpart]           
+
             # search for pos in comment
             abbreviations = [
                     ('vb','verb'),
@@ -138,22 +155,16 @@ def parse_gloss(gloss, output='list'):
             for p,t in sorted(abbreviations, key=lambda x: len(x),
                     reverse=True):
                 if p in comment and not pos:
-                    pos = t             
-
-            # check for a "first part" in case we encounter white space in the
-            # data (and return only the largest string of them)
-            if ' ' in mainpart:
-                parts = mainpart.split(' ')
-                best_part = sorted(parts, key=lambda x: len(x))[-1]
-            else:
-                best_part = mainpart
+                    pos = t
+                elif p in parts:
+                    pos = t
 
             G += [(mainpart, comment_start, comment, comment_end, pos, prefix,
-                best_part, constituent)]
+                best_part, parts, gloss)]
     
     if output == 'dict':
         return [dict(zip(["main","comment_start", "comment", "comment_end",
-            "pos", "prefix", "longest_part", "gloss"], g)) for g in G]
+            "pos", "prefix", "longest_part", "parts", "gloss"], g)) for g in G]
     return G
 
 
@@ -171,7 +182,7 @@ def compare_conceptlists(list1, list2, output='', match=None):
     
     # check for match quality
     if not match:
-        match = [1,2,3,4]
+        match = [1,2,3,4,5]
         
     # take first list as basic list
     base = csv2list(list1)
@@ -233,27 +244,44 @@ def compare_conceptlists(list1, list2, output='', match=None):
                 else:
                     sims += [(i,j,3)]
             elif a['longest_part'] == b['longest_part']:
-                sims += [(i,j,4)]
-            elif b['longest_part'] in a['gloss']:
-                sims += [(i,j,5)]
-            elif a['longest_part'] in b['gloss']:
+                if a['pos'] == b['pos'] and a['pos']:
+                    sims += [(i,j,4)]
+                else:
+                    sims += [(i,j,5)]
+            elif b['longest_part'] in a['parts']:
                 sims += [(i,j,6)]
+            elif a['longest_part'] in b['parts']:
+                sims += [(i,j,7)]
     
     # get the number of items which were not matched in the second list
     matched = [x[1] for x in sims if x[2] in match]
     not_matched = [idx for idx in C if idx not in matched]
     for idx in not_matched:
-        sims += [(0,idx,7)]
+        sims += [(0,idx,8)]
 
+    # sort the matches, add them to a dictionary
+    best = {}
+    for a,b,c in sims:
+        try:
+            best[b] += [(a,c)]
+        except KeyError:
+            best[b] = [(a,c)]
+    for k,v in best.items():
+
+        best[k] = sorted(set(v), key=lambda x: x[1])
+        
+        if best[k][0][1] in matched:
+            best[k] = [best[k][0]]
+            print(best[k][0][1], best[k])
+
+    
+    print(best[29])
     # prepare the output
     output = []
-    for a,b,c in sims:
-        if c in match:
-            output += [(c,B[a]['gloss'],B[a]['number'], C[b]['gloss'],C[b]['number'])]
-        elif c not in match and c < 7:
-            pass
-        else:
-            output += [(c,'?','?',C[b]['gloss'],C[b]['number'])]
+    for b in best:# in sims:
+        for a,c in best[b]:
+            if c in match:
+                output += [(c,B[a]['gloss'],B[a]['number'], C[b]['gloss'],C[b]['number'])]
             
     return output
 
