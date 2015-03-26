@@ -4,6 +4,7 @@ Module provides functions for the handling of concept glosses in linguistic data
 import re
 from ..read.csv import csv2list
 from ..align.pairwise import edit_dist
+from ..util import write_text_file
 
 def parse_gloss(gloss, output='list'):
     """
@@ -168,7 +169,8 @@ def parse_gloss(gloss, output='list'):
     return G
 
 
-def compare_conceptlists(list1, list2, output='', match=None):
+def compare_conceptlists(list1, list2, output='', match=None, 
+        filename='matches'):
     """
     Function compares two concept lists and outputs suggestions for mapping.
 
@@ -272,17 +274,25 @@ def compare_conceptlists(list1, list2, output='', match=None):
         
         if best[k][0][1] in matched:
             best[k] = [best[k][0]]
-            print(best[k][0][1], best[k])
 
-    
-    print(best[29])
     # prepare the output
-    output = []
+    out = []
     for b in best:# in sims:
         for a,c in best[b]:
             if c in match:
-                output += [(c,B[a]['gloss'],B[a]['number'], C[b]['gloss'],C[b]['number'])]
-            
-    return output
+                out += [(c,B[a]['gloss'],B[a]['number'], C[b]['gloss'],C[b]['number'])]
+    if not output:
+        return out
+
+    elif output == 'tsv':
+
+
+        txt = '\t'.join(comph)+'\tOWID\tQUALITY\n'
+        for line in comp:
+            data = best[int(line[cnum])]
+            for a,b in data:
+                txt += '\t'.join(line)+'\t'+str(a)+'\t'+str(b)+'\n'
+
+        write_text_file(filename, txt)
 
     

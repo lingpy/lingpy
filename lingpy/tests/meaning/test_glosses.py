@@ -15,15 +15,18 @@ def test_parse_gloss():
 
 def test_conceptlists():
 
-    a,b = compare_conceptlists(test_data('listA.tsv'), test_data('listB.tsv'))
+    comparison = compare_conceptlists(test_data('listA.tsv'), test_data('listB.tsv'))
+    
+
+    
 
     return a,b
 if __name__ == '__main__':
     test_parse_gloss()
     out = compare_conceptlists('../test_data/listA.tsv',
             '../test_data/listB.tsv',
-            match=[1,2,3,4,5,6])
+            match=[1,2,3,4,5,6], output='tsv', filename='bla')
     
-    for i,line in enumerate(sorted(out, key=lambda x:int(x[-1]))):
-        print(i+1,line[4],line[0],line[1],line[2],line[3])
+    #for i,line in enumerate(sorted(out, key=lambda x:int(x[-1]))):
+    #    print(i+1,line[4],line[0],line[1],line[2],line[3])
 
