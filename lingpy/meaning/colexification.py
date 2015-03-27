@@ -12,18 +12,23 @@ except ImportError:
     print("Warning") # add log-specification later XXX
 
 
-def _get_colexifications(wordlist, entry='ipa', concept='concept'):
+def _get_colexifications(wordlist, entry='ipa', concept='concept',
+        family='family'):
     """
     Helper function computes colexifications for a given set of languages in a
     wordlist.
     """
+    if family not in wordlist.header:
+        family = 'doculect'
 
     taxa = wordlist.cols
     colexifications = []
     for taxon in taxa:
         
         print('Analyzing taxon {0}...'.format(taxon)) # XXX replace by log info
-
+        
+        tmp_idxs = wordlist.get_list(taxon=taxon, flat=True)
+        tmp_family = wordlist[tmp_idxs[0], family]
         tmp_concepts = wordlist.get_list(taxon=taxon, flat=True,
                 entry=concept)
         tmp_entries = wordlist.get_list(taxon=taxon, flat=True,
@@ -34,9 +39,51 @@ def _get_colexifications(wordlist, entry='ipa', concept='concept'):
             for j,c2 in enumerate(tmp_concepts):
                 if i < j:
                     if tmp_entries[i] == tmp_entries[j] and c1 != c2: 
-                        colexifications += [(c1,c2,taxon,tmp_entries[i])]
+                        colexifications += [(c1,c2,taxon,tmp_family,tmp_entries[i])]
 
     return colexifications
+
+def _get_statistics(wordlist, entry='ipa', concept='concept', family='family'):
+    """
+    Assemble data on occurrence frequency of each concept in the data.
+
+    Returns
+    -------
+    statistics : dict
+        A dictionary with concepts as primary keys and dictionaries as values.
+        The dictionary-values themselves yield various statistics, including
+        the number of language families in which each concept occurs, the
+        number of languages, and the respective words themselves.
+    """
+    # check whether "family" is in the wordlist.header
+    if family not in wordlist.header:
+        family = 'doculect'
+
+    taxa = wordlist.cols
+    statistics = {}
+    for k in wordlist:
+        tmp_concept = wordlist[k,concept]
+        tmp_entry = wordlist[k,entry]
+        tmp_family = wordlist[k,family]
+        tmp_taxon = wordlist[k,'taxon']
+
+        try:
+            statistics[tmp_concept]['families'] += [tmp_family]
+            statistics[tmp_concept]['doculects'] += [tmp_taxon]
+            statistics[tmp_concept]['words'] += [tmp_entry]
+        except KeyError:
+            statistics[tmp_concept] = dict(
+                    families=[tmp_family],
+                    doculects=[tmp_taxon],
+                    words=[tmp_entry])
+    for k in statistics:
+        statistics[k]['family_occ'] = len(set(statistics[k]['families']))
+        statistics[k]['doculect_occ'] = len(set(statistics[k]['doculects']))
+        statistics[k]['word_occ'] = len(statistics[k]['words'])
+        statistics[k]['families'] = sorted(set(statistics[k]['families']))
+        statistics[k]['doculects'] = sorted(set(statistics[k]['doculects']))
+
+    return statistics
 
 def _get_colexifications_by_taxa(colexifications):
     
@@ -75,25 +122,51 @@ def _make_matrix(taxa, colex):
                 matrix[j][i] = dist
     return matrix
 
-def _make_graph(colexifications):
+def _make_graph(colexifications, bipartite=False):
     """
     Return a graph-object from colexification data.
     """
     G = nx.Graph()
-    for c1,c2,t,entry in colexifications:
-        try:
-            G.edge[c1][c2]['weight'] += 1
-            G.edge[c1][c2]['occs'] += [t]
-            G.edge[c1][c2]['entries'] += [entry]
-        except:
-            G.add_edge(c1,c2, weight=1, occs=[t], entries=[entry])
+
+    if not bipartite:
+        for c1,c2,t,f,entry in colexifications:
+            try:
+                G.edge[c1][c2]['families'] += [f]
+                G.edge[c1][c2]['doculects'] += [t]
+                G.edge[c1][c2]['words'] += [entry]
+            except:
+                G.add_node(c1, ntype='concept')
+                G.add_node(c1, ntype='concept')
+                G.add_edge(c1,c2, families=[f], doculects=[t], words=[entry])
+        for a,b,d in G.edges(data=True):
+            d['family_weight'] = len(set(d['families']))
+            d['word_weight'] = len(d['words'])
+            d['doculect_weight'] = len(set(d['doculects']))
+            d['family'] = sorted(set(d['families']))
+            d['doculects'] = sorted(set(d['doculects']))
+            
+    elif bipartite:
+        idx = 1
+        for c1,c2,t,f,entry in colexifications:
+            try:
+                G.edge[t+'.'+str(idx)][c1]['weight'] += 1
+                G.edge[t+'.'+str(idx)][c2]['weight'] += 1
+                idx += 1
+            except:
+                G.add_node(t+'.'+str(idx), ntype='word', entry=entry,
+                        doculect=t, family=f)
+                G.add_node(c1, ntype='concept')
+                G.add_node(c2, ntype='concept')
+                G.add_edge(t+'.'+str(idx),c1,weight=1)
+                G.add_edge(t+'.'+str(idx),c2,weight=1)
+                idx += 1
     
     return G
 
 def colexification_network(wordlist, entry='ipa', concept='concept', 
-        output=None, **keywords):
+        output='', filename='network', bipartite=False, **keywords):
     """
-    Calculate a colexification networkw from a given wordlist object.
+    Calculate a colexification network from a given wordlist object.
 
     Parameters
     ----------
@@ -105,6 +178,16 @@ def colexification_network(wordlist, entry='ipa', concept='concept',
     concept : str (default="concept")
         The reference point for the name of the row containing the concepts. We
         use "concept" as a default.
+    output: str (default='')
+        If output is set to "gml", the resulting network will be written to a
+        textfile in GML format.
+
+    Returns
+    -------
+    G : networkx.Graph
+        A networkx.Graph object.
+
+    
     """
 
     # get a list of the taxa
@@ -115,10 +198,30 @@ def colexification_network(wordlist, entry='ipa', concept='concept',
     G = nx.Graph()
 
     colexifications = _get_colexifications(wordlist, entry, concept)
-    G = _make_graph(colexifications)
+    stats = _get_statistics(wordlist, entry, concept)
+
+    G = _make_graph(colexifications, bipartite=bipartite)
+
+    # we should also add meta-data to the nodes in the graph
+    for node,data in G.nodes(data=True):
+        if data['ntype'] == 'concept':
+            data.update(stats[node])
 
     if not output:
         return G
+    
+    if output == 'gml':
+
+        for node,data in G.nodes(data=True):
+            for k in data:
+                if isinstance(data[k], list):
+                        data[k] = '//'.join([str(x) for x in data[k]])
+        for nA,nB,data in G.edges(data=True):
+            for k in data:
+                if isinstance(data[k], list):
+                    data[k] = '//'.join([str(x) for x in data[k]])
+        nx.write_gml(G, filename+'.gml')
+        print("Data has been written to file {0}.".format(filename+'.gml')) # XXX
 
 def compare_colexifications(wordlist, entry='ipa', concept='concept'):
     """
