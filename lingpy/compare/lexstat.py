@@ -1263,12 +1263,19 @@ class LexStat(Wordlist):
                     flat=True
                     )
 
-            matrix = [] #matrices[concept]
+            matrix = []
             
             for i,idxA in enumerate(indices):
                 for j,idxB in enumerate(indices):
                     if i < j:
-                        d = function(idxA,idxB)
+                        try:
+                            d = function(idxA,idxB)
+                        except ZeroDivisionError:
+                            self.log.warning(
+                                "Encountered Zero-Division for the comparison of {0} and {1}".format(
+                                ''.join(self[idxA,"tokens"]),
+                                ''.join(self[idxB,"tokens"])))
+                            d = 100
                         
                         # append distance score to matrix
                         matrix += [d]

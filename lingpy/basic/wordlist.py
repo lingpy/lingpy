@@ -21,11 +21,11 @@ from six import text_type as str
 
 # basic lingpy imports
 from ..read.qlc import read_qlc
-from ..convert.strings import matrix2dst, pap2nex, pap2csv
+from ..convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from ..settings import rcParams
 from .parser import QLCParser
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc, triple2tsv, tsv2triple
+        wl2qlc, triple2tsv, tsv2triple, wl2multistate
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
@@ -977,7 +977,7 @@ class Wordlist(QLCParser):
                     )
             if fileformat == 'paps.nex':
                 pap2nex(
-                        self.taxa,
+                        self.cols,
                         paps,
                         missing=keywords['missing'],
                         filename=keywords['filename']+'.paps'
@@ -993,7 +993,7 @@ class Wordlist(QLCParser):
         elif fileformat == 'taxa':
             if hasattr(self,'taxa'):
                 out = ''
-                for taxon in self.taxa:
+                for taxon in self.cols:
                     out += taxon + '\n'
                 util.write_text_file(keywords['filename'] + '.taxa', out)
             else:
@@ -1015,7 +1015,7 @@ class Wordlist(QLCParser):
 
             # check for taxa in meta
             if not 'taxa' in self._meta:
-                self._meta['taxa'] = self.taxa
+                self._meta['taxa'] = self.cols
 
             # get the data, in case a subset is chosen
             if not keywords['subset']:
@@ -1154,6 +1154,15 @@ class Wordlist(QLCParser):
                 keywords['filename'],
                 '\n'.join(lines),
                 'starling_' + keywords['entry'] + '.csv')
+        
+        elif fileformat == 'multistate.nex':
+            
+            if not keywords['filename'].endswith('.multistate.nex'):
+                keywords['filename'] += '.multistate.nex'
+                
+            matrix = wl2multistate(self, keywords['ref'])
+            multistate2nex(self.taxa, matrix, keywords['filename'])
+            
 
         elif fileformat == 'separated':
             if not os.path.isdir(keywords['filename']):

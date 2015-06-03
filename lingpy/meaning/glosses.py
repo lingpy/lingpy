@@ -105,7 +105,8 @@ def parse_gloss(gloss, output='list'):
                     comment = comment[:-1]
 
             # search for useless chars
-            mainpart = ''.join([m for m in mainpart if m not in '?!"¨:;,»«´“”*'])
+            mainpart = ''.join([m for m in mainpart if m not in
+                '?!"¨:;,»«´“”*+-'])
             mainpart = mainpart.strip()
             mainpart = mainpart.lower()
 
@@ -151,7 +152,10 @@ def parse_gloss(gloss, output='list'):
                     ('adj','adjective'),
                     ('nn','noun'),
                     ('n.','noun'),
-                    ('adv','adverb')
+                    ('adv','adverb'),
+                    ('noun', 'nount'),
+                    ('verb','verb'),
+                    ('adjective','adjective')
                     ]
             for p,t in sorted(abbreviations, key=lambda x: len(x),
                     reverse=True):
@@ -168,9 +172,49 @@ def parse_gloss(gloss, output='list'):
             "pos", "prefix", "longest_part", "parts", "gloss"], g)) for g in G]
     return G
 
+def compare_concepts(c1, c2):
+    """
+    Debug-function for concept comparison.
+    """
+    
+    c1g = parse_gloss(c1, output='dict')
+    c2g = parse_gloss(c2, output='dict')
+
+    sims = []
+
+    for a in c1g:
+        for b in c2g:
+            
+
+            # first-order-match: identical glosses
+            if a['gloss'] == b['gloss']:
+                sims += [(a['gloss'],b['gloss'],1)] #[(i,j,1)]
+            # second-order match: identical main-parts
+            elif a['main'] == b['gloss'] or a['gloss'] == b['main'] or \
+                    a['main'] == b['main']:
+                # best match if pos matches 
+                if a['pos'] == b['pos']:
+                    sims += [(a['gloss'], b['gloss'],2)] #[(i,j,2)]
+
+                # less good match if pos mismatches
+                else:
+                    sims += [(a['gloss'], b['gloss'],3)] #[(i,j,3)]
+            elif a['longest_part'] == b['longest_part']:
+                if a['pos'] == b['pos'] and a['pos']:
+                    sims += [(a['gloss'],b['gloss'],4)] #[(i,j,4)]
+                else:
+                    sims += [(a['gloss'], b['gloss'],5)] #[(i,j,5)]
+            elif b['longest_part'] in a['parts']:
+                sims += [(a['gloss'],b['gloss'],6)] #[(i,j,6)]
+            elif a['longest_part'] in b['parts']:
+                sims += [(a['gloss'],b['gloss'],7)] #[(i,j,7)]
+            
+            else:
+                sims += [('?','?',8)]
+    return sims
 
 def compare_conceptlists(list1, list2, output='', match=None, 
-        filename='matches'):
+        filename='matches', debug=False, **keywords):
     """
     Function compares two concept lists and outputs suggestions for mapping.
 
@@ -180,11 +224,42 @@ def compare_conceptlists(list1, list2, output='', match=None,
     plausible mapping of concepts in the second list to the first list. All
     suggestions can then be output in various forms, both with multiple matches
     excluded or included, and in textform or in other forms.
+
+    What is important, regarding the output here, is, that the output contains
+    all matches, including non-matched items which occur **in the second list
+    but not in the first list**. Non-matched items which occur in the first
+    list but not in the second list are ignored.
+
+    The syntax for matching types is organized as follows:
+
+    * 1 indicates a full match between glosses, including information on part
+      speech and the like
+    * 2 indicates a very good match between a full gloss and the main part of a
+      gloss or the two main parts of a gloss
+    * 3 indicates a very good match between the main parts of two glosses with
+      non-matching information regarding part of speech
+    * 4 indicates that the longest part of two glosses matches along with the
+      part-of-speech information.
+    * 5 indicates that the longest part of two glosses matches with
+      non-matching part-of-speech information.
+    * 6 indicates that the longest part of the first list is matched by one of
+      the parts in the second list
+    * 7 indicates that the longest part of the second list is matched by one of
+      the parts in the first list
+    * 8 indicates that no match could be found.
     """
     
     # check for match quality
     if not match:
         match = [1,2,3,4,5]
+
+    # check for keywords
+    defaults = dict(
+            id_name = 'CONCEPTICON_ID',
+            gloss_name = 'CONCEPTICON_GLOSS',
+            match_quality = 'MATCH_QUALITY'
+            )
+    defaults.update(keywords)
         
     # take first list as basic list
     base = csv2list(list1)
@@ -217,6 +292,7 @@ def compare_conceptlists(list1, list2, output='', match=None,
             idx += 1
     
     idx = 1
+    line2idx = {}
     C = {}
     for i,line in enumerate(comp):
         gloss = line[cidx]
@@ -224,7 +300,12 @@ def compare_conceptlists(list1, list2, output='', match=None,
         for gdatum in gdata:
             gdatum['number'] = line[cnum] # we won't need "enumerate" XXX
             C[idx] = gdatum
+            try:
+                line2idx[i] += [idx]
+            except KeyError:
+                line2idx[i] = [idx]
             idx += 1
+
 
     # now that we have prepared all the glossed list as planned, we compare
     # them item by item and check for similarity
@@ -268,6 +349,7 @@ def compare_conceptlists(list1, list2, output='', match=None,
             best[b] += [(a,c)]
         except KeyError:
             best[b] = [(a,c)]
+
     for k,v in best.items():
 
         best[k] = sorted(set(v), key=lambda x: x[1])
@@ -275,24 +357,62 @@ def compare_conceptlists(list1, list2, output='', match=None,
         if best[k][0][1] in matched:
             best[k] = [best[k][0]]
 
+
     # prepare the output
     out = []
     for b in best:# in sims:
         for a,c in best[b]:
             if c in match:
                 out += [(c,B[a]['gloss'],B[a]['number'], C[b]['gloss'],C[b]['number'])]
+            elif c == 0:
+                out += [(c,'?', '0', C[b]['gloss'], C[b]['number'])]
+
     if not output:
         return out
-
+    
     elif output == 'tsv':
+        
+        added = []
+        txt = '\t'.join(comph)+'\t{0}\t{1}\t{2}\n'.format(
+                defaults['id_name'],
+                defaults['gloss_name'],
+                defaults['match_quality'])
+        for i,line in enumerate(comp):
+
+            for idx in line2idx[i]:
+                
+                if idx in best:
+                    data = best[idx]
+                else:
+                    data = [('?','0')]
+                
+                for a,b in data:
+                    if b in match or b == 8:
+                        try: 
+                            base_gloss = B[a]['gloss']
+                            base_num = B[a]['number']
+                        except KeyError:
+                            base_gloss = '???'
+                            base_num = '0'
+
+                        nline = '\t'.join(line)+'\t'+str(base_num)+'\t'+base_gloss+'\t'+str(b)+'\n'
+                        
+                        if nline not in added:
+                            txt += nline
+                            added += [nline]
+                    else:
+                        nline = '\t'.join(line)+'\t???\t???\t8\n'
+                        if nline not in added:
+                            txt += nline
+                            added += [nline]
+                            
 
 
-        txt = '\t'.join(comph)+'\tOWID\tQUALITY\n'
-        for line in comp:
-            data = best[int(line[cnum])]
-            for a,b in data:
-                txt += '\t'.join(line)+'\t'+str(a)+'\t'+str(b)+'\n'
+            txt += '\n'
 
         write_text_file(filename, txt)
+
+    if debug:
+        return sims
 
     

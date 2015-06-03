@@ -353,4 +353,57 @@ def pap2csv(
     util.write_text_file(filename + '.csv', out)
     return
 
+def multistate2nex(taxa, matrix, filename=''):
+    """
+    Convert the data in a given wordlist to NEXUS-format for multistate analyses in PAUP.
+    
+    Parameters
+    ----------
+    taxa : list
+        The list of taxa that shall be written to file.
+    matrix : list
+        The multi-state matrix with the first dimension indicating the taxa,
+        and the second their states.
+    filename : str (default="")
+        If not specified, the filename of the Wordlist will be taken,
+        otherwise, it specifies the name of the file to which the data will be
+        written.
+    """
+    
+    # set up the nexus template
+    nexus = """#NEXUS
 
+BEGIN DATA;
+DIMENSIONS ntax={ntax} NCHAR={nchar};
+FORMAT RESPECTCASE DATATYPE=STANDARD symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP0123456789" GAP=? MISSING=- interleave=yes;
+OPTIONS MSTAXA = POLYMORPH;
+
+MATRIX
+
+{matrix}
+
+END;
+"""
+
+    # calculate maximal length of taxon strings
+    tlen = max([len(t) for t in taxa])
+    
+    # calculate the matrix-text in the nexus template
+    matrix_text = ""
+    for taxon, line in zip(taxa, matrix):
+        ntaxon = taxon + tlen * ' ' + ' '
+        ntaxon = ntaxon[:tlen]
+        matrix_text += "{0} {1}\n".format(ntaxon,''.join(line))
+    
+    if filename:
+        util.write_text_file(
+                filename,
+                nexus.format(
+                    ntax = len(taxa),
+                    nchar = len(matrix[0]),
+                    matrix = matrix_text
+                    )
+                )
+    else:
+        raise ValueError("[!] A wrong filename was specified!")
+    return

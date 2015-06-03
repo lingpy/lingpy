@@ -167,7 +167,8 @@ class QLCParser(object):
                             warn = warn.format(
                                             key,
                                             i,
-                                            '|'.join(self._data[key]),
+                                            '|'.join([str(x) for x in
+                                                self._data[key]]),
                                             self._data[key][i],
                                             self._class[head],
                                             head

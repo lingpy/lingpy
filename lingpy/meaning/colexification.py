@@ -136,7 +136,7 @@ def _make_graph(colexifications, bipartite=False):
                 G.edge[c1][c2]['words'] += [entry]
             except:
                 G.add_node(c1, ntype='concept')
-                G.add_node(c1, ntype='concept')
+                G.add_node(c2, ntype='concept')
                 G.add_edge(c1,c2, families=[f], doculects=[t], words=[entry])
         for a,b,d in G.edges(data=True):
             d['family_weight'] = len(set(d['families']))
@@ -236,8 +236,17 @@ def compare_colexifications(wordlist, entry='ipa', concept='concept'):
 
     return _make_matrix(taxa, colex)
 
-def partition_colexifications(G):
+def partition_colexifications(G, weight='weight'):
+    """
+    Use a simple partition algorithm to cluster the nodes.
+    """
 
+    # check whether keyword "weight" is actually in the graph.
+    if weight != 'weight':
+        for a,b,c in G.edges(data=True):
+            if 'weight' not in c:
+                c['weight'] = c[weight]
+                
     partition = community.best_partition(G)
     converted = {}
     for node in partition:
@@ -248,4 +257,19 @@ def partition_colexifications(G):
 
     return converted, partition
 
+def evaluate_colexifications(G, weight='word_weight', outfile=None):
+    """
+    Function calculates most frequent colexifications in a wordlist.
+
+    """
+
+    # get edges first, sorted by degree
+    edges = [(a,b,c[weight]) for a,b,c in sorted(
+        G.edges(data=True), key=lambda x: x[2][weight])]
+
+    # now get the degree for the nodes
+    nodes = sorted(G.degree(weight=weight).items(), key=lambda x: x[1])
+
+    if not outfile:
+        return nodes,edges
 
