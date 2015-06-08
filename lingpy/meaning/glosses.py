@@ -257,7 +257,9 @@ def compare_conceptlists(list1, list2, output='', match=None,
     defaults = dict(
             id_name = 'CONCEPTICON_ID',
             gloss_name = 'CONCEPTICON_GLOSS',
-            match_quality = 'MATCH_QUALITY'
+            match_quality = 'MATCH_QUALITY',
+            gloss = 'GLOSS',
+            number = 'NUMBER'
             )
     defaults.update(keywords)
         
@@ -270,15 +272,21 @@ def compare_conceptlists(list1, list2, output='', match=None,
     comph,comp = comp[0],comp[1:]
     
     # make sure to raise if 'gloss' is not in the headers
-    if (not "GLOSS" in baseh and not "GLOSS" in comph) or \
-            (not "NUMBER" in baseh and not "NUMBER" in comph):
-        raise ValueError("There is not field for 'GLOSS' or 'NUMBER' in the header of the input lists.")
+    if (not defaults["gloss"] in baseh and not defaults["gloss"] in comph) or \
+            (not defaults["number"] in baseh and not defaults["number"] in comph):
+        print(baseh,comph,keywords['gloss'])
+        raise ValueError(
+                "[!] There is no field for '{0}' or '{1}'".format(
+                    keywords['gloss'], 
+                    keywords['number']
+                    ) +" in the header of the input lists."
+                        )
     
     # get gloss indices
-    bidx = baseh.index('GLOSS')
-    cidx = comph.index('GLOSS')
-    bnum = baseh.index("NUMBER")
-    cnum = comph.index("NUMBER")
+    bidx = baseh.index(defaults['gloss'])
+    cidx = comph.index(defaults['gloss'])
+    bnum = baseh.index(defaults['number'])
+    cnum = comph.index(defaults['number'])
     
     # extract glossing information from the data
     B = {}
