@@ -1,17 +1,9 @@
-# *-* coding: utf-8 *-*
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-14 00:21
-# modified : 2014-12-02 21:10
 """
 This module provides a basic class for the handling of word lists.
 """
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
 
 import os
 import numpy as np
@@ -25,7 +17,7 @@ from ..convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from ..settings import rcParams
 from .parser import QLCParser
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc, triple2tsv, tsv2triple, wl2multistate
+        wl2qlc, triple2tsv, tsv2triple, wl2multistate, coverage
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
@@ -1422,3 +1414,16 @@ class Wordlist(QLCParser):
         self._tokenize(orthography_profile=orthography_profile, source=source, target=target,
                 column=column, **keywords)
 
+    def coverage(self, stats='absolute'):
+        """
+        Function determines the coverage of a wordlist.
+        """
+
+        cov = coverage(self)
+        
+        if stats == 'absolute':
+            return cov
+        elif stats == 'ratio':
+            return dict([(a,b/self.height) for a,b in cov.items()])
+        elif stats == 'mean':
+            return sum([a/self.height for a in cov.values()]) / self.width

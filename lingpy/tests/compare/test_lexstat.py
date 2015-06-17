@@ -2,10 +2,7 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-12 12:46
-# modified : 2013-11-12 12:46
+
 """
 Test lexstat module.
 """
@@ -39,3 +36,24 @@ class TestLexStat(unittest.TestCase):
     
     def test_align_pairs(self):
         self.lex.align_pairs('English', 'German', method='sca')
+
+    def test_get_frequencies(self):
+
+        f = self.lex.get_frequencies('sounds')
+        assert len(f) == self.lex.width
+
+        f = self.lex.get_frequencies('sounds',aggregated=True)
+        tokens = []
+        for k in self.lex:
+            for t in self.lex[k,'tokens']:
+                tokens += [t]
+        assert len(f) == len(set(tokens))
+
+        d = self.lex.get_frequencies('diversity',ref='cogid')
+        assert isinstance(d, float)
+
+        w = self.lex.get_frequencies('wordlength')
+        assert len(w) == self.lex.width
+
+        w = self.lex.get_frequencies('wordlength', aggregated=True)
+        assert isinstance(w, float)

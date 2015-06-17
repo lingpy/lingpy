@@ -222,6 +222,12 @@ def renumber(wordlist,source,target='', override=False):
 
     # make converter
     converter = dict(zip(sources,targets))
+
+    # check for zero ids
+    if 0 in converter:
+        converter[0] = 0
+    if '' in converter:
+        converter[''] = 0
     
     wordlist.add_entries(target,source,lambda x:converter[x], override=override)
 
@@ -351,7 +357,7 @@ def wl2qlc(
             keywords[k] = defaults[k]
 
     if keywords['ignore'] == 'all':
-        keywords['ignore'] = ['taxa', 'doculects', 'msa', 'json']
+        keywords['ignore'] = ['taxa', 'distances', 'doculects', 'msa', 'json']
 
     formatter = formatter.upper()
 

@@ -415,6 +415,11 @@ class PhyBo(Wordlist):
                     'concept',
                     f
                     )
+        else:
+            self._id2gl = dict([(int(self[k,'glid']),self[k,'concept']) for k in self])
+            self._gl2id = dict([(self[k,'concept'],int(self[k,'glid'])) for k in self])
+
+        
         # check for paps as attribute in the wordlist
         if paps not in self.entries:
              
