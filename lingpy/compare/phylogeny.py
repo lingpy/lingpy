@@ -2438,7 +2438,7 @@ class PhyBo(Wordlist):
             for cog,events in ile.items():
                 if events:
                     f.write(
-                        cog + '\t' + ','.join(
+                        text_type(cog) + '\t' + ','.join(
                             ['{0}:{1}'.format(a,b) for a,b in events]
                         ) + '\n')
 

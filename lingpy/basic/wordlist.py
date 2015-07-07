@@ -1384,36 +1384,6 @@ class Wordlist(QLCParser):
                 **keywords
                 )
 
-    def tokenize(
-            self,
-            orthography_profile='',
-            source="counterpart",
-            target="tokens",
-            column='graphemes',
-            **keywords
-            ):
-        """
-        Tokenize the data with help of orthography profiles.
-
-        Parameters
-        ----------
-        ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the 
-            input data into IPA tokens.
-        
-        source : str (default="translation")
-            The source data that shall be used for the tokenization procedures.
-        
-        target : str (default="tokens")
-            The name of the target column that will be added to the wordlist.
-
-        column : str (default="graphemes")
-            Tokenization target.
-
-        """
-        self._tokenize(orthography_profile=orthography_profile, source=source, target=target,
-                column=column, **keywords)
-
     def coverage(self, stats='absolute'):
         """
         Function determines the coverage of a wordlist.

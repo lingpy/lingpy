@@ -1250,7 +1250,7 @@ def bigrams(sequence):
     """
     Convert a given sequence into a sequence of bigrams.
     """
-    if ' ' in sequence:
+    if ' ' in sequence and isinstance(sequence, str):
         seq = sequence.split(' ')
     else:
         seq = list(sequence)
