@@ -180,7 +180,6 @@ class Pairwise(object):
         if isinstance(keywords['model'], (text_type, str)):
             self.model = rcParams[keywords['model']]
         else:
-            print(type(keywords['model']))
             self.model = keywords['model']
         
         self.classes = []
