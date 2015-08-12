@@ -1,7 +1,8 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-09-02 12:45
-# modified : 2013-09-02 13:32
+# *-* coding: utf-8 *-*
+# These lines were automatically added by the 3to2-conversion.
+from __future__ import print_function
+from __future__ import division
+from __future__ import unicode_literals
 """
 Basic module for the comparison of automatic phonetic alignments.
 """
@@ -18,6 +19,8 @@ from ..settings import rcParams
 from ..align.sca import PSA,MSA
 from ..algorithm import misc
 from .. import log
+from six import text_type
+from ..util import write_text_file
 
 
 class EvalMSA(object):
@@ -740,7 +743,7 @@ class EvalPSA(object):
         if not keywords['filename'].endswith('.diff'):
             keywords['filename'] = keywords['filename']+'.diff'
 
-        out = codecs.open(keywords['filename'],'w')
+        out = '' #codecs.open(keywords['filename'],'w')
 
         for i,(a,b) in enumerate(zip(self.gold.alignments,self.test.alignments)):
             
@@ -751,7 +754,7 @@ class EvalPSA(object):
                 taxA,taxB = self.gold.taxa[i]
                 taxlen = max(len(taxA),len(taxB))
                 seq_id = self.gold.seq_ids[i]
-                out.write('{0}\n{1}\t{2}\n{3}\t{4}\n{5}\n{1}\t{6}\n{3}\t{7}\n\n'.format(
+                out += '{0}\n{1}\t{2}\n{3}\t{4}\n{5}\n{1}\t{6}\n{3}\t{7}\n\n'.format(
                     seq_id,
                     taxA,
                     '\t'.join(g1),
@@ -760,6 +763,6 @@ class EvalPSA(object):
                     '{0}\t{1}'.format(taxlen*' ','\t'.join(['==' for x in range(maxL)])),
                     '\t'.join(t1),
                     '\t'.join(t2),
-                    ))
-        out.close()
+                    )
         log.file_written(keywords['filename'])
+        write_text_file(out, keywords['filename'])

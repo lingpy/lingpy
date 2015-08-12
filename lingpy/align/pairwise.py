@@ -128,7 +128,7 @@ class Pairwise(object):
 
     def __repr__(self):
 
-        return str(self.seqs)
+        return text_type(self.seqs)
     
     def __len__(self):
         return len(self.seqs)
@@ -177,9 +177,10 @@ class Pairwise(object):
             if k not in keywords:
                 keywords[k] = defaults[k]
         
-        if isinstance(keywords['model'], text_type):
+        if isinstance(keywords['model'], (text_type, str)):
             self.model = rcParams[keywords['model']]
         else:
+            print(type(keywords['model']))
             self.model = keywords['model']
         
         self.classes = []
@@ -718,7 +719,7 @@ def turchin(
         1 (words are not likely to be cognate).
 
     """
-    if str(model) == model:
+    if text_type(model) == model:
         model = rcParams[model]
     elif hasattr(model,'info'):
         pass
