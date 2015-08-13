@@ -1,17 +1,10 @@
-# *-* coding: utf-8 *-*
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-14 00:21
-# modified : 2014-12-02 21:10
+# *-* coding: utf-8 *-* 
 """
 This module provides a basic class for the handling of word lists.
 """
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
 
 import os
 import numpy as np
@@ -21,11 +14,11 @@ from six import text_type as str
 
 # basic lingpy imports
 from ..read.qlc import read_qlc
-from ..convert.strings import matrix2dst, pap2nex, pap2csv
+from ..convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from ..settings import rcParams
 from .parser import QLCParser
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc, triple2tsv, tsv2triple
+        wl2qlc, triple2tsv, tsv2triple, wl2multistate, coverage
 
 from ..algorithm import clustering as cluster
 from ..algorithm import misc
@@ -977,7 +970,7 @@ class Wordlist(QLCParser):
                     )
             if fileformat == 'paps.nex':
                 pap2nex(
-                        self.taxa,
+                        self.cols,
                         paps,
                         missing=keywords['missing'],
                         filename=keywords['filename']+'.paps'
@@ -993,7 +986,7 @@ class Wordlist(QLCParser):
         elif fileformat == 'taxa':
             if hasattr(self,'taxa'):
                 out = ''
-                for taxon in self.taxa:
+                for taxon in self.cols:
                     out += taxon + '\n'
                 util.write_text_file(keywords['filename'] + '.taxa', out)
             else:
@@ -1015,7 +1008,7 @@ class Wordlist(QLCParser):
 
             # check for taxa in meta
             if not 'taxa' in self._meta:
-                self._meta['taxa'] = self.taxa
+                self._meta['taxa'] = self.cols
 
             # get the data, in case a subset is chosen
             if not keywords['subset']:
@@ -1154,6 +1147,15 @@ class Wordlist(QLCParser):
                 keywords['filename'],
                 '\n'.join(lines),
                 'starling_' + keywords['entry'] + '.csv')
+        
+        elif fileformat == 'multistate.nex':
+            
+            if not keywords['filename'].endswith('.multistate.nex'):
+                keywords['filename'] += '.multistate.nex'
+                
+            matrix = wl2multistate(self, keywords['ref'])
+            multistate2nex(self.taxa, matrix, keywords['filename'])
+            
 
         elif fileformat == 'separated':
             if not os.path.isdir(keywords['filename']):
@@ -1383,33 +1385,16 @@ class Wordlist(QLCParser):
                 **keywords
                 )
 
-    def tokenize(
-            self,
-            orthography_profile='',
-            source="counterpart",
-            target="tokens",
-            column='graphemes',
-            **keywords
-            ):
+    def coverage(self, stats='absolute'):
         """
-        Tokenize the data with help of orthography profiles.
-
-        Parameters
-        ----------
-        ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the 
-            input data into IPA tokens.
-        
-        source : str (default="translation")
-            The source data that shall be used for the tokenization procedures.
-        
-        target : str (default="tokens")
-            The name of the target column that will be added to the wordlist.
-
-        column : str (default="graphemes")
-            Tokenization target.
-
+        Function determines the coverage of a wordlist.
         """
-        self._tokenize(orthography_profile=orthography_profile, source=source, target=target,
-                column=column, **keywords)
 
+        cov = coverage(self)
+        
+        if stats == 'absolute':
+            return cov
+        elif stats == 'ratio':
+            return dict([(a,b/self.height) for a,b in cov.items()])
+        elif stats == 'mean':
+            return sum([a/self.height for a in cov.values()]) / self.width

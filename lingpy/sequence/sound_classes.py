@@ -280,14 +280,25 @@ def syllabify(seq, alignment=False, breakpoints=False):
         # simple rule: we start a new syllable, if p2 is smaller or equal to p1 and p3
         # is larger than p2
         if p1 >= p2 < p3:
-            if p3 == 8:
+            if p3 == 8 or p3 == 9:
+                new_syl = False
+            # don't break if we are in the initial and no vowel followed
+            # can be expanded to general "vowel needs to follow"-rule
+            elif p1 != 7 and p2 != 7 and i == 2:
+                new_syl = False
+            # don't break if we are in the end of the word
+            elif i == len(profile)-3 and p3 != 7:
                 new_syl = False
             else:
                 new_syl = True
 
         # get the char before, after
         if new_syl:
-            breaks += [rcParams['morpheme_separator'],char]
+            # control for break chars which are already there
+            if p1 == 9:
+                breaks += [char]
+            else:
+                breaks += [rcParams['morpheme_separator'],char]
             new_syl = False
         else:
             breaks += [char]
@@ -326,10 +337,131 @@ def syllabify(seq, alignment=False, breakpoints=False):
         else:
             return bpoints
 
-        
-
-
     return breaks
+
+def _split_syllables(syllables,tokens):
+    """
+    Split the output of the syllabify method into subsets.
+    
+    Note
+    ----
+    This is a simple helper function to deal with syllabified content.
+    """
+    
+    out = [[]]
+    idx = 0
+    for s in syllables:
+        if s != rcParams['morpheme_separator'] and s not in '#_':
+            out[-1] += [(s,tokens[idx])]
+            idx += 1
+        else:
+            # reconsider deleting these lines, since they            
+            # may well confuse the algorithms and we should
+            # better restrict all actions to but one syllable separator
+            if s in '#_':
+                idx += 1
+            out += [[]]
+
+    return out
+
+def _pprint_ono(ono):
+    """
+    Helper function for string output of ono-parsed words.
+    """
+
+    out = []
+    for k in ono:
+        out.append(k[0] or '-')
+        if k[1] == 'c':
+            out += [rcParams['morpheme_separator']]
+
+    return ' '.join(out)
+
+def ono_parse(word, output=''):
+    """
+    Carry out a rough onset-nucleus-offset parse of a word in IPA.
+    
+    Notes
+    -----
+    Method is an approximation and not supposed to do without flaws. It is,
+    however, rather helpful in most instances. It defines a so far simple model
+    in which 7 different contexts for each word are distinguished:
+
+    * "#": onset cluster in a word's initial
+    * "C": onset cluster in a word's non-initial
+    * "V": nucleus vowel in a word's initial syllable
+    * "v": nucleus vowel in a word's non-initial and non-final syllable
+    * ">": nucleus vowel in a word's final syllable
+    * "c": offset cluster in a word's non-final syllable
+    * "$": offset cluster in a word's final syllable
+
+
+    """
+    
+    tokens = ipa2tokens(word)
+    syllabified = syllabify(tokens)
+    prostring = prosodic_string(tokens, _output='CcV')
+    syllables = _split_syllables(syllabified,prostring) 
+    
+    out = []
+    for i,syl in enumerate(syllables):
+        
+        # we take lists to restore internal tokenization
+        parse = [[],[],[]]
+        env = 'C'
+        for s in syl:
+            if s[1] == 'C' and env == 'C':
+                parse[0] += [s[0]]
+            elif s[1] == 'C' and env != 'C':
+                parse[2] += [s[0]]
+            elif s[1] == 'V':
+                parse[1] += [s[0]]
+                env = 'V'
+            elif s[1] == 'c' and env == 'C':
+                parse[0] += [s[0]]
+
+            elif s[1] == 'c':
+                parse[2] += [s[0]]
+                env = 'c'
+        
+        # correct parse by type
+        if i == 0:
+            parse[0] = (parse[0],'#')
+            parse[1] = (parse[1],'V')
+
+            if len(syllables) != 1:
+                parse[2] = (parse[2],'c')
+            else:
+                parse[2] = (parse[2],'$')
+
+        elif i == len(syllables) -1:
+            parse[0] = (parse[0],'C')
+            parse[1] = (parse[1],'>')
+            parse[2] = (parse[2],'$')
+
+        else:
+            parse[0] = (parse[0],'C')
+            parse[1] = (parse[1],'v')
+            parse[2] = (parse[2],'c')
+
+        # linearize parse [XXX bad solution but too lazy to correct it in this
+        # stage @lingulist]
+        for tokens,prostring in parse:
+            if tokens:
+                for token in tokens:
+                    out += [(token,prostring)]
+            else:
+                out += [('-',prostring)]
+
+        if i < len(syllables)-1:
+            out += [rcParams['morpheme_separator']]
+    
+    if output == 'pprint':
+        return _pprint_ono(out)
+    elif output == 'prostring':
+        return ''.join([p[1] for p in out if len(p) == 2 and p[0] != '-'])
+
+    return out
 
 def asjp2tokens(
         seq,
@@ -1118,7 +1250,7 @@ def bigrams(sequence):
     """
     Convert a given sequence into a sequence of bigrams.
     """
-    if ' ' in sequence:
+    if ' ' in sequence and isinstance(sequence, str):
         seq = sequence.split(' ')
     else:
         seq = list(sequence)

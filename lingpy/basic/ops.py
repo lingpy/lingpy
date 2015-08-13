@@ -11,8 +11,8 @@ from six import text_type
 
 # internal imports
 from ..settings import rcParams
-from ..convert.strings import matrix2dst, scorer2str, msa2str, pap2nex, pap2csv
-from ..algorithm import clustering
+from ..convert.strings import matrix2dst, scorer2str, msa2str, pap2nex, pap2csv, multistate2nex
+from ..algorithm import clustering, misc
 from .. import util
 from .. import log
 
@@ -222,6 +222,12 @@ def renumber(wordlist,source,target='', override=False):
 
     # make converter
     converter = dict(zip(sources,targets))
+
+    # check for zero ids
+    if 0 in converter:
+        converter[0] = 0
+    if '' in converter:
+        converter[''] = 0
     
     wordlist.add_entries(target,source,lambda x:converter[x], override=override)
 
@@ -351,7 +357,7 @@ def wl2qlc(
             keywords[k] = defaults[k]
 
     if keywords['ignore'] == 'all':
-        keywords['ignore'] = ['taxa', 'doculects', 'msa', 'json']
+        keywords['ignore'] = ['taxa', 'distances', 'doculects', 'msa', 'json']
 
     formatter = formatter.upper()
 
@@ -568,7 +574,11 @@ def triple2tsv(infile, output="table"):
 
 
     for line in lines: 
-        a,b,c = line.split('\t')
+        if isinstance(line, (list,tuple)):
+            a,b,c = line
+        elif isinstance(line, (text_type, str)):
+            a,b,c = line.split('\t')
+
         try:
             D[a][b] = c
         except KeyError:
@@ -604,3 +614,79 @@ def triple2tsv(infile, output="table"):
     
     else:
         return output_table
+
+
+def coverage(wordlist):
+    """
+    Determine the average coverage of a wordlist.
+    """
+
+    corge = []
+    for taxon in wordlist.taxa:
+        concepts = wordlist.get_dict(col=taxon)
+        corge += [len(concepts)]
+    
+    return dict(zip(
+        wordlist.taxa,
+        [x for x in corge]
+        ))
+
+def wl2multistate(wordlist, ref):
+    """
+    Helper function converts a wordlist to multistate format (matrix compatible with PAUP).
+    """
+
+    # convert the data to a multistate matrix
+    # get etymological dictionary
+    etd = wordlist.get_etymdict(ref=ref)
+
+    # define chars, we only have a limited set, unfortunately
+    chars='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY0123456789'
+
+    # iterate over all cognate sets and assign the chars
+    cogs = {}
+    matrix = []
+    for c in wordlist.concepts:
+        
+        tmp = wordlist.get_dict(concept=c, entry='cogid')
+        tmpl = []
+        line = []
+        for t in wordlist.taxa:
+            if t in tmp:
+                for state in tmp[t]:
+                    tmpl += [state]
+            else:
+                tmpl += [0]
+
+            if t in tmp:
+                if len(tmp[t]) > 1:
+                    states = ()
+                    for state in tmp[t]:
+                        states += (state,)
+                    line += [states]
+                else:
+                    line += [tmp[t][0]]
+            else:
+                line += ["-"]
+        
+        # make converter
+        if len(sorted(set(tmpl))) > len(chars):
+            print('warning')
+        converter = dict(zip(sorted(set(tmpl)),chars))
+        for i in range(len(line)):
+            if line[i] != "-":
+                if isinstance(line[i],int) == 1:
+                    line[i] = converter[line[i]]
+                else:
+                    if len(set(line[i])) == 1:
+                        line[i] = converter[line[i][0]]
+                    else:
+                        line[i] = "("+"".join([converter[x] for x in
+                            sorted(set(line[i]))])+')'
+                #tmpl[i] = converter[tmpl[i]]
+        matrix += [line]
+
+    # transpose matrix 
+    matrix = misc.transpose(matrix)
+
+    return matrix

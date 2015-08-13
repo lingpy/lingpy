@@ -106,6 +106,7 @@ setup(
             'tests/test_data/*.qlc',
             'tests/test_data/*.msq',
             'tests/test_data/*.msa',
+            'tests/test_data/*.tsv',
             'data/conceptlists/*.tsv',
             'data/conf/*.rc',
             'data/models/*/converter',

@@ -1263,12 +1263,19 @@ class LexStat(Wordlist):
                     flat=True
                     )
 
-            matrix = [] #matrices[concept]
+            matrix = []
             
             for i,idxA in enumerate(indices):
                 for j,idxB in enumerate(indices):
                     if i < j:
-                        d = function(idxA,idxB)
+                        try:
+                            d = function(idxA,idxB)
+                        except ZeroDivisionError:
+                            self.log.warning(
+                                "Encountered Zero-Division for the comparison of {0} and {1}".format(
+                                ''.join(self[idxA,"tokens"]),
+                                ''.join(self[idxB,"tokens"])))
+                            d = 100
                         
                         # append distance score to matrix
                         matrix += [d]
@@ -1695,6 +1702,86 @@ class LexStat(Wordlist):
             D = misc.squareform(D)
 
         return D
+
+    def get_frequencies(self, ftype='sounds', ref='tokens', aggregated=False):
+        """
+        Computes the frequencies of a given wordlist.
+        
+        Parameters
+        ----------
+        ftype: str (default='sounds')
+            The type of frequency which shall be calculated. Select between
+            "sounds" (type-token frequencies of sounds), and "wordlength" (average
+            word length per taxon or in aggregated form), or "diversity" for the diversity
+            index (requires that you have carried out cognate judgments, and
+            make sure to set the "ref" keyword to the column in which your
+            cognates are). 
+        ref : str (default="tokens")
+            The reference column, with the column for "tokens" as a default.
+            Make sure to modify this keyword in case you want to check for the
+            "diversity".
+        aggregated : bool (default=False)
+            Determine whether frequencies should be calculated in an aggregated
+            way, for all languages, or on a language-per-language basis.
+        
+        Returns
+        -------
+        freqs : {dict, float}
+            Depending on the selection of the datatype you chose, this returns
+            either a dictionary containing the frequencies or a float
+            indicating the ratio.
+        """
+
+        if ftype == 'sounds':
+            _F = {}
+            for k in self:
+                tokens = self[k,ref]
+                taxon = self[k][self._colIdx]
+                for token in tokens:
+                    try:
+                        _F[taxon][token] += 1
+                    except KeyError:
+                        try:
+                            _F[taxon][token] = 1
+                        except KeyError:
+                            _F[taxon] = { token : 1 }
+            if aggregated:
+                F = {}
+                for key,value in _F.items():
+                    for k,v in value.items():
+                        try:
+                            F[k] += 1
+                        except KeyError:
+                            F[k] = 1
+                return F
+            else:
+                return _F
+
+        if ftype == 'wordlength':
+            _W = {}
+            for k in self:
+                tokens = self[k,ref]
+                taxon = self[k][self._colIdx]
+                try:
+                    _W[taxon][0] += len(tokens)
+                    _W[taxon][1] += 1
+                except KeyError:
+                    _W[taxon] = [len(tokens),1]
+            _W = dict([(a,b[0]/b[1]) for a,b in _W.items()])
+            
+            if not aggregated:
+                return _W
+            else:
+                return sum(_W.values()) / self.width
+        
+        if ftype == 'diversity':
+            c = len(self.get_etymdict(ref))
+            e = len(self)
+            i = self.height
+
+            return (c - i) / (e - i)
+        
+                
 
     def output(
             self,

@@ -241,7 +241,7 @@ class MSA(Multiple):
 
         # create a specific format string in order to receive taxa of equal length
         mtax = max([len(t) for t in self.taxa])
-        txf = '{0:.<'+str(mtax)+'}'
+        txf = '{0:.<'+text_type(mtax)+'}'
         
         with util.TextFile((filename or self.infile) + '.' + fileformat) as out:
             # start writing data to file
@@ -439,7 +439,7 @@ class PSA(Pairwise):
                 handle_data(data, i)
                 i += 4
             except:
-                log.warn("Line "+str(i+1)+" of the data is probably miscoded.")
+                log.warn("Line "+text_type(i+1)+" of the data is probably miscoded.")
                 i += 1
 
         self.pair_num = len(self.pairs)
@@ -449,6 +449,7 @@ class PSA(Pairwise):
         """
         Load a ``psa``-file.
         """
+
         almA = data[i + 1].split('\t')
         almB = data[i + 2].split('\t')
         taxonA = almA.pop(0)
@@ -457,7 +458,7 @@ class PSA(Pairwise):
         dot_join = lambda iter: '.'.join([k for k in iter if k != '-'])
         self.taxa.append((taxonA, taxonB))
         self.pairs.append((dot_join(almA), dot_join(almB)))
-        self.alignments.append(([str(a) for a in almA], [str(b) for b in almB], 0))
+        self.alignments.append(([text_type(a) for a in almA], [text_type(b) for b in almB], 0))
 
     def _handle_seq_data(self, data, i):
         """
@@ -514,7 +515,7 @@ class PSA(Pairwise):
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
                     mtax = max([len(t) for t in self.taxa[i]])
-                    txf = '{0:.<'+str(mtax)+'}'
+                    txf = '{0:.<'+text_type(mtax)+'}'
 
                     out.write(txf.format(self.taxa[i][0])+'\t'+a+'\n')
                     out.write(txf.format(self.taxa[i][1])+'\t'+b+'\n\n')
@@ -528,7 +529,7 @@ class PSA(Pairwise):
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
                     mtax = max([len(t) for t in self.taxa[i]])
-                    txf = '{0:.<'+str(mtax)+'}'
+                    txf = '{0:.<'+text_type(mtax)+'}'
                 
                     out.write(txf.format(self.taxa[i][0])+'\t'+'\t'.join(a)+'\n')
                     out.write(txf.format(self.taxa[i][1])+'\t'+'\t'.join(b)+'\n')
@@ -687,7 +688,7 @@ class Alignments(Wordlist):
                         if 'alignment' in self.header:
                             d['alignment'] += [self[seq,'alignment']]
                         else:
-                            if isinstance(string, str):
+                            if isinstance(string, text_type):
                                 d['alignment'] += [string.split(' ')]
                             else:
                                 d['alignment'] += [string]
@@ -876,7 +877,7 @@ class Alignments(Wordlist):
                 [
                     kw['method'],
                     kw['model'].name,
-                    str(kw['gop']),
+                    text_type(kw['gop']),
                     '{0:.1f}'.format(kw['scale']),
                     '{0:.1f}'.format(kw['factor']),
                     kw['tree_calc'],
@@ -1071,7 +1072,7 @@ class Alignments(Wordlist):
                             classes = misc.transpose(classes),
                             tree = tree,
                             gaps = gaps,
-                            taxa = [str(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            taxa = [text_type(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
@@ -1082,7 +1083,7 @@ class Alignments(Wordlist):
                             classes = classes,
                             tree = tree,
                             gaps = gaps,
-                            taxa = [str(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
+                            taxa = [text_type(taxon.replace("(","").replace(")","")) for taxon in self.msa[ref][cog]['taxa']],
                             #taxa = self.msa[ref][cog]['taxa'],
                             **keywords
                             )
@@ -1237,10 +1238,10 @@ class Alignments(Wordlist):
 
                             out += '\t'.join(
                                 [
-                                    str(real_cogid),
+                                    text_type(real_cogid),
                                     taxon,
                                     concept,
-                                    str(cid),
+                                    text_type(cid),
                                     alm_string, #'\t'.join(alm)
                                     ]
                                 )+'\n'
@@ -1255,10 +1256,10 @@ class Alignments(Wordlist):
                         cid = concept2id[concept]
                         out += '\t'.join(
                                 [
-                                    str(cogid),
+                                    text_type(cogid),
                                     taxon,
                                     concept,
-                                    str(cid),
+                                    text_type(cid),
                                     ''.join(seq),
                                     ]
                                 )+'\n'
@@ -1271,7 +1272,7 @@ class Alignments(Wordlist):
                     os.path.join(
                         '{0}-msa'.format(value['dataset']),
                         '{0}-{1}.msa'.format(value['dataset'], key)),
-                    msa2str(value, wordlist=kw['style'] in ['id', 'with_id']),
+                    msa2text_type(value, wordlist=kw['style'] in ['id', 'with_id']),
                     log=False)
 
 
@@ -1592,7 +1593,7 @@ def get_consensus(
             tree = subGuideTree(tree,newIndices)
             #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
             #for leaf in tree.tips():
-            #    leaf.Name = str(indexMap[int(leaf.Name)])
+            #    leaf.Name = text_type(indexMap[int(leaf.Name)])
         #otherwise, the leaves of the guide trees are expected to have integer IDs
         #print("\nWrite partial alignments and sizes into the tree:")
         for node in tree.postorder():
@@ -1603,7 +1604,7 @@ def get_consensus(
                 node.alignment = node.Children[0].alignment + node.Children[1].alignment
                 node.size = node.Children[0].size + node.Children[1].size
         #for node in tree.postorder():
-        #    print str(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
+        #    print text_type(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
         #print("\nCompute phoneme distribution at each position of the alignment:")
         for node in tree.postorder():
             node.distribution = []
@@ -1624,7 +1625,7 @@ def get_consensus(
                         value /= node.size
                         node.distribution[i][phoneme] = value
         #for node in tree.postorder():
-        #    print str(node.Name) + ": " + str(node.distribution)
+        #    print text_type(node.Name) + ": " + str(node.distribution)
         recon_alg = "sankoff_parsimony"
         #print("\nReconstruct word forms at inner nodes by simplistic criteria:")
         for node in tree.postorder():
@@ -1720,10 +1721,10 @@ def get_consensus(
                                     if systematizationBonus:
                                         if hasattr(node.Children[0].orig, "best_replacements") and char + char1 in node.Children[0].orig.best_replacements.keys():
                                             bonusFactor1 /= 1 + node.Children[0].orig.best_replacements[char+char1] 
-                                            #print ("bonusFactor1: " + str(bonusFactor1))           
+                                            #print ("bonusFactor1: " + text_type(bonusFactor1))           
                                         if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
                                             bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char+char2]
-                                            #print ("bonusFactor2: " + str(bonusFactor2))   
+                                            #print ("bonusFactor2: " + text_type(bonusFactor2))   
                                     if distributionBonus:
                                         bonusFactor1 /= node.distribution[i][char]
                                         bonusFactor2 /= node.distribution[i][char]
@@ -1763,7 +1764,7 @@ def get_consensus(
                                         node.Children[1].orig.best_replacements[char + char2] += 1
                                     #print(node.Children[1].orig.best_replacements)
                 #read out the backpointers for an optimal reconstruction
-                #print(str(tree.sankoffTable[i]))
+                #print(text_type(tree.sankoffTable[i]))
                 minValue = min(tree.sankoffTable[i].values())
                 minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
                 reconChar = minKeys[0]

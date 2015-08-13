@@ -188,7 +188,7 @@ class Tokenizer(object):
     def _init_rules(self, f):
         # Process the orthography rules file.
         for line in util.read_config_file(f, normalize='NFD'):
-            rule, replacement = line.split(",")
+            rule, replacement = line.split("\t")
             rule = rule.strip()  # just in case there's trailing whitespace
             replacement = replacement.strip()  # because there's probably trailing whitespace!
             self.op_rules.append(re.compile(rule))
