@@ -576,7 +576,7 @@ def triple2tsv(infile, output="table"):
     for line in lines: 
         if isinstance(line, (list,tuple)):
             a,b,c = line
-        elif isinstance(line, str):
+        elif isinstance(line, (text_type, str)):
             a,b,c = line.split('\t')
 
         try:
