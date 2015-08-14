@@ -8,9 +8,9 @@ from six import text_type
 # builtin
 import random
 import codecs
-import sys
 from itertools import combinations_with_replacement
 from math import factorial
+from collections import defaultdict
 
 # thirdparty
 from six.moves import input
@@ -87,25 +87,20 @@ class LexStat(Wordlist):
     input file.
 
     """
-    
-    def __init__(
-            self,
-            filename,
-            **keywords
-            ):
-
+    def __init__(self, filename, **keywords):
         kw = {
-                "model"        : rcParams['sca'],
-                "merge_vowels" : rcParams['merge_vowels'],
-                'transform'    : rcParams['lexstat_transform'],
-                "check"        : False,
-                "apply_checks" : False,
-                "defaults"     : False,
-                "no_bscorer"   : False
-                }
+            "model": rcParams['sca'],
+            "merge_vowels": rcParams['merge_vowels'],
+            'transform': rcParams['lexstat_transform'],
+            "check": False,
+            "apply_checks": False,
+            "defaults": False,
+            "no_bscorer": False
+        }
         kw.update(keywords)
-        if kw['defaults']: return kw
-        
+        if kw['defaults']:
+            return
+
         # store the model
         if str(kw['model']) == kw['model']:
             self.model = rcParams[kw['model']]
@@ -113,55 +108,36 @@ class LexStat(Wordlist):
             self.model = kw['model']
 
         # set the lexstat stamp
-        self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
+        self._stamp = "# Created using the LexStat class of LingPy\n"
 
         # initialize the wordlist
-        Wordlist.__init__(self,filename)
+        Wordlist.__init__(self, filename)
         
         # check for basic input data
         # tokens
-        if not "tokens" in self.header:
+        if "tokens" not in self.header:
             self.add_entries(
-                    "tokens",
-                    "ipa",
-                    lambda x:ipa2tokens(
-                        x,
-                        merge_vowels = kw['merge_vowels']
-                        )
-                    )
+                "tokens", "ipa", lambda x: ipa2tokens(x, merge_vowels=kw['merge_vowels']))
 
         # add a debug procedure for tokens
         if kw["check"]:
             errors = []
             for key in self:
-                line = self[key,"tokens"]
+                line = self[key, "tokens"]
                 if "" in line:
-                    errors += [(
-                        key,
-                        "empty token",
-                        ' '.join(line)
-                        )]
+                    errors += [(key, "empty token", ' '.join(line))]
                 else:
                     try:
-                        sonars = tokens2class(line,rcParams['art'])
+                        sonars = tokens2class(line, rcParams['art'])
                         if not sonars or sonars == ['0']:
-                            errors += [(
-                                key,
-                                "empty sound-class string",
-                                ' '.join(line)
-                                )]
+                            errors += [(key, "empty sound-class string", ' '.join(line))]
                     except:
-                        errors += [(
-                            key,
-                            "sound-class conversion failed",
-                            ' '.join(line)
-                            )]
+                        errors += [(key, "sound-class conversion failed", ' '.join(line))]
             if errors:
-                out = codecs.open("errors.log","w",'utf-8')
-                out.write("ID\tTokens\tError-Type\n")
-                for a,b,c in errors:
-                    out.write("{0}\t<{1}>\t{2}\n".format(a,c,b))
-                out.close()
+                with codecs.open("errors.log", "w", 'utf-8') as out:
+                    out.write("ID\tTokens\tError-Type\n")
+                    for a, b, c in errors:
+                        out.write("{0}\t<{1}>\t{2}\n".format(a, c, b))
                 if not kw["apply_checks"]:
                     answer = input(
                         "[?] There were errors in the input data. Do you want to exclude them? (y/n)")
@@ -170,14 +146,13 @@ class LexStat(Wordlist):
 
                 if answer in rcParams['answer_yes']:
                     self.output(
-                            'qlc',
-                            filename=self.filename+'_cleaned',
-                            subset=True,
-                            rows = {"ID":"not in "+str([i[0] for i in errors])}
-                            )
+                        'qlc',
+                        filename=self.filename + '_cleaned',
+                        subset=True,
+                        rows={"ID": "not in " + str([i[0] for i in errors])})
                     # load the data in another wordlist and copy the stuff
-                    wl = Wordlist(self.filename+'_cleaned.qlc')
-                    
+                    wl = Wordlist(self.filename + '_cleaned.qlc')
+
                     # change the attributes
                     self._array = wl._array
                     self._data = wl._data
@@ -186,182 +161,104 @@ class LexStat(Wordlist):
 
                     # store errors in meta
                     self._meta['errors'] = [i[0] for i in errors]
-
                 else:
                     return
             else:
                 self.log.info("No obvious errors found in the data.")
 
         # sonority profiles
-        if not "sonars" in self.header:
+        if "sonars" not in self.header:
             self.add_entries(
-                    "sonars",
-                    "tokens",
-                    lambda x:[int(i) for i in tokens2class(
-                        x,
-                        rcParams['art'],
-                        stress = rcParams['stress']
-                        )]
-                )
+                "sonars",
+                "tokens",
+                lambda x: [int(i) for i in tokens2class(
+                    x, rcParams['art'], stress=rcParams['stress'])])
 
         # get prosodic strings
-        if not "prostrings" in self.header:
-            self.add_entries(
-                    "prostrings",
-                    "sonars",
-                    lambda x:prosodic_string(x)
-                    )
+        if "prostrings" not in self.header:
+            self.add_entries("prostrings", "sonars", lambda x: prosodic_string(x))
 
         # get sound class strings
-        if not "classes" in self.header:
+        if "classes" not in self.header:
             self.add_entries(
-                    "classes",
-                    "tokens",
-                    lambda x:''.join(tokens2class(x,kw["model"]))
-                    )
+                "classes", "tokens", lambda x: ''.join(tokens2class(x, kw["model"])))
         
         # create IDs for the languages
-        if not "langid" in self.header:
-            transform = dict(zip(self.taxa,[str(i+1) for i in range(self.width)]))
-            self.add_entries(
-                    "langid",
-                    "taxa",
-                    lambda x:transform[x]
-                    )
+        if "langid" not in self.header:
+            transform = dict(zip(self.taxa, [str(i + 1) for i in range(self.width)]))
+            self.add_entries("langid", "taxa", lambda x: transform[x])
         # get the numbers for all strings
-        if not "numbers" in self.header:
+        if "numbers" not in self.header:
             # change the discriminative potential of the sound-class string
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
-            self._transform =  kw['transform']
+            self._transform = kw['transform']
             self.add_entries(
-                    "numbers",
-                    "langid,classes,prostrings",
-                    lambda x,y: ["{0}.{1}.{2}".format(
-                        x[y[0]],
-                        a,
-                        self._transform[b]
-                        ) for a,b in zip(x[y[1]],x[y[2]])]    
-                    )
+                "numbers",
+                "langid,classes,prostrings",
+                lambda x, y: ["{0}.{1}.{2}".format(
+                    x[y[0]],
+                    a,
+                    self._transform[b]) for a, b in zip(x[y[1]], x[y[2]])])
 
-        # check for weights
-        if not "weights" in self.header:
-            self.add_entries(
-                    "weights",
-                    "prostrings",
-                    lambda x:prosodic_weights(x)
-                    )
+        if "weights" not in self.header:
+            self.add_entries("weights", "prostrings", lambda x: prosodic_weights(x))
 
         # check for duplicates
         # first, check for item 'words' in data, if this is not given, create
         # it
-        if 'ipa' in self.header:
-            pass
-        else:
-            self.add_entries('ipa','tokens',lambda x:''.join(x))
+        if 'ipa' not in self.header:
+            self.add_entries('ipa', 'tokens', lambda x: ''.join(x))
 
-        if not "duplicates" in self.header:
+        if "duplicates" not in self.header:
             duplicates = {}
             for taxon in self.taxa:
                 words = []
-                for idx in self.get_list(
-                        col=taxon,
-                        flat=True
-                        ):
+                for idx in self.get_list(col=taxon, flat=True):
                     # get the words
-                    word = self[idx,'ipa']
+                    word = self[idx, 'ipa']
                     if word in words:
                         duplicates[idx] = 1
                     else:
                         duplicates[idx] = 0
                         words += [word]
-            self.add_entries(
-                    "duplicates",
-                    duplicates,
-                    lambda x:x
-                    )
+            self.add_entries("duplicates", duplicates, lambda x: x)
 
         # create an index 
-        if not hasattr(self,'freqs'):
+        if not hasattr(self, 'freqs'):
             self.chars = []
             self.rchars = []
             self.freqs = {}
             for taxon in self.taxa:
-                self.freqs[taxon] = {}
-                words = self.get_list(
-                        col=taxon,
-                        entry='numbers',
-                        flat=True
-                        )
+                self.freqs[taxon] = defaultdict(int)
+                words = self.get_list(col=taxon, entry='numbers', flat=True)
                 for word in words:
                     for char in word:
-                        try:
-                            self.freqs[taxon][char] += 1
-                        except:
-                            self.freqs[taxon][char] = 1
+                        self.freqs[taxon][char] += 1
                         self.chars.append(char)
-                        self.rchars.append(char[char.index('.')+1:])
+                        self.rchars.append(char[char.index('.') + 1:])
+                # cast to regular dict to allow pickling:
+                self.freqs[taxon] = dict(self.freqs[taxon])
             self.chars = list(set(self.chars))
             self.rchars = list(set(self.rchars))
             for i in range(self.width):
-                self.chars += [str(i+1)+'.X.-']
+                self.chars += [str(i + 1) + '.X.-']
 
         # check for scorers
-        if not hasattr(self,"scorer"):
+        if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
 
         # create a scoring dictionary
-        if not hasattr(self,"bscorer") and not kw['no_bscorer']:
-            matrix = [[0.0 for i in range(len(self.chars))] for j in range(len(self.chars))]
-            for i,charA in enumerate(self.chars):
-                for j,charB in enumerate(self.chars):
-                    if i < j:
-                        
-                        # add dictionary scores to the scoredict
-                        score = self.model(
-                                charA[charA.index('.')+1][0],
-                                charB[charB.index('.')+1][0]
-                                )
-                        matrix[i][j] = score
-                        matrix[j][i] = score
-                    elif i == j:
-                        # add dictionary scores to the scoredict
-                        score = self.model(
-                                charA[charA.index('.')+1][0],
-                                charB[charB.index('.')+1][0]
-                                )
-                        matrix[i][j] = score
-        
-            self.bscorer = misc.ScoreDict(self.chars,matrix)
-            self._meta['scorer']['bscorer'] = self.bscorer
+        if not hasattr(self, "bscorer") and not kw['no_bscorer']:
+            self._meta['scorer']['bscorer'] = self.bscorer = self._get_score_dict(
+                self.chars, lambda char: char[char.index('.') + 1][0])
         elif not kw['no_bscorer']:
             self.bscorer = self._meta['scorer']['bscorer']
 
         # check for rscorer
-        if not hasattr(self,"rscorer"):
-            matrix = [[0.0 for i in range(len(self.rchars))] for j in
-                    range(len(self.rchars))]
-            for i,charA in enumerate(self.rchars):
-                for j,charB in enumerate(self.rchars):
-                    if i < j:
-                        
-                        # add dictionary scores to the scoredict
-                        score = self.model(
-                                charA[0],
-                                charB[0]
-                                )
-                        matrix[i][j] = score
-                        matrix[j][i] = score
-                    elif i == j:
-                        # add dictionary scores to the scoredict
-                        score = self.model(
-                                charA[0],
-                                charB[0]
-                                )
-                        matrix[i][j] = score
-        
-            self.rscorer = misc.ScoreDict(self.rchars,matrix)
-            self._meta['scorer']['rscorer'] = self.rscorer
+        if not hasattr(self, "rscorer"):
+            self._meta['scorer']['rscorer'] = self.rscorer = self._get_score_dict(
+                self.rchars, lambda char: char[0])
         else:
             self.rscorer = self._meta['scorer']['rscorer']
 
@@ -371,74 +268,72 @@ class LexStat(Wordlist):
                 self.cscorer = self._meta['scorer']['cscorer']
 
         # make the language pairs
-        if not hasattr(self,"pairs"):
+        if not hasattr(self, "pairs"):
             self.pairs = {}
-            for i,taxonA in enumerate(self.taxa):
-                for j,taxonB in enumerate(self.taxa):
-                    if i < j:
-                        self.pairs[taxonA,taxonB] = []
+            for (i, taxonA), (j, taxonB) in combinations_with_replacement(
+                    enumerate(self.taxa), r=2):
+                self.pairs[taxonA, taxonB] = []
+                if i < j:
+                    dictA = self.get_dict(col=taxonA)
+                    dictB = self.get_dict(col=taxonB)
 
-                        dictA = self.get_dict(col=taxonA)
-                        dictB = self.get_dict(col=taxonB)
+                    for c in dictA:
+                        if c in dictB:
+                            valA = dictA[c]
+                            valB = dictB[c]
 
-                        for c in dictA:
-                            if c in dictB:
-                                valA = dictA[c]
-                                valB = dictB[c]
+                            for idxA in valA:
+                                for idxB in valB:
+                                    dA = self[idxA, "duplicates"]
+                                    dB = self[idxB, "duplicates"]
+                                    if dA != 1 and dB != 1:
+                                        self.pairs[taxonA, taxonB] += [(idxA, idxB)]
+                elif i == j:
+                    dictAB = self.get_dict(col=taxonA)
+                    for c in dictAB:
+                        valAB = dictAB[c]
+                        for idx in valAB:
+                            dAB = self[idx, "duplicates"]
+                            if dAB != 1:
+                                self.pairs[taxonA, taxonA] += [(idx, idx)]
 
-                                for idxA in valA:
-                                    for idxB in valB:
-                                        dA = self[idxA,"duplicates"]
-                                        dB = self[idxB,"duplicates"]
-                                        if dA != 1 and dB != 1:
-                                            self.pairs[taxonA,taxonB] += [(idxA,idxB)]
-                    elif i == j:
-                        self.pairs[taxonA,taxonA] = []
-                        dictAB = self.get_dict(col=taxonA)
-                        for c in dictAB:
-                            valAB = dictAB[c]
-                            for idx in valAB:
-                                dAB = self[idx,"duplicates"]
-                                if dAB != 1:
-                                    self.pairs[taxonA,taxonA] += [(idx,idx)]
+    def _get_score_dict(self, chars, model_param):
+        matrix = [[0.0 for i in range(len(chars))] for j in range(len(chars))]
+        for (i, cA), (j, cB) in combinations_with_replacement(enumerate(chars), r=2):
+            matrix[i][j] = self.model(model_param(cA), model_param(cB))
+            if i < j:
+                matrix[j][i] = matrix[i][j]
+        return misc.ScoreDict(self.chars, matrix)
 
     def __repr__(self):
-
         return "<lexstat-model {0}>".format(self.filename)
 
-    def __getitem__(self,idx):
+    def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
 
         In contrast to the basic wordlist, the LexStat wordlist further allows
         to access item pairs by passing a tuple.
         """
-        try:
+        if idx in self._cache:
             return self._cache[idx]
-        except:
-            pass
-        
-        try:
+
+        if idx in self._data:
             # return full data entry as list
-            out = self._data[idx]
-            self._cache[idx] = out
-            return out
-        except KeyError:
-            # check for dtype
+            self._cache[idx] = self._data[idx]
+            return self._cache[idx]
+        # check for dtype
+        try:
+            return (
+                self._data[idx[0][0]][self._header[self._alias[idx[1]]]],
+                self._data[idx[0][1]][self._header[self._alias[idx[1]]]])
+        except:
             try:
-                out = (
-                        self._data[idx[0][0]][self._header[self._alias[idx[1]]]],
-                        self._data[idx[0][1]][self._header[self._alias[idx[1]]]]
-                        )
-                return out
-            except:
-                try:
-                    # return data entry with specified key word
-                    out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                    self._cache[idx] = out
-                    return out
-                except KeyError:
-                    pass
+                # return data entry with specified key word
+                self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
+                return self._cache[idx]
+            except KeyError:
+                pass
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -460,40 +355,32 @@ class LexStat(Wordlist):
         list (Swadesh list). 
         """
         self.subsets = {}
-        for i, tA in enumerate(self.taxa):
-            for j, tB in enumerate(self.taxa):
-                if i <= j:
-                    self.subsets[tA,tB] = []
-                    
-                    # get current pairs
-                    pairs = self.pairs[tA,tB]
+        for (i, tA), (j, tB) in combinations_with_replacement(enumerate(self.taxa), r=2):
+            self.subsets[tA, tB] = []
 
-                    # iterate over pairs and append those whose reference point
-                    # is in the sublist
-                    for pair in pairs:
-                        if self[pair,ref][0] in sublist:
-                            self.subsets[tA,tB] += [pair]
-            
-    def _get_corrdist(
-            self,
-            **keywords
-            ):
+            # iterate over current pairs and append those whose reference point
+            # is in the sublist
+            for pair in self.pairs[tA, tB]:
+                if self[pair, ref][0] in sublist:
+                    self.subsets[tA, tB] += [pair]
+
+    def _get_corrdist(self, **keywords):
         """
         Use alignments to get a correspondences statistics.
         """
         kw = dict(
-                cluster_method          = 'upgma',
-                factor                  = rcParams['align_factor'],
-                gop                     = rcParams['align_gop'],
-                modes                   = rcParams['lexstat_modes'],
-                preprocessing           = False,
-                preprocessing_method    = rcParams['lexstat_preprocessing_method'],
-                preprocessing_threshold = rcParams['lexstat_preprocessing_threshold'],
-                ref                     = 'scaid',
-                restricted_chars        = rcParams['restricted_chars'],
-                threshold               = rcParams['lexstat_threshold'],
-                subset                  = False
-                )
+            cluster_method          = 'upgma',
+            factor                  = rcParams['align_factor'],
+            gop                     = rcParams['align_gop'],
+            modes                   = rcParams['lexstat_modes'],
+            preprocessing           = False,
+            preprocessing_method    = rcParams['lexstat_preprocessing_method'],
+            preprocessing_threshold = rcParams['lexstat_preprocessing_threshold'],
+            ref                     = 'scaid',
+            restricted_chars        = rcParams['restricted_chars'],
+            threshold               = rcParams['lexstat_threshold'],
+            subset                  = False
+        )
         kw.update(keywords)
 
         self._included = {}
@@ -502,22 +389,21 @@ class LexStat(Wordlist):
         if kw['preprocessing']:
             if kw['ref'] not in self.header:
                 self.cluster(
-                        method=kw['preprocessing_method'],
-                        threshold=kw['preprocessing_threshold'],
-                        gop = kw['gop'],
-                        cluster_method=kw['cluster_method'],
-                        ref=kw['ref']
-                        )
+                    method=kw['preprocessing_method'],
+                    threshold=kw['preprocessing_threshold'],
+                    gop=kw['gop'],
+                    cluster_method=kw['cluster_method'],
+                    ref=kw['ref'])
 
         tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
-            for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+            for (i, tA), (j, tB) in combinations_with_replacement(
+                    enumerate(self.taxa), r=2):
                 progress.update()
-                tA, tB = self.taxa[i], self.taxa[j]
                 self.log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
-                corrdist[tA,tB] = {}
-                for mode,gop,scale in kw['modes']:
+                corrdist[tA, tB] = defaultdict(float)
+                for mode, gop, scale in kw['modes']:
                     # XXX this is where we should add the new function for
                     # subsets of swadesh lists XXX
                     # this can be easily done by first checking for a
@@ -528,94 +414,58 @@ class LexStat(Wordlist):
                     # subset-variable or hash in which for all language
                     # pairs the subset is defined.
                     if kw['subset']:
-                        pairs = [pair for pair in self.pairs[tA,tB] if \
-                                pair in self.subsets[tA,tB]]
+                        pairs = [pair for pair in self.pairs[tA, tB]
+                                 if pair in self.subsets[tA, tB]]
                     else:
-                        pairs = self.pairs[tA,tB]
+                        pairs = self.pairs[tA, tB]
 
                     if kw['preprocessing']:
-                        numbers = [self[pair,"numbers"] for pair in pairs \
-                                if self[pair, kw['ref']][0] == self[pair,
-                                    kw['ref']][1]]
-                        weights = [self[pair,"weights"] for pair in pairs \
-                                if self[pair, kw['ref']][0] == self[pair,
-                                    kw['ref']][1]]
-                        prostrings = [self[pair,"prostrings"] for pair in
-                                pairs if self[pair, kw['ref']][0] ==  self[pair,
-                                    kw['ref']][1]]
-                        corrs,included = calign.corrdist(
-                                10.0,
-                                numbers,
-                                weights,
-                                prostrings,
-                                gop,
-                                scale,
-                                kw['factor'],
-                                self.bscorer,
-                                mode,
-                                kw['restricted_chars']
-                                )
+                        pairs = [p for p in pairs
+                                 if self[p, kw['ref']][0] == self[p, kw['ref']][1]]
+                        threshold = 10.0
                     else:
-                        numbers = [self[pair,"numbers"] for pair in pairs]
-                        weights = [self[pair,"weights"] for pair in pairs]
-                        prostrings = [self[pair,"prostrings"] for pair in
-                                pairs]
-                        #tks = [self[pair, 'tokens'] for pair in pairs]
-                        #for X,(a,b) in enumerate(numbers):
-                        #    print(''.join([x[2] for x in a]))
-                        #    print(''.join([x[2] for x in b]))
-                        #    print(tks[X])
-                        #    print('')
-                        corrs,included = calign.corrdist(
-                                kw['preprocessing_threshold'],
-                                numbers,
-                                weights,
-                                prostrings,
-                                gop,
-                                scale,
-                                kw['factor'],
-                                self.bscorer,
-                                mode,
-                                kw['restricted_chars']
-                                )
-
-                    self._included[tA,tB] = included
+                        threshold = kw['preprocessing_threshold']
+                    corrs, self._included[tA, tB] = calign.corrdist(
+                        threshold,
+                        [self[pair, "numbers"] for pair in pairs],
+                        [self[pair, "weights"] for pair in pairs],
+                        [self[pair, "prostrings"] for pair in pairs],
+                        gop,
+                        scale,
+                        kw['factor'],
+                        self.bscorer,
+                        mode,
+                        kw['restricted_chars'])
 
                     # change representation of gaps
-                    for a,b in list(corrs.keys()):
+                    for a, b in list(corrs.keys()):
                         # XXX check for bias XXX
-                        d = corrs[a,b]
+                        d = corrs[a, b]
                         if a == '-':
-                            a = str(i+1)+'.X.-'
+                            a = str(i + 1) + '.X.-'
                         elif b == '-':
-                            b = str(j+1)+'.X.-'
-                        try:
-                            corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                        except:
-                            corrdist[tA,tB][a,b] = d / len(kw['modes'])
+                            b = str(j + 1) + '.X.-'
+                        corrdist[tA, tB][a, b] += d / len(kw['modes'])
 
         return corrdist
 
-    def _get_randist(
-            self,
-            **keywords
-            ):
+    def _get_randist(self, **keywords):
         """
         Return the aligned results of randomly aligned sequences.
         """
         kw = dict(
-                modes = rcParams['lexstat_modes'],
-                factor = rcParams['align_factor'],
-                restricted_chars = rcParams['restricted_chars'],
-                runs = rcParams['lexstat_runs'],
-                rands = rcParams['lexstat_rands'],
-                limit = rcParams['lexstat_limit'],
-                method = rcParams['lexstat_scoring_method']
-                )
+            modes=rcParams['lexstat_modes'],
+            factor=rcParams['align_factor'],
+            restricted_chars=rcParams['restricted_chars'],
+            runs=rcParams['lexstat_runs'],
+            rands=rcParams['lexstat_rands'],
+            limit=rcParams['lexstat_limit'],
+            method=rcParams['lexstat_scoring_method']
+        )
         kw.update(keywords)
                 
         # determine the mode
-        if kw['method'] in ['markov','markov-chain','mc']:
+        if kw['method'] in ['markov', 'markov-chain', 'mc']:
             method = 'markov'
         else:
             method = 'shuffle'
@@ -624,15 +474,12 @@ class LexStat(Wordlist):
         tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
 
         if method == 'markov':
-            seqs = {}
-            pros = {}
-            weights = {}
+            seqs, pros, weights = defaultdict(list), defaultdict(list), defaultdict(list)
 
             # get a random distribution for all pairs
             sample = random.sample(
-                    [(i,j) for i in range(kw['rands']) for j in range(kw['rands'])],
-                    kw['runs']
-                    )
+                [(i, j) for i in range(kw['rands']) for j in range(kw['rands'])],
+                kw['runs'])
 
             with util.ProgressBar('SEQUENCE GENERATION', len(self.taxa)) as progress:
                 for i, taxon in enumerate(self.taxa):
@@ -641,10 +488,9 @@ class LexStat(Wordlist):
 
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
                     prostrings = self.get_list(col=taxon, entry="prostrings", flat=True)
-                    m = MCPhon(tokens,True,prostrings)
+                    m = MCPhon(tokens, True, prostrings)
                     words = []
-                    j = 0
-                    k = 0
+                    j, k = 0, 0
                     while j < kw['rands']:
                         s = m.get_string(new=False)
                         if s in words:
@@ -656,53 +502,38 @@ class LexStat(Wordlist):
                             j += 1
                             words += [s]
 
-                    seqs[taxon] = []
-                    pros[taxon] = []
-                    weights[taxon] = []
-
                     for w in words:
-                        cls = tokens2class(w.split(' '),self.model)
-                        pros[taxon] += [prosodic_string(w.split(' '))]
-                        weights[taxon] += [prosodic_weights(pros[taxon][-1])]
-                        seqs[taxon] += [['{0}.{1}'.format(
-                            c,
-                            p
-                            ) for c,p in zip(
-                                cls,
-                                [self._transform[pr] for pr in pros[taxon][-1]]
-                                )
-                            ]]
+                        cls = tokens2class(w.split(' '), self.model)
+                        pros[taxon].append(prosodic_string(w.split(' ')))
+                        weights[taxon].append(prosodic_weights(pros[taxon][-1]))
+                        seqs[taxon].append(['{0}.{1}'.format(
+                            c, p) for c, p in zip(
+                                cls, [self._transform[pr] for pr in pros[taxon][-1]])])
 
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+                for (i, tA), (j, tB) in combinations_with_replacement(
+                        enumerate(self.taxa), r=2):
                     progress.update()
-                    tA, tB = self.taxa[i], self.taxa[j]
                     self.log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB))
-
-                    corrdist[tA,tB] = {}
-                    for mode,gop,scale in kw['modes']:
-                        numbers = [(seqs[tA][x],seqs[tB][y]) for x,y in sample]
-                        gops = [(weights[tA][x],weights[tB][y]) for x,y in sample]
-                        prostrings = [(pros[tA][x],pros[tB][y]) for x,y in sample]
-
-                        corrs,included = calign.corrdist(
-                                10.0,
-                                numbers,
-                                gops,
-                                prostrings,
-                                gop,
-                                scale,
-                                kw['factor'],
-                                self.rscorer,
-                                mode,
-                                kw['restricted_chars']
-                                )
+                    corrdist[tA, tB] = defaultdict(float)
+                    for mode, gop, scale in kw['modes']:
+                        corrs, included = calign.corrdist(
+                            10.0,
+                            [(seqs[tA][x], seqs[tB][y]) for x, y in sample],
+                            [(weights[tA][x], weights[tB][y]) for x, y in sample],
+                            [(pros[tA][x], pros[tB][y]) for x, y in sample],
+                            gop,
+                            scale,
+                            kw['factor'],
+                            self.rscorer,
+                            mode,
+                            kw['restricted_chars'])
 
                         # change representation of gaps
-                        for a,b in list(corrs.keys()):
+                        for a, b in list(corrs.keys()):
                             # get the correspondence count
-                            d = corrs[a,b] * self._included[tA,tB] / included # XXX check XXX * len(self.pairs[tA,tB]) / runs
+                            d = corrs[a, b] * self._included[tA,tB] / included # XXX check XXX * len(self.pairs[tA,tB]) / runs
 
                             # check for gaps
                             if a == '-':
@@ -710,95 +541,62 @@ class LexStat(Wordlist):
                             elif b == '-':
                                 b = 'X.-'
 
-                            a = str(i+1)+'.'+a
-                            b = str(j+1)+'.'+b
-
-                            # append to overall dist
-                            try:
-                                corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                            except:
-                                corrdist[tA,tB][a,b] = d / len(kw['modes'])
-
+                            a = str(i + 1) + '.' + a
+                            b = str(j + 1) + '.' + b
+                            corrdist[tA, tB][a, b] += d / len(kw['modes'])
         # use shuffle approach otherwise
         else:
             tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
+                for (i, tA), (j, tB) in combinations_with_replacement(
+                        enumerate(self.taxa), r=2):
                     progress.update()
-                    tA, tB = self.taxa[i], self.taxa[j]
                     self.log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB))
-
-                    corrdist[tA,tB] = {}
+                    corrdist[tA, tB] = defaultdict(float)
 
                     # get the number pairs etc.
-                    numbers = [self[pair,'numbers'] for pair in
-                            self.pairs[tA,tB]]
-                    gops = [self[pair,'weights'] for pair in
-                            self.pairs[tA,tB]]
-                    prostrings = [self[pair,'prostrings'] for pair in
-                            self.pairs[tA,tB]]
+                    numbers = [self[pair, 'numbers'] for pair in self.pairs[tA, tB]]
+                    gops = [self[pair, 'weights'] for pair in self.pairs[tA, tB]]
+                    prostrings = [self[pair, 'prostrings'] for pair in self.pairs[tA, tB]]
 
+                    sample = [(x, y) for x in range(len(numbers)) for y
+                              in range(len(numbers))]
                     try:
-                        sample = random.sample(
-                                [(x,y) for x in range(len(numbers)) for y in
-                                    range(len(numbers))],
-                                kw['runs']
-                                )
-                    # handle exception of sample is larger than population
+                        sample = random.sample(sample, kw['runs'])
                     except ValueError:
-                        sample = [(x,y) for x in range(len(numbers)) for y
-                                in range(len(numbers))]
+                        # handle exception of sample is larger than population
+                        pass
 
-                    # get an index that will be repeatedly changed
-                    #indices = list(range(len(numbers)))
-
-                    for mode,gop,scale in kw['modes']:
-                        nnums = [(numbers[s[0]][0],numbers[s[1]][1]) for
-                                s in sample]
-                        ggops = [(gops[s[0]][0],gops[s[1]][1]) for s in
-                                sample]
-                        ppros = [(prostrings[s[0]][0],prostrings[s[1]][1]) for s in
-                                sample]
-
-                        corrs,included = calign.corrdist(
-                                10.0,
-                                nnums,
-                                ggops,
-                                ppros,
-                                gop,
-                                scale,
-                                kw['factor'],
-                                self.bscorer,
-                                mode,
-                                kw['restricted_chars']
-                                )
+                    for mode, gop, scale in kw['modes']:
+                        corrs, included = calign.corrdist(
+                            10.0,
+                            [(numbers[s[0]][0], numbers[s[1]][1]) for s in sample],
+                            [(gops[s[0]][0], gops[s[1]][1]) for s in sample],
+                            [(prostrings[s[0]][0], prostrings[s[1]][1]) for s in sample],
+                            gop,
+                            scale,
+                            kw['factor'],
+                            self.bscorer,
+                            mode,
+                            kw['restricted_chars'])
 
                         # change representation of gaps
-                        for a,b in list(corrs.keys()):
-
+                        for a, b in list(corrs.keys()):
                             # get the correspondence count
-                            d = corrs[a,b] * self._included[tA,tB] / included #XXX check XXX* len(self.pairs[tA,tB]) / runs
+                            d = corrs[a, b] * self._included[tA, tB] / included #XXX check XXX* len(self.pairs[tA,tB]) / runs
 
                             # check for gaps
                             if a == '-':
-                                a = str(i+1)+'.X.-'
-
+                                a = str(i + 1) + '.X.-'
                             elif b == '-':
-                                b = str(j+1)+'.X.-'
+                                b = str(j + 1) + '.X.-'
 
-                            # append to overall dist
-                            try:
-                                corrdist[tA,tB][a,b] += d / len(kw['modes'])
-                            except:
-                                corrdist[tA,tB][a,b] = d / len(kw['modes'])
+                            corrdist[tA, tB][a, b] += d / len(kw['modes'])
 
         return corrdist
 
-    def get_scorer(
-            self,
-            **keywords
-            ):
+    def get_scorer(self, **keywords):
         """
         Create a scoring function based on sound correspondences.
 
@@ -932,15 +730,11 @@ class LexStat(Wordlist):
         self._stamp += "# Parameters: "+parstring+'\n'
 
         # get the correspondence distribution
-        corrdist = self._get_corrdist(**kw)
+        self._corrdist = self._get_corrdist(**kw)
 
         # get the random distribution
-        randist = self._get_randist(**kw)
-        
-        # store the distributions as attributes
-        self._corrdist = corrdist
-        self._randist = randist
-        
+        self._randist = self._get_randist(**kw)
+
         # get the average gop
         gop = sum([m[1] for m in kw['modes']]) / len(kw['modes'])
 
@@ -949,58 +743,57 @@ class LexStat(Wordlist):
         char_dict = self.bscorer.chars2int
 
         # start the calculation
-        for i,tA in enumerate(self.taxa):
-            for j,tB in enumerate(self.taxa):
-                if i <= j:
-                    for charA in list(self.freqs[tA]) + [str(i+1)+'.X.-']:
-                        for charB in list(self.freqs[tB]) + [str(j+1)+'.X.-']:
-                            try:
-                                exp = randist[tA,tB][charA,charB]
-                            except:
-                                exp = False
-                            try:
-                                att = corrdist[tA,tB][charA,charB]
-                            except:
-                                att = False
+        for (i, tA), (j, tB) in combinations_with_replacement(enumerate(self.taxa), r=2):
+            for charA in list(self.freqs[tA]) + [str(i + 1) + '.X.-']:
+                for charB in list(self.freqs[tB]) + [str(j + 1) + '.X.-']:
+                    try:
+                        exp = self._randist[tA, tB][charA, charB]
+                    except:
+                        exp = False
+                    try:
+                        att = self._corrdist[tA, tB][charA, charB]
+                    except:
+                        att = False
 
-                            # in the following we follow the former lexstat
-                            # protocol
-                            if att <= 1 and i != j:
-                                att = False
+                    # in the following we follow the former lexstat protocol
+                    if att <= 1 and i != j:
+                        att = False
 
-                            if att and exp:
-                                score = np.log2((att ** 2 ) / ( exp ** 2 ) )
-                            elif att and not exp:
-                                score = np.log2((att ** 2 ) / 0.00001 )
-                            elif exp and not att:
-                                score = -5  #XXX gop ??? 
-                            elif not exp and not att:
-                                score = -90 # ???
+                    if att and exp:
+                        score = np.log2((att ** 2) / (exp ** 2))
+                    elif att and not exp:
+                        score = np.log2((att ** 2) / 0.00001)
+                    elif exp and not att:
+                        score = -5  # XXX gop ???
+                    elif not exp and not att:
+                        score = -90  # ???
+                    else:
+                        raise ValueError
 
-                            # combine the scores
-                            if '-' not in charA+charB:
-                                sim = self.bscorer[charA,charB]
-                            else:
-                                sim = gop
+                    # combine the scores
+                    if '-' not in charA + charB:
+                        sim = self.bscorer[charA, charB]
+                    else:
+                        sim = gop
 
-                            # get the real score
-                            rscore = ( kw['ratio'][0] * score + kw['ratio'][1] * sim ) / sum (kw['ratio'])
-                            
-                            try:
-                                idxA = char_dict[charA]
-                                idxB = char_dict[charB]
+                    # get the real score
+                    rscore = (kw['ratio'][0] * score + kw['ratio'][1] * sim) / sum(kw['ratio'])
 
-                                # use the vowel scale
-                                if charA[4] in 'XYZT_' and charB[4] in 'XYZT_':
-                                    matrix[idxA][idxB] = kw['vscale'] * rscore
-                                    matrix[idxB][idxA] = kw['vscale'] * rscore
-                                else:
-                                    matrix[idxA][idxB] = rscore
-                                    matrix[idxB][idxA] = rscore
-                            except:
-                                pass
+                    try:
+                        idxA = char_dict[charA]
+                        idxB = char_dict[charB]
+
+                        # use the vowel scale
+                        if charA[4] in 'XYZT_' and charB[4] in 'XYZT_':
+                            matrix[idxA][idxB] = kw['vscale'] * rscore
+                            matrix[idxB][idxA] = kw['vscale'] * rscore
+                        else:
+                            matrix[idxA][idxB] = rscore
+                            matrix[idxB][idxA] = rscore
+                    except:
+                        pass
         
-        self.cscorer = misc.ScoreDict(self.chars,matrix)
+        self.cscorer = misc.ScoreDict(self.chars, matrix)
         self._meta['scorer']['cscorer'] = self.cscorer
 
     def align_pairs(
@@ -1365,9 +1158,7 @@ class LexStat(Wordlist):
         
         # check for parameters and add clustering, in order to make sure that
         # analyses are not repeated
-        if hasattr(self,'params'):
-            pass
-        else:
+        if not hasattr(self, 'params'):
             self.params = {}
         
         self.params['cluster'] = "{0}_{1}_{2:.2f}".format(
@@ -1502,10 +1293,7 @@ class LexStat(Wordlist):
                     for idxA,idxB in zip(indices,clusters):
                         clr[idxA] = idxB
         
-        if 'override' in kw:
-            override = kw['override']
-        else:
-            override = False
+        override = kw.get('override', False)
 
         # assign ids
         if not ref:
@@ -1731,63 +1519,36 @@ class LexStat(Wordlist):
             either a dictionary containing the frequencies or a float
             indicating the ratio.
         """
-
         if ftype == 'sounds':
-            _F = {}
+            _F = defaultdict(lambda: defaultdict(int))
             for k in self:
-                tokens = self[k,ref]
                 taxon = self[k][self._colIdx]
-                for token in tokens:
-                    try:
-                        _F[taxon][token] += 1
-                    except KeyError:
-                        try:
-                            _F[taxon][token] = 1
-                        except KeyError:
-                            _F[taxon] = { token : 1 }
+                for token in self[k, ref]:
+                    _F[taxon][token] += 1
             if aggregated:
-                F = {}
-                for key,value in _F.items():
-                    for k,v in value.items():
-                        try:
-                            F[k] += 1
-                        except KeyError:
-                            F[k] = 1
+                F = defaultdict(int)
+                for key, value in _F.items():
+                    for k, v in value.items():
+                        F[k] += 1
                 return F
-            else:
-                return _F
+            return _F
 
         if ftype == 'wordlength':
-            _W = {}
+            _W = defaultdict(lambda: [0, 0])
             for k in self:
-                tokens = self[k,ref]
                 taxon = self[k][self._colIdx]
-                try:
-                    _W[taxon][0] += len(tokens)
-                    _W[taxon][1] += 1
-                except KeyError:
-                    _W[taxon] = [len(tokens),1]
-            _W = dict([(a,b[0]/b[1]) for a,b in _W.items()])
-            
+                _W[taxon][0] += len(self[k, ref])
+                _W[taxon][1] += 1
+            _W = {a: b[0] / b[1] for a, b in _W.items()}
+
             if not aggregated:
                 return _W
-            else:
-                return sum(_W.values()) / self.width
+            return sum(_W.values()) / self.width
         
         if ftype == 'diversity':
-            c = len(self.get_etymdict(ref))
-            e = len(self)
-            i = self.height
+            return (len(self.get_etymdict(ref)) - self.height) / (len(self) - self.height)
 
-            return (c - i) / (e - i)
-        
-                
-
-    def output(
-            self,
-            fileformat,
-            **keywords
-            ):
+    def output(self, fileformat, **keywords):
         """
         Write data for lexstat to file.
 
@@ -1829,13 +1590,10 @@ class LexStat(Wordlist):
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
         """
-
-        kw = dict(
-                filename = self.filename,
-                defaults = False
-                )
+        kw = dict(filename=self.filename, defaults=False)
         kw.update(keywords)
-        if kw['defaults']: return kw
+        if kw['defaults']:
+            return kw
 
         if fileformat == 'scorer':
             if 'scorer' not in kw:
@@ -1843,4 +1601,4 @@ class LexStat(Wordlist):
             out = scorer2str(kw['scorer'])
             util.write_text_file(kw['filename'] + '.' + fileformat, out)
         else:
-            self._output(fileformat,**kw)
+            self._output(fileformat, **kw)
