@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 import numpy as np
 import logging
+from collections import defaultdict
 
 from six import text_type as str
 
@@ -21,7 +22,6 @@ from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
         wl2qlc, triple2tsv, tsv2triple, wl2multistate, coverage
 
 from ..algorithm import clustering as cluster
-from ..algorithm import misc
 from .. import util
 from .. import log
 
@@ -77,7 +77,7 @@ class Wordlist(QLCParser):
         QLCParser.__init__(self, filename, conf or util.data_path('conf', 'wordlist.rc'))
         
         # check whether additional data has to be loaded
-        if not hasattr(self,'_rowidx'):
+        if not hasattr(self, '_rowidx'):
             # check whether additional data has to be loaded
             # retrieve basic types for rows and columns from the word list
             try:
@@ -85,28 +85,21 @@ class Wordlist(QLCParser):
                 colIdx = self.header[self._alias[col]]
             except:
                 raise ValueError("[!] Could not find row and col in configuration or input file!")
-            
-            basic_rows = sorted(
-                    set(
-                        [self._data[k][rowIdx] for k in self._data if k != 0 and isinstance(k, int)]
-                        ),
-                    key = lambda x: x.lower()
-                    )
-            basic_cols = sorted(
-                    set(
-                        [self._data[k][colIdx] for k in self._data if k != 0 and isinstance(k, int)]
-                        ),
-                    key = lambda x: x.lower()
-                    )
-            
+
             # define rows and cols as attributes of the word list
-            self.rows = basic_rows
-            self.cols = basic_cols
+            self.rows = sorted(
+                set([self._data[k][rowIdx] for k in self._data
+                     if k != 0 and isinstance(k, int)]),
+                key=lambda x: x.lower())
+            self.cols = sorted(
+                set([self._data[k][colIdx] for k in self._data
+                     if k != 0 and isinstance(k, int)]),
+                key=lambda x: x.lower())
 
             # define height and width of the word list
             self.height = len(self.rows)
             self.width = len(self.cols)
-            
+
             # row and column index point to the place where the data of the main
             # items is stored in the original dictionary
             self._rowIdx = rowIdx
@@ -167,6 +160,9 @@ class Wordlist(QLCParser):
                 
         # define a cache dictionary for stored data for quick access
         self._cache = {}
+
+        # setup other local temporary storage
+        self._etym_dict = {}
 
         # check for taxa in meta
         if 'taxa' in self._alias:
@@ -330,81 +326,50 @@ class Wordlist(QLCParser):
         Wordlist.add_entries
 
         """
-        
-        if row and not col:
-            try:
-                return self._cache[row,entry]
-            except:
-                pass
+        assert not (row and col)
 
-            if row not in self.rows:
-                print("[!] The row you selected is not available!")
-            else:
-                data = self._dict[row]
-                if not entry:
-                    entries = data
-                else:
-                    entries = {}
-                    idx = self._header[entry]
+        if row or col:
+            key = row or col
+            attr = 'col' if col else 'row'
 
-                    for key,value in data.items():
-                        entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[row,entry] = entries
-                return entries
+            if (key, entry) in self._cache:
+                return self._cache[key, entry]
 
-        if col and not row:
-            try:
-                return self._cache[col,entry]
-            except:
-                pass
+            if key not in getattr(self, attr + 's'):
+                print("[!] The {0} you selected is not available!".format(attr))
+                return
 
-            if col not in self.cols:
-                print("[!] The column you selected is not available!")
-            else:
-                data = {}
-                for i,j in  [(self[i][self._rowIdx],i) for 
-                        i in self._array[:,self.cols.index(col)] if i != 0]:
-                    try:
-                        data[i] += [j]
-                    except:
-                        data[i] = [j]
+        if row:
+            entries = self._dict[row]
+            if entry:
+                entries = {key: [self[i][self._header[entry]] for i in value]
+                           for key, value in entries.items()}
 
-                if not entry:
-                    entries = data
-                else:
-                    entries = {}
-                    idx = self._header[entry]
+            self._cache[row, entry] = entries
+            return entries
 
-                    for key,value in data.items():
-                        entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[col,entry] = entries
-                
-                return entries
-    
-        elif row and col:
-            print("[!] You should specify only a value for row or for col!")
-        else:
-            for key in [k for k in keywords if k in self._alias]:
-                if self._alias[key] == self._col_name:
-                    entries = self.get_dict(
-                            col = keywords[key],
-                            entry = entry,
-                            )
-                    self._cache[col,entry] = entries
-                    return entries
+        if col:
+            data = defaultdict(list)
+            for i, j in [(self[i][self._rowIdx], i)
+                         for i in self._array[:, self.cols.index(col)] if i != 0]:
+                data[i].append(j)
 
-                elif self._alias[key] == self._row_name:
-                    entries = self.get_dict(
-                            row = keywords[key],
-                            entry = entry
-                            )
-                    self._cache[col,entry] = entries
-                    return entries
+            entries = data
+            if entry:
+                entries = {key: [self[i][self._header[entry]] for i in value]
+                           for key, value in entries.items()}
 
+            self._cache[col, entry] = entries
+            return entries
 
-            print("[!] Neither rows nor columns are selected!")
+        for key in [k for k in keywords if k in self._alias]:
+            if self._alias[key] == self._col_name:
+                return self.get_dict(col=keywords[key], entry=entry)
+
+            if self._alias[key] == self._row_name:
+                return self.get_dict(row=keywords[key], entry=entry)
+
+        print("[!] Neither rows nor columns are selected!")
 
     def get_list(
             self,
@@ -613,29 +578,17 @@ class Wordlist(QLCParser):
             format.
 
         """
-
-        try:
+        if self._alias[entry] in self._cache:
             return self._cache[self._alias[entry]]
-        except:
-            pass
 
         if entry in self._header:
-            
-            # get the index
-            idx = self._header[entry]
-
             entries = []
-
             for row in self._array:
-                tmp = [0 for i in row]
-                for i,cell in enumerate(row):
-                    if cell != 0:
-                        tmp[i] = self[cell][idx]
-                entries.append(tmp)
+                entries.append(
+                    [self[cell][self._header[entry]] if cell != 0 else 0 for cell in row])
 
             # add entries to cache
             self._cache[self._alias[entry]] = entries
-
             return entries
 
     def get_etymdict(
@@ -687,21 +640,13 @@ class Wordlist(QLCParser):
             f = lambda x: x
 
         # check in the cache
-        try:
-            return self._cache[ref,entry]
-        except:
-            pass
+        if (ref, entry) in self._cache:
+            return self._cache[ref, entry]
 
         # create an etymdict object
-        try:
-            self._etym_dict[ref]
-        except:
-            try:
-                self._etym_dict
-                self._etym_dict[ref] = {}
-            except:
-                self._etym_dict = {ref:{}}
-            
+        if ref not in self._etym_dict:
+            self._etym_dict[ref] = {}
+
             # get the index for the cognate id 
             cogIdx = self._header[ref[0]]
             
@@ -713,6 +658,8 @@ class Wordlist(QLCParser):
 
                     # assign new line if cogid is missing
                     if cogid not in self._etym_dict[ref]:
+                        # FIXME: why initialize with list of 0 instead of list of [],
+                        # if lateron we treat the elements as lists?
                         self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
                     
                     # assign the values for the current session
@@ -727,6 +674,8 @@ class Wordlist(QLCParser):
                     colIdx = self.cols.index(self[key][self._colIdx])
                     for cog in cogids:
                         cogid = f(cog)
+                        # FIXME: bug? shouldn't it be `cogid` in the lines below?
+                        # Otherwise `cogid` isn't used anywhere!
                         if cog not in self._etym_dict[ref]:
                             self._etym_dict[ref][cog] = [0 for i in range(self.width)]
 
@@ -735,8 +684,7 @@ class Wordlist(QLCParser):
                             self._etym_dict[ref][cog][colIdx] += [key]
                         except:
                             self._etym_dict[ref][cog][colIdx] = [key]
-                        
-        
+
         if entry:
             # create the output
             etym_dict = {}
@@ -758,8 +706,7 @@ class Wordlist(QLCParser):
             etym_dict = self._etym_dict[ref]
         
         # add the stuff to the cache
-        self._cache[ref,entry] = etym_dict
-
+        self._cache[ref, entry] = etym_dict
         return etym_dict
 
     def get_paps(
@@ -1283,21 +1230,10 @@ class Wordlist(QLCParser):
                         ('ipa', '[{0}]\n')
                         ]
         
-        # setup defaults
-        defaults = dict(
-                filename = rcParams['filename'] 
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        util.setdefaults(keywords, filename=rcParams['filename'])
 
         # get the temporary dictionary
-        out = wl2dict(
-                self,
-                sections,
-                entries,
-                exclude
-                )
+        out = wl2dict(self, sections, entries, exclude)
     
         # assign the output string
         out_string = ''
@@ -1376,25 +1312,23 @@ class Wordlist(QLCParser):
         """
 
         self._export(
-                fileformat,
-                sections,
-                entries,
-                entry_sep,
-                item_sep,
-                template,
-                **keywords
-                )
+            fileformat,
+            sections,
+            entries,
+            entry_sep,
+            item_sep,
+            template,
+            **keywords)
 
     def coverage(self, stats='absolute'):
         """
         Function determines the coverage of a wordlist.
         """
-
         cov = coverage(self)
-        
+
         if stats == 'absolute':
             return cov
-        elif stats == 'ratio':
-            return dict([(a,b/self.height) for a,b in cov.items()])
-        elif stats == 'mean':
-            return sum([a/self.height for a in cov.values()]) / self.width
+        if stats == 'ratio':
+            return dict([(a, b / self.height) for a, b in cov.items()])
+        if stats == 'mean':
+            return sum([a / self.height for a in cov.values()]) / self.width
