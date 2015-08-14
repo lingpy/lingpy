@@ -8,7 +8,7 @@ from six import text_type
 # builtin
 import random
 import codecs
-from itertools import combinations_with_replacement
+from itertools import combinations_with_replacement, combinations
 from math import factorial
 from collections import defaultdict
 
@@ -670,50 +670,45 @@ class LexStat(Wordlist):
 
         # get parameters and store them in string
         modestring = []
-        for a,b,c in kw['modes']:
-            modestring += ['{0}-{1}-{2:.2f}'.format(a,abs(b),c)]
+        for a, b, c in kw['modes']:
+            modestring += ['{0}-{1}-{2:.2f}'.format(a, abs(b), c)]
         modestring = ':'.join(modestring)
         
         params = dict(
-                ratio = kw['ratio'],
-                vscale = kw['vscale'],
-                runs = kw['runs'],
-                threshold = kw['preprocessing_threshold'],
-                modestring = modestring,
-                factor = kw['factor'],
-                restricted_chars = kw['restricted_chars'],
-                method = kw['method'],
-                preprocessing = '{0}:{1}:{2}'.format(
-                    kw['preprocessing'],
-                    kw['cluster_method'],
-                    kw['gop']
-                    )
-                )
+            ratio=kw['ratio'],
+            vscale=kw['vscale'],
+            runs=kw['runs'],
+            threshold=kw['preprocessing_threshold'],
+            modestring=modestring,
+            factor=kw['factor'],
+            restricted_chars=kw['restricted_chars'],
+            method=kw['method'],
+            preprocessing='{0}:{1}:{2}'.format(
+                kw['preprocessing'],
+                kw['cluster_method'],
+                kw['gop']))
 
-        parstring = '_'.join(
-                [
-                    '{ratio[0]}:{ratio[1]}'
-                    '{vscale:.2f}',
-                    '{runs}',
-                    '{threshold:.2f}',
-                    '{modestring}',
-                    '{factor:.2f}',
-                    '{restricted_chars}',
-                    '{method}',
-                    '{preprocessing}'
-                    ]).format(
-                **params
-                )
+        parstring = '_'.join([
+            '{ratio[0]}:{ratio[1]}'
+            '{vscale:.2f}',
+            '{runs}',
+            '{threshold:.2f}',
+            '{modestring}',
+            '{factor:.2f}',
+            '{restricted_chars}',
+            '{method}',
+            '{preprocessing}'
+        ]).format(**params)
 
         # check for existing attributes
-        if hasattr(self,'cscorer') and not kw['force']:
+        if hasattr(self, 'cscorer') and not kw['force']:
             self.log.warn(
                 "An identical scoring function has already been calculated, force "
                 "recalculation by setting 'force' to 'True'.")
             return
 
         # check for attribute
-        if hasattr(self,'params') and not kw['force']:
+        if hasattr(self, 'params') and not kw['force']:
             if 'cscorer' in self.params:
                 if self.params['cscorer'] == params:
                     self.log.warn(
@@ -725,9 +720,9 @@ class LexStat(Wordlist):
                     "A different scoring function has already been calculated, overwriting previous settings.")
 
         # store parameters
-        self.params = {'cscorer':params }
+        self.params = {'cscorer': params}
         self._meta['params'] = self.params
-        self._stamp += "# Parameters: "+parstring+'\n'
+        self._stamp += "# Parameters: " + parstring + '\n'
 
         # get the correspondence distribution
         self._corrdist = self._get_corrdist(**kw)
@@ -748,11 +743,11 @@ class LexStat(Wordlist):
                 for charB in list(self.freqs[tB]) + [str(j + 1) + '.X.-']:
                     try:
                         exp = self._randist[tA, tB][charA, charB]
-                    except:
+                    except KeyError:
                         exp = False
                     try:
                         att = self._corrdist[tA, tB][charA, charB]
-                    except:
+                    except KeyError:
                         att = False
 
                     # in the following we follow the former lexstat protocol
@@ -796,13 +791,7 @@ class LexStat(Wordlist):
         self.cscorer = misc.ScoreDict(self.chars, matrix)
         self._meta['scorer']['cscorer'] = self.cscorer
 
-    def align_pairs(
-            self,
-            idxA,
-            idxB,
-            concept = None,
-            **keywords
-            ):
+    def align_pairs(self, idxA, idxB, concept=None, **keywords):
         """
         Align all or some words of a given pair of languages.
 
@@ -834,99 +823,88 @@ class LexStat(Wordlist):
             will be returned.
         """
         kw = dict(
-                method           = 'lexstat',
-                mode             = "global",
-                scale            = 0.5,
-                factor           = 0.3,
-                restricted_chars = '_T',
-                pprint           = True,
-                return_distance  = False,
-                gop              = -2,
-                distance         = True,
-                defaults         = False,
-                return_raw       = False
-                )
+            method           = 'lexstat',
+            mode             = "global",
+            scale            = 0.5,
+            factor           = 0.3,
+            restricted_chars = '_T',
+            pprint           = True,
+            return_distance  = False,
+            gop              = -2,
+            distance         = True,
+            defaults         = False,
+            return_raw       = False
+        )
         kw.update(keywords)
-        if kw['defaults']: return kw
-        
+        if kw['defaults']:
+            return kw
+
         if isinstance(idxA, (text_type, tuple)):
             if isinstance(idxA, tuple):
                 idxsA = self.get_dict(col=idxA[0])[idxA[1]]
                 idxsB = self.get_dict(col=idxB[0])[idxB[1]]
-                for i,indexA in enumerate(idxsA):
-                    for j,indexB in enumerate(idxsB):
-                        self.align_pairs(indexA,indexB,**kw)
-
+                for i, indexA in enumerate(idxsA):
+                    for j, indexB in enumerate(idxsB):
+                        self.align_pairs(indexA, indexB, **kw)
             else:
                 if not concept:
                     for c in self.concepts:
                         print("Concept: {0}".format(c))
-                        concept = c
-                        self.align_pairs(idxA,idxB,c,**kw)
+                        self.align_pairs(idxA, idxB, c, **kw)
                         print('')
                 else:
-                    self.align_pairs(
-                            (idxA,concept),
-                            (idxB,concept),
-                            concept=None,
-                            **kw
-                            )
+                    self.align_pairs((idxA, concept), (idxB, concept), concept=None, **kw)
             return
         
         # assign the distance value
         distance = 1 if kw['distance'] else 0
 
         # get the language ids
-        lA = self[idxA,'langid']
-        lB = self[idxB,'langid']
+        lA = self[idxA, 'langid']
+        lB = self[idxB, 'langid']
 
         if kw['method'] == 'lexstat':
             scorer = self.cscorer
             gop = 1.0
-            weightsA = [self.cscorer[str(lA)+'.X.-',n] for n in
-                self[idxA,'numbers']]
-            weightsB = [self.cscorer[str(lB)+'.X.-',n] for n in
-                self[idxB,'numbers']]
-
+            weightsA = [self.cscorer[str(lA) + '.X.-', n] for n in self[idxA, 'numbers']]
+            weightsB = [self.cscorer[str(lB) + '.X.-', n] for n in self[idxB, 'numbers']]
         else:
             gop = kw['gop']
-            weightsA = self[idxA,'weights']
-            weightsB = self[idxB,'weights']
+            weightsA = self[idxA, 'weights']
+            weightsB = self[idxB, 'weights']
             scorer = self.bscorer
 
-        almA,almB,d = calign.align_pair(
-                self[idxA,'numbers'],
-                self[idxB,'numbers'],
-                weightsA,
-                weightsB,
-                self[idxA,'prostrings'],
-                self[idxB,'prostrings'],
-                gop,
-                kw['scale'],
-                kw['factor'],
-                scorer,
-                kw['mode'],
-                kw['restricted_chars'],
-                distance
-                )
+        almA, almB, d = calign.align_pair(
+            self[idxA, 'numbers'],
+            self[idxB, 'numbers'],
+            weightsA,
+            weightsB,
+            self[idxA, 'prostrings'],
+            self[idxB, 'prostrings'],
+            gop,
+            kw['scale'],
+            kw['factor'],
+            scorer,
+            kw['mode'],
+            kw['restricted_chars'],
+            distance)
 
         # get a string of scores
         if kw['method'] == 'lexstat':
-            fun = lambda x,y: x if x != '-' else '{0}.X.-'.format(y)
-
-            scoreA = [fun(a,lA) for a in almA]
-            scoreB = [fun(b,lB) for b in almB]
+            fun = lambda x, y: x if x != '-' else '{0}.X.-'.format(y)
+            scoreA = [fun(a, lA) for a in almA]
+            scoreB = [fun(b, lB) for b in almB]
         else:
             scoreA = almA
             scoreB = almB
 
-        scores = ['{0:.2f}'.format(scorer[a,b]) for a,b in zip(scoreA,scoreB)]
+        scores = ['{0:.2f}'.format(scorer[a, b]) for a, b in zip(scoreA, scoreB)]
         
         if kw['return_raw']:
             return almA, almB, d
         
-        almA = class2tokens(self[idxA,'tokens'],almA)
-        almB = class2tokens(self[idxB,'tokens'],almB)
+        almA = class2tokens(self[idxA, 'tokens'], almA)
+        almB = class2tokens(self[idxB, 'tokens'], almB)
         if kw['pprint']:
             print('\t'.join(almA))
             print('\t'.join(almB))
@@ -938,8 +916,8 @@ class LexStat(Wordlist):
         
         if kw['return_distance']:
             return d
-        return almA,almB,d
-    
+        return almA, almB, d
+
     def _get_matrices(
             self,
             concept = False,
@@ -962,124 +940,86 @@ class LexStat(Wordlist):
         """
         # currently, there are no defaults XXX
         kw = dict(
-                defaults = False,
-                external_scorer = False, # external scoring function
-                )
+            defaults=False,
+            external_scorer=False,  # external scoring function
+        )
         kw.update(keywords)
 
-        # check for method
         if method == 'lexstat':
-            
-            # check for scorer
-            if not hasattr(self,'cscorer'):
+            if not hasattr(self, 'cscorer'):
                 self.log.warn("No correspondence-scorer has been specified.")
                 return
-            
-            # define the function with help of lambda
-            function = lambda idxA,idxy: calign.align_pair(
-                    self[idxA,'numbers'],
-                    self[idxB,'numbers'],
-                    [self.cscorer[self[idxB,'langid'] + ".X.-",n] for n in
-                        self[idxA,'numbers']],
-                    [self.cscorer[self[idxA,'langid'] + ".X.-",n] for n in
-                        self[idxB,'numbers']],
 
-                    self[idxA,'prostrings'],
-                    self[idxB,'prostrings'],
-                    1,
-                    scale,
-                    factor,
-                    self.cscorer,
-                    mode,
-                    restricted_chars,
-                    1
-                    )[2]
+            # define the function with help of lambda
+            function = lambda idxA, idxy: calign.align_pair(
+                self[idxA, 'numbers'],
+                self[idxB, 'numbers'],
+                [self.cscorer[self[idxB, 'langid'] + ".X.-", n]
+                 for n in self[idxA, 'numbers']],
+                [self.cscorer[self[idxA, 'langid'] + ".X.-", n]
+                 for n in self[idxB, 'numbers']],
+                self[idxA, 'prostrings'],
+                self[idxB, 'prostrings'],
+                1,
+                scale,
+                factor,
+                self.cscorer,
+                mode,
+                restricted_chars,
+                1)[2]
         elif method == 'sca':
             # define the function with help of lambda
-            function = lambda idxA,idxB: calign.align_pair(
-                    ['.'.join(n.split('.')[1:]) for n in self[idxA,'numbers']],
-                    ['.'.join(n.split('.')[1:]) for n in self[idxB,'numbers']],
-                    self[idxA,'weights'],
-                    self[idxB,'weights'],
-                    self[idxA,'prostrings'],
-                    self[idxB,'prostrings'],
-                    gop,
-                    scale,
-                    factor,
-                    self.rscorer,
-                    mode,
-                    restricted_chars,
-                    1
-                    )[2]  
-
+            function = lambda idxA, idxB: calign.align_pair(
+                ['.'.join(n.split('.')[1:]) for n in self[idxA, 'numbers']],
+                ['.'.join(n.split('.')[1:]) for n in self[idxB, 'numbers']],
+                self[idxA, 'weights'],
+                self[idxB, 'weights'],
+                self[idxA, 'prostrings'],
+                self[idxB, 'prostrings'],
+                gop,
+                scale,
+                factor,
+                self.rscorer,
+                mode,
+                restricted_chars,
+                1)[2]
         elif method == 'edit-dist':
-            try:
-                entry = kw['entry']
-            except:
-                entry = 'tokens'
-
-            # define function with lamda
-            function = lambda idxA,idxB: edit_dist(
-                    self[idxA,entry],
-                    self[idxB,entry],
-                    True,
-                    restriction
-                    )
-
+            entry = kw.get('entry', 'tokens')
+            function = lambda idxA, idxB: edit_dist(
+                self[idxA, entry], self[idxB, entry], True, restriction)
         elif method == 'turchin':
-            function = lambda idxA,idxB: turchin(
-                    self[idxA,'tokens'],
-                    self[idxB,'tokens']
-                    )
-
+            function = lambda idxA, idxB: turchin(
+                self[idxA, 'tokens'], self[idxB, 'tokens'])
         elif method == 'custom':
-            
-            function = lambda idxA,idxB: talign.align_pair(
-                    self[idxA, 'utokens'],
-                    self[idxB, 'utokens'],
-                    gop,
-                    scale,
-                    keywords['external_scorer'],
-                    'overlap',
-                    True)[2]
-
-        if not concept:
-            concepts = sorted(self.rows)
+            function = lambda idxA, idxB: talign.align_pair(
+                self[idxA, 'utokens'],
+                self[idxB, 'utokens'],
+                gop,
+                scale,
+                keywords['external_scorer'],
+                'overlap',
+                True)[2]
         else:
-            concepts = [concept]
-
-        for c in sorted(concepts):
+            raise ValueError(method)
+        concepts = [concept] if concept else sorted(self.rows)
+        for c in concepts:
             self.log.info("Analyzing words for concept <{0}>.".format(c))
-
-            indices = self.get_list(
-                    row=c,
-                    flat=True
-                    )
-
+            indices = self.get_list(row=c, flat=True)
             matrix = []
+            for (i, idxA), (j, idxB) in combinations(enumerate(indices), r=2):
+                try:
+                    d = function(idxA, idxB)
+                except ZeroDivisionError:
+                    self.log.warning(
+                        "Encountered Zero-Division for the comparison of {0} and {1}".format(
+                            ''.join(self[idxA, "tokens"]),
+                            ''.join(self[idxB, "tokens"])))
+                    d = 100
+
+                matrix += [d]
             
-            for i,idxA in enumerate(indices):
-                for j,idxB in enumerate(indices):
-                    if i < j:
-                        try:
-                            d = function(idxA,idxB)
-                        except ZeroDivisionError:
-                            self.log.warning(
-                                "Encountered Zero-Division for the comparison of {0} and {1}".format(
-                                ''.join(self[idxA,"tokens"]),
-                                ''.join(self[idxB,"tokens"])))
-                            d = 100
-                        
-                        # append distance score to matrix
-                        matrix += [d]
-            
-            # squareform the matrix 
             matrix = misc.squareform(matrix)
-            
-            if not concept:
-                yield c,indices,matrix
-            else:
-                yield matrix
+            yield matrix if concept else c, indices, matrix
 
     def cluster(
             self,
@@ -1139,20 +1079,20 @@ class LexStat(Wordlist):
         """
         # set up defaults
         kw = dict(
-                inflation       = 2,
-                expansion       = 2,
-                max_steps       = 1000,
-                add_self_loops  = True,
-                guess_threshold = False,
-                gt_trange       = (0.4,0.6,0.02),
-                mcl_logs        = lambda x: -np.log2((1-x)**2),
-                gt_mode         = 'average',
-                matrix_type     = 'distances',
-                link_threshold  = False,
-                _return_matrix  = False, # help function for test purposes
-                defaults        = False,
-                external_scorer = False, # external scoring dictionary
-                )
+            inflation       = 2,
+            expansion       = 2,
+            max_steps       = 1000,
+            add_self_loops  = True,
+            guess_threshold = False,
+            gt_trange       = (0.4,0.6,0.02),
+            mcl_logs        = lambda x: -np.log2((1-x)**2),
+            gt_mode         = 'average',
+            matrix_type     = 'distances',
+            link_threshold  = False,
+            _return_matrix  = False, # help function for test purposes
+            defaults        = False,
+            external_scorer = False, # external scoring dictionary
+        )
         kw.update(keywords)
         if kw['defaults']: return kw
         
@@ -1162,51 +1102,38 @@ class LexStat(Wordlist):
             self.params = {}
         
         self.params['cluster'] = "{0}_{1}_{2:.2f}".format(
-                method,
-                cluster_method,
-                threshold
-                )
+            method, cluster_method, threshold)
         self._stamp += '# Cluster: ' + self.params['cluster']
-        
-        if method not in ['lexstat','sca','turchin','edit-dist', 'custom']:
-            raise ValueError(
-                    "[!] The method you selected is not available."
-                    )
-        
+        assert method in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom']
+
         # set up clustering algorithm, first the simple basics
         if external_function:
             fclust = external_function
-
-        elif cluster_method in ['upgma','single','complete']:
-            fclust = lambda x,y: clustering.flat_cluster(
-                    cluster_method,
-                    y,
-                    x,
-                    revert = True
-                    )
+        elif cluster_method in ['upgma', 'single', 'complete']:
+            fclust = lambda x, y: clustering.flat_cluster(
+                cluster_method, y, x, revert=True)
         # we need specific conditions for mcl clustering
         elif cluster_method == 'mcl':
-            fclust = lambda x,y: clustering.mcl(
-                    y,
-                    x,
-                    list(range(len(x))),
-                    max_steps = kw['max_steps'],
-                    inflation = kw['inflation'],
-                    expansion = kw['expansion'],
-                    add_self_loops = kw['add_self_loops'],
-                    logs = kw['mcl_logs'],
-                    revert = True,
-                    )
-        elif cluster_method in ['lcl','link_clustering','lc']:
-            fclust = lambda x,y: clustering.link_clustering(
-                    y,
-                    x,
-                    list(range(len(x))),
-                    revert = True,
-                    fuzzy = False,
-                    matrix_type = kw['matrix_type'],
-                    link_threshold = kw['link_threshold']
-                    )
+            fclust = lambda x, y: clustering.mcl(
+                y,
+                x,
+                list(range(len(x))),
+                max_steps=kw['max_steps'],
+                inflation=kw['inflation'],
+                expansion=kw['expansion'],
+                add_self_loops=kw['add_self_loops'],
+                logs=kw['mcl_logs'],
+                revert=True,
+            )
+        elif cluster_method in ['lcl', 'link_clustering', 'lc']:
+            fclust = lambda x, y: clustering.link_clustering(
+                y,
+                x,
+                list(range(len(x))),
+                revert=True,
+                fuzzy=False,
+                matrix_type=kw['matrix_type'],
+                link_threshold=kw['link_threshold'])
 
         # make a dictionary that stores the clusters for later update
         clr = {}
@@ -1214,53 +1141,53 @@ class LexStat(Wordlist):
         
         # create a matrix iterator
         matrices = self._get_matrices(
-                method            = method,
-                scale             = scale,
-                factor            = factor,
-                restricted_chars  = restricted_chars,
-                mode              = mode,
-                gop               = gop,
-                restriction       = restriction,
-                **kw
-                )
+            method=method,
+            scale=scale,
+            factor=factor,
+            restricted_chars=restricted_chars,
+            mode=mode,
+            gop=gop,
+            restriction=restriction,
+            **kw)
 
         # check for full consideration of basic t
         if kw['guess_threshold'] and kw['gt_mode'] == 'average':
             thresholds = []
             matrices = list(matrices)
-            for c,i,m in matrices:
-                t = clustering.best_threshold(
-                    m,
-                    kw['gt_trange']
-                    )
-                thresholds += [t]
+            for c, i, m in matrices:
+                thresholds += [clustering.best_threshold(m, kw['gt_trange'])]
             threshold = sum(thresholds) / len(thresholds)
         # new method for threshold estimation based on calculating approximate
         # random distributions of similarities for each sequence
         elif kw['guess_threshold'] and kw['gt_mode'] == 'nulld':
             DR = []
-            align = lambda x,y: self.align_pairs(x, y, method=method,
-                    restricted_chars=restricted_chars, mode=mode, scale=scale,
-                    factor=factor, return_distance=True, pprint=False, gop=gop)
-            for l1,l2 in self.pairs:
+            align = lambda x, y: self.align_pairs(
+                x,
+                y,
+                method=method,
+                restricted_chars=restricted_chars,
+                mode=mode,
+                scale=scale,
+                factor=factor,
+                return_distance=True,
+                pprint=False,
+                gop=gop)
+            for l1, l2 in self.pairs:
                 if l1 != l2:
-                    pairs = self.pairs[l1,l2]
-                    for p1,p2 in pairs:
-                        dx = [align(p1, pairs[random.randint(0, len(pairs)-1)][1])
-                                for i in range(len(pairs)//5)]
-                        DR += dx #[sum(dx)/len(dx)]
+                    pairs = self.pairs[l1, l2]
+                    for p1, p2 in pairs:
+                        dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
+                              for i in range(len(pairs) // 5)]
+                        DR += dx  # [sum(dx)/len(dx)]
             threshold = sum(DR) / len(DR)
 
         with util.ProgressBar('SEQUENCE CLUSTERING', len(self.rows)) as progress:
-            for concept,indices,matrix in matrices:
+            for concept, indices, matrix in matrices:
                 progress.update()
 
                 # check for keyword to guess the threshold
                 if kw['guess_threshold'] and kw['gt_mode'] == 'item':
-                    t = clustering.best_threshold(
-                        matrix,
-                        kw['gt_trange']
-                        )
+                    t = clustering.best_threshold(matrix, kw['gt_trange'])
                 # considering new function here JML
                 elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
                     for idx in indices:
@@ -1268,31 +1195,30 @@ class LexStat(Wordlist):
                 else:
                     t = threshold
 
-                c = fclust(matrix,t)
+                c = fclust(matrix, t)
             
                 # specific clustering for fuzzy methods, currently not yet
                 # supported
-                if cluster_method in ['fuzzy']: #['link_communities','lc','lcl']:
-                    clusters = [[d+k for d in c[i]] for i in range(len(matrix))]
+                if cluster_method in ['fuzzy']:  # ['link_communities','lc','lcl']:
+                    clusters = [[d + k for d in c[i]] for i in range(len(matrix))]
                     tests = []
                     for clrx in clusters:
                         for x in clrx:
                             tests += [x]
                     k = max(tests)
-                    for idxA,idxB in zip(indices,clusters):
+                    for idxA, idxB in zip(indices, clusters):
                         clr[idxA] = idxB
-                    
                 else:
                     # extract the clusters
-                    clusters = [c[i]+k for i in range(len(matrix))]
+                    clusters = [c[i] + k for i in range(len(matrix))]
 
                     # reassign the "k" value
                     k = max(clusters)
             
                     # add values to cluster dictionary
-                    for idxA,idxB in zip(indices,clusters):
+                    for idxA, idxB in zip(indices, clusters):
                         clr[idxA] = idxB
-        
+
         override = kw.get('override', False)
 
         # assign ids
