@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os
 import numpy as np
 import logging
+from collections import defaultdict
 
 from six import text_type as str
 
@@ -21,7 +22,6 @@ from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
         wl2qlc, triple2tsv, tsv2triple, wl2multistate, coverage
 
 from ..algorithm import clustering as cluster
-from ..algorithm import misc
 from .. import util
 from .. import log
 
@@ -77,7 +77,7 @@ class Wordlist(QLCParser):
         QLCParser.__init__(self, filename, conf or util.data_path('conf', 'wordlist.rc'))
         
         # check whether additional data has to be loaded
-        if not hasattr(self,'_rowidx'):
+        if not hasattr(self, '_rowidx'):
             # check whether additional data has to be loaded
             # retrieve basic types for rows and columns from the word list
             try:
@@ -85,28 +85,21 @@ class Wordlist(QLCParser):
                 colIdx = self.header[self._alias[col]]
             except:
                 raise ValueError("[!] Could not find row and col in configuration or input file!")
-            
-            basic_rows = sorted(
-                    set(
-                        [self._data[k][rowIdx] for k in self._data if k != 0 and isinstance(k, int)]
-                        ),
-                    key = lambda x: x.lower()
-                    )
-            basic_cols = sorted(
-                    set(
-                        [self._data[k][colIdx] for k in self._data if k != 0 and isinstance(k, int)]
-                        ),
-                    key = lambda x: x.lower()
-                    )
-            
+
             # define rows and cols as attributes of the word list
-            self.rows = basic_rows
-            self.cols = basic_cols
+            self.rows = sorted(
+                set([self._data[k][rowIdx] for k in self._data
+                     if k != 0 and isinstance(k, int)]),
+                key=lambda x: x.lower())
+            self.cols = sorted(
+                set([self._data[k][colIdx] for k in self._data
+                     if k != 0 and isinstance(k, int)]),
+                key=lambda x: x.lower())
 
             # define height and width of the word list
             self.height = len(self.rows)
             self.width = len(self.cols)
-            
+
             # row and column index point to the place where the data of the main
             # items is stored in the original dictionary
             self._rowIdx = rowIdx
@@ -119,88 +112,69 @@ class Wordlist(QLCParser):
 
             # first, find out, how many items (== synonyms) are there maximally for
             # each row
-            tmp_dict = {}
-            for key,value in [(k,v) for k,v in self._data.items() if k != 0 and str(k).isnumeric()]:
-                try:
-                    tmp_dict[value[rowIdx]][value[colIdx]] += [key]
-                except KeyError:
-                    try:
-                        tmp_dict[value[rowIdx]][value[colIdx]] = [key]
-                    except KeyError:
-                        tmp_dict[value[rowIdx]] = {}
-                        tmp_dict[value[rowIdx]][value[colIdx]] = [key]
-        
-            # assign the values as _dict-attribute to the dictionary
-            self._dict = tmp_dict
+            self._dict = defaultdict(lambda: defaultdict(list))
+            for key, value in [(k, v) for k, v in self._data.items()
+                               if k != 0 and str(k).isnumeric()]:
+                self._dict[value[rowIdx]][value[colIdx]].append(key)
+
+            # We must cast to a regular dict to make the attribute picklable.
+            self._dict = dict(self._dict)
 
             # create the array by counting the maximal number of occurrences, store
             # the row names separately in a dictionary
             tmp_list = []
-            row_dict = {}
-            
-            count = 0
-            for k,d in self._dict.items():
+            self._idx = {}
 
-                row_dict[k] = []
+            count = 0
+            for k, d in self._dict.items():
+                self._idx[k] = []
 
                 # get maximal amount of "synonyms"
-                m = max(
-                        [len(x) for x in d.values()]
-                        )
-
-                for i in range(m):
+                for i in range(max([len(x) for x in d.values()])):
                     tmp = []
                     for j in range(self.width):
                         try:
-                            tmp.append(
-                                    d[self.cols[j]][i]
-                                    )
+                            tmp.append(d[self.cols[j]][i])
                         except:
                             tmp.append(0)
-                    row_dict[k] += [count]
+                    self._idx[k] += [count]
                     count += 1
                     tmp_list += [tmp]
 
             # create the array 
             self._array = np.array(tmp_list)
-            self._idx = row_dict
-                
+
         # define a cache dictionary for stored data for quick access
         self._cache = {}
+
+        # setup other local temporary storage
+        self._etym_dict = {}
 
         # check for taxa in meta
         if 'taxa' in self._alias:
             if self._alias['taxa'] not in self._meta:
                 self._meta[self._alias['taxa']] = self.cols
 
-    def __getitem__(
-            self,
-            idx
-            ):
+    def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
         """
+        if idx in self._cache:
+            return self._cache[idx]
+
+        if idx in self._data:
+            # return full data entry as list
+            self._cache[idx] = self._data[idx]
+            return self._cache[idx]
+
         try:
+            # return data entry with specified key word
+            self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
             return self._cache[idx]
         except:
-            try:
-                # return full data entry as list
-                out = self._data[idx]
-                self._cache[idx] = out
-                return out
-            except:
-                try:
-                    # return data entry with specified key word
-                    out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                    self._cache[idx] = out
-                    return out
-                except:
-                    try:
-                        out = self._meta[idx]
-                        self._cache[idx] = out
-                        return out
-                    except:
-                        pass
+            if idx in self._meta:
+                self._cache[idx] = self._meta[idx]
+                return self._cache[idx]
 
     def _clean_cache(self):
 
@@ -330,81 +304,50 @@ class Wordlist(QLCParser):
         Wordlist.add_entries
 
         """
-        
-        if row and not col:
-            try:
-                return self._cache[row,entry]
-            except:
-                pass
+        assert not (row and col)
 
-            if row not in self.rows:
-                print("[!] The row you selected is not available!")
-            else:
-                data = self._dict[row]
-                if not entry:
-                    entries = data
-                else:
-                    entries = {}
-                    idx = self._header[entry]
+        if row or col:
+            key = row or col
+            attr = 'col' if col else 'row'
 
-                    for key,value in data.items():
-                        entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[row,entry] = entries
-                return entries
+            if (key, entry) in self._cache:
+                return self._cache[key, entry]
 
-        if col and not row:
-            try:
-                return self._cache[col,entry]
-            except:
-                pass
+            if key not in getattr(self, attr + 's'):
+                print("[!] The {0} you selected is not available!".format(attr))
+                return
 
-            if col not in self.cols:
-                print("[!] The column you selected is not available!")
-            else:
-                data = {}
-                for i,j in  [(self[i][self._rowIdx],i) for 
-                        i in self._array[:,self.cols.index(col)] if i != 0]:
-                    try:
-                        data[i] += [j]
-                    except:
-                        data[i] = [j]
+        if row:
+            entries = self._dict[row]
+            if entry:
+                entries = {key: [self[i][self._header[entry]] for i in value]
+                           for key, value in entries.items()}
 
-                if not entry:
-                    entries = data
-                else:
-                    entries = {}
-                    idx = self._header[entry]
+            self._cache[row, entry] = entries
+            return entries
 
-                    for key,value in data.items():
-                        entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[col,entry] = entries
-                
-                return entries
-    
-        elif row and col:
-            print("[!] You should specify only a value for row or for col!")
-        else:
-            for key in [k for k in keywords if k in self._alias]:
-                if self._alias[key] == self._col_name:
-                    entries = self.get_dict(
-                            col = keywords[key],
-                            entry = entry,
-                            )
-                    self._cache[col,entry] = entries
-                    return entries
+        if col:
+            data = defaultdict(list)
+            for i, j in [(self[i][self._rowIdx], i)
+                         for i in self._array[:, self.cols.index(col)] if i != 0]:
+                data[i].append(j)
 
-                elif self._alias[key] == self._row_name:
-                    entries = self.get_dict(
-                            row = keywords[key],
-                            entry = entry
-                            )
-                    self._cache[col,entry] = entries
-                    return entries
+            entries = data
+            if entry:
+                entries = {key: [self[i][self._header[entry]] for i in value]
+                           for key, value in entries.items()}
 
+            self._cache[col, entry] = entries
+            return entries
 
-            print("[!] Neither rows nor columns are selected!")
+        for key in [k for k in keywords if k in self._alias]:
+            if self._alias[key] == self._col_name:
+                return self.get_dict(col=keywords[key], entry=entry)
+
+            if self._alias[key] == self._row_name:
+                return self.get_dict(row=keywords[key], entry=entry)
+
+        print("[!] Neither rows nor columns are selected!")
 
     def get_list(
             self,
@@ -613,29 +556,17 @@ class Wordlist(QLCParser):
             format.
 
         """
-
-        try:
+        if self._alias[entry] in self._cache:
             return self._cache[self._alias[entry]]
-        except:
-            pass
 
         if entry in self._header:
-            
-            # get the index
-            idx = self._header[entry]
-
             entries = []
-
             for row in self._array:
-                tmp = [0 for i in row]
-                for i,cell in enumerate(row):
-                    if cell != 0:
-                        tmp[i] = self[cell][idx]
-                entries.append(tmp)
+                entries.append(
+                    [self[cell][self._header[entry]] if cell != 0 else 0 for cell in row])
 
             # add entries to cache
             self._cache[self._alias[entry]] = entries
-
             return entries
 
     def get_etymdict(
@@ -687,21 +618,13 @@ class Wordlist(QLCParser):
             f = lambda x: x
 
         # check in the cache
-        try:
-            return self._cache[ref,entry]
-        except:
-            pass
+        if (ref, entry) in self._cache:
+            return self._cache[ref, entry]
 
         # create an etymdict object
-        try:
-            self._etym_dict[ref]
-        except:
-            try:
-                self._etym_dict
-                self._etym_dict[ref] = {}
-            except:
-                self._etym_dict = {ref:{}}
-            
+        if ref not in self._etym_dict:
+            self._etym_dict[ref] = {}
+
             # get the index for the cognate id 
             cogIdx = self._header[ref[0]]
             
@@ -713,6 +636,8 @@ class Wordlist(QLCParser):
 
                     # assign new line if cogid is missing
                     if cogid not in self._etym_dict[ref]:
+                        # FIXME: why initialize with list of 0 instead of list of [],
+                        # if lateron we treat the elements as lists?
                         self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
                     
                     # assign the values for the current session
@@ -720,23 +645,21 @@ class Wordlist(QLCParser):
                         self._etym_dict[ref][cogid][colIdx] += [key]
                     except:
                         self._etym_dict[ref][cogid][colIdx] = [key]
-
             elif fuzzy:
                 for key in self:
                     cogids = self[key][cogIdx]
                     colIdx = self.cols.index(self[key][self._colIdx])
                     for cog in cogids:
                         cogid = f(cog)
-                        if cog not in self._etym_dict[ref]:
-                            self._etym_dict[ref][cog] = [0 for i in range(self.width)]
+                        if cogid not in self._etym_dict[ref]:
+                            self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
 
                         # assign new values for the current session
                         try:
-                            self._etym_dict[ref][cog][colIdx] += [key]
+                            self._etym_dict[ref][cogid][colIdx] += [key]
                         except:
-                            self._etym_dict[ref][cog][colIdx] = [key]
-                        
-        
+                            self._etym_dict[ref][cogid][colIdx] = [key]
+
         if entry:
             # create the output
             etym_dict = {}
@@ -758,8 +681,7 @@ class Wordlist(QLCParser):
             etym_dict = self._etym_dict[ref]
         
         # add the stuff to the cache
-        self._cache[ref,entry] = etym_dict
-
+        self._cache[ref, entry] = etym_dict
         return etym_dict
 
     def get_paps(
@@ -919,273 +841,193 @@ class Wordlist(QLCParser):
         if self._alias[source] == 'doculect':
             clean_taxnames(self, self._alias[source], f)
     
-    def _output(
-            self,
-            fileformat,
-            **keywords
-            ):
+    def _output(self, fileformat, **keywords):
         """
         Internal function that eases its modification by daughter classes.
         """
-
         # check for stamp attribute
-        if hasattr(self,"_stamp"):
-            keywords["stamp"] = self._stamp
-        else:
-            keywords["stamp"] = ''
+        keywords["stamp"] = getattr(self, '_stamp', '')
 
         # add the default parameters, they will be checked against the keywords
-        defaults = {
-                'cols'       : False,
-                'distances'  : False,
-                'entries'    : ("concept","counterpart"),
-                'entry'      : 'concept',
-                'fileformat' : fileformat,
-                'filename'   : rcParams['filename'],
-                'formatter'  : 'concept',
-                'loans'      : False,
-                'meta'       : self._meta,
-                'missing'    : 0,
-                'ref'        : 'cogid',
-                'rows'       : False,
-                'subset'     : False, # setup a subset of the data,
-                'taxa'       : 'taxa',
-                'threshold'  : 0.6, # threshold for flat clustering
-                'tree_calc'  : 'neighbor',
-                }
-            
-        # compare with keywords and add missing ones
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        util.setdefaults(
+            keywords,
+            cols=False,
+            distances=False,
+            entries=("concept", "counterpart"),
+            entry='concept',
+            fileformat=fileformat,
+            filename=rcParams['filename'],
+            formatter='concept',
+            loans=False,
+            meta=self._meta,
+            missing=0,
+            ref='cogid',
+            rows=False,
+            subset=False,  # setup a subset of the data,
+            taxa='taxa',
+            threshold=0.6,  # threshold for flat clustering
+            tree_calc='neighbor')
 
-        if fileformat in ['triple','triples','triples.tsv']:
-            tsv2triple(self, keywords['filename']+'.'+fileformat)
+        if fileformat in ['triple', 'triples', 'triples.tsv']:
+            return tsv2triple(self, keywords['filename'] + '.' + fileformat)
 
-        elif fileformat in ['paps.nex','paps.csv']:
+        if fileformat in ['paps.nex', 'paps.csv']:
             paps = self.get_paps(
-                    ref=keywords['ref'],
-                    entry=keywords['entry'],
-                    missing=keywords['missing']
-                    )
+                ref=keywords['ref'], entry=keywords['entry'], missing=keywords['missing'])
+            kw = dict(filename=keywords['filename'] + '.paps')
             if fileformat == 'paps.nex':
-                pap2nex(
-                        self.cols,
-                        paps,
-                        missing=keywords['missing'],
-                        filename=keywords['filename']+'.paps'
-                        )
-            elif fileformat == 'paps.csv':
-                pap2csv(
-                        self.cols,
-                        paps,
-                        filename=keywords['filename']+'.paps'
-                        )
-        
+                kw['missing'] = keywords['missing']
+                return pap2nex(self.cols, paps, **kw)
+            return pap2csv(self.cols, paps, **kw)
+
         # simple printing of taxa
-        elif fileformat == 'taxa':
-            if hasattr(self,'taxa'):
-                out = ''
-                for taxon in self.cols:
-                    out += taxon + '\n'
-                util.write_text_file(keywords['filename'] + '.taxa', out)
-            else:
-                raise ValueError(
-                        "[i] Taxa are not available."
-                        )
-        
+        if fileformat == 'taxa':
+            assert hasattr(self, 'taxa')
+            return util.write_text_file(keywords['filename'] + '.taxa', self.cols)
+
         # csv-output
-        elif fileformat in ['csv','qlc','tsv']:
+        if fileformat in ['csv', 'qlc', 'tsv']:
             if fileformat == 'csv':
-                log.deprecated('csv','qlc')
+                log.deprecated('csv', 'qlc')
 
             # get the header line
             header = sorted(
-                    [s for s in set(self._alias.values()) if s in self._header],
-                    key = lambda x: self._header[x]
-                    )
+                [s for s in set(self._alias.values()) if s in self._header],
+                key=lambda x: self._header[x])
             header = [h.upper() for h in header]
 
-            # check for taxa in meta
-            if not 'taxa' in self._meta:
-                self._meta['taxa'] = self.cols
+            self._meta.setdefault('taxa', self.cols)
 
             # get the data, in case a subset is chosen
             if not keywords['subset']:
                 # write stuff to file
-                wl2qlc(
-                        header,
-                        self._data,
-                        **keywords
-                        )
+                return wl2qlc(header, self._data, **keywords)
+
+            cols, rows = keywords['cols'], keywords['rows']
+
+            if not isinstance(cols, (list, tuple, bool)):
+                raise ValueError("[i] Argument 'cols' should be list or tuple.")
+            if not isinstance(rows, (dict, bool)):
+                raise ValueError("[i] Argument 'rows' should be a dictionary.")
+
+            # check for chosen header
+            if cols:
+                # get indices for header
+                indices = [self._header[x] for x in cols]
+                header = [c.upper() for c in cols]
             else:
-                cols,rows = keywords['cols'],keywords['rows']
+                indices = [r for r in range(len(self.header))]
 
-                if not isinstance(cols, (list, tuple, bool)):
-                    raise ValueError(
-                            "[i] Argument 'cols' should be list or tuple."
-                            )
-                if not isinstance(rows, (dict,bool)):
-                    raise ValueError(
-                            "[i] Argument 'rows' should be a dictionary."
-                            )
+            if rows:
+                stmts = []
+                for key, value in rows.items():
+                    if key == 'ID':
+                        stmts += ["key " + value]
+                    else:
+                        idx = self._header[key]
+                        stmts += ["line[{0}] ".format(idx) + value]
 
-                # check for chosen header
-                if cols:
-                    # get indices for header
-                    indices = [self._header[x] for x in cols]
-                    header = [c.upper() for c in cols]
-                else:
-                    indices = [r for r in range(len(self.header))]
+            log.debug("calculated what should be excluded")
+
+            # get the data
+            out = {}
+            for key, line in self._data.items():
+                if log.get_level() <= logging.DEBUG:
+                    print(key)
 
                 if rows:
-                    stmts = []
-                    for key,value in rows.items():
-                        if key == 'ID':
-                            stmts += ["key "+value] #
-                        else:
-                            idx = self._header[key]
-                            stmts += ["line[{0}] ".format(idx)+value]
-
-                log.debug("calculated what should be excluded")
-
-                # get the data
-                out = {}
-
-                for key,line in self._data.items():
-                    if log.get_level() <= logging.DEBUG:
-                        print(key)
-
-                    if rows:
-                        if eval(" and ".join(stmts)):
-                            out[key] = [line[i] for i in indices]
-                    else:
+                    if eval(" and ".join(stmts)):
                         out[key] = [line[i] for i in indices]
-                
-                log.debug("passing data to wl2qlc")
-                wl2qlc(
-                        header,
-                        out,
-                        **keywords
-                        )
+                else:
+                    out[key] = [line[i] for i in indices]
+
+            log.debug("passing data to wl2qlc")
+            return wl2qlc(header, out, **keywords)
         
         # output dst-format (phylip)
-        elif fileformat == 'dst':
+        if fileformat == 'dst':
             # check for distances as keyword
             if 'distances' not in self._meta:
-                self._meta['distances'] = wl2dst(self,**keywords)
-            
-            # write data to file
-            out = matrix2dst(
-                    self._meta['distances'],
-                    self.taxa,
-                    stamp=keywords['stamp']
-                    )
-            _write_file(keywords['filename'], out, fileformat)
+                self._meta['distances'] = wl2dst(self, **keywords)
+
+            out = matrix2dst(self._meta['distances'], self.taxa, stamp=keywords['stamp'])
+            return _write_file(keywords['filename'], out, fileformat)
+
         # output tre-format (newick)
-        elif fileformat in ['tre','nwk']: #,'cluster','groups']:
+        if fileformat in ['tre', 'nwk']:  # ,'cluster','groups']:
             if 'tree' not in self._meta:
-            
                 # check for distances
                 if 'distances' not in self._meta:
                     self._meta['distances'] = wl2dst(self)
-                    
-                if keywords['tree_calc'] == 'neighbor':
-                    tree = cluster.neighbor(
-                            self._meta['distances'],
-                            self.cols,
-                            distances=keywords['distances']
-                            )
-                elif keywords['tree_calc'] == 'upgma':
-                    tree = cluster.ugpma(
-                            self._meta['distances'],
-                            self.cols,
-                            distances=keywords['distances']
-                            )
+                # we look up a function to calculate a tree in the cluster module:
+                tree = getattr(cluster, keywords['tree_calc'])(
+                    self._meta['distances'], self.cols, distances=keywords['distances'])
             else:
                 tree = self._meta['tree']
 
-            _write_file(keywords['filename'], '{0}'.format(tree), fileformat)
+            return _write_file(keywords['filename'], '{0}'.format(tree), fileformat)
 
-        elif fileformat in ['cluster','groups']:
+        if fileformat in ['cluster', 'groups']:
             if 'distances' not in self._meta:
-                
-                self._meta['distances'] = wl2dst(self) # check for keywords
+                self._meta['distances'] = wl2dst(self)  # check for keywords
 
             if 'groups' not in self._meta:
                 self._meta['groups'] = cluster.matrix2groups(
-                        keywords['threshold'],
-                        self._meta['distances'],
-                        self.taxa
-                        )
+                    keywords['threshold'], self._meta['distances'], self.taxa)
             lines = []
             for taxon, group in sorted(self._meta['groups'].items(), key=lambda x: x[0]):
                 lines.append('{0}\t{1}'.format(taxon, group))
-            _write_file(keywords['filename'], '\n'.join(lines), fileformat)
+            return _write_file(keywords['filename'], lines, fileformat)
 
-        elif fileformat in ['starling','star.csv']:
+        if fileformat in ['starling', 'star.csv']:
             # make lambda inline for data-check
             l = lambda x: ['-' if x == 0 else x][0]
 
             lines = []
             if 'cognates' not in keywords:
-                lines.append('ID\tConcept\t'+'\t'.join(self.taxa))
+                lines.append('ID\tConcept\t' + '\t'.join(self.taxa))
                 for i, concept in enumerate(self.concepts):
-                    for line in self.get_list(row=concept,entry=keywords['entry']):
+                    for line in self.get_list(row=concept, entry=keywords['entry']):
                         lines.append(
-                            str(i+1)+'\t'+concept+'\t'+'\t'.join([l(t) for t in line]))
+                            str(i + 1) + '\t' + concept + '\t' + '\t'.join(
+                                [l(t) for t in line]))
             else:
                 lines.append(
                     'ID\tConcept\t'+'\t'.join(['{0}\t COG'.format(t) for t in self.taxa]))
                 for i, concept in enumerate(self.concepts):
-                    cogs = self.get_list(row=concept,entry=keywords['cognates'])
-                    for j,line in enumerate(self.get_list(row=concept,entry=keywords['entry'])):
-                        part = '\t'.join('{0}\t{1}'.format(l(a),b) for a,b in zip(line,cogs[j]))
-                        lines.append(str(i+1)+'\t'+concept+'\t'+part)
+                    cogs = self.get_list(row=concept, entry=keywords['cognates'])
+                    for j, line in enumerate(self.get_list(row=concept, entry=keywords['entry'])):
+                        part = '\t'.join('{0}\t{1}'.format(l(a), b) for a, b in zip(line, cogs[j]))
+                        lines.append(str(i + 1) + '\t' + concept + '\t' + part)
 
-            _write_file(
-                keywords['filename'],
-                '\n'.join(lines),
-                'starling_' + keywords['entry'] + '.csv')
-        
-        elif fileformat == 'multistate.nex':
-            
+            return _write_file(
+                keywords['filename'], lines, 'starling_' + keywords['entry'] + '.csv')
+
+        if fileformat == 'multistate.nex':
             if not keywords['filename'].endswith('.multistate.nex'):
                 keywords['filename'] += '.multistate.nex'
-                
-            matrix = wl2multistate(self, keywords['ref'])
-            multistate2nex(self.taxa, matrix, keywords['filename'])
-            
 
-        elif fileformat == 'separated':
+            matrix = wl2multistate(self, keywords['ref'])
+            return multistate2nex(self.taxa, matrix, keywords['filename'])
+
+        if fileformat == 'separated':
             if not os.path.isdir(keywords['filename']):
                 os.mkdir(keywords['filename'])
 
             for l in self.cols:
-                if 'ignore_keys' in keywords:
-                    lines = ['']
-                else:
-                    lines = ['ID\t']
+                lines = [''] if 'ignore_keys' in keywords else ['ID\t']
                 lines[0] += '\t'.join([x.upper() for x in keywords['entries']])
-                for key in self.get_list(col=l,flat=True):
-                    line = [key] if 'ignore_keys' not in keywords else []
+                for key in self.get_list(col=l, flat=True):
+                    line = [] if 'ignore_keys' in keywords else [key]
                     for entry in keywords['entries']:
-                        tmp = self[key,entry]
+                        tmp = self[key, entry]
                         if isinstance(tmp, list):
                             tmp = ' '.join([str(x) for x in tmp])
-                        
                         line += [tmp]
                     lines.append('\t'.join('{0}'.format(x) for x in line))
-                _write_file(
-                    '{0}/{1}'.format(keywords['filename'], l),
-                    '\n'.join(lines),
-                    'tsv')
+                _write_file('{0}/{1}'.format(keywords['filename'], l), lines, 'tsv')
 
-    def output(
-            self,
-            fileformat,
-            **keywords
-            ):
+    def output(self, fileformat, **keywords):
         """
         Write wordlist to file.
 
@@ -1228,7 +1070,7 @@ class Wordlist(QLCParser):
             'groups' or 'cluster' is chosen as output format.
 
         """
-        return self._output(fileformat,**keywords)
+        return self._output(fileformat, **keywords)
     
     def _export(
             self,
@@ -1246,109 +1088,72 @@ class Wordlist(QLCParser):
         """
         Export a wordlist to various file formats.
         """
-        # check for sections
         if not sections:
             if fileformat == 'txt':
                 sections = dict(
-                        h1 = ('concept', '\n# Concept: {0}\n'),
-                        h2 = ('cogid', '## Cognate-ID: {0}\n'),
-                        )
+                    h1=('concept', '\n# Concept: {0}\n'),
+                    h2=('cogid', '## Cognate-ID: {0}\n'))
             elif fileformat == 'tex':
                 sections = dict(
-                        h1 = ('concept', r'\section{{Concept: ``{0}"}}'+'\n'),
-                        h2 = ('cogid', r'\subsection{{Cognate Set: ``{0}"}}'+'\n')
-                        )
+                    h1=('concept', r'\section{{Concept: ``{0}"}}' + '\n'),
+                    h2=('cogid', r'\subsection{{Cognate Set: ``{0}"}}' + '\n'))
             elif fileformat == 'html':
-                
                 sections = dict(
-                        h1 = ('concept', '<h1>Concept: {0}</h1>'),
-                        h2 = ('cogid', '<h2>Cognate Set: {0}</h2>')
-                        )
-    
-        # check for entries
+                    h1=('concept', '<h1>Concept: {0}</h1>'),
+                    h2=('cogid', '<h2>Cognate Set: {0}</h2>'))
+
         if not entries:
             if fileformat == 'txt':
-                entries = [
-                        ('language', '{0} '),
-                        ('ipa', '{0}\n')
-                        ]
+                entries = [('language', '{0} '), ('ipa', '{0}\n')]
             elif fileformat == 'tex':
-                entries = [
-                        ('language', '{0} '),
-                        ('ipa', '[{0}]'+'\n')
-                        ]
+                entries = [('language', '{0} '), ('ipa', '[{0}]' + '\n')]
             elif fileformat == 'html':
-                entries = [
-                        ('language', '{0}&nbsp;'),
-                        ('ipa', '[{0}]\n')
-                        ]
+                entries = [('language', '{0}&nbsp;'), ('ipa', '[{0}]\n')]
         
-        # setup defaults
-        defaults = dict(
-                filename = rcParams['filename'] 
-                )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+        util.setdefaults(keywords, filename=rcParams['filename'])
 
         # get the temporary dictionary
-        out = wl2dict(
-                self,
-                sections,
-                entries,
-                exclude
-                )
+        out = wl2dict(self, sections, entries, exclude)
     
         # assign the output string
         out_string = ''
     
         # iterate over the dictionary and start to fill the string
         for key in sorted(out, key=lambda x: str(x).lower()):
-            
             # write key to file
             out_string += key[1]
             
             # reassign tmp
             tmp = out[key]
-    
-            # set the pointer and the index
-            pointer = {0:[tmp,sorted(tmp.keys())]}
-            
 
-            break_loop = False
+            # set the pointer and the index
+            pointer = {0: [tmp, sorted(tmp.keys())]}
 
             while True:
-                
-                if break_loop:
-                    break
-
                 idx = max(pointer.keys())
 
                 # check for type of current point
                 if isinstance(tmp, dict):
-                    
                     if pointer[idx][1]:
                         next_key = pointer[idx][1].pop()
                         out_string += next_key[1]
                         tmp = pointer[idx][0][next_key]
                         if isinstance(tmp, dict):
-                            pointer[idx+1] = [tmp,sorted(tmp.keys())]
+                            pointer[idx + 1] = [tmp, sorted(tmp.keys())]
                         else:
-                            pointer[idx+1] = [tmp,tmp]
+                            pointer[idx + 1] = [tmp, tmp]
                     else:
                         del pointer[idx]
                         if idx == 0:
-                            break_loop = True
-
+                            break
                 else:
                     tmp_strings = []
                     for line in sorted(tmp):
                         tmp_strings += [item_sep.join(line)]
-                    out_string += entry_start+entry_sep.join(tmp_strings)+entry_close
-
-                    tmp = pointer[idx-1][0]
+                    out_string += entry_start + entry_sep.join(tmp_strings) + entry_close
+                    tmp = pointer[idx - 1][0]
                     del pointer[idx]
-    
+
         if fileformat == 'tex':
             out_string = out_string.replace('_', r'\_')
         tmpl = util.read_text_file(template) if template else '{0}'
@@ -1376,25 +1181,23 @@ class Wordlist(QLCParser):
         """
 
         self._export(
-                fileformat,
-                sections,
-                entries,
-                entry_sep,
-                item_sep,
-                template,
-                **keywords
-                )
+            fileformat,
+            sections,
+            entries,
+            entry_sep,
+            item_sep,
+            template,
+            **keywords)
 
     def coverage(self, stats='absolute'):
         """
         Function determines the coverage of a wordlist.
         """
-
         cov = coverage(self)
-        
+
         if stats == 'absolute':
             return cov
-        elif stats == 'ratio':
-            return dict([(a,b/self.height) for a,b in cov.items()])
-        elif stats == 'mean':
-            return sum([a/self.height for a in cov.values()]) / self.width
+        if stats == 'ratio':
+            return dict([(a, b / self.height) for a, b in cov.items()])
+        if stats == 'mean':
+            return sum([a / self.height for a in cov.values()]) / self.width
