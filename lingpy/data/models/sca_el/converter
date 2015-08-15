@@ -1,17 +1,17 @@
 A : a
-C : c, C
+C : c, C, T, j
 B : f, v
 E : e, E
 D : 8
 G : X, x
 I : i, I
 H : H, h, 7
-K : q, k, g
+K : q, k, g, G, !
 J : y
 M : m
 L : l, L
 O : 3
-N : n, N, 5
+N : n, N, 5, 4
 P : p, b
 S : s, z, S, Z
 R : r, R
@@ -21,6 +21,5 @@ W : w
 Y : u
 1 : 1
 2 : 2
-4 : 4
 6 : 6
 _ : _
