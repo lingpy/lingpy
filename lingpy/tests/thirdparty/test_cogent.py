@@ -1,18 +1,12 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-20 20:02
-# modified : 2013-11-20 20:02
 """
 Test thirdparty modules.
 """
+from __future__ import unicode_literals, print_function, division
+from unittest import TestCase
+from collections import defaultdict
 
-__author__="Johann-Mattis List"
-__date__="2013-11-20"
+from six import PY3
 
 from lingpy.thirdparty.cogent import LoadTree
 from lingpy.tests.util import test_data
@@ -32,10 +26,69 @@ def test_LoadTree():
             "Xi\u2019an", "Xiamen", "Xianggang", "Xiangtan", "Xining",
             "Yinchuan", "Zhengzhou"])
     
-    for a,b in zip(sorted(tree.taxa), taxa):
+    for a, b in zip(sorted(tree.taxa), taxa):
         assert a == b
     
     tree = LoadTree("((((((((Taiyuan,Pingyao,Huhehaote),((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,Wulumuqi)),(((Tianjin,Jinan),Qingdao),Beijing,Haerbin)),(((Guiyang,Kunming),Chengdu,Wuhan),(Nanjing,Hefei)))),(Xiangtan,Changsha)),Nanchang),(Shexian,Tunxi)),((Shanghai,Suzhou,Hangzhou),Wenzhou)),(((Xianggang,Guangzhou),Nanning),(Meixian,Taoyuan))),((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));")
 
-    for a,b in zip(sorted(tree.taxa), taxa):
+    for a, b in zip(sorted(tree.taxa), taxa):
         assert a == b
+
+
+class TreeTests(TestCase):
+    def test_Tree(self):
+        from lingpy.thirdparty.cogent import TreeNode, TreeError
+
+        tree = TreeNode(
+            Name='a',
+            Children=[
+                TreeNode(Name='b', Children=[TreeNode(Name='c')]),
+                TreeNode(Name='b2'),
+            ])
+        tree.getEdgeNames('b', 'c', False, False)
+        assert tree[0]
+        tree.compareByNames(tree[0])
+        '%s' % tree.copy()
+        assert tree.params == {}
+        if not PY3:
+            tree.makeTreeArray()
+        tree.prune()
+        tree.getDistances()
+        list(tree.traverse_recursive())
+        self.assertEquals(tree.lowestCommonAncestor(['b', 'c']).Name, 'a')
+        self.assertEquals(tree.separation(tree[0]), 1)
+        for before in [True, False]:
+            for after in [True, False]:
+                list(tree.traverse(before, after))
+        assert tree.childGroups()
+        tree[0].childGroups()
+        tree.compareBySubsets(tree.sorted())
+        for p1 in [True, False]:
+            for p2 in [True, False]:
+                tree.asciiArt(p1, p2, defaultdict(lambda: 'a'))
+        self.assertRaises(TreeError, tree.getSubTree, [])
+        tree.get_LCA(tree.getNodeNames()[0])
+        tree.getNewickRecursive()
+
+
+class PhyloNodeTests(TestCase):
+    def test_PhyloNode(self):
+        from lingpy.thirdparty.cogent import PhyloNode
+
+        node = PhyloNode(
+            Length=1,
+            Name='a',
+            Children=[
+                PhyloNode(Length=7, Name='b'),
+                PhyloNode(Length=3, Name='c')])
+        node.scaleBranchLengths()
+        node.tipsWithinDistance(0.5)
+        node.append(PhyloNode(Length=7, Name='d'))
+        node.tipToTipDistances()
+        node.rootAtMidpoint()
+        node.balanced()
+        node.unrooted()
+        if not PY3:
+            node.compareByPartitions(PhyloNode(Name='x'))
+        node.getDistances()
+        node.tipToTipDistances()

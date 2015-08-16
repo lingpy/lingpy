@@ -50,7 +50,7 @@ __maintainer__ = "Gavin Huttley"
 __email__ = "gavin.huttley@anu.edu.au"
 __status__ = "Production"
 
-if sys.version_info[0] > 2:
+if sys.version_info[0] > 2:  # pragma: no cover
     from functools import reduce
 
     def cmp(a, b):
@@ -121,7 +121,7 @@ class TreeNode(object):
         WARNING: Does not currently set the class to the right type.
         """
         return 'Tree("%s")' % self.getNewick()
-    
+
     def __str__(self):
         """Returns Newick-format string representation of tree."""
         return self.getNewick()
@@ -2212,7 +2212,7 @@ class TreeBuilder(object):
         self._used_names = {'edge':-1}
         self._known_edges = {}
         self.TreeNodeClass = constructor
-    
+
     def _unique_name(self, name):
         # Unnamed edges become edge.0, edge.1 edge.2 ...
         # Other duplicates go mouse mouse.2 mouse.3 ...
@@ -2254,6 +2254,7 @@ class TreeBuilder(object):
         self._known_edges[id(node)] = node
         return node
 
+
 def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=False):
 
     """Constructor for tree.
@@ -2267,7 +2268,6 @@ def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=
     of the Newick format. Set underscore_unmunge to True to replace underscores
     with spaces in all names read.
     """
-
     if filename:
         assert not (treestring or tip_names)
         # slight modification for easy import of treestrings instead of
@@ -2290,4 +2290,3 @@ def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=
     else:
         raise TreeError('filename or treestring not specified')
     return tree
- 
