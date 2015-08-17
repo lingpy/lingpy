@@ -1,29 +1,28 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
 """
 Basic module for the comparison of automatic phonetic alignments.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-09-02"
+from __future__ import print_function, division, unicode_literals
+from collections import namedtuple, defaultdict
+from itertools import combinations
 
 # external modules
 import numpy as np
-import codecs
 
 # internal modules
-from ..settings import rcParams
-from ..align.sca import PSA,MSA
 from ..algorithm import misc
 from .. import log
-from six import text_type
-from ..util import write_text_file
+from ..util import write_text_file, cached_property, setdefaults
 
 
-class EvalMSA(object):
+class Eval(object):
+    """Base class for evaluation objects."""
+    def __init__(self, gold, test):
+        self.gold = gold
+        self.test = test
+
+
+class EvalMSA(Eval):
     """
     Base class for the evaluation of automatic multiple sequence analyses.
 
@@ -47,32 +46,26 @@ class EvalMSA(object):
     --------
     lingpy.evaluate.apa.EvalPSA
     """
-    def __init__(self, 
-            gold, 
-            test
-            ):
-        self.gold = gold
-        self.test = test
-    
-    def _get_c_scores(self):
+    @cached_property()
+    def c_scores(self):
         """
         Calculate the c-scores.
         """
-        
         almsGold = misc.transpose(self.gold.alm_matrix)
         almsTest = misc.transpose(self.test.alm_matrix)
 
         commons = len([i for i in almsGold if i in almsTest])
-        
-        self.cp = commons / len(almsTest)
-        self.cr = commons / len(almsGold)
-        self.c_ = 2 * commons / (len(almsTest) + len(almsGold))
-        try:
-            self.cf = 2 * self.cp * self.cr / (self.cp + self.cr)
-        except ZeroDivisionError:
-            self.cf = 0.0
 
-    def c_score(self,mode=1):
+        cp = commons / len(almsTest)
+        cr = commons / len(almsGold)
+        c_ = 2 * commons / (len(almsTest) + len(almsGold))
+        try:
+            cf = 2 * cp * cr / (cp + cr)
+        except ZeroDivisionError:
+            cf = 0.0
+        return namedtuple('Scores', 'cp cr c_ cf')(cp, cr, c_, cf)
+
+    def c_score(self, mode=1):
         r"""
         Calculate the column (C) score. 
 
@@ -116,25 +109,17 @@ class EvalMSA(object):
         lingpy.evaluate.apa.EvalPSA.c_score
 
         """
-        try:
-            self.cp
-        except:
-            self._get_c_scores()
-
         if mode == 1:
-            return self.cp
-        elif mode == 2:
-            return self.cr
-        elif mode == 3:
-            return self.c_
-        elif mode == 4:
-            return self.cf
-        else:
-            raise ValueError('The mode you chose is not available.')
+            return self.c_scores.cp
+        if mode == 2:
+            return self.c_scores.cr
+        if mode == 3:
+            return self.c_scores.c_
+        if mode == 4:
+            return self.c_scores.cf
+        raise ValueError('%s' % mode)
 
-    def r_score(
-            self
-            ):
+    def r_score(self):
         """
         Compute the rows (R) score.
 
@@ -153,20 +138,11 @@ class EvalMSA(object):
         --------
         lingpy.evaluate.apa.EvalPSA.r_score
         """
-        almsGold = self.gold.alm_matrix
-        almsTest = self.test.alm_matrix
-        
-        goods = 0.0
-        count = 0.0
-        for i in range(len(almsGold)):
-            if ''.join(almsGold[i]) == ''.join(almsTest[i]):
-                goods += 1.0
-            
-            count += 1.0
+        goods = [i for i in range(len(self.gold.alm_matrix)) if
+                 ''.join(self.gold.alm_matrix[i]) == ''.join(self.test.alm_matrix[i])]
+        return float(len(goods)) / len(self.gold.alm_matrix)
 
-        return goods / count
-
-    def sp_score(self,mode=1):
+    def sp_score(self, mode=1):
         """
         Calculate the sum-of-pairs (SP) score.
 
@@ -208,11 +184,9 @@ class EvalMSA(object):
         --------
         lingpy.evaluate.apa.EvalPSA.sp_score
         """
-        try:
-            return self.sp
-        except:
+        if not hasattr(self, 'sp'):
             self._pair_scores()
-            return self.sp
+        return self.sp
 
     def jc_score(self):
         """
@@ -234,17 +208,11 @@ class EvalMSA(object):
         lingpy.test.evaluate.EvalPSA.jc_score
 
         """
-        
-        try:
-            return self.jc
-        except:
+        if not hasattr(self, 'jc'):
             self._pair_scores()
-            return self.jc
+        return self.jc
 
-    def _pair_scores(
-            self,
-            weights = False
-            ):
+    def _pair_scores(self, weights=False):
         """
         Calculate msa alignment scores by calculating the pairwise scores.
         """
@@ -263,26 +231,8 @@ class EvalMSA(object):
             return 
 
         # replace all characters by numbers
-        almsGold = np.zeros(
-                (
-                    len(
-                        self.gold.alm_matrix
-                        ),
-                    len(
-                        self.gold.alm_matrix[0]
-                        )
-                    )
-                )
-        almsTest = np.zeros(
-                (
-                    len(
-                        self.test.alm_matrix
-                        ),
-                    len(
-                        self.test.alm_matrix[0]
-                        )
-                    )
-                )
+        almsGold = np.zeros((len(self.gold.alm_matrix), len(self.gold.alm_matrix[0])))
+        almsTest = np.zeros((len(self.test.alm_matrix), len(self.test.alm_matrix[0])))
         
         # select between calculation which is based on an explicit weighting or
         # a calculation which is based on implicit weighting, explicit
@@ -298,116 +248,97 @@ class EvalMSA(object):
         if weights:
             self.gold._set_model(weights)
             self._uniseqs = self.gold.int2ext
-        
         else:
-            self._uniseqs = {}
-            for i,seq in enumerate(self.gold.alm_matrix):
-                seq = ''.join(seq).replace('-','')
-                try:
-                    self._uniseqs[seq] += [i]
-                except:
-                    self._uniseqs[seq] = [i]
+            self._uniseqs = defaultdict(list)
+            for i, seq in enumerate(self.gold.alm_matrix):
+                self._uniseqs[''.join(seq).replace('-', '')].append(i)
 
         self.weights = {}
         for key in self._uniseqs.keys():
             vals = self._uniseqs[key]
             l = len(vals)
             for val in vals:
-                self.weights[val] = (key,1.0 / l)
+                self.weights[val] = (key, 1.0 / l)
+
+        def fix_residues(matrix, target):
+            for key in self._uniseqs:
+                k = 1
+                vals = self._uniseqs[key]
+                tmp = []
+                for res in matrix[vals[0]]:
+                    if res == '-':
+                        tmp.append(0)
+                    else:
+                        tmp.append(k)
+                        k += 1
+                target[vals[0]] += np.array(tmp)
 
         # change residues by assining each residue a unique status in both MSAs
-        for key in self._uniseqs:
-            k = 1
-            vals = self._uniseqs[key]
-            tmp = []
-            for res in self.gold.alm_matrix[vals[0]]:
-                if res == '-':
-                    tmp.append(0)
-                else:
-                    tmp.append(k)
-                    k += 1
-            almsGold[vals[0]] += np.array(tmp)
-
-        for key in self._uniseqs:
-            k = 1
-            vals = self._uniseqs[key]
-            tmp = []
-            for res in self.test.alm_matrix[vals[0]]:
-                if res == '-':
-                    tmp.append(0)
-                else:
-                    tmp.append(k)
-                    k += 1
-            almsTest[vals[0]] += np.array(tmp)
+        fix_residues(self.gold.alm_matrix, almsGold)
+        fix_residues(self.test.alm_matrix, almsTest)
 
         # start computation by assigning the variables
-        crp = 0.0 # common residue pairs
-        trp = 0.0 # residue pairs in test alignment
-        rrp = 0.0 # residue pairs in reference alignment
-        urp = 0.0 # unique residue pairs in test and reference
-        gcrp = 0.0 # common residue pairs including gaps
-        gtrp = 0.0 # length of test alignment
-        grrp = 0.0 # length of reference alignment
-        pip = 0.0 # percentage of identical pairs score
+        crp = 0.0  # common residue pairs
+        trp = 0.0  # residue pairs in test alignment
+        rrp = 0.0  # residue pairs in reference alignment
+        urp = 0.0  # unique residue pairs in test and reference
+        gcrp = 0.0  # common residue pairs including gaps
+        gtrp = 0.0  # length of test alignment
+        grrp = 0.0  # length of reference alignment
+        pip = 0.0  # percentage of identical pairs score
 
         testL = len(almsTest[0])
         goldL = len(almsGold[0])
         
         # start iteration
-        for i,almA in enumerate(almsGold):
-            for j,almB in enumerate(almsGold):
-                if i < j:
-                    gold = list(zip(almA,almB))
-                    test = list(zip(almsTest[i],almsTest[j]))
-                    
-                    if self.weights[i][0] != self.weights[j][0]:
-                        w = self.weights[i][1] * self.weights[j][1]
-                    else:
-                        w = 0.0
+        for (i, almA), (j, almB) in combinations(enumerate(almsGold), r=2):
+            gold = list(zip(almA, almB))
+            test = list(zip(almsTest[i], almsTest[j]))
 
-                    # speed up the stuff when sequences are identical
-                    if gold == test:
-                        tmp = len([x for x in gold if 0 not in x]) * w
-                        crp += tmp 
-                        trp += tmp 
-                        rrp += tmp 
-                        urp += tmp 
-                        gcrp += testL * w
-                        gtrp += testL * w
-                        grrp += goldL * w
-                        pip += 1 * w
-                    
-                    else:
-                        if [x for x in gold if x != (0,0)] == [y for y in test \
-                                if y != (0,0)]:
-                            pip += 1 * w
+            if self.weights[i][0] != self.weights[j][0]:
+                w = self.weights[i][1] * self.weights[j][1]
+            else:
+                w = 0.0
 
-                        crp += len([x for x in gold if x in test and 0 not in
-                            x]) * w
-                        trp += len([x for x in test if 0 not in x]) * w
-                        rrp += len([x for x in gold if 0 not in x]) * w
-                        urp += len(set([x for x in gold+test if 0 not in x])) * w
-                        gcrp += len([x for x in gold if x in test]) * w
-                        gtrp += testL * w
-                        grrp += goldL * w
-        
+            # speed up the stuff when sequences are identical
+            if gold == test:
+                tmp = len([x for x in gold if 0 not in x]) * w
+                crp += tmp
+                trp += tmp
+                rrp += tmp
+                urp += tmp
+                gcrp += testL * w
+                gtrp += testL * w
+                grrp += goldL * w
+                pip += 1 * w
+            else:
+                if [x for x in gold if x != (0, 0)] == \
+                        [y for y in test if y != (0, 0)]:
+                    pip += 1 * w
+
+                crp += len([x for x in gold if x in test and 0 not in x]) * w
+                trp += len([x for x in test if 0 not in x]) * w
+                rrp += len([x for x in gold if 0 not in x]) * w
+                urp += len(set([x for x in gold + test if 0 not in x])) * w
+                gcrp += len([x for x in gold if x in test]) * w
+                gtrp += testL * w
+                grrp += goldL * w
+
         # calculate the scores
         self.sp = crp / rrp
         self.o1 = self.sp
         self.o2 = crp / trp
         self.o_ = 2 * crp / (rrp + trp)
         self.jc = crp / urp
-        self.cg1 = gcrp / grrp # recall
-        self.cg2 = gcrp / gtrp # precision
+        self.cg1 = gcrp / grrp  # recall
+        self.cg2 = gcrp / gtrp  # precision
         self.cg_ = 2 * gcrp / (grrp + gtrp)
         self.cgf = 2 * (self.cg1 * self.cg2) / (self.cg1 + self.cg2)
         
         l = len(self._uniseqs)
         self.pip = pip / ((l ** 2 - l) / 2)
 
-    def check_swaps(
-            self
-            ):
+    def check_swaps(self):
         """
         Check for possibly identical swapped sites.
 
@@ -429,28 +360,22 @@ class EvalMSA(object):
             0 -- indicates that there are no swaps in the gold standard and the
               testset.
         """
-        try:
-            swA = self.gold.swap_index
-        except:
-            swA = False
-        try:
-            swB = self.test.swap_index
-        except:
-            swB = False
+        swA = getattr(self.gold, 'swap_index', False)
+        swB = getattr(self.test, 'swap_index', False)
 
         if swA and not swB:
             return 2
-        elif not swA and swB:
+        if not swA and swB:
             return -2
-        elif swA and swB:
+        if swA and swB:
             if swA == swB:
                 return 1
-            else:# swA != swB:
-                return -1
-        elif not swA and not swB:
-            return 0
+            # swA != swB:
+            return -1
+        return 0
 
-class EvalPSA(object):
+
+class EvalPSA(Eval):
     """
     Base class for the evaluation of automatic pairwise sequence analyses.
 
@@ -474,15 +399,7 @@ class EvalPSA(object):
     --------
     lingpy.evaluate.apa.EvalMSA
     """
-    def __init__(self,gold,test):
-
-        self.gold = gold
-        self.test = test
-
-    def r_score(
-            self,
-            mode = 1
-            ):
+    def r_score(self, mode=1):
         """
         Compute the percentage of identical rows (PIR) score.
 
@@ -509,96 +426,67 @@ class EvalPSA(object):
         --------
         lingpy.evaluate.apa.EvalMSA.r_score
         """
-        
         score = 0.0
-        count = 0.0
 
-        if mode == 1:
-            for i,alms in enumerate(self.gold.alignments):
-                if self.test.alignments[i][0] == alms[0]:
-                    score += 0.5
-                if self.test.alignments[i][1] == alms[1]:
-                    score += 0.5
-                count += 1.0
-        elif mode == 2:
-            for i,alms in enumerate(self.gold.alignments):
-                tmp = 0
-                if self.test.alignments[i][0] == alms[0]:
-                    tmp = 1
-                if self.test.alignments[i][1] == alms[1]:
-                    tmp += 1
+        for i, alms in enumerate(self.gold.alignments):
+            tmp = 0
+            if self.test.alignments[i][0] == alms[0]:
+                tmp = 1
+            if self.test.alignments[i][1] == alms[1]:
+                tmp += 1
+            if mode == 1:
+                # half point for each matched item
+                score += tmp / float(2)
+            elif mode == 2:
                 if tmp == 2:
+                    # mode 2: no half points!
                     score += 1.0
-                count += 1.0
 
-        return score / count
+        return score / len(self.gold.alignments)
 
-    def _pairwise_column_scores(
-            self
-            ):
+    @cached_property()
+    def pairwise_column_scores(self):
         """
         Compute the different column scores for pairwise alignments. The method
         returns the precision, the recall score, and the f-score, following the
         proposal of Bergsma and Kondrak (2007), and the column score proposed
         by Thompson et al. (1999).
         """
-
         # the variables which store the different counts
+        crp = 0.0  # number of common residue pairs in reference and test alm.
+        rrp = 0.0  # number of residue pairs in reference alignment
+        trp = 0.0  # number of residue pairs in test alignment
+        urp = 0.0  # number of unique residue pairs in reference and test alm.
         
-        crp = 0.0 # number of common residue pairs in reference and test alm.
-        rrp = 0.0 # number of residue pairs in reference alignment 
-        trp = 0.0 # number of residue pairs in test alignment
-        urp = 0.0 # number of unique residue pairs in reference and test alm.
-        
-        gtrp = 0.0 # number of residue pairs (including gaps) in test alm.
-        grrp = 0.0 # number of residue pairs (including gaps) in reference alm.
-        gcrp = 0.0 # number of common residue pairs (including gaps) in r and t
+        gtrp = 0.0  # number of residue pairs (including gaps) in test alm.
+        grrp = 0.0  # number of residue pairs (including gaps) in reference alm.
+        gcrp = 0.0  # number of common residue pairs (including gaps) in r and t
 
-        self.sps_list = []
-        self.cs_list = []
+        sps_list = []
+        cs_list = []
 
-        for i,alms in enumerate(self.gold.alignments):
-            zipsA = zip(
-                    self.gold.alignments[i][0],
-                    self.gold.alignments[i][1]
-                    )
-            zipsB = zip(
-                    self.test.alignments[i][0],
-                    self.test.alignments[i][1]
-                    )
-            
+        def get_pairs(alignment):
+            j, k = 1, 1
+            for a, b in zip(alignment[0], alignment[1]):
+                x, y = 0, 0
+                if a != '-':
+                    x = j
+                    j += 1
+                if b != '-':
+                    y = k
+                    k += 1
+                yield (x, y)
+
+        for i, alms in enumerate(self.gold.alignments):
             # replace all residues in reference and test alignment with ids
-            pairsGold = []
-            j,k = 1,1
-            for a,b in zipsA:
-                x,y = 0,0
-                if a != '-':
-                    x = j
-                    j += 1
-                if b != '-':
-                    y = k
-                    k += 1
-                pairsGold.append((x,y))
-
-            pairsTest = []
-            j,k = 1,1
-            for a,b in zipsB:
-                x,y = 0,0
-                if a != '-':
-                    x = j
-                    j += 1
-                if b != '-':
-                    y = k
-                    k += 1
-                pairsTest.append((x,y))
+            pairsGold = list(get_pairs(self.gold.alignments[i]))
+            pairsTest = list(get_pairs(self.test.alignments[i]))
 
             # calculate the number of residues in crp, rrp, and trp
-            commons = len([x for x in pairsTest if x in pairsGold and 0 not in x])
-            nogaps = len([x for x in pairsGold if 0 not in x])
             crp += len([x for x in pairsTest if x in pairsGold and 0 not in x])
             rrp += len([x for x in pairsGold if 0 not in x])
             trp += len([x for x in pairsTest if 0 not in x])
-            urp += len(set([x for x in pairsGold+pairsTest if 0 not in x]))
+            urp += len(set([x for x in pairsGold + pairsTest if 0 not in x]))
 
             grrp += len(pairsGold)
             gtrp += len(pairsTest)
@@ -611,28 +499,26 @@ class EvalPSA(object):
             columns = len([x for x in pairsTest if x in pairsGold])
 
             if nogaps != 0:
-                self.sps_list.append((2 * commons) / (nogaps + nogaps2)) #new
+                sps_list.append((2 * commons) / (nogaps + nogaps2))  # new
             elif nogaps == 0 and commons == 0:
-                self.sps_list.append(1)
+                sps_list.append(1)
             else:
-                self.sps_list.append(0)
-            self.cs_list.append((2 * columns)/(len(pairsGold)+len(pairsTest)))#new
+                sps_list.append(0)
+            cs_list.append((2 * columns) / (len(pairsGold) + len(pairsTest)))  # new
         
         # calculate the scores        
-        self.sop = crp / rrp
-        self.jac = crp / urp
-        self.o1 = self.sop
+        sop = crp / rrp
+        jac = crp / urp
+        self.o1 = sop
         self.o2 = crp / trp
         self.o_ = 2 * crp / (rrp + trp)
         self.precision = gcrp / gtrp
         self.recall = gcrp / grrp
-        self.pic = self.precision
-        self.fscore = 2 * (self.precision * self.recall) / (self.precision + \
-                self.recall)
+        pic = self.precision
+        self.fscore = 2 * (self.precision * self.recall) / (self.precision + self.recall)
+        return namedtuple('Scores', 'pic sop jac')(pic, sop, jac)
 
-    def c_score(
-            self
-            ):
+    def c_score(self):
         """
         Calculate column (C) score. 
 
@@ -653,15 +539,9 @@ class EvalPSA(object):
         lingpy.test.evaluate.EvalMSA.c_score
 
         """
-        try:
-            return self.pic
-        except:
-            self._pairwise_column_scores()
-            return self.pic
+        return self.pairwise_column_scores.pic
 
-    def sp_score(
-            self
-            ):
+    def sp_score(self):
         """
         Calculate the sum-of-pairs (SP) score.
 
@@ -682,15 +562,9 @@ class EvalPSA(object):
         lingpy.test.evaluate.EvalMSA.sp_score
 
         """
-        try:
-            return self.sop
-        except:
-            self._pairwise_column_scores()
-            return self.sop
+        return self.pairwise_column_scores.sop
 
-    def jc_score(
-            self
-            ):
+    def jc_score(self):
         """
         Calculate the Jaccard (JC) score.
 
@@ -711,16 +585,9 @@ class EvalPSA(object):
         lingpy.test.evaluate.EvalMSA.jc_score
 
         """
-        try:
-            return self.jac
-        except:
-            self._pairwise_column_scores()
-            return self.jac
+        return self.pairwise_column_scores.jac
 
-    def diff(
-            self,
-            **keywords
-            ):
+    def diff(self, **keywords):
         """
         Write all differences between two sets to a file.
 
@@ -731,38 +598,29 @@ class EvalPSA(object):
             Default
 
         """
-        # set up the defaults
-        defaults = dict(
-                filename = self.gold.infile
-                )
-
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
+        setdefaults(keywords, filename=self.gold.infile)
         if not keywords['filename'].endswith('.diff'):
-            keywords['filename'] = keywords['filename']+'.diff'
+            keywords['filename'] = keywords['filename'] + '.diff'
 
-        out = '' #codecs.open(keywords['filename'],'w')
-
-        for i,(a,b) in enumerate(zip(self.gold.alignments,self.test.alignments)):
-            
-            g1,g2,g3 = a
-            t1,t2,t3 = b
-            maxL = max([len(g1),len(t1)])
+        out = []
+        for i, (a, b) in enumerate(zip(self.gold.alignments, self.test.alignments)):
+            g1, g2, g3 = a
+            t1, t2, t3 = b
+            maxL = max([len(g1), len(t1)])
             if g1 != t1 or g2 != t2:
-                taxA,taxB = self.gold.taxa[i]
-                taxlen = max(len(taxA),len(taxB))
+                taxA, taxB = self.gold.taxa[i]
+                taxlen = max(len(taxA), len(taxB))
                 seq_id = self.gold.seq_ids[i]
-                out += '{0}\n{1}\t{2}\n{3}\t{4}\n{5}\n{1}\t{6}\n{3}\t{7}\n\n'.format(
+                out.append('{0}\n{1}\t{2}\n{3}\t{4}\n{5}\n{1}\t{6}\n{3}\t{7}\n\n'.format(
                     seq_id,
                     taxA,
                     '\t'.join(g1),
                     taxB,
                     '\t'.join(g2),
-                    '{0}\t{1}'.format(taxlen*' ','\t'.join(['==' for x in range(maxL)])),
+                    '{0}\t{1}'.format(
+                        taxlen * ' ', '\t'.join(['==' for x in range(maxL)])),
                     '\t'.join(t1),
                     '\t'.join(t2),
-                    )
+                ))
         log.file_written(keywords['filename'])
-        write_text_file(out, keywords['filename'])
+        write_text_file(keywords['filename'], out)
