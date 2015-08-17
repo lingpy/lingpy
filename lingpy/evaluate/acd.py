@@ -1,31 +1,17 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-13 18:31
-# modified : 2013-10-19 10:26
 """
 Evaluation methods for automatic cognate detection.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-10-19"
-
+from __future__ import print_function, division, unicode_literals
 import codecs
-from ..settings import rcParams
+from itertools import combinations
+from collections import defaultdict
+
 from .. import log
+from ..util import identity
 
 
-def bcubes(
-        lex,
-        gold='cogid',
-        test='lexstatid',
-        loans=False,
-        pprint=True
-        ):
+def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -69,73 +55,32 @@ def bcubes(
     lex._clean_cache()
 
     # if loans are treated as homologs
-    if loans:
-        evl = lambda x:abs(x)
-    else:
-        evl = lambda x:x
+    evl = abs if loans else identity
 
-    # get the etymdicts
-    etdG = []
-    for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
-        etdG += [[]]
-        for value in [evl(x[0]) for x in line if x != 0]:
-            etdG[-1] += [value]
-    etdT = []
-    for key,line in lex.get_etymdict(ref=test,loans=loans).items():
-        etdT += [[]]
-        for value in [evl(x[0]) for x in line if x != 0]:
-            etdT[-1] += [value]
-    
+    def get_scores(one, other):
+        for _, line in lex.get_etymdict(ref=one, loans=loans).items():
+            line = [value for value in [evl(x[0]) for x in line if x != 0]]
+            # check for linesize
+            if len(line) > 1:
+                # get cognate-ids in the other set for the line
+                other_line = [evl(lex[idx, other]) for idx in line]
+
+                # get the recall
+                for idx in other_line:
+                    yield other_line.count(idx) / len(line)
+            else:
+                yield 1.0
+
     # b-cubed recall
-    bcr = []
+    bcr = list(get_scores(gold, test))
 
-    # start comparing from gold perspective
-    for lineG in etdG:
-        
-        # get the line of the cluster
-        gLen = len(lineG)
-
-        # check for linesize
-        if gLen > 1:
-
-            # get cognate-ids in the testset for the line
-            lineT = [evl(lex[idx,test]) for idx in lineG]
-            
-            # get the recall
-            for idx in lineT:
-                bcr += [lineT.count(idx) / gLen]
-        
-        # otherwise
-        else:
-            bcr += [1.0]
-    
     # b-cubed precision
-    bcp = []
-
-    # now compare from the test perspective
-    for lineT in etdT:
-        
-        # get the line of the cluster
-        tLen = len(lineT)
-
-        # check for linesize
-        if tLen > 1:
-
-            # get cognate-ids in the testset for the line
-            lineG = [evl(lex[idx,gold]) for idx in lineT]
-            
-            # get the recall
-            for idx in lineG:
-                bcp += [lineG.count(idx) / tLen]
-        
-        # otherwise
-        else:
-            bcp += [1.0]
+    bcp = list(get_scores(test, gold))
 
     # calculate general scores
     BCP = sum(bcp) / len(bcp)
     BCR = sum(bcr) / len(bcr)
-    FSC = 2 * ( ( BCP * BCR ) / ( BCP + BCR ) )
+    FSC = 2 * ((BCP * BCR) / (BCP + BCR))
 
     # print the results if this option is chosen
     if pprint:
@@ -146,20 +91,13 @@ def bcubes(
         print('* B-Cubed-Recall:    {0:.4f} *'.format(BCR))
         print('* B-Cubed-F-Scores:  {0:.4f} *'.format(FSC))
         print('*****************************')
-    
+
     # clean cache again
     lex._clean_cache()
+    return BCP, BCR, FSC
 
-    # return the stuff
-    return BCP,BCR,FSC
 
-def pairs(
-        lex,
-        gold='cogid',
-        test='lexstatid',
-        loans=False,
-        pprint=True
-        ):
+def pairs(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     """
     Compute pair scores for the evaluation of cognate detection algorithms.
     
@@ -197,44 +135,21 @@ def pairs(
     bcubes
     """
     # if loans are treated as homologs
-    if loans:
-        evl = lambda x:abs(x)
-    else:
-        evl = lambda x:x
+    evl = abs if loans else identity
 
-    # get the etymdicts
-    etdG = []
-    for key,line in lex.get_etymdict(ref=gold,loans=loans).items():
-        etdG += [[]]
-        for value in [evl(x[0]) for x in line if x != 0]:
-            etdG[-1] += [value]
-    etdT = []
-    for key,line in lex.get_etymdict(ref=test,loans=loans).items():
-        etdT += [[]]
-        for value in [evl(x[0]) for x in line if x != 0]:
-            etdT[-1] += [value]
-    
-    # get the pairs for gold and test
-    pairsG = []
-    for line in etdG:
-        for i,a in enumerate(line):
-            for j,b in enumerate(line):
-                if i < j:
-                    pairsG += [tuple(sorted([a,b]))]
-    pairsG = set(pairsG)
+    def get_pairs(ref):
+        for key, line in lex.get_etymdict(ref=ref, loans=loans).items():
+            line = [value for value in [evl(x[0]) for x in line if x != 0]]
+            for a, b in combinations(line, r=2):
+                yield tuple(sorted([a, b]))
 
-    pairsT = []
-    for line in etdT:
-        for i,a in enumerate(line):
-            for j,b in enumerate(line):
-                if i < j:
-                    pairsT += [tuple(sorted([a,b]))]
-    pairsT = set(pairsT)
+    pairsG = set(get_pairs(gold))
+    pairsT = set(get_pairs(test))
     
     # calculate precision and recall
     pp = len(pairsG.intersection(pairsT)) / len(pairsT)
     pr = len(pairsG.intersection(pairsT)) / len(pairsG)
-    fs = 2 * ( pp * pr ) / ( pp + pr )
+    fs = 2 * (pp * pr) / (pp + pr)
 
     # print the results if this option is chosen
     if pprint:
@@ -246,7 +161,8 @@ def pairs(
         print('* Pair-F-Scores:  {0:.4f} *'.format(fs))
         print('**************************')
     
-    return pp,pr,fs
+    return pp, pr, fs
+
 
 def diff(
         lex,
@@ -254,10 +170,9 @@ def diff(
         test='lexstatid',
         loans=False,
         pprint=True,
-        filename = '',
-        tofile = True,
-        fuzzy = False
-        ):
+        filename='',
+        tofile=True,
+        fuzzy=False):
     r"""
     Write differences in classifications on an item-basis to file.
 
@@ -326,174 +241,98 @@ def diff(
     bcubes
     pairs
     """
-    # check for filename
-    if not filename:
-        filename = lex.filename
-    else:
-        pass
-
-    if loans:
-        loan = lambda x: abs(x)
-    else:
-        loan = lambda x: x
+    filename = filename or lex.filename
+    loan = abs if loans else identity
 
     # open file
     if tofile:
-        f = codecs.open(filename+'.diff','w','utf-8')
+        f = codecs.open(filename + '.diff', 'w', 'utf-8')
 
     # get a formatter for language names
-    lform = '{0:'+str(max([len(l) for l in lex.cols]))+'}'
+    lform = '{0:' + str(max([len(l) for l in lex.cols])) + '}'
     
-    preT,recT = [],[]
-    preB,recB = [],[]
-    preP,recP = [],[]
+    preT, recT = [], []
+    preB, recB = [], []
+    preP, recP = [], []
 
-    # iterate over all concepts
+    def get_cogs(ref, bidx):
+        cogs = lex.get_list(row=concept, entry=ref, flat=True)
+        if fuzzy:
+            cogs = [i[0] for i in cogs]
+
+        tmp = {}
+        for a, b in zip(cogs, bidx):
+            if loan(a) not in tmp:
+                tmp[loan(a)] = b
+        return [tmp[loan(i)] for i in cogs]
+
+    def get_pairs(cogs, idxs):
+        tmp = defaultdict(list)
+        for x, y in zip(cogs, idxs):
+            tmp[x].append(y)
+        for x in tmp:
+            for yA, yB in combinations(tmp[x], r=2):
+                yield tuple(sorted([yA, yB]))
+
+    def get_bcubed_score(one, other):
+        tmp = defaultdict(list)
+        for x, y in zip(one, other):
+            tmp[x].append(y)
+        bcp = 0.0
+        for x in tmp:
+            for y in tmp[x]:
+                bcp += tmp[x].count(y) / len(tmp[x])
+        return bcp / len(idxs)
+
     for concept in lex.concepts:
-        idxs = lex.get_list(row=concept,flat=True)
-        if not fuzzy:
-            cogsG = lex.get_list(row=concept,entry=gold,flat=True)
-            cogsT = lex.get_list(row=concept,entry=test,flat=True)
-        else:
-            cogsG = [i[0] for i in lex.get_list(row=concept,entry=gold,flat=True)]
-            cogsT = [i[0] for i in lex.get_list(row=concept,entry=test,flat=True)]
-
-        # compare cogs and test
+        idxs = lex.get_list(row=concept, flat=True)
         # get the basic index for all seqs
-        bidx = [i+1 for i in range(len(idxs))]
-        
-        # translate to cogs
-        tmp = {}
-        for a,b in zip(cogsG,bidx):
-            if loan(a) in tmp:
-                pass
-            else:
-                tmp[loan(a)] = b
-        cogsG = [tmp[loan(i)] for i in cogsG]
+        bidx = [i + 1 for i in range(len(idxs))]
 
-        # translate to test
-        tmp = {}
-        for a,b in zip(cogsT,bidx):
-            if loan(a) in tmp:
-                pass
-            else:
-                tmp[loan(a)] = b
-        cogsT = [tmp[loan(i)] for i in cogsT]
-        
+        cogsG = get_cogs(gold, bidx)
+        cogsT = get_cogs(test, bidx)
+
         if cogsG != cogsT:
-
             # calculate the transformation distance of the sets
-            tramGT = len(set(zip(cogsG,cogsT)))
-            tramG  = len(set(cogsG))
-            tramT  = len(set(cogsT))
-            preT += [tramT/tramGT]
-            recT += [tramG/tramGT]
+            tramGT = len(set(zip(cogsG, cogsT)))
+            tramG = len(set(cogsG))
+            tramT = len(set(cogsT))
+            preT += [tramT / tramGT]
+            recT += [tramG / tramGT]
 
             # calculate the bcubed precision for the sets
-            tmp = {}
-            for x,y in zip(cogsT,cogsG):
-                if x in tmp:
-                    tmp[x] += [y]
-                else:
-                    tmp[x] = [y]
-            bcp = 0.0
-            for x in tmp:
-                for y in tmp[x]:
-                    bcp += tmp[x].count(y) / len(tmp[x])
-            preB += [bcp / len(idxs)]
-            
+            preB += get_bcubed_score(cogsT, cogsG)
+
             # calculate b-cubed recall
-            tmp = {}
-            for x,y in zip(cogsG,cogsT):
-                if x in tmp:
-                    tmp[x] += [y]
-                else:
-                    tmp[x] = [y]
-            bcr = 0.0
-            for x in tmp:
-                for y in tmp[x]:
-                    bcr += tmp[x].count(y) / len(tmp[x])
-            recB += [bcr / len(idxs)]
+            recB += get_bcubed_score(cogsG, cogsT)
 
             # calculate pair precision
-            tmp = {}
-            for x,y in zip(cogsG,idxs):
-                if x in tmp:
-                    tmp[x] += [y]
-                else:
-                    tmp[x] = [y]
-            pairsG = []
-            for x in tmp:
-                for i,yA in enumerate(tmp[x]):
-                    for j,yB in enumerate(tmp[x]):
-                        if i < j:
-                            pairsG += [tuple(sorted([yA,yB]))]
-            pairsG = set(pairsG)
-            
-            tmp = {}
-            for x,y in zip(cogsT,idxs):
-                if x in tmp:
-                    tmp[x] += [y]
-                else:
-                    tmp[x] = [y]
-            pairsT = []
-            for x in tmp:
-                for i,yA in enumerate(tmp[x]):
-                    for j,yB in enumerate(tmp[x]):
-                        if i < j:
-                            pairsT += [tuple(sorted([yA,yB]))]
-            pairsT = set(pairsT)
-            
-            # append stuff
-            if pairsT:
-                preP += [len(pairsT.intersection(pairsG)) / len(pairsT) ]
-            else:
-                preP += [1.0]
-            if pairsG:
-                recP += [len(pairsT.intersection(pairsG)) / len(pairsG) ]
-            else:
-                recP += [1.0]
+            pairsG = set(get_pairs(cogsG, idxs))
+            pairsT = set(get_pairs(cogsT, idxs))
 
-            if preP[-1] == 1.0:
-                fp = "no"
-            else:
-                fp = "yes"
-            if recP[-1] == 1.0:
-                fn = "no"
-            else:
-                fn = "yes"
-            
+            preP.append(len(pairsT.intersection(pairsG)) / len(pairsT) if pairsT else 1.0)
+            recP.append(len(pairsT.intersection(pairsG)) / len(pairsG) if pairsG else 1.0)
+            fp = "no" if preP[-1] == 1.0 else "yes"
+            fn = "no" if recP[-1] == 1.0 else "yes"
+
             if tofile:
                 f.write("Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
-                    concept,
-                    fp,
-                    fn
-                    ))
+                    concept, fp, fn))
 
             # get the words
-            words = [lex[i,'ipa'] for i in idxs]
-            langs = [lex[i,'taxa'] for i in idxs]
+            words = [lex[i, 'ipa'] for i in idxs]
+            langs = [lex[i, 'taxa'] for i in idxs]
 
             # get a word-formater
-            wform = '{0:'+str(max([len(w) for w in words]))+'}'
+            wform = '{0:' + str(max([len(w) for w in words])) + '}'
 
             # write differences to file
             if tofile:
-                for word,lang,cG,cT in sorted(
-                        zip(
-                            words,
-                            langs,
-                            cogsG,
-                            cogsT
-                            ),
-                        key=lambda x:(x[2],x[3])
-                        ):
+                for word, lang, cG, cT in sorted(
+                        zip(words, langs, cogsG, cogsT),
+                        key=lambda x: (x[2], x[3])):
                     f.write('{0}\t{1}\t{2:4}\t{3:4}\n'.format(
-                        lform.format(lang),
-                        wform.format(word),
-                        cG,
-                        cT
-                        ))
+                        lform.format(lang), wform.format(word), cG, cT))
                 f.write('#\n')
         else:
             preT += [1.0]
@@ -503,25 +342,14 @@ def diff(
             preP += [1.0]
             recP += [1.0]
 
-    hp = sum(preT) / len(preT)
-    hr = sum(recT) / len(recT)
-    hf = 2 * ( hp * hr ) / ( hp + hr )
     bp = sum(preB) / len(preB)
     br = sum(recB) / len(recB)
-    bf = 2 * ( bp * br ) / ( bp + br )
+    bf = 2 * (bp * br) / (bp + br)
     pp = sum(preP) / len(preP)
     pr = sum(recP) / len(recP)
-    pf = 2 * ( pp * pr ) / ( pp + pr )
+    pf = 2 * (pp * pr) / (pp + pr)
 
     if pprint:
-        #print('**************************')
-        #print('* Transformation-Scores  *')
-        #print('* ---------------------- *')
-        #print('* Tram-Precision: {0:.4f} *'.format(hp))
-        #print('* Tram-Recall:    {0:.4f} *'.format(hr))
-        #print('* Tram-F-Scores:  {0:.4f} *'.format(hf))
-        #print('**************************')
-        #print('')
         print('**************************')
         print('* B-Cubed-Scores         *')
         print('* ---------------------- *')
@@ -548,13 +376,7 @@ def diff(
         f.write('Precision: {0:.4f}\n'.format(pp))
         f.write('Recall:    {0:.4f}\n'.format(pr))
         f.write('F-Score:   {0:.4f}\n'.format(pf))
-        #f.write('#\n')
-        #f.write('Hamming Scores:\n')
-        #f.write('Precision: {0:.4f}\n'.format(hp))
-        #f.write('Recall:    {0:.4f}\n'.format(hr))
-        #f.write('F-Score:   {0:.4f}\n'.format(hf))
-        #f.write('#\n')
         f.close()
         log.file_written(filename + '.diff')
     else:
-        return ((bp,br,bf),(pp,pr,pf))
+        return (bp, br, bf), (pp, pr, pf)
