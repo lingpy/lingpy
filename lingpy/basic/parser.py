@@ -4,6 +4,8 @@ Basic parser for text files in QLC format.
 """
 
 import os
+import numpy as np
+from collections import defaultdict
 
 from six import text_type as str
 from six import string_types
@@ -49,10 +51,9 @@ class QLCParser(object):
             # evaluation which is hopefully fixed by now
             tmp_keys = [k for k in input_data if isinstance(k, int)] 
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
-                raise ValueError("[!] Wrong input format!")
-
+                raise ValueError("[!] Wrong input format!")  # pragma: no cover
         # check whether it's another wordlist-object
-        elif hasattr(filename,'_data') and hasattr(filename,'_meta'):
+        elif hasattr(filename, '_data') and hasattr(filename, '_meta'):
             input_data = dict(filename._data.items())
             input_data.update(filename._meta.items())
             input_data[0] = [a for a,b in sorted(
@@ -62,12 +63,10 @@ class QLCParser(object):
                 )]
             internal_import = True
             self.filename = rcParams['filename']
-        
         # or whether the data is an actual file
-        elif os.path.isfile(filename):
+        elif isinstance(filename, string_types) and os.path.isfile(filename):
             input_data = read_qlc(filename)
             self.filename = filename
-        
         # raise an error otherwise
         elif isinstance(filename, string_types):
             raise IOError("[ERROR] Input file '{0}' does not exist.".format(filename))
@@ -160,20 +159,17 @@ class QLCParser(object):
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
-                        except:
-                            warn = 'Problem with row {0} in col {1}, expected' \
-                                    + ' «{4}» as datatype but received «{3}» '\
-                                    + ' (ROW: {2}, entry {5}).'
-                            warn = warn.format(
-                                            key,
-                                            i,
-                                            '|'.join([str(x) for x in
-                                                self._data[key]]),
-                                            self._data[key][i],
-                                            self._class[head],
-                                            head
-                                            )
-                            log.warn(warn)
+                        except:  # pragma: no cover
+                            log.warn(
+                                'Problem with row {0} in col {1}, expected'
+                                + ' «{4}» as datatype but received «{3}» '
+                                + ' (ROW: {2}, entry {5}).'.format(
+                                    key,
+                                    i,
+                                    '|'.join([str(x) for x in self._data[key]]),
+                                    self._data[key][i],
+                                    self._class[head],
+                                    head))
 
         # create entry attribute of the wordlist
         self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
@@ -188,60 +184,29 @@ class QLCParser(object):
         self.log = log.get_logger()
         self._class = {key: eval(value) for key, value in self._class_string.items()}
 
-    def __getitem__(self,idx):
+    def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
         """
-        try:
+        if idx in self._data:
             # return full data entry as list
-            out = self._data[idx]
-            return out
-        except:
-            try:
+            return self._data[idx]
+
+        if isinstance(idx, (list, tuple)) and len(idx) == 2:
+            if idx[0] in self._data and idx[1] in self._alias:
                 # return data entry with specified key word
-                out = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                return out
-            except:
-                try:
-                    out = self._meta[idx]
-                    return out
-                except:
-                    raise KeyError("[ERROR] The key {0} does not exist!".format(idx))
+                return self._data[idx[0]][self._header[self._alias[idx[1]]]]
+
+        if idx in self._meta:
+            return self._meta[idx]
+
+        raise KeyError("[ERROR] The key {0} does not exist!".format(idx))
 
     def __len__(self):
         """
         Length of a Wordlist is the number of counterparts.
         """
         return len(self._data)
-
-    def __getattr__(
-            self,
-            attr
-            ):
-        """
-        Define how attributes are overloaded.
-        """
-        if attr.startswith('_'): return self.__getattribute__(attr)
-        
-        try:
-            # get the right name
-            nattr = self._alias[attr]
-
-            if nattr == self._row_name:
-                return self.rows
-            elif nattr == self._col_name:
-                return self.cols
-            elif nattr in self._header:
-                return self.get_entries(nattr)
-            else:
-                raise AttributeError("%r object has no attribute %r" %
-                        (self.__class__,attr))
-        except:
-            try:
-                return self._meta[attr]
-            except:
-                raise AttributeError("%r object has no attribute %r" %
-                        (self.__class__,attr))
 
     def __iter__(self):
         """
@@ -322,25 +287,36 @@ class QLCParser(object):
         # check for empty entries etc.
         if not entry:
             raise ValueError('Entry was not properly specified.')
-        
+
+        lentry = entry.lower()
+
+        def _apply(key, s, *args, **kwargs):
+            try:
+                res = function(s, *args, **kwargs)
+            except:
+                raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s, key))
+            if override:
+                self[key][self._header[lentry]] = res
+            else:
+                self[key].append(res)
+
         # check for override stuff, this causes otherwise an error message
         if entry not in self.header and override:
-            return self.add_entries(entry,source,function,override=False)
+            return self.add_entries(entry, source, function, override=False)
 
         # check whether the stuff is already there
         if entry in self._header and not override:
             answer = input("[?] Column <{entry}> already exists, do you want to override? (y/n) ".format(entry=entry))
             if answer.lower() in ['y','yes','j']:
                 keywords['override'] = True
-                self.add_entries(entry,source,function,**keywords)
-            else:
-                return
-        elif not override:
+                return self.add_entries(entry, source, function, **keywords)
+            return  # pragma: no cover
 
+        if not override:
             # get the new index into the header
             # add a new alias if this is not specified
             if entry.lower() not in self._alias2:
-                self._alias2[entry.lower()] = [entry.lower(),entry.upper()]
+                self._alias2[entry.lower()] = [entry.lower(), entry.upper()]
                 self._alias[entry.lower()] = entry.lower()
                 self._alias[entry.upper()] = entry.lower()
 
@@ -350,7 +326,7 @@ class QLCParser(object):
             # get the new index
             newIdx = max(self._header.values()) + 1
             
-            # change the aliassed header for each entry in alias2
+            # change the aliased header for each entry in alias2
             for a in self._alias2[name]:
                 self._header[a] = newIdx
 
@@ -358,114 +334,25 @@ class QLCParser(object):
 
             # modify the entries attribute
             self.entries = sorted(set(self.entries + [entry.lower()]))
-            
-            # check for multiple entries (separated by comma)
-            if ',' in source:
-                sources = source.split(',')
-                idxs = [self._header[s] for s in sources]
 
-                # iterate over the data and create the new entry
-                for key in self:
+        # check for multiple entries (separated by comma)
+        if ',' in source:
+            sources = source.split(',')
+            idxs = [self._header[s] for s in sources]
 
-                    # get the id line
-                    s = self[key]
-
-                    # transform according to the function
-                    try:
-                        t = function(s,idxs)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-                    # add the stuff to the dictionary
-                    self[key].append(t)
-
-            # if the source is a dictionary, this dictionary will be directly added to the
-            # original data-storage of the wordlist
-            elif hasattr(source,'keys') and hasattr(source,'values'): 
-                
-                for key in self:
-                    s = source[key]
-                    try:
-                        t = function(s)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-                    
-                    self[key].append(t)
-            
-            else:
-                # get the index of the source in self
-                idx = self._header[source]            
-
-                # iterate over the data and create the new entry
-                for key in self:
-                    
-                    # get the source
-                    s = self[key][idx]
-
-                    # transform s
-                    try:
-                        t = function(s,**keywords)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-                    
-                    # add
-                    self[key].append(t)
-        
-        elif override:
-
-            # get the index that shall be replaced
-            rIdx = self._header[entry.lower()]
-            
-            # check for multiple entries (separated by comma)
-            if ',' in source:
-                sources = source.split(',')
-                idxs = [self._header[s] for s in sources]
-
-                # iterate over the data and create the new entry
-                for key in self:
-
-                    # get the id line
-                    s = self[key]
-
-                    # transform according to the function
-                    try:
-                        t = function(s,idxs)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-
-                    # add the stuff to the dictionary
-                    self[key][rIdx] = t
-
-            # if the source is a dictionary, this dictionary will be directly added to the
-            # original data-storage of the wordlist
-            elif isinstance(source, dict):
-                
-                for key in self:
-                    s = source[key]
-                    try:
-                        t = function(s)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-
-                    self[key][rIdx] = t
-
-            else:
-                # get the index of the source in self
-                idx = self._header[source]            
-
-                # iterate over the data and create the new entry
-                for key in self:
-                    
-                    # get the source
-                    s = self[key][idx]
-
-                    # transform s
-                    try:
-                        t = function(s,**keywords)
-                    except:
-                        raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s,key))
-
-                    # add
-                    self[key][rIdx] = t
+            # iterate over the data and create the new entry
+            for key in self:
+                _apply(key, self[key], idxs)
+        # if the source is a dictionary, this dictionary will be directly added to the
+        # original data-storage of the wordlist
+        elif isinstance(source, dict):
+            for key in self:
+                _apply(key, source[key])
+        else:
+            # get the index of the source in self
+            idx = self._header[source]
+            for key in self:
+                _apply(key, self[key][idx], **keywords)
 
     def _tokenize(
             self,
@@ -479,17 +366,149 @@ class QLCParser(object):
         Tokenize the data with help of orthography profiles.
                 
         """
-
         t = Tokenizer(orthography_profile)
 
-        # else just return a Unicode grapheme clusters parse
-        if target == 'tokens':
-            function = lambda x: t.tokenize(x, column).split(' ')
-        else:
-            function = lambda x: t.tokenize(x, column)
+        def tokenize(x):
+            return t.tokenize(x, column)
+
+        def tokenize_and_split(x):
+            return tokenize(x).split(' ')  # pragma: no cover
 
         self.add_entries(
-            target,
-            source,
-            function
-            )
+            target, source, tokenize_and_split if target == 'tokens' else tokenize)
+
+
+class QLCParserWithRowsAndCols(QLCParser):
+    def __init__(self, filename, row, col, conf):
+        QLCParser.__init__(self, filename, conf=conf)
+
+        try:
+            self._row_name = self._alias[row]
+            self._col_name = self._alias[col]
+            rowIdx = self.header[self._alias[row]]
+            colIdx = self.header[self._alias[col]]
+        except KeyError:
+            raise ValueError("Could not find row or col in configuration or input file!")
+
+        def unique_sorted(idx, key):
+            return sorted(
+                set([self._data[k][idx] for k in self._data
+                     if k != 0 and isinstance(k, int)]),
+                key=key)
+
+        # define rows and cols as attributes of the word list
+        self.rows = unique_sorted(rowIdx, lambda x: ('%s' % x).lower())
+        self.cols = unique_sorted(colIdx, lambda x: x.lower())
+
+        # define height and width of the word list
+        self.height = len(self.rows)
+        self.width = len(self.cols)
+
+        # row and column index point to the place where the data of the main
+        # items is stored in the original dictionary
+        self._rowIdx = rowIdx
+        self._colIdx = colIdx
+
+        # create a basic array which assigns ids for the entries in a starling manner.
+        # first, find out, how many items (== synonyms) are there maximally for each row
+        self._dict = defaultdict(lambda: defaultdict(list))
+        for key, value in [(k, v) for k, v in self._data.items()
+                           if k != 0 and str(k).isnumeric()]:
+            self._dict[value[rowIdx]][value[colIdx]].append(key)
+
+        # We must cast to a regular dict to make the attribute picklable.
+        self._dict = dict(self._dict)
+
+        # create the array by counting the maximal number of occurrences, store
+        # the row names separately in a dictionary
+        tmp_list = []
+        self._idx = {}
+
+        count = 0
+        for k, d in self._dict.items():
+            self._idx[k] = []
+
+            # get maximal amount of "synonyms"
+            for i in range(max([len(x) for x in d.values()])):
+                tmp = []
+                for j in range(self.width):
+                    try:
+                        tmp.append(d[self.cols[j]][i])
+                    except:
+                        tmp.append(0)
+                self._idx[k] += [count]
+                count += 1
+                tmp_list += [tmp]
+
+        self._array = np.array(tmp_list)
+
+        self._cache = {}
+
+    def __getattr__(self, attr):
+        """
+        Define how attributes are overloaded.
+        """
+        if attr.startswith('_'):
+            return self.__getattribute__(attr)
+
+        if attr in self._alias:
+            # get the right name
+            nattr = self._alias[attr]
+
+            if nattr == self._row_name:
+                return self.rows
+
+            if nattr == self._col_name:
+                return self.cols
+
+            if nattr in self._header:
+                return self.get_entries(nattr)
+
+        if attr in self._meta:
+            return self._meta[attr]
+
+        raise AttributeError("%r object has no attribute %r" % (self.__class__, attr))
+
+    def _get_cached(self, idx):
+        """
+        Method allows quick access to the data by passing the integer key.
+        """
+        if idx in self._cache:
+            return self._cache[idx]
+
+        if idx in self._data:
+            # return full data entry as list
+            self._cache[idx] = self._data[idx]
+            return self._cache[idx]
+
+        raise KeyError()
+
+    def get_entries(self, entry):
+        """
+        Return all entries matching the given entry-type as a two-dimensional list.
+
+        Parameters
+        ----------
+        entry : string
+            The entry-type of the data that shall be returned in tabular
+            format.
+        """
+        if self._alias[entry] in self._cache:
+            return self._cache[self._alias[entry]]
+
+        if entry in self._header:
+            entries = []
+            for row in self._array:
+                entries.append(
+                    [self[cell][self._header[entry]] if cell != 0 else 0 for cell in row])
+
+            # add entries to cache
+            self._cache[self._alias[entry]] = entries
+            return entries
+
+    def _clean_cache(self):
+        """
+        Function cleans the cache.
+        """
+        del self._cache
+        self._cache = {}
