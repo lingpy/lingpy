@@ -1,0 +1,63 @@
+Number	Word	Megleno Romanian	Megleno Romanian #	Istro Romanian	Istro Romanian #	Aromanian	Aromanian #	Romanian	Romanian #
+0		20	0	20	0	20	0	21	0
+1	all	tot {tot}	1	tot {tot}	1	tˈut-ŭ {tut}	1	tot {tot}	1
+2	ashes	čənˈuš-ə {tšănúșă}	1	čerˈuš-e {čerúșe}	1	činˈuš-e {činúșe}	1	čenˈuš-ə {cenușă}	1
+2	ashes	skrum {scrum}	-1		0	skrˈum-ŭ {scrum}	-1		0
+3	bark		-1	kˈor-a {córa}	-1	kˈoaž-e {coáje}	1	skˈoarc-ə {scoarţă}	2
+4	belly	fˈo̯al-i {foáli}	1	tərbˈux {târbúh}	-1	pˈɨntik-ŭ {pîˊntic}	2	bˈurt-ə {burtă}	-1
+5	big	mˈar-i {mári}	1	mˈɒr-e {måre}	1	mˈar-e {máre}	1	mˈar-e {mare}	1
+6	bird	puʎ {puľ}	1	puʎ {puľ}	1	pˈuʎ-ŭ {puľĭŭ}	1	pˈasər-e {pasăre}	2
+7	bite	mˈučk-u {mútšcu}	1	mučk-ˈɒ {mučcå}	1	mˈɨšk-u {mî șcu} ~ mˈušk-u {mușcu}	1	a=mušk-ˈa {a mușca}	1
+8	black	nˈegr-u {négru}	1	nˈegr-u {négru}	1	lˈay-ŭ {laĭŭ}	2	nˈegr-u {negru}	1
+9	blood	sˈɔnz-i {sǫnzi}	1	sˈənz-e {sấnze}	1	sˈɨnʒ-e {sîndze}	1	sˈɨnǯ-e {sânge}	1
+10	bone	wos {u̯os}	1	os {os}	1	ˈos-ŭ {os}	1	os {os}	1
+11	breast	ȶept {chépt}	1	kʎept {cľept}	1	ȶˈept-u {képtu}	1	pyept {piept}	1
+11	breast	sin {sin}	2		0		0		0
+12	burn tr.	art {ard}	1	pal-ˈi {palí}	-1	ˈard-u {árdu}	1	a=ˈard-e {a arde}	1
+12	burn tr.		0		0		0		0
+13	claw(nail)	ˈungʎ-ə {úngľă}	1	ˈuŋgʎ-e {úngľe}	1	ˈungʎ-e {úngľe}	1	ˈuŋgy-e {unghie}	1
+14	cloud	nor {nor}	1	oblˈɒk {oblåc}	-1	niˈor-ŭ {niór}	1	nor {nor}	1
+15	cold	rˈac-i {rátsi}	1	rˈɒč-e {råče}	1	arˈac-e {aráţe}	1	rˈeč-e {rece}	1
+16	come	vin {vin}	1	ver-ˈi {verí}	1	ʑˈin-ŭ {ɣin}	1	a=ven-ˈi {a veni}	1
+17	die	mor {mor}	1	mur-ˈi {murí}	1	mˈor-ŭ {mor}	1	a=mur-ˈi {a muri}	1
+18	dog	kˈɔyn-i {cǫi̯ni}	1	brek {brec}	-1	kˈɨn-e {cîne}	1	kˈɨyn-e {câine}	1
+19	drink	be̯a-w {beáu̯}	1	bä {bę}	1	bea-w {beáŭ}	1	a=bˈea {a bea}	1
+20	dry	usk-ˈat {uscát}	1	uskˈɒ-t {uscåt}	1	usk-ˈat-ŭ {uscát}	1	usk-ˈat {uscat}	1
+20	dry		0		0		0		0
+21	ear	urˈe̯akʎ-ə {ureácľă}	1	urˈäkʎ-e {uręcľe}	1	urˈeakʎ-e {ureácľe}	1	urˈek-e {ureche}	1
+22	earth	cˈar-ə {tsáră}	1	pemˈint {pemínt}	2	cˈar-ə {ţáră}	1	pəmˈɨnt {pământ}	2
+23	eat	mənˈank {mănánc}	1	məŋk-ˈɒ {mâŋcå}	1	mˈɨk-ŭ {mîc}	1	a=mɨŋk-ˈa {a mânca}	1
+24	egg	wow { u̯óu̯}	1	ov {ov}	1	ow {oŭ}	1	ow {ou}	1
+25	eye	wˈokʎ-u {u̯ócľu}	1	ˈokʎ-u {ócľu}	1	ˈokʎ-u {ócľĭu}	1	okʸ {ochi}	1
+26	fat n.	grəs-ˈim-i {grăsími}	1	mɒst {måst}	-1	grəs-ˈim-e {grăsíme}	1	grəs-ˈim-e {grăsime}	1
+27	feather	pˈe̯an-ə {peánă}	1	pˈäna {pęna}	1	pˈe̯an-ə {peánă}	1	pˈan-ə {pană}	1
+28	fire	fok {foc}	1	fok {foc}	1	fˈok-ŭ {foc}	1	fok {foc}	1
+29	fish	pˈeašt-i {peáști}	1	rˈib-ä {ríbę}	-1	pˈesk-u {péscu}	1	pˈešt-e {pește}	1
+30	fly v.	pər-əy-ˈes {părăi̯és}	-1	let-ˈi {letí}	-1	asbˈo̯air-ŭ {asboáir}	1	a=zbur-ˈa {a zbura}	1
+31	foot	pičˈor {pitšór}	1	pičˈor {pičór}	1	čičˈor-ŭ {čičór}	1	pičˈor {picior}	1
+32	full	ɐm=plˈin {ạmplín}	1	pʎir {pľir}	1	plˈin-ŭ {plin} ~ m=plˈin-ŭ {mplin}	1	plin {plin}	1
+33	give	da-w {dáu̯}	1	dɒ {då}	1	da-w {daŭ}	1	a=dˈa {a da}	1
+34	good	bun {bun}	1	bur {bur}	1	bˈun-ŭ {bun}	1	bun {bun}	1
+35	green	vˈe̯ard-i {veárdi}	1	zelˈen {zelén}	-1	vˈe̯ard-e {veárde}	1	vˈerd-e {verde}	1
+36	hair	per {per}	1	per {per}	1	pˈer-ŭ {per}	1	pər {păr}	1
+37	hand	mˈɔn-ə {mǫnă}	1	mər {mâr}	1	mˈɨn-ə {mînă}	1	mˈɨn-ə {mână}	1
+38	head	kap {cap}	1	kɒp {cåp}	1	kˈap-ŭ {cap}	1	kap {cap}	1
+38	head		0		0		0		0
+39	hear	ut {ud}	1	avz-ˈi {avzí}	1	ˈavd-u {ávdu}	1	a=awz-ˈi {a auzi}	1
+39	hear		0		0		0		0
+40	heart	burˈik {buríc}	1	yˈirim-ä {írimę}	2	ˈinim-ə {ínimă}	2	ˈinim-ə {inimă}	2
+41	horn	korn {corn}	1	korn {corn}	1	kˈorn-u {córnu}	1	korn {corn}	1
+42	I	yo {i̯o} ~ yew {i̯eu̯} ~ iwə {iu̯ă}	1	yo {ó}	1	yo {ĭo}	1	yew {eu}	1
+42	I	mini {mini}	2	mˈire {míre}	2	mˈine {mine}	2	mˈine {mine}	2
+43	kill	nek {nec}	1	učˈid-e {učíde}	2	vˈat-əm {vátăm}	3	a=učˈid-e {a ucide}	2
+43	kill		0		0		0	a=omor-ˈɨ {a omorî}	-1
+44	knee	zinˈukʎ-u {zinúcľu}	1	žerˈuŋkʎ-u {žerúŋcľu}	1	ʒinˈukʎ-u {dzinúcľŭ}	1	ǯenˈuŋkʸ {genunchi}	1
+45	know	šti-w {știu̯}	1	šti {ști}	1	šti-w {știŭ}	1	a=štˈi {a ști}	1
+46	leaf	frˈunz-ə {frúnză}	1	fˈoʎ-e {fóľe}	2	frˈɨnʒ-ə {frîndză}	1	ˈfrunz-ə {frunză}	1
+46	leaf		0		0		0		0
+47	lie	zak {zac}	1	zač-ˈɒ {začå}	1	ʒˈak-ŭ {dzac}	1	a=stˈa kulk-ˈat {a sta culcat} ~ a=fˈi kulk-ˈat {a fi culcat}	2
+47	lie		0		0		0		0
+48	liver	drop {drob}	-1	fikˈɒc {ficåţ}	1	ikˈat-ŭ {hicát} ~ ixkˈat-ŭ {ihcát}	1	fikˈat {ficat}	1
+48	liver		0		0		0		0
+49	long	lunk {lung}	1	luŋg {luŋg}	1	lˈung-u {lúngu}	1	luŋg {lung}	1
+50	louse	pidˈukʎ-u {pidúcľu}	1	pedˈukʎ-u {pedúcľu}	1	pidˈukʎ-u {pidúcľĭu}	1	pədˈuk-e {păduche}	1

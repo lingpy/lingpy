@@ -14,12 +14,11 @@ from collections import defaultdict
 from six import text_type as str
 
 # basic lingpy imports
-from ..read.qlc import read_qlc
 from ..convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from ..settings import rcParams
-from .parser import QLCParser
+from .parser import QLCParserWithRowsAndCols
 from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc, triple2tsv, tsv2triple, wl2multistate, coverage
+        wl2qlc, tsv2triple, wl2multistate, coverage
 
 from ..algorithm import clustering as cluster
 from .. import util
@@ -32,7 +31,7 @@ def _write_file(filename, content, ext=None):
     util.write_text_file(filename, content)
 
 
-class Wordlist(QLCParser):
+class Wordlist(QLCParserWithRowsAndCols):
     """
     Basic class for the handling of multilingual word lists.
 
@@ -71,81 +70,9 @@ class Wordlist(QLCParser):
     can be easily accessed as two separate two-dimensional lists.
     
     """
-
     def __init__(self, filename, row='concept', col='doculect', conf=None):
-        
-        QLCParser.__init__(self, filename, conf or util.data_path('conf', 'wordlist.rc'))
-        
-        # check whether additional data has to be loaded
-        if not hasattr(self, '_rowidx'):
-            # check whether additional data has to be loaded
-            # retrieve basic types for rows and columns from the word list
-            try:
-                rowIdx = self.header[self._alias[row]]
-                colIdx = self.header[self._alias[col]]
-            except:
-                raise ValueError("[!] Could not find row and col in configuration or input file!")
-
-            # define rows and cols as attributes of the word list
-            self.rows = sorted(
-                set([self._data[k][rowIdx] for k in self._data
-                     if k != 0 and isinstance(k, int)]),
-                key=lambda x: x.lower())
-            self.cols = sorted(
-                set([self._data[k][colIdx] for k in self._data
-                     if k != 0 and isinstance(k, int)]),
-                key=lambda x: x.lower())
-
-            # define height and width of the word list
-            self.height = len(self.rows)
-            self.width = len(self.cols)
-
-            # row and column index point to the place where the data of the main
-            # items is stored in the original dictionary
-            self._rowIdx = rowIdx
-            self._colIdx = colIdx
-            self._row_name = self._alias[row]
-            self._col_name = self._alias[col]
-
-            # create a basic array which assigns ids for the entries in a starling
-            # manner. 
-
-            # first, find out, how many items (== synonyms) are there maximally for
-            # each row
-            self._dict = defaultdict(lambda: defaultdict(list))
-            for key, value in [(k, v) for k, v in self._data.items()
-                               if k != 0 and str(k).isnumeric()]:
-                self._dict[value[rowIdx]][value[colIdx]].append(key)
-
-            # We must cast to a regular dict to make the attribute picklable.
-            self._dict = dict(self._dict)
-
-            # create the array by counting the maximal number of occurrences, store
-            # the row names separately in a dictionary
-            tmp_list = []
-            self._idx = {}
-
-            count = 0
-            for k, d in self._dict.items():
-                self._idx[k] = []
-
-                # get maximal amount of "synonyms"
-                for i in range(max([len(x) for x in d.values()])):
-                    tmp = []
-                    for j in range(self.width):
-                        try:
-                            tmp.append(d[self.cols[j]][i])
-                        except:
-                            tmp.append(0)
-                    self._idx[k] += [count]
-                    count += 1
-                    tmp_list += [tmp]
-
-            # create the array 
-            self._array = np.array(tmp_list)
-
-        # define a cache dictionary for stored data for quick access
-        self._cache = {}
+        QLCParserWithRowsAndCols.__init__(
+            self, filename, row, col, conf or util.data_path('conf', 'wordlist.rc'))
 
         # setup other local temporary storage
         self._etym_dict = {}
@@ -159,30 +86,17 @@ class Wordlist(QLCParser):
         """
         Method allows quick access to the data by passing the integer key.
         """
-        if idx in self._cache:
-            return self._cache[idx]
-
-        if idx in self._data:
-            # return full data entry as list
-            self._cache[idx] = self._data[idx]
-            return self._cache[idx]
-
         try:
-            # return data entry with specified key word
-            self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-            return self._cache[idx]
-        except:
-            if idx in self._meta:
-                self._cache[idx] = self._meta[idx]
+            return self._get_cached(idx)
+        except KeyError:
+            try:
+                # return data entry with specified key word
+                self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
                 return self._cache[idx]
-
-    def _clean_cache(self):
-
-        """
-        Function cleans the cache.
-        """
-        del self._cache
-        self._cache = {}
+            except:
+                if idx in self._meta:
+                    self._cache[idx] = self._meta[idx]
+                    return self._cache[idx]
 
     def add_entries(
             self,
@@ -541,33 +455,6 @@ class Wordlist(QLCParser):
 
             print("[!] Neither rows nor columns are selected!")
             return 
-    
-    def get_entries(
-            self,
-            entry
-            ):
-        """
-        Return all entries matching the given entry-type as a two-dimensional list.
-
-        Parameters
-        ----------
-        entry : string
-            The entry-type of the data that shall be returned in tabular
-            format.
-
-        """
-        if self._alias[entry] in self._cache:
-            return self._cache[self._alias[entry]]
-
-        if entry in self._header:
-            entries = []
-            for row in self._array:
-                entries.append(
-                    [self[cell][self._header[entry]] if cell != 0 else 0 for cell in row])
-
-            # add entries to cache
-            self._cache[self._alias[entry]] = entries
-            return entries
 
     def get_etymdict(
             self,
