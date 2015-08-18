@@ -10,6 +10,7 @@ class TestLexStat(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.lex = LexStat(test_data('KSL.qlc'))
+        self.log = Mock(warn=Mock())
 
     def test_init(self):
         LexStat(test_data('phybo.qlc'), check=True)
@@ -18,7 +19,11 @@ class TestLexStat(WithTempDir):
     def test_get_scorer(self):
         self.lex.get_scorer()
         assert hasattr(self.lex, "cscorer")
+        with patch('lingpy.basic.parser.log', Mock(get_logger=lambda: self.log)):
+            self.lex.get_scorer()
+            #assert self.log.warn.called
         del self.lex.cscorer
+        self.lex.get_scorer()
         self.lex.get_scorer(method='markov')
 
     def test_cluster(self):
@@ -72,3 +77,27 @@ class TestLexStat(WithTempDir):
     def test_output(self):
         self.lex.output('csv', filename='%s' % self.tmp_path('test_lexstat'))
         self.lex.output('scorer', filename='%s' % self.tmp_path('test_lexstat'))
+
+    def test_correctness(self):
+        lex = LexStat({
+            0: ['ID', 'doculect', 'concept', 'IPA'],
+            1: ['1', 'deu', 'hand', 'hand'],
+            2: ['2', 'eng', 'hand', 'hand'],
+            3: ['3', 'xyz', 'hand', 'xyz']})
+        lex.get_scorer()
+        lex.cluster(ref='cogid')
+        self.assertEquals(lex.get_entries('cogid'), [[1, 1, 3]])
+
+        lex = LexStat({
+            0: ['ID', 'concept', 'ipa', 'doculect'],
+            1: ['5424', 'Abend::N', 'swar', 'FRA'],
+            2: ['5425', 'Abend::N', 'sware', 'FRA'],
+            3: ['5426', 'Abend::N', 'sear3', 'RON'],
+            4: ['5427', 'Abend::N', 'ivniN', 'ENG'],
+            5: ['5428', 'Abend::N', 'noyt3', 'POR'],
+            6: ['5429', 'Abend::N', 'tardi5a', 'POR'],
+            7: ['5430', 'Abend::N', 'afd3n', 'DAN'],
+        })
+        lex.get_scorer()
+        lex.cluster(method='lexstat', threshold=0.8, ref='cogid')
+        self.assertEquals(lex.get_entries('cogid'), [[1, 2, 3, 4, 5], [0, 0, 3, 3, 0]])
