@@ -18,6 +18,7 @@ before_install:
 # The next couple lines fix a crash with multiprocessing on Travis and are not specific to using Miniconda
 - sudo rm -rf /dev/shm
 - sudo ln -s /run/shm /dev/shm
+- pip install codecov
 # Install packages
 install:
 - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
@@ -33,4 +34,4 @@ script:
  
 # Calculate coverage
 after_success:
-- coveralls
+- codecov
