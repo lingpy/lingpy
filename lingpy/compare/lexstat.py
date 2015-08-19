@@ -553,9 +553,9 @@ class LexStat(Wordlist):
 
                             # check for gaps
                             if a == '-':
-                                a = str(i + 1) + '.X.-'
+                                a = charstring(i + 1)
                             elif b == '-':
-                                b = str(j + 1) + '.X.-'
+                                b = charstring(j + 1)
 
                             corrdist[tA, tB][a, b] += d / len(kw['modes'])
         return corrdist
@@ -633,17 +633,13 @@ class LexStat(Wordlist):
             return kw
 
         # get parameters and store them in string
-        modestring = []
-        for a, b, c in kw['modes']:
-            modestring += ['{0}-{1}-{2:.2f}'.format(a, abs(b), c)]
-        modestring = ':'.join(modestring)
-
         params = dict(
             ratio=kw['ratio'],
             vscale=kw['vscale'],
             runs=kw['runs'],
             threshold=kw['preprocessing_threshold'],
-            modestring=modestring,
+            modestring=':'.join(
+                '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in kw['modes']),
             factor=kw['factor'],
             restricted_chars=kw['restricted_chars'],
             method=kw['method'],
@@ -689,14 +685,9 @@ class LexStat(Wordlist):
         self._stamp += "# Parameters: " + parstring + '\n'
 
         # get the correspondence distribution
-        corrdist = self._get_corrdist(**kw)
-
+        self._corrdist = self._get_corrdist(**kw)
         # get the random distribution
-        randist = self._get_randist(**kw)
-
-        # store the distributions as attributes
-        self._corrdist = corrdist
-        self._randist = randist
+        self._randist = self._get_randist(**kw)
 
         # get the average gop
         gop = sum([m[1] for m in kw['modes']]) / len(kw['modes'])
@@ -710,8 +701,8 @@ class LexStat(Wordlist):
                 list(self.freqs[tA]) + [charstring(i + 1)],
                 list(self.freqs[tB]) + [charstring(j + 1)]
             ):
-                exp = randist.get((tA, tB), {}).get((charA, charB), False)
-                att = corrdist.get((tA, tB), {}).get((charA, charB), False)
+                exp = self._randist.get((tA, tB), {}).get((charA, charB), False)
+                att = self._corrdist.get((tA, tB), {}).get((charA, charB), False)
 
                 # in the following we follow the former lexstat protocol
                 if att <= 1 and i != j:
@@ -742,11 +733,9 @@ class LexStat(Wordlist):
 
                     # use the vowel scale
                     if charA[4] in 'XYZT_' and charB[4] in 'XYZT_':
-                        matrix[idxA][idxB] = kw['vscale'] * rscore
-                        matrix[idxB][idxA] = kw['vscale'] * rscore
+                        matrix[idxA][idxB] = matrix[idxB][idxA] = kw['vscale'] * rscore
                     else:
-                        matrix[idxA][idxB] = rscore
-                        matrix[idxB][idxA] = rscore
+                        matrix[idxA][idxB] = matrix[idxB][idxA] = rscore
                 except:
                     pass
 
@@ -803,11 +792,11 @@ class LexStat(Wordlist):
 
         if isinstance(idxA, (text_type, tuple)):
             if isinstance(idxA, tuple):
-                idxsA = self.get_dict(col=idxA[0])[idxA[1]]
-                idxsB = self.get_dict(col=idxB[0])[idxB[1]]
-                for i, indexA in enumerate(idxsA):
-                    for j, indexB in enumerate(idxsB):
-                        self.align_pairs(indexA, indexB, **kw)
+                for indexA, indexB in product(
+                    self.get_dict(col=idxA[0])[idxA[1]],
+                    self.get_dict(col=idxB[0])[idxB[1]],
+                ):
+                    self.align_pairs(indexA, indexB, **kw)
             else:
                 if not concept:
                     for c in self.concepts:
@@ -828,8 +817,8 @@ class LexStat(Wordlist):
         if kw['method'] == 'lexstat':
             scorer = self.cscorer
             gop = 1.0
-            weightsA = [self.cscorer[str(lA) + '.X.-', n] for n in self[idxA, 'numbers']]
-            weightsB = [self.cscorer[str(lB) + '.X.-', n] for n in self[idxB, 'numbers']]
+            weightsA = [self.cscorer[charstring(lA), n] for n in self[idxA, 'numbers']]
+            weightsB = [self.cscorer[charstring(lB), n] for n in self[idxB, 'numbers']]
         else:
             gop = kw['gop']
             weightsA = self[idxA, 'weights']
@@ -853,8 +842,7 @@ class LexStat(Wordlist):
 
         # get a string of scores
         if kw['method'] == 'lexstat':
-            fun = lambda x, y: x if x != '-' else '{0}.X.-'.format(y)
-
+            fun = lambda x, y: x if x != '-' else charstring(y)
             scoreA = [fun(a, lA) for a in almA]
             scoreB = [fun(b, lB) for b in almB]
         else:
@@ -1121,37 +1109,36 @@ class LexStat(Wordlist):
             restriction=restriction,
             **kw)
 
-        # check for full consideration of basic t
-        if kw['guess_threshold'] and kw['gt_mode'] == 'average':
+        if kw['guess_threshold']:
             thresholds = []
-            matrices = list(matrices)
-            for c, i, m in matrices:
-                t = clustering.best_threshold(m, kw['gt_trange'])
-                thresholds += [t]
-            threshold = sum(thresholds) / len(thresholds)
-        # new method for threshold estimation based on calculating approximate
-        # random distributions of similarities for each sequence
-        elif kw['guess_threshold'] and kw['gt_mode'] == 'nulld':
-            DR = []
-            align = lambda x, y: self.align_pairs(
-                x,
-                y,
-                method=method,
-                restricted_chars=restricted_chars,
-                mode=mode,
-                scale=scale,
-                factor=factor,
-                return_distance=True,
-                pprint=False,
-                gop=gop)
-            for l1, l2 in self.pairs:
-                if l1 != l2:
-                    pairs = self.pairs[l1, l2]
-                    for p1, p2 in pairs:
-                        dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
-                              for i in range(len(pairs) // 5)]
-                        DR += dx  # [sum(dx)/len(dx)]
-            threshold = sum(DR) / len(DR)
+            # check for full consideration of basic t
+            if kw['gt_mode'] == 'average':
+                matrices = list(matrices)
+                for c, i, m in matrices:
+                    thresholds.append(clustering.best_threshold(m, kw['gt_trange']))
+            # new method for threshold estimation based on calculating approximate
+            # random distributions of similarities for each sequence
+            elif kw['gt_mode'] == 'nulld':
+                align = lambda x, y: self.align_pairs(
+                    x,
+                    y,
+                    method=method,
+                    restricted_chars=restricted_chars,
+                    mode=mode,
+                    scale=scale,
+                    factor=factor,
+                    return_distance=True,
+                    pprint=False,
+                    gop=gop)
+                for l1, l2 in self.pairs:
+                    if l1 != l2:
+                        pairs = self.pairs[l1, l2]
+                        for p1, p2 in pairs:
+                            dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
+                                  for i in range(len(pairs) // 5)]
+                            thresholds.extend(dx)
+            if thresholds:
+                threshold = sum(thresholds) / len(thresholds)
 
         with util.ProgressBar('SEQUENCE CLUSTERING', len(self.rows)) as progress:
             for concept, indices, matrix in matrices:
@@ -1160,9 +1147,9 @@ class LexStat(Wordlist):
                 # check for keyword to guess the threshold
                 if kw['guess_threshold'] and kw['gt_mode'] == 'item':
                     t = clustering.best_threshold(matrix, kw['gt_trange'])
-                # considering new function here JML
-                elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
-                    pass
+                # FIXME: considering new function here JML
+                #elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
+                #    pass
                 else:
                     t = threshold
 
