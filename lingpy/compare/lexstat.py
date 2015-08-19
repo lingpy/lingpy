@@ -13,7 +13,6 @@ from copy import copy
 
 # thirdparty
 from six import string_types
-from six.moves import input
 import numpy as np
 
 # lingpy-modules
@@ -30,6 +29,23 @@ from ..algorithm import talign
 from ..algorithm import misc
 from .. import util
 from .. import log
+
+
+def _check_tokens(key_and_tokens):
+    """Generator for error reports on token strings.
+
+    :param key_and_tokens: iterator over (key, token_string) pairs.
+    """
+    for key, line in key_and_tokens:
+        if "" in line:
+            yield (key, "empty token", line)
+        else:
+            try:
+                sonars = tokens2class(line, rcParams['art'])
+                if not sonars or sonars == ['0']:
+                    yield (key, "empty sound-class string", line)
+            except ValueError:
+                yield (key, "sound-class conversion failed", line)
 
 
 class LexStat(Wordlist):
@@ -98,8 +114,6 @@ class LexStat(Wordlist):
             "errors": "errors.log",
         }
         kw.update(keywords)
-        if kw['defaults']:
-            return
 
         if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
@@ -121,33 +135,15 @@ class LexStat(Wordlist):
 
         # add a debug procedure for tokens
         if kw["check"]:
-            errors = []
-            for key in self:
-                line = self[key, "tokens"]
-                if "" in line:
-                    errors += [(key, "empty token", ' '.join(line))]
-                else:
-                    try:
-                        sonars = tokens2class(line, rcParams['art'])
-                        if not sonars or sonars == ['0']:
-                            errors += [(
-                                key, "empty sound-class string", ' '.join(line))]
-                    except:
-                        errors += [(
-                            key, "sound-class conversion failed", ' '.join(line))]
+            errors = list(_check_tokens((key, self[key, "tokens"]) for key in self))
             if errors:
-                out = codecs.open(kw['errors'], "w", 'utf-8')
-                out.write("ID\tTokens\tError-Type\n")
-                for a, b, c in errors:
-                    out.write("{0}\t<{1}>\t{2}\n".format(a, c, b))
-                out.close()
-                answer = "y"
-                if not kw["apply_checks"]:
-                    answer = input(
-                        "[?] There were errors in the input data. " +
-                        "Do you want to exclude them? (y/n)")
+                lines = ["ID\tTokens\tError-Type"]
+                for key, msg, line in errors:
+                    lines.append("{0}\t<{1}>\t{2}".format(key, msg, ' '.join(line)))
+                util.write_text_file(kw['errors'], lines)
 
-                if answer in rcParams['answer_yes']:
+                if kw["apply_checks"] or util.confirm(
+                        "There were errors in the input data - exclude them?"):
                     self.output(
                         'qlc',
                         filename=self.filename + '_cleaned',
