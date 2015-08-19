@@ -5,8 +5,17 @@ from tempfile import mkdtemp
 import shutil
 
 from pathlib import Path
+from mock import Mock
 
 from lingpy.util import lingpy_path
+
+
+def get_log():
+    """A mock object for `lingpy.log` to test whether log messages have been emitted.
+
+    :return: Mock instance.
+    """
+    return Mock(warn=Mock(), info=Mock(), debug=Mock(), error=Mock())
 
 
 def test_data(*comps):

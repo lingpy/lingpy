@@ -9,8 +9,10 @@ import random
 import codecs
 from itertools import combinations_with_replacement
 from math import factorial
+from copy import copy
 
 # thirdparty
+from six import string_types
 from six.moves import input
 import numpy as np
 
@@ -27,6 +29,7 @@ from ..algorithm import calign
 from ..algorithm import talign
 from ..algorithm import misc
 from .. import util
+from .. import log
 
 
 class LexStat(Wordlist):
@@ -64,7 +67,7 @@ class LexStat(Wordlist):
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
-        file ``errors.log``.
+        file **errors**, defaulting to ``errors.log``.
 
     no_bscorer: bool (default=False)
         If set to **True**, this will suppress the creation of a
@@ -72,6 +75,9 @@ class LexStat(Wordlist):
         additional ballast if the method "lexstat" is not used after all. If
         you use the "lexstat" method, however, this needs to be set to
         **False**.
+
+    errors : str
+        The name of the error log.
 
     Notes
     -----
@@ -88,14 +94,14 @@ class LexStat(Wordlist):
             "check": False,
             "apply_checks": False,
             "defaults": False,
-            "no_bscorer": False
+            "no_bscorer": False,
+            "errors": "errors.log",
         }
         kw.update(keywords)
         if kw['defaults']:
             return
 
-        # store the model
-        if str(kw['model']) == kw['model']:
+        if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
         else:
             self.model = kw['model']
@@ -129,17 +135,16 @@ class LexStat(Wordlist):
                         errors += [(
                             key, "sound-class conversion failed", ' '.join(line))]
             if errors:
-                out = codecs.open("errors.log", "w", 'utf-8')
+                out = codecs.open(kw['errors'], "w", 'utf-8')
                 out.write("ID\tTokens\tError-Type\n")
                 for a, b, c in errors:
                     out.write("{0}\t<{1}>\t{2}\n".format(a, c, b))
                 out.close()
+                answer = "y"
                 if not kw["apply_checks"]:
                     answer = input(
                         "[?] There were errors in the input data. " +
                         "Do you want to exclude them? (y/n)")
-                else:
-                    answer = "y"
 
                 if answer in rcParams['answer_yes']:
                     self.output(
@@ -147,19 +152,13 @@ class LexStat(Wordlist):
                         filename=self.filename + '_cleaned',
                         subset=True,
                         rows={"ID": "not in " + str([i[0] for i in errors])})
-                    # load the data in another wordlist and copy the stuff
-                    wl = Wordlist(self.filename + '_cleaned.qlc')
-
-                    # change the attributes
-                    self._array = wl._array
-                    self._data = wl._data
-                    self._dict = wl._dict
-                    self._idx = wl._idx
-                    self._meta['errors'] = [i[0] for i in errors]
-                else:
-                    return
+                    # load the data in a new LexStat instance and copy the __dict__
+                    lexstat = LexStat(self.filename + '_cleaned.qlc', **kw)
+                    lexstat._meta['errors'] = [i[0] for i in errors]
+                    self.__dict__ = copy(lexstat.__dict__)
+                return
             else:
-                self.log.info("No obvious errors found in the data.")
+                log.info("No obvious errors found in the data.")
 
         # sonority profiles
         if "sonars" not in self.header:
@@ -425,7 +424,7 @@ class LexStat(Wordlist):
             for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                 progress.update()
                 tA, tB = self.taxa[i], self.taxa[j]
-                self.log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
+                log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
                 corrdist[tA, tB] = {}
                 for mode, gop, scale in kw['modes']:
@@ -534,7 +533,7 @@ class LexStat(Wordlist):
             with util.ProgressBar('SEQUENCE GENERATION', len(self.taxa)) as progress:
                 for i, taxon in enumerate(self.taxa):
                     progress.update()
-                    self.log.info("Analyzing taxon {0}.".format(taxon))
+                    log.info("Analyzing taxon {0}.".format(taxon))
 
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
                     prostrings = self.get_list(col=taxon, entry="prostrings", flat=True)
@@ -568,7 +567,7 @@ class LexStat(Wordlist):
                 for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                     progress.update()
                     tA, tB = self.taxa[i], self.taxa[j]
-                    self.log.info(
+                    log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
                     )
 
@@ -617,7 +616,7 @@ class LexStat(Wordlist):
                 for i, j in combinations_with_replacement(range(len(self.taxa)), r=2):
                     progress.update()
                     tA, tB = self.taxa[i], self.taxa[j]
-                    self.log.info(
+                    log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
                     )
                     corrdist[tA, tB] = {}
@@ -780,7 +779,7 @@ class LexStat(Wordlist):
 
         # check for existing attributes
         if hasattr(self, 'cscorer') and not kw['force']:
-            self.log.warn(
+            log.warn(
                 "An identical scoring function has already been calculated, force "
                 "recalculation by setting 'force' to 'True'.")
             return
@@ -789,12 +788,12 @@ class LexStat(Wordlist):
         if hasattr(self, 'params') and not kw['force']:
             if 'cscorer' in self.params:
                 if self.params['cscorer'] == params:
-                    self.log.warn(
+                    log.warn(
                         "An identical scoring function has already been calculated, force"
                         " recalculation by setting 'force' to 'True'.")
                     return
             else:
-                self.log.warn(
+                log.warn(
                     "A different scoring function has already been calculated, "
                     "overwriting previous settings.")
 
@@ -1034,7 +1033,7 @@ class LexStat(Wordlist):
         if method == 'lexstat':
             # check for scorer
             if not hasattr(self, 'cscorer'):
-                self.log.warn("No correspondence-scorer has been specified.")
+                log.warn("No correspondence-scorer has been specified.")
                 return
 
             # define the function with help of lambda
@@ -1098,7 +1097,7 @@ class LexStat(Wordlist):
             concepts = [concept]
 
         for c in sorted(concepts):
-            self.log.info("Analyzing words for concept <{0}>.".format(c))
+            log.info("Analyzing words for concept <{0}>.".format(c))
             indices = self.get_list(row=c, flat=True)
             matrix = []
 
@@ -1108,7 +1107,7 @@ class LexStat(Wordlist):
                         try:
                             d = function(idxA, idxB)
                         except ZeroDivisionError:
-                            self.log.warning(
+                            log.warn(
                                 "Encountered Zero-Division for the comparison of "
                                 "{0} and {1}".format(
                                     ''.join(self[idxA, "tokens"]),

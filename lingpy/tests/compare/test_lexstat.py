@@ -3,31 +3,45 @@ from __future__ import print_function, division, unicode_literals
 from mock import patch, Mock
 
 from lingpy import LexStat
-from lingpy.tests.util import test_data, WithTempDir
+from lingpy.tests.util import test_data, WithTempDir, get_log
 
 
 class TestLexStat(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.lex = LexStat(test_data('KSL.qlc'))
-        self.log = Mock(warn=Mock())
+        self.log = get_log()
+        self.get_scorer_kw = dict(runs=10, rands=10, limit=100)
 
     def test_init(self):
+        LexStat(None, defaults=True)
+        LexStat({0: ['ID', 'doculect', 'concept', 'IPA']}, model='sca')
         LexStat(test_data('phybo.qlc'), check=True)
-        LexStat(test_data('KSL.qlc'), check=True)
+        with patch('lingpy.compare.lexstat.log', self.log):
+            LexStat(test_data('KSL.qlc'), check=True)
+            assert self.log.info.called
+        error_log = self.tmp_path('errors')
+        with patch('lingpy.compare.lexstat.input', Mock(return_value='y')):
+            LexStat({
+                0: ['ID', 'doculect', 'concept', 'IPA', 'tokens'],
+                1: ['1', 'deu', 'hand', 'hand', ['']],
+                2: ['2', 'eng', 'hand', 'hand', ['abc']],
+                3: ['3', 'xyz', 'hand', 'hund', 'h u n d'],
+            }, check=True, errors='%s' % error_log)
+            assert error_log.exists()
 
     def test_get_scorer(self):
-        self.lex.get_scorer()
+        self.lex.get_scorer(**self.get_scorer_kw)
         assert hasattr(self.lex, "cscorer")
-        with patch('lingpy.basic.parser.log', Mock(get_logger=lambda: self.log)):
-            self.lex.get_scorer()
-            #assert self.log.warn.called
+        with patch('lingpy.compare.lexstat.log', self.log):
+            self.lex.get_scorer(**self.get_scorer_kw)
+            assert self.log.warn.called
         del self.lex.cscorer
-        self.lex.get_scorer()
-        self.lex.get_scorer(method='markov')
+        self.lex.get_scorer(**self.get_scorer_kw)
+        self.lex.get_scorer(method='markov', **self.get_scorer_kw)
 
     def test_cluster(self):
-        self.lex.get_scorer()
+        self.lex.get_scorer(**self.get_scorer_kw)
         self.lex.cluster(method="lexstat", threshold=0.7)
         self.lex.cluster(method="edit-dist", threshold=0.7)
         self.lex.cluster(method="turchin", threshold=0.7)
@@ -48,7 +62,7 @@ class TestLexStat(WithTempDir):
         self.assertEquals([v for v in self.lex.subsets.values() if v], [])
 
     def test_get_distances(self):
-        self.lex.get_scorer()
+        self.lex.get_scorer(**self.get_scorer_kw)
         self.lex.get_random_distances()
         self.lex.get_distances()
         self.lex.get_distances(method='turchin')
@@ -84,7 +98,7 @@ class TestLexStat(WithTempDir):
             1: ['1', 'deu', 'hand', 'hand'],
             2: ['2', 'eng', 'hand', 'hand'],
             3: ['3', 'xyz', 'hand', 'xyz']})
-        lex.get_scorer()
+        lex.get_scorer(**self.get_scorer_kw)
         lex.cluster(ref='cogid')
         self.assertEquals(lex.get_entries('cogid'), [[1, 1, 3]])
 
