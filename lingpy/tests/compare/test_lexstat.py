@@ -1,4 +1,5 @@
 from __future__ import print_function, division, unicode_literals
+from operator import itemgetter
 
 from mock import patch, Mock
 
@@ -16,6 +17,11 @@ class TestLexStat(WithTempDir):
     def test_init(self):
         LexStat(None, defaults=True)
         LexStat({0: ['ID', 'doculect', 'concept', 'IPA']}, model='sca')
+        ls = LexStat({0: ['ID', 'doculect', 'concept', 'IPA']})
+        self.assertIn('lexstat', repr(ls))
+        LexStat(ls)
+        LexStat({0: ['ID', 'doculect', 'concept', 'tokens']})
+        self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect', 'concept']})
         LexStat(test_data('phybo.qlc'), check=True)
         with patch('lingpy.compare.lexstat.log', self.log):
             LexStat(test_data('KSL.qlc'), check=True)
@@ -29,6 +35,9 @@ class TestLexStat(WithTempDir):
                 3: ['3', 'xyz', 'hand', 'hund', 'h u n d'],
             }, check=True, errors='%s' % error_log)
             assert error_log.exists()
+
+    def test_getitem(self):
+        self.assertIsNone(self.lex['xyz'])
 
     def test_get_scorer(self):
         self.lex.get_scorer(**self.get_scorer_kw)

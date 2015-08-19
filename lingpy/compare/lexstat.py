@@ -111,6 +111,7 @@ class LexStat(Wordlist):
 
         # initialize the wordlist
         Wordlist.__init__(self, filename)
+        assert "tokens" in self.header or "ipa" in self.header
 
         # check for basic input data
         # tokens
@@ -545,6 +546,8 @@ class LexStat(Wordlist):
                         s = m.get_string(new=False)
                         if s in words:
                             k += 1
+                            if k > kw['limit']:
+                                break
                         elif k < kw['limit']:
                             j += 1
                             words += [s]
