@@ -3,6 +3,7 @@ from __future__ import print_function, division, unicode_literals
 from mock import patch, Mock
 
 from lingpy import LexStat
+from lingpy.util import jsonload
 from lingpy.tests.util import test_data, WithTempDir, get_log
 
 
@@ -34,6 +35,25 @@ class TestLexStat(WithTempDir):
             }, check=True, errors='%s' % error_log)
             assert error_log.exists()
             self.assertEquals(len(lex._meta['errors']), 2)
+
+    def test_init2(self):
+        freqs = self.lex.freqs['Hawaiian']
+        for char, n in {'5.W.C': 19, '5.I.V': 87, '5.Y.V': 75, '5.U.V': 87}.items():
+            self.assertEquals(freqs[char], n)
+        self.assertEquals(len(self.lex.chars), 187)
+        self.assertEquals(len(self.lex.rchars), 35)
+
+        self.maxDiff = None
+
+        for name in 'bscorer rscorer pairs'.split():
+            obj = jsonload(test_data('KSL.%s.json' % name))
+            if name != 'pairs':
+                self.assertEquals(getattr(self.lex, name).matrix, obj)
+            else:
+                for key, values in self.lex.pairs.items():
+                    values = set(values)
+                    ovalues = set(tuple(v) for v in obj['---'.join(key)])
+                    self.assertEquals(values, ovalues)
 
     def test_getitem(self):
         self.assertIsNone(self.lex['xyz'])
@@ -68,6 +88,10 @@ class TestLexStat(WithTempDir):
     def test_get_subset(self):
         self.lex.get_subset([])
         self.assertEquals([v for v in self.lex.subsets.values() if v], [])
+        pairs = jsonload(test_data('KSL.pairs.json'))
+        self.assertEquals(
+            sorted('---'.join(k) for k in self.lex.subsets.keys()),
+            sorted(pairs.keys()))
 
     def test_get_distances(self):
         self.lex.get_scorer(**self.get_scorer_kw)

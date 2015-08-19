@@ -7,9 +7,10 @@ import logging
 import os
 from tempfile import NamedTemporaryFile
 from functools import partial
+import json
 
 from pathlib import Path
-from six import text_type
+from six import text_type, PY3
 from six.moves import input
 
 import lingpy
@@ -242,3 +243,28 @@ class cached_property(object):
 
 def identity(x):
     return x
+
+
+def jsondump(obj, path, **kw):
+    """python 2 + 3 compatible version of json.dump.
+
+    :param obj: The object to be dumped.
+    :param path: The path of the JSON file to be written.
+    """
+    _kw = dict(mode='w')
+    if PY3:  # pragma: no cover
+        _kw['encoding'] = 'utf8'
+    with open(path, **_kw) as fp:
+        return json.dump(obj, fp, **kw)
+
+
+def jsonload(path, **kw):
+    """python 2 + 3 compatible version of json.load.
+
+    :return: The python object read from path.
+    """
+    _kw = {}
+    if PY3:  # pragma: no cover
+        _kw['encoding'] = 'utf8'
+    with open(path, **_kw) as fp:
+        return json.load(fp, **kw)
