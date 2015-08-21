@@ -7,12 +7,41 @@ import logging
 import os
 from tempfile import NamedTemporaryFile
 from functools import partial
+import json
 
 from pathlib import Path
-from six import text_type
+from six import text_type, PY3
+from six.moves import input
 
 import lingpy
 from lingpy.log import get_logger, get_level
+from lingpy.settings import rcParams
+
+
+def confirm(question, default=False):
+    """
+    Ask user a yes/no question and return their response as True or False.
+
+    ``question`` should be a simple, grammatically complete question such as
+    "Do you wish to continue?", and will have a string similar to " [Y/n] "
+    appended automatically. This function will *not* append a question mark for
+    you.
+
+    By default, when the user presses Enter without typing anything, or the user
+    is not recognized as "yes" or "no", "no" is assumed. This can be changed by
+    specifying ``default=True``.
+
+    .. note:: Adapted from fabric.contrib.console.confirm
+    """
+    response = input("%s [%s] " % (question, "Y/n" if default else "y/N")).lower()
+    if response in rcParams['answer_yes']:
+        return True
+
+    if response in ['n', 'no']:
+        return False
+
+    # Didn't get empty, yes or no, so complain and loop
+    return default
 
 
 class TemporaryPath(object):
@@ -214,3 +243,28 @@ class cached_property(object):
 
 def identity(x):
     return x
+
+
+def jsondump(obj, path, **kw):
+    """python 2 + 3 compatible version of json.dump.
+
+    :param obj: The object to be dumped.
+    :param path: The path of the JSON file to be written.
+    """
+    _kw = dict(mode='w')
+    if PY3:  # pragma: no cover
+        _kw['encoding'] = 'utf8'
+    with open(path, **_kw) as fp:
+        return json.dump(obj, fp, **kw)
+
+
+def jsonload(path, **kw):
+    """python 2 + 3 compatible version of json.load.
+
+    :return: The python object read from path.
+    """
+    _kw = {}
+    if PY3:  # pragma: no cover
+        _kw['encoding'] = 'utf8'
+    with open(path, **_kw) as fp:
+        return json.load(fp, **kw)
