@@ -180,6 +180,7 @@ def flat_cluster(
             clusters[key] = [taxa[i] for i in clusters[key]]
 
         return clusters
+    
     if revert:
         for key in clusters:
             for i in clusters[key]:

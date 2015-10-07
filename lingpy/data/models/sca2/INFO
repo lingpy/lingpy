@@ -1,0 +1,8 @@
+SCA Sound-Class Model
+=====================
+@description: Extended sound class model based on Dolgopolsky (1986)
+@source: List (2012)
+@compiler: Johann-Mattis List
+@date: 2012-03
+@vowels: AEIOUY
+@tones: 123456

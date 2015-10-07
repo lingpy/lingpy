@@ -290,6 +290,19 @@ class Pairwise(object):
                     keywords['mode'],
                     keywords['restricted_chars']
                     )
+        elif keywords['mode'] == 'local' and keywords['distance'] in [2,'local']:
+            self._alignments = calign.align_pairs(
+                    self.classes,
+                    self.weights,
+                    self.prostrings,
+                    keywords['gop'],
+                    keywords['scale'],
+                    keywords['factor'],
+                    self.scoredict,
+                    keywords['mode'],
+                    keywords['restricted_chars'],
+                    distance = 2
+                    )
         else:
             self._alignments = calign.align_pairs(
                     self.classes,

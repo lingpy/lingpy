@@ -1088,3 +1088,4 @@ class Wordlist(QLCParserWithRowsAndCols):
             return dict([(a, b / self.height) for a, b in cov.items()])
         if stats == 'mean':
             return sum([a / self.height for a in cov.values()]) / self.width
+

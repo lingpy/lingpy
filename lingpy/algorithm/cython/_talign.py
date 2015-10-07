@@ -24,10 +24,10 @@ def globalign(
     """
 
     # declare integers
-#     cdef int i,j
+# [autouncomment]     cdef int i,j
 
     # declare floats
-#     cdef gapA,gapB,match,sim
+# [autouncomment]     cdef float gapA,gapB,match,sim
 
     # declare lists
     almA = []
@@ -115,10 +115,10 @@ def semi_globalign(
     """
 
     # declare integers
-#     cdef int i,j
+# [autouncomment]     cdef int i,j
 
     # declare floats
-#     cdef gapA,gapB,match,sim
+# [autouncomment]     cdef float gapA,gapB,match,sim
 
     # declare lists
     almA = []
@@ -210,13 +210,13 @@ def localign(
     """
 
     # declare integers
-#     cdef int i,j,k,l
+# [autouncomment]     cdef int i,j,k,l
 
     # declare floats
-#     cdef gapA,gapB,match,sim
+# [autouncomment]     cdef float gapA,gapB,match,sim
 
     # declare char-character
-#     cdef str x
+# [autouncomment]     cdef str x
 
     # declare lists
     almA = []
@@ -326,10 +326,10 @@ def dialign(
     """
 
     # declare integers
-#     cdef int i,j,k,l,o,p
+# [autouncomment]     cdef int i,j,k,l,o,p
 
     # declare floats
-#     cdef gapA,gapB,match,sim,tmp_match
+# [autouncomment]     cdef float gapA,gapB,match,sim,tmp_match
 
     # declare lists
     almA = []
@@ -419,9 +419,9 @@ def align_pair(
     Align a pair of sequences.
     """
     # define basic types
-#     cdef int i
-#     cdef list almA,almB
-#     cdef float sim,dist,simA,simB
+# [autouncomment]     cdef int i
+# [autouncomment]     cdef list almA,almB
+# [autouncomment]     cdef float sim,dist,simA,simB
 
     # get length of seqA,seqB
     M = len(seqA)
@@ -498,15 +498,15 @@ def align_pairwise(
         mode
         ):
     """
-    Align a list of sequences pairwise.
+    Align a of sequences pairwise.
     """
     # define basic stuff
     alignments = []
     lS = len(seqs)
     
-#     cdef int i,j,k,lenA,lenB
-#     cdef list almA,almB,seqA,seqB
-#     cdef float sim,simA,simB,dist
+# [autouncomment]     cdef int i,j,k,lenA,lenB
+# [autouncomment]     cdef list almA,almB,seqA,seqB
+# [autouncomment]     cdef float sim,simA,simB,dist
 
     # get self-scores
     sims = [0.0 for i in range(lS)]
@@ -660,9 +660,9 @@ def align_pairs(
     Align multiple sequence pairs.
     """
     # basic defs
-#     cdef int i,j,M,N,lP
-#     cdef list seqA,seqB,almA,almB
-#     cdef float sim
+# [autouncomment]     cdef int i,j,M,N,lP
+# [autouncomment]     cdef list seqA,seqB,almA,almB
+# [autouncomment]     cdef float sim
     alignments = []
 
     # get basic params
@@ -750,10 +750,10 @@ def align_profile(
     """
 
     # basic defs
-#     cdef int i,j,k,l,M,N,O,P
-#     cdef float sim,count
-#     cdef str charA,charB
-#     cdef list listA,listB,almA,almB
+# [autouncomment]     cdef int i,j,k,l,M,N,O,P
+# [autouncomment]     cdef float sim,count
+# [autouncomment]     cdef str charA,charB
+# [autouncomment]     cdef list listA,listB,almA,almB
     
     M = len(profileA)
     N = len(profileB)
@@ -824,8 +824,8 @@ def score_profile(
     Basic function for the scoring of profiles.
     """
     # basic definitions
-#     cdef int i,j
-#     cdef str charA,charB
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef str charA,charB
 
     # define the initial score
     score = 0.0
@@ -857,8 +857,8 @@ def swap_score_profile(
     Basic function for the scoring of profiles.
     """
     # basic definitions
-#     cdef int i,j
-#     cdef str charA,charB
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef str charA,charB
 
     # define the initial score
     score = 0.0

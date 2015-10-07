@@ -11,7 +11,7 @@ __date__="2013-03-13"
 
 
 cdef extern from "math.h": 
-    double sqrt(double x)
+    double sqrt( double x)
 
 def transpose(
         list matrix

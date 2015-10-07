@@ -27,7 +27,7 @@ def globalign(
     cdef int i,j
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare lists
     cdef list almA = []
@@ -118,7 +118,7 @@ def semi_globalign(
     cdef int i,j
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare lists
     cdef list almA = []
@@ -213,7 +213,7 @@ def localign(
     cdef int i,j,k,l
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare char-character
     cdef str x
@@ -329,7 +329,7 @@ def dialign(
     cdef int i,j,k,l,o,p
 
     # declare floats
-    cdef gapA,gapB,match,sim,tmp_match
+    cdef float gapA,gapB,match,sim,tmp_match
 
     # declare lists
     cdef list almA = []

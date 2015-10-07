@@ -296,9 +296,9 @@ class QLCParser(object):
             except:
                 raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s, key))
             if override:
-                self[key][self._header[lentry]] = res
+                self._data[key][self._header[lentry]] = res
             else:
-                self[key].append(res)
+                self._data[key].append(res)
 
         # check for override stuff, this causes otherwise an error message
         if entry not in self.header and override:

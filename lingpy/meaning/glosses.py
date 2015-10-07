@@ -159,13 +159,18 @@ def parse_gloss(gloss, output='list'):
                     ('adv','adverb'),
                     ('noun', 'nount'),
                     ('verb','verb'),
-                    ('adjective','adjective')
+                    ('adjective','adjective'),
+                    ('cls', 'classifier')
                     ]
             for p,t in sorted(abbreviations, key=lambda x: len(x),
                     reverse=True):
                 if p in comment and not pos:
                     pos = t
                 elif p in parts:
+                    pos = t
+                elif t in comment and not pos:
+                    pos = t
+                elif t in parts:
                     pos = t
 
             G += [(mainpart, comment_start, comment, comment_end, pos, prefix,
@@ -385,10 +390,10 @@ def compare_conceptlists(list1, list2, output='', match=None,
     elif output == 'tsv':
         
         added = []
-        txt = '\t'.join(comph)+'\t{0}\t{1}\t{2}\n'.format(
+        txt = ['\t'.join(comph)+'\t{0}\t{1}\t{2}\n'.format(
                 defaults['id_name'],
                 defaults['gloss_name'],
-                defaults['match_quality'])
+                defaults['match_quality'])]
         for i,line in enumerate(comp):
 
             for idx in line2idx[i]:
@@ -410,19 +415,24 @@ def compare_conceptlists(list1, list2, output='', match=None,
                         nline = '\t'.join(line)+'\t'+str(base_num)+'\t'+base_gloss+'\t'+str(b)+'\n'
                         
                         if nline not in added:
-                            txt += nline
+                            txt += [nline]
                             added += [nline]
                     else:
                         nline = '\t'.join(line)+'\t???\t???\t8\n'
                         if nline not in added:
-                            txt += nline
+                            txt += [nline]
                             added += [nline]
                             
 
 
-            txt += '\n'
+            txt[-1] += '\n'
+        
+        out = [txt[0]] + sorted(
+                txt[1:],
+                key = lambda x: x.strip()[-1]
+                )
 
-        write_text_file(filename, txt)
+        write_text_file(filename, ''.join(out))
 
     if debug:
         return sims

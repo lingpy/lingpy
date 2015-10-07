@@ -10,8 +10,9 @@ __author__="Johann-Mattis List"
 __date__="2013-03-13"
 
 
-#cdef extern from "math.h": 
+# [autouncomment] cdef extern from "math.h": 
 from numpy import sqrt
+# [autouncomment]     double sqrt( double x)
 
 def transpose(
         matrix
@@ -24,7 +25,7 @@ def transpose(
     matrix : list
         A two-dimensional list.
     """
-#     cdef int i,j
+# [autouncomment]     cdef int i,j
     lA = len(matrix)
     lB = len(matrix[0])
 
@@ -51,7 +52,7 @@ def squareform(
         The two-dimensional redundant representation of a symmetric distance matrix.
 
     """
-#     cdef int i,j,k
+# [autouncomment]     cdef int i,j,k
     l = len(x)
 
     # calculate the length of the square
@@ -76,7 +77,7 @@ class ScoreDict(object):
     Parameters
     ----------
     chars : list
-        The list of all character tokens for the scoring dictionary.
+        The of all character tokens for the scoring dictionary.
     matrix : list
         A two-dimensional scoring matrix.
 
@@ -86,10 +87,10 @@ class ScoreDict(object):
             chars,
             matrix
             ):
-#         cdef int i
-#         cdef str character
+# [autouncomment]         cdef int i
+# [autouncomment]         cdef str character
 
-        self.chars2int = dict([(character,i) for character,i in
+        self.chars2= dict([(character,i) for character,i in
             zip(chars,range(len(chars)))])
 
         self.matrix = matrix
@@ -98,7 +99,7 @@ class ScoreDict(object):
             self,
             x
             ):
-#         cdef int i,j
+# [autouncomment]         cdef int i,j
         try:
             i = self.chars2int[x[0]]
             j = self.chars2int[x[1]]
@@ -112,7 +113,7 @@ class ScoreDict(object):
             x,
             y
             ):
-#         cdef int i,j
+# [autouncomment]         cdef int i,j
         i = self.chars2int[x[0]]
         j = self.chars2int[x[1]]
 

@@ -31,7 +31,7 @@ def globalign(
     cdef int i,j
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare lists
     cdef list almA = []
@@ -249,7 +249,7 @@ def semi_globalign(
     cdef int i,j
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare lists
     cdef list almA = []
@@ -357,7 +357,7 @@ def secondary_semi_globalign(
     cdef int i,j
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare lists
     cdef list almA = []
@@ -473,7 +473,7 @@ def localign(
     cdef int i,j,k,l
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare char-character
     cdef str x
@@ -603,7 +603,7 @@ def secondary_localign(
     cdef int i,j,k,l
 
     # declare floats
-    cdef gapA,gapB,match,sim
+    cdef float gapA,gapB,match,sim
 
     # declare char-character
     cdef str x
@@ -738,7 +738,7 @@ def dialign(
     cdef int i,j,k,l,o,p
 
     # declare floats
-    cdef gapA,gapB,match,sim,tmp_match
+    cdef float gapA,gapB,match,sim,tmp_match
 
     # declare lists
     cdef list almA = []
@@ -841,7 +841,7 @@ def secondary_dialign(
     cdef int i,j,k,l,o,p
 
     # declare floats
-    cdef gapA,gapB,match,sim,tmp_match
+    cdef float apA,gapB,match,sim,tmp_match
 
     # declare lists
     cdef list almA = []
@@ -1628,12 +1628,23 @@ def align_pairs(
                        )
 
         # calculate distances if option is chose
-        if distance > 0:
+        if distance == 1:
             simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
             simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
 
             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
             if distance == 1:
+                alignments.append((almA,almB,dist))
+            else:
+                alignments.append((almA,almB,sim,dist))
+        # align locally using the subsequence distance
+        elif distance == 2 and mode == 'local':
+            simA = sum([(1.0 + factor) * scorer[almA[1][i],almA[1][i]] for i in
+                range(len(almA[1])) if almA[1][i] != '-'])
+            simB = sum([(1.0 + factor) * scorer[almB[1][i],almB[1][i]] for i in
+                range(len(almB[1])) if almB[1][i] != '-'])
+            dist = 1 - ( ( 2 * sim ) / ( simA + simB ))
+            if distance == 2:
                 alignments.append((almA,almB,dist))
             else:
                 alignments.append((almA,almB,sim,dist))
