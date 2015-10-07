@@ -1721,7 +1721,8 @@ class PhyBo(Wordlist):
 
         """
         kw = dict(
-            fileformat = 'png'
+            fileformat = 'png',
+            homoplasy = 0.05,
             )
         kw.update(keywords)
 
