@@ -1628,23 +1628,12 @@ def align_pairs(
                        )
 
         # calculate distances if option is chose
-        if distance == 1:
+        if distance > 0:
             simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
             simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
 
             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
             if distance == 1:
-                alignments.append((almA,almB,dist))
-            else:
-                alignments.append((almA,almB,sim,dist))
-        # align locally using the subsequence distance
-        elif distance == 2 and mode == 'local':
-            simA = sum([(1.0 + factor) * scorer[almA[1][i],almA[1][i]] for i in
-                range(len(almA[1])) if almA[1][i] != '-'])
-            simB = sum([(1.0 + factor) * scorer[almB[1][i],almB[1][i]] for i in
-                range(len(almB[1])) if almB[1][i] != '-'])
-            dist = 1 - ( ( 2 * sim ) / ( simA + simB ))
-            if distance == 2:
                 alignments.append((almA,almB,dist))
             else:
                 alignments.append((almA,almB,sim,dist))

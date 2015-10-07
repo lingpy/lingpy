@@ -90,7 +90,7 @@ class ScoreDict(object):
 # [autouncomment]         cdef int i
 # [autouncomment]         cdef str character
 
-        self.chars2= dict([(character,i) for character,i in
+        self.chars2int = dict([(character,i) for character,i in
             zip(chars,range(len(chars)))])
 
         self.matrix = matrix

@@ -34,7 +34,7 @@ def pyx2py(infile):
                         break
             else:
                 for w in words:
-                    if w+' ' in line:
+                    if ' '+w+' ' in line:
                         line = line.replace(w+' ','')
                         break
         else:
@@ -45,7 +45,7 @@ def pyx2py(infile):
                         break
             else:
                 for w in words:
-                    if w+' ' in line:
+                    if ' '+w+' ' in line:
                         line = line.replace(w+' ','')
                         break
         newlines += [line]
