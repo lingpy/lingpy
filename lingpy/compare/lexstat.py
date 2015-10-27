@@ -105,7 +105,11 @@ class LexStat(Wordlist):
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
-        file **errors**, defaulting to ``errors.log``.
+        file **errors**, defaulting to ``errors.log``. See also ``apply_checks``
+
+    apply_checks : bool (default=False)
+        If set to **True**, any errors identified by `check` will be handled
+        silently.
 
     no_bscorer: bool (default=False)
         If set to **True**, this will suppress the creation of a
