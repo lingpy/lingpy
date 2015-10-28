@@ -12,7 +12,7 @@ import sys
 import operator
 import unicodedata
 
-from ..sequence import Tokenizer
+from ..sequence.tokenize import Tokenizer
 
 
 def character_model(list, test=False):

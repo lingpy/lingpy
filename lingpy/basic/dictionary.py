@@ -29,6 +29,7 @@ from .parser import QLCParser
 from ..read.qlc import read_qlc
 from ..settings import rcParams
 from .. import util
+from ..sequence.tokenizer import Tokenizer
 
 
 class Dictionary(QLCParser):
@@ -158,6 +159,30 @@ class Dictionary(QLCParser):
         """
         self._tokenize(orthography_profile, source, target, column,
             **keywords)
+
+
+    def _tokenize(
+            self,
+            orthography_profile=None,
+            source="head",
+            target="tokens",
+            column='graphemes',
+            **keywords
+            ):
+        """
+        Tokenize the data with help of orthography profiles.
+                
+        """
+        t = Tokenizer(orthography_profile)
+
+        def tokenize(x):
+            return t.tokenize(x, column)
+
+        def tokenize_and_split(x):
+            return tokenize(x).split(' ')  # pragma: no cover
+
+        self.add_entries(
+            target, source, tokenize_and_split if target == 'tokens' else tokenize)
 
     def add_entries(
             self,
