@@ -34,7 +34,7 @@ qualname = lingpy
 [handler_console]
 class = StreamHandler
 args = (sys.stderr,)
-level = WARNING
+level = INFO
 formatter = generic
 
 [formatter_generic]
@@ -42,6 +42,14 @@ format = %(asctime)s [%(levelname)s] %(message)s
 """
 
 _logger = None
+
+
+class CustomFilter(logging.Filter):
+    def filter(self, record):
+        if getattr(record, 'lines', None):
+            for line in record.lines:
+                record.msg = record.msg + '\n\t' + '%s' % (line,)
+        return super(CustomFilter, self).filter(record)
 
 
 def get_logger(config_dir=None, force_default_config=False, test=False):
@@ -57,6 +65,7 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
     global _logger
     if _logger is None or force_default_config or test:
         _logger = logging.getLogger('lingpy')
+        _logger.addFilter(CustomFilter())
         cfg = Config('logging', default=LOGGING, config_dir=config_dir)
         remove = False
         if cfg.path.exists() and not force_default_config:
@@ -76,16 +85,16 @@ def get_level():
     return get_logger().getEffectiveLevel()
 
 
-def info(msg):
-    get_logger().info(msg)
+def info(msg, **kw):
+    get_logger().info(msg, **kw)
 
 
 def warn(msg):
     get_logger().warn(msg)
 
 
-def debug(msg):
-    get_logger().debug(msg)
+def debug(msg, **kw):
+    get_logger().debug(msg, **kw)
 
 
 def error(msg, **kw):

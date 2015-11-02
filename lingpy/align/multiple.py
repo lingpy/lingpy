@@ -1,8 +1,4 @@
 # *-* coding: utf-8 *-*
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-06 16:41
-# modified : 2014-12-02 21:00
 """
 Module provides classes and functions for multiple alignment analyses.
 """
@@ -254,8 +250,9 @@ class Multiple(object):
             if log.get_level() <= logging.DEBUG:
                 for _i, _sonar in enumerate(self._sonars):
                     if 0 in _sonar:
-                        print("[WARNING] Sequence {0} contains unrecognized characters!".format(
-                            self.seqs[self.int2ext[_i][0]]))
+                        self.log.warn(
+                            "Sequence {0} contains unrecognized characters!".format(
+                                self.seqs[self.int2ext[_i][0]]))
             self._prostrings = list([prosodic_string(s) for s in self._sonars])
         # do nothing if no arguments are passed
         else:
@@ -515,25 +512,23 @@ class Multiple(object):
                     int(sum([k for k in col if k >= 0]) /
                         len([k for k in col if k >= 0]) + 0.5) for col in sonarB]
                 self.log.warn("There are empty segments in the consensus.")
-                if log.get_level() <= logging.INFO:
-                    print(' '.join([str(X) for X in consA]))
-                    print(' '.join([str(X) for X in consB]))
+                self.log.info(
+                    '',
+                    extra=dict(lines=[' '.join([str(x) for x in cons])
+                                      for cons in [consA, consB]]))
             except:
-                self.log.error("Failed to compute the consensus string.")
-                print(sonarA)
-                print(sonarB)
-                print(almsA[0])
-                print([self._get(n, 'tokens') for n in almsA[0]])
-                print(almsB[0])
-                print([self._get(n, 'tokens') for n in almsB[0]])
+                self.log.error(
+                    "Failed to compute the consensus string.",
+                    extra=dict(lines=[
+                        sonarA, sonarB,
+                        almsA[0], [self._get(n, 'tokens') for n in almsA[0]],
+                        almsB[0], [self._get(n, 'tokens') for n in almsB[0]]
+                    ]))
 
         prosA = prosodic_string(consA)
         prosB = prosodic_string(consB)
 
-        if log.get_level() <= logging.DEBUG:
-            print(prosA, consA)
-            print(prosB, consB)
-        
+        self.log.debug('', extra=dict(lines=[(prosA, consA), (prosB, consB)]))
         weightsA, weightsB = prosodic_weights(prosA), prosodic_weights(prosB)
 
         # carry out the alignment
@@ -685,9 +680,7 @@ class Multiple(object):
                         int(sum([k for k in col if k >= 0]) /
                             len([k for k in col if k >= 0]) + 0.5) for col in sonars]
                     self.log.warn("There are empty segments in the consensus.")
-                    if log.get_level() <= logging.INFO:
-                        print(consensus)
-
+                    self.log.info('', extra=dict(lines=[consensus]))
                 except:
                     consensus = []
                     self.log.error("Failed to compute the consensus string.")
@@ -1860,14 +1853,13 @@ class Multiple(object):
             matB, gap_weight=gap_weight, swap_penalty=swap_penalty)
         msaAB = int((msaA + msaB) * 0.5 * 1000000)
 
-        if db:  # pragma: no cover
-            for line in matA:
-                print([self._get(x, '_classes') for x in line])
-            print(msaA)
-            for line in matB:
-                print([self._get(x, '_classes') for x in line])
-            print(msaB)
-            print(msaAB, msa)
+        if log.get_level() <= logging.DEBUG:
+            lines = [[self._get(x, '_classes') for x in line] for line in matA]
+            lines.append(msaA)
+            lines.extend([[self._get(x, '_classes') for x in line] for line in matA])
+            lines.append(msaB)
+            lines.append((msaAB, msa))
+            self.log.debug('', extra=dict(lines=lines))
 
         # return True if the newly calculated sop-score is greater than the previous one
         return msaAB > msa
