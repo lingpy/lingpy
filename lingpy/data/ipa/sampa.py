@@ -8,15 +8,8 @@ import types
 from ...settings import *
 from lingpy import log
 
-try:
-    import regex as re
-    if not isinstance(re, types.ModuleType):
-        # this is the case when creating the docs!
-        raise ImportError
-except ImportError:
-    import re
-    log.missing_module('regex')
 
+import re
 import sys
 import os
 import codecs

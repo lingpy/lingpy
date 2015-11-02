@@ -1,19 +1,12 @@
 from __future__ import unicode_literals
-# author   : Peter Bouda
-# email    : pbouda@cidles.eu
-# created  : 2013-08-21 08:43
 """
 This contains the test classes and functions for dictionary.py.
-
 """
-
-__author__="Peter Bouda"
-__date__="2013-08-21"
 
 import os
 from unittest import TestCase
 
-from lingpy import Dictionary
+from lingpy.basic.dictionary import Dictionary
 from lingpy.tests.util import test_data
 
 
@@ -47,8 +40,3 @@ class TestDictionary(TestCase):
         assert tuples[5] == \
             ('los que vinieron (hace tiempo)',
                 ['los', 'que', 'vinieron', '(hace', 'tiempo)'])
-
-    def test_tokenize(self):
-        self.dictionary.tokenize()
-        tuples = self.dictionary.get_tuples(['head', 'tokens'])
-        self.assertEqual(tuples[0], ('aa', ['a', 'a']))

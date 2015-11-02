@@ -29,8 +29,6 @@ from .parser import QLCParser
 from ..read.qlc import read_qlc
 from ..settings import rcParams
 from .. import util
-from ..sequence.tokenizer import Tokenizer
-
 
 class Dictionary(QLCParser):
     """
@@ -129,60 +127,6 @@ class Dictionary(QLCParser):
                 entries.append(tuple(mygetter(row)))
 
         return entries
-
-    def tokenize(
-            self,
-            orthography_profile='',
-            source="head",
-            target="tokens",
-            column='graphemes',
-            **keywords
-            ):
-        """
-        Tokenize the data with help of orthography profiles.
-
-        Parameters
-        ----------
-        ortho_profile : str (default='')
-            Path to the orthographic profile used to convert and tokenize the 
-            input data into IPA tokens.
-        
-        source : str (default="translation")
-            The source data that shall be used for the tokenization procedures.
-        
-        target : str (default="tokens")
-            The name of the target column that will be added to the wordlist.
-
-        column : str (default="graphemes")
-            Tokenization target.
-
-        """
-        self._tokenize(orthography_profile, source, target, column,
-            **keywords)
-
-
-    def _tokenize(
-            self,
-            orthography_profile=None,
-            source="head",
-            target="tokens",
-            column='graphemes',
-            **keywords
-            ):
-        """
-        Tokenize the data with help of orthography profiles.
-                
-        """
-        t = Tokenizer(orthography_profile)
-
-        def tokenize(x):
-            return t.tokenize(x, column)
-
-        def tokenize_and_split(x):
-            return tokenize(x).split(' ')  # pragma: no cover
-
-        self.add_entries(
-            target, source, tokenize_and_split if target == 'tokens' else tokenize)
 
     def add_entries(
             self,

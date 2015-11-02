@@ -1,8 +1,8 @@
-
 import os
+from sys import argv
 
 
-def pyx2py(infile):
+def pyx2py(infile, debug=False):
 
     with open(infile+'.pyx') as f:
         data = f.readlines()
@@ -49,42 +49,27 @@ def pyx2py(infile):
                         line = line.replace(w+' ','')
                         break
         newlines += [line]
-        if old_line != line:
+        if old_line != line and debug:
             print(old_line, line)
 
     with open('_'+infile+'.py','w') as f:
         f.write(''.join(newlines))
-    print('converter file {0}'.format(infile))
 
                     
 
 
 def main():
-
-    for inf in ['calign','cluster','misc','malign','talign']:
-        pyx2py(inf)
-    input('pause')
-    os.system('cython calign.pyx')
-    os.system('cython cluster.pyx')
-    os.system('cython misc.pyx')
-    os.system('cython malign.pyx')
-    os.system('cython talign.pyx')
-
-
-    os.system('gcc -c -fPIC -I/usr/include/python3.4m/ -I/usr/lib/python3.4/site-packages/numpy/core/include/ calign.c')
-    os.system('gcc -c -fPIC -I/usr/include/python3.4m/ -I/usr/lib/python3.4/site-packages/numpy/core/include/ cluster.c')
-    os.system('gcc -c -fPIC -I/usr/include/python3.4m/ -I/usr/lib/python3.4/site-packages/numpy/core/include/ misc.c')
-    os.system('gcc -c -fPIC -I/usr/include/python3.4m/ -I/usr/lib/python3.4/site-packages/numpy/core/include/ talign.c')
-    os.system('gcc -c -fPIC -I/usr/include/python3.4m/ -I/usr/lib/python3.4/site-packages/numpy/core/include/ malign.c')
-
-    os.system('gcc -shared calign.o -o calign.so')
-    os.system('gcc -shared calign.o -o misc.so')
-    os.system('gcc -shared calign.o -o malign.so')
-    os.system('gcc -shared calign.o -o talign.so')
-    os.system('gcc -shared calign.o -o cluster.so')
-
-    print('Successful')
-
+    
+    scripts = ['calign','cluster','misc','malign','talign']
+    for script in scripts:
+        print('[i] compiling {0}...'.format(script))
+        pyx2py(script)
+        os.system('cython '+script+'.pyx')
+        cmd = 'gcc -c -fPIC -I/usr/include/python{1}m/ {0}.c'.format(script,
+                argv[1])
+        os.system(cmd)
+        os.system('gcc -shared '+script+'.o -o '+script+'.so')
+        print('... done.')
 
 if __name__ == '__main__':
     main()
