@@ -1,9 +1,12 @@
+.gitignore
 __pycache__
 *.pyc
 *.so
 *~
 *.swp
 /build
+/include
+.coverage
 /dist
 /doc/build
 /doc/out
