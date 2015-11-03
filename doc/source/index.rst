@@ -4,7 +4,7 @@ Python Library for Historical Linguistics
  
 ..   :Release: |version|
 ..   :Date: |today|
-..   :Author: QLC Research Group, Philipps-University, Marburg
+..   :Author: 
 
 .. LingPy is a suite of open source Python modules for sequence comparison, distance analyses, data operations and visualization methods in quantitative historical linguistics.
 
@@ -44,9 +44,13 @@ Python Library for Historical Linguistics
     </tr>
     <tr class="field-even field">
       <th class="field-name">Authors:</th>
-      <td class="field-body">J.-M. List, S. Moran, P. Bouda, J. Dellert, Taraka Rama, and R. Forkel</td>
+      <td class="field-body">J.-M. List, and R. Forkel</td>
     </tr>
-    <tr class="field-even field">
+    <tr class="field-odd field">
+      <th class="field-name">Contributors:</th>
+      <td class="field-body">S. Moran, P. Bouda, J. Dellert, T. Rama, F. Nagel, and S. Greenhill</td>
+    </tr>
+    <tr class="field-odd field">
       <th class="field-name">Code:</th>
       <td class="field-body"><a href="https://github.com/lingpy/lingpy">GitHub</a></td>
     </tr>
