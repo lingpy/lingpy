@@ -301,10 +301,10 @@ def diff(
             recT += [tramG / tramGT]
 
             # calculate the bcubed precision for the sets
-            preB += get_bcubed_score(cogsT, cogsG)
+            preB += [get_bcubed_score(cogsT, cogsG)]
 
             # calculate b-cubed recall
-            recB += get_bcubed_score(cogsG, cogsT)
+            recB += [get_bcubed_score(cogsG, cogsT)]
 
             # calculate pair precision
             pairsG = set(get_pairs(cogsG, idxs))

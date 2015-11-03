@@ -24,11 +24,11 @@ def nw_align(
     N = len(seqB)
 
     # define general and specific integers
-#     cdef int i,j
-#     cdef int sim # stores the similarity score
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef int sim # stores the similarity score
 
     # define values for the main loop
-#     cdef int gapA,gapB,match,penalty # for the loop
+# [autouncomment]     cdef int gapA,gapB,match,penalty # for the loop
  
     # define values for the traceback
     almA = []
@@ -100,9 +100,9 @@ def edit_dist(
     
     M = len(seqA)
     N = len(seqB)
-#     cdef int gapA,gapB,match
-#     cdef int i,j,sim
-#     cdef float dist
+# [autouncomment]     cdef int gapA,gapB,match
+# [autouncomment]     cdef int i,j,sim
+# [autouncomment]     cdef float dist
     
     matrix = [[0 for i in range(M+1)] for j in range(N+1)]
     
@@ -147,14 +147,14 @@ def sw_align(
     Align two sequences using the Smith-Waterman algorithm.
     """
     # basic stuff
-#     cdef int i,j
-#     cdef float gapA,gapB
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef float gapA,gapB
 
     # get the lengths of the strings
     lenA = len(seqA)
     lenB = len(seqB)
 
-#     cdef str s
+# [autouncomment]     cdef str s
 
     # define values for the main loop
     null = 0 # constant during the loop
@@ -227,7 +227,7 @@ def sw_align(
         else:
             break
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (
             (
                 almA[0:j],
@@ -252,10 +252,10 @@ def we_align(
     Align two sequences using the Waterman-Eggert algorithm.
     """
     # basic defs
-#     cdef int lenA,lenB,i,j,null,igap,jgap
-#     cdef float sim,gapA,gapB,match,max_score
-#     cdef str gap_char
-#     cdef list matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
+# [autouncomment]     cdef int lenA,lenB,i,j,null,igap,jgap
+# [autouncomment]     cdef float sim,gapA,gapB,match,max_score
+# [autouncomment]     cdef str gap_char
+# [autouncomment]     cdef list matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
     
     # get the lengths of the strings
     lenA = len(seqA)
@@ -310,7 +310,7 @@ def we_align(
             tracer.append(matrix[i][j])
 
     
-    # make list of alignments
+    # make of alignments
     out = []
 
     # start the while loop
@@ -372,7 +372,7 @@ def we_align(
         # retrieve the aligned parts of the sequences
         out.append((almA[jmin:jmax+jgap],almB[imin:imax+igap],sim))
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return out
 
 def structalign(
@@ -387,7 +387,7 @@ def structalign(
     ----------
     seqA,seqB : str
         The input sequences.
-    restricted_chars : str (default = "")
+    restricted_chars : (default = "")
         The characters which are used to separate secondary from primary
         segments in the input sequences. Currently, the use of restricted chars
         may fail to yield an alignment.
@@ -401,10 +401,10 @@ def structalign(
     with repeated edit operations being penalized only once.
     """
     # get basic variables
-#     cdef int maxScore,thisScore,newScore,fullScore
-#     cdef list out,queue,alm
-#     cdef str restA,restB
-#     cdef tuple residues
+# [autouncomment]     cdef int maxScore,thisScore,newScore,fullScore
+# [autouncomment]     cdef list out,queue,alm
+# [autouncomment]     cdef str restA,restB
+# [autouncomment]     cdef tuple residues
 
     # get the max score
     maxScore = max(len(seqA),len(seqB))
@@ -509,9 +509,9 @@ def restricted_edit_dist(
     
     M = len(seqA)
     N = len(seqB)
-#     cdef int gapA,gapB,match
-#     cdef int i,j,sim
-#     cdef float dist
+# [autouncomment]     cdef int gapA,gapB,match
+# [autouncomment]     cdef int i,j,sim
+# [autouncomment]     cdef float dist
     
     # define alignments
     almA = []

@@ -119,6 +119,7 @@ rcParamsUpd = dict(
         dolgo                      = Model('dolgo'),
         _color                     = Model('color'),
         art                        = Model('art'),
+        cv                         = Model('cv'),
         jaeger                     = Model('jaeger'),
         diacritics                 = diacritics,
         model                      = Model('sca'),

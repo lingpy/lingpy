@@ -77,9 +77,9 @@ def _get_statistics(wordlist, entry='ipa', concept='concept', family='family'):
                     doculects=[tmp_taxon],
                     words=[tmp_entry])
     for k in statistics:
-        statistics[k]['family_occ'] = len(set(statistics[k]['families']))
-        statistics[k]['doculect_occ'] = len(set(statistics[k]['doculects']))
-        statistics[k]['word_occ'] = len(statistics[k]['words'])
+        statistics[k]['familyOcc'] = len(set(statistics[k]['families']))
+        statistics[k]['doculectOcc'] = len(set(statistics[k]['doculects']))
+        statistics[k]['wordOcc'] = len(statistics[k]['words'])
         statistics[k]['families'] = sorted(set(statistics[k]['families']))
         statistics[k]['doculects'] = sorted(set(statistics[k]['doculects']))
 
@@ -139,9 +139,9 @@ def _make_graph(colexifications, bipartite=False):
                 G.add_node(c2, ntype='concept')
                 G.add_edge(c1,c2, families=[f], doculects=[t], words=[entry])
         for a,b,d in G.edges(data=True):
-            d['family_weight'] = len(set(d['families']))
-            d['word_weight'] = len(d['words'])
-            d['doculect_weight'] = len(set(d['doculects']))
+            d['familyWeight'] = len(set(d['families']))
+            d['wordWeight'] = len(d['words'])
+            d['doculectWeight'] = len(set(d['doculects']))
             d['family'] = sorted(set(d['families']))
             d['doculects'] = sorted(set(d['doculects']))
             

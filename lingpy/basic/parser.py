@@ -17,7 +17,7 @@ from .. import cache
 from .. import util
 from .. import log
 
-from ..sequence.tokenizer import Tokenizer
+#from ..sequence.tokenizer import Tokenizer
 
 
 class QLCParser(object):
@@ -296,9 +296,9 @@ class QLCParser(object):
             except:
                 raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s, key))
             if override:
-                self[key][self._header[lentry]] = res
+                self._data[key][self._header[lentry]] = res
             else:
-                self[key].append(res)
+                self._data[key].append(res)
 
         # check for override stuff, this causes otherwise an error message
         if entry not in self.header and override:
@@ -353,30 +353,6 @@ class QLCParser(object):
             idx = self._header[source]
             for key in self:
                 _apply(key, self[key][idx], **keywords)
-
-    def _tokenize(
-            self,
-            orthography_profile=None,
-            source="head",
-            target="tokens",
-            column='graphemes',
-            **keywords
-            ):
-        """
-        Tokenize the data with help of orthography profiles.
-                
-        """
-        t = Tokenizer(orthography_profile)
-
-        def tokenize(x):
-            return t.tokenize(x, column)
-
-        def tokenize_and_split(x):
-            return tokenize(x).split(' ')  # pragma: no cover
-
-        self.add_entries(
-            target, source, tokenize_and_split if target == 'tokens' else tokenize)
-
 
 class QLCParserWithRowsAndCols(QLCParser):
     def __init__(self, filename, row, col, conf):

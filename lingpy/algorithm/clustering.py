@@ -167,6 +167,14 @@ def flat_cluster(
     mcl
 
     """
+    if method == 'ward':
+        for i,line in enumerate(matrix):
+            for j,cell in enumerate(line):
+                if i < j:
+                    matrix[i][j] = cell ** 2
+                    matrix[j][i] = matrix[i][j]
+        method = 'upgma'
+
     return cluster.flat_cluster(method, threshold, matrix, taxa or [], revert)
 
 

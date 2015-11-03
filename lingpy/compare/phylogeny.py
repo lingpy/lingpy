@@ -1721,7 +1721,8 @@ class PhyBo(Wordlist):
 
         """
         kw = dict(
-            fileformat = 'png'
+            fileformat = 'png',
+            homoplasy = 0.05,
             )
         kw.update(keywords)
 
@@ -1802,47 +1803,9 @@ class PhyBo(Wordlist):
                         if child not in self.taxa:
                             queue += [child.Name]
                 
-                avsd_list += [tmp_list]
+                avsd_list += [[int(form - form * kw['homoplasy'] + 0.5) for
+                    form in tmp_list]]
 
-                #-> avsd_list += [[0 for node in nodes]]
-                #-> for pap in pap_set:
-                #->     gls,noo = self.gls[glm][pap]
-
-                #->     # sort the gls
-                #->     gls = sorted(
-                #->             gls,
-                #->             key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
-                #->             reverse = True
-                #->             )
-
-                #->     # retrieve the state of the root
-                #->     if gls[0][1] == 1 and gls[0][0] == 'root':
-                #->         state = 1
-                #->     else:
-                #->         state = 0
-
-                #->     # assign the state of the root to all nodes in tmp
-                #->     tmp = [state for node in nodes]
-
-                #->     # iterate over the gls and assign the respective values to all
-                #->     # children
-                #->     for name,event in gls:
-                #->         if event == 1:
-                #->             this_state = 1
-                #->         else:
-                #->             this_state = 0
-
-                #->         # get the subtree nodes
-                #->         sub_tree_nodes = [node.Name for node in
-                #->                 self.tree.getNodeMatchingName(name).nontips()]
-
-                #->         # assign this state to all subtree nodes
-                #->         for node in sub_tree_nodes:
-                #->             tmp[nodes.index(node)] = this_state
-
-                #->     # add the values to the avsd_list
-                #->     avsd_list[-1] = [a+b for a,b in zip(avsd_list[-1],tmp)]
-            
             # calculate best distribution, we can use averages for this
             # purpose, since it seems that the kruskalwallis test or
             # mannwhitneyu does not really apply to this kind of data with lots

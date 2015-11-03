@@ -152,7 +152,7 @@ def sw_align(
 
     # get the lengths of the strings
     cdef int lenA = len(seqA)
-    cdef lenB = len(seqB)
+    cdef int lenB = len(seqB)
 
     cdef str s
 

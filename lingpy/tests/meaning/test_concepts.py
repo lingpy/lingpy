@@ -1,18 +1,11 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Peter Bouda
-# email    : pbouda@cidles.eu
-# created  : 2013-08-26 09:48
 """
 This contains the test classes and functions for concepts.py.
 
 """
-
-__author__="Peter Bouda"
-__date__="2013-08-26"
 
 import os
 import tempfile
@@ -23,8 +16,6 @@ import lingpy.meaning.concepts
 
 from six import text_type as str
 
-# add a warning routine to prevent this from firing
-    
 class TestConceptComparerSpanishStem:
 
     def setup(self):

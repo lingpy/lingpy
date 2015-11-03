@@ -198,7 +198,8 @@ def setdefaults(d, **kw):
 
 class cached_property(object):
 
-    """Decorator for read-only properties evaluated only once.
+    """
+    Decorator for read-only properties evaluated only once.
 
     It can be used to create a cached property like this::
 

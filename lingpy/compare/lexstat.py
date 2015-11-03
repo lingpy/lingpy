@@ -1072,22 +1072,20 @@ class LexStat(Wordlist):
         # set up clustering algorithm, first the simple basics
         if external_function:
             fclust = external_function
-        elif cluster_method in ['upgma', 'single', 'complete']:
+        elif cluster_method in ['upgma', 'single', 'complete', 'ward']:
             fclust = lambda x, y: clustering.flat_cluster(
                 cluster_method, y, x, revert=True)
-        # FIXME: method mcl is not implemented yet (in _get_matrices).
-        ## we need specific conditions for mcl clustering
-        #elif cluster_method == 'mcl':
-        #    fclust = lambda x, y: clustering.mcl(
-        #        y,
-        #        x,
-        #        list(range(len(x))),
-        #        max_steps=kw['max_steps'],
-        #        inflation=kw['inflation'],
-        #        expansion=kw['expansion'],
-        #        add_self_loops=kw['add_self_loops'],
-        #        logs=kw['mcl_logs'],
-        #        revert=True)
+        elif cluster_method == 'mcl':
+            fclust = lambda x, y: clustering.mcl(
+                y,
+                x,
+                list(range(len(x))),
+                max_steps=kw['max_steps'],
+                inflation=kw['inflation'],
+                expansion=kw['expansion'],
+                add_self_loops=kw['add_self_loops'],
+                logs=kw['mcl_logs'],
+                revert=True)
         elif cluster_method in ['lcl', 'link_clustering', 'lc']:
             fclust = lambda x, y: clustering.link_clustering(
                 y,
@@ -1120,6 +1118,7 @@ class LexStat(Wordlist):
                 matrices = list(matrices)
                 for c, i, m in matrices:
                     thresholds.append(clustering.best_threshold(m, kw['gt_trange']))
+
             # new method for threshold estimation based on calculating approximate
             # random distributions of similarities for each sequence
             elif kw['gt_mode'] == 'nulld':

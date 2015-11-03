@@ -6,12 +6,7 @@ Basic functions for the conversion of Python-internal data into strings.
 from .. import log
 from .. import util
 
-try:
-    import regex as re
-except ImportError:
-    import re
-    log.missing_module('regex')
-
+import re
 
 def scorer2str(
         scorer

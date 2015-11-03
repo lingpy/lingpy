@@ -12,7 +12,6 @@ import operator
 import unicodedata
 import collections
 import operator
-import regex as re
 from time import gmtime, strftime
 
 # internal imports
@@ -23,6 +22,12 @@ from ..read.csv import *
 from ..convert import *
 from .. import util
 from .. import log
+
+try:
+    import regex as re
+except ImportError:
+    import re
+    log.missing_module('regex')
 
 
 class Spreadsheet:

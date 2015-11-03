@@ -20,8 +20,8 @@ class TestParser(TestCase):
         self.assertRaises(TypeError, QLCParser, None)
         self.assertRaises(ValueError, QLCParserWithRowsAndCols, {0: ['a']}, 'x', 'y', {})
 
-    def test__tokenize(self):
-        self.parser._tokenize(target='ttokens', source='gloss')
+    #def test__tokenize(self):
+    #    self.parser._tokenize(target='ttokens', source='gloss')
 
     def test_getitem(self):
         key = list(self.parser._data.keys())[0]

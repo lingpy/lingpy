@@ -929,6 +929,9 @@ class Alignments(Wordlist):
                         new_tk = class2tokens(tk,alm)
                         m.alm_matrix[i] = new_tk
 
+                if hasattr(m, 'swaps'):
+                    self._meta['msa'][kw['ref']][key]['swaps'] = m.swaps
+
                 self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
                 self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
                 self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
@@ -1272,7 +1275,7 @@ class Alignments(Wordlist):
                     os.path.join(
                         '{0}-msa'.format(value['dataset']),
                         '{0}-{1}.msa'.format(value['dataset'], key)),
-                    msa2text_type(value, wordlist=kw['style'] in ['id', 'with_id']),
+                    msa2str(value, wordlist=kw['style'] in ['id', 'with_id']),
                     log=False)
 
 

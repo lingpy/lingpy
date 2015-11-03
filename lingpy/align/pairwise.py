@@ -303,12 +303,14 @@ class Pairwise(object):
                     keywords['restricted_chars'],
                     distance = 1
                     )
-        
+
+
         # switch back to alignments
         self.alignments = []
         for i,(almA,almB,sim) in enumerate(self._alignments):
             
             if keywords['mode'] != "local":
+
                 self.alignments.append(
                         (
                             class2tokens(
