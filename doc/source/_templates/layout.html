@@ -29,18 +29,18 @@ LingPy
 {#% block sidebar2 %}{% endblock %#}
 
 {% block footer %}
- <div id="footer" style="display:flex">
+ <div id="footer" style="align-items:center;padding-top:5px;padding-left:0px;display:flex;justify-content:space-between;">
 
    <div>
-     <a href="http://www.hhu.de/"><img width="120px" src="http://www.hhu.de/home/fileadmin/images/uni_duesseldorf_logo.gif" alt="HHUD" /></a>
+     <a href="http://ssh.mpg.de"><img width="60px" src="{{ pathto('_static/minerva.png', 1) }}" alt="MPG-SSH" /></a>
    </div>
   <div>
-    <a href="http://www.uni-marburg.de/"><img width="120px" src="http://www.uni-marburg.de/bilder/logo_uni1.gif" alt="PUD" /></a>
+    <a href="http://dfg.de/"><img width="80px" src="{{ pathto('_static/dfg_logo_schwarz.jpg', 1) }}" alt="DFG" /></a>
   </div>
 
-  <div>
+  <div style="max-width:300px;">
     <p style="font-size:70%">Created using <a href="http://sphinx-doc.org">Sphinx</a>. Last updated
-    on XXXX.XX.XX.<br>
+    on {{ last_updated }}<br>
       This work is licensed under a <a rel="license"
         href="http://creativecommons.org/licenses/by-nc/3.0/deed.en_US">Creative
       Commons Attribution-NonCommercial 3.0 Unported License</a>.</p>
@@ -51,13 +51,11 @@ LingPy
   </div>
 
   <div>
-    <a href="http://www.bmbf.de/"><img width="100px" src="/home/mattis/projects/scripts/LingPy/doc/build/lingpy.github.io/_static/default.css" alt="BMBF" /></a>
- </div>
-  <div>
     <a href="http://erc.europa.eu/"><img width="80px" src="http://quanthistling.info/theme/qhl/images/logo_erc.png" alt="ERC" /></a>
   </div>
-  <div>
-    <a href="http://www.uni-tuebingen.de"><img width="120px" src="http://www.uni-tuebingen.de/fileadmin/pics/logo-uni-tuebingen.png" alt="logo_tuebingen" /></a>
+  <div style="max-width:150px;text-align:right;">
+    <a href="http://github.com/lingpy/lingpy/">Application source on</a> 
+    <a href="https://github.com/"><img width="100px" src="{{ pathto('_static/GitHub_Logo.png', 1) }}" alt="github logo" /></a>
 </div>
 </div>
 {% endblock %}
