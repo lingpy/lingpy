@@ -70,7 +70,7 @@ def squareform(
 
 class ScoreDict(object):
     """
-    Class allows quick access to scoring functions with using dictionary \
+    Class allows quick access to scoring functions using dictionary \
     syntax.
 
     Parameters

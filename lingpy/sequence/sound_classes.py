@@ -588,11 +588,19 @@ def tokens2class(
                     if token[0] in kw['stress']:
                         try:
                             out.append(model[token[1:]])
-                        except:
+                        except KeyError:
                             try:
                                 out.append(model[token[1]])
-                            except:
+                            except KeyError:
                                 # new character for missing data and spurious items
+                                out.append('0')
+                    elif token[0] in rcParams['diacritics']:
+                        try:
+                            out.append(model[token[1:]])
+                        except KeyError:
+                            try:
+                                out.append(model[token[1]])
+                            except KeyError:
                                 out.append('0')
                     else:
                         # new character for missing data and spurious items

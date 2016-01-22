@@ -80,7 +80,7 @@ setup(
     package_dir=pkg_dir,
     install_requires=requires,
     tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
-    author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, and Simon Greenhill)",
+    author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill)",
     author_email="mattis.list@lingpy.org",
     keywords=[
         "historical linguistics",

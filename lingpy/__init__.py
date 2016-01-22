@@ -20,7 +20,7 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 
 """
 
-__author__="Johann-Mattis List, Robert Forkel (with contributions by Steven Moran, Taraka Rama, Johannes Dellert, Peter Bouda, and Simon Greenhill)"
+__author__="Johann-Mattis List, Robert Forkel (with contributions by Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, Peter Bouda, and Simon Greenhill)"
 __date__="2015-11-18"
 
 # import settings
