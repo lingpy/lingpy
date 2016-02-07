@@ -29,7 +29,7 @@ from ..convert import html
 from ..convert.tree import subGuideTree
 from ..convert.strings import msa2str
 from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
-        prosodic_string, prosodic_weights
+        prosodic_string, prosodic_weights, tokens2morphemes
 from .multiple import Multiple
 from .pairwise import Pairwise
 from ..algorithm import misc
@@ -607,9 +607,23 @@ class Alignments(Wordlist):
             _interactive=True,
             **keywords
             ):
+        # keywords, "strings" locates, where the reference for the alignments
+        # is to be found
+        kw = {
+                "strings" : "tokens",
+                "alignment" : "alignment"
+                }
+        kw.update(keywords)
+
         # initialize the wordlist
-        Wordlist.__init__(self,infile,row,col,conf)
+        Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
+        self._alignment = kw['alignment'] # defines where alignments are stored
+        self._tokens = kw['strings']
+
+        # check whether fuzzy (partial) alignment or normal alignment is
+        # carried out
+        self._mode = 'fuzzy' if self._class_string[ref] not in ['str', 'int'] else 'plain'
 
         # check for reference / cognates
         if 'cognates' in keywords:
@@ -631,23 +645,11 @@ class Alignments(Wordlist):
 
         # store loan-status
         self._loans = loans
-
-        # check for strings
-        if 'tokens' in self.header:
-            stridx = self.header['tokens']
-        elif 'orthoparse' in self.header:
-            stridx = self.header['orthoparse']
-        elif 'ipa' in self.header:
-            stridx = self.header['ipa']
-        else:
-            if 'strings' in keywords:
-                try:
-                    stridx = self.header[keywords['strings']]
-                except:
-                    log.warn("No valid source for strings could be found.")
-            else:
-                log.warn("No valid source for strings could be found.")
-                return 
+        
+        try:
+            stridx = self.header[kw['strings']]
+        except:
+            log.warn("No valid source for strings could be found.")
 
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
@@ -681,17 +683,25 @@ class Alignments(Wordlist):
                     # set up the data
                     for seq in seqids:
                         taxon = self[seq,'taxa']
-                        string = self[seq][stridx]
+                        if kw['alignment'] in self.header:
+                            this_string = self[seq][self.header[kw['alignment']]]
+                        else:
+                            this_string = self[seq][stridx]
+                        if isinstance(this_string, text_type):
+                            this_string = this_string.split(' ')
+                        # check for partial cognates
+                        if self._mode == 'fuzzy':
+                            # split the string into morphemes
+                            # FIXME add keywords for morpheme segmentation
+                            morphemes = tokens2morphemes(this_string)
+                            # get the position of the morpheme
+                            midx = self[seq][self.header[ref]].index(key)
+                            this_string = morphemes[midx]
+
                         d['ID'] += [seq]
                         d['taxa'] += [self[seq,'taxa']]
-                        d['seqs'] += [self[seq][stridx]]
-                        if 'alignment' in self.header:
-                            d['alignment'] += [self[seq,'alignment']]
-                        else:
-                            if isinstance(string, text_type):
-                                d['alignment'] += [string.split(' ')]
-                            else:
-                                d['alignment'] += [string]
+                        d['seqs'] += [this_string]
+                        d['alignment'] += [this_string]
                                 
                     d['alignment'] = normalize_alignment(d['alignment'])
                         
@@ -732,8 +742,6 @@ class Alignments(Wordlist):
             if k not in D:
                 D[k] = ['']
         self.add_entries('_alignment', D, lambda x: x)
-
-
             
     def _msa2col(
             self,
@@ -744,25 +752,47 @@ class Alignments(Wordlist):
         parse them in the wordlist editor.
         """
         tmp = {}
-        for key,msa in self.msa[ref].items():
-            for i,idx in enumerate(msa['ID']):
-                try:
-                    tmp[idx] = ' '.join(msa['alignment'][i])
-                except KeyError:
-                    log.error("There are no alignments in your data.  Aborting...")
-                    return
-        missing = [idx for idx in self if idx not in tmp]
-        for m in missing:
-            if 'tokens' in self.header:
-                tmp[m] = self[m,'tokens']
-            elif 'ipa' in self.header:
-                tmp[m] = ipa2tokens(self[m,'ipa'])
-            elif 'alignment' in self.header:
-                tmp[m] = self[m,'alignment']
-            else:
-                raise ValueError("There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) in your data.")
+        # plain mode, that means, no partial alignments
+        if self._mode == 'plain':
+            for key,msa in self.msa[ref].items():
+                for i,idx in enumerate(msa['ID']):
+                    try:
+                        tmp[idx] = ' '.join(msa['alignment'][i])
+                    except KeyError:
+                        log.error("There are no alignments in your data.  Aborting...")
+                        return
 
-        self.add_entries('alignment', tmp, lambda x: x)
+            missing = [idx for idx in self if idx not in tmp]
+            for m in missing:
+                if 'tokens' in self.header:
+                    tmp[m] = self[m,'tokens']
+                elif 'ipa' in self.header:
+                    tmp[m] = ipa2tokens(self[m,'ipa'])
+                elif self._alignment in self.header:
+                    tmp[m] = self[m, self._alignment]
+                else:
+                    raise ValueError("There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) in your data.")
+        else:
+            # in this mode, we need to trace the order of the bits that make up
+            # the alignemnts
+            for key in self:
+                # get the cognate IDs
+                cogids = self[key, rcParams['ref']]
+                # get the alignment
+                tmp[key] = []
+                for i,cogid in enumerate(cogids):
+                    if cogid in self.msa[rcParams['ref']]:
+                        msa = self.msa[rcParams['ref']][cogid]
+                        idx = msa['ID'].index(key)
+                        tmp[key] += msa['alignment'][idx]
+                    else:
+                        tmp[key] += tokens2morphemes(self[key,self._tokens])[i]
+                    # add morpheme separator as long as we don't add the last
+                    # element                    
+                    if i < len(cogids)-1:
+                        tmp[key] += [rcParams['morpheme_separator']]
+
+        self.add_entries(self._alignment, tmp, lambda x: x)
 
     def align(
             self,

@@ -379,6 +379,55 @@ def _get_breakpoints(seq, sep):
             count += 1
     return bpoints + [(start, i+1)]
 
+def tokens2morphemes(tokens, **keywords):
+    """
+    Function splits a list of tokens into subsequent lists of morphemes if the list contains morpheme separators.
+
+    Parameters
+    ----------
+    sep : str (default="◦")
+        Select your morpheme separator.
+    word_sep: str (default="_")
+        Select your word separator.
+    
+    Returns
+    -------
+    morphemes : list
+        A nested list of the original segments split into morphemes.
+    """
+
+    if not isinstance(tokens, (list, tuple)):
+        raise ValueError("The sequence needs to be a list or a tuple.")
+
+    kw = {
+            "sep" : rcParams['morpheme_separator'],
+            "word_sep" : rcParams['word_separator'],
+            "word_seps" : rcParams['word_separators'],
+            "seps" : rcParams['morpheme_separators'],
+            "tone" : "T"
+            }
+    kw.update(keywords)
+
+    # check for other hints than the clean separators in the data
+    new_tokens = [t for t in tokens]
+    if not kw['sep'] in tokens and not kw['word_sep'] in tokens:
+        class_string = tokens2class(tokens, 'cv')
+        if kw['tone'] in class_string and not '+' in class_string and not '_' in class_string:
+            new_tokens = []
+            for i,token in enumerate(tokens):
+                if class_string[i] == 'T' and i != len(class_string) -1:
+                    new_tokens += [token, kw['sep']]
+                else:
+                    new_tokens += [token]
+    out = [[]]
+    for i,token in enumerate(new_tokens):
+        if token not in kw['sep']+kw['word_sep']+kw['word_seps']+kw['seps']:
+            out[-1] += [token]
+        else:
+            out += [[]]
+
+    return out
+
 def _split_syllables(syllables, tokens):
     """
     Split the output of the syllabify method into subsets.

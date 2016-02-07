@@ -7,7 +7,7 @@ from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
-        get_n_ngrams, pgrams, syllabify
+        get_n_ngrams, pgrams, syllabify, tokens2morphemes
 from lingpy import rc, csv2list
 
 """
@@ -177,4 +177,16 @@ def test_syllabify():
     assert syllabify(seq3, output="nested")[1] == list("bəl")
     assert syllabify(seq4, output="nested")[1] == list("bu-")
 
+def test_tokens2morphemes():
+
+    seq1 = "t i a o ¹ b u ² d a o".split(' ')
+    seq2 = "t i a o ¹ + b u ² # d a o".split(' ')
+    seq3 = "t i a o ¹ b u _ d a o".split(' ')
+    seq4 = "t i a o murks w a o".split(' ')
+
+    assert len(tokens2morphemes(seq1)) == 3
+    assert len(tokens2morphemes(seq2)) == 3
+    assert len(tokens2morphemes(seq3)) == 2
+    assert len(tokens2morphemes(seq4, sep='murks')) == 2
+    assert_raises(ValueError, tokens2morphemes, "t i a o")
 
