@@ -7,7 +7,7 @@ from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
-        get_n_ngrams, pgrams
+        get_n_ngrams, pgrams, syllabify
 from lingpy import rc, csv2list
 
 """
@@ -162,3 +162,19 @@ def test_pgrams():
     f = pgrams('ab')
     assert f[0] == ('a','X')
     assert f[-1] == ('b','N')
+
+def test_syllabify():
+    
+    seq1 = "t i a o ¹ b u ² d a o"
+    seq2 = "jabloko"
+    seq3 = "jabəlko"
+    seq4 = "j a b u - k o"
+
+    assert_raises(ValueError, syllabify, seq1, output="test")
+
+    assert syllabify(seq1, output="flat").count(rc('morpheme_separator')) == 2
+    assert syllabify(seq2, output="breakpoints")[0] == (0,2)
+    assert syllabify(seq3, output="nested")[1] == list("bəl")
+    assert syllabify(seq4, output="nested")[1] == list("bu-")
+
+

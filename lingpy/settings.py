@@ -135,7 +135,8 @@ rcParamsUpd = dict(
         gop                        = -2,
         ref                        = 'cogid',
         morpheme_separator         = "◦",
-        nasal_placeholder          = "∼"
+        nasal_placeholder          = "∼",
+        gap_symbol                 = "-"
         )
 rcParams.update(rcParamsUpd)
 
