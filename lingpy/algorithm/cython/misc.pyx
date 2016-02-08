@@ -116,7 +116,7 @@ class ScoreDict(object):
         i = self.chars2int[x[0]]
         j = self.chars2int[x[1]]
 
-        if i == j:
+        if i != j:
             self.matrix[i][j] = y
             self.matrix[j][i] = y
         else:
