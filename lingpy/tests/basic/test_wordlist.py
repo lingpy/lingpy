@@ -82,9 +82,9 @@ class TestWordlist(WithTempDir):
         self.wordlist.add_entries('fuzzyid', 'cogid', lambda x: [x])
 
         etd3 = self.wordlist.get_etymdict(
-            ref='fuzzyid', entry='ipa', loans=False, fuzzy=True)
+            ref='fuzzyid', entry='ipa', loans=False)
         etd4 = self.wordlist.get_etymdict(
-            ref='fuzzyid', entry='ipa', loans=True, fuzzy=True)
+            ref='fuzzyid', entry='ipa', loans=True)
         for key in etd1:
             assert etd1[key] == etd3[key]
         for key in etd2:
