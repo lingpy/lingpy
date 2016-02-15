@@ -666,12 +666,14 @@ def tokens2class(
     
     out = []
     for token in tstring:
+        if not token:
+            raise ValueError("[i] String {0} contains an empty token!".format(tstring))
         try:
             out.append(model[token])
-        except:
+        except KeyError:
             try:
                 out.append(model[token[0]])
-            except:
+            except KeyError:
                 # check for stressed syllables
                 if len(token) > 0:
                     if token[0] in kw['stress']:
@@ -684,13 +686,16 @@ def tokens2class(
                                 # new character for missing data and spurious items
                                 out.append('0')
                     elif token[0] in rcParams['diacritics']:
-                        try:
-                            out.append(model[token[1:]])
-                        except KeyError:
+                        if len(token) > 1:
                             try:
-                                out.append(model[token[1]])
+                                out.append(model[token[1:]])
                             except KeyError:
-                                out.append('0')
+                                try:
+                                    out.append(model[token[1]])
+                                except KeyError:
+                                    out.append('0')
+                        else:
+                            out.append('0')
                     else:
                         # new character for missing data and spurious items
                         out.append('0')

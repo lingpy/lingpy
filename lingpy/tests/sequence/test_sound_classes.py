@@ -72,9 +72,9 @@ def test_token2class():
 
 def test_tokens2class():
 
-    seq = 'tʰ ɔ x ˈth ə r A ˈI'.split(' ')
+    seq = 'tʰ ɔ x ˈth ə r A ˈI ʲ'.split(' ')
 
-    assert tokens2class(seq, 'dolgo') == list('TVKTVR00')
+    assert tokens2class(seq, 'dolgo') == list('TVKTVR000')
 
     assert_raises(ValueError, tokens2class, 'b  l'.split(' '), 'dolgo')
 
