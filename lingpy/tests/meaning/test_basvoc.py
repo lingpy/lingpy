@@ -10,7 +10,7 @@ class TestBasVoc(TestCase):
     def test_init(self):
         basvoc = lpm.basvoc.BasVoc
 
-        self.assertRaises(OSError, basvoc, 'x')
+        self.assertRaises(IOError, basvoc, 'x')
     
     def test_get_list(self):
         jach = self.basvoc.get_list('jachontov','number','item')
