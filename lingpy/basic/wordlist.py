@@ -460,8 +460,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             self,
             ref="cogid",
             entry='',
-            loans=False,
-            fuzzy=False
+            loans=False
             ):
         """
         Return an etymological dictionary representation of the word list.
@@ -479,9 +478,6 @@ class Wordlist(QLCParserWithRowsAndCols):
             Negative IDs can be used to indicate borrowings, or, more
             accurately, xenologs.
 
-        fuzzy : bool (default=False)
-            d
-
         Returns
         -------
         etym_dict : dict
@@ -491,7 +487,10 @@ class Wordlist(QLCParserWithRowsAndCols):
         -----
         In contrast to the word-list representation of the data, an
         etymological dictionary representation sorts the counterparts according to
-        the cognate sets of which they are reflexes. 
+        the cognate sets of which they are reflexes. If more than one cognate
+        ID are assigned to an entry, for example in cases of fuzzy cognate IDs
+        or partial cognate IDs, the etymological dictionary will return one
+        cognate set for each of the IDs.
 
         """
         
@@ -504,10 +503,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         else:
             f = lambda x: x
 
-        # check in the cache
-        if (ref, entry) in self._cache:
-            return self._cache[ref, entry]
-
         # create an etymdict object
         if ref not in self._etym_dict:
             self._etym_dict[ref] = {}
@@ -516,37 +511,26 @@ class Wordlist(QLCParserWithRowsAndCols):
             cogIdx = self._header[ref[0]]
             
             # iterate over all data
-            if not fuzzy:
-                for key in self:
-                    cogid = f(self[key][cogIdx])
-                    colIdx = self.cols.index(self[key][self._colIdx])
-
-                    # assign new line if cogid is missing
-                    if cogid not in self._etym_dict[ref]:
-                        # FIXME: why initialize with list of 0 instead of list of [],
-                        # if lateron we treat the elements as lists?
-                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+            for key in self:
+                cogids = self[key][cogIdx]
+                colIdx = self.cols.index(self[key][self._colIdx])
+                # check if data is not a list or tuple, if this is the case,
+                # make it a fake-list, so we can treat it just as all the other
+                # instances of fuzzy cognates (output is the same, though)
+                if isinstance(cogids, (str, int, float)):
+                    cogids = [cogids]
                     
-                    # assign the values for the current session
+                for cog in cogids:
+                    cogid = f(cog)
+                    # we initialize with zero here, since this corresponds to a
+                    # missing entry in our data
+                    if cogid not in self._etym_dict[ref]:
+                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
+                    # assign new values for the current session
                     try:
                         self._etym_dict[ref][cogid][colIdx] += [key]
                     except:
-                        self._etym_dict[ref][cogid][colIdx] = [key]
-            elif fuzzy:
-                for key in self:
-                    cogids = self[key][cogIdx]
-                    colIdx = self.cols.index(self[key][self._colIdx])
-                    for cog in cogids:
-                        cogid = f(cog)
-                        if cogid not in self._etym_dict[ref]:
-                            self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-
-                        # assign new values for the current session
-                        try:
-                            self._etym_dict[ref][cogid][colIdx] += [key]
-                        except:
                             self._etym_dict[ref][cogid][colIdx] = [key]
-
         if entry:
             # create the output
             etym_dict = {}
@@ -567,8 +551,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         else:
             etym_dict = self._etym_dict[ref]
         
-        # add the stuff to the cache
-        self._cache[ref, entry] = etym_dict
         return etym_dict
 
     def get_paps(
@@ -589,13 +571,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             The field which is used to check for missing data.
         missing : string,int (default = 0)
             The marker for missing items.
-        """
-         
-        try:
-            return self._cache['#paps#'+str(missing)+'#',ref]
-        except:
-            pass
-        
+        """        
         etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)            
 
         # create dictionary for paps
@@ -644,9 +620,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                             paps[key].append(0)
                     else:
                         paps[key].append(1)
-        
-        self._cache['#paps#'+str(missing)+'#',ref] = paps
-        
+                
         return paps
     
     def calculate(
@@ -1088,4 +1062,5 @@ class Wordlist(QLCParserWithRowsAndCols):
             return dict([(a, b / self.height) for a, b in cov.items()])
         if stats == 'mean':
             return sum([a / self.height for a in cov.values()]) / self.width
+    
 

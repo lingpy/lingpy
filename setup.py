@@ -71,7 +71,7 @@ if sys.version_info < (3, 4):
     requires.append('pathlib')
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.4.2"
+thisversion = "2.4"
 
 setup(
     name=pkgname,
@@ -80,12 +80,13 @@ setup(
     package_dir=pkg_dir,
     install_requires=requires,
     tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
-    author="Johann-Mattis List, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Robert Forkel",
-    author_email="mattis.list@uni-marburg.de",
+    author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill)",
+    author_email="mattis.list@lingpy.org",
     keywords=[
         "historical linguistics",
         "sequence alignment",
-        "computational linguistics"
+        "computational linguistics",
+        "dialectology"
     ],
     url="http://lingpy.org",
     description="Python library for automatic tasks in historical linguistics",

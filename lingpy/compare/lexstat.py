@@ -41,6 +41,9 @@ def _check_tokens(key_and_tokens):
                 sonars = tokens2class(line, rcParams['art'])
                 if not sonars or sonars == ['0']:
                     yield (key, "empty sound-class string", line)
+                elif '0' in sonars:
+                    yield (key, "bad character in tokens at «{0}»".format(
+                        line[sonars.index('0')]), line)
             except ValueError:
                 yield (key, "sound-class conversion failed", line)
 

@@ -39,7 +39,7 @@ http://www.python.org for details.
 How to cite LingPy?
 -------------------
 
-If you are using LingPy in its 2.0 version for non-commercial, scientific projects,
+If you are using LingPy in its 2.0 or higher version for non-commercial, scientific projects,
 please cite the following paper:
 
 .. raw:: html
@@ -60,9 +60,9 @@ Additionally, please cite the library in its current state along with the versio
 .. raw:: html
 
    <ul>
-   <li> List, Johann-Mattis, Steven Moran, Peter Bouda, Johannes Dellert & Taraka Rama (2014): LingPy. Python
-   Library for Automatic Tasks in Historical Linguistics. Version 2.4.dev (Uploaded on 2014-10-13). URL:
-   <a href="http://lingpy.org">http://www.lingpy.org</a>.
+   <li> List, Johann-Mattis and Forkel, Robert (2014): LingPy. Python
+   Library for Automatic Tasks in Historical Linguistics. In collaboration with Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, and Simon Greenhill. Version 2.4 (Uploaded on XXXX-XX-XX). URL:
+   <a href="http://lingpy.org">http://www.lingpy.org</a>, DOI: <a href="XXX">XXX</a>.
    </li>
    </ul>
 

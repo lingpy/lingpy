@@ -18,17 +18,40 @@ try:
 except:
     log.missing_module('networkx')
 
+try:
+    import igraph as ig
+except:
+    log.missing_module('igraph')
+
 import numpy as np
 
 from ..thirdparty import cogent as cg
 
+def networkx2igraph(graph):
+    """Helper function converts networkx graph to igraph graph object."""
+    newgraph = ig.Graph()
+    nodes = {}
+    for i,(node, data) in enumerate(graph.nodes(data=True)):
+        newgraph.add_vertex(i,Name=node, **data)
+        nodes[node] = i
+    for node1, node2, data in graph.edges(data=True):
+        newgraph.add_edge(nodes[node1], nodes[node2], **data)
+    return newgraph
+
+def igraph2networkx(graph):
+    newgraph = nx.Graph()
+    for node in graph.vs:
+        newgraph.add_node(node['name'], **node.attributes())
+    for edge in graph.es:
+        newgraph.add_edge(graph.vs[edge.source]['name'],
+                graph.vs[edge.target]['name'], **edge.attributes())
+    return newgraph
 
 def _graph_or_file(graph, filename):
     if filename:
         util.write_text_file(filename + '.gml', nx.generate_gml(graph))
         return
     return graph
-
 
 def gls2gml(
         gls,
@@ -134,7 +157,6 @@ def gls2gml(
 
     return _graph_or_file(g, filename)
 
-
 def nwk2gml(
         treefile,
         filename='',
@@ -191,7 +213,6 @@ def nwk2gml(
             graph.add_edge(parent.Name,node)
 
     return _graph_or_file(graph, filename)
-
 
 def radial_layout(
         treestring,

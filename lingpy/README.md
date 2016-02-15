@@ -37,7 +37,7 @@ refers to the sound-class model "asjp". This model consists of a so-called "conv
 * ipa_vowels: All vowel characters recognized by LingPy as characters referring to vowels in the IPA
 * ipa_diacritics: All characters which LingPy recognizes as IPA diacritics
 * ipa_tones: All standard tone characters, including sub- and superscript numerals.
-* _color: A color scheme, that converts IPA characters to 10 specific colors as defined by the Dolgopolsky sound-class model
+* `_color`: A color scheme, that converts IPA characters to 10 specific colors as defined by the Dolgopolsky sound-class model
 
 As an alternative, there is a dictionary called "rcParams", containing all these variables, and additional ones. This dictionary is used for internal coding purposes and stores parameters that are globally set (if not defined otherwise by the user), such as
 

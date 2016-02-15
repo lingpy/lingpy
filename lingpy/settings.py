@@ -3,17 +3,9 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-07-17 10:40
-# modified : 2014-12-07 13:32
 """
 Module handels all global parameters used in a LingPy session.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-12-07"
-
 # builtin imports
 from datetime import datetime,date
 import os
@@ -143,7 +135,11 @@ rcParamsUpd = dict(
         gop                        = -2,
         ref                        = 'cogid',
         morpheme_separator         = "◦",
-        nasal_placeholder          = "∼"
+        morpheme_separators        = "◦+",
+        nasal_placeholder          = "∼",
+        gap_symbol                 = "-",
+        word_separator             = "_",
+        word_separators            = "_#",
         )
 rcParams.update(rcParamsUpd)
 

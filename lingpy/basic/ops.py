@@ -164,7 +164,7 @@ def renumber(wordlist, source, target='', override=False):
 def clean_taxnames(
         wordlist,
         column = 'doculect',
-        f = lambda x:''.join([t for t in x if t not in '()[]{},;:'])
+        f = lambda x:''.join([t for t in x if t not in '()[]{},;:']).replace('-','_').replace(' ','_')
         ):
     """
     Function cleans taxon names in order to make sure they can be used in Newick files.

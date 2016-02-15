@@ -235,38 +235,65 @@ def ipa2tokens(
     
     return out
 
-def syllabify(seq, alignment=False, breakpoints=False):
+def syllabify(seq, output="flat", **keywords):
     """
     Carry out a simple syllabification of a sequence, using sonority as a proxy.
 
+    Parameters
+    ----------
+    output: {"flat", "breakpoints", "nested"} (default="flat")
+        Define how to output the syllabification. Select between:
+        * "flat": A syllable separator is introduced to mark the syllable
+          boundaries
+        * "breakpoins": A tuple consisting of indices that slice the original
+          sequence into syllables is returned.
+        * "nested": A nested list reflecting the syllable structure is
+          returned.
+    sep : str (default="◦")
+        Select your preferred syllable separator.
+    
     Note
     ----
     When analyzing the sequence, we start a new syllable in all cases where we
-    reach a deepest point.
+    reach a deepest point in the sonority hierarchy of the sonority profile of
+    the sequence. When passing an aligned string to this function, the gaps
+    will be ignored when computing boundaries, but later on re-introduced, if
+    the alignment is passed in segmented form.
 
     Returns
     -------
     syllable : list
-        A nested list, representing the structure of the syllable.
+        Either a flat list containing a morpheme separator, or a nested list,
+        reflecting the syllable structure, or a list of tuples containing the
+        indices indicating where the input sequence should be sliced in order
+        to split it into syllables.
     """
-    # check for alignment keyword
-    if alignment:
+    if output not in ['flat', 'breakpoints', 'nested']:
+        raise ValueError("The output «{0}» you specified is not available.".format(output))
 
-        if ' ' in seq:
-            seq = seq.split(' ')
-        alm = [x for x in seq]
-        
-        seq = [s for s in seq if s != '-']
+    kw = {
+            "sep" : rcParams['morpheme_separator'],
+            "gap" : rcParams['gap_symbol'],
+            "model" : "art"
+            }
+    kw.update(keywords)
     
     # we assume we are dealing with tokens if the syllable is a list.
-    if type(seq) == list:
+    if isinstance(seq, (list,tuple)):
         listed_seq = [s for s in seq]
     elif ' ' in seq:
         listed_seq = seq.split(' ')
     else:
         listed_seq = ipa2tokens(seq)
 
-    profile = [0] + [int(i) for i in tokens2class(listed_seq, 'art')] + [0]
+    # check whether our sequence is an alignment
+    alm = False
+    if kw['gap'] in listed_seq:
+        alm = [x for x in listed_seq]
+        listed_seq = [s for s in listed_seq if s != kw['gap']]
+    
+    # get the profile for the sequence
+    profile = [0] + [int(i) for i in tokens2class(listed_seq, **kw)] + [0]
     
     new_syl = False
     breaks = []
@@ -298,14 +325,14 @@ def syllabify(seq, alignment=False, breakpoints=False):
             if p1 == 9:
                 breaks += [char]
             else:
-                breaks += [rcParams['morpheme_separator'],char]
+                breaks += [kw['sep'],char]
             new_syl = False
         else:
             breaks += [char]
     
-    # if the alignment option is chosen, we need to re-assign the gaps to the
-    # current form
-    if alignment:
+    # if we detected an alignment character in the string, we need to reparse
+    # the data
+    if alm:
         out = []
         idxA,idxB = 0,0
         bpoints = []
@@ -320,26 +347,88 @@ def syllabify(seq, alignment=False, breakpoints=False):
                 idxB += 1
                 out += [charA]
 
-            elif charB == '-':
+            elif charB == kw['gap']:
                 idxB += 1
                 out += [charB]
 
-            elif charA == rcParams['morpheme_separator']:
+            elif charA == kw['sep']:
                 idxA += 1
                 out += [charA]
-                bpoints += [(lastbp,len(out)-1)]
                 lastbp = len(out)-1
+    else: 
+        out = breaks
+        alm = listed_seq
 
-        bpoints += [(lastbp,len(out))]
+    if output in ['breakpoints', 'nested']:
+        bpoints = _get_breakpoints(out, kw['sep'])
+        if output == 'nested':
+            return [alm[x:y] for (x,y) in bpoints]
+        return bpoints
+    return out
 
-        if not breakpoints:
-            return out
+def _get_breakpoints(seq, sep):
+    """
+    Helper function determines the points where to split a sequence.
+    """
+    bpoints, start, count = [], 0, 0 
+    for i,char in enumerate(seq):
+        if char == sep:
+            bpoints += [(start, count)]
+            start = count
         else:
-            return bpoints
+            count += 1
+    return bpoints + [(start, i+1)]
 
-    return breaks
+def tokens2morphemes(tokens, **keywords):
+    """
+    Function splits a list of tokens into subsequent lists of morphemes if the list contains morpheme separators.
 
-def _split_syllables(syllables,tokens):
+    Parameters
+    ----------
+    sep : str (default="◦")
+        Select your morpheme separator.
+    word_sep: str (default="_")
+        Select your word separator.
+    
+    Returns
+    -------
+    morphemes : list
+        A nested list of the original segments split into morphemes.
+    """
+
+    if not isinstance(tokens, (list, tuple)):
+        raise ValueError("The sequence needs to be a list or a tuple.")
+
+    kw = {
+            "sep" : rcParams['morpheme_separator'],
+            "word_sep" : rcParams['word_separator'],
+            "word_seps" : rcParams['word_separators'],
+            "seps" : rcParams['morpheme_separators'],
+            "tone" : "T"
+            }
+    kw.update(keywords)
+
+    # check for other hints than the clean separators in the data
+    new_tokens = [t for t in tokens]
+    if not kw['sep'] in tokens and not kw['word_sep'] in tokens:
+        class_string = tokens2class(tokens, 'cv')
+        if kw['tone'] in class_string and not '+' in class_string and not '_' in class_string:
+            new_tokens = []
+            for i,token in enumerate(tokens):
+                if class_string[i] == 'T' and i != len(class_string) -1:
+                    new_tokens += [token, kw['sep']]
+                else:
+                    new_tokens += [token]
+    out = [[]]
+    for i,token in enumerate(new_tokens):
+        if token not in kw['sep']+kw['word_sep']+kw['word_seps']+kw['seps']:
+            out[-1] += [token]
+        else:
+            out += [[]]
+
+    return out
+
+def _split_syllables(syllables, tokens):
     """
     Split the output of the syllabify method into subsets.
     
@@ -588,11 +677,19 @@ def tokens2class(
                     if token[0] in kw['stress']:
                         try:
                             out.append(model[token[1:]])
-                        except:
+                        except KeyError:
                             try:
                                 out.append(model[token[1]])
-                            except:
+                            except KeyError:
                                 # new character for missing data and spurious items
+                                out.append('0')
+                    elif token[0] in rcParams['diacritics']:
+                        try:
+                            out.append(model[token[1:]])
+                        except KeyError:
+                            try:
+                                out.append(model[token[1]])
+                            except KeyError:
                                 out.append('0')
                     else:
                         # new character for missing data and spurious items
