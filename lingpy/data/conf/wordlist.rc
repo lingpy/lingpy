@@ -42,3 +42,5 @@ clusterformat	lambda x: [int(i) for i in x.split(" ")]	clusterformat
 morphemes	lambda x: x.split(" ")	morphemes
 palignment	lambda x: x.split(" ")	pca,palignment,partial_cognate_alignment
 pcogsets	lambda x: [int(i) for i in x.split(" ")]	partial_cognate_sets,pcogset,pcs
+partialid	lambda x:[int(s) for s in x.split(" ")]	partialid
+

@@ -29,7 +29,7 @@ from ..convert import html
 from ..convert.tree import subGuideTree
 from ..convert.strings import msa2str
 from ..sequence.sound_classes import ipa2tokens, tokens2class, class2tokens, \
-        prosodic_string, prosodic_weights
+        prosodic_string, prosodic_weights, tokens2morphemes
 from .multiple import Multiple
 from .pairwise import Pairwise
 from ..algorithm import misc
@@ -607,9 +607,23 @@ class Alignments(Wordlist):
             _interactive=True,
             **keywords
             ):
+        # keywords, "strings" locates, where the reference for the alignments
+        # is to be found
+        kw = {
+                "strings" : "tokens",
+                "alignment" : "alignment"
+                }
+        kw.update(keywords)
+
         # initialize the wordlist
-        Wordlist.__init__(self,infile,row,col,conf)
+        Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
+        self._alignment = kw['alignment'] # defines where alignments are stored
+        self._tokens = kw['strings']
+
+        # check whether fuzzy (partial) alignment or normal alignment is
+        # carried out
+        self._mode = 'fuzzy' if self._class_string[ref] not in ['str', 'int'] else 'plain'
 
         # check for reference / cognates
         if 'cognates' in keywords:
@@ -631,23 +645,11 @@ class Alignments(Wordlist):
 
         # store loan-status
         self._loans = loans
-
-        # check for strings
-        if 'tokens' in self.header:
-            stridx = self.header['tokens']
-        elif 'orthoparse' in self.header:
-            stridx = self.header['orthoparse']
-        elif 'ipa' in self.header:
-            stridx = self.header['ipa']
-        else:
-            if 'strings' in keywords:
-                try:
-                    stridx = self.header[keywords['strings']]
-                except:
-                    log.warn("No valid source for strings could be found.")
-            else:
-                log.warn("No valid source for strings could be found.")
-                return 
+        
+        try:
+            stridx = self.header[kw['strings']]
+        except:
+            log.warn("No valid source for strings could be found.")
 
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
@@ -681,17 +683,25 @@ class Alignments(Wordlist):
                     # set up the data
                     for seq in seqids:
                         taxon = self[seq,'taxa']
-                        string = self[seq][stridx]
+                        if kw['alignment'] in self.header:
+                            this_string = self[seq][self.header[kw['alignment']]]
+                        else:
+                            this_string = self[seq][stridx]
+                        if isinstance(this_string, text_type):
+                            this_string = this_string.split(' ')
+                        # check for partial cognates
+                        if self._mode == 'fuzzy':
+                            # split the string into morphemes
+                            # FIXME add keywords for morpheme segmentation
+                            morphemes = tokens2morphemes(this_string)
+                            # get the position of the morpheme
+                            midx = self[seq][self.header[ref]].index(key)
+                            this_string = morphemes[midx]
+
                         d['ID'] += [seq]
                         d['taxa'] += [self[seq,'taxa']]
-                        d['seqs'] += [self[seq][stridx]]
-                        if 'alignment' in self.header:
-                            d['alignment'] += [self[seq,'alignment']]
-                        else:
-                            if isinstance(string, text_type):
-                                d['alignment'] += [string.split(' ')]
-                            else:
-                                d['alignment'] += [string]
+                        d['seqs'] += [this_string]
+                        d['alignment'] += [this_string]
                                 
                     d['alignment'] = normalize_alignment(d['alignment'])
                         
@@ -732,8 +742,6 @@ class Alignments(Wordlist):
             if k not in D:
                 D[k] = ['']
         self.add_entries('_alignment', D, lambda x: x)
-
-
             
     def _msa2col(
             self,
@@ -744,25 +752,47 @@ class Alignments(Wordlist):
         parse them in the wordlist editor.
         """
         tmp = {}
-        for key,msa in self.msa[ref].items():
-            for i,idx in enumerate(msa['ID']):
-                try:
-                    tmp[idx] = ' '.join(msa['alignment'][i])
-                except KeyError:
-                    log.error("There are no alignments in your data.  Aborting...")
-                    return
-        missing = [idx for idx in self if idx not in tmp]
-        for m in missing:
-            if 'tokens' in self.header:
-                tmp[m] = self[m,'tokens']
-            elif 'ipa' in self.header:
-                tmp[m] = ipa2tokens(self[m,'ipa'])
-            elif 'alignment' in self.header:
-                tmp[m] = self[m,'alignment']
-            else:
-                raise ValueError("There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) in your data.")
+        # plain mode, that means, no partial alignments
+        if self._mode == 'plain':
+            for key,msa in self.msa[ref].items():
+                for i,idx in enumerate(msa['ID']):
+                    try:
+                        tmp[idx] = ' '.join(msa['alignment'][i])
+                    except KeyError:
+                        log.error("There are no alignments in your data.  Aborting...")
+                        return
 
-        self.add_entries('alignment', tmp, lambda x: x)
+            missing = [idx for idx in self if idx not in tmp]
+            for m in missing:
+                if 'tokens' in self.header:
+                    tmp[m] = self[m,'tokens']
+                elif 'ipa' in self.header:
+                    tmp[m] = ipa2tokens(self[m,'ipa'])
+                elif self._alignment in self.header:
+                    tmp[m] = self[m, self._alignment]
+                else:
+                    raise ValueError("There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) in your data.")
+        else:
+            # in this mode, we need to trace the order of the bits that make up
+            # the alignemnts
+            for key in self:
+                # get the cognate IDs
+                cogids = self[key, rcParams['ref']]
+                # get the alignment
+                tmp[key] = []
+                for i,cogid in enumerate(cogids):
+                    if cogid in self.msa[rcParams['ref']]:
+                        msa = self.msa[rcParams['ref']][cogid]
+                        idx = msa['ID'].index(key)
+                        tmp[key] += msa['alignment'][idx]
+                    else:
+                        tmp[key] += tokens2morphemes(self[key,self._tokens])[i]
+                    # add morpheme separator as long as we don't add the last
+                    # element                    
+                    if i < len(cogids)-1:
+                        tmp[key] += [rcParams['morpheme_separator']]
+
+        self.add_entries(self._alignment, tmp, lambda x: x)
 
     def align(
             self,
@@ -1785,110 +1815,3 @@ def get_consensus(
 
     return cons if gaps else [c for c in cons if c != '-'] #cons.replace('-','')
 
-
-#.. File Formats
-#.. ------------
-#.. 
-#.. Pairwise as well as multiple sequence comparison is basically carried out by
-#.. reading data from text files and writing the results of the analyses back to
-#.. text files. For pairwise and multiple sequence analyses, specific file formats 
-#.. are required. See the documentation for the respective classes for details.
-#.. 
-#.. ``psq``-format
-#..     The ``psq``-format is a specific format for text files containing unaligned
-#..     sequence pairs. Files in this format should have the extension ``psq``. 
-#..     
-#..     The first line of a ``psq``-file contains information regarding the dataset.
-#..     The sequence pairs are given in triplets, with a sequence identifier in the
-#..     first line of a triplet (containing the meaning, or orthographical
-#..     information) and the two sequences in the second and third line, whereas
-#..     the first column of each sequence line contains the name of the taxon and
-#..     the second column the sequence in IPA format. All triplets are divided by
-#..     one empty line. As an example, consider the file ``test.psq``::
-#.. 
-#..         Harry Potter Testset
-#..         Woldemort in German and Russian
-#..         German  waldemar
-#..         Russian vladimir
-#.. 
-#..         Woldemort in English and Russian
-#..         English woldemort
-#..         Russian vladimir
-#.. 
-#..         Woldemort in English and German
-#..         English woldemort
-#..         German  waldemar
-#.. 
-#.. ``psa``-format
-#..     The ``psa``-format is a specific format for text files containing unaligned
-#..     sequence pairs. Files in this format should have the extension ``psq``. 
-#..     
-#..     The first line of a ``psa``-file contains information regarding the
-#..     dataset.  The sequence pairs are given in quadruplets, with a sequence
-#..     identifier in the first line of a quadruplet (containing the meaning, or
-#..     orthographical information) and the aligned sequences in the second and
-#..     third line, whith the name of the taxon in the first column and all aligned
-#..     segments in the following columns, separated by tabstops. The fourth line
-#..     contains a float indicating the similarity score of the sequences.  All
-#..     quadruplets are divided by one empty line. As an example, consider the file
-#..     ``test.psa``::
-#.. 
-#..         Harry Potter Testset
-#..         Woldemort in German and Russian
-#..         German.    w    a    l    -    d    e    m    a    r
-#..         Russian    v    -    l    a    d    i    m    i    r
-#..         41.0
-#..         
-#..         Woldemort in English and Russian
-#..         English    w    o    l    -    d    e    m    o    r    t
-#..         Russian    v    -    l    a    d    i    m    i    r    -
-#..         34.0
-#..         
-#..         Woldemort in English and German
-#..         English    w    o    l    d    e    m    o    r    t
-#..         German.    w    a    l    d    e    m    a    r    -
-#..         56.0
-#.. 
-#.. ``msq``-format
-#..     The ``msq``-format is a specific format for text files containing unaligned
-#..     sequences. Files in this format should have the extension ``msq``. The
-#..     first line of an ``msq``-file contains information regarding the dataset.
-#..     The second line contains information regarding the sequence (meaning,
-#..     identifier), and the following lines contain the name of the taxa in the
-#..     first column and the sequences in IPA format in the second column,
-#..     separated by a tabstop. As an example, consider the file ``test.msq``::
-#.. 
-#..         Harry Potter Testset
-#..         Woldemort (in different languages)
-#..         German  waldemar
-#..         English woldemort
-#..         Russian vladimir
-#.. 
-#.. 
-#.. ``msa``-format
-#..     The ``msa``-format is a specific format for text files containing already
-#..     aligned sequence pairs. Files in this format should have the extension
-#..     ``msa``. 
-#..     
-#..     The first line of a ``msa``-file contains information regarding the
-#..     dataset. The second line contains information regarding the sequence (its
-#..     meaning, the protoform corresponding to the cognate set, etc.). The aligned
-#..     sequences are given in the following lines, whereas the taxa are given in
-#..     the first column and the aligned segments in the following columns.
-#..     Additionally, there may be a specific line indicating the presence of swaps
-#..     and a specific line indicating highly consistent sites (local peaks) in the
-#..     MSA.  The line for swaps starts with the headword ``SWAPS`` whereas a plus
-#..     character (``+``) marks the beginning of a swapped region, the dash
-#..     character (``-``) its center and another plus character the end. All sites
-#..     which are not affected by swaps contain a dot. The line for local peaks
-#..     starts with the headword ``LOCAL``. All sites which are highly consistent
-#..     are marked with an asterisk (``*``), all other sites are marked with a dot
-#..     (``.``). As an example, consider the file ``test.msa``::
-#.. 
-#..         Harry Potter Testset
-#..         Woldemort (in different languages)
-#..         English     w    o    l    -    d    e    m    o    r    t
-#..         German.     w    a    l    -    d    e    m    a    r    -
-#..         Russian     v    -    l    a    d    i    m    i    r    -
-#..         SWAPS..     .    +    -    +    .    .    .    .    .    .
-#..         LOCAL..     *    *    *    .    *    *    *    *    *    .
