@@ -244,7 +244,7 @@ class LexStat(Wordlist):
         # v-scale in lexstat.get_scorer
         if not 'vowels' in self._meta:
             self._meta['vowels'] = ' '.join(sorted(set([self._transform[v] for v
-                in 'XYZT_'])))
+                in 'XYZT_']))) if hasattr(self, '_transform') else 'VT_'
 
         if "duplicates" not in self.header:
             duplicates = {}
