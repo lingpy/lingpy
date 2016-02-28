@@ -2,7 +2,7 @@
 
 Publication | Links 
 --- | ---
-Lesage, J. (2016): **Words, trees, and the dispersal of iron working in sub-Saharan Afric. Some explorations of a computational linguistic approach to tracing the spread of words for `iron' across Africa**. Master thesis. Radboud Universiteit: Nijmegen. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Lesage2016)
+Lesage, J. (2016): **Words, trees, and the dispersal of iron working in sub-Saharan Afric. Some explorations of a computational linguistic approach to tracing the spread of words for ‘iron’ across Africa**. Master thesis. Radboud Universiteit: Nijmegen. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Lesage2016)
 da Silva Cardoso, H. and M. Wolska (2015): **Misspellings in responses to listening comprehension questions: Prospects for scoring based on phonetic normalization**. In: *4th workshop on NLP for Computer Assisted Language Learning* 1-10. | [BibTex](http://bibliography.lingpy.org/raw.php?key=DaSilvaCardoso2015)
 Wahle, J. (2015): **Automatic alignment using Pair Hidden Markov Models**. In: *Proceedings of the ESSLLI 2015 Student Session* 238-248. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Wahle2015)
 Roberts, S. (2015): **Commentary: Large-scale psychological differences within China explained by rice vs. wheat agriculture**. *Frontiers in Psychology* 6.950. 1-4. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Roberts2015)
@@ -15,10 +15,10 @@ List, J.-M., S. Nelson-Sathi, H. Geisler, and W. Martin (2014): **Networks of le
 List, J.-M. and J. Prokić (2014): **A benchmark database of phonetic alignments in historical linguistics and dialectology.**. In: *Proceedings of the Ninth International Conference on Language Resources and Evaluation* 288-294. | [BibTex](http://bibliography.lingpy.org/raw.php?key=List2014e) [URL](http://alignments.lingpy.org)
 List, J.-M. (2014): **Sequence comparison in historical linguistics**. Düsseldorf University Press: Düsseldorf. | [BibTex](http://bibliography.lingpy.org/raw.php?key=List2014d) [URL](http://sequencecomparison.github.io/)
 List, J.-M. (2014): **Investigating the impact of sample size on cognate detection**. *Journal of Language Relationship* 11. 91-101. | [BibTex](http://bibliography.lingpy.org/raw.php?key=List2014c) [URL](http://www.jolr.ru/index.php?en)
-Kassian, A. (2014): **K formal'noj genealogi\vceskoj klassifikacii lezginskich jazykov (Severnyj Kavkaz)**[On the formal genetic classification of Lezgian languages (North Caucasus)]. *Journal of Language Relationship* 11. 63-80. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Kassian2014)
-Dekker, P. (2014): **Determining Dutch dialect phylogeny using bayesian inference**. . University of Utrecht: Utrecht. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Dekker2014)
-Wahle, J. (2013): **Alignment and word comparison with Pair Hidden Markov Models**. . Eberhard-Karls-Universität Tübingen: . | [BibTex](http://bibliography.lingpy.org/raw.php?key=Wahle2013)
-Moran, S. and J. Proki\'c (2013): **Investigating the relatedness of the endangered Dogon languages**. *Literary and Linguistic Computing* 28.4. 676-691. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Moran2013)
+Kassian, A. (2014): **K formal’noj genealogi\vceskoj klassifikacii lezginskich jazykov (Severnyj Kavkaz)**[On the formal genetic classification of Lezgian languages (North Caucasus)]. *Journal of Language Relationship* 11. 63-80. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Kassian2014)
+Dekker, P. (2014): **Determining Dutch dialect phylogeny using bayesian inference**. Bacehlor thesis. University of Utrecht: Utrecht. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Dekker2014)
+Wahle, J. (2013): **Alignment and word comparison with Pair Hidden Markov Models**. Master thesis. Eberhard-Karls-Universität: Tübingen. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Wahle2013)
+Moran, S. and J. Proki\’c (2013): **Investigating the relatedness of the endangered Dogon languages**. *Literary and Linguistic Computing* 28.4. 676-691. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Moran2013)
 List, J.-M. and S. Moran (2013): **An open source toolkit for quantitative historical linguistics**. In: *Proceedings of the ACL 2013 System Demonstrations* 13-18. | [BibTex](http://bibliography.lingpy.org/raw.php?key=List2013b)
 Gilman, S. (2013): **Comparative method algorithm**. Bachelor thesis. Yale University: New Haven. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Gilman2013)
 Delz, M. (2013): **A theoretical approach to automatic loanword detection**. Master thesis. Eberhard-Karls-Universität: Tübingen. | [BibTex](http://bibliography.lingpy.org/raw.php?key=Delz2013)
