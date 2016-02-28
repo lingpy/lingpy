@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/lingpy/lingpy.svg?branch=master)](https://travis-ci.org/lingpy/lingpy)
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.16093.svg)](http://dx.doi.org/10.5281/zenodo.16093)
-[![Latest Stable Version](https://poser.pugx.org/phpunit/phpunit/version)]https://github.com/lingpy/lingpy/releases/tag/v2.3)
+[![Latest Stable Version](https://poser.pugx.org/phpunit/phpunit/version)](https://github.com/lingpy/lingpy/releases/tag/v2.3)
 [![Latest Unstable Version](https://poser.pugx.org/phpunit/phpunit/v/unstable)](https://github.com/lingpy/lingpy/releases/tag/v2.4.1-alpha)
 
 
