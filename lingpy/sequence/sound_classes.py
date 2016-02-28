@@ -666,8 +666,6 @@ def tokens2class(
     
     out = []
     for token in tstring:
-        if not token:
-            raise ValueError("[i] String {0} contains an empty token!".format(tstring))
         try:
             out.append(model[token])
         except KeyError:
@@ -676,7 +674,7 @@ def tokens2class(
             except KeyError:
                 # check for stressed syllables
                 if len(token) > 0:
-                    if token[0] in kw['stress']:
+                    if token[0] in kw['stress'] and len(token) > 1:
                         try:
                             out.append(model[token[1:]])
                         except KeyError:

@@ -1,15 +1,3 @@
-# author   : Taraka Rama, Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-10-13 13:49
-# modified : 2014-10-13 13:49
-"""
-Test routines for string comparisons.
-"""
-
-__author__="Taraka Rama, Johann-Mattis List"
-__date__="2014-10-13"
-
-
 from lingpy.compare import strings
 
 class TestStrings:

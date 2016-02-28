@@ -429,9 +429,8 @@ def compare_conceptlists(list1, list2, output='', match=None,
         
         out = [txt[0]] + sorted(
                 txt[1:],
-                key = lambda x: x.strip()[-1]
+                key = lambda x: x[x.index('\t')]
                 )
-
         write_text_file(filename, ''.join(out))
 
     if debug:

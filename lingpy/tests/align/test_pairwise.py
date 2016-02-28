@@ -2,22 +2,10 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-12-02 15:37
-# modified : 2014-12-02 15:37
-"""
-Testing multiple module.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
-
 import os
 import unittest
 from lingpy.align import Pairwise, pw_align, nw_align, edit_dist, sw_align,\
         we_align, structalign, turchin
-
 
 class TestPairwise(object):
 

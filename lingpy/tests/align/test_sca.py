@@ -1,15 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-12 12:53
-# modified : 2013-11-12 12:53
 """
 Test the SCA module.
 """
 from __future__ import unicode_literals
-
-__author__="Johann-Mattis List"
-__date__="2013-11-12"
-
 from itertools import product
 
 from six import text_type
