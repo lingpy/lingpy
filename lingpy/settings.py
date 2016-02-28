@@ -42,7 +42,8 @@ lexstat = dict(
         lexstat_threshold      = 0.3,
         lexstat_cluster_method = 'upgma',
         lexstat_preprocessing_method = 'sca',
-        lexstat_preprocessing_threshold = 0.7
+        lexstat_preprocessing_threshold = 0.7,
+        lexstat_bad_chars_limit = 0.1
         )
 rcParams.update(lexstat)
 

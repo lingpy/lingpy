@@ -29,7 +29,7 @@ from ..thirdparty import cogent as cg
 
 def networkx2igraph(graph):
     """Helper function converts networkx graph to igraph graph object."""
-    newgraph = ig.Graph()
+    newgraph = ig.Graph(directed=graph.is_directed())
     nodes = {}
     for i,(node, data) in enumerate(graph.nodes(data=True)):
         newgraph.add_vertex(i,Name=node, **data)
