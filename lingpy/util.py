@@ -14,7 +14,7 @@ from six import text_type, PY3
 from six.moves import input
 
 import lingpy
-from lingpy.log import get_logger, get_level
+from lingpy.log import get_logger, get_level, file_written
 from lingpy.settings import rcParams
 
 
@@ -91,7 +91,7 @@ def write_text_file(path, content, normalize=None, log=True):
     with io.open(_str_path(path, mkdir=True), 'w', encoding='utf8') as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
     if log:
-        get_logger().info("Data has been written to file <{0}>.".format(_str_path(path)))
+        file_written(_str_path(path))
 
 
 def lines_to_text(lines):
@@ -110,7 +110,7 @@ class TextFile(object):
     def __exit__(self, type, value, traceback):
         self.fp.close()
         if self.log:
-            get_logger().info("Data has been written to file <{0}>.".format(_str_path(self.path)))
+            file_written(_str_path(self.path))
 
 
 def read_text_file(path, normalize=None, lines=False):

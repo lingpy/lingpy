@@ -32,6 +32,7 @@ try:  # pragma: no cover
     import matplotlib as mpl
     import matplotlib.pyplot as plt
 except:
+    mpl, plt = None, None
     log.missing_module('matplotlib')
 
 # import 3d-stuff

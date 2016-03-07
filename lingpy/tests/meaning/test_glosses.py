@@ -10,7 +10,7 @@ def test_parse_gloss():
         datum = line[1]
         glosses = parse_gloss(datum)
         for a,b,c,d,e,f,g,h,i in glosses:
-            print(datum,'=>',','.join([x for x in [a,b,c,d,e,f,g,''.join(h),i]]),'\t',a)
+            # print(datum,'=>',','.join([x for x in [a,b,c,d,e,f,g,''.join(h),i]]),'\t',a)
             assert a == target
 
 
