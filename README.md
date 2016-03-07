@@ -5,7 +5,7 @@
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.16093.svg)](http://dx.doi.org/10.5281/zenodo.16093)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)
 
-[![Latest Unstable Version](https://poser.pugx.org/phpunit/phpunit/v/unstable)](https://github.com/lingpy/lingpy/releases/tag/v2.4.1-alpha)
+
 
 
 Authors: [Johann-Mattis List](https://github.com/linguist) ([CRLAO, Paris](http://crlao.ehess.fr/)) and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
@@ -40,8 +40,6 @@ $ python setup.py develop
 This will just put a symlink to the source code (i.e. to the ``lingpy`` package in the repository clone) in your python site-packages; thus you will be able edit the sources in the git clone and import the altered code just as the regular python package.
 
 
-## Contributing
 
-LingPy development follows the model and workflow outlined here https://gun.io/blog/how-to-github-fork-branch-and-pull-request/. In order to keep the code transparent even for multiple contributors, we have set up a list of coding conventions. See [here](https://github.com/lingpy/lingpy/blob/master/CONVENTIONS.md) for details.
 
 
