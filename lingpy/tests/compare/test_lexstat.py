@@ -58,9 +58,7 @@ class TestLexStat(WithTempDir):
                 for key, values in self.lex.pairs.items():
                     values = set(values)
                     ovalues = set(tuple(v) for v in obj['---'.join(key)])
-                    if 'TRAVIS' not in os.environ and sys.version_info < (3, 5):
-                        # For some reason this assertion fails when run on travis-ci with
-                        # python 3.3
+                    if name != 'pairs':
                         self.assertEquals(values, ovalues)
     
     def test_init3(self): # with kw check=True
@@ -98,7 +96,7 @@ class TestLexStat(WithTempDir):
             and 'turchinid' in self.lex.header
 
     def test_align_pairs(self):
-        self.lex.align_pairs('English', 'German', method='sca')
+        self.lex.align_pairs('English', 'German', method='sca', pprint=False)
 
     def test_get_subset(self):
         self.lex.get_subset([])

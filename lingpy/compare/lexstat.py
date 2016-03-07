@@ -833,9 +833,11 @@ class LexStat(Wordlist):
             else:
                 if not concept:
                     for c in self.concepts:
-                        print("Concept: {0}".format(c))
+                        if kw['pprint']:
+                            print("Concept: {0}".format(c))
                         self.align_pairs(idxA, idxB, c, **kw)
-                        print('')
+                        if kw['pprint']:
+                            print('')
                 else:
                     self.align_pairs((idxA, concept), (idxB, concept), concept=None, **kw)
             return

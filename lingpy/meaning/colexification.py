@@ -2,6 +2,7 @@
 Module offers methods to handle colexification patterns in wordlist objects.
 """
 from .. import log
+
 try:
     import networkx as nx
 except ImportError:
@@ -24,7 +25,7 @@ def _get_colexifications(wordlist, entry='ipa', concept='concept',
     colexifications = []
     for taxon in taxa:
         
-        log.info('Analyzing taxon {0}...'.format(taxon)) # XXX replace by log info
+        log.info('Analyzing taxon {0}...'.format(taxon))
         
         tmp_idxs = wordlist.get_list(taxon=taxon, flat=True)
         tmp_family = wordlist[tmp_idxs[0], family]
@@ -219,8 +220,8 @@ def colexification_network(wordlist, entry='ipa', concept='concept',
             for k in data:
                 if isinstance(data[k], list):
                     data[k] = '//'.join([str(x) for x in data[k]])
-        nx.write_gml(G, filename+'.gml')
-        log.info("Data has been written to file {0}.".format(filename+'.gml'))
+        nx.write_gml(G, filename + '.gml')
+        log.file_written(filename + '.gml')
 
 def compare_colexifications(wordlist, entry='ipa', concept='concept'):
     """
