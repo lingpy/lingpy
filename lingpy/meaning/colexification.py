@@ -1,18 +1,16 @@
 """
 Module offers methods to handle colexification patterns in wordlist objects.
 """
-from lingpy import log
+from .. import log
 
 try:
     import networkx as nx
 except ImportError:
     log.missing_module('networkx')
-
 try:
     import community
 except ImportError:
-    log.missing_module('community')
-
+    log.missing_module('community') 
 
 def _get_colexifications(wordlist, entry='ipa', concept='concept',
         family='family'):
@@ -224,7 +222,6 @@ def colexification_network(wordlist, entry='ipa', concept='concept',
                     data[k] = '//'.join([str(x) for x in data[k]])
         nx.write_gml(G, filename + '.gml')
         log.file_written(filename + '.gml')
-
 
 def compare_colexifications(wordlist, entry='ipa', concept='concept'):
     """

@@ -137,7 +137,7 @@ def renumber(wordlist, source, target='', override=False):
     Create numerical identifiers from string identifiers.
     """
     # iterate over wordlist and get all source ids
-    sources = sorted(set([wordlist[k, source] for k in wordlist]))
+    sources = sorted(set([text_type(wordlist[k, source]) for k in wordlist]))
 
     # convert to numbers
     targets = list(range(1, len(sources) + 1))
@@ -154,7 +154,7 @@ def renumber(wordlist, source, target='', override=False):
     if '' in converter:
         converter[''] = 0
     
-    wordlist.add_entries(target, source, lambda x: converter[x], override=override)
+    wordlist.add_entries(target, source, lambda x: converter[text_type(x)], override=override)
 
     # add stuff to meta
     wordlist._meta[source + '2' + target] = converter
@@ -222,6 +222,9 @@ def calculate_data(
     # calculate distances
     if data in ['distances', 'dst']:
         wordlist._meta['distances'] = wl2dst(wordlist, taxa, concepts, ref, **keywords)
+    elif data in ['diversity', 'div']:
+        etd = wordlist.get_etymdict(ref=ref)
+        wordlist._meta['diversity'] = (len(etd) - wordlist.height) / (len(wordlist) - wordlist.height)
     elif data in ['tre', 'tree', 'nwk']:
         if 'distances' not in wordlist._meta:
             wordlist._meta['distances'] = wl2dst(wordlist, taxa, concepts, ref, **keywords)
@@ -257,17 +260,19 @@ def wl2qlc(
     util.setdefaults(
         keywords,
         ignore=['taxa', 'doculects', 'msa'],
-        fileformat='qlc')
+        fileformat='qlc',
+        prettify=True
+        )
 
     if keywords['ignore'] == 'all':
-        keywords['ignore'] = ['taxa', 'distances', 'doculects', 'msa', 'json']
+        keywords['ignore'] = ['taxa', 'scorer', 'meta', 'distances', 'doculects', 'msa', 'json']
 
     formatter = formatter.upper()
     if not filename:
         filename = rcParams['filename']
 
     # create output string
-    out = '# Wordlist\n'
+    out = '# Wordlist\n' if keywords['prettify'] else ''
 
     # write meta to file
     meta = keywords.get("meta", {})
@@ -313,8 +318,8 @@ def wl2qlc(
             except TypeError:
                 pass
 
-    if kvpairs:
-        out += '\n# META\n'
+    if kvpairs and 'meta' not in keywords['ignore']:
+        out += '\n# META\n' if keywords['prettify'] else ''
         for k, v in sorted(kvpairs.items(), key=lambda x: x[0]):
             out += '@{0}:{1}\n'.format(k, v)
     if taxa and keywords['taxa']:
@@ -344,7 +349,8 @@ def wl2qlc(
     if scorer and 'scorer' not in keywords['ignore']:
         out += '\n# SCORER\n' + scorer
 
-    out += '\n# DATA\nID\t' + '\t'.join(header) + '\n'
+    out += '\n# DATA\n' if keywords['prettify'] else '' 
+    out += 'ID\t'+'\t'.join(header) + '\n'
     
     # check for gloss in header to create nice output format
     if formatter in header:
@@ -370,7 +376,7 @@ def wl2qlc(
         # check for formatter
         if idx in range(len(line)):
             if line[idx] != formatter:
-                out += '#\n'
+                out += '#\n' if keywords['prettify'] else ''
                 formatter = line[idx]
 
         # add the key 

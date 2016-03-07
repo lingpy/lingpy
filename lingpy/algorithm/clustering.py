@@ -1,13 +1,6 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-10-07 14:05
-# modified : 2014-02-25 10:34
 """
 Module provides general clustering functions for LingPy.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-02-25"
 
 import logging
 from collections import defaultdict
@@ -382,9 +375,6 @@ def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
                 new_matrix,
                 [t for t in taxa if t != taxon]
                 )
-
-        if log.get_level() <= logging.INFO:
-            print(taxon,idx,clusters)
 
         for clr in clusters:
             for i,tA in enumerate(clusters[clr]):
@@ -865,9 +855,6 @@ def _interprete_matrix(
     """
     Look for attracting nodes in the matrix.
     """
-    if log.get_level() <= logging.DEBUG:
-        print(matrix)
-
     clusters = []
     flags = len(matrix) * [False]
     for i in range(len(matrix)):
@@ -1014,9 +1001,6 @@ def mcl(
     else:
         for i in range(len(imatrix)):
             imatrix[i][i] = add_self_loops(imatrix[:,i])
-
-    if log.get_level() <= logging.DEBUG:
-        print("[DEBUG]\n",imatrix)
 
     # normalize the matrix
     imatrix = _normalize_matrix(imatrix)

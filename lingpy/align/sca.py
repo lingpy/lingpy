@@ -1624,11 +1624,7 @@ def get_consensus(
                 leaf.Name = text_type(taxon_to_id[leaf.Name])
             newIndices = [taxon_to_id[text_type(taxon)] for taxon in taxa]
             tree = subGuideTree(tree,newIndices)
-            #indexMap = dict({(newIndices[taxa[i]],i) for i in range(len(taxa))})
-            #for leaf in tree.tips():
-            #    leaf.Name = text_type(indexMap[int(leaf.Name)])
         #otherwise, the leaves of the guide trees are expected to have integer IDs
-        #print("\nWrite partial alignments and sizes into the tree:")
         for node in tree.postorder():
             if node.isTip():
                 node.alignment = [matrix[int(node.Name)]]
@@ -1636,9 +1632,6 @@ def get_consensus(
             else:
                 node.alignment = node.Children[0].alignment + node.Children[1].alignment
                 node.size = node.Children[0].size + node.Children[1].size
-        #for node in tree.postorder():
-        #    print text_type(node.Name) + ": (" + str(node.size) + ") " + str(node.alignment)
-        #print("\nCompute phoneme distribution at each position of the alignment:")
         for node in tree.postorder():
             node.distribution = []
         for i in range (0,len(matrix[0])):
@@ -1657,10 +1650,7 @@ def get_consensus(
                             value += child2.size * child2.distribution[i][phoneme]
                         value /= node.size
                         node.distribution[i][phoneme] = value
-        #for node in tree.postorder():
-        #    print text_type(node.Name) + ": " + str(node.distribution)
         recon_alg = "sankoff_parsimony"
-        #print("\nReconstruct word forms at inner nodes by simplistic criteria:")
         for node in tree.postorder():
             node.reconstructed = []
         if recon_alg == "modified_consensus":
@@ -1754,10 +1744,8 @@ def get_consensus(
                                     if systematizationBonus:
                                         if hasattr(node.Children[0].orig, "best_replacements") and char + char1 in node.Children[0].orig.best_replacements.keys():
                                             bonusFactor1 /= 1 + node.Children[0].orig.best_replacements[char+char1] 
-                                            #print ("bonusFactor1: " + text_type(bonusFactor1))           
                                         if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
                                             bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char+char2]
-                                            #print ("bonusFactor2: " + text_type(bonusFactor2))   
                                     if distributionBonus:
                                         bonusFactor1 /= node.distribution[i][char]
                                         bonusFactor2 /= node.distribution[i][char]
@@ -1788,16 +1776,13 @@ def get_consensus(
                                         node.Children[0].orig.best_replacements[char + char1] = 1
                                     else:
                                         node.Children[0].orig.best_replacements[char + char1] += 1
-                                    #print(node.Children[0].orig.best_replacements)
                                 minValue2 = min(node.Children[1].sankoffTable[i].values())
                                 for char2 in [key for key in node.Children[1].sankoffTable[i].keys() if node.Children[1].sankoffTable[i][key]==minValue2]:
                                     if char + char2 not in node.Children[1].orig.best_replacements.keys():
                                         node.Children[1].orig.best_replacements[char + char2] = 1
                                     else:
                                         node.Children[1].orig.best_replacements[char + char2] += 1
-                                    #print(node.Children[1].orig.best_replacements)
                 #read out the backpointers for an optimal reconstruction
-                #print(text_type(tree.sankoffTable[i]))
                 minValue = min(tree.sankoffTable[i].values())
                 minKeys = [key for key in tree.sankoffTable[i].keys() if tree.sankoffTable[i][key]==minValue]
                 reconChar = minKeys[0]
@@ -1810,7 +1795,6 @@ def get_consensus(
                 reconstruct_by_sankoff(tree, reconChar)
         else:
             log.error("Unknown reconstruction method: " + recon_alg)
-        #printTree(tree,0,names=[germanicNameTable[lang] for lang in cognateLangs], field="reconstructed", func="".join)
         cons = "".join(tree.reconstructed)
 
     return cons if gaps else [c for c in cons if c != '-'] #cons.replace('-','')

@@ -1083,7 +1083,7 @@ def plot_heatmap(
                     try:
                         shared = shared / slots
                     except ZeroDivisionError:
-                        print(shared,slots,len(cogsA),len(cogsB),taxonA,taxonB)
+                        log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
                         shared = 0.0
 
                 matrix[i][j] = shared
@@ -1137,7 +1137,7 @@ def plot_heatmap(
                     try:
                         shared = shared / slots
                     except ZeroDivisionError:
-                        print(shared,slots,len(cogsA),len(cogsB),taxonA,taxonB)
+                        log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
                         shared = 0.0
 
                 matrix[i][j] = shared

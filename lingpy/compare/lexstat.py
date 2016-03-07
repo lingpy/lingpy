@@ -44,9 +44,8 @@ def _check_tokens(key_and_tokens):
                 elif '0' in sonars:
                     yield (key, "bad character in tokens at «{0}»".format(
                         line[sonars.index('0')]), line)
-            except ValueError:
+            except ValueError or IndexError:
                 yield (key, "sound-class conversion failed", line)
-
 
 def charstring(id_, char='X', cls='-'):
     return '{0}.{1}.{2}'.format(id_, char, cls)
@@ -104,6 +103,22 @@ class LexStat(Wordlist):
         * ``V`` for all vowels,
         * ``T`` for all tones, and
         * ``_`` for word-breaks.
+
+        Make sure to check also the "vowel" keyword when initialising a LexStat
+        object, since the symbols you use for vowels and tones should be
+        identical with the ones you define in your transform dictionary.
+
+    vowels : str (default="VT_")
+        For scoring function creation using the
+        ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
+        possibility to use reduced scores for the matching of tones and vowels
+        by modifying the "vscale" parameter, which is set to 0.5 as a default.
+        In order to make sure that vowels and tones are properly detected, make
+        sure your prosodic string representation of vowels matches the one in
+        this keyword. Thus, if you change the prosodic strings using the
+        "transform" keyword, you also need to change the vowel string, to make
+        sure that "vscale" works as wanted in the
+        ~lingpy.compare.lexstat.LexStat.get_scorer function.
 
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
@@ -214,6 +229,7 @@ class LexStat(Wordlist):
                 "langid,classes,prostrings",
                 lambda x, y: [charstring(x[y[0]], a, self._transform[b])
                               for a, b in zip(x[y[1]], x[y[2]])])
+
         # check for weights
         if "weights" not in self.header:
             self.add_entries("weights", "prostrings", lambda x: prosodic_weights(x))
@@ -222,6 +238,13 @@ class LexStat(Wordlist):
         # first, check for item 'words' in data, if this is not given, create it
         if 'ipa' not in self.header:
             self.add_entries('ipa', 'tokens', lambda x: ''.join(x))
+
+        # add information regarding vowels in the data based on the
+        # transformation, which is important for the calculation of the
+        # v-scale in lexstat.get_scorer
+        if not 'vowels' in self._meta:
+            self._meta['vowels'] = ' '.join(sorted(set([self._transform[v] for v
+                in 'XYZT_']))) if hasattr(self, '_transform') else 'VT_'
 
         if "duplicates" not in self.header:
             duplicates = {}
@@ -247,6 +270,13 @@ class LexStat(Wordlist):
             self.rchars = sorted(set(char.split('.', 1)[1] for char in self.chars))
             self.chars = sorted(self.chars) \
                 + [charstring(i + 1) for i in range(self.width)]
+            if not self.chars:
+                raise ValueError("Your input data does not contain any entries!")
+            self.bad_chars = [char for char in self.chars if char[2] == '0']
+            if len(self.bad_chars) / len(self.chars) > rcParams['lexstat_bad_chars_limit']:
+                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by LingPy. You should re-load with check=True!".format(
+                        100 * len(self.bad_chars) / len(self.chars)))
+            
 
         if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
@@ -355,7 +385,7 @@ class LexStat(Wordlist):
             preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
             ref='scaid',
             restricted_chars=rcParams['restricted_chars'],
-            threshold=rcParams['lexstat_threshold'],
+            threshold=rcParams['lexstat_scoring_threshold'],
             subset=False)
         kw.update(keywords)
 
@@ -380,26 +410,20 @@ class LexStat(Wordlist):
 
                 corrdist[tA, tB] = defaultdict(float)
                 for mode, gop, scale in kw['modes']:
-                    # XXX this is where we should add the new function for
-                    # subsets of swadesh lists XXX
-                    # this can be easily done by first checking for a
-                    # sublist parameter and then getting all the numbers in
-                    # a temporary variable "pairs" for all cases where this
-                    # subset is defined, all that needs to be done is to
-                    # provide an extra function that creates a
-                    # subset-variable or hash in which for all language
-                    # pairs the subset is defined.
                     pairs = self.pairs[tA, tB]
                     if kw['subset']:
                         pairs = [pair for pair in pairs if pair in self.subsets[tA, tB]]
-
+                    
+                    # threshold and preprocessing, make sure threshold is
+                    # different from pre-processing threshold when
+                    # preprocessing is set to false
                     if kw['preprocessing']:
                         pairs = [pair for pair in pairs
                                  if self[pair, kw['ref']][0] == self[pair, kw['ref']][1]]
                         threshold = 10.0
                     else:
-                        threshold = kw['preprocessing_threshold']
-
+                        threshold = kw['threshold']
+                        
                     corrs, self._included[tA, tB] = calign.corrdist(
                         threshold,
                         [self[pair, "numbers"] for pair in pairs],
@@ -419,7 +443,7 @@ class LexStat(Wordlist):
                             a = charstring(i + 1)
                         elif b == '-':
                             b = charstring(j + 1)
-                        corrdist[tA, tB][a, b] += d / len(kw['modes'])
+                        corrdist[tA, tB][a, b] += d / float(len(kw['modes']))
 
         return corrdist
 
@@ -620,7 +644,7 @@ class LexStat(Wordlist):
             ratio=rcParams['lexstat_ratio'],
             vscale=rcParams['lexstat_vscale'],
             runs=rcParams['lexstat_runs'],
-            threshold=rcParams['lexstat_threshold'],
+            threshold=rcParams['lexstat_scoring_threshold'],
             modes=rcParams['lexstat_modes'],
             factor=rcParams['align_factor'],
             restricted_chars=rcParams['restricted_chars'],
@@ -644,7 +668,8 @@ class LexStat(Wordlist):
             ratio=kw['ratio'],
             vscale=kw['vscale'],
             runs=kw['runs'],
-            threshold=kw['preprocessing_threshold'],
+            scoring_threshold = kw['threshold'],
+            preprocessing_threshold=kw['preprocessing_threshold'],
             modestring=':'.join(
                 '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in kw['modes']),
             factor=kw['factor'],
@@ -658,12 +683,13 @@ class LexStat(Wordlist):
                 '{ratio[0]}:{ratio[1]}'
                 '{vscale:.2f}',
                 '{runs}',
-                '{threshold:.2f}',
+                '{scoring_threshold:.2f}',
                 '{modestring}',
                 '{factor:.2f}',
                 '{restricted_chars}',
                 '{method}',
-                '{preprocessing}'
+                '{preprocessing}',
+                '{preprocessing_threshold}'
             ]).format(**params)
 
         # check for existing attributes
@@ -739,7 +765,7 @@ class LexStat(Wordlist):
                     idxB = char_dict[charB]
 
                     # use the vowel scale
-                    if charA[4] in 'XYZT_' and charB[4] in 'XYZT_':
+                    if charA[4] in self.vowels and charB[4] in self.vowels:
                         matrix[idxA][idxB] = matrix[idxB][idxA] = kw['vscale'] * rscore
                     else:
                         matrix[idxA][idxB] = matrix[idxB][idxA] = rscore
@@ -912,7 +938,7 @@ class LexStat(Wordlist):
                 return
 
             # define the function with help of lambda
-            function = lambda idxA, idxy: calign.align_pair(
+            function = lambda idxA, idxB: calign.align_pair(
                 self[idxA, 'numbers'],
                 self[idxB, 'numbers'],
                 [self.cscorer[charstring(self[idxB, 'langid']), n]

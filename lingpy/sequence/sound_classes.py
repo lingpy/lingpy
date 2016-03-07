@@ -10,6 +10,7 @@ Module provides various methods for the handling of sound classes.
 
 # lingpy imports
 import re
+from .. import log
 from ..settings import rcParams
 from ..data.ipa.sampa import reXS,xs
 
@@ -666,8 +667,6 @@ def tokens2class(
     
     out = []
     for token in tstring:
-        if not token:
-            raise ValueError("[i] String {0} contains an empty token!".format(tstring))
         try:
             out.append(model[token])
         except KeyError:
@@ -676,7 +675,7 @@ def tokens2class(
             except KeyError:
                 # check for stressed syllables
                 if len(token) > 0:
-                    if token[0] in kw['stress']:
+                    if token[0] in kw['stress'] and len(token) > 1:
                         try:
                             out.append(model[token[1:]])
                         except KeyError:
@@ -871,12 +870,10 @@ def prosodic_string(
 
         # dummy for other stuff
         else:
-            print("[i] Warning, condition not met in conversion.")
-            print(sstring)
-            print(pstring)
-            print(a,b,c)
-            input("[i] Press the Any-Key to carry on.")
-            pstring += '?'
+            raise ValueError("Conversion to prosodic string failed due to a condition which was not defined in the convertion, for details compare the numerical string {0} with the profile string {1}".format(
+                sstring,
+                pstring
+                ))
     
     if _output == 'cv':
         conv = {
@@ -1195,18 +1192,14 @@ def pid(
         try:
             return idn_pos / (aln_pos + int_gps)
         except ZeroDivisionError:
-            #print('\t'.join(almA))
-            #print('\t'.join(almB))
-            #print('-----')
+            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 1: 
         try:
             return idn_pos / aln_pos
         except ZeroDivisionError:
-            #print('\t'.join(almA))
-            #print('\t'.join(almB))
-            #print('-----')
+            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 3:
@@ -1221,9 +1214,7 @@ def pid(
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            #print('\t'.join(strA))
-            #print('\t'.join(strB))
-            #print('-----')
+            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 4:
@@ -1238,9 +1229,7 @@ def pid(
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            print('\t'.join(almA))
-            print('\t'.join(almB))
-            print('-----')
+            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 5:
@@ -1279,7 +1268,7 @@ def check_tokens(tokens,**keywords):
     
     return errors
 
-def get_all_ngrams(sequence):
+def get_all_ngrams(sequence, sort=False):
     """
     Function returns all possible n-grams of a given sequence.
 
@@ -1326,8 +1315,10 @@ def get_all_ngrams(sequence):
         # increment i and decrement l
         i += 1
         l -= 1
+    
+    sort = sort or list
 
-    return sorted(out,key=lambda x:len(x),reverse=True)
+    return sort(out)
 
 def sampa2uni(seq):
     """

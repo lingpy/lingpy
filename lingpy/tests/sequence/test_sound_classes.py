@@ -76,7 +76,7 @@ def test_tokens2class():
 
     assert tokens2class(seq, 'dolgo') == list('TVKTVR000')
 
-    assert_raises(ValueError, tokens2class, 'b  l'.split(' '), 'dolgo')
+    assert_raises(IndexError, tokens2class, 'b  l'.split(' '), 'dolgo')
 
 def test_prosodic_string():
 

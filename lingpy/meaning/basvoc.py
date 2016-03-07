@@ -142,7 +142,7 @@ class BasVoc(QLCParserWithRowsAndCols):
                 pass
 
             if row not in self.rows:
-                print("[!] The row you selected is not available!")
+                raise ValueError("The row {0} you selected is not available!".format(row))
             else:
                 data = self._dict[row]
                 if not entry:
@@ -168,7 +168,7 @@ class BasVoc(QLCParserWithRowsAndCols):
                 pass
 
             if col not in self.cols:
-                print("[!] The column you selected is not available!")
+                raise ValueError("[!] The column you selected is not available!")
             else:
                 data = {}
                 for i,j in  [(self[i][self._rowIdx],i) for 
@@ -196,7 +196,7 @@ class BasVoc(QLCParserWithRowsAndCols):
                 return entries
     
         elif row and col:
-            print("[!] You should specify only a value for row or for col!")
+            raise ValueError("[!] You should specify only a value for row or for col!")
         else:
             for key in [k for k in keywords if k in self._alias]:
                 if self._alias[key] == self._col_name:
@@ -216,7 +216,7 @@ class BasVoc(QLCParserWithRowsAndCols):
                     return entries
 
 
-            print("[!] Neither rows nor columns are selected!")
+            raise ValueError("[!] Neither rows nor columns are selected!")
 
     def get_list(self, swadlist, *entries):
         """

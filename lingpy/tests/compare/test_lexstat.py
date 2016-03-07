@@ -3,11 +3,10 @@ import os
 import sys
 
 from mock import patch, Mock
-
-from lingpy import LexStat
+from nose.tools import assert_raises
+from lingpy import LexStat, rc
 from lingpy.util import jsonload
 from lingpy.tests.util import test_data, WithTempDir, get_log
-
 
 class TestLexStat(WithTempDir):
     def setUp(self):
@@ -17,12 +16,16 @@ class TestLexStat(WithTempDir):
         self.get_scorer_kw = dict(runs=10, rands=10, limit=100)
 
     def test_init(self):
-        LexStat({0: ['ID', 'doculect', 'concept', 'IPA']}, model='sca')
-        ls = LexStat({0: ['ID', 'doculect', 'concept', 'IPA']})
+        LexStat({0: ['ID', 'doculect', 'concept', 'IPA'],
+            1: ['1', 'deu', 'hand', 'hant']}, model='sca')
+        ls = LexStat({0: ['ID', 'doculect', 'concept', 'IPA'],
+            1: ['1', 'deu', 'hand', 'hant']})
         self.assertIn('lexstat', repr(ls))
         LexStat(ls)
-        LexStat({0: ['ID', 'doculect', 'concept', 'tokens']})
-        self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect', 'concept']})
+        LexStat({0: ['ID', 'doculect', 'concept', 'tokens'], 
+            1: ['1', 'deu', 'hand', 'hant']})
+        self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect',
+            'concept'], 1: ['1', 'deu', 'hand']})
         LexStat(test_data('phybo.qlc'), check=True)
         with patch('lingpy.compare.lexstat.log', self.log):
             LexStat(test_data('KSL.qlc'), check=True)
@@ -57,6 +60,13 @@ class TestLexStat(WithTempDir):
                     ovalues = set(tuple(v) for v in obj['---'.join(key)])
                     if name != 'pairs':
                         self.assertEquals(values, ovalues)
+    
+    def test_init3(self): # with kw check=True
+        
+        assert_raises(ValueError, LexStat, test_data('bad_file.tsv'))
+        assert hasattr(LexStat(test_data('bad_file.tsv'), check=True,
+                apply_checks=True), 'errors')
+        assert_raises(ValueError, LexStat, {0:['concept', 'language', 'ipa']})
 
     def test_getitem(self):
         self.assertIsNone(self.lex['xyz'])
@@ -133,10 +143,10 @@ class TestLexStat(WithTempDir):
             1: ['1', 'deu', 'hand', 'hand'],
             2: ['2', 'eng', 'hand', 'hand'],
             3: ['3', 'xyz', 'hand', 'xyz']})
-        lex.get_scorer(**self.get_scorer_kw)
-        lex.cluster(ref='cogid')
-        self.assertEquals(lex.get_entries('cogid'), [[1, 1, 3]])
-
+        lex.cluster(ref='cogid', method='sca', threshod=0.5)
+        self.assertEquals(lex[1,'cogid'], lex[2, 'cogid'])
+        
+        rc(schema='asjp')
         lex = LexStat({
             0: ['ID', 'concept', 'ipa', 'doculect'],
             1: ['5424', 'Abend::N', 'swar', 'FRA'],
@@ -147,6 +157,6 @@ class TestLexStat(WithTempDir):
             6: ['5429', 'Abend::N', 'tardi5a', 'POR'],
             7: ['5430', 'Abend::N', 'afd3n', 'DAN'],
         })
-        lex.get_scorer()
-        lex.cluster(method='lexstat', threshold=0.8, ref='cogid')
-        self.assertEquals(lex.get_entries('cogid'), [[1, 2, 3, 4, 5], [0, 0, 3, 3, 0]])
+        lex.cluster(method='sca', threshold=0.5, ref='cogid')
+        self.assertEquals(lex[1,'cogid'], lex[2,'cogid'], lex[3,'cogid'])
+        rc(schema='ipa')

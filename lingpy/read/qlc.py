@@ -309,7 +309,7 @@ def read_qlc(
                     if type(meta[key]) == list:
                         meta[key] += [value]
                     else:
-                        print("[WARNING] Key '{0}' in input file is not unique! Use JSON-format for these datatypes!".format(key))
+                        log.warn("Key '{0}' in input file is not unique! Use JSON-format for these datatypes!".format(key))
                         meta[key] = [meta[key]]
                         meta[key] += [value]
                         

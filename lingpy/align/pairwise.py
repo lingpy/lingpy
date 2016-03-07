@@ -3,17 +3,10 @@
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-05 17:50
-# modified : 2014-12-02 22:17
+
 """
 Module provides classes and functions for pairwise alignment analyses.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-12-02"
-
 # modules
 #from ..data import *
 from ..settings import rcParams

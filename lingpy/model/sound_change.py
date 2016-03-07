@@ -1,14 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-05-11 12:16
-# modified : 2014-05-11 12:16
 """
 Module provides functions for modeling sound change.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-05-11"
-
+from .. import log
 from ..algorithm import misc
 from ..sequence.sound_classes import bigrams, trigrams, pgrams, get_all_ngrams, class2tokens, ipa2tokens, prosodic_string
 from ..align.pairwise import nw_align, Pairwise, sw_align, pw_align
@@ -48,9 +41,6 @@ class SoundChanger(object):
                     not in gaps], **keywords)
                 pA = class2tokens(pA,almA)
                 progA = list(zip(almA,pA))
-                #progA = pgrams([almA[i] for i in range(len(almA)) if i not in
-                #    gaps],**keywords)
-
                 progB = pgrams(almB,**keywords)
 
             elif mode == 'simple':
@@ -61,7 +51,6 @@ class SoundChanger(object):
                 progA = bigrams(almA)
                 progB = bigrams(almB)
 
-            
             # zip source and target
             zips = list(zip(progA,progB))
 
@@ -74,12 +63,7 @@ class SoundChanger(object):
                 # get upper and lower
                 upper = tuple([g[0] for g in ngram if g[0][0] != '-'])
                 lower = tuple([g[1] for g in ngram if g[1][0] != '-'])
-
-                # backup for pgrams
-                #if mode == 'pgrams':
-                #    upper = tuple(pgrams(ipa2tokens([g[0] for g in upper]),
-                #        **keywords))
-
+                
                 # append to ngrams dictionary
                 try:
                     self.ngrams[upper,lower] += 1
@@ -133,7 +117,7 @@ class SoundChanger(object):
                     else:
                         self.trivials += [source]
         
-    def _split_string(self, sequence, debug=False):
+    def _split_string(self, sequence):
         """
         Dynamic-programming approach to splitting all input strings into substrings which have unique counterparts in the target language.
         """
@@ -142,8 +126,7 @@ class SoundChanger(object):
         while queue:
 
             current,idx = queue.pop(0)
-            if debug:
-                print(idx, current, current in self.trivials)
+            if log.debug(idx, current, current in self.trivials)
 
             if idx == len(sequence)-1:
                 if current in self.trivials:
@@ -180,8 +163,7 @@ class SoundChanger(object):
 
             current,idx,outseq = queue.pop(0)
 
-            if debug:
-                print(idx,current,outseq,current in self.trivials)
+            if log.debug(idx,current,outseq,current in self.trivials)
 
             if idx == len(seq) -1:
                 if current in self.trivials:

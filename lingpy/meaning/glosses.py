@@ -283,7 +283,6 @@ def compare_conceptlists(list1, list2, output='', match=None,
     # make sure to raise if 'gloss' is not in the headers
     if (not defaults["gloss"] in baseh and not defaults["gloss"] in comph) or \
             (not defaults["number"] in baseh and not defaults["number"] in comph):
-        print(baseh,comph,keywords['gloss'])
         raise ValueError(
                 "[!] There is no field for '{0}' or '{1}'".format(
                     keywords['gloss'], 
@@ -429,9 +428,8 @@ def compare_conceptlists(list1, list2, output='', match=None,
         
         out = [txt[0]] + sorted(
                 txt[1:],
-                key = lambda x: x.strip()[-1]
+                key = lambda x: x[x.index('\t')]
                 )
-
         write_text_file(filename, ''.join(out))
 
     if debug:
