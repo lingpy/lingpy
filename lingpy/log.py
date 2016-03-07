@@ -1,6 +1,7 @@
 """Logging utilities"""
 from __future__ import unicode_literals, print_function, absolute_import, division
 import os
+import sys
 import logging
 from logging.config import fileConfig
 from tempfile import NamedTemporaryFile
@@ -66,18 +67,22 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
     if _logger is None or force_default_config or test:
         _logger = logging.getLogger('lingpy')
         _logger.addFilter(CustomFilter())
-        cfg = Config('logging', default=LOGGING, config_dir=config_dir)
-        remove = False
-        if cfg.path.exists() and not force_default_config:
-            fname = text_type(cfg.path)
+        testing = len(sys.argv) and sys.argv[0].endswith('nosetests')
+        if not (force_default_config or test) and testing:
+            _logger.setLevel(logging.CRITICAL)
         else:
-            with NamedTemporaryFile(delete=False) as fp:
-                fp.write(LOGGING.encode('utf8'))
-                fname = fp.name
-                remove = True
-        fileConfig(fname, disable_existing_loggers=False)
-        if remove:
-            os.remove(fname)
+            cfg = Config('logging', default=LOGGING, config_dir=config_dir)
+            remove = False
+            if cfg.path.exists() and not force_default_config:
+                fname = text_type(cfg.path)
+            else:
+                with NamedTemporaryFile(delete=False) as fp:
+                    fp.write(LOGGING.encode('utf8'))
+                    fname = fp.name
+                    remove = True
+            fileConfig(fname, disable_existing_loggers=False)
+            if remove:
+                os.remove(fname)
     return _logger
 
 

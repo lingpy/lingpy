@@ -57,7 +57,6 @@ def test_ipa2tokens():
 
     tokens = csv2list(test_data('test_tokenization_nasals.tsv'))
     for a,b in tokens:
-        print(tks)
         tks = ' '.join(ipa2tokens(a, merge_vowels=True, merge_geminates=True,
             expand_nasals=True, semi_diacritics='h'))
         assert tks == b
@@ -144,10 +143,7 @@ def test_trigrams():
     assert trigrams('ab')[0] == ('#', '#' ,'a') and trigrams('ab')[-1] == ('b','$', '$')
 
 def test_fourgrams():
-    
     f = fourgrams('ab')
-    print(f)
-
     assert f[0] == ('#','#','#','a')
     assert f[-1] == ('b','$','$','$')
 

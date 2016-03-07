@@ -1,6 +1,6 @@
 from __future__ import print_function, division, unicode_literals
 import os
-import sys
+from pathlib import Path
 
 from mock import patch, Mock
 from nose.tools import assert_raises
@@ -8,37 +8,45 @@ from lingpy import LexStat, rc
 from lingpy.util import jsonload
 from lingpy.tests.util import test_data, WithTempDir, get_log
 
+
 class TestLexStat(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
-        self.lex = LexStat(test_data('KSL.qlc'))
+        self.lex = self._make_one(test_data('KSL.qlc'))
         self.log = get_log()
         self.get_scorer_kw = dict(runs=10, rands=10, limit=100)
 
+    def _make_one(self, *args, **kw):
+        kw.setdefault('errors', self.tmp_path('errors.log').as_posix())
+        return LexStat(*args, **kw)
+
     def test_init(self):
-        LexStat({0: ['ID', 'doculect', 'concept', 'IPA'],
+        self._make_one({0: ['ID', 'doculect', 'concept', 'IPA'],
             1: ['1', 'deu', 'hand', 'hant']}, model='sca')
-        ls = LexStat({0: ['ID', 'doculect', 'concept', 'IPA'],
+        ls = self._make_one({0: ['ID', 'doculect', 'concept', 'IPA'],
             1: ['1', 'deu', 'hand', 'hant']})
         self.assertIn('lexstat', repr(ls))
-        LexStat(ls)
-        LexStat({0: ['ID', 'doculect', 'concept', 'tokens'], 
+        self._make_one(ls)
+        self._make_one({0: ['ID', 'doculect', 'concept', 'tokens'],
             1: ['1', 'deu', 'hand', 'hant']})
         self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect',
             'concept'], 1: ['1', 'deu', 'hand']})
-        LexStat(test_data('phybo.qlc'), check=True)
+        self._make_one(test_data('phybo.qlc'), check=True)
         with patch('lingpy.compare.lexstat.log', self.log):
-            LexStat(test_data('KSL.qlc'), check=True)
+            self._make_one(test_data('KSL.qlc'), check=True)
             assert self.log.info.called
         error_log = self.tmp_path('errors')
         with patch('lingpy.util.confirm', Mock(return_value=True)):
-            lex = LexStat({
+            lex = self._make_one({
                 0: ['ID', 'doculect', 'concept', 'IPA', 'tokens'],
                 1: ['1', 'deu', 'hand', 'hand', ['']],
                 2: ['2', 'eng', 'hand', 'hand', ['abc']],
                 3: ['3', 'xyz', 'hand', 'hund', 'h u n d'],
             }, check=True, errors='%s' % error_log)
             assert error_log.exists()
+            self.assertTrue(lex.filename.endswith('_cleaned.qlc'))
+            self.assertTrue(os.path.exists(lex.filename))
+            os.remove(lex.filename)
             self.assertEquals(len(lex._meta['errors']), 2)
 
     def test_init2(self):
@@ -62,10 +70,13 @@ class TestLexStat(WithTempDir):
                         self.assertEquals(values, ovalues)
     
     def test_init3(self): # with kw check=True
-        
-        assert_raises(ValueError, LexStat, test_data('bad_file.tsv'))
-        assert hasattr(LexStat(test_data('bad_file.tsv'), check=True,
-                apply_checks=True), 'errors')
+        bad_file = Path(test_data('bad_file.tsv'))
+        assert_raises(ValueError, LexStat, bad_file.as_posix())
+        ls = self._make_one(bad_file.as_posix(), check=True, apply_checks=True)
+        assert hasattr(ls, 'errors')
+        cleaned = bad_file.parent.joinpath(bad_file.name + '_cleaned.qlc')
+        self.assertTrue(cleaned.exists())
+        os.remove(cleaned.as_posix())
         assert_raises(ValueError, LexStat, {0:['concept', 'language', 'ipa']})
 
     def test_getitem(self):
@@ -138,7 +149,7 @@ class TestLexStat(WithTempDir):
         self.lex.output('scorer', filename='%s' % self.tmp_path('test_lexstat'))
 
     def test_correctness(self):
-        lex = LexStat({
+        lex = self._make_one({
             0: ['ID', 'doculect', 'concept', 'IPA'],
             1: ['1', 'deu', 'hand', 'hand'],
             2: ['2', 'eng', 'hand', 'hand'],
@@ -147,7 +158,7 @@ class TestLexStat(WithTempDir):
         self.assertEquals(lex[1,'cogid'], lex[2, 'cogid'])
         
         rc(schema='asjp')
-        lex = LexStat({
+        lex = self._make_one({
             0: ['ID', 'concept', 'ipa', 'doculect'],
             1: ['5424', 'Abend::N', 'swar', 'FRA'],
             2: ['5425', 'Abend::N', 'sware', 'FRA'],
