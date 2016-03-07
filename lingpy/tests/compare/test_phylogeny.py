@@ -80,6 +80,7 @@ class TestPhyBo(WithTempDir):
         glm = list(phy.stats.keys())[0]
         phy.get_stats(glm)
 
+    @patch('lingpy.compare.phylogeny.mpl', new=MagicMock())
     @patch('lingpy.compare.phylogeny.gls2gml', new=MagicMock())
     @patch('lingpy.compare.phylogeny.plot_tree', new=MagicMock())
     @patch('lingpy.compare.phylogeny.bmp', new=Bmp())
