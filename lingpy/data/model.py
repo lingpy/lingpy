@@ -1,14 +1,6 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-06 23:14
-# modified : 2014-11-10 09:57
 """
 Module for handling sequence models.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-11-10"
-
 import re
 from pickle import load
 import os

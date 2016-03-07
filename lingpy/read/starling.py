@@ -4,8 +4,8 @@ Basic parser for Starling data.
 from __future__ import unicode_literals, division, print_function
 
 from .csv import csv2list
-from lingpy import log
-from lingpy.util import identity
+from .. import log
+from ..util import identity
 
 
 def star2qlc(filename, clean_taxnames=False, debug=False):
@@ -76,8 +76,8 @@ def star2qlc(filename, clean_taxnames=False, debug=False):
             cognate_sets = []
             current_concept = gloss
         else:
-            if debug:
-                print(gloss, current_concept, cognate_counter)
+            log.debug('starling, indices (%s, %s, %s)' % (gloss,
+                current_concept, cognate_counter))
 
         for i in range(lngIdx, len(header), 2):
             word = line[i]

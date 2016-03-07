@@ -385,7 +385,7 @@ class LexStat(Wordlist):
             preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
             ref='scaid',
             restricted_chars=rcParams['restricted_chars'],
-            threshold=rcParams['lexstat_threshold'],
+            threshold=rcParams['lexstat_scoring_threshold'],
             subset=False)
         kw.update(keywords)
 
@@ -644,7 +644,7 @@ class LexStat(Wordlist):
             ratio=rcParams['lexstat_ratio'],
             vscale=rcParams['lexstat_vscale'],
             runs=rcParams['lexstat_runs'],
-            threshold=rcParams['lexstat_threshold'],
+            threshold=rcParams['lexstat_scoring_threshold'],
             modes=rcParams['lexstat_modes'],
             factor=rcParams['align_factor'],
             restricted_chars=rcParams['restricted_chars'],
@@ -668,7 +668,7 @@ class LexStat(Wordlist):
             ratio=kw['ratio'],
             vscale=kw['vscale'],
             runs=kw['runs'],
-            threshold = kw['threshold'],
+            scoring_threshold = kw['threshold'],
             preprocessing_threshold=kw['preprocessing_threshold'],
             modestring=':'.join(
                 '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in kw['modes']),
@@ -683,7 +683,7 @@ class LexStat(Wordlist):
                 '{ratio[0]}:{ratio[1]}'
                 '{vscale:.2f}',
                 '{runs}',
-                '{threshold:.2f}',
+                '{scoring_threshold:.2f}',
                 '{modestring}',
                 '{factor:.2f}',
                 '{restricted_chars}',

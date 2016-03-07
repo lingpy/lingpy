@@ -72,7 +72,6 @@ class MCBasic(object):
             if nextS == '$':
                 break
             
-            #print(out)
             out += [nextS]
             i += 1
 
@@ -205,7 +204,6 @@ class MCPhon(MCBasic):
         else:
             teststring = list(zip(prostring,tokens))
 
-        print(teststring)
         scores = []
 
         while len(teststring) > 0:

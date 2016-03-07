@@ -228,8 +228,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                 return self._cache[key, entry]
 
             if key not in getattr(self, attr + 's'):
-                print("[!] The {0} you selected is not available!".format(attr))
-                return
+                raise ValueError("[!] The {0} you selected is not available!".format(attr))
 
         if row:
             entries = self._dict[row]
@@ -261,7 +260,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             if self._alias[key] == self._row_name:
                 return self.get_dict(row=keywords[key], entry=entry)
 
-        print("[!] Neither rows nor columns are selected!")
+        raise ValueError("[!] Neither rows nor columns are selected!")
 
     def get_list(
             self,
@@ -358,7 +357,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
             # otherwise, start searching
             if row not in self.rows:
-                print("[!] The row you selected is not available.")
+                raise ValueError("[!] The row {0} you selected is not available.".format(row))
             else:
                 # first, get the row ids
                 data = self._array[self._idx[row]]
@@ -403,7 +402,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                 pass
 
             if col not in self.cols:
-                print("[!] The column you selected is not available!")
+                raise ValueError("[!] The column {0} you selected is not available!".format(col))
                 return
             else:
                 data = self._array[:,self.cols.index(col)]
@@ -432,7 +431,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             return entries
         
         elif row and col:
-            print("[!] You should specify only a value for row or for col!")
+            raise ValueError("[!] You should specify only one value for either row or for col!")
         else:
             for key in [k for k in keywords if k in self._alias]:
                 if self._alias[key] == self._col_name:
@@ -453,8 +452,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                     self._cache[col,entry,flat] = entries
                     return entries
 
-            print("[!] Neither rows nor columns are selected!")
-            return 
+            raise ValueError("[!] Neither rows nor columns are selected!")
 
     def get_etymdict(
             self,
@@ -793,8 +791,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             # get the data
             out = {}
             for key, line in self._data.items():
-                if log.get_level() <= logging.DEBUG:
-                    print(key)
+                log.debug(key)
 
                 if rows:
                     if eval(" and ".join(stmts)):

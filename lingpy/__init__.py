@@ -21,7 +21,9 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 """
 
 __author__="Johann-Mattis List, Robert Forkel (with contributions by Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, Peter Bouda, and Simon Greenhill)"
-__date__="2015-11-18"
+__date__="2016-28-02"
+__version__ = "2.4.1-alpha"
+
 
 # import settings
 from .settings import rc
