@@ -14,7 +14,7 @@ from six import text_type, PY3
 from six.moves import input
 
 import lingpy
-from lingpy.log import get_logger, get_level, file_written
+from lingpy.log import get_level, file_written
 from lingpy.settings import rcParams
 
 

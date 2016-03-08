@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
-from .util import WithTempDir
-from .. import util
+from lingpy.tests.util import WithTempDir
+from lingpy import util
 
 
 class Test(WithTempDir):
@@ -10,16 +10,18 @@ class Test(WithTempDir):
             for i in range(n):
                 yield 'line%s' % i
 
-        util.write_text_file('test', 'test')
-        self.assertEqual(util.read_text_file('test'), 'test')
+        path = self.tmp_path('test')
+        util.write_text_file(path, 'test')
+        self.assertEqual(util.read_text_file(path), 'test')
 
-        util.write_text_file('test', ['line1', 'line2'])
-        self.assertEqual(len(util.read_text_file('test', lines=True)), 2)
+        util.write_text_file(path, ['line1', 'line2'])
+        self.assertEqual(len(util.read_text_file(path, lines=True)), 2)
 
-        util.write_text_file('test', lines_generator(5))
-        self.assertEqual(len(util.read_text_file('test', lines=True)), 5)
+        util.write_text_file(path, lines_generator(5))
+        self.assertEqual(len(util.read_text_file(path, lines=True)), 5)
 
     def test_TextFile(self):
-        with util.TextFile('test') as fp:
+        path = self.tmp_path('test')
+        with util.TextFile(path) as fp:
             fp.writelines(['line1\n', 'line2\n'])
-        self.assertEqual(len(util.read_text_file('test', lines=True)), 2)
+        self.assertEqual(len(util.read_text_file(path, lines=True)), 2)
