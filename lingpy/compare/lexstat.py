@@ -649,7 +649,7 @@ class LexStat(Wordlist):
             factor=rcParams['align_factor'],
             restricted_chars=rcParams['restricted_chars'],
             force=False,
-            preprocessing=True,
+            preprocessing=False,
             rands=rcParams['lexstat_rands'],
             limit=rcParams['lexstat_limit'],
             cluster_method=rcParams['lexstat_cluster_method'],
