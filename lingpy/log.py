@@ -119,4 +119,6 @@ def deprecated(old, new):
 
 def missing_module(name, logger=None):
     logger = logger or get_logger()
-    logger.warn("Module '{0}' could not be loaded. Some methods may not work properly.".format(name))
+    logger.warn(
+        "Module '{0}' could not be loaded. Some methods may not work properly.".format(
+            name))

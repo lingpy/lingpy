@@ -541,7 +541,7 @@ class PhyBo(Wordlist):
 
     def _config(self):
         try:
-            return compat.jsonload(self.dataset + '.json')
+            return util.jsonload(self.dataset + '.json')
         except:
             return {}
 
