@@ -21,7 +21,7 @@ import os
 import sys
 
 from six import text_type
-
+from lingpy import __version__
 from ..read.qlc import read_msa, normalize_alignment, reduce_alignment
 from ..settings import rcParams
 from ..basic.wordlist import Wordlist
@@ -36,7 +36,6 @@ from ..algorithm import misc
 from ._align import confidence
 from .. import util
 from .. import log
-
 
 class MSA(Multiple):
     """
@@ -965,7 +964,7 @@ class Alignments(Wordlist):
                 self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
                 self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = m._sonority_consensus
                 self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
-                    m.dataset, m.seq_id, rcParams['timestamp'], params)
+                    m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
 
         self._msa2col(ref=kw['ref'])
 

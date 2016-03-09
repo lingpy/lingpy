@@ -1,13 +1,12 @@
 """
 Module for handling sequence models.
 """
+from __future__ import division, print_function, unicode_literals
 import re
-from pickle import load
 import os
-import codecs
 
-from .._settings import rcParams
-from ..log import *
+from lingpy._settings import rcParams
+from lingpy.log import *
 try:
     from .derive import compile_model, compile_dvt
 except ImportError:
