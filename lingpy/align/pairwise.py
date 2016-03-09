@@ -447,7 +447,12 @@ def nw_align(
     scorer : dict (default=False)
         If set to c{False} a scorer will automatically be calculated,
         otherwise, the scorer needs to be passed as a dictionary that covers
-        all segment matches between the input strings.
+        all segment matches between the input strings (segment matches need to
+        be passed as tuples of two segments, following the order of the input
+        sequences). Note also that the scorer can well be asymmetric, so you
+        could also use it for two completely different alphabets. All you need
+        to make sure is that the tuples representing the segment matches follow
+        the order of your input sequences.
     gap : int (default=-1)
         The gap penalty.
 
@@ -469,6 +474,40 @@ def nw_align(
     >>> setB = 'catfat'
     >>> nw_align(seqA,seqB)
     (['f', 'a', 't', ' ', 'c', 'a', 't'], ['c', 'a', 't', '-', 'f', 'a', 't'], 1)
+
+    Use your own scorer (make sure all characters are covered, or you use a
+    default dict).  We start with a scorer that is "normal", with identical symbols getting
+    identical scores:
+
+    >>> scorer = { ('a','a'): 1, ('a','b'):-1, ('b','a'):-1, ('b', 'b'): 1}
+    >>> seqA, seqB = 'abab', 'baba'
+    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+    a b a b -
+    - b a b a (sim=1)
+
+    Nothing unexpected so far, you could reach the same result without the
+    scorer. But now let's make a scorer that favors mismatches for our little
+    two-letter alphabet.
+
+    >>> scorer = { ('a','b'): 1, ('a','a'):-1, ('b','b'):-1, ('b', 'a'): 1}
+    >>> seqA, seqB = 'abab', 'baba'
+    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+    a b a b
+    b a b a (sim=4)
+
+    Now, let's analyse two strings which are completely different, but where we
+    use the scorer to define mappings between the segments. We simply do this
+    by using lower case letters in one and upper case letters in the other
+    case, which will, of course, be treated as different symbols in Python:
+
+    >>> scorer = { ('A','a'): 1, ('A','b'):-1, ('B','a'):-1, ('B', 'B'): 1}
+    >>> seqA, seqB = 'ABAB', 'aa'
+    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+    A B A B
+    a - a - (sim=0)
 
     """
     # check whether the sequences are tuples

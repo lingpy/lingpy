@@ -969,7 +969,9 @@ def plot_heatmap(
             tree_width = 0.2,
             height = 0.8,
             width = 0.8,
-            scale = 0.075
+            scale = 0.075,
+            vmax = 1.0,
+            vmin = 0.0
             )
     for k in defaults:
         if k not in keywords:
@@ -1018,14 +1020,11 @@ def plot_heatmap(
         d = sch.dendrogram(
                 np.array(tree_matrix),
                 labels = [t for t in taxa],
-                orientation = 'right',
+                orientation = 'left',
 
                 )
         taxa = d['ivl'][::-1]
         ax1.set_xticks([])
-        
-        #for i,ticks in enumerate(ax1.yaxis.iter_ticks()):
-        #    ticks[0].set(textsize=6) #mklb(taxa[i])+)
         ax1.set_yticks([])
     
         left = keywords['left']+keywords['scale'] * keywords['width']
@@ -1036,124 +1035,125 @@ def plot_heatmap(
 
     # start iterating over taxa in order of the reference tree and fill in the
     # matrix with numbers of shared cognates
-    for i,taxonA in enumerate(taxa):
-        for j,taxonB in enumerate(taxa):
-            if i < j:
-                if normalized in [False,"jaccard"]:
-                    cogsA = wordlist.get_list(
+    if keywords['matrix']:
+        matrix = keywords['matrix']
+    else:
+        for i,taxonA in enumerate(taxa):
+            for j,taxonB in enumerate(taxa):
+                if i < j:
+                    if normalized in [False,"jaccard"]:
+                        cogsA = wordlist.get_list(
+                                taxa = taxonA,
+                                flat = True,
+                                entry = ref
+                                )
+                        cogsB = wordlist.get_list(
+                                taxa = taxonB,
+                                flat = True,
+                                entry = ref
+                                )
+
+                        cogsA,cogsB = set(cogsA),set(cogsB)
+                        
+                        shared = len(cogsA.intersection(cogsB))
+
+                        if normalized:
+                            shared = shared / len(cogsA.union(cogsB))
+                    else:
+                        cogsA = wordlist.get_dict(
+                                taxa = taxonA,
+                                entry = ref
+                                )
+                        cogsB = wordlist.get_dict(
+                                taxa = taxonB,
+                                entry = ref
+                                )
+                        
+                        shared = 0
+                        slots = 0
+                        
+                        # iterate over cognate sets in meaning slots
+                        for key in cogsA.keys():
+                            # check whether keys are present, we follow the
+                            # STARLING procedure in ignoring missing data
+                            if key in cogsA and key in cogsB:
+                                
+                                # check for shared items
+                                if [k for k in cogsA[key] if k in cogsB[key]]:
+                                    shared += 1
+                                slots += 1
+                        try:
+                            shared = shared / slots
+                        except ZeroDivisionError:
+                            log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
+                            shared = 0.0
+
+                    matrix[i][j] = shared
+
+                    # if refB is also a possibiltiy
+                    if not refB:
+                        matrix[j][i] = shared
+                
+                elif i > j and refB:
+                    if normalized in [False,"jaccard"]:
+                        cogsA = wordlist.get_list(
+                                taxa = taxonA,
+                                flat = True,
+                                entry = refB
+                                )
+                        cogsB = wordlist.get_list(
+                                taxa = taxonB,
+                                flat = True,
+                                entry = refB
+                                )
+
+                        cogsA,cogsB = set(cogsA),set(cogsB)
+                        
+                        shared = len(cogsA.intersection(cogsB))
+
+                        if normalized:
+                            shared = shared / len(cogsA.union(cogsB))
+                    else:
+                        cogsA = wordlist.get_dict(
+                                taxa = taxonA,
+                                entry = refB
+                                )
+                        cogsB = wordlist.get_dict(
+                                taxa = taxonB,
+                                entry = refB
+                                )
+                        
+                        shared = 0
+                        slots = 0
+                        
+                        # iterate over cognate sets in meaning slots
+                        for key in cogsA.keys():
+                            # check whether keys are present, we follow the
+                            # STARLING procedure in ignoring missing data
+                            if key in cogsA and key in cogsB:
+                                
+                                # check for shared items
+                                if [k for k in cogsA[key] if k in cogsB[key]]:
+                                    shared += 1
+                                slots += 1
+                        try:
+                            shared = shared / slots
+                        except ZeroDivisionError:
+                            log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
+                            shared = 0.0
+
+                    matrix[i][j] = shared
+
+                elif i == j:
+                    cogs = wordlist.get_list(
                             taxa = taxonA,
                             flat = True,
                             entry = ref
                             )
-                    cogsB = wordlist.get_list(
-                            taxa = taxonB,
-                            flat = True,
-                            entry = ref
-                            )
-
-                    cogsA,cogsB = set(cogsA),set(cogsB)
-                    
-                    shared = len(cogsA.intersection(cogsB))
-
                     if normalized:
-                        shared = shared / len(cogsA.union(cogsB))
-                else:
-                    cogsA = wordlist.get_dict(
-                            taxa = taxonA,
-                            entry = ref
-                            )
-                    cogsB = wordlist.get_dict(
-                            taxa = taxonB,
-                            entry = ref
-                            )
-                    
-                    shared = 0
-                    slots = 0
-                    
-                    # iterate over cognate sets in meaning slots
-                    for key in cogsA.keys():
-                        # check whether keys are present, we follow the
-                        # STARLING procedure in ignoring missing data
-                        if key in cogsA and key in cogsB:
-                            
-                            # check for shared items
-                            if [k for k in cogsA[key] if k in cogsB[key]]:
-                                shared += 1
-                            slots += 1
-                    try:
-                        shared = shared / slots
-                    except ZeroDivisionError:
-                        log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
-                        shared = 0.0
-
-                matrix[i][j] = shared
-
-                # if refB is also a possibiltiy
-                if not refB:
-                    matrix[j][i] = shared
-            
-            elif i > j and refB:
-                if normalized in [False,"jaccard"]:
-                    cogsA = wordlist.get_list(
-                            taxa = taxonA,
-                            flat = True,
-                            entry = refB
-                            )
-                    cogsB = wordlist.get_list(
-                            taxa = taxonB,
-                            flat = True,
-                            entry = refB
-                            )
-
-                    cogsA,cogsB = set(cogsA),set(cogsB)
-                    
-                    shared = len(cogsA.intersection(cogsB))
-
-                    if normalized:
-                        shared = shared / len(cogsA.union(cogsB))
-                else:
-                    cogsA = wordlist.get_dict(
-                            taxa = taxonA,
-                            entry = refB
-                            )
-                    cogsB = wordlist.get_dict(
-                            taxa = taxonB,
-                            entry = refB
-                            )
-                    
-                    shared = 0
-                    slots = 0
-                    
-                    # iterate over cognate sets in meaning slots
-                    for key in cogsA.keys():
-                        # check whether keys are present, we follow the
-                        # STARLING procedure in ignoring missing data
-                        if key in cogsA and key in cogsB:
-                            
-                            # check for shared items
-                            if [k for k in cogsA[key] if k in cogsB[key]]:
-                                shared += 1
-                            slots += 1
-                    try:
-                        shared = shared / slots
-                    except ZeroDivisionError:
-                        log.warn(str([shared,slots,len(cogsA),len(cogsB),taxonA,taxonB]))
-                        shared = 0.0
-
-                matrix[i][j] = shared
-
-            elif i == j:
-                cogs = wordlist.get_list(
-                        taxa = taxonA,
-                        flat = True,
-                        entry = ref
-                        )
-                if normalized:
-                    matrix[i][j] = 1.0
-                else:
-                    matrix[i][j] = len(set(cogs))
-    
-
+                        matrix[i][j] = 1.0
+                    else:
+                        matrix[i][j] = len(set(cogs)) 
 
     ax2 = fig.add_axes(
             [
@@ -1167,7 +1167,10 @@ def plot_heatmap(
             #[0.15,0.1,0.7,0.7])
 
     cmap = mpl.cm.jet
-    im = ax2.matshow(matrix,aspect='auto',origin='lower',interpolation='nearest',cmap=cmap)
+    im = ax2.matshow(matrix, aspect='auto', origin='lower',
+                interpolation='nearest', cmap=keywords['cmap'],
+                vmax=keywords['vmax'], vmin=keywords['vmin']
+                )
    
     # set the xticks
     steps = int(len(taxa)/keywords['steps'] + 0.5)
@@ -1202,8 +1205,8 @@ def plot_heatmap(
             )
 
     if keywords["colorbar"]:
-        plt.imshow(matrix,cmap=keywords['cmap'],visible=False)
-        c = plt.colorbar(im,shrink=keywords['colorbar_shrink'])
+        plt.imshow(matrix,cmap=keywords['cmap'],visible=False, vmax=keywords['vmax'])
+        c = plt.colorbar(im, shrink=keywords['colorbar_shrink'])
         c.set_label(keywords["colorbar_label"],size=keywords['colorbar_textsize'])
     
     plt.subplots_adjust(

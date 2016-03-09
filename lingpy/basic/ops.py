@@ -263,7 +263,6 @@ def wl2qlc(
         fileformat='qlc',
         prettify=True
         )
-
     if keywords['ignore'] == 'all':
         keywords['ignore'] = ['taxa', 'scorer', 'meta', 'distances', 'doculects', 'msa', 'json']
 

@@ -31,8 +31,8 @@ lexstat = dict(
     lexstat_limit=10000,
     lexstat_scoring_method='shuffle',
     lexstat_ratio=(2, 1),
-    lexstat_vscale=0.5,
-    lexstat_threshold=0.3,
+    lexstat_vscale=1.0,
+    lexstat_threshold=0.45,
     lexstat_cluster_method='upgma',
     lexstat_preprocessing_method='sca',
     lexstat_preprocessing_threshold=0.7,
@@ -84,9 +84,9 @@ alignments = dict(
     align_stamp="""# MSA
 # dataset    : {0}
 # collection : {1}
-# aligned by : LingPy-2.2 <www.lingpy.org>
-# created on : {2}
-# parameters : {3}
+# aligned by : LingPy Version {2} <www.lingpy.org>
+# created on : {3}
+# parameters : {4}
 """)
 rcParams.update(alignments)
 
@@ -147,7 +147,6 @@ for key in kw_base:
     # set all the alias values
     for value in kw_base[key]:
         alias[value] = key
-
 
 def rc(rval=None, **keywords):
     """

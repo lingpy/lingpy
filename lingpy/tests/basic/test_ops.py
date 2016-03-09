@@ -31,6 +31,7 @@ class TestOps(WithTempDir):
 
         stamp = 'test-stamp'
         out = self.tmp_path('test')
+
         wl2csv(self.wordlist.header, self.wordlist._data, filename=out.as_posix())
         wl2qlc(self.wordlist.header, self.wordlist._data, filename=out.as_posix(), stamp=stamp)
         out = self.tmp_path('test.qlc')
