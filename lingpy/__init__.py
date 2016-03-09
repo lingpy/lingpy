@@ -20,39 +20,39 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 
 """
 
-__author__="Johann-Mattis List, Robert Forkel (with contributions by Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, Peter Bouda, and Simon Greenhill)"
-__date__="2016-28-02"
+__author__ = "Johann-Mattis List, Robert Forkel (with contributions by Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, Peter Bouda, and Simon Greenhill)"
+__date__ = "2016-28-02"
 __version__ = "2.4.1-alpha"
 
-
+# We exempt this module from QA, because it only provides import shortcuts.
+# flake8: noqa
 # import settings
-from .settings import rc
+from lingpy.settings import rc
 
 # general imports
-from .basic import Wordlist, Tree, Workflow
+from lingpy.basic import Wordlist, Tree, Workflow
 
 # import converts
 # from .convert import *
 
 # we don't import align for the moment for safety reasons...
-from .align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dist, \
+from lingpy.align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dist, \
         pw_align, nw_align, sw_align, we_align, structalign, turchin, \
         mult_align
 
 # load the sound-class models
-from .data import Model
+from lingpy.data import Model
 
 # import reading routine
-from .read import csv2list, csv2dict, star2qlc
+from lingpy.read import csv2list, csv2dict, star2qlc
 
 # import sequence routines
-from .sequence import ipa2tokens, tokens2class, prosodic_string, \
+from lingpy.sequence import ipa2tokens, tokens2class, prosodic_string, \
         prosodic_weights, class2tokens, pid, sampa2uni
 
 # import lexstat
-from .compare.lexstat import LexStat
+from lingpy.compare.lexstat import LexStat
 
 # import algorithm-stuff
-from .algorithm.clustering import upgma, neighbor, flat_upgma, flat_cluster, \
+from lingpy.algorithm.clustering import upgma, neighbor, flat_upgma, flat_cluster, \
         fuzzy, link_clustering, mcl
-

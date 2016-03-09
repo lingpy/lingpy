@@ -115,12 +115,12 @@ class TextFile(object):
 
 def read_text_file(path, normalize=None, lines=False):
     """Read a text file encoded in utf-8.
-    
+
     Parameters
     ----------
     :param path: File-system path of the file.
     :param normalize: If not `None` a valid unicode normalization mode must be passed.
-    :param lines: Flag signalling whether to return a list of lines (without 
+    :param lines: Flag signalling whether to return a list of lines (without
       the line-separation character).
     :return: File content as unicode object or list of lines as unicode objects.
 
