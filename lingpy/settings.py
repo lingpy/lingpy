@@ -148,6 +148,7 @@ for key in kw_base:
     for value in kw_base[key]:
         alias[value] = key
 
+
 def rc(rval=None, **keywords):
     """
     Function changes parameters globally set for LingPy sessions.
