@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from unittest import TestCase
 
 from lingpy.tests.util import WithTempDir
 from lingpy import util
@@ -25,3 +26,24 @@ class Test(WithTempDir):
         with util.TextFile(path) as fp:
             fp.writelines(['line1\n', 'line2\n'])
         self.assertEqual(len(util.read_text_file(path, lines=True)), 2)
+
+
+class TestCombinations(TestCase):
+    def test_combinations2(self):
+        from lingpy.util import combinations2, multicombinations2
+
+        def f(l):
+            for i, a1 in enumerate(l):
+                for j, a2 in enumerate(l):
+                    if i < j:
+                        yield a1, a2
+
+        def fm(l):
+            for i, a1 in enumerate(l):
+                for j, a2 in enumerate(l):
+                    if i <= j:
+                        yield a1, a2
+
+        for l in [list(range(5)), 'abcdefg']:
+            self.assertEqual(list(combinations2(l)), list(f(l)))
+            self.assertEqual(list(multicombinations2(l)), list(fm(l)))

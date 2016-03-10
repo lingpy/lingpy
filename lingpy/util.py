@@ -8,6 +8,7 @@ import os
 from tempfile import NamedTemporaryFile
 from functools import partial
 import json
+import itertools
 
 from pathlib import Path
 from six import text_type, PY3
@@ -16,6 +17,29 @@ from six.moves import input
 import lingpy
 from lingpy.log import get_level, file_written
 from lingpy.settings import rcParams
+
+
+def combinations2(iterable):
+    """
+    Convenience shortcut
+    """
+    return itertools.combinations(iterable, 2)
+
+
+def multicombinations2(iterable):
+    """
+    Convenience shortcut, for the name, see the Wikipedia article on Combination.
+
+    https://en.wikipedia.org/wiki/Combination#Number_of_combinations_with_repetition
+    """
+    return itertools.combinations_with_replacement(iterable, 2)
+
+
+def join(sep, *args):
+    """
+    Convenience shortcut. Strings to be joined to not have to be passed as list or tuple.
+    """
+    return sep.join(args)
 
 
 def confirm(question, default=False):
