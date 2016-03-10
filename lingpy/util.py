@@ -18,6 +18,10 @@ from lingpy.log import get_level, file_written
 from lingpy.settings import rcParams
 
 
+def join(sep, *args):
+    return sep.join(args)
+
+
 def confirm(question, default=False):
     """
     Ask user a yes/no question and return their response as True or False.
