@@ -3,7 +3,6 @@ Module provides basic operations on Wordlist-Objects.
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
 
-# external imports
 import json
 from string import ascii_letters, digits
 from collections import defaultdict
@@ -11,12 +10,11 @@ from itertools import product
 
 from six import text_type
 
-# internal imports
-from ..settings import rcParams
-from ..convert.strings import matrix2dst, scorer2str, msa2str
-from ..algorithm import clustering, misc
-from .. import util
-from .. import log
+from lingpy.settings import rcParams
+from lingpy.convert.strings import matrix2dst, scorer2str, msa2str
+from lingpy.algorithm import clustering, misc
+from lingpy import util
+from lingpy import log
 
 
 def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts'):
@@ -153,8 +151,9 @@ def renumber(wordlist, source, target='', override=False):
         converter[0] = 0
     if '' in converter:
         converter[''] = 0
-    
-    wordlist.add_entries(target, source, lambda x: converter[text_type(x)], override=override)
+
+    wordlist.add_entries(
+        target, source, lambda x: converter[text_type(x)], override=override)
 
     # add stuff to meta
     wordlist._meta[source + '2' + target] = converter
@@ -163,38 +162,37 @@ def renumber(wordlist, source, target='', override=False):
 
 def clean_taxnames(
         wordlist,
-        column = 'doculect',
-        f = lambda x:''.join([t for t in x if t not in '()[]{},;:']).replace('-','_').replace(' ','_')
-        ):
+        column='doculect',
+        f=lambda x: ''.join([t for t in x if t not in '()[]{},;:'])
+        .replace('-', '_').replace(' ', '_')):
     """
     Function cleans taxon names in order to make sure they can be used in Newick files.
 
     """
     # clean the names for all taxa in a wordlist
-    current_taxa = eval('wordlist.'+column)
+    current_taxa = eval('wordlist.' + column)
     new_taxa = [f(taxon) for taxon in current_taxa]
 
-    old2new = dict(zip(current_taxa,new_taxa))
-    new2old = dict(zip(new_taxa,current_taxa))
-    
+    old2new = dict(zip(current_taxa, new_taxa))
+    new2old = dict(zip(new_taxa, current_taxa))
+
     if column == wordlist._col_name:
         wordlist.cols = [old2new[t] for t in current_taxa]
-    
-    wordlist.add_entries('_doculect','doculect',lambda x:old2new[x],override=True)
-    wordlist.add_entries('doculect','_doculect',lambda x:new2old[x],override=True)
+
+    wordlist.add_entries('_doculect', 'doculect', lambda x: old2new[x], override=True)
+    wordlist.add_entries('doculect', '_doculect', lambda x: new2old[x], override=True)
 
 
 def calculate_data(
         wordlist,
         data,
-        taxa = 'taxa',
-        concepts = 'concepts',
-        ref = 'cogid',
-        **keywords
-        ):
+        taxa='taxa',
+        concepts='concepts',
+        ref='cogid',
+        **keywords):
     """
     Manipulate a wordlist object by adding different kinds of data.
-    
+
     Parameters
     ----------
     data : str
@@ -224,13 +222,16 @@ def calculate_data(
         wordlist._meta['distances'] = wl2dst(wordlist, taxa, concepts, ref, **keywords)
     elif data in ['diversity', 'div']:
         etd = wordlist.get_etymdict(ref=ref)
-        wordlist._meta['diversity'] = (len(etd) - wordlist.height) / (len(wordlist) - wordlist.height)
+        wordlist._meta['diversity'] = \
+            (len(etd) - wordlist.height) / (len(wordlist) - wordlist.height)
     elif data in ['tre', 'tree', 'nwk']:
         if 'distances' not in wordlist._meta:
-            wordlist._meta['distances'] = wl2dst(wordlist, taxa, concepts, ref, **keywords)
+            wordlist._meta['distances'] = \
+                wl2dst(wordlist, taxa, concepts, ref, **keywords)
         distances = wordlist._meta['distances']
         if 'tree' in wordlist._meta and not keywords['force']:
-            logger.warn("Reference tree has already been calculated, force overwrite by setting 'force' to 'True'.")
+            logger.warn("Reference tree has already been calculated, force overwrite by "
+                        "setting 'force' to 'True'.")
             return
         wordlist._meta['tree'] = clustering.matrix2tree(
             distances, these_taxa, keywords['tree_calc'], keywords['distances'])
@@ -241,7 +242,8 @@ def calculate_data(
         else:
             distances = wordlist._meta['distances']
         if 'groups' in wordlist._meta and not keywords['force']:
-            logger.warn("Distance matrix has already been calculated, force overwrite by setting 'force' to 'True'.")
+            logger.warn("Distance matrix has already been calculated, force overwrite by "
+                        "setting 'force' to 'True'.")
             return
         wordlist._meta['groups'] = clustering.matrix2groups(
             keywords['threshold'], distances, these_taxa, keywords['cluster_method'])
@@ -261,11 +263,10 @@ def wl2qlc(
         keywords,
         ignore=['taxa', 'doculects', 'msa'],
         fileformat='qlc',
-        prettify=True
-        )
-
+        prettify=True)
     if keywords['ignore'] == 'all':
-        keywords['ignore'] = ['taxa', 'scorer', 'meta', 'distances', 'doculects', 'msa', 'json']
+        keywords['ignore'] = [
+            'taxa', 'scorer', 'meta', 'distances', 'doculects', 'msa', 'json']
 
     formatter = formatter.upper()
     if not filename:
@@ -297,11 +298,10 @@ def wl2qlc(
                     msapairs[ref][a] = b
         elif k == 'distances':
             distances = matrix2dst(v, meta['taxa'])
-        elif k in ['taxa', 'doculect', 'taxon', 'doculects']: # and k not in keywords['ignore']:
+        elif k in ['taxa', 'doculect', 'taxon', 'doculects']:
             # we need to find a better solution here, since it is not nice to
             # have taxa written to json again and again
             pass
-            #taxa = '\n'.join(meta['taxa'])
         elif k == 'trees' and k not in keywords['ignore']:
             trees = ''
             for key, value in v.items():
@@ -349,9 +349,9 @@ def wl2qlc(
     if scorer and 'scorer' not in keywords['ignore']:
         out += '\n# SCORER\n' + scorer
 
-    out += '\n# DATA\n' if keywords['prettify'] else '' 
-    out += 'ID\t'+'\t'.join(header) + '\n'
-    
+    out += '\n# DATA\n' if keywords['prettify'] else ''
+    out += 'ID\t' + '\t'.join(header) + '\n'
+
     # check for gloss in header to create nice output format
     if formatter in header:
         idx = header.index(formatter)
@@ -372,16 +372,16 @@ def wl2qlc(
     for key in sorted_data:
         # get the line
         line = data[key]
-        
+
         # check for formatter
         if idx in range(len(line)):
             if line[idx] != formatter:
                 out += '#\n' if keywords['prettify'] else ''
                 formatter = line[idx]
 
-        # add the key 
+        # add the key
         out += text_type(key)
-        
+
         # add the rest of the values
         for value in line:
             if type(value) == list:
@@ -410,8 +410,7 @@ def wl2csv(
         filename='',
         formatter='concept',
         verbose=True,
-        **keywords
-        ):
+        **keywords):
     log.deprecated('wl2csv', '')
     return wl2qlc(header, data, filename, formatter, **keywords)
 
@@ -485,7 +484,7 @@ def coverage(wordlist):
 
 def wl2multistate(wordlist, ref):
     """
-    Helper function converts a wordlist to multistate format (matrix compatible with PAUP).
+    Helper function converts a wordlist to multistate format (compatible with PAUP).
     """
 
     # convert the data to a multistate matrix

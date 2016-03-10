@@ -2,7 +2,7 @@
 """
 Basic parser for text files in QLC format.
 """
-
+from __future__ import unicode_literals, division, print_function
 import os
 import numpy as np
 from collections import defaultdict
@@ -11,13 +11,11 @@ from six import text_type as str
 from six import string_types
 from six.moves import input
 
-from ..settings import rcParams
-from ..read.qlc import read_qlc
-from .. import cache
-from .. import util
-from .. import log
-
-#from ..sequence.tokenizer import Tokenizer
+from lingpy.settings import rcParams
+from lingpy.read.qlc import read_qlc
+from lingpy import cache
+from lingpy import util
+from lingpy import log
 
 
 class QLCParser(object):
@@ -46,21 +44,20 @@ class QLCParser(object):
             if 'filename' not in input_data:
                 self.filename = rcParams['filename']
             internal_import = True
-            
+
             # make check for correct input, there was a bug with a wrong
             # evaluation which is hopefully fixed by now
-            tmp_keys = [k for k in input_data if isinstance(k, int)] 
+            tmp_keys = [k for k in input_data if isinstance(k, int)]
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
                 raise ValueError("[!] Wrong input format!")  # pragma: no cover
         # check whether it's another wordlist-object
         elif hasattr(filename, '_data') and hasattr(filename, '_meta'):
             input_data = dict(filename._data.items())
             input_data.update(filename._meta.items())
-            input_data[0] = [a for a,b in sorted(
+            input_data[0] = [a for a, b in sorted(
                 filename.header.items(),
-                key = lambda x:x[1],
-                reverse = False
-                )]
+                key=lambda x:x[1],
+                reverse=False)]
             internal_import = True
             self.filename = rcParams['filename']
         # or whether the data is an actual file
@@ -69,9 +66,10 @@ class QLCParser(object):
             self.filename = filename
         # raise an error otherwise
         elif isinstance(filename, string_types):
-            raise IOError("[ERROR] Input file '{0}' does not exist.".format(filename))
+            raise IOError("Input file '{0}' does not exist.".format(filename))
         else:
-            raise TypeError("[ERROR] Unrecognized type for 'filename' argument: {0}".format(type(filename).__name__))
+            raise TypeError("Unrecognized type for 'filename' argument: {0}".format(
+                type(filename).__name__))
 
         # load the configuration file
         if not conf:
@@ -82,9 +80,8 @@ class QLCParser(object):
 
         # define two attributes, _alias, and _class which store the aliases and
         # the datatypes (classes) of the given entries
-        self._alias,self._class,self._class_string,self._alias2 = {},{},{},{}
-        for name,cls,alias in tmp:
-            
+        self._alias, self._class, self._class_string, self._alias2 = {}, {}, {}, {}
+        for name, cls, alias in tmp:
             # make sure the name itself is there
             self._alias[name.lower()] = name
             self._alias[name.upper()] = name
@@ -124,15 +121,11 @@ class QLCParser(object):
         # the header stores the indices of the data in the original data
         # dictionary
         self.header = dict(
-                zip(
-                    [self._alias[x] for x in input_data[0]],
-                    range(len(input_data[0]))
-                    )
-                )
+            zip([self._alias[x] for x in input_data[0]], range(len(input_data[0]))))
 
         # now create a specific header which has all aliases
-        self._header = dict([(k,v) for k,v in self.header.items()])
-        
+        self._header = dict([(k, v) for k, v in self.header.items()])
+
         # assign all aliases to the header
         for alias in self._alias:
             try:
@@ -140,30 +133,31 @@ class QLCParser(object):
                 self._header[alias] = idx
             except:
                 pass
-        
+
         # assign the data as attribute to the word list class. Note that we
         # need to check for the type here, but since numpy also offers integer
         # types, we don't check for type(x) == int, but instead use the
         # str.numeric-function that returns numeric values only if it is an
         # integer
-        self._data = dict([(int(k),v) for k,v in input_data.items() if k != 0 and str(k).isnumeric()])
+        self._data = {
+            int(k): v for k, v in input_data.items() if k != 0 and str(k).isnumeric()}
 
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
         if not internal_import:
-            heads = sorted(self._header.items(),key=lambda x:x[1])
+            heads = sorted(self._header.items(), key=lambda x: x[1])
             for key in self._data:
                 check = []
-                for head,i in heads:
+                for head, i in heads:
                     if i not in check:
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
                         except:  # pragma: no cover
                             log.warn(
-                                'Problem with row {0} in col {1}, expected'
-                                + ' «{4}» as datatype but received «{3}» '
-                                + ' (ROW: {2}, entry {5}).'.format(
+                                'Problem with row {0} in col {1}, expected' +
+                                ' «{4}» as datatype but received «{3}» ' +
+                                ' (ROW: {2}, entry {5}).'.format(
                                     key,
                                     i,
                                     '|'.join([str(x) for x in self._data[key]]),
@@ -172,7 +166,7 @@ class QLCParser(object):
                                     head))
 
         # create entry attribute of the wordlist
-        self.entries = sorted(set([b.lower() for a,b in self._alias.items() if b]))
+        self.entries = sorted(set([b.lower() for a, b in self._alias.items() if b]))
 
         # assign meta-data
         self._meta = {}
@@ -282,8 +276,7 @@ class QLCParser(object):
             source,
             function,
             override=False,
-            **keywords
-    ):
+            **keywords):
         # check for empty entries etc.
         if not entry:
             raise ValueError('Entry was not properly specified.')
@@ -306,8 +299,10 @@ class QLCParser(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input("[?] Column <{entry}> already exists, do you want to override? (y/n) ".format(entry=entry))
-            if answer.lower() in ['y','yes','j']:
+            answer = input(
+                "[?] Column <{entry}> already exists, do you want to override? (y/n) "
+                .format(entry=entry))
+            if answer.lower() in ['y', 'yes', 'j']:
                 keywords['override'] = True
                 return self.add_entries(entry, source, function, **keywords)
             return  # pragma: no cover
@@ -325,7 +320,7 @@ class QLCParser(object):
 
             # get the new index
             newIdx = max(self._header.values()) + 1
-            
+
             # change the aliased header for each entry in alias2
             for a in self._alias2[name]:
                 self._header[a] = newIdx
@@ -353,6 +348,7 @@ class QLCParser(object):
             idx = self._header[source]
             for key in self:
                 _apply(key, self[key][idx], **keywords)
+
 
 class QLCParserWithRowsAndCols(QLCParser):
     def __init__(self, filename, row, col, conf):

@@ -31,8 +31,9 @@ class TestOps(WithTempDir):
 
         stamp = 'test-stamp'
         out = self.tmp_path('test')
-        wl2csv(self.wordlist.header, self.wordlist._data)
-        wl2qlc(self.wordlist.header, self.wordlist._data, filename=str(out), stamp=stamp)
+
+        wl2csv(self.wordlist.header, self.wordlist._data, filename=out.as_posix())
+        wl2qlc(self.wordlist.header, self.wordlist._data, filename=out.as_posix(), stamp=stamp)
         out = self.tmp_path('test.qlc')
         with out.open(encoding='utf8') as fp:
             self.assertTrue(fp.read().endswith(stamp))

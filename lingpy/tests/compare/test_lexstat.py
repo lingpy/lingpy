@@ -154,7 +154,7 @@ class TestLexStat(WithTempDir):
             1: ['1', 'deu', 'hand', 'hand'],
             2: ['2', 'eng', 'hand', 'hand'],
             3: ['3', 'xyz', 'hand', 'xyz']})
-        lex.cluster(ref='cogid', method='sca', threshod=0.5)
+        lex.cluster(ref='cogid', method='sca', threshold=0.5)
         self.assertEquals(lex[1,'cogid'], lex[2, 'cogid'])
         
         rc(schema='asjp')
