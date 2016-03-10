@@ -36,9 +36,9 @@ def flat_upgma(threshold, matrix, taxa=None, revert=False):
     ----------
 
     threshold : float
-        The threshold which terminates the algorithm.   
+        The threshold which terminates the algorithm.
 
-    matrix : list 
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list (default=None)
@@ -93,14 +93,14 @@ def flat_upgma(threshold, matrix, taxa=None, revert=False):
 def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
     """
     Carry out a flat cluster analysis based on linkage algorithms.
-    
+
     Parameters
     ----------
     method : { "upgma", "single", "complete" }
         Select between 'ugpma', 'single', and 'complete'.
 
     threshold : float
-        The threshold which terminates the algorithm.   
+        The threshold which terminates the algorithm.
 
     matrix : list
         A two-dimensional list containing the distances.
@@ -126,7 +126,7 @@ def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
     Create a list of arbitrary taxa.
 
     >>> taxa = ['German','Swedish','Icelandic','English','Dutch']
-    
+
     Create an arbitrary distance matrix.
 
     >>> matrix = squareform([0.5,0.67,0.8,0.2,0.4,0.7,0.6,0.8,0.8,0.3])
@@ -209,7 +209,7 @@ def upgma(matrix, taxa, distances=True):
 
     See also
     --------
-    neighbor   
+    neighbor
 
     """
 
@@ -293,7 +293,7 @@ def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
         If set to "False", only the topology of the tree will be returned.
 
     revert : bool (default=False)
-        Specify whether a reverted dictionary should be returned. 
+        Specify whether a reverted dictionary should be returned.
 
     Returns
     -------
@@ -416,7 +416,7 @@ def matrix2tree(matrix, taxa, tree_calc="neighbor", distances=True, filename="")
         raise ValueError(tree_calc)
 
     tree = cg.LoadTree(treestring=algorithm(matrix, taxa, distances))
-    
+
     if not filename:
         return tree
     util.write_text_file(filename + '.nwk', text_type(tree))
@@ -430,7 +430,7 @@ def matrix2groups(threshold, matrix, taxa, cluster_method="upgma"):
     ----------
     threshold : float
         The threshold to be used for the calculation.
-    matrix : list 
+    matrix : list
         The distance matrix to be used.
     taxa : list
         A list of the taxa in the distance matrix.
@@ -520,10 +520,10 @@ def find_threshold(matrix, thresholds=[i * 0.05 for i in range(1, 19)][::-1], lo
     This is a very simple method that may not work well depending on the
     dataset. So we recommend to use it with great care.
     """
- 
+
     # get the old degree of the matrix
     odeg = _get_wad(matrix, 1)
-    
+
     # store the plateaus (where nothing changes in the network)
     plato = {0: [1.0]}
 
@@ -662,7 +662,7 @@ def link_clustering(
     for i, j in combinations(range(len(taxa)), 2):
         taxA, taxB = taxa[i], taxa[j]
         if evaluate(matrix[i][j]):
-            edges.add((taxA,taxB))
+            edges.add((taxA, taxB))
             adjacency[taxA].add(taxB)
             adjacency[taxB].add(taxA)
         elif matrix_type == 'weights':
@@ -693,15 +693,15 @@ def link_clustering(
 
     # carry out the analyses using defaults for the clustering
     edge2cid = hlc.single_linkage(threshold=link_threshold, w=weights)[0]
-    
+
     # retrieve all clusterings for the nodes
     # retrieve the data
     clr2nodes = defaultdict(list)
     clr2edges = defaultdict(list)
 
-    # count the links of 
+    # count the links of
     for edge, idx in edge2cid.items():
-        nodeA,nodeB = edge[0], edge[1]
+        nodeA, nodeB = edge[0], edge[1]
         clr2edges[idx].append(edge)
         clr2nodes[idx].extend([nodeA, nodeB])
 
@@ -820,7 +820,7 @@ def _interprete_matrix(matrix):
 
     # make a converter for length
     out = [0 for i in range(len(matrix))]
-    idx = 1 
+    idx = 1
     for clr in clusters:
         for i in clr:
             out[i] = idx
@@ -853,7 +853,7 @@ def mcl(
         assigned to the data. If set to c{False}, the weights from the matrix
         will be used directly.
 
-    matrix : list 
+    matrix : list
         A two-dimensional list containing the distances.
 
     taxa : list
@@ -874,18 +874,18 @@ def mcl(
         should be weighted. If a function for the calculation of self-loops is
         given, it will take the whole column of the matrix for each taxon as
         input.
-    
+
     logs : { bool, function } (default=True)
         If set to c{True}, the logarithm of the score beyond the threshold will
         be assigned as weight to the graph. If set to c{False} all weights will
         be set to 1. Use a custom function to define individual ways to
         calculate the weights.
-    
+
     matrix_type : { "distances", "similarities" }
         Specify the type of the matrix. If the matrix contains distance data,
         it will be adapted to similarity data. If it contains "similarities",
         no adaptation is needed.
-    
+
     Examples
     --------
 
@@ -952,7 +952,7 @@ def mcl(
         pass
     else:
         for i in range(len(imatrix)):
-            imatrix[i][i] = add_self_loops(imatrix[:,i])
+            imatrix[i][i] = add_self_loops(imatrix[:, i])
 
     # normalize the matrix
     imatrix = _normalize_matrix(imatrix)
@@ -1073,7 +1073,7 @@ def partition_density(matrix, t):
 
         N = len(nodes)
         M = edges
-        
+
         # calculate sum formula
         x = 1
         try:
@@ -1135,7 +1135,6 @@ def best_threshold(matrix, trange=(0.3, 0.7, 0.05)):
         del pds[d]
 
     for p in pds:
-        
         v = p[0] / (len(matrix) + 1 - p[1])
         if v >= best_score:
             best_score = v

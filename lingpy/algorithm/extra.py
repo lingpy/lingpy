@@ -58,7 +58,7 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
 
     # turn distances to similarities
     matrix = np.array(matrix)
-    
+
     # iterate over matrix
     for i, line in enumerate(matrix):
         matrix[i][i] = 10
@@ -70,7 +70,7 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
             else:
                 matrix[i][j] = - score ** 5  # 0.0
                 matrix[j][i] = - score ** 5  # 0.0
-    
+
     ap = cluster.AffinityPropagation(affinity='precomputed')
     labels = ap.fit_predict(matrix)
 

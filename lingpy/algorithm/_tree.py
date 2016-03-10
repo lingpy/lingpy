@@ -79,9 +79,9 @@ class _TreeDist(object):
         return grf if distance == 'grf' else rf
 
     @staticmethod
-    def get_bipartition(tree):      
-        partition_list = []             
-        temp_stack = [] 
+    def get_bipartition(tree):
+        partition_list = []
+        temp_stack = []
         ind_list = []
         hash_lang = {}  # nltk.defaultdict(int)
         lang_cnt = 0
@@ -91,7 +91,7 @@ class _TreeDist(object):
                 for k in [m.start() for m in re.finditer(_TreeDist.LBRA, elem)]:
                     ind_list.append(i)
                 lang = elem.strip("(")
-                lang = lang.split(":")[0]                       
+                lang = lang.split(":")[0]
                 lang = lang.replace("(", "-")
                 lang = lang.replace(")", "-")
                 lang = lang.replace(" ", "_").replace("'", "")
@@ -101,7 +101,7 @@ class _TreeDist(object):
                     lang_cnt += 1
                     hash_lang[lang] = str(lang_cnt)
                     hash_lang[lang] = lang
-                    temp_stack.append(hash_lang[lang]) 
+                    temp_stack.append(hash_lang[lang])
             elif elem.find(")") > -1:
                 lang = elem.replace(")", "")
                 lang = lang.split(":")[0].strip()
@@ -115,7 +115,7 @@ class _TreeDist(object):
                 for k in [m.start() for m in re.finditer(_TreeDist.RBRA, elem)]:
                     partition = temp_stack[ind_list.pop():]
                     p1 = partition
-                    partition_list.append(p1)                       
+                    partition_list.append(p1)
             else:
                 lang = elem.split(":")[0]
                 if lang in hash_lang:
@@ -130,7 +130,7 @@ class _TreeDist(object):
             raise ValueError("Cannot compute the bipartition!")
 
         lang_set = frozenset(partition_list[-1])
-        final_parts = {} 
+        final_parts = {}
         for x in partition_list:
             set_x = frozenset(x)
             set_x1 = lang_set - set_x
