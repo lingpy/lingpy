@@ -6,8 +6,13 @@ from collections import defaultdict
 from itertools import combinations
 
 from six import text_type
+import numpy as np
 
-from lingpy.algorithm import misc
+try:
+    from .cython import misc as misc
+except ImportError:
+    from .cython import _misc as misc
+
 try:
     from .cython import cluster as cluster
 except ImportError:
@@ -17,8 +22,6 @@ from lingpy.thirdparty import linkcomm as lc
 from lingpy.thirdparty import cogent as cg
 from lingpy import log
 from lingpy import util
-
-import numpy as np
 
 try:  # pragma: no cover
     import networkx as nx

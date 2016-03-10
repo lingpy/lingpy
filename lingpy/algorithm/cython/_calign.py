@@ -1,13 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-10 18:33
-# modified : 2013-05-25 23:39
 """
 Basic module for sound-class based alignment analyses.
 """
 
-__author__="Johann-Mattis List"
-__date__="2013-05-25"
 
 # we start with basic alignment functions
 def globalign(
@@ -17,12 +11,11 @@ def globalign(
         gopB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
-        scorer
-        ):
+        scorer):
     """
     Carry out global alignment of two sequences.
     """
@@ -38,46 +31,45 @@ def globalign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
-        matrix[0][i] = matrix[0][i-1] + gopA[i-1] * scale
+    for i in range(1, M + 1):
+        matrix[0][i] = matrix[0][i - 1] + gopA[i - 1] * scale
         traceback[0][i] = 2
-    for i in range(1,N+1):
-        matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
+    for i in range(1, N + 1):
+        matrix[i][0] = matrix[i - 1][0] + gopB[i - 1] * scale
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
             # calculate costs for gapA
-            if traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+            if traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
-            if traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+            if traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
 
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j - 1], seqB[i - 1]]
             
             # check for similar prostring
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) >= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif abs(ord(proA[j - 1]) - ord(proB[i - 1])) >= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA > match and gapA >= gapB:
@@ -97,23 +89,24 @@ def globalign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
     # turn alignments back
-    almA,almB = almA[::-1],almB[::-1]
+    almA, almB = almA[::-1], almB[::-1]
 
     # return alignments
-    return almA,almB,sim
+    return almA, almB, sim
+
 
 def secondary_globalign(
         seqA,
@@ -122,12 +115,12 @@ def secondary_globalign(
         gopB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
         scorer,
-        r # restricted_chars
+        r  # restricted_chars
         ):
     """
     Carry out global alignment of two sequences.
@@ -144,53 +137,52 @@ def secondary_globalign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
-        matrix[0][i] = matrix[0][i-1] + gopA[i-1] * scale
+    for i in range(1, M + 1):
+        matrix[0][i] = matrix[0][i - 1] + gopA[i - 1] * scale
         traceback[0][i] = 2
-    for i in range(1,N+1):
-        matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
+    for i in range(1, N + 1):
+        matrix[i][0] = matrix[i - 1][0] + gopB[i - 1] * scale
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
             # calculate costs for gapA
-            if proB[i-1] in r and proA[j-1] not in r and j != M:
-                gapA = matrix[i-1][j] - 1000000
-            elif traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+            if proB[i - 1] in r and proA[j - 1] not in r and j != M:
+                gapA = matrix[i - 1][j] - 1000000
+            elif traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
-            if proA[j-1] in r and proB[i-1] not in r and i != N:
-                gapB = matrix[i][j-1] - 1000000
-            elif traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+            if proA[j - 1] in r and proB[i - 1] not in r and i != N:
+                gapB = matrix[i][j - 1] - 1000000
+            elif traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
-            
+            match = scorer[seqA[j - 1], seqB[i - 1]]
+
             # check for similar prostrings
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif proA[j-1] in r and proB[i-1] not in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif proA[j-1] not in r and proB[i-1] in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) >= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif proA[j - 1] in r and proB[i - 1] not in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif proA[j - 1] not in r and proB[i - 1] in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif abs(ord(proA[j - 1]) - ord(proB[i - 1])) >= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA > match and gapA >= gapB:
@@ -210,23 +202,24 @@ def secondary_globalign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
     # turn alignments back
-    almA,almB = almA[::-1],almB[::-1]
+    almA, almB = almA[::-1], almB[::-1]
 
     # return alignments
-    return almA,almB,sim
+    return almA, almB, sim
+
 
 def semi_globalign(
         seqA,
@@ -235,8 +228,8 @@ def semi_globalign(
         gopB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
         scorer
@@ -256,48 +249,47 @@ def semi_globalign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
+    for i in range(1, M + 1):
         traceback[0][i] = 2
-    for i in range(1,N+1):
+    for i in range(1, N + 1):
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
             # calculate costs for gapA
             if j == M:
-                gapA = matrix[i-1][j]
-            elif traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+                gapA = matrix[i - 1][j]
+            elif traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
             if i == N:
-                gapB = matrix[i][j-1]
-            elif traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+                gapB = matrix[i][j - 1]
+            elif traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
 
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j - 1], seqB[i - 1]]
             
             # check for similar prostring
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) <= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif abs(ord(proA[j - 1]) - ord(proB[i - 1])) <= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA > match and gapA >= gapB:
@@ -317,23 +309,24 @@ def semi_globalign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
     # turn alignments back
-    almA,almB = almA[::-1],almB[::-1]
+    almA, almB = almA[::-1], almB[::-1]
 
     # return alignments
-    return almA,almB,sim
+    return almA, almB, sim
+
 
 def secondary_semi_globalign(
         seqA,
@@ -342,12 +335,12 @@ def secondary_semi_globalign(
         gopB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
         scorer,
-        r # restricted_chars
+        r  # restricted_chars
         ):
     """
     Carry out global alignment of two sequences.
@@ -364,57 +357,57 @@ def secondary_semi_globalign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
-        matrix[0][i] = matrix[0][i-1] + gopA[i-1] * scale
+    for i in range(1,M + 1):
+        matrix[0][i] = matrix[0][i - 1] + gopA[i - 1] * scale
         traceback[0][i] = 2
-    for i in range(1,N+1):
-        matrix[i][0] = matrix[i-1][0] + gopB[i-1] * scale
+    for i in range(1,N + 1):
+        matrix[i][0] = matrix[i - 1][0] + gopB[i - 1] * scale
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
+    for i in range(1,N + 1):
+        for j in range(1,M + 1):
 
             # calculate costs for gapA
             if j == M:
-                gapA = matrix[i-1][j]
-            elif proB[i-1] in r and proA[j-1] not in r and j != M:
-                gapA = matrix[i-1][j] - 1000000
-            elif traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+                gapA = matrix[i - 1][j]
+            elif proB[i - 1] in r and proA[j - 1] not in r and j != M:
+                gapA = matrix[i - 1][j] - 1000000
+            elif traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
             if i == N:
-                gapB = matrix[i][j-1]
-            elif proA[j-1] in r and proB[i-1] not in r and i != N:
-                gapB = matrix[i][j-1] - 1000000
-            elif traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+                gapB = matrix[i][j - 1]
+            elif proA[j - 1] in r and proB[i - 1] not in r and i != N:
+                gapB = matrix[i][j - 1] - 1000000
+            elif traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j - 1],seqB[i - 1]]
             
             # check for similar prostrings
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif proA[j-1] in r and proB[i-1] not in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif proA[j-1] not in r and proB[i-1] in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) <= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif proA[j - 1] in r and proB[i - 1] not in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif proA[j - 1] not in r and proB[i - 1] in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif abs(ord(proA[j - 1])-ord(proB[i - 1])) <= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA > match and gapA >= gapB:
@@ -434,15 +427,15 @@ def secondary_semi_globalign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
@@ -483,40 +476,40 @@ def localign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # set similarity to zero
     sim = 0.0
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
+    for i in range(1,N + 1):
+        for j in range(1,M + 1):
 
             # calculate costs for gapA
-            if traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+            if traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
-            if traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+            if traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
 
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j - 1],seqB[i - 1]]
             
             # check for similar prostring
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) <= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif abs(ord(proA[j - 1])-ord(proB[i - 1])) <= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA >= match and gapA >= gapB and gapA >= 0.0:
@@ -555,16 +548,16 @@ def localign(
         if traceback[i][j] == 3:
             
             almA[1] += ['-']
-            almB[1] += [seqB[i-1]]
+            almB[1] += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA[1] += [seqA[j-1]]
-            almB[1] += [seqB[i-1]]
+            almA[1] += [seqA[j - 1]]
+            almB[1] += [seqB[i - 1]]
             i -= 1
             j -= 1
         
         elif traceback[i][j] == 2:
-            almA[1] += [seqA[j-1]]
+            almA[1] += [seqA[j - 1]]
             almB[1] += ['-']
             j -= 1
         else:
@@ -613,48 +606,48 @@ def secondary_localign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # set similarity to zero
     sim = 0.0
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
+    for i in range(1,N + 1):
+        for j in range(1,M + 1):
 
             # calculate costs for gapA
-            if proB[i-1] in r and proA[j-1] not in r and j != M:
-                gapA = matrix[i-1][j] - 1000000
-            elif traceback[i-1][j] == 3:
-                gapA = matrix[i-1][j] + gopB[i-1] * scale
+            if proB[i - 1] in r and proA[j - 1] not in r and j != M:
+                gapA = matrix[i - 1][j] - 1000000
+            elif traceback[i - 1][j] == 3:
+                gapA = matrix[i - 1][j] + gopB[i - 1] * scale
             else:
-                gapA = matrix[i-1][j] + gopB[i-1]
+                gapA = matrix[i - 1][j] + gopB[i - 1]
 
             # calculate costs for gapB
-            if proA[j-1] in r and proB[i-1] not in r and j != N:
-                gapB = matrix[i][j-1] - 1000000
-            elif traceback[i][j-1] == 2:
-                gapB = matrix[i][j-1] + gopA[j-1] * scale
+            if proA[j - 1] in r and proB[i - 1] not in r and j != N:
+                gapB = matrix[i][j - 1] - 1000000
+            elif traceback[i][j - 1] == 2:
+                gapB = matrix[i][j - 1] + gopA[j - 1] * scale
             else:
-                gapB = matrix[i][j-1] + gopA[j-1]
+                gapB = matrix[i][j - 1] + gopA[j - 1]
 
             # calculate costs for match
 
             # get the score
-            match = scorer[seqA[j-1],seqB[i-1]]
+            match = scorer[seqA[j - 1],seqB[i - 1]]
             
             # check for similar prostring
-            if proA[j-1] == proB[i-1]:
-                match += matrix[i-1][j-1] + match * factor
-            elif proA[j-1] in r and proB[i-1] not in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif proA[j-1] not in r and proB[i-1] in r:
-                match += matrix[i-1][j-1] - 1000000
-            elif abs(ord(proA[j-1])-ord(proB[i-1])) <= 2:
-                match += matrix[i-1][j-1] + match * factor / 2
+            if proA[j - 1] == proB[i - 1]:
+                match += matrix[i - 1][j - 1] + match * factor
+            elif proA[j - 1] in r and proB[i - 1] not in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif proA[j - 1] not in r and proB[i - 1] in r:
+                match += matrix[i - 1][j - 1] - 1000000
+            elif abs(ord(proA[j - 1])-ord(proB[i - 1])) <= 2:
+                match += matrix[i - 1][j - 1] + match * factor / 2
             else:
-                match += matrix[i-1][j-1]
+                match += matrix[i - 1][j - 1]
 
             # determine minimal cost
             if gapA >= match and gapA >= gapB and gapA >= 0.0:
@@ -693,16 +686,16 @@ def secondary_localign(
         if traceback[i][j] == 3:
             
             almA[1] += ['-']
-            almB[1] += [seqB[i-1]]
+            almB[1] += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA[1] += [seqA[j-1]]
-            almB[1] += [seqB[i-1]]
+            almA[1] += [seqA[j - 1]]
+            almB[1] += [seqB[i - 1]]
             i -= 1
             j -= 1
         
         elif traceback[i][j] == 2:
-            almA[1] += [seqA[j-1]]
+            almA[1] += [seqA[j - 1]]
             almB[1] += ['-']
             j -= 1
         else:
@@ -717,15 +710,16 @@ def secondary_localign(
     almB += [[x for x in seqB[0:i]]]
 
     # return alignments
-    return almA[::-1],almB[::-1],sim
+    return almA[::-1], almB[::-1], sim
+
 
 def dialign(
         seqA,
         seqB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
         scorer
@@ -745,42 +739,41 @@ def dialign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
+    for i in range(1, M + 1):
         traceback[0][i] = 2
-    for i in range(1,N+1):
+    for i in range(1, N + 1):
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
             # calculate costs for gapA
-            gapA = matrix[i-1][j]
+            gapA = matrix[i - 1][j]
 
             # calculate costs for gapB
-            gapB = matrix[i][j-1]
+            gapB = matrix[i][j - 1]
 
             # calculate costs for match
             sim = 0.0
             o = 1
-            for k in range(min(i,j)):
-                match = matrix[i-k-1][j-k-1]
-                for l in range(k,-1,-1):
+            for k in range(min(i, j)):
+                match = matrix[i - k - 1][j - k - 1]
+                for l in range(k, -1, -1):
                     # get temporary match
-                    tmp_match = scorer[seqA[j-l-1],seqB[i-l-1]]
+                    tmp_match = scorer[seqA[j - l - 1],seqB[i - l - 1]]
                     # check for common prostrings
-                    if proA[j-l-1] == proB[i-l-1]:
-                        tmp_match = tmp_match * ( 1 + factor )
-                    elif abs(ord(proA[j-l-1]) - ord(proB[i-l-1])) <= 2:
-                        tmp_match = tmp_match * ( 1 + factor / 2 )
+                    if proA[j - l - 1] == proB[i - l - 1]:
+                        tmp_match = tmp_match * (1 + factor)
+                    elif abs(ord(proA[j - l - 1]) - ord(proB[i - l - 1])) <= 2:
+                        tmp_match = tmp_match * (1 + factor / 2)
                     match += tmp_match
 
-                p = k+1
+                p = k + 1
                 if match > sim:
                     sim = match
                     o = p
@@ -803,35 +796,36 @@ def dialign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
     # turn alignments back
-    almA,almB = almA[::-1],almB[::-1]
+    almA, almB = almA[::-1], almB[::-1]
 
     # return alignments
-    return almA,almB,sim
+    return almA, almB, sim
+
 
 def secondary_dialign(
         seqA,
         seqB,
         proA,
         proB,
-        M, # length of seqA
-        N, # length of seqB
+        M,  # length of seqA
+        N,  # length of seqB
         scale,
         factor,
         scorer,
-        r # restricted chars
+        r  # restricted chars
         ):
     """
     Carry out semi-global alignment of two sequences.
@@ -848,55 +842,54 @@ def secondary_dialign(
     almB = []
 
     # create matrix and traceback
-    matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
-    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0.0 for i in range(M + 1)] for j in range(N + 1)]
+    traceback = [[0 for i in range(M + 1)] for j in range(N + 1)]
 
     # modify matrix and traceback
     traceback[0][0] = 1
-    for i in range(1,M+1):
+    for i in range(1, M + 1):
         traceback[0][i] = 2
-    for i in range(1,N+1):
+    for i in range(1, N + 1):
         traceback[i][0] = 3
 
     # start the loop
-    for i in range(1,N+1):
-        for j in range(1,M+1):
-
+    for i in range(1, N + 1):
+        for j in range(1, M + 1):
             # calculate costs for gapA
-            if proB[i-1] in r and proA[j-1] not in r and j != M:
-                gapA = matrix[i-1][j] - 1000000
+            if proB[i - 1] in r and proA[j - 1] not in r and j != M:
+                gapA = matrix[i - 1][j] - 1000000
             else:
-                gapA = matrix[i-1][j]
+                gapA = matrix[i - 1][j]
 
             # calculate costs for gapB
-            if proA[j-1] in r and proB[i-1] not in r and i != N:
-                gapB = matrix[i][j-1] - 1000000
+            if proA[j - 1] in r and proB[i - 1] not in r and i != N:
+                gapB = matrix[i][j - 1] - 1000000
             else:
-                gapB = matrix[i][j-1]
+                gapB = matrix[i][j - 1]
 
             # calculate costs for match
             sim = 0.0
             o = 1
-            for k in range(min(i,j)):
-                match = matrix[i-k-1][j-k-1]
-                for l in range(k,-1,-1):
+            for k in range(min(i, j)):
+                match = matrix[i - k - 1][j - k - 1]
+                for l in range(k, -1, -1):
                     # get temporary match
-                    tmp_match = scorer[seqA[j-l-1],seqB[i-l-1]]
+                    tmp_match = scorer[seqA[j - l - 1], seqB[i - l - 1]]
 
                     # check for common prostrings
-                    if proA[j-l-1] == proB[i-l-1]:
+                    if proA[j - l - 1] == proB[i - l - 1]:
                         tmp_match += tmp_match * factor
-                    elif proA[j-l-1] in r and proB[i-l-1] not in r:
+                    elif proA[j - l - 1] in r and proB[i - l - 1] not in r:
                         tmp_match += -1000000
-                    elif proA[j-l-1] not in r and proB[i-l-1] in r:
+                    elif proA[j - l - 1] not in r and proB[i - l - 1] in r:
                         tmp_match += -1000000
-                    elif abs(ord(proA[j-l-1]) - ord(proB[i-l-1])) <= 2:
+                    elif abs(ord(proA[j - l - 1]) - ord(proB[i - l - 1])) <= 2:
                         tmp_match += tmp_match * factor / 2
-                    
+
                     # get match
                     match += tmp_match
 
-                p = k+1
+                p = k + 1
                 if match > sim:
                     sim = match
                     o = p
@@ -919,23 +912,24 @@ def secondary_dialign(
     while i > 0 or j > 0:
         if traceback[i][j] == 3:
             almA += ['-']
-            almB += [seqB[i-1]]
+            almB += [seqB[i - 1]]
             i -= 1 
         elif traceback[i][j] == 1: 
-            almA += [seqA[j-1]]
-            almB += [seqB[i-1]]
+            almA += [seqA[j - 1]]
+            almB += [seqB[i - 1]]
             i -= 1
             j -= 1
         else:
-            almA += [seqA[j-1]]
+            almA += [seqA[j - 1]]
             almB += ['-']
             j -= 1
 
     # turn alignments back
-    almA,almB = almA[::-1],almB[::-1]
+    almA, almB = almA[::-1], almB[::-1]
 
     # return alignments
-    return almA,almB,sim
+    return almA, almB, sim
+
 
 def align_pair(
         seqA,
@@ -950,7 +944,7 @@ def align_pair(
         scorer,
         mode,
         restricted_chars,
-        distance = 0
+        distance=0
         ):
     """
     Align a pair of sequences.
@@ -969,158 +963,145 @@ def align_pair(
     gopB = [gop * gopB[i] for i in range(N)]
 
     # check for secondary structures
-    if not set(restricted_chars).intersection(set(proA+proB)):
-
+    if not set(restricted_chars).intersection(set(proA + proB)):
         # determine the mode
         if mode == "global":
-            
             # carry out the alignment
-            almA,almB,sim = globalign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer
-                    )
-
+            almA, almB, sim = globalign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer
+            )
         elif mode == "local":
-            
             # carry out the alignment
-            almA,almB,sim = localign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer
-                    )
-
+            almA, almB, sim = localign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer
+            )
         elif mode == "overlap":
-            
             # carry out the alignment
-            almA,almB,sim = semi_globalign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer
-                    )
-
+            almA, almB, sim = semi_globalign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer
+            )
         elif mode == "dialign":
-            almA,almB,sim = dialign(
-                    seqA,
-                    seqB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer
-                    )
+            almA, almB, sim = dialign(
+                seqA,
+                seqB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer
+            )
 
     # check for secondary structures
     else:
-        
         # determine the mode
         if mode == "global":
-            
             # carry out the alignment
-            almA,almB,sim = secondary_globalign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer,
-                    restricted_chars
-                    )
-
+            almA, almB, sim = secondary_globalign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer,
+                restricted_chars
+            )
         elif mode == "local":
-            
             # carry out the alignment
-            almA,almB,sim = secondary_localign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer,
-                    restricted_chars
-                    )
-
+            almA, almB, sim = secondary_localign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer,
+                restricted_chars
+            )
         elif mode == "overlap":
-            
             # carry out the alignment
-            almA,almB,sim = secondary_semi_globalign(
-                    seqA,
-                    seqB,
-                    gopA,
-                    gopB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer,
-                    restricted_chars
-                    )
-
+            almA, almB, sim = secondary_semi_globalign(
+                seqA,
+                seqB,
+                gopA,
+                gopB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer,
+                restricted_chars
+            )
         elif mode == "dialign":
-            almA,almB,sim = secondary_dialign(
-                    seqA,
-                    seqB,
-                    proA,
-                    proB,
-                    M,
-                    N,
-                    scale,
-                    factor,
-                    scorer,
-                    restricted_chars
-                    )
-    
+            almA, almB, sim = secondary_dialign(
+                seqA,
+                seqB,
+                proA,
+                proB,
+                M,
+                N,
+                scale,
+                factor,
+                scorer,
+                restricted_chars
+            )
+
     # calculate distance, if this is needed
     if distance > 0:
-        simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
-        simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
+        simA = sum([(1.0 + factor) * scorer[seqA[i], seqA[i]] for i in range(M)])
+        simB = sum([(1.0 + factor) * scorer[seqB[i], seqB[i]] for i in range(N)])
 
-        dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
+        dist = 1 - ((2 * sim) / (simA + simB))
         if distance == 1:
-            return almA,almB,dist
+            return almA, almB, dist
         else:
-            return almA,almB,sim,dist
+            return almA, almB, sim, dist
     else:
-        return almA,almB,sim
-    
+        return almA, almB, sim
+
+
 def align_pairwise(
         seqs,
         gops,
@@ -1151,65 +1132,56 @@ def align_pairwise(
     for i in range(lS):
         seqA = seqs[i]
         k = len(seqA)
-        sim = sum([(1 + factor) * scorer[seqA[j],seqA[j]] for j in range(k)])
+        sim = sum([(1 + factor) * scorer[seqA[j], seqA[j]] for j in range(k)])
         lens[i] = k
         sims[i] = sim
         gops[i] = [gop * gops[i][j] for j in range(k)]
-    
+
     # check for restricted chars in the beginning
     if not set(restricted_chars).intersection(set(''.join(pros))):
-
         if mode == "global":
             # start loop
             for i in range(lS):
                 for j in range(lS):
                     if i < j:
-                        seqA,seqB = seqs[i],seqs[j]
-                        gopA,gopB = gops[i],gops[j]
-                        proA,proB = pros[i],pros[j]
-                        simA,simB = sims[i],sims[j]
-                        lenA,lenB = lens[i],lens[j]
+                        seqA, seqB = seqs[i], seqs[j]
+                        gopA, gopB = gops[i], gops[j]
+                        proA, proB = pros[i], pros[j]
+                        simA, simB = sims[i], sims[j]
+                        lenA, lenB = lens[i], lens[j]
 
-                        almA,almB,sim = globalign(
-                                seqA,
-                                seqB,
-                                gopA,
-                                gopB,
-                                proA,
-                                proB,
-                                lenA,
-                                lenB,
-                                scale,
-                                factor,
-                                scorer
-                                )
-                        
+                        almA, almB, sim = globalign(
+                            seqA,
+                            seqB,
+                            gopA,
+                            gopB,
+                            proA,
+                            proB,
+                            lenA,
+                            lenB,
+                            scale,
+                            factor,
+                            scorer
+                        )
                         # get the distance
-                        dist = 1 - ( 2 * sim / ( simA + simB ) )
-                        
-                        # append it to list
-                        alignments.append(
-                                (almA,almB,sim,dist)
-                                )
+                        dist = 1 - (2 * sim / (simA + simB))
+                        alignments.append((almA, almB, sim, dist))
                     elif i == j:
                         seqA = seqs[i]
-                        alignments.append(
-                                (seqA,seqA,sims[i],0.0)
-                                )
-
+                        alignments.append((seqA, seqA, sims[i], 0.0))
         elif mode == "local":
             # start loop
             for i in range(lS):
                 for j in range(lS):
                     if i < j:
-                        seqA,seqB = seqs[i],seqs[j]
-                        gopA,gopB = gops[i],gops[j]
-                        proA,proB = pros[i],pros[j]
-                        simA,simB = sims[i],sims[j]
-                        lenA,lenB = lens[i],lens[j]
+                        seqA, seqB = seqs[i], seqs[j]
+                        gopA, gopB = gops[i], gops[j]
+                        proA, proB = pros[i], pros[j]
+                        simA, simB = sims[i], sims[j]
+                        lenA, lenB = lens[i], lens[j]
 
                         # check for secondary structures
-                        almA,almB,sim = localign(
+                        almA, almB, sim = localign(
                                 seqA,
                                 seqB,
                                 gopA,
@@ -1224,18 +1196,13 @@ def align_pairwise(
                                 ) 
                         
                         # get the distance
-                        dist = 1 - ( 2 * sim / ( simA + simB ) )
-                        
+                        dist = 1 - (2 * sim / (simA + simB))
+
                         # append it to list
-                        alignments.append(
-                                (almA,almB,sim,dist)
-                                )
+                        alignments.append((almA, almB, sim, dist))
                     elif i == j:
                         seqA = seqs[i]
-                        alignments.append(
-                                (seqA,seqA,sims[i],0.0)
-                                )
-
+                        alignments.append((seqA, seqA, sims[i], 0.0))
         elif mode == "overlap":
             # start loop
             for i in range(lS):
@@ -2045,5 +2012,3 @@ def corrdist(
                     corrs[almA[j],almB[j]] = 1
 
     return corrs,included
-
-
