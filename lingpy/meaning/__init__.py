@@ -1,1 +1,2 @@
-from .basvoc import BasVoc
+from lingpy.meaning.basvoc import BasVoc
+assert BasVoc

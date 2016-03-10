@@ -2,44 +2,40 @@
 Class for the handling of basic vocabulary lists.
 """
 from __future__ import unicode_literals, print_function, division
-
-
-
-from .. import log
-from .. import util
-from .. import util
-from ..basic.parser import QLCParserWithRowsAndCols
-from ..read.csv import csv2list
-from ..settings import rcParams
-
 from functools import partial
 from glob import glob
-import numpy as np
 import os
+
+import numpy as np
+
+from lingpy import log
+from lingpy import util
+from lingpy.basic.parser import QLCParserWithRowsAndCols
+from lingpy.read.csv import csv2list
 
 
 class BasVoc(QLCParserWithRowsAndCols):
     """
     Load a comparative collection of Swadesh lists (concepticon).
-    
+
     Notes
     -----
     This collection may be useful for retrieving a subset of a given dataset,
     or for converting between conceptual items.
-    
+
     Examples
     --------
     Load a BasVoc object without arguments in order to get the default object::
-    
+
         >>> from lingpy.meaning import BasVoc
         >>> concepticon = BasVoc()
-    
+
     Alternatively, load a pre-compiled object from LingPy::
-    
+
         >>> from lingpy.meaning import concepticon
-    
+
     Retrieve all original words in Jachontov's list concept list::
-    
+
         >>> concepticon.get_list('jachontov','number','item')
         [['94', 'water'],
          ['25', 'eye'],
@@ -137,7 +133,7 @@ class BasVoc(QLCParserWithRowsAndCols):
         """
         if row and not col:
             try:
-                return self._cache[row,entry]
+                return self._cache[row, entry]
             except:
                 pass
 
@@ -152,18 +148,18 @@ class BasVoc(QLCParserWithRowsAndCols):
                     for etr in entry.split(','):
                         idx = self._header[etr]
 
-                        for key,value in data.items():
+                        for key, value in data.items():
                             try:
                                 entries[key] += [self[i][idx] for i in value]
                             except:
                                 entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[row,entry] = entries
+
+                self._cache[row, entry] = entries
                 return entries
 
         if col and not row:
             try:
-                return self._cache[col,entry]
+                return self._cache[col, entry]
             except:
                 pass
 
@@ -171,8 +167,10 @@ class BasVoc(QLCParserWithRowsAndCols):
                 raise ValueError("[!] The column you selected is not available!")
             else:
                 data = {}
-                for i,j in  [(self[i][self._rowIdx],i) for 
-                        i in self._array[:,self.cols.index(col)] if i != 0]:
+                for i, j in [
+                    (self[i][self._rowIdx], i)
+                    for i in self._array[:, self.cols.index(col)] if i != 0
+                ]:
                     try:
                         data[i] += [j]
                     except:
@@ -185,36 +183,28 @@ class BasVoc(QLCParserWithRowsAndCols):
                     for etr in entry.split(','):
                         idx = self._header[etr]
 
-                        for key,value in data.items():
+                        for key, value in data.items():
                             try:
                                 entries[key] += [self[i][idx] for i in value]
                             except KeyError:
                                 entries[key] = [self[i][idx] for i in value]
-                
-                self._cache[col,entry] = entries
-                
+
+                self._cache[col, entry] = entries
                 return entries
-    
+
         elif row and col:
             raise ValueError("[!] You should specify only a value for row or for col!")
         else:
             for key in [k for k in keywords if k in self._alias]:
                 if self._alias[key] == self._col_name:
-                    entries = self.get_dict(
-                            col = keywords[key],
-                            entry = entry,
-                            )
-                    self._cache[col,entry] = entries
+                    entries = self.get_dict(col=keywords[key], entry=entry)
+                    self._cache[col, entry] = entries
                     return entries
 
                 elif self._alias[key] == self._row_name:
-                    entries = self.get_dict(
-                            row = keywords[key],
-                            entry = entry
-                            )
-                    self._cache[col,entry] = entries
+                    entries = self.get_dict(row=keywords[key], entry=entry)
+                    self._cache[col, entry] = entries
                     return entries
-
 
             raise ValueError("[!] Neither rows nor columns are selected!")
 
@@ -233,28 +223,27 @@ class BasVoc(QLCParserWithRowsAndCols):
         -------
         l : list
             A list that contains the entries as specified.
-        
+
         Examples
         --------
-        
+
         >>> from lingpy.meaning import concepticon
         >>> lst = concepticon.get_list('jachontov', 'item')[:5]
         >>> lst
         ['water', 'eye', 'know', 'this', 'tail']
-        
+
         """
-        
         if entries:
             if len(entries) > 1:
-                return [self[i,entries] for i in self._meta[swadlist]]
+                return [self[i, entries] for i in self._meta[swadlist]]
             else:
-                return [self[i,entries[0]] for i in self._meta[swadlist]]
+                return [self[i, entries[0]] for i in self._meta[swadlist]]
         else:
             return [self[i] for i in self._meta[swadlist]]
-    
-    def get_sublist(self,sublist,baselist,*entries):
+
+    def get_sublist(self, sublist, baselist, *entries):
         """
-        Return the entries of one list that also occur in another list. 
+        Return the entries of one list that also occur in another list.
 
         Parameters
         ----------
@@ -281,27 +270,28 @@ class BasVoc(QLCParserWithRowsAndCols):
          'louse',
          'two',
          'name']
-        
+
         Returns
         -------
         l : list
             A list containing the entries as specified.
-        
-        """
 
+        """
         listA = self.get_list(baselist)
-        listB = self.get_list(sublist,'key')
-        
+        listB = self.get_list(sublist, 'key')
+
         if not entries:
             return [l for l in listA if l[self.header['key']] in listB]
         elif len(entries) > 1:
             return [
-                    [
-                        l[self.header[x]] for x in entries
-                        ] for l in listA if l[self.header['key']] in listB
-                    ]
+                [
+                    l[self.header[x]] for x in entries
+                ] for l in listA if l[self.header['key']] in listB
+            ]
         else:
-            return [l[self.header[entries[0]]] for l in listA if l[self.header['key']] in listB]
+            return [l[self.header[entries[0]]]
+                    for l in listA if l[self.header['key']] in listB]
+
 
 class Concepticon(object):
 
@@ -335,14 +325,13 @@ class Concepticon(object):
                     artid -= 1
                 else:
                     D[name][line[-1]] = line[:-1]
-            
+
             D[name][0] = header
-    
+
         self._dict = D
         self._keys = list(self._dict.keys())
-    
+
     def __getitem__(self, key):
-        
         key = key.lower()
 
         # first, check whether key is a given concept list
@@ -351,50 +340,41 @@ class Concepticon(object):
         elif key.lower() in ' '.join(self._keys):
             matches = []
             for k in self._keys:
-                if key in k: 
+                if key in k:
                     matches += [k]
             if len(matches) == 1:
                 return self._dict[matches[0]]
             else:
-                log.error("Multiple matches could be found: "+', '.join(matches)+'...')
+                log.error(
+                    "Multiple matches could be found: " + ', '.join(matches) + '...')
                 raise
         else:
-            return 
+            return
 
     def __str__(self):
-        
         return '\n'.join(self._keys)
 
     def __repr__(self):
+        return "<concepticon with " + str(len(self._keys) - 1) + " conceptlists>"
 
-        return "<concepticon with "+str(len(self._keys)-1)+" conceptlists>"
-    
     def compare(self, *lists, **keywords):
         """
         Compare multiple concept lists with each other.
         """
-        
-        kw = dict(
-                mode = 'intersection',
-                output = None,
-                filename = 'output',
-                )
+        kw = dict(mode='intersection', output=None, filename='output')
         kw.update(keywords)
 
         out = {}
-        
         listlen = 0
 
         for k in lists:
-            
             curlist = self[k]
             if not curlist:
                 raise ValueError("Not all of the lists you selected are defined.")
             else:
                 listlen += 1
-        
-        for i,k in enumerate(lists):
-            
+
+        for i, k in enumerate(lists):
             curlist = self[k]
             header = curlist[0]
             gidx = header.index('gloss')
@@ -415,5 +395,5 @@ class Concepticon(object):
                     del out[k]
             else:
                 pass
-            
+
         return out

@@ -1,16 +1,11 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-12 08:05
-# modified : 2013-10-16 13:45
 """
 Package for specific algorithms and time-intensive routines.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-10-16"
-
-from .distance import *
-from ..settings import rcParams
+# flake8: noqa
+from lingpy.algorithm.distance import *
+from lingpy.settings import rcParams
+from lingpy.algorithm.clustering import *
+from lingpy.algorithm._tree import _TreeDist as TreeDist
 
 cmod = {}
 # check for c-modules
@@ -40,9 +35,5 @@ except:
 
 rcParams['cmodules'] = not bool(cmod)
 
-from .clustering import *
-from ._tree import _TreeDist as TreeDist
-
 # define squareform for global lingpy-applications
 squareform = misc.squareform
-
