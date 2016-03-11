@@ -6,6 +6,7 @@ from __future__ import division, print_function, unicode_literals
 
 from six import text_type
 
+from lingpy.util import setdefaults, multicombinations2
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, prosodic_string, tokens2class, prosodic_weights, class2tokens,
@@ -191,7 +192,8 @@ class Pairwise(object):
             If set to *True*, the alignments are printed to the screen.
 
         """
-        defaults = dict(
+        setdefaults(
+            keywords,
             gop=-1,
             scale=0.5,
             mode='global',
@@ -201,71 +203,45 @@ class Pairwise(object):
             model=rcParams['sca'],
             pprint=False,
             transform=rcParams['align_transform'])
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
 
         if hasattr(self, 'model'):
-            if keywords['model'] == self.model:
-                pass
-            else:
+            if keywords['model'] != self.model:
                 self._set_model(**keywords)
         else:
             self._set_model(**keywords)
 
         # create the alignments array
-        self._alignments = []
-        self.alignments = []
-
-        if not keywords['distance']:
-            self._alignments = calign.align_pairs(
-                self.classes,
-                self.weights,
-                self.prostrings,
-                keywords['gop'],
-                keywords['scale'],
-                keywords['factor'],
-                self.scoredict,
-                keywords['mode'],
-                keywords['restricted_chars'])
-        else:
-            self._alignments = calign.align_pairs(
-                self.classes,
-                self.weights,
-                self.prostrings,
-                keywords['gop'],
-                keywords['scale'],
-                keywords['factor'],
-                self.scoredict,
-                keywords['mode'],
-                keywords['restricted_chars'],
-                distance=1)
+        self._alignments = calign.align_pairs(
+            self.classes,
+            self.weights,
+            self.prostrings,
+            keywords['gop'],
+            keywords['scale'],
+            keywords['factor'],
+            self.scoredict,
+            keywords['mode'],
+            keywords['restricted_chars'],
+            distance=1 if keywords['distance'] else 0)
 
         # switch back to alignments
         self.alignments = []
         for i, (almA, almB, sim) in enumerate(self._alignments):
-            if keywords['mode'] != "local":
-                self.alignments.append(
-                    (
-                        class2tokens(self.tokens[i][0], almA),
-                        class2tokens(self.tokens[i][1], almB),
-                        sim
-                    )
-                )
-            else:
-                self.alignments.append(
-                    (
-                        class2tokens(self.tokens[i][0], almA, local=True),
-                        class2tokens(self.tokens[i][1], almB, local=True),
-                        sim
-                    )
-                )
+            self.alignments.append((
+                class2tokens(self.tokens[i][0], almA, local=keywords['mode'] == "local"),
+                class2tokens(self.tokens[i][1], almB, local=keywords['mode'] == "local"),
+                sim))
 
         # print the alignments, if this is chosen
         if keywords['pprint']:
             print(self)
-        else:
-            pass
+
+
+def _get_scorer(seqA, seqB):
+    scorer = {}
+    for a in seqA:
+        for b in seqB:
+            scorer[a, b] = 1.0 if a == b else -1.0
+    return scorer
 
 
 # the following functions provide solutions for convenience
@@ -321,30 +297,15 @@ def pw_align(
     elif not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
 
-    if distance:
-        distance = 1
-    else:
-        distance = 0
+    distance = 1 if distance else 0
 
     if not scorer and distance == 0:
-        scorer = {}
-        for a in seqA:
-            for b in seqB:
-                if a == b:
-                    scorer[a, b] = 1.0
-                else:
-                    scorer[a, b] = -1.0
+        scorer = _get_scorer(seqA, seqB)
     elif not scorer and distance == 1:
         scorer = {}
-        for i, a in enumerate(sorted(set(seqA + seqB))):
-            for j, b in enumerate(sorted(set(seqA + seqB))):
-                if i <= j:
-                    if a == b:
-                        scorer[a, b] = 1.0
-                        scorer[b, a] = 1.0
-                    else:
-                        scorer[a, b] = -1.0
-                        scorer[b, a] = -1.0
+        for (i, a), (j, b) in multicombinations2(enumerate(sorted(set(seqA + seqB)))):
+            scorer[a, b] = 1.0 if a == b else -1.0
+            scorer[b, a] = 1.0 if a == b else -1.0
 
     # start alignment
     return talign.align_pair(seqA, seqB, gop, scale, scorer, mode, distance)
@@ -432,16 +393,7 @@ def nw_align(seqA, seqB, scorer=False, gap=-1):
     elif not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
 
-    if not scorer:
-        scorer = {}
-        for a in seqA:
-            for b in seqB:
-                if a == b:
-                    scorer[a, b] = 1.0
-                else:
-                    scorer[a, b] = -1.0
-
-    return malign.nw_align(seqA, seqB, scorer, gap)
+    return malign.nw_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
 def edit_dist(seqA, seqB, normalized=False, restriction=''):
@@ -542,16 +494,8 @@ def sw_align(seqA, seqB, scorer=False, gap=-1):
         seqB = list(seqB)
     elif not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
-    if not scorer:
-        scorer = {}
-        for a in seqA:
-            for b in seqB:
-                if a == b:
-                    scorer[a, b] = 1.0
-                else:
-                    scorer[a, b] = -1.0
 
-    return malign.sw_align(seqA, seqB, scorer, gap)
+    return malign.sw_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
 def we_align(seqA, seqB, scorer=False, gap=-1):
@@ -601,16 +545,7 @@ def we_align(seqA, seqB, scorer=False, gap=-1):
     elif not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
 
-    if not scorer:
-        scorer = {}
-        for a in seqA:
-            for b in seqB:
-                if a == b:
-                    scorer[a, b] = 1.0
-                else:
-                    scorer[a, b] = -1.0
-
-    return malign.we_align(seqA, seqB, scorer, gap)
+    return malign.we_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
 def structalign(seqA, seqB):

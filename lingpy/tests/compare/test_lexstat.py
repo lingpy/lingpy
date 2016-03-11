@@ -98,7 +98,7 @@ class TestLexStat(WithTempDir):
         self.lex.cluster(method="edit-dist", threshold=0.7)
         self.lex.cluster(method="turchin", threshold=0.7)
         self.assertRaises(ValueError, self.lex.cluster, method="fuzzy")
-        with patch('lingpy.basic.parser.input', Mock(return_value='y')):
+        with patch('lingpy.basic.parser.confirm', Mock(return_value=True)):
             self.lex.cluster(method="sca", guess_threshold=True, gt_mode='nulld')
 
         assert 'scaid' in self.lex.header \

@@ -483,10 +483,7 @@ class Wordlist(QLCParserWithRowsAndCols):
         ref = (self._alias[ref], loans)
 
         # make converting function for loans
-        if loans:
-            f = lambda x: abs(x)
-        else:
-            f = lambda x: x
+        f = abs if loans else util.identity
 
         # create an etymdict object
         if ref not in self._etym_dict:
@@ -555,12 +552,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             The marker for missing items.
         """
         etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)
-
-        # create dictionary for paps
-        paps = {}
-
-        # create dictionary that stores missing data
-        missed = {}
+        paps, missed = {}, {}
 
         # retrieve the values
         for key, values in etym_dict.items():
@@ -576,18 +568,11 @@ class Wordlist(QLCParserWithRowsAndCols):
                 meaning = meanings.pop()
 
                 if meaning not in missed:
+                    # get the sum of the list in the wordlist of self
+                    tmp = sum(np.array(self.get_list(row=meaning)))
 
-                    # get the list in the wordlist of self
-                    tmp = np.array(self.get_list(row=meaning))
-
-                    # get the sum of the list
-                    tmp = sum(tmp)
-
-                    # get all languages which are zero
-                    gaps = [i for i in range(self.width) if not tmp[i]]
-
-                    # append gaps to missing
-                    missed[meaning] = gaps
+                    # append all languages which are zero to missing
+                    missed[meaning] = [i for i in range(self.width) if not tmp[i]]
             else:
                 meaning = False
 
@@ -840,7 +825,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                             self.get_list(row=concept, entry=keywords['entry'])):
                         part = '\t'.join(
                             '{0}\t{1}'.format(l(a), b) for a, b in zip(line, cogs[j]))
-                        lines.append(str(i + 1) + '\t' + concept + '\t' + part)
+                        lines.append(util.tabjoin(i + 1, concept, part))
 
             return _write_file(
                 keywords['filename'], lines, 'starling_' + keywords['entry'] + '.csv')
@@ -858,7 +843,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
             for l in self.cols:
                 lines = [''] if 'ignore_keys' in keywords else ['ID\t']
-                lines[0] += '\t'.join([x.upper() for x in keywords['entries']])
+                lines[0] += '\t'.join(x.upper() for x in keywords['entries'])
                 for key in self.get_list(col=l, flat=True):
                     line = [] if 'ignore_keys' in keywords else [key]
                     for entry in keywords['entries']:

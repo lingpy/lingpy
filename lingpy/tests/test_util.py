@@ -30,8 +30,6 @@ class Test(WithTempDir):
 
 class TestCombinations(TestCase):
     def test_combinations2(self):
-        from lingpy.util import combinations2, multicombinations2
-
         def f(l):
             for i, a1 in enumerate(l):
                 for j, a2 in enumerate(l):
@@ -45,5 +43,15 @@ class TestCombinations(TestCase):
                         yield a1, a2
 
         for l in [list(range(5)), 'abcdefg']:
-            self.assertEqual(list(combinations2(l)), list(f(l)))
-            self.assertEqual(list(multicombinations2(l)), list(fm(l)))
+            self.assertEqual(list(util.combinations2(l)), list(f(l)))
+            self.assertEqual(list(util.multicombinations2(l)), list(fm(l)))
+
+
+class TestJoin(TestCase):
+    def test_join(self):
+        self.assertEqual(util.join('.'), '')
+        self.assertEqual(util.join('.', 1), '1')
+        self.assertEqual(util.join('.', 1, 2), '1.2')
+
+    def test_dotjoin(self):
+        self.assertEqual(util.dotjoin(1, 2), '1.2')

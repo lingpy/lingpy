@@ -5,7 +5,7 @@ import cgi
 
 from lingpy.sequence.sound_classes import class2tokens, token2class
 from lingpy.settings import rcParams
-from lingpy.util import join
+from lingpy.util import charstring, dotjoin
 
 
 def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
@@ -71,7 +71,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
 
                 # get the char
                 if num != '-':
-                    charA = join('.', taxa[i], msa['alignment'][i][j], num.split('.')[2])
+                    charA = dotjoin(taxa[i], msa['alignment'][i][j], num.split('.')[2])
                     chars += [charA]
                     try:
                         occs[charA] += [concept]
@@ -87,11 +87,8 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                         else:
                             if numB != '-' and num != '-':
                                 # get the second char
-                                charB = join(
-                                    '.',
-                                    taxa[k],
-                                    msa['alignment'][k][j],
-                                    numB.split('.')[2])
+                                charB = dotjoin(
+                                    taxa[k], msa['alignment'][k][j], numB.split('.')[2])
                                 try:
                                     corrs[charA][charB] += 1
                                 except:
@@ -102,10 +99,10 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
 
                             gaps = False
                             if num == '-' and numB != '-':
-                                numA = str(idx) + '.X.-'
+                                numA = charstring(idx)
                                 gaps = True
                             elif numB == '-' and num != '-':
-                                numB = str(alms.taxa.index(taxa[k])) + '.X.-'
+                                numB = charstring(alms.taxa.index(taxa[k]))
                                 numA = num
                                 gaps = True
                             else:
@@ -187,13 +184,12 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 tmp += '<td class="display" rowspan={0}>'.format(spans[a])
                 tmp += a + '</td>'
                 tmp += '<td class="display" onclick="show({0});"><span '.format(
-                    "'" + '.'.join([a, b, c]) + "'")
+                    "'" + dotjoin(a, b, c) + "'")
                 tmp += 'class="char {0}">' + b + '</span></td>'
                 tmp += '<td class="display">'
                 tmp += c + '</td>'
                 tmp += '<td class="display">' + str(d) + '</td>'
-                tmp += '<td class="display">' + str(len(occs['.'.join([a, b, c])])) + \
-                       '</td>'
+                tmp += '<td class="display">' + str(len(occs[dotjoin(a, b, c)])) + '</td>'
                 tmp += '</tr>'
                 t = 'dolgo_' + token2class(b, rcParams['dolgo'])
 
@@ -211,13 +207,11 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
             elif counter > 0:
                 tmp = '<tr class="display">'
                 tmp += '<td class="display" onclick="show({0});"><span '.format(
-                    "'" + '.'.join([a, b, c]) + "'")
+                    "'" + dotjoin(a, b, c) + "'")
                 tmp += 'class="char {0}">' + b + '</span></td>'
-
                 tmp += '<td class="display">' + c + '</td>'
                 tmp += '<td class="display">' + str(d) + '</td>'
-                tmp += '<td class="display">' + str(len(occs['.'.join([a, b, c])])) + \
-                       '</td>'
+                tmp += '<td class="display">' + str(len(occs[dotjoin(a, b, c)])) + '</td>'
                 tmp += '</tr>'
 
                 t = 'dolgo_' + token2class(b, rcParams['dolgo'])
@@ -283,7 +277,7 @@ def get_correspondences(alms, ref='lexstatid'):
 
                 # get the char
                 if num != '-':
-                    charA = join('.', taxa[i], msa['alignment'][i][j], num.split('.')[2])
+                    charA = dotjoin(taxa[i], msa['alignment'][i][j], num.split('.')[2])
                     chars += [charA]
                     try:
                         occs[charA] += [concept]
@@ -299,8 +293,7 @@ def get_correspondences(alms, ref='lexstatid'):
                         else:
                             if numB != '-' and num != '-':
                                 # get the second char
-                                charB = join(
-                                    '.',
+                                charB = dotjoin(
                                     taxa[k],
                                     msa['alignment'][k][j],
                                     numB.split('.')[2])

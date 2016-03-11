@@ -19,7 +19,7 @@ from lingpy.sequence.sound_classes import (
 )
 from lingpy.settings import rcParams
 from lingpy import log
-from lingpy.util import setdefaults, identity
+from lingpy.util import setdefaults, identity, dotjoin
 
 
 class Multiple(object):
@@ -63,8 +63,7 @@ class Multiple(object):
         self.numbers = []
         if self.tokens:
             for i, tokens in enumerate(self.tokens):
-                self.numbers.append(
-                    [str(i + 1) + '.' + str(j + 1) for j in range(len(tokens))])
+                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
         else:
             # create a numerical representation of all sequences which reflects the
             # order of both their position and the position of their tokens. Before
@@ -74,8 +73,7 @@ class Multiple(object):
                 # check for pre-tokenized strings
                 tokens = ipa2tokens(seq, **kw)
                 self.tokens.append(tokens)
-                self.numbers.append(
-                    [str(i + 1) + '.' + str(j + 1) for j in range(len(tokens))])
+                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
 
         self.uniseqs = defaultdict(list)
         self.unique_seqs = kw["unique_seqs"]
@@ -217,16 +215,15 @@ class Multiple(object):
 
         # add the classes
         self._classes = [self.classes[key] for key in keys]
-        self._numbers = [[str(i + 1) + '.' + str(j + 1) for j in
+        self._numbers = [[dotjoin(i + 1, j + 1) for j in
                           range(len(self._classes[i]))] for i in range(self.height)]
 
         # create an index which allows to quickly interchange between classes
         # and given sequences (trivial without sequence uniqueness
         if self.unique_seqs:
-            self.int2ext = dict(
-                [(i, indices[tuple(self._classes[i])]) for i in range(len(keys))])
+            self.int2ext = {i: indices[tuple(self._classes[i])] for i in range(len(keys))}
         else:
-            self.int2ext = dict([(i, [i]) for i in range(len(keys))])
+            self.int2ext = {i: [i] for i in range(len(keys))}
 
         # -> # create external to internal in order to allow for a quick switching
         # -> # of the vals
@@ -454,9 +451,7 @@ class Multiple(object):
         Create the guide tree using either the UPGMA or the Neighbor-Joining
         algorithm.
         """
-        # create the clusters
-        clusters = dict(
-            [(i[0], [i[1]]) for i in zip(range(self.height), range(self.height))])
+        clusters = {i[0]: [i[1]] for i in zip(range(self.height), range(self.height))}
 
         # create the tree matrix
         self.tree_matrix = []
@@ -697,7 +692,7 @@ class Multiple(object):
                 numbers = []
                 for num in line:
                     try:
-                        numbers.append(str(j + 1) + '.' + num.split('.')[1])
+                        numbers.append(dotjoin(j + 1, num.split('.')[1]))
                     except:
                         numbers.append('X')
                 self.alm_matrix[j] = [self._get(num, 'tokens') for num in numbers]
@@ -1312,8 +1307,7 @@ class Multiple(object):
             return
 
         # create the clusters
-        clusters = dict(
-            [(i[0], [i[1]]) for i in zip(range(self.height), range(self.height))])
+        clusters = {i[0]: [i[1]] for i in zip(range(self.height), range(self.height))}
 
         cluster._flat_upgma(clusters, self.matrix, threshold)
         self._iter(
@@ -1640,7 +1634,7 @@ class Multiple(object):
                             for m in tok:
                                 try:
                                     alm.append(self._get(
-                                        str(idx + 1) + '.' + m.split('.')[1], 'tokens'))
+                                        dotjoin(idx + 1, m.split('.')[1]), 'tokens'))
                                 except:
                                     alm.append('-')
 

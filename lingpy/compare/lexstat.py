@@ -24,6 +24,7 @@ from lingpy.algorithm import calign
 from lingpy.algorithm import talign
 from lingpy.algorithm import misc
 from lingpy import util
+from lingpy.util import charstring
 from lingpy import log
 
 
@@ -45,10 +46,6 @@ def _check_tokens(key_and_tokens):
                         line[sonars.index('0')]), line)
             except ValueError or IndexError:
                 yield (key, "sound-class conversion failed", line)
-
-
-def charstring(id_, char='X', cls='-'):
-    return '{0}.{1}.{2}'.format(id_, char, cls)
 
 
 def char_from_charstring(cstring):
@@ -164,7 +161,7 @@ class LexStat(Wordlist):
             self.model = kw['model']
 
         # set the lexstat stamp
-        self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
+        self._stamp = "# Created using the LexStat class of {0}\n".format(util.PROG)
 
         # initialize the wordlist
         Wordlist.__init__(self, filename)
@@ -241,7 +238,7 @@ class LexStat(Wordlist):
         # add information regarding vowels in the data based on the
         # transformation, which is important for the calculation of the
         # v-scale in lexstat.get_scorer
-        if not 'vowels' in self._meta:
+        if 'vowels' not in self._meta:
             self._meta['vowels'] = ' '.join(sorted(set([self._transform[v] for v
                 in 'XYZT_']))) if hasattr(self, '_transform') else 'VT_'
 
@@ -273,8 +270,8 @@ class LexStat(Wordlist):
                 raise ValueError("Your input data does not contain any entries!")
             self.bad_chars = [char for char in self.chars if char[2] == '0']
             if len(self.bad_chars) / len(self.chars) > rcParams['lexstat_bad_chars_limit']:
-                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by LingPy. You should re-load with check=True!".format(
-                        100 * len(self.bad_chars) / len(self.chars)))
+                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by {1}. You should re-load with check=True!".format(
+                    100 * len(self.bad_chars) / len(self.chars), util.PROG))
 
         if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
