@@ -66,7 +66,7 @@ class TestParser(TestCase):
         self.parser.add_entries('lTaxon', 'taxon', lambda t: t.lower(), override=True)
         assert 'ltaxon' in self.parser.entries
 
-        with patch('lingpy.basic.parser.input', Mock(return_value='y')):
+        with patch('lingpy.basic.parser.confirm', Mock(return_value=True)):
             self.parser.add_entries('ltaxon', 'taxon', lambda t: t.lower())
 
         self.parser.add_entries('tg', 'taxon,gloss', lambda v, id_: ''.join(v))

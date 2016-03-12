@@ -1,7 +1,10 @@
 """
 Module offers methods to handle colexification patterns in wordlist objects.
 """
+from collections import defaultdict
+
 from lingpy import log
+from lingpy.util import combinations2, dotjoin, join
 
 try:
     import networkx as nx
@@ -32,11 +35,9 @@ def _get_colexifications(wordlist, entry='ipa', concept='concept', family='famil
         tmp_entries = wordlist.get_list(taxon=taxon, flat=True, entry=entry)
 
         # iterate over all concepts and add them to the graph
-        for i, c1 in enumerate(tmp_concepts):
-            for j, c2 in enumerate(tmp_concepts):
-                if i < j:
-                    if tmp_entries[i] == tmp_entries[j] and c1 != c2:
-                        colexifications += [(c1, c2, taxon, tmp_family, tmp_entries[i])]
+        for (i, c1), (j, c2) in combinations2(enumerate(tmp_concepts)):
+            if tmp_entries[i] == tmp_entries[j] and c1 != c2:
+                colexifications += [(c1, c2, taxon, tmp_family, tmp_entries[i])]
 
     return colexifications
 
@@ -57,22 +58,13 @@ def _get_statistics(wordlist, entry='ipa', concept='concept', family='family'):
     if family not in wordlist.header:
         family = 'doculect'
 
-    statistics = {}
+    statistics = defaultdict(lambda: defaultdict(list))
     for k in wordlist:
         tmp_concept = wordlist[k, concept]
-        tmp_entry = wordlist[k, entry]
-        tmp_family = wordlist[k, family]
-        tmp_taxon = wordlist[k, 'taxon']
+        statistics[tmp_concept]['families'].append(wordlist[k, family])
+        statistics[tmp_concept]['doculects'].append(wordlist[k, 'taxon'])
+        statistics[tmp_concept]['words'].append(wordlist[k, entry])
 
-        try:
-            statistics[tmp_concept]['families'] += [tmp_family]
-            statistics[tmp_concept]['doculects'] += [tmp_taxon]
-            statistics[tmp_concept]['words'] += [tmp_entry]
-        except KeyError:
-            statistics[tmp_concept] = dict(
-                families=[tmp_family],
-                doculects=[tmp_taxon],
-                words=[tmp_entry])
     for k in statistics:
         statistics[k]['familyOcc'] = len(set(statistics[k]['families']))
         statistics[k]['doculectOcc'] = len(set(statistics[k]['doculects']))
@@ -84,14 +76,10 @@ def _get_statistics(wordlist, entry='ipa', concept='concept', family='family'):
 
 
 def _get_colexifications_by_taxa(colexifications):
-    colex = {}
+    colex = defaultdict(set)
     for c1, c2, t, entry in colexifications:
-        try:
-            colex[t] += [(c1, c2), (c2, c1)]
-        except KeyError:
-            colex[t] = [(c1, c2), (c2, c1)]
-    for t in colex:
-        colex[t] = set(colex[t])
+        colex[t].add((c1, c2))
+        colex[t].add((c2, c1))
     return colex
 
 
@@ -107,15 +95,10 @@ def _make_matrix(taxa, colex):
     """
     # calculate the matrix
     matrix = [[0 for i in range(len(colex))] for j in range(len(colex))]
-    for i, t1 in enumerate(taxa):
-        for j, t2 in enumerate(taxa):
-            if i < j:
-                intersection = colex[t1].intersection(colex[t2])
-                union = colex[t1].union(colex[t2])
-
-                dist = 1 - len(intersection) / len(union)
-                matrix[i][j] = dist
-                matrix[j][i] = dist
+    for (i, t1), (j, t2) in combinations2(enumerate(taxa)):
+        intersection = colex[t1].intersection(colex[t2])
+        union = colex[t1].union(colex[t2])
+        matrix[i][j] = matrix[j][i] = 1 - len(intersection) / len(union)
     return matrix
 
 
@@ -142,20 +125,17 @@ def _make_graph(colexifications, bipartite=False):
             d['family'] = sorted(set(d['families']))
             d['doculects'] = sorted(set(d['doculects']))
     elif bipartite:
-        idx = 1
-        for c1, c2, t, f, entry in colexifications:
+        for idx, (c1, c2, t, f, entry) in enumerate(colexifications):
+            nindex = dotjoin(t, idx + 1)
             try:
-                G.edge[t + '.' + str(idx)][c1]['weight'] += 1
-                G.edge[t + '.' + str(idx)][c2]['weight'] += 1
-                idx += 1
+                G.edge[nindex][c1]['weight'] += 1
+                G.edge[nindex][c2]['weight'] += 1
             except:
-                G.add_node(
-                    t + '.' + str(idx), ntype='word', entry=entry, doculect=t, family=f)
+                G.add_node(nindex, ntype='word', entry=entry, doculect=t, family=f)
                 G.add_node(c1, ntype='concept')
                 G.add_node(c2, ntype='concept')
-                G.add_edge(t + '.' + str(idx), c1, weight=1)
-                G.add_edge(t + '.' + str(idx), c2, weight=1)
-                idx += 1
+                G.add_edge(nindex, c1, weight=1)
+                G.add_edge(nindex, c2, weight=1)
     return G
 
 
@@ -205,15 +185,16 @@ def colexification_network(
     if not output:
         return G
 
+    def stringify_data(data):
+        for k in data:
+            if isinstance(data[k], list):
+                data[k] = join('//', *data[k])
+
     if output == 'gml':
         for node, data in G.nodes(data=True):
-            for k in data:
-                if isinstance(data[k], list):
-                        data[k] = '//'.join([str(x) for x in data[k]])
+            stringify_data(data)
         for nA, nB, data in G.edges(data=True):
-            for k in data:
-                if isinstance(data[k], list):
-                    data[k] = '//'.join([str(x) for x in data[k]])
+            stringify_data(data)
         nx.write_gml(G, filename + '.gml')
         log.file_written(filename + '.gml')
 
@@ -222,12 +203,8 @@ def compare_colexifications(wordlist, entry='ipa', concept='concept'):
     """
     Compare colexification patterns for a given wordlist.
     """
-
-    taxa = wordlist.cols
     colexifications = _get_colexifications(wordlist, entry, concept)
-    colex = _get_colexifications_by_taxa(colexifications)
-
-    return _make_matrix(taxa, colex)
+    return _make_matrix(wordlist.cols, _get_colexifications_by_taxa(colexifications))
 
 
 def partition_colexifications(G, weight='weight'):
@@ -242,12 +219,9 @@ def partition_colexifications(G, weight='weight'):
                 c['weight'] = c[weight]
 
     partition = community.best_partition(G)
-    converted = {}
+    converted = defaultdict(list)
     for node in partition:
-        try:
-            converted[partition[node]] += [node]
-        except KeyError:
-            converted[partition[node]] = [node]
+        converted[partition[node]].append(node)
 
     return converted, partition
 

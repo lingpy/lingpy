@@ -9,12 +9,12 @@ from collections import defaultdict
 
 from six import text_type as str
 from six import string_types
-from six.moves import input
 
 from lingpy.settings import rcParams
 from lingpy.read.qlc import read_qlc
 from lingpy import cache
 from lingpy import util
+from lingpy.util import confirm
 from lingpy import log
 
 
@@ -236,8 +236,7 @@ class QLCParser(object):
             source,
             function,
             override=False,
-            **keywords
-    ):
+            **keywords):
         """
         Add new entry-types to the word list by modifying given ones.
 
@@ -299,10 +298,9 @@ class QLCParser(object):
 
         # check whether the stuff is already there
         if entry in self._header and not override:
-            answer = input(
-                "[?] Column <{entry}> already exists, do you want to override? (y/n) "
-                .format(entry=entry))
-            if answer.lower() in ['y', 'yes', 'j']:
+            if confirm(
+                "Column <{entry}> already exists, do you want to override?".format(
+                    entry=entry)):
                 keywords['override'] = True
                 return self.add_entries(entry, source, function, **keywords)
             return  # pragma: no cover

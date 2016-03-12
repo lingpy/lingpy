@@ -10,6 +10,7 @@ perspective deals with aligned sequences.
 """
 from __future__ import print_function, division, unicode_literals
 import os
+from collections import Counter, defaultdict
 
 from six import text_type
 
@@ -85,25 +86,19 @@ class MSA(Multiple):
     """
 
     def __init__(self, infile, **keywords):
-        # set the defaults
-        defaults = {
-            'comment': rcParams['comment'],
-            "diacritics": rcParams['diacritics'],
-            "vowels": rcParams['vowels'],
-            "tones": rcParams['tones'],
-            "combiners": rcParams['combiners'],
-            "breaks": rcParams['breaks'],
-            "stress": rcParams['stress'],
-            "merge_vowels": rcParams['merge_vowels'],
-            "ids": False,
-            "header": True,
-            "normalize": True,
-        }
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
-        # store comment-string
+        util.setdefaults(
+            keywords,
+            comment=rcParams['comment'],
+            diacritics=rcParams['diacritics'],
+            vowels=rcParams['vowels'],
+            tones=rcParams['tones'],
+            combiners=rcParams['combiners'],
+            breaks=rcParams['breaks'],
+            stress=rcParams['stress'],
+            merge_vowels=rcParams['merge_vowels'],
+            ids=False,
+            header=True,
+            normalize=True)
         self.comment = keywords['comment']
 
         # initialization checks first, whether we are dealing with msa-files or
@@ -406,8 +401,7 @@ class PSA(Pairwise):
                 handle_data(data, i)
                 i += 4
             except:
-                log.warn(
-                    "Line " + text_type(i + 1) + " of the data is probably miscoded.")
+                log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
                 i += 1
 
         self.pair_num = len(self.pairs)
@@ -423,9 +417,9 @@ class PSA(Pairwise):
         taxonA = almA.pop(0)
         taxonB = almB.pop(0)
 
-        dot_join = lambda iter: '.'.join([k for k in iter if k != '-'])
+        kw = dict(condition=lambda k: k != '-')
         self.taxa.append((taxonA, taxonB))
-        self.pairs.append((dot_join(almA), dot_join(almB)))
+        self.pairs.append((util.dotjoin(*almA, **kw), util.dotjoin(*almB, **kw)))
         self.alignments.append(
             ([text_type(a) for a in almA], [text_type(b) for b in almB], 0))
 
@@ -455,6 +449,7 @@ class PSA(Pairwise):
             the infile will be taken by default.
 
         """
+        assert fileformat in ['psa', 'psq']
         util.setdefaults(
             keywords,
             gop=-2,
@@ -470,31 +465,24 @@ class PSA(Pairwise):
             outfile = filename + '_out.' + fileformat
 
         with util.TextFile(outfile) as out:
+            out.write(self.dataset + '\n')
             # if data is simple, just write simple data to file
             if fileformat == 'psq':
-                out.write(self.dataset + '\n')
                 for i, (a, b) in enumerate(self.pairs):
-                    out.write(self.seq_ids[i] + '\n')
-
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
-                    mtax = max([len(t) for t in self.taxa[i]])
-                    txf = '{0:.<' + text_type(mtax) + '}'
+                    txf = '{0:.<' + text_type(max([len(t) for t in self.taxa[i]])) + '}'
 
+                    out.write(self.seq_ids[i] + '\n')
                     out.write(txf.format(self.taxa[i][0]) + '\t' + a + '\n')
                     out.write(txf.format(self.taxa[i][1]) + '\t' + b + '\n\n')
-
-            # if data is psa-format
-            elif fileformat == 'psa':
-                out.write(self.dataset + '\n')
+            else:  # if fileformat == 'psa':
                 for i, (a, b, c) in enumerate(self.alignments):
-                    out.write(self.seq_ids[i] + '\n')
-
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
-                    mtax = max([len(t) for t in self.taxa[i]])
-                    txf = '{0:.<' + text_type(mtax) + '}'
+                    txf = '{0:.<' + text_type(max([len(t) for t in self.taxa[i]])) + '}'
 
+                    out.write(self.seq_ids[i] + '\n')
                     out.write(txf.format(self.taxa[i][0]) + '\t' + '\t'.join(a) + '\n')
                     out.write(txf.format(self.taxa[i][1]) + '\t' + '\t'.join(b) + '\n')
 
@@ -620,12 +608,8 @@ class Alignments(Wordlist):
                     seqids += t
                 if len(seqids) > 1:
                     # set up the dictionary
-                    d = {}
-                    d['taxa'] = []
-                    d['seqs'] = []
+                    d = {'ID': [], 'taxa': [], 'seqs': [], 'alignment': []}
                     d['dataset'] = os.path.split(os.path.splitext(self.filename)[0])[1]
-                    d['ID'] = []
-                    d['alignment'] = []
                     if 'concept' in self.header:
                         concept = self[seqids[0], 'concept']
                         d['seq_id'] = '{0} ("{1}")'.format(key, concept)
@@ -649,10 +633,10 @@ class Alignments(Wordlist):
                             midx = self[seq][self.header[ref]].index(key)
                             this_string = morphemes[midx]
 
-                        d['ID'] += [seq]
-                        d['taxa'] += [self[seq, 'taxa']]
-                        d['seqs'] += [this_string]
-                        d['alignment'] += [this_string]
+                        d['ID'].append(seq)
+                        d['taxa'].append(self[seq, 'taxa'])
+                        d['seqs'].append(this_string)
+                        d['alignment'].append(this_string)
 
                     d['alignment'] = normalize_alignment(d['alignment'])
                     self._meta['msa'][ref][key] = d
@@ -1015,7 +999,7 @@ class Alignments(Wordlist):
 
                     # temporary solution for sound-class integration
                     if classes == True:
-                        classes = []
+                        _classes = []
                         if weights:
                             keywords['weights'] = prosodic_weights(
                                 prosodic_string(self.msa[ref][cog]['_sonority_consensus'])
@@ -1030,28 +1014,20 @@ class Alignments(Wordlist):
                                 keywords['model']
                             ) if c != '0']
                             cls = class2tokens(cls, alm)
-                            classes += [cls]
-
-                        cons = get_consensus(
-                            self.msa[ref][cog]['alignment'],
-                            classes=misc.transpose(classes),
-                            tree=tree,
-                            gaps=gaps,
-                            taxa=[text_type(taxon.replace("(", "").replace(")", ""))
-                                  for taxon in self.msa[ref][cog]['taxa']],
-                            **keywords)
-                        classes = True
+                            _classes.append(cls)
+                        _classes = misc.transpose(_classes)
                     else:
-                        cons = get_consensus(
-                            self.msa[ref][cog]['alignment'],
-                            classes=classes,
-                            tree=tree,
-                            gaps=gaps,
-                            taxa=[text_type(taxon.replace("(", "").replace(")", ""))
-                                  for taxon in self.msa[ref][cog]['taxa']],
-                            **keywords)
-                    self.msa[ref][cog]["consensus"] = cons
+                        _classes = classes
 
+                    cons = get_consensus(
+                        self.msa[ref][cog]['alignment'],
+                        classes=_classes,
+                        tree=tree,
+                        gaps=gaps,
+                        taxa=[text_type(taxon.replace("(", "").replace(")", ""))
+                              for taxon in self.msa[ref][cog]['taxa']],
+                        **keywords)
+                    self.msa[ref][cog]["consensus"] = cons
                 # if there's no msa for a given cognate set, this set is a singleton
                 else:
                     cons = self[
@@ -1183,15 +1159,8 @@ class Alignments(Wordlist):
                                      for a, b, c in zip(alm, confs, chars)]
                                 )
 
-                            out += '\t'.join(
-                                [
-                                    text_type(real_cogid),
-                                    taxon,
-                                    concept,
-                                    text_type(cid),
-                                    alm_string,  # '\t'.join(alm)
-                                ]
-                            ) + '\n'
+                            out += util.tabjoin(
+                                real_cogid, taxon, concept, cid, alm_string) + '\n'
                     else:
                         this_idx = [x for x in self.etd[ref][cogid] if x != 0][0][0]
                         taxon = self[this_idx, 'taxon']
@@ -1199,15 +1168,8 @@ class Alignments(Wordlist):
                         if not seq:
                             seq = ' '.join(self[this_idx, 'tokens'])
                         cid = concept2id[concept]
-                        out += '\t'.join(
-                            [
-                                text_type(cogid),
-                                taxon,
-                                concept,
-                                text_type(cid),
-                                ''.join(seq),
-                            ]
-                        ) + '\n'
+                        out += util.tabjoin(
+                            cogid, taxon, concept, cid, ''.join(seq)) + '\n'
 
             util.write_text_file(filename + '.' + fileformat, out)
 
@@ -1286,37 +1248,26 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
     cons : c{str}
         A consensus string of the given MSA.
     """
-    # set defaults
+    vowels = [
+        'a', 'e', 'i', 'o', 'u', 'E', 'I',
+        '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
+        'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
+        'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
+        'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
+        'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ',
+    ]
+
     def rep_weights(char1, char2, _):
         if char1 == char2:
             return 0
 
         if char1 == '-':
-            if char2 in [
-                'a', 'e', 'i', 'o', 'u', 'E', 'I',
-                '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-                'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-                'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-                'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-                'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ'
-            ]:
-                return 0.1
-            else:
-                return 0.8
-        elif char2 == "-":
-            if char1 in [
-                'a', 'e', 'i', 'o', 'u', 'E', 'I',
-                '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-                'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-                'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-                'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-                'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ'
-            ]:
-                return 0.3
-            else:
-                return 0.1
-        else:
-            return 0.1
+            return 0.1 if char2 in vowels else 0.8
+
+        if char2 == "-":
+            return 0.3 if char1 in vowels else 0.1
+
+        return 0.1
 
     util.setdefaults(
         keywords,
@@ -1328,9 +1279,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
         rep_weights=rep_weights,
         local=False)
 
-    # stores the consensus string
-    cons = []
-
     # transform the matrix
     matrix = misc.transpose(getattr(msa, 'alm_matrix', msa))
 
@@ -1341,17 +1289,15 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
             peaks = []
             for line in matrix:
                 sim = []
-                for i, charA in enumerate(line):
-                    for j, charB in enumerate(line):
-                        if i < j:
-                            if charA not in '-' and charB not in '-':
-                                sim += [keywords['model'](
-                                        tokens2class([charA], keywords['model'])[0],
-                                        tokens2class([charB], keywords['model'])[0]
-                                        )]
-                            else:
-                                sim += [0.0]
-                peaks += [sum(sim) / len(sim)]
+                for (i, charA), (j, charB) in util.combinations2(enumerate(line)):
+                    if charA not in '-' and charB not in '-':
+                        sim.append(keywords['model'](
+                            tokens2class([charA], keywords['model'])[0],
+                            tokens2class([charB], keywords['model'])[0]
+                        ))
+                    else:
+                        sim.append(0.0)
+                peaks.append(sum(sim) / len(sim))
 
             # get the average,min, and max of the peaks
             pmean = sum(peaks) / len(peaks)
@@ -1363,7 +1309,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                 if peak <= pmax - pmean - pmean / 3:
                     del matrix[i]
                 i -= 1
-
         elif keywords['local'] == 'gaps':
             # store the number of gaps in a simple array
             gap_array = []
@@ -1394,60 +1339,33 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
 
     # if no tree is passed, it is a simple majority-rule principle that outputs
     # the consensus string
+    cons = []
+
     if not tree:
         if not classes:
             for col in matrix:
-                tmp = {}
-
-                # count chars in columns
-                for j, c in enumerate(col):
-                    if c in tmp:
-                        tmp[c] += 1
-                    else:
-                        tmp[c] = 1
-
-                # half the weight of gaps
-                if '-' in tmp:
-                    tmp['-'] = tmp['-'] * keywords['gap_scale']
-
-                # get maximum
-                chars = [c for c, n in sorted(
-                    tmp.items(), key=lambda x:(x[1], len(x[0])), reverse=True)]
-
-                # append highest-scoring char
-                cons += [chars[0]]
+                count = Counter(col)
+                if '-' in count:
+                    count['-'] *= keywords['gap_scale']
+                cons.append(count.most_common(1)[0][0])
         elif classes:
             for i, col in enumerate(classes):
-                tmpA = {}
-                tmpB = {}
+                tmpA, tmpB = Counter(col), defaultdict(int)
 
-                # count chars in columns
                 for j, c in enumerate(col):
-                    if c in tmpA:
-                        tmpA[c] += 1
-                    else:
-                        tmpA[c] = 1
-
-                    if matrix[i][j] in tmpB:
-                        tmpB[matrix[i][j]] += 1
-                    else:
-                        tmpB[matrix[i][j]] = 1
+                    tmpB[matrix[i][j]] += 1
 
                 # half the weight of gaps
                 if '-' in tmpA:
-                    tmpA['-'] = tmpA['-'] * keywords['gap_scale']
+                    tmpA['-'] *= keywords['gap_scale']
 
-                # get max
-                chars = [(c, n) for c, n in sorted(
-                    tmpA.items(), key=lambda x: x[1], reverse=True)]
+                chars = tmpA.most_common()
 
                 # if mode is set to 'maximize', calculate the score
                 if keywords['mode'] == 'maximize':
                     tmpC = {}
                     for j, c in enumerate(col):
-                        if c in tmpC:
-                            pass
-                        else:
+                        if c not in tmpC:
                             score = 0
                             for k, c2 in enumerate(col):
                                 if '-' not in (c, c2):
@@ -1459,8 +1377,7 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                                         score += keywords['gap_score'] * \
                                             keywords['weights'][i]
 
-                            score = score / len(col)
-                            tmpC[c] = score
+                            tmpC[c] = score / len(col)
 
                     chars = [(c, n) for c, n in sorted(
                         tmpC.items(), key=lambda x:(x[1], tmpA[x[0]]), reverse=True)]
@@ -1476,17 +1393,12 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                     else:
                         break
 
-                tmp = {}
+                tmp = Counter()
                 for j, c in enumerate(col):
                     if c in clss:
-                        if matrix[i][j] in tmp:
-                            tmp[matrix[i][j]] += 1
-                        else:
-                            tmp[matrix[i][j]] = 1
+                        tmp.update([matrix[i][j]])
 
-                # get max
-                chars = [c for c, n in sorted(
-                    tmp.items(), key=lambda x:(x[1], len(x[0])), reverse=True)]
+                chars = [c for c, n in tmp.most_common(2)]
 
                 # apply check for gaps here, if there are more gaps than in the
                 # full column, take the gaps, otherwise, take the next char
@@ -1498,8 +1410,7 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                 else:
                     cchar = chars[0]
 
-                cons += [cchar]
-
+                cons.append(cchar)
     # otherwise, we use a bottom-up parsimony approach to determine the best
     # match
     elif tree:
@@ -1571,23 +1482,9 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                         # if one of both is '-', take the other one (preference for
                         # segment loss)
                         # BUT: epenthesis is allowed
-                        if leftVariant == '-' and rightVariant not in [
-                            'a', 'e', 'i', 'o', 'u', 'E', 'I',
-                            '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-                            'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-                            'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-                            'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-                            'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ'
-                        ]:
+                        if leftVariant == '-' and rightVariant not in vowels:
                             node.reconstructed.append(rightVariant)
-                        elif rightVariant == '-' and leftVariant not in [
-                            'a', 'e', 'i', 'o', 'u', 'E', 'I',
-                            '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-                            'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-                            'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-                            'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-                            'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ'
-                        ]:
+                        elif rightVariant == '-' and leftVariant not in vowels:
                             node.reconstructed.append(leftVariant)
                         else:
                             # let the distribution decide otherwise
@@ -1611,8 +1508,7 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
                 def sankoff_value(sankoffTable, char):
                     if char in sankoffTable.keys():
                         return sankoffTable[char]
-                    else:
-                        return 65535  # approximation to Integer.MAX_INT
+                    return 65535  # approximation to Integer.MAX_INT
                 mtx = keywords["rep_weights"]
                 # apply the Sankoff algorithm, store backpointers
                 for node in tree.postorder():
