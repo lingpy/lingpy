@@ -1,28 +1,25 @@
-# *-* coding: utf-8 *-* 
+# *-* coding: utf-8 *-*
 """
 This module provides a basic class for the handling of word lists.
 """
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
+from __future__ import print_function, division, unicode_literals
 
 import os
 import numpy as np
-import logging
 from collections import defaultdict
 
 from six import text_type as str
 
-# basic lingpy imports
-from ..convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
-from ..settings import rcParams
-from .parser import QLCParserWithRowsAndCols
-from .ops import wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, \
-        wl2qlc, tsv2triple, wl2multistate, coverage
-
-from ..algorithm import clustering as cluster
-from .. import util
-from .. import log
+from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
+from lingpy.settings import rcParams
+from lingpy.basic.parser import QLCParserWithRowsAndCols
+from lingpy.basic.ops import (
+    wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, wl2qlc, tsv2triple,
+    wl2multistate, coverage,
+)
+from lingpy.algorithm import clustering as cluster
+from lingpy import util
+from lingpy import log
 
 
 def _write_file(filename, content, ext=None):
@@ -45,13 +42,13 @@ class Wordlist(QLCParserWithRowsAndCols):
     row : str (default = "concept")
         A string indicating the name of the row that shall be taken as the
         basis for the tabular representation of the word list.
-    
+
     col : str (default = "doculect")
         A string indicating the name of the column that shall be taken as the
         basis for the tabular representation of the word list.
-    
+
     conf : string (default='')
-        A string defining the path to the configuration file. 
+        A string defining the path to the configuration file.
 
     Notes
     -----
@@ -68,7 +65,7 @@ class Wordlist(QLCParserWithRowsAndCols):
     simple orthographical entries but also of IPA encoded phonetic
     transcriptions, both the orthographical source and the IPA transcriptions
     can be easily accessed as two separate two-dimensional lists.
-    
+
     """
     def __init__(self, filename, row='concept', col='doculect', conf=None):
         QLCParserWithRowsAndCols.__init__(
@@ -104,8 +101,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             source,
             function,
             override=False,
-            **keywords
-            ):
+            **keywords):
         """
         Add new entry-types to the word list by modifying given ones.
 
@@ -144,8 +140,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             col='',
             row='',
             entry='',
-            **keywords
-            ):
+            **keywords):
         """
         Function returns dictionaries of the cells matched by the indices.
 
@@ -156,13 +151,13 @@ class Wordlist(QLCParserWithRowsAndCols):
             values in the row of the
             :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
             taxon (language) name.
-        
+
         row : string (default="")
             The row index evaluated by the method. It should contain one of the
             values in the row of the
             :py:class:`~lingpy.basic.wordlist.Wordlist` instance, usually a
             taxon (language) name.
-        
+
         entry : string (default="")
             The index for the entry evaluated by the method. It can be used to specify
             the datatype of the rows or columns selected. As a default, the
@@ -184,30 +179,31 @@ class Wordlist(QLCParserWithRowsAndCols):
         language, one may type something like::
 
             >>> Wordlist.get_dict(language='LANGUAGE')
-        
+
         and for the selection of a concept, one may type something like::
 
-            >>> Wordlist.get_dict(concept='CONCEPT')    
-        
+            >>> Wordlist.get_dict(concept='CONCEPT')
+
         See the examples below for details.
 
         Examples
         --------
         Load the ``harry_potter.csv`` file::
-            
+
             >>> wl = Wordlist('harry_potter.csv')
 
         Select all IPA-entries for the language "German"::
-        
+
             >>> wl.get_dict(language='German',entry='ipa')
             {'Harry': ['haralt'], 'hand': ['hant'], 'leg': ['bain']}
-        
+
         Select all words (orthographical representation) for the concept
         "Harry"::
-        
+
             >>> wl.get_dict(concept="Harry",entry="words")
-            {'English': ['hæri'], 'German': ['haralt'], 'Russian': ['gari'], 'Ukrainian': ['gari']}
-            
+            {'English': ['hæri'], 'German': ['haralt'], 'Russian': ['gari'], \
+            'Ukrainian': ['gari']}
+
         Note that the values of the dictionary that is returned are always
         lists, since it is possible that the original file contains synonyms
         (multiple words corresponding to the same concept).
@@ -228,7 +224,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                 return self._cache[key, entry]
 
             if key not in getattr(self, attr + 's'):
-                raise ValueError("[!] The {0} you selected is not available!".format(attr))
+                raise ValueError("The {0} you selected is not available!".format(attr))
 
         if row:
             entries = self._dict[row]
@@ -268,8 +264,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             col='',
             entry='',
             flat=False,
-            **keywords
-            ):
+            **keywords):
         """
         Function returns lists of rows and columns specified by their name.
 
@@ -280,7 +275,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         col : string (default = '')
             The column name whose entries are selected from the data.
-        
+
         entry: string (default = '')
             The entry-type which is selected from the data.
 
@@ -294,7 +289,6 @@ class Wordlist(QLCParserWithRowsAndCols):
             A list representing the selected part of the
             data.
 
-
         Notes
         -----
         The 'col' and 'row' keywords in the function are all aliased according
@@ -303,34 +297,34 @@ class Wordlist(QLCParserWithRowsAndCols):
         language, one may type something like::
 
             >>> Wordlist.get_list(language='LANGUAGE')
-        
+
         and for the selection of a concept, one may type something like::
 
-            >>> Wordlist.get_list(concept='CONCEPT')    
-        
+            >>> Wordlist.get_list(concept='CONCEPT')
+
         See the examples below for details.
-        
+
         Examples
         --------
         Load the ``harry_potter.csv`` file::
-            
+
             >>> wl = Wordlist('harry_potter.csv')
 
         Select all IPA-entries for the language "German"::
-        
+
             >>> wl.get_list(language='German',entry='ipa'
             ['bain', 'hant', 'haralt']
 
         Note that this function returns 0 for missing values (concepts that
         don't have a word in the given language). If one wants to avoid this,
         the 'flat' keyword should be set to *True*.
-        
+
         Select all words (orthographical representation) for the concept
         "Harry"::
-        
+
             >>> wl.get_list(concept="Harry",entry="words")
-            [['Harry', 'Harald', 'Гари', 'Гарi']]            
-        
+            [['Harry', 'Harald', 'Гари', 'Гарi']]
+
         Note that the values of the list that is returned are always
         two-dimensional
         lists, since it is possible that the original file contains synonyms
@@ -340,7 +334,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
             >>> wl.get_list(concept="Harry",entry="words",flat=True)
             ['hæri', 'haralt', 'gari', 'hari']
-            
+
         See also
         --------
         Wordlist.get_list
@@ -351,13 +345,13 @@ class Wordlist(QLCParserWithRowsAndCols):
         if row and not col:
             # first try to return what's in the cache
             try:
-                return self._cache[row,entry,flat]
+                return self._cache[row, entry, flat]
             except:
                 pass
 
             # otherwise, start searching
             if row not in self.rows:
-                raise ValueError("[!] The row {0} you selected is not available.".format(row))
+                raise ValueError("The row {0} you selected is not available.".format(row))
             else:
                 # first, get the row ids
                 data = self._array[self._idx[row]]
@@ -375,21 +369,20 @@ class Wordlist(QLCParserWithRowsAndCols):
                 else:
                     # get the index for the entry in the data dictionary
                     idx = self._header[entry]
-                    
+
                     if flat:
                         # get the entries
-                        entries = [self[i][idx] for i in 
-                                data.flatten() if i != 0]
+                        entries = [self[i][idx] for i in data.flatten() if i != 0]
                     else:
                         # get the entries
                         entries = data.tolist()
-                        for i,line in enumerate(data):
-                            for j,cell in enumerate(line):
+                        for i, line in enumerate(data):
+                            for j, cell in enumerate(line):
                                 if cell != 0:
                                     entries[i][j] = self[cell][idx]
-                    
+
                 # append entries to cache
-                self._cache[row,entry,flat] = entries
+                self._cache[row, entry, flat] = entries
 
                 return entries
 
@@ -397,16 +390,16 @@ class Wordlist(QLCParserWithRowsAndCols):
         elif col and not row:
             # try to return the cache
             try:
-                return self._cache[col,entry,flat]
+                return self._cache[col, entry, flat]
             except:
                 pass
 
             if col not in self.cols:
-                raise ValueError("[!] The column {0} you selected is not available!".format(col))
-                return
+                raise ValueError(
+                    "The column {0} you selected is not available!".format(col))
             else:
-                data = self._array[:,self.cols.index(col)]
-                
+                data = self._array[:, self.cols.index(col)]
+
                 if not entry:
                     if flat:
                         entries = [i for i in data if i != 0]
@@ -425,41 +418,35 @@ class Wordlist(QLCParserWithRowsAndCols):
                                 entries.append(self[i][idx])
                             else:
                                 entries.append(0)
-            
-            self._cache[col,entry,flat] = entries
-            
+
+            self._cache[col, entry, flat] = entries
+
             return entries
-        
+
         elif row and col:
-            raise ValueError("[!] You should specify only one value for either row or for col!")
+            raise ValueError(
+                "You should specify only one value for either row or for col!")
         else:
             for key in [k for k in keywords if k in self._alias]:
                 if self._alias[key] == self._col_name:
                     entries = self.get_list(
-                            col = keywords[key],
-                            entry = entry,
-                            flat = flat
-                            )
-                    self._cache[col,entry,flat] = entries
+                        col=keywords[key], entry=entry, flat=flat)
+                    self._cache[col, entry, flat] = entries
                     return entries
 
                 elif self._alias[key] == self._row_name:
                     entries = self.get_list(
-                            row = keywords[key],
-                            entry = entry,
-                            flat = flat
-                            )
-                    self._cache[col,entry,flat] = entries
+                        row=keywords[key], entry=entry, flat=flat)
+                    self._cache[col, entry, flat] = entries
                     return entries
 
-            raise ValueError("[!] Neither rows nor columns are selected!")
+            raise ValueError("Neither rows nor columns are selected!")
 
     def get_etymdict(
             self,
             ref="cogid",
             entry='',
-            loans=False
-            ):
+            loans=False):
         """
         Return an etymological dictionary representation of the word list.
 
@@ -491,23 +478,20 @@ class Wordlist(QLCParserWithRowsAndCols):
         cognate set for each of the IDs.
 
         """
-        
+
         # make an alias for the reference
-        ref = (self._alias[ref],loans)
+        ref = (self._alias[ref], loans)
 
         # make converting function for loans
-        if loans:
-            f = lambda x: abs(x)
-        else:
-            f = lambda x: x
+        f = abs if loans else util.identity
 
         # create an etymdict object
         if ref not in self._etym_dict:
             self._etym_dict[ref] = {}
 
-            # get the index for the cognate id 
+            # get the index for the cognate id
             cogIdx = self._header[ref[0]]
-            
+
             # iterate over all data
             for key in self:
                 cogids = self[key][cogIdx]
@@ -517,7 +501,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                 # instances of fuzzy cognates (output is the same, though)
                 if isinstance(cogids, (str, int, float)):
                     cogids = [cogids]
-                    
+
                 for cog in cogids:
                     cogid = f(cog)
                     # we initialize with zero here, since this corresponds to a
@@ -536,19 +520,17 @@ class Wordlist(QLCParserWithRowsAndCols):
             # get the index of the header
             idx = self._header[entry]
 
-            # retrieve the values 
-            for key,values in self._etym_dict[ref].items():
+            # retrieve the values
+            for key, values in self._etym_dict[ref].items():
                 etym_dict[key] = []
                 for value in values:
                     if value != 0:
-                        etym_dict[key].append(
-                                [self[v][idx] for v in value]
-                                )
+                        etym_dict[key].append([self[v][idx] for v in value])
                     else:
                         etym_dict[key].append(0)
         else:
             etym_dict = self._etym_dict[ref]
-        
+
         return etym_dict
 
     def get_paps(
@@ -556,8 +538,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             ref='cogid',
             entry='concept',
             missing=0,
-            loans=False
-            ):
+            loans=False):
         """
         Function returns a list of present-absent-patterns of a given word list.
 
@@ -569,17 +550,12 @@ class Wordlist(QLCParserWithRowsAndCols):
             The field which is used to check for missing data.
         missing : string,int (default = 0)
             The marker for missing items.
-        """        
-        etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)            
-
-        # create dictionary for paps
-        paps = {}
-
-        # create dictionary that stores missing data
-        missed = {}
+        """
+        etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)
+        paps, missed = {}, {}
 
         # retrieve the values
-        for key,values in etym_dict.items():
+        for key, values in etym_dict.items():
             paps[key] = []
 
             # check for missing data
@@ -592,22 +568,15 @@ class Wordlist(QLCParserWithRowsAndCols):
                 meaning = meanings.pop()
 
                 if meaning not in missed:
-                    
-                    # get the list in the wordlist of self
-                    tmp = np.array(self.get_list(row=meaning))
-                    
-                    # get the sum of the list
-                    tmp = sum(tmp)
-                    
-                    # get all languages which are zero
-                    gaps = [i for i in range(self.width) if not tmp[i]]
+                    # get the sum of the list in the wordlist of self
+                    tmp = sum(np.array(self.get_list(row=meaning)))
 
-                    # append gaps to missing
-                    missed[meaning] = gaps
+                    # append all languages which are zero to missing
+                    missed[meaning] = [i for i in range(self.width) if not tmp[i]]
             else:
                 meaning = False
 
-            for i,value in enumerate(values):
+            for i, value in enumerate(values):
                 if value:
                     paps[key].append(1)
                 else:
@@ -618,17 +587,16 @@ class Wordlist(QLCParserWithRowsAndCols):
                             paps[key].append(0)
                     else:
                         paps[key].append(1)
-                
+
         return paps
-    
+
     def calculate(
             self,
             data,
             taxa='taxa',
             concepts='concepts',
             ref='cogid',
-            **keywords
-            ):
+            **keywords):
         """
         Function calculates specific data.
 
@@ -642,18 +610,17 @@ class Wordlist(QLCParserWithRowsAndCols):
             * "cluster": cluster the taxa into groups using different methods
 
         """
-        
-        calculate_data(self,data,taxa,concepts,ref,**keywords)
+
+        calculate_data(self, data, taxa, concepts, ref, **keywords)
 
     def renumber(
             self,
             source,
             target='',
-            override=False
-            ):
+            override=False):
         """
         Renumber a given set of string identifiers by replacing the ids by integers.
-        
+
         Parameters
         ----------
         source : str
@@ -676,13 +643,12 @@ class Wordlist(QLCParserWithRowsAndCols):
         or directly as an attribute of the wordlist.
 
         """
-        renumber(self,source,target,override=override)
+        renumber(self, source, target, override=override)
 
     def _clean(
             self,
             source,
-            f=lambda x: ''.join([t for t in x if t not in '()[] {},;:'])
-            ):
+            f=lambda x: ''.join([t for t in x if t not in '()[] {},;:'])):
         """
         Clean given names of doculects to make them work in Newick.
 
@@ -696,10 +662,10 @@ class Wordlist(QLCParserWithRowsAndCols):
         language names like "German (Standard)" do not look really appealing in
         basic applications.
         """
-        
+
         if self._alias[source] == 'doculect':
             clean_taxnames(self, self._alias[source], f)
-    
+
     def _output(self, fileformat, **keywords):
         """
         Internal function that eases its modification by daughter classes.
@@ -801,7 +767,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
             log.debug("passing data to wl2qlc")
             return wl2qlc(header, out, **keywords)
-        
+
         # output dst-format (phylip)
         if fileformat == 'dst':
             # check for distances as keyword
@@ -851,12 +817,15 @@ class Wordlist(QLCParserWithRowsAndCols):
                                 [l(t) for t in line]))
             else:
                 lines.append(
-                    'ID\tConcept\t'+'\t'.join(['{0}\t COG'.format(t) for t in self.taxa]))
+                    'ID\tConcept\t' + '\t'.join(
+                        ['{0}\t COG'.format(t) for t in self.taxa]))
                 for i, concept in enumerate(self.concepts):
                     cogs = self.get_list(row=concept, entry=keywords['cognates'])
-                    for j, line in enumerate(self.get_list(row=concept, entry=keywords['entry'])):
-                        part = '\t'.join('{0}\t{1}'.format(l(a), b) for a, b in zip(line, cogs[j]))
-                        lines.append(str(i + 1) + '\t' + concept + '\t' + part)
+                    for j, line in enumerate(
+                            self.get_list(row=concept, entry=keywords['entry'])):
+                        part = '\t'.join(
+                            '{0}\t{1}'.format(l(a), b) for a, b in zip(line, cogs[j]))
+                        lines.append(util.tabjoin(i + 1, concept, part))
 
             return _write_file(
                 keywords['filename'], lines, 'starling_' + keywords['entry'] + '.csv')
@@ -874,7 +843,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
             for l in self.cols:
                 lines = [''] if 'ignore_keys' in keywords else ['ID\t']
-                lines[0] += '\t'.join([x.upper() for x in keywords['entries']])
+                lines[0] += '\t'.join(x.upper() for x in keywords['entries'])
                 for key in self.get_list(col=l, flat=True):
                     line = [] if 'ignore_keys' in keywords else [key]
                     for entry in keywords['entries']:
@@ -891,7 +860,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         Parameters
         ----------
-        fileformat : {"qlc", "tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv"}
+        fileformat : {"qlc","tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv"}
             The format that is written to file. This corresponds to the file
             extension, thus 'qlc' creates a file in qlc-format, 'dst' creates
             a file in Phylip-distance format, etc.
@@ -929,7 +898,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         """
         return self._output(fileformat, **keywords)
-    
+
     def _export(
             self,
             fileformat,
@@ -941,8 +910,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             exclude=None,
             entry_start='',
             entry_close='',
-            **keywords
-            ):
+            **keywords):
         """
         Export a wordlist to various file formats.
         """
@@ -967,20 +935,20 @@ class Wordlist(QLCParserWithRowsAndCols):
                 entries = [('language', '{0} '), ('ipa', '[{0}]' + '\n')]
             elif fileformat == 'html':
                 entries = [('language', '{0}&nbsp;'), ('ipa', '[{0}]\n')]
-        
+
         util.setdefaults(keywords, filename=rcParams['filename'])
 
         # get the temporary dictionary
         out = wl2dict(self, sections, entries, exclude)
-    
+
         # assign the output string
         out_string = ''
-    
+
         # iterate over the dictionary and start to fill the string
         for key in sorted(out, key=lambda x: str(x).lower()):
             # write key to file
             out_string += key[1]
-            
+
             # reassign tmp
             tmp = out[key]
 
@@ -1025,8 +993,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             entry_sep='',
             item_sep='',
             template='',
-            **keywords
-            ):
+            **keywords):
         """
         Export the wordlist to specific fileformats.
 
@@ -1059,5 +1026,3 @@ class Wordlist(QLCParserWithRowsAndCols):
             return dict([(a, b / self.height) for a, b in cov.items()])
         if stats == 'mean':
             return sum([a / self.height for a in cov.values()]) / self.width
-    
-

@@ -1,31 +1,31 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
 import random
-from itertools import combinations_with_replacement, product, combinations
+from itertools import product
 
 from collections import Counter, defaultdict
 from math import factorial
 from copy import copy
 
-# thirdparty
 from six import text_type
 from six import string_types
 import numpy as np
 
-# lingpy-modules
-from ..settings import rcParams
-from ..sequence.sound_classes import (
-    ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens)
-from ..sequence.generate import MCPhon
-from ..basic import Wordlist
-from ..align.pairwise import turchin, edit_dist
-from ..convert.strings import scorer2str
-from ..algorithm import clustering
-from ..algorithm import calign
-from ..algorithm import talign
-from ..algorithm import misc
-from .. import util
-from .. import log
+from lingpy.settings import rcParams
+from lingpy.sequence.sound_classes import (
+    ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens,
+)
+from lingpy.sequence.generate import MCPhon
+from lingpy.basic import Wordlist
+from lingpy.align.pairwise import turchin, edit_dist
+from lingpy.convert.strings import scorer2str
+from lingpy.algorithm import clustering
+from lingpy.algorithm import calign
+from lingpy.algorithm import talign
+from lingpy.algorithm import misc
+from lingpy import util
+from lingpy.util import charstring
+from lingpy import log
 
 
 def _check_tokens(key_and_tokens):
@@ -47,9 +47,6 @@ def _check_tokens(key_and_tokens):
             except ValueError or IndexError:
                 yield (key, "sound-class conversion failed", line)
 
-def charstring(id_, char='X', cls='-'):
-    return '{0}.{1}.{2}'.format(id_, char, cls)
-
 
 def char_from_charstring(cstring):
     comps = cstring.split('.')
@@ -64,8 +61,7 @@ def char_from_charstring(cstring):
 
 def get_score_dict(chars, model):
     matrix = [[0.0 for i in chars] for j in chars]
-    for (i, charA), (j, charB) in combinations_with_replacement(
-            enumerate(chars), r=2):
+    for (i, charA), (j, charB) in util.multicombinations2(enumerate(chars)):
         matrix[i][j] = model(char_from_charstring(charA), char_from_charstring(charB))
         if i < j:
             matrix[j][i] = matrix[i][j]
@@ -165,7 +161,7 @@ class LexStat(Wordlist):
             self.model = kw['model']
 
         # set the lexstat stamp
-        self._stamp = "# Created using the LexStat class of LingPy-2.0\n"
+        self._stamp = "# Created using the LexStat class of {0}\n".format(util.PROG)
 
         # initialize the wordlist
         Wordlist.__init__(self, filename)
@@ -242,7 +238,7 @@ class LexStat(Wordlist):
         # add information regarding vowels in the data based on the
         # transformation, which is important for the calculation of the
         # v-scale in lexstat.get_scorer
-        if not 'vowels' in self._meta:
+        if 'vowels' not in self._meta:
             self._meta['vowels'] = ' '.join(sorted(set([self._transform[v] for v
                 in 'XYZT_']))) if hasattr(self, '_transform') else 'VT_'
 
@@ -274,9 +270,8 @@ class LexStat(Wordlist):
                 raise ValueError("Your input data does not contain any entries!")
             self.bad_chars = [char for char in self.chars if char[2] == '0']
             if len(self.bad_chars) / len(self.chars) > rcParams['lexstat_bad_chars_limit']:
-                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by LingPy. You should re-load with check=True!".format(
-                        100 * len(self.bad_chars) / len(self.chars)))
-            
+                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by {1}. You should re-load with check=True!".format(
+                    100 * len(self.bad_chars) / len(self.chars), util.PROG))
 
         if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
@@ -299,8 +294,7 @@ class LexStat(Wordlist):
         # make the language pairs
         if not hasattr(self, "pairs"):
             self.pairs = {}
-            for (i, taxonA), (j, taxonB) in combinations_with_replacement(
-                    enumerate(self.taxa), r=2):
+            for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.taxa)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
                 dictB = self.get_dict(col=taxonB)
@@ -367,7 +361,7 @@ class LexStat(Wordlist):
         list (Swadesh list).
         """
         self.subsets = {}
-        for tA, tB in combinations_with_replacement(self.taxa, r=2):
+        for tA, tB in util.multicombinations2(self.taxa):
             self.subsets[tA, tB] = [
                 pair for pair in self.pairs[tA, tB] if self[pair, ref][0] in sublist]
 
@@ -403,8 +397,7 @@ class LexStat(Wordlist):
 
         tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
-            for (i, tA), (j, tB) in combinations_with_replacement(
-                    enumerate(self.taxa), r=2):
+            for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                 progress.update()
                 log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
@@ -506,8 +499,7 @@ class LexStat(Wordlist):
                              zip(cls, [self._transform[pr] for pr in pros[taxon][-1]])])
 
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for (i, tA), (j, tB) in combinations_with_replacement(
-                        enumerate(self.taxa), r=2):
+                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                     progress.update()
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
@@ -545,8 +537,7 @@ class LexStat(Wordlist):
         else:
             tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for (i, tA), (j, tB) in combinations_with_replacement(
-                        enumerate(self.taxa), r=2):
+                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                     progress.update()
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
@@ -668,7 +659,7 @@ class LexStat(Wordlist):
             ratio=kw['ratio'],
             vscale=kw['vscale'],
             runs=kw['runs'],
-            scoring_threshold = kw['threshold'],
+            scoring_threshold=kw['threshold'],
             preprocessing_threshold=kw['preprocessing_threshold'],
             modestring=':'.join(
                 '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in kw['modes']),
@@ -729,7 +720,7 @@ class LexStat(Wordlist):
         matrix = [[c for c in line] for line in self.bscorer.matrix]
         char_dict = self.bscorer.chars2int
 
-        for (i, tA), (j, tB) in combinations_with_replacement(enumerate(self.taxa), r=2):
+        for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
             for charA, charB in product(
                 list(self.freqs[tA]) + [charstring(i + 1)],
                 list(self.freqs[tB]) + [charstring(j + 1)]
@@ -994,7 +985,7 @@ class LexStat(Wordlist):
             log.info("Analyzing words for concept <{0}>.".format(c))
             indices = self.get_list(row=c, flat=True)
             matrix = []
-            for idxA, idxB in combinations(indices, r=2):
+            for idxA, idxB in util.combinations2(indices):
                 try:
                     d = function(idxA, idxB)
                 except ZeroDivisionError:
@@ -1249,7 +1240,7 @@ class LexStat(Wordlist):
             function = lambda x, y: edit_dist(
                 self[x, 'tokens'], self[y, 'tokens'], normalized=edit_dist_normalized)
 
-        for taxA, taxB in combinations(self.taxa, r=2):
+        for taxA, taxB in util.combinations2(self.taxa):
             distances = []
             for pA, pB in sample(self.pairs[taxA, taxB]):
                 try:

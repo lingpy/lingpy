@@ -1,14 +1,9 @@
 # *-* coding: utf-8 *-*
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
 """
 This module provides functions to calculate basic distance measures.
 
 """
-__author__ = "Steven Moran"
-__date__ = "2013-2"
-
+from __future__ import unicode_literals, print_function, division
 import operator
 
 from six.moves import zip_longest
@@ -32,7 +27,7 @@ def hamming(str1, str2):
     Returns
     -------
     _ : int
-        the hamming distance 
+        the hamming distance
 
     """
     return sum(operator.ne(*pair) for pair in zip_longest(str1, str2, fillvalue=None))
@@ -43,9 +38,9 @@ def jaccard(set1, set2):
     Computer the Jaccard distance between two sets.
 
     Jaccard distance measures the dissimilarity between sample sets.
-    It is complementary to the Jaccard coefficient and is obtained by 
-    subtracting the Jaccard coefficient from 1, or, equivalently, by 
-    dividing the difference of the sizes of the union and the intersection 
+    It is complementary to the Jaccard coefficient and is obtained by
+    subtracting the Jaccard coefficient from 1, or, equivalently, by
+    dividing the difference of the sizes of the union and the intersection
     of two sets by the size of the union:
 
     J(A,B) = 1 - J(A,B) = \|A ∪ B\| - \|A ∩ B\| / \|A ∪ B\|

@@ -1,18 +1,12 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-02-18 12:26
-# modified : 2014-02-18 12:26
 """
 Calculate confidence scores for the scoring functions in alignment plots.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-02-18"
-
 import cgi
 
-from ...sequence.sound_classes import class2tokens, token2class
-from ...settings import rcParams
+from lingpy.sequence.sound_classes import class2tokens, token2class
+from lingpy.settings import rcParams
+from lingpy.util import charstring, dotjoin
+
 
 def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
     """
@@ -29,7 +23,6 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
         The reference entry-type, referring to the cognate-set to be used for
         the analysis.
     """
-    
     # store all values for average scores
     values = []
 
@@ -37,14 +30,13 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
     corrs = {}
 
     # store occurrences
-    occs = {} 
+    occs = {}
 
-    for key,msa in alms.msa[ref].items():
-        
+    for key, msa in alms.msa[ref].items():
         # get basic stuff
         idxs = msa['ID']
         taxa = msa['taxa']
-        concept = cgi.escape(alms[idxs[0],'concept'], True)
+        concept = cgi.escape(alms[idxs[0], 'concept'], True)
 
         # get numerical representation of alignments
         if scorer:
@@ -53,18 +45,18 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 msa['alignment'][i]) for i in range(len(idxs))]
         else:
             alignment = msa['alignment']
-        
+
         # create new array for confidence
         confidence_matrix = []
         character_matrix = []
 
         # iterate over each taxon
-        for i,taxon in enumerate(taxa):
-            idx = alms.taxa.index(taxon)+1
+        for i, taxon in enumerate(taxa):
+            idx = alms.taxa.index(taxon) + 1
 
             # get the numerical sequence
             nums = alignment[i]
-            
+
             # store confidences per line
             confidences = []
 
@@ -72,16 +64,14 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
             chars = []
 
             # iterate over the sequence
-            for j,num in enumerate(nums):
-
+            for j, num in enumerate(nums):
                 col = [alm[j] for alm in alignment]
-                
                 score = 0
                 count = 0
 
                 # get the char
                 if num != '-':
-                    charA = taxa[i]+'.'+msa['alignment'][i][j]+'.'+num.split('.')[2]
+                    charA = dotjoin(taxa[i], msa['alignment'][i][j], num.split('.')[2])
                     chars += [charA]
                     try:
                         occs[charA] += [concept]
@@ -89,53 +79,53 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                         occs[charA] = [concept]
                 else:
                     chars += ['-']
-                    
-                for k,numB in enumerate(col):
+
+                for k, numB in enumerate(col):
                     if k != i:
                         if num == '-' and numB == '-':
                             pass
                         else:
                             if numB != '-' and num != '-':
                                 # get the second char
-                                charB = taxa[k]+'.'+msa['alignment'][k][j]+'.'+numB.split('.')[2]
-                                
+                                charB = dotjoin(
+                                    taxa[k], msa['alignment'][k][j], numB.split('.')[2])
                                 try:
                                     corrs[charA][charB] += 1
                                 except:
                                     try:
                                         corrs[charA][charB] = 1
                                     except:
-                                        corrs[charA] = {charB : 1}
+                                        corrs[charA] = {charB: 1}
 
                             gaps = False
                             if num == '-' and numB != '-':
-                                numA = str(idx)+'.X.-'
+                                numA = charstring(idx)
                                 gaps = True
                             elif numB == '-' and num != '-':
-                                numB = str(alms.taxa.index(taxa[k]))+'.X.-'
+                                numB = charstring(alms.taxa.index(taxa[k]))
                                 numA = num
                                 gaps = True
                             else:
                                 numA = num
-                            
-                            scoreA = scorer[numA,numB]
-                            scoreB = scorer[numB,numA]
-                            this_score = max(scoreA,scoreB)
-                            
+
+                            scoreA = scorer[numA, numB]
+                            scoreB = scorer[numB, numA]
+                            this_score = max(scoreA, scoreB)
+
                             if not gaps:
                                 score += this_score
                                 count += 1
                             else:
                                 score += this_score * gap_weight
                                 count += gap_weight
-                            
+
                 if count:
-                    score = score / count 
+                    score = score / count
                 else:
                     score = -25
 
-                confidences += [int(score+0.5)]
-                values += [int(score+0.5)]
+                confidences += [int(score + 0.5)]
+                values += [int(score + 0.5)]
             confidence_matrix += [confidences]
             character_matrix += [chars]
 
@@ -144,68 +134,65 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
         alms.msa[ref][key]['_charmat'] = character_matrix
 
     # sort the values
-    values = sorted(set(values+[1]))
+    values = sorted(set(values + [1]))
 
     # make conversion to scale of 100 values
     converter = {}
-    step = 50 / (len(values)+1)
     valsA = values[:values.index(1)]
     valsB = values[values.index(1):]
-    stepA = 50 / (len(valsA)+1)
-    stepB = 75 / (len(valsB)+1)
-    for i,score in enumerate(valsA): #values[:values.index(0)):
-        converter[score] = int((stepA * i) / 4 +0.5)
-    for i,score in enumerate(valsB):
-        converter[score] = int(stepB * i+0.5)+50
+    stepA = 50 / (len(valsA) + 1)
+    stepB = 75 / (len(valsB) + 1)
+    for i, score in enumerate(valsA):  # values[:values.index(0)):
+        converter[score] = int((stepA * i) / 4 + 0.5)
+    for i, score in enumerate(valsB):
+        converter[score] = int(stepB * i + 0.5) + 50
 
     # iterate over keys again
-    for key,msa in alms.msa[ref].items():
-        
+    for key, msa in alms.msa[ref].items():
         # get basic stuff
-        for i,line in enumerate(msa['confidence']):
-            for j,cell in enumerate(line):
+        for i, line in enumerate(msa['confidence']):
+            for j, cell in enumerate(line):
                 alms.msa[ref][key]['confidence'][i][j] = converter[cell]
 
     jsond = {}
-    for key,corr in corrs.items():
-
-        splits = [c.split('.')+[o] for c,o in corr.items()]
-        sorts = sorted(splits, key=lambda x: (x[0],-x[3]))
+    for key, corr in corrs.items():
+        splits = [c.split('.') + [o] for c, o in corr.items()]
+        sorts = sorted(splits, key=lambda x: (x[0], -x[3]))
         new_sorts = []
 
         # check for rowspan
         spans = {}
-        for a,b,c,d in sorts:
+        for a, b, c, d in sorts:
             if a in spans:
                 if spans[a] < 3 and d > 1:
                     spans[a] += 1
-                    new_sorts += [[a,b,c,d]]
+                    new_sorts += [[a, b, c, d]]
             else:
                 if d > 1:
                     spans[a] = 1
-                    new_sorts += [[a,b,c,d]]
+                    new_sorts += [[a, b, c, d]]
 
         bestis = []
         old_lang = ''
         counter = 0
-        for a,b,c,d in new_sorts:
+        for a, b, c, d in new_sorts:
             new_lang = a
             if new_lang != old_lang:
                 old_lang = new_lang
-                
+
                 tmp = '<tr class="display">'
                 tmp += '<td class="display" rowspan={0}>'.format(spans[a])
-                tmp += a+'</td>'
+                tmp += a + '</td>'
                 tmp += '<td class="display" onclick="show({0});"><span '.format(
-                        "'"+'.'.join([a,b,c])+"'")
-                tmp += 'class="char {0}">'+b+'</span></td>'
+                    "'" + dotjoin(a, b, c) + "'")
+                tmp += 'class="char {0}">' + b + '</span></td>'
                 tmp += '<td class="display">'
-                tmp += c+'</td>'
-                tmp += '<td class="display">'+str(d)+'</td>'
-                tmp += '<td class="display">'+str(len(occs['.'.join([a,b,c])]))+'</td>'
+                tmp += c + '</td>'
+                tmp += '<td class="display">' + str(d) + '</td>'
+                tmp += '<td class="display">' + str(len(occs[dotjoin(a, b, c)])) + '</td>'
                 tmp += '</tr>'
-                t = 'dolgo_'+token2class(b, rcParams['dolgo'])
-                
+                t = 'dolgo_' + token2class(b, rcParams['dolgo'])
+
                 # bad check for three classes named differently
                 if t == 'dolgo__':
                     t = 'dolgo_X'
@@ -218,20 +205,17 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 counter += 1
 
             elif counter > 0:
-
                 tmp = '<tr class="display">'
-                #tmp += '<td class="display"><span class="char {0}">'+b+'</span></td>'
                 tmp += '<td class="display" onclick="show({0});"><span '.format(
-                        "'"+'.'.join([a,b,c])+"'")
-                tmp += 'class="char {0}">'+b+'</span></td>'
-
-                tmp += '<td class="display">'+c+'</td>'
-                tmp += '<td class="display">'+str(d)+'</td>'
-                tmp += '<td class="display">'+str(len(occs['.'.join([a,b,c])]))+'</td>'
+                    "'" + dotjoin(a, b, c) + "'")
+                tmp += 'class="char {0}">' + b + '</span></td>'
+                tmp += '<td class="display">' + c + '</td>'
+                tmp += '<td class="display">' + str(d) + '</td>'
+                tmp += '<td class="display">' + str(len(occs[dotjoin(a, b, c)])) + '</td>'
                 tmp += '</tr>'
 
-                t = 'dolgo_'+token2class(b, rcParams['dolgo'])
-                
+                t = 'dolgo_' + token2class(b, rcParams['dolgo'])
+
                 # bad check for three classes named differently
                 if t == 'dolgo__':
                     t = 'dolgo_X'
@@ -243,7 +227,6 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
                 bestis += [tmp.format(t)]
                 counter += 1
                 old_lang = new_lang
-                
             else:
                 old_lang = new_lang
                 counter = 0
@@ -252,26 +235,22 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
 
     return jsond
 
+
 def get_correspondences(alms, ref='lexstatid'):
     """
     Compute sound correspondences for a given set of aligned cognates.
     """
-    
-    # store all values for average scores
-    values = []
-
     # store all correspondences
     corrs = {}
 
     # store occurrences
-    occs = {} 
+    occs = {}
 
-    for key,msa in alms.msa[ref].items():
-        
+    for key, msa in alms.msa[ref].items():
         # get basic stuff
         idxs = msa['ID']
         taxa = msa['taxa']
-        concept = cgi.escape(alms[idxs[0],'concept'], True)
+        concept = cgi.escape(alms[idxs[0], 'concept'], True)
 
         # get numerical representation of alignments
         if 'numbers' in alms.header:
@@ -280,33 +259,25 @@ def get_correspondences(alms, ref='lexstatid'):
                 msa['alignment'][i]) for i in range(len(idxs))]
         else:
             alignment = msa['alignment']
-        
+
         # create new array for confidence
         character_matrix = []
 
         # iterate over each taxon
-        for i,taxon in enumerate(taxa):
-            idx = alms.taxa.index(taxon)+1
-
+        for i, taxon in enumerate(taxa):
             # get the numerical sequence
             nums = alignment[i]
-            
-            # store confidences per line
-            confidences = []
 
             # store chars per line
             chars = []
 
             # iterate over the sequence
-            for j,num in enumerate(nums):
-
+            for j, num in enumerate(nums):
                 col = [alm[j] for alm in alignment]
-                
-                count = 0
 
                 # get the char
                 if num != '-':
-                    charA = taxa[i]+'.'+msa['alignment'][i][j]+'.'+num.split('.')[2]
+                    charA = dotjoin(taxa[i], msa['alignment'][i][j], num.split('.')[2])
                     chars += [charA]
                     try:
                         occs[charA] += [concept]
@@ -314,38 +285,29 @@ def get_correspondences(alms, ref='lexstatid'):
                         occs[charA] = [concept]
                 else:
                     chars += ['-']
-                    
-                for k,numB in enumerate(col):
+
+                for k, numB in enumerate(col):
                     if k != i:
                         if num == '-' and numB == '-':
                             pass
                         else:
                             if numB != '-' and num != '-':
                                 # get the second char
-                                charB = taxa[k]+'.'+msa['alignment'][k][j]+'.'+numB.split('.')[2]
-                                
+                                charB = dotjoin(
+                                    taxa[k],
+                                    msa['alignment'][k][j],
+                                    numB.split('.')[2])
                                 try:
                                     corrs[charA][charB] += 1
                                 except:
                                     try:
                                         corrs[charA][charB] = 1
                                     except:
-                                        corrs[charA] = {charB : 1}
+                                        corrs[charA] = {charB: 1}
 
-                            gaps = False
-                            if num == '-' and numB != '-':
-                                numA = str(idx)+'.X.-'
-                                gaps = True
-                            elif numB == '-' and num != '-':
-                                numB = str(alms.taxa.index(taxa[k]))+'.X.-'
-                                numA = num
-                                gaps = True
-                            else:
-                                numA = num
-                            
             character_matrix += [chars]
 
         # append confidence matrix to alignments
         alms.msa[ref][key]['_charmat'] = character_matrix
 
-    return corrs,occs
+    return corrs, occs

@@ -8,16 +8,18 @@ from itertools import combinations, combinations_with_replacement, product
 from collections import defaultdict
 from functools import partial
 
-from ..algorithm import calign
-from ..algorithm import talign
-from ..algorithm import cluster
-from ..algorithm import misc
+from lingpy.algorithm import calign
+from lingpy.algorithm import talign
+from lingpy.algorithm import cluster
+from lingpy.algorithm import misc
 
-from ..thirdparty.cogent import LoadTree
-from ..sequence.sound_classes import *
-from ..settings import rcParams
-from .. import log
-from lingpy.util import setdefaults, identity
+from lingpy.thirdparty.cogent import LoadTree
+from lingpy.sequence.sound_classes import (
+    ipa2tokens, tokens2class, prosodic_string, prosodic_weights, pid,
+)
+from lingpy.settings import rcParams
+from lingpy import log
+from lingpy.util import setdefaults, identity, dotjoin
 
 
 class Multiple(object):
@@ -61,8 +63,7 @@ class Multiple(object):
         self.numbers = []
         if self.tokens:
             for i, tokens in enumerate(self.tokens):
-                self.numbers.append(
-                    [str(i + 1) + '.' + str(j + 1) for j in range(len(tokens))])
+                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
         else:
             # create a numerical representation of all sequences which reflects the
             # order of both their position and the position of their tokens. Before
@@ -72,8 +73,7 @@ class Multiple(object):
                 # check for pre-tokenized strings
                 tokens = ipa2tokens(seq, **kw)
                 self.tokens.append(tokens)
-                self.numbers.append(
-                    [str(i + 1) + '.' + str(j + 1) for j in range(len(tokens))])
+                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
 
         self.uniseqs = defaultdict(list)
         self.unique_seqs = kw["unique_seqs"]
@@ -88,7 +88,7 @@ class Multiple(object):
             self.uniseqs = range(0, len(self.seqs))
 
         self._length = len(self.uniseqs)
-        
+
     def __len__(self):
         # the length of an alignment is defined as the number of unique
         # sequences present in the alignment
@@ -189,7 +189,7 @@ class Multiple(object):
         # check for keyword classes
         if not classes:
             classify = identity
-        else: 
+        else:
             self.model = model or rcParams['sca']
             classify = lambda x: tokens2class(x, self.model)
 
@@ -210,21 +210,20 @@ class Multiple(object):
         if self.unique_seqs:
             keys = [val[0] for val in indices.values()]
         else:
-            keys = range(len(self.classes))  
+            keys = range(len(self.classes))
         self.height = len(keys)
 
         # add the classes
         self._classes = [self.classes[key] for key in keys]
-        self._numbers = [[str(i + 1) + '.' + str(j + 1) for j in
+        self._numbers = [[dotjoin(i + 1, j + 1) for j in
                           range(len(self._classes[i]))] for i in range(self.height)]
 
         # create an index which allows to quickly interchange between classes
         # and given sequences (trivial without sequence uniqueness
         if self.unique_seqs:
-            self.int2ext = dict(
-                [(i, indices[tuple(self._classes[i])]) for i in range(len(keys))])
+            self.int2ext = {i: indices[tuple(self._classes[i])] for i in range(len(keys))}
         else:
-            self.int2ext = dict([(i, [i]) for i in range(len(keys))])
+            self.int2ext = {i: [i] for i in range(len(keys))}
 
         # -> # create external to internal in order to allow for a quick switching
         # -> # of the vals
@@ -258,7 +257,7 @@ class Multiple(object):
         else:
             self._sonars = False
             self._prostrings = False
-        
+
         # create a scoredict for the calculation of alignment analyses
         # append the scorer if it is given with the model
         def scorer(x, y):
@@ -269,7 +268,8 @@ class Multiple(object):
             return 1.0 if x == y else -1.0
 
         self.scoredict = {}
-        for (i, seqA), (j, seqB) in combinations_with_replacement(enumerate(self._numbers), 2):
+        for (i, seqA), (j, seqB) in combinations_with_replacement(
+                enumerate(self._numbers), 2):
             if i < j:
                 for (numA, numB) in product(seqA, seqB):
                     self.scoredict[numA, numB] = scorer(
@@ -292,25 +292,24 @@ class Multiple(object):
 
     def _get_pairwise_alignments(
             self,
-            mode = 'global',
-            gop = -2,
-            scale = 0.5, 
-            factor = 0.3,
-            restricted_chars = 'T_',
-            **keywords
-            ):
+            mode='global',
+            gop=-2,
+            scale=0.5,
+            factor=0.3,
+            restricted_chars='T_',
+            **keywords):
         """
         Function calculates all pairwise alignments from the data.
         """
         if 'transform' not in keywords:
             keywords['transform'] = rcParams['align_transform']
-        
+
         # create array for alignments
         self._alignments = [[0 for i in range(self.height)] for i in range(self.height)]
 
         # create the distance matrix
         self.matrix = []
-        
+
         # check for the mode, if sonority profiles are not chose, take the
         # simple alignment function
         if self._sonars:
@@ -368,7 +367,7 @@ class Multiple(object):
         approach.
         """
         self.library = {}
-        
+
         # create library for non-sound-class approaches
         if not self._sonars:
             for numA, numB in combinations_with_replacement(self._numbers, 2):
@@ -381,7 +380,8 @@ class Multiple(object):
             # sometimes, therefore, the library is initialized by setting only the
             # scores for c-c and v-v matches to 0, the other scores get their
             # original penalty defined by the old scorer
-            for (i, numA), (j, numB) in combinations_with_replacement(enumerate(self._numbers), 2):
+            for (i, numA), (j, numB) in combinations_with_replacement(
+                    enumerate(self._numbers), 2):
                 if i < j:
                     for k, l in product(numA, numB):
                         # see the comment above for the add-on in this
@@ -407,7 +407,7 @@ class Multiple(object):
         for i, j in [(i, j) for i in range(self.height)
                      for j in range(self.height) if i <= j]:
             for m, n in zip(self._alignments[i][j][0], self._alignments[i][j][1]):
-                if m != "-" and n != "-":                    
+                if m != "-" and n != "-":
                     # add the values to the library
                     # the similarity score is determined by adding taking the
                     # average of matrix score and the similarity score of the
@@ -430,7 +430,7 @@ class Multiple(object):
         for i, j, k in mappings:
             almI, almIK, simIK = self._alignments[i][k]
             almJ, almJK, simJK = self._alignments[j][k]
-            
+
             # determine, which of the values occur in both alignments
             # with the third sequence
             for char in self._numbers[k]:
@@ -438,11 +438,11 @@ class Multiple(object):
                     valI = almI[almIK.index(char)]
                     valJ = almJ[almJK.index(char)]
                     if valI != "-" and valJ != "-":
-                       score = self.scorer[valI, valJ]
-                       sim = min(simIK, simJK) / ((len(almIK) + len(almJK)) / 2.0)
+                        score = self.scorer[valI, valJ]
+                        sim = min(simIK, simJK) / ((len(almIK) + len(almJK)) / 2.0)
 
-                       self.library[valI, valJ] += (sim + score) / 2.0
-                       self.library[valJ, valI] = self.library[valI, valJ]
+                        self.library[valI, valJ] += (sim + score) / 2.0
+                        self.library[valJ, valI] = self.library[valI, valJ]
                 except:
                     pass
 
@@ -451,20 +451,19 @@ class Multiple(object):
         Create the guide tree using either the UPGMA or the Neighbor-Joining
         algorithm.
         """
-        # create the clusters
-        clusters = dict(
-            [(i[0], [i[1]]) for i in zip(range(self.height), range(self.height))])
-        
+        clusters = {i[0]: [i[1]] for i in zip(range(self.height), range(self.height))}
+
         # create the tree matrix
         self.tree_matrix = []
-        
+
         # carry out the clustering
         if tree_calc == 'upgma':
             cluster._upgma(clusters, self.matrix, self.tree_matrix)
         elif tree_calc == 'neighbor':
             cluster._neighbor(clusters, self.matrix, self.tree_matrix)
         else:
-            raise ValueError('[i] Method <' + tree_calc + '> for tree calculation not available.')
+            raise ValueError(
+                'Method <' + tree_calc + '> for tree calculation not available.')
 
         # create a newick-representation of the string
         self.tree = LoadTree(cluster._tree2nwk(
@@ -486,8 +485,8 @@ class Multiple(object):
         profileB = misc.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
-        m, o = len(profileA), len(profileA[0])
-        n, p = len(profileB), len(profileB[0])
+        o = len(profileA[0])
+        p = len(profileB[0])
 
         # create the weights by which the gap opening penalties will be modified
         sonarA = [[self._get(char, value='_sonars', error=('X', 0))
@@ -521,8 +520,8 @@ class Multiple(object):
                     "Failed to compute the consensus string.",
                     extra=dict(lines=[
                         sonarA, sonarB,
-                        almsA[0], [self._get(n, 'tokens') for n in almsA[0]],
-                        almsB[0], [self._get(n, 'tokens') for n in almsB[0]]
+                        almsA[0], [self._get(n_, 'tokens') for n_ in almsA[0]],
+                        almsB[0], [self._get(n_, 'tokens') for n_ in almsB[0]]
                     ]))
 
         prosA = prosodic_string(consA)
@@ -559,7 +558,7 @@ class Multiple(object):
                 profileB.insert(i, p * ['X'])
 
         # invert the profiles and the weight matrices by turning columns
-        # into rows and rows into columns  
+        # into rows and rows into columns
         profileA = misc.transpose(profileA)
         profileB = misc.transpose(profileB)
 
@@ -578,8 +577,7 @@ class Multiple(object):
             scale=0.5,
             gap_weight=0.5,
             return_similarity=False,
-            iterate=False,
-            ):
+            iterate=False):
         """
         Align profiles for tokens, not sound classes.
         """
@@ -587,9 +585,9 @@ class Multiple(object):
         profileB = misc.transpose(almsB)
 
         # calculate profile length and profile depth for both profiles
-        m, o = len(profileA), len(profileA[0])
-        n, p = len(profileB), len(profileB[0])
-        
+        o = len(profileA[0])
+        p = len(profileB[0])
+
         # carry out the alignment
         almA, almB, sim = talign.align_profile(
             profileA, profileB, gop, scale, self.scorer, mode, gap_weight)
@@ -606,7 +604,7 @@ class Multiple(object):
                 profileB.insert(i, p * ['X'])
 
         # invert the profiles and the weight matrices by turning columns
-        # into rows and rows into columns  
+        # into rows and rows into columns
         profileA = misc.transpose(profileA)
         profileB = misc.transpose(profileB)
 
@@ -623,13 +621,12 @@ class Multiple(object):
             scale=0.5,
             factor=0,
             gap_weight=0.5,
-            restricted_chars='T_',
-            ):
+            restricted_chars='T_'):
         # create the lists which will store the current stages of the
         # alignment process
         seq_ord = [[i] for i in range(self.height)]
         alm_lst = [[seq] for seq in self._numbers[:]]
-        
+
         # start the iteration through the tree array: the first two lines
         # in the matrix contain the ids of the sequences in the array,
         # which are aligned along the tree
@@ -695,7 +692,7 @@ class Multiple(object):
                 numbers = []
                 for num in line:
                     try:
-                        numbers.append(str(j + 1) + '.' + num.split('.')[1])
+                        numbers.append(dotjoin(j + 1, num.split('.')[1]))
                     except:
                         numbers.append('X')
                 self.alm_matrix[j] = [self._get(num, 'tokens') for num in numbers]
@@ -711,27 +708,27 @@ class Multiple(object):
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
             Currently, three models are supported:
-            
+
             * "dolgo" -- a sound-class model based on :evobib:`Dolgopolsky1986`,
 
             * "sca" -- an extension of the "dolgo" sound-class model based on
               :evobib:`List2012b`, and
-            
+
             * "asjp" -- an independent sound-class model which is based on the
               sound-class model of :evobib:`Brown2008` and the empirical data
               of :evobib:`Brown2011` (see the description in
               :evobib:`List2012`.
-        
+
         mode : { "global", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
             * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
-        
+
         gop : int (default=-2)
             The gap opening penalty (GOP) used in the analysis.
 
@@ -750,18 +747,18 @@ class Multiple(object):
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
-            
+
         guide_tree : tree_matrix
             Use a custom guide tree instead of performing a cluster algorithm
             for constructing one based on the input similarities. The use of this
-            option makes the tree_calc option irrelevant. 
+            option makes the tree_calc option irrelevant.
 
         gap_weight : float (default=0.5)
             The factor by which gaps in aligned columns contribute to the
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
             as much as other characters.
-        
+
         restricted_chars : string (default="T")
             Define which characters of the prosodic string of a sequence
             reflect its secondary structure (cf. :evobib:`List2012b`) and
@@ -790,7 +787,7 @@ class Multiple(object):
         # fixing a but to avoid that defining models as string will yield an error
         if not hasattr(kw['model'], 'name'):
             kw['model'] = rcParams[kw['model']]
-        
+
         # define the model for convenience
         model = kw['model']
 
@@ -805,7 +802,7 @@ class Multiple(object):
             '{0:.1f}'.format(kw['gap_weight']),
             kw['restricted_chars']
         ])
-        
+
         self._set_model(model, kw['classes'], kw['sonar'], kw['sonars'], kw['scoredict'])
         self._set_scorer('classes')
 
@@ -833,7 +830,7 @@ class Multiple(object):
     def lib_align(self, **keywords):
         """
         Carry out a library-based progressive alignment analysis of the sequences.
-        
+
         Notes
         -----
         In contrast to traditional progressive multiple sequence alignment
@@ -852,12 +849,12 @@ class Multiple(object):
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
             Currently, three models are supported:
-            
+
             * "dolgo" -- a sound-class model based on :evobib:`Dolgopolsky1986`,
 
             * "sca" -- an extension of the "dolgo" sound-class model based on
               :evobib:`List2012b`, and
-            
+
             * "asjp" -- an independent sound-class model which is based on the
               sound-class model of :evobib:`Brown2008` and the empirical data
               of :evobib:`Brown2011` (see the description in
@@ -865,8 +862,8 @@ class Multiple(object):
 
         mode : { "global", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
@@ -874,10 +871,10 @@ class Multiple(object):
               local similarities :evobib:`Morgenstern1996`.
 
         modes : list (default=[("global",-10,0.6),("local",-1,0.6)])
-            Indicate the mode, the gap opening penalties (GOP), and the gap extension scale
-            (GEP scale), of the pairwise alignment analyses which
+            Indicate the mode, the gap opening penalties (GOP), and the gap extension
+            scale (GEP scale), of the pairwise alignment analyses which
             are used to create the library.
-        
+
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
 
@@ -896,8 +893,8 @@ class Multiple(object):
             the guide tree. Select between ``neighbor``, the Neighbor-Joining
             algorithm (:evobib:`Saitou1987`), and ``upgma``, the UPGMA
             algorithm (:evobib:`Sokal1958`).
-            
-        guide_tree : tree_matrix 
+
+        guide_tree : tree_matrix
             Use a custom guide tree instead of performing a cluster algorithm
             for constructing one based on the input similarities. The use of this
             option makes the tree_calc option irrelevant.
@@ -907,7 +904,7 @@ class Multiple(object):
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
             as much as other characters.
-        
+
         restricted_chars : string (default="T")
             Define which characters of the prosodic string of a sequence
             reflect its secondary structure (cf. :evobib:`List2012b`) and
@@ -956,14 +953,13 @@ class Multiple(object):
         mode_params = 'y'.join(mode_params)
 
         params[3] = mode_params
-        
         self.params = '_'.join(params)
-        
+
         self._set_model(
             kw['model'], kw['classes'], kw['sonar'], kw['sonars'], kw['scoredict'])
-        
+
         self._set_scorer('classes')
-        
+
         # start to create the library, note that scales and factors are set to
         # zero here, since scales and zeros are only useful in
         # profile-alignments. they eventually disturb pairwise alignments,
@@ -978,12 +974,12 @@ class Multiple(object):
         self._set_scorer('library')
         self._get_pairwise_alignments(
             kw['mode'], 0, 0.0, kw['factor'], kw['restricted_chars'])
-        
+
         if 'guide_tree' in kw.keys():
             self.tree_matrix = kw['guide_tree']
         else:
             self._make_guide_tree(tree_calc=kw['tree_calc'])
-        
+
         # merge the alignments, not that the scale doesn't really influence any
         # of the results here, since gap scores are set to 0, gapping should be
         # the same in all positions, the factor, however, eventually influences
@@ -1005,21 +1001,20 @@ class Multiple(object):
             # XXX if list(new_msa[:,i]).count(gap) != len(new_msa):
             if [line[i] for line in new_msa].count(gap) != len(new_msa):
                 no_gap_index.append(i)
-        
+
         new_msa = [[line[i] for i in no_gap_index] for line in new_msa]
         # XXX new_msa = new_msa[:,no_gap_index].tolist()
-
         return new_msa
 
     def _split(self, idx):
         """
-        Split an MSA into two parts and retain their indices. 
+        Split an MSA into two parts and retain their indices.
         """
         # XXX
         # create the inverted index
         idxA = idx
         idxB = [i for i in range(self.height) if i not in idx]
-        
+
         # get idxA
         almA = [self._alm_matrix[i] for i in idxA]
         almB = [self._alm_matrix[i] for i in idxB]
@@ -1034,7 +1029,7 @@ class Multiple(object):
 
     def _join(self, almA, almB, idxA, idxB):
         """
-        Join two aligned MSA by their index. 
+        Join two aligned MSA by their index.
         """
         m = len(almA[0])
         out_alm = [[0 for i in range(m)] for j in range(self.height)]
@@ -1049,21 +1044,20 @@ class Multiple(object):
     def _iter(
             self,
             idx_list,
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 0.0,
-            gap_weight = 0.5,
-            check = 'final',
-            restricted_chars = 'T_'
-            ):
+            mode='global',
+            gop=-3,
+            scale=0.5,
+            factor=0.0,
+            gap_weight=0.5,
+            check='final',
+            restricted_chars='T_'):
         """
         Split an MSA into two parts and realign them.
         """
         sop = self.sum_of_pairs(gap_weight=gap_weight)
         alm_matrix = [[cell for cell in line] for line in self._alm_matrix]
         # XXX .copy()
-        
+
         if len(idx_list) == 1:
             return
 
@@ -1094,7 +1088,7 @@ class Multiple(object):
                 self._alm_matrix = alm_matrix
 
         self._update_alignments()
-    
+
     def sum_of_pairs(self, alm_matrix='self', mat=None, gap_weight=0.0, gop=-1):
         """
         Calculate the sum-of-pairs score for a given alignment analysis.
@@ -1114,7 +1108,7 @@ class Multiple(object):
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
             as much as other characters.
-        
+
         Returns
         -------
         The sum-of-pairs score of the alignment.
@@ -1123,7 +1117,7 @@ class Multiple(object):
             alm_matrix = self._alm_matrix
         else:
             alm_matrix = mat
-        
+
         lenM = len(alm_matrix[0])
 
         score = 0.0
@@ -1158,17 +1152,16 @@ class Multiple(object):
                 swap_penalty=swap_penalty)
 
         return score / lenM
-    
+
     def iterate_orphans(
             self,
-            check = 'final',
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 0,
-            gap_weight = 1.0,
-            restricted_chars = 'T_'
-            ):
+            check='final',
+            mode='global',
+            gop=-3,
+            scale=0.5,
+            factor=0,
+            gap_weight=1.0,
+            restricted_chars='T_'):
         """
         Iterate over the most divergent sequences in the sample.
 
@@ -1179,11 +1172,11 @@ class Multiple(object):
             Specify when to check for improved sum-of-pairs scores: After each
             iteration ("immediate") or after all iterations have been carried
             out ("final").
-         
+
         mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
@@ -1191,8 +1184,8 @@ class Multiple(object):
               local similarities :evobib:`Morgenstern1996`.
 
             * "overlap" -- semi-global alignment, where gaps introduced in the
-              beginning and the end of a sequence do not score.     
-        
+              beginning and the end of a sequence do not score.
+
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
 
@@ -1241,21 +1234,20 @@ class Multiple(object):
             factor=factor,
             gap_weight=gap_weight,
             restricted_chars=restricted_chars)
-           
+
     def iterate_clusters(
             self,
             threshold,
-            check = 'final',
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 0,
-            gap_weight = 1,
-            restricted_chars = 'T_'
-            ):
+            check='final',
+            mode='global',
+            gop=-3,
+            scale=0.5,
+            factor=0,
+            gap_weight=1,
+            restricted_chars='T_'):
         """
         Iterative refinement based on a flat cluster analysis of the data.
-        
+
         Notes
         -----
         This method uses the :py:func:`lingpy.algorithm.clustering.flat_upgma`
@@ -1263,7 +1255,7 @@ class Multiple(object):
 
         Parameters
         ----------
-        
+
         threshold : float
             The threshold for the flat cluster analysis.
 
@@ -1271,11 +1263,11 @@ class Multiple(object):
             Specify when to check for improved sum-of-pairs scores: After each
             iteration ("immediate") or after all iterations have been carried
             out ("final").
-         
+
         mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * 'global' -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
@@ -1283,7 +1275,7 @@ class Multiple(object):
               local similarities :evobib:`Morgenstern1996`.
 
             * 'overlap' -- semi-global alignment, where gaps introduced in the
-              beginning and the end of a sequence do not score.     
+              beginning and the end of a sequence do not score.
 
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
@@ -1310,14 +1302,12 @@ class Multiple(object):
         Multiple.iterate_all_sequences
 
         """
-        
         # don't calculate this if there are less than 5 sequences
         if len(self.seqs) < 3:
-            return 
-        
+            return
+
         # create the clusters
-        clusters = dict(
-            [(i[0], [i[1]]) for i in zip(range(self.height), range(self.height))])
+        clusters = {i[0]: [i[1]] for i in zip(range(self.height), range(self.height))}
 
         cluster._flat_upgma(clusters, self.matrix, threshold)
         self._iter(
@@ -1332,22 +1322,21 @@ class Multiple(object):
 
     def iterate_similar_gap_sites(
             self,
-            check = 'final',
-            mode = 'global',
-            gop = -3,
-            scale = 0.5,
-            factor = 0,
-            gap_weight = 1,
-            restricted_chars = 'T_'
-            ):
+            check='final',
+            mode='global',
+            gop=-3,
+            scale=0.5,
+            factor=0,
+            gap_weight=1,
+            restricted_chars='T_'):
         """
         Iterative refinement based on the *Similar Gap Sites* heuristic.
-        
+
         Notes
         -----
         This heuristic is fairly simple. The idea is to try to split a given
         MSA into partitions with identical gap sites.
-        
+
         Parameters
         ----------
 
@@ -1355,11 +1344,11 @@ class Multiple(object):
             Specify when to check for improved sum-of-pairs scores: After each
             iteration ("immediate") or after all iterations have been carried
             out ("final").
-         
+
         mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * 'global' -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
@@ -1367,7 +1356,7 @@ class Multiple(object):
               local similarities :evobib:`Morgenstern1996`.
 
             * 'overlap' -- semi-global alignment, where gaps introduced in the
-              beginning and the end of a sequence do not score.       
+              beginning and the end of a sequence do not score.
 
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
@@ -1395,9 +1384,8 @@ class Multiple(object):
         Multiple.iterate_orphans
 
         """
-
         self._similar_gap_sites()
-        
+
         if len(self.gap_dict) == 1:
             return
         self._iter(
@@ -1417,17 +1405,16 @@ class Multiple(object):
             scale=0.5,
             factor=0,
             gap_weight=1,
-            restricted_chars="T_"
-            ):
+            restricted_chars="T_"):
         """
         Iterative refinement based on a complete realignment of all sequences.
-        
+
         Notes
         -----
         This method essentially follows the iterative method of
         :evobib:`Barton1987` with the exception that an MSA has already been
         calculated.
-        
+
         Parameters
         ----------
 
@@ -1438,8 +1425,8 @@ class Multiple(object):
 
         mode : { "global", "overlap", "dialign" } (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
@@ -1448,7 +1435,7 @@ class Multiple(object):
 
             * "overlap" -- semi-global alignment, where gaps introduced in the
               beginning and the end of a sequence do not score.
-        
+
         gop : int (default=-5)
             The gap opening penalty (GOP) used in the analysis.
 
@@ -1467,7 +1454,7 @@ class Multiple(object):
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
             as much as other characters.
-        
+
         See also
         --------
         Multiple.iterate_clusters
@@ -1491,7 +1478,7 @@ class Multiple(object):
 
         Parameters
         ----------
-        
+
         gap_weight : float (default=0)
             The factor by which gaps in aligned columns contribute to the
             calculation of the column score. When set to 0, gaps will be
@@ -1504,7 +1491,7 @@ class Multiple(object):
         peaks : list
             A list containing the profile scores for each column of the given
             alignment.
-            
+
         Examples
         --------
 
@@ -1528,7 +1515,7 @@ class Multiple(object):
         threshold : { int, float } (default=2)
             The threshold to determine whether a given column is a peak or not.
         gap_weight : float (default=0.0)
-            The weight for gaps. 
+            The weight for gaps.
 
         """
         peaks = self.get_peaks(gap_weight=gap_weight)
@@ -1537,7 +1524,7 @@ class Multiple(object):
     def get_pairwise_alignments(self, **keywords):
         """
         Function creates a dictionary of all pairwise alignments  scores.
-        
+
         Parameters
         ----------
         new_calc : bool (default=True)
@@ -1549,12 +1536,12 @@ class Multiple(object):
             A string indicating the name of the :py:class:`Model \
             <lingpy.data.model>` object that shall be used for the analysis.
             Currently, three models are supported:
-            
+
             * "dolgo" -- a sound-class model based on :evobib:`Dolgopolsky1986`,
 
             * "sca" -- an extension of the "dolgo" sound-class model based on
               :evobib:`List2012b`, and
-            
+
             * "asjp" -- an independent sound-class model which is based on the
               sound-class model of :evobib:`Brown2008` and the empirical data
               of :evobib:`Brown2011` (see the description in
@@ -1562,14 +1549,14 @@ class Multiple(object):
 
         mode : string (default="global")
             A string indicating which kind of alignment analysis should be
-            carried out during the progressive phase. Select between: 
-            
+            carried out during the progressive phase. Select between:
+
             * "global" -- traditional global alignment analysis based on the
               Needleman-Wunsch algorithm :evobib:`Needleman1970`,
 
             * "dialign" -- global alignment analysis which seeks to maximize
               local similarities :evobib:`Morgenstern1996`.
-        
+
         gop : int (default=-3)
             The gap opening penalty (GOP) used in the analysis.
 
@@ -1588,7 +1575,7 @@ class Multiple(object):
             calculation of the column score. When set to 0, gaps will be
             ignored in the calculation. When set to 0.5, gaps will count half
             as much as other characters.
-        
+
         restricted_chars : string (default="T")
             Define which characters of the prosodic string of a sequence
             reflect its secondary structure (cf. :evobib:`List2012b`) and
@@ -1647,7 +1634,7 @@ class Multiple(object):
                             for m in tok:
                                 try:
                                     alm.append(self._get(
-                                        str(idx + 1) + '.' + m.split('.')[1], 'tokens'))
+                                        dotjoin(idx + 1, m.split('.')[1]), 'tokens'))
                                 except:
                                     alm.append('-')
 
@@ -1671,24 +1658,24 @@ class Multiple(object):
     def get_pid(self, mode=1):
         """
         Return the Percentage Identity (PID) score of the calculated MSA.
-        
+
         Parameters
         ----------
         mode : { 1, 2, 3, 4, 5 } (default=1)
-            Indicate which of the four possible PID scores described in :evobib:`Raghava2006`
-            should be calculated, the fifth possibility is added for linguistic
-            purposes:
-            
+            Indicate which of the four possible PID scores described in
+            :evobib:`Raghava2006` should be calculated, the fifth possibility is added
+            for linguistic purposes:
+
             1. identical positions / (aligned positions + internal gap positions),
-            
+
             2. identical positions / aligned positions,
-            
+
             3. identical positions / shortest sequence, or
-            
+
             4. identical positions / shortest sequence (including internal gap
                pos.)
 
-            5. identical positions / (aligned positions + 2 * number of gaps)  
+            5. identical positions / (aligned positions + 2 * number of gaps)
 
 
         Returns
@@ -1717,7 +1704,7 @@ class Multiple(object):
             kB, wB = weights[j]
             if kA != kB:
                 score += pid(seqA, seqB, mode) * wA * wB
-        
+
         l = len(self.uniseqs)
         count = (l ** 2 - l) / 2
         return 1.0 if count == 0 else score / count
@@ -1731,7 +1718,7 @@ class Multiple(object):
         referring to the position of the sequences having this structure in the
         MSA.
         """
-        
+
         self.gap_dict = defaultdict(list)
         """
         A dictionary storing the different gap profiles of an MSA as keys and
@@ -1762,7 +1749,6 @@ class Multiple(object):
         The condition for swaps to possibly occur in the alignment. These are
         the complementary sites in the alignment, which are extracted from the
         gap array.
-        
         """
         swaps = []
         gap_array = self._mk_gap_array()
@@ -1776,7 +1762,7 @@ class Multiple(object):
                 pass
 
         return swaps
-        
+
     def _swap_check(self, ind, gap_weight=1.0, swap_penalty=-5, db=False):
         """
         Carry out a check for swapped regions.
@@ -1789,42 +1775,40 @@ class Multiple(object):
         matB = [[c for c in line] for line in self._alm_matrix]
 
         for i in range(len(self._classes)):
-            
             # [i] shift the gap of the first and third matrix
-            if matA[i][ind] != 'X' and matA[i][ind+2] == 'X':
-                matA[i][ind+2] = matA[i][ind+1]
-                matA[i][ind+1] = matA[i][ind]
+            if matA[i][ind] != 'X' and matA[i][ind + 2] == 'X':
+                matA[i][ind + 2] = matA[i][ind + 1]
+                matA[i][ind + 1] = matA[i][ind]
                 matA[i][ind] = 'X'
 
             elif matA[i][ind] == 'X':
-                matA[i][ind] = matA[i][ind+1]
-                matA[i][ind+1] = matA[i][ind+2]
-                matA[i][ind+2] = 'X'
+                matA[i][ind] = matA[i][ind + 1]
+                matA[i][ind + 1] = matA[i][ind + 2]
+                matA[i][ind + 2] = 'X'
 
         # determine in which direction to turn by counting the number of chars
         # in all cols
         t1 = len([i for i in [line[ind] for line in matA] if i != 'X'])
-        t2 = len([i for i in [line[ind+2] for line in matA] if i != 'X'])
+        t2 = len([i for i in [line[ind + 2] for line in matA] if i != 'X'])
         turnLeftA = t1 > t2
 
         t1 = len([i for i in [line[ind] for line in matB] if i != 'X'])
-        t2 = len([i for i in [line[ind+2] for line in matB] if i != 'X'])
+        t2 = len([i for i in [line[ind + 2] for line in matB] if i != 'X'])
         turnLeftB = t1 > t2
 
         for i in range(len(self._classes)):
             # [i] unswap the possibly swapped columns by shifting values
             # ... unequal to a gap and leaving a special symbol (+) which will
-            # ... cope for the penalty for a swap. 
-            
+            # ... cope for the penalty for a swap.
             if turnLeftA:
                 if matA[i][ind] != 'X':
                     pass
-                elif matA[i][ind+2] != 'X' :
-                    matA[i][ind] = matA[i][ind+2]
-                    matA[i][ind+2] = '+'
+                elif matA[i][ind + 2] != 'X':
+                    matA[i][ind] = matA[i][ind + 2]
+                    matA[i][ind + 2] = '+'
             else:
                 if matA[i][ind] != 'X':
-                    matA[i][ind+2] = matA[i][ind]
+                    matA[i][ind + 2] = matA[i][ind]
                     matA[i][ind] = '+'
                 else:
                     pass
@@ -1833,16 +1817,16 @@ class Multiple(object):
             if turnLeftB:
                 if matB[i][ind] != 'X':
                     pass
-                elif matB[i][ind+2] != 'X' :
-                    matB[i][ind] = matB[i][ind+2]
-                    matB[i][ind+2] = '+'
+                elif matB[i][ind + 2] != 'X':
+                    matB[i][ind] = matB[i][ind + 2]
+                    matB[i][ind + 2] = '+'
             else:
                 if matB[i][ind] != 'X':
-                    matB[i][ind+2] = matB[i][ind]
+                    matB[i][ind + 2] = matB[i][ind]
                     matB[i][ind] = '+'
                 else:
                     pass
-        
+
         # [i] calculate normal and new sum-of-pairs scores, convert to integers
         # ... in order to guarantee the accuracy of the comparison of
         # ... sop-scores
@@ -1884,14 +1868,14 @@ class Multiple(object):
             Returns ``True``, if a swap was identified, and ``False``
             otherwise. The information regarding the position of the swap is
             stored in the attribute ``swap_index``.
-        
+
         Notes
         -----
         The method for swap detection is described in detail in :evobib:`List2012b`.
 
         Examples
         --------
-        Define a set of strings whose alignment contans a swap. 
+        Define a set of strings whose alignment contans a swap.
 
         >>> from lingpy import *
         >>> mult = Multiple(["woldemort", "waldemar", "wladimir"])
@@ -1931,8 +1915,8 @@ class Multiple(object):
                 i = swaps.pop(0)
                 if i - 1 not in swp and i - 2 not in swp and i - 3 not in swp:
                     swp.append(i)
-            
-            self.swap_index = [(i, i + 1, i + 2) for i in swp]
+
+            self.swap_index = [(i_, i_ + 1, i_ + 2) for i_ in swp]
             self.swaps = self.swap_index
             return True
         return False
@@ -1967,7 +1951,7 @@ def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False, ppri
     w   o   l   -   d   e   m   o   r   t
     w   a   l   -   d   e   m   a   r   -
     -   v   l   a   d   i   m   i   r   -
-    
+
 
     """
     m = Multiple(seqs)
