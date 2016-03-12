@@ -283,7 +283,7 @@ def neighbor(matrix, taxa, distances=True):
     return cluster.neighbor(matrix,taxa,distances)
 
 
-def fuzzy(threshold,matrix,taxa,method='upgma',revert=False):
+def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
     """
     Create fuzzy cluster of a given distance matrix.
     

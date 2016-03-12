@@ -77,6 +77,7 @@ class TestLexStat(WithTempDir):
         cleaned = bad_file.parent.joinpath(bad_file.name + '_cleaned.qlc')
         self.assertTrue(cleaned.exists())
         os.remove(cleaned.as_posix())
+        os.remove(self.tmp_path('errors.log').as_posix())
         assert_raises(ValueError, LexStat, {0:['concept', 'language', 'ipa']})
 
     def test_getitem(self):
