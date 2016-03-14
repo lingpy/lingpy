@@ -12,7 +12,8 @@ Authors: [Johann-Mattis List](https://github.com/linguist) ([CRLAO, Paris](http:
 
 Collaborators: Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), Simon Greenhill ([Australian National University, Canberra](https://researchers.anu.edu.au/researchers/greenhill-s).
 
-LingPy is a Python Library for Historical Linguistics. It is being developed in Python 3, but we also provide basic functionality for Python 2.
+LingPy is a Python Library for Historical Linguistics. It is being developed for Python 2.7 and Python 3.x 
+using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
 
 * All source code is available at: [https://github.com/lingpy/lingpy](https://github.com/lingpy/lingpy).
 * Documentation can be found at: [http://lingpy.org](http://lingpy.org).
@@ -27,19 +28,16 @@ $ cd lingpy
 $ python setup.py install
 ```
 
-In order to use the library, open Python2 or Python3 in your terminal and import LingPy as follows:
+In order to use the library, start an interactive python session and import LingPy as follows:
 ```python
 >>> from lingpy import *
 ```
+
 To install LingPy to hack on it, fork the repository, open a terminal and type:
 ```bash
 $ git clone https://github.com/<your-github-user>/lingpy/
 $ cd lingpy
 $ python setup.py develop
 ```
-This will just put a symlink to the source code (i.e. to the ``lingpy`` package in the repository clone) in your python site-packages; thus you will be able edit the sources in the git clone and import the altered code just as the regular python package.
-
-
-
-
-
+This will install LingPy in ["develpment mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
+i.e. you will be able edit the sources in the cloned repository and import the altered code just as the regular python package.
