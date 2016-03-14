@@ -12,6 +12,7 @@ Date: 2007-08-16
 from lingpy import log
 
 import numpy as n
+
 try:
     import pylab as p
 except:
@@ -26,20 +27,24 @@ def _angle_to_point(point, centre):
         res += n.pi
     return res
 
+
 def _draw_triangle(p1, p2, p3, **kwargs):
-    tmp = n.vstack((p1,p2,p3))
-    x,y = [x[0] for x in zip(tmp.transpose())]
-    p.fill(x,y, **kwargs)
+    tmp = n.vstack((p1, p2, p3))
+    x, y = [x[0] for x in zip(tmp.transpose())]
+    p.fill(x, y, **kwargs)
+
 
 def area_of_triangle(p1, p2, p3):
     '''calculate area of any triangle given co-ordinates of the corners'''
-    return n.linalg.norm(n.cross((p2 - p1), (p3 - p1)))/2.
+    return n.linalg.norm(n.cross((p2 - p1), (p3 - p1))) / 2.
 
 
 def convex_hull(points, graphic=True, smidgen=0.0075):
-    '''Calculate subset of points that make a convex hull around points
+    """
+    Calculate subset of points that make a convex hull around points
 
-Recursively eliminates points that lie inside two neighbouring points until only convex hull is remaining.
+Recursively eliminates points that lie inside two neighbouring points until only convex
+hull is remaining.
 
 :Parameters:
     points : ndarray (2 x m)
@@ -52,7 +57,7 @@ Recursively eliminates points that lie inside two neighbouring points until only
 :Returns:
     hull_points : ndarray (2 x n)
         convex hull surrounding points
-'''
+    """
     if graphic:
         p.clf()
         p.plot(points[0], points[1], 'ro')
@@ -60,12 +65,13 @@ Recursively eliminates points that lie inside two neighbouring points until only
     if n_pts < 3:
         return points
     centre = points.mean(1)
-    if graphic: p.plot((centre[0],),(centre[1],),'bo')
+    if graphic:
+        p.plot((centre[0],), (centre[1],), 'bo')
     angles = n.apply_along_axis(_angle_to_point, 0, points, centre)
-    pts_ord = points[:,angles.argsort()]
+    pts_ord = points[:, angles.argsort()]
     if graphic:
         for i in range(n_pts):
-            p.text(pts_ord[0,i] + smidgen, pts_ord[1,i] + smidgen, \
+            p.text(pts_ord[0, i] + smidgen, pts_ord[1, i] + smidgen,
                    '%d' % i)
     pts = [x[0] for x in zip(pts_ord.transpose())]
     prev_pts = len(pts) + 1
@@ -73,24 +79,25 @@ Recursively eliminates points that lie inside two neighbouring points until only
     while prev_pts > n_pts:
         prev_pts = n_pts
         n_pts = len(pts)
-        if graphic: p.gca().patches = []
+        if graphic:
+            p.gca().patches = []
         i = -2
         while i < (n_pts - 2):
-            Aij = area_of_triangle(centre, pts[i],     pts[(i + 1) % n_pts])
-            Ajk = area_of_triangle(centre, pts[(i + 1) % n_pts], \
+            Aij = area_of_triangle(centre, pts[i], pts[(i + 1) % n_pts])
+            Ajk = area_of_triangle(centre, pts[(i + 1) % n_pts],
                                    pts[(i + 2) % n_pts])
-            Aik = area_of_triangle(centre, pts[i],     pts[(i + 2) % n_pts])
+            Aik = area_of_triangle(centre, pts[i], pts[(i + 2) % n_pts])
             if graphic:
-                _draw_triangle(centre, pts[i], pts[(i + 1) % n_pts], \
-                               facecolor='blue', alpha = 0.2)
-                _draw_triangle(centre, pts[(i + 1) % n_pts], \
-                               pts[(i + 2) % n_pts], \
-                               facecolor='green', alpha = 0.2)
-                _draw_triangle(centre, pts[i], pts[(i + 2) % n_pts], \
-                               facecolor='red', alpha = 0.2)
+                _draw_triangle(centre, pts[i], pts[(i + 1) % n_pts],
+                               facecolor='blue', alpha=0.2)
+                _draw_triangle(centre, pts[(i + 1) % n_pts],
+                               pts[(i + 2) % n_pts], facecolor='green', alpha=0.2)
+                _draw_triangle(
+                    centre, pts[i], pts[(i + 2) % n_pts], facecolor='red', alpha=0.2)
             if Aij + Ajk < Aik:
-                if graphic: p.plot((pts[i + 1][0],),(pts[i + 1][1],),'go')
-                del pts[i+1]
+                if graphic:
+                    p.plot((pts[i + 1][0],), (pts[i + 1][1],), 'go')
+                del pts[i + 1]
             i += 1
             n_pts = len(pts)
         k += 1
