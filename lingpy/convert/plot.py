@@ -1144,6 +1144,7 @@ def plot_heatmap(
             keywords['height']
         ]
     )
+    cmap = keywords['cmap'] 
 
     # [0.15,0.1,0.7,0.7])
 

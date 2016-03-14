@@ -152,6 +152,7 @@ class LexStat(Wordlist):
             "defaults": False,
             "no_bscorer": False,
             "errors": "errors.log",
+            "expand_nasals": False
         }
         kw.update(keywords)
 
@@ -171,7 +172,9 @@ class LexStat(Wordlist):
         # tokens
         if "tokens" not in self.header:
             self.add_entries(
-                "tokens", "ipa", lambda x: ipa2tokens(x, merge_vowels=kw['merge_vowels']))
+                "tokens", "ipa", lambda x: ipa2tokens(x,
+                    merge_vowels=kw['merge_vowels'],
+                    expand_nasals=kw['expand_nasals']))
 
         # add a debug procedure for tokens
         if kw["check"]:
@@ -803,7 +806,7 @@ class LexStat(Wordlist):
         """
         kw = dict(
             method='lexstat',
-            mode="global",
+            mode="overlap",
             scale=0.5,
             factor=0.3,
             restricted_chars='_T',
@@ -1159,15 +1162,20 @@ class LexStat(Wordlist):
                     return_distance=True,
                     pprint=False,
                     gop=gop)
-                for l1, l2 in self.pairs:
-                    if l1 != l2:
-                        pairs = self.pairs[l1, l2]
-                        for p1, p2 in pairs:
-                            dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
-                                  for i in range(len(pairs) // 5)]
-                            thresholds.extend(dx)
+
+                with util.ProgressBar('THRESHOLD DETERMINATION',
+                        len(self.pairs)-len(self.cols)) as progress:
+                    for l1, l2 in self.pairs:
+                        progress.update()
+                        if l1 != l2:
+                            pairs = self.pairs[l1, l2]
+                            for p1, p2 in pairs:
+                                dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
+                                      for i in range(len(pairs) // 20 or 5)]
+                                thresholds.extend(dx)
             if thresholds:
-                threshold = sum(thresholds) / len(thresholds)
+                threshold = sum(thresholds) / len(thresholds) * 0.5
+                self._meta['guessed_threshold'] = threshold
 
         with util.ProgressBar('SEQUENCE CLUSTERING', len(self.rows)) as progress:
             for concept, indices, matrix in matrices:
