@@ -4,11 +4,8 @@ format.
 """
 from __future__ import unicode_literals, print_function, division
 
-import colorsys
-import webbrowser
-
-from ..settings import rcParams
-from .. import log
+from lingpy.settings import rcParams
+from lingpy import log
 
 import numpy as np
 
@@ -27,11 +24,9 @@ try:
 except:
     log.missing_module('scipy')
 
-from ..thirdparty import cogent as cg
-
-from lingpy.convert.strings import msa2str
-from lingpy.convert.tree import xml2nwk
-from lingpy.convert.graph import igraph2networkx
+from lingpy.thirdparty import cogent as cg
+from lingpy.convert.tree import nwk2tree_matrix
+from lingpy.convert.graph import gls2gml, radial_layout
 
 
 def plot_gls(
@@ -226,9 +221,9 @@ def plot_tree(
         tree will be).
     fileformat : str (default="pdf")
         Select the fileformat to which the tree shall be written.
-    filename : str 
+    filename : str
         Determine the name of the file to which the data shall be written.
-        Defaults to a timestamp. 
+        Defaults to a timestamp.
     figsize : tuple (default=(10,10))
         Determine the size of the figure.
     """
@@ -357,8 +352,8 @@ def plot_tree(
             if k not in settings:
                 settings[k] = keywords[k]
 
-        if d['label'].startswith('edge') or d['label'].startswith(root) or keywords[
-            'no_labels']:
+        if d['label'].startswith('edge') \
+                or d['label'].startswith(root) or keywords['no_labels']:
             plt.plot(
                 x,
                 y,
@@ -430,7 +425,7 @@ def plot_concept_evolution(
     **keywords
 ):
     """
-    Plot the evolution according to the MLN method of all words for a given concept. 
+    Plot the evolution according to the MLN method of all words for a given concept.
     
     Parameters
     ----------
@@ -538,19 +533,8 @@ def plot_concept_evolution(
     cfunc = np.array(np.linspace(10, 256, len(scenarios)), dtype='int')
 
     if not keywords['colors']:
-        colors = dict(
-            [
-                (
-                    scenarios[i][0],
-                    mpl.colors.rgb2hex(
-                        colormap(
-                            cfunc[i]
-                        )
-                    )
-                ) for i in range(len(scenarios)
-                                 )
-                ]
-        )
+        colors = {scenarios[i][0]: mpl.colors.rgb2hex(colormap(cfunc[i]))
+                  for i in range(len(scenarios))}
     else:
         colors = keywords['colors']
 
@@ -689,7 +673,6 @@ def plot_concept_evolution(
     # now iterate over the nodes
     for n, d in graph.nodes(data=True):
         cpaps = d['pap']
-        states = list(cpaps.values())
         x, y = g.node[n]['graphics']['x'], g.node[n]['graphics']['y']
 
         # get z-value which serves as zorder attribute
@@ -992,14 +975,11 @@ def plot_heatmap(
             raise ValueError(
                 "Keyword 'normalized' must be one of 'jaccard','swadesh',False.")
 
-    # create an empty matrix 
+    # create an empty matrix
     if not normalized:
         matrix = np.zeros((wordlist.width, wordlist.width), dtype=int)
     else:
         matrix = np.zeros((wordlist.width, wordlist.width), dtype=float)
-
-    # make a lambda function for the labels
-    mklb = lambda x: keywords['labels'][x] if x in keywords['labels'] else x
 
     # create the figure
     fig = plt.figure(figsize=keywords['figsize'])
@@ -1167,7 +1147,6 @@ def plot_heatmap(
 
     # [0.15,0.1,0.7,0.7])
 
-    cmap = mpl.cm.jet
     im = ax2.matshow(matrix, aspect='auto', origin='lower',
                      interpolation='nearest', cmap=keywords['cmap'],
                      vmax=keywords['vmax'], vmin=keywords['vmin']

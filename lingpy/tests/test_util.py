@@ -55,3 +55,8 @@ class TestJoin(TestCase):
 
     def test_dotjoin(self):
         self.assertEqual(util.dotjoin(1, 2), '1.2')
+        self.assertEqual(util.dotjoin([1, 2]), '1.2')
+        self.assertEqual(util.dotjoin((1, 2)), '1.2')
+        self.assertEqual(
+            util.dotjoin((i for i in range(1, 3)), condition=lambda j: j > 1), '2')
+        self.assertEqual(util.dotjoin(i for i in range(1, 3)), '1.2')

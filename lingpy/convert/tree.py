@@ -1,15 +1,11 @@
 """
 Functions for tree calculations and working with trees.
 """
-
-# external
 import xml.dom.minidom as minidom
 from collections import deque
 
-# internal
-from ..settings import rcParams
-from ..thirdparty import cogent as cg
-from .. import util
+from lingpy.thirdparty import cogent as cg
+from lingpy import util
 
 
 def _nwk_format(taxon):
@@ -20,15 +16,16 @@ def _nwk_format(taxon):
     taxon = taxon.strip()
 
     # replace white space underscore
-    taxon = taxon.replace(' ','_')
+    taxon = taxon.replace(' ', '_')
 
     # exclude all kinds of brackets
-    return ''.join([t for t in taxon if t not in '()[]{},;:."'+"'"])
+    return ''.join([t for t in taxon if t not in '()[]{},;:."' + "'"])
+
 
 def _xml2dict(
-        infile,
-        tax_name = 'pri-name'
-        ):
+    infile,
+    tax_name='pri-name'
+):
     """
     Convert xml-based MultiTree format to Newick format.
 
@@ -51,70 +48,69 @@ def _xml2dict(
 
     # get the document
     document['document'] = minidom.parse(infile)
-    
+
     # get the hash
     document['hash'] = document['document'].getElementsByTagName('hash')[0]
-    
+
     # get the tree
     document['tree'] = document['hash'].getElementsByTagName('tree')[0]
-    
+
     # get the root
     document['root'] = document['tree'].getElementsByTagName('root')[0]
-    
 
     # now start iteration
-    nwk = {(0,'root'):[]}
-    queue = [(document['root'],(0,"root"))]
+    nwk = {(0, 'root'): []}
+    queue = [(document['root'], (0, "root"))]
     taxa = []
     while queue:
-        
-        root,(idx,tname) = queue.pop()
-        
-        max_idx = max([k[0] for k in nwk if type(k) == tuple]) #type(k) == int])
-    
-        if (idx,tname) not in nwk:
-            nwk[(idx,tname)] = []
-    
+
+        root, (idx, tname) = queue.pop()
+
+        max_idx = max([k[0] for k in nwk if type(k) == tuple])  # type(k) == int])
+
+        if (idx, tname) not in nwk:
+            nwk[(idx, tname)] = []
+
         # get the children
         children = [c for c in root.childNodes if c.nodeName == 'children']
-    
+
         # get the childs
-        childs = [c for c in children[0].childNodes if c.nodeName == 'child'] 
-    
-        #print("Idx {0} has {1} childs".format(idx,len(childs)))
-        
+        childs = [c for c in children[0].childNodes if c.nodeName == 'child']
+
+        # print("Idx {0} has {1} childs".format(idx,len(childs)))
+
         if childs:
             # iterate over childs
-            for i,child in enumerate(childs):
-                
+            for i, child in enumerate(childs):
+
                 # get the name of the child
                 name = [c for c in child.childNodes if c.nodeName == tax_name]
                 name = name[0].childNodes[0].data
 
-
-                if idx < max_idx+i+1:
-                    queue += [(child,(max_idx+i+1,name))]
-                    nwk[idx,tname] += [(max_idx+i+1,name)]
+                if idx < max_idx + i + 1:
+                    queue += [(child, (max_idx + i + 1, name))]
+                    nwk[idx, tname] += [(max_idx + i + 1, name)]
                 else:
-                    name = [c for c in child.childNodes if c.nodeName==tax_name]
+                    name = [c for c in child.childNodes if c.nodeName == tax_name]
                     name = name[0].childNodes[0].data
-                    nwk[idx,tname] = [_nwk_format(name)]
+                    nwk[idx, tname] = [_nwk_format(name)]
                     taxa.append(_nwk_format(name))
-    
+
         else:
             name = [c for c in root.childNodes if c.nodeName == tax_name][0]
             name = name.childNodes[0].data
-            
-            nwk[idx,tname] = [_nwk_format(name)]
+
+            nwk[idx, tname] = [_nwk_format(name)]
             taxa.append(_nwk_format(name))
-    
-    return nwk,taxa
+
+    return nwk, taxa
+
 
 def xml2nwk(
-        infile,
-        filename = '',
-        tax_name = 'pri-name',
-        ):
+    infile,
+    filename='',
+    tax_name='pri-name',
+):
     """
     Convert xml-based MultiTree format to Newick-format.
 
@@ -135,26 +131,27 @@ def xml2nwk(
         A newick-string, if filename is not left empty.
 
     """
-    nwk,taxa = _xml2dict(infile,tax_name)
+    nwk, taxa = _xml2dict(infile, tax_name)
 
     # first, create a specific newick-dictionary
     newick = {}
-    
-    # make a lambda function for conversion of internal nodes into names
-    makeChild = lambda x: '{{x_{0}_{1}}}'.format(x[0],_nwk_format(x[1])) if type(x) == tuple else x
 
-    for i,n in sorted(nwk,key=lambda x: x[0]): #range(len(nwk)):
-        
+    # make a lambda function for conversion of internal nodes into names
+    makeChild = lambda x: '{{x_{0}_{1}}}'.format(x[0], _nwk_format(x[1])) if type(
+        x) == tuple else x
+
+    for i, n in sorted(nwk, key=lambda x: x[0]):  # range(len(nwk)):
+
         name = _nwk_format(n)
-        #create format-string for children
-        children = [makeChild(c) for c in nwk[i,n]]
-    
+        # create format-string for children
+        children = [makeChild(c) for c in nwk[i, n]]
+
         # create dictionary to replace previous format string
         if len(children) > 1:
-            newick['x_'+str(i)+'_'+name] = '('+','.join(children)+')'+name
+            newick['x_' + str(i) + '_' + name] = '(' + ','.join(children) + ')' + name
         else:
-            newick['x_'+str(i)+'_'+name] = children[0]
-    
+            newick['x_' + str(i) + '_' + name] = children[0]
+
     # add the taxa
     for taxon in taxa:
         newick[str(taxon)] = taxon
@@ -162,11 +159,11 @@ def xml2nwk(
     # create the newick-string
     newick_string = "{x_0_root};"
     newick_check = newick_string
-    
+
     # start conversion
     i = 0
     while True:
-        
+
         newick_string = newick_string.format(**newick)
         if newick_check == newick_string:
             break
@@ -174,7 +171,7 @@ def xml2nwk(
             newick_check = newick_string
 
     return newick_string
-    
+
     if not filename:
         return newick_string
     util.write_text_file(filename + '.nwk', newick_string)
@@ -182,24 +179,24 @@ def xml2nwk(
 
 
 def nwk2guidetree(
-                  newick
-                  ):
+    newick
+):
     """
     Build a tree matrix for a guide tree given in Newick format.
     Input is a binary tree with zero-based integer names at the leaves.
     """
-    #assumption: a binary tree with integer names starting with 0 at the leaves
+    # assumption: a binary tree with integer names starting with 0 at the leaves
     tree = cg.LoadTree(treestring=newick)
     nodeIndex = {}
     nextIdx = len(tree.tips())
-    #generate virtual cluster IDs for the tree nodes, store them in nodeIndex
+    # generate virtual cluster IDs for the tree nodes, store them in nodeIndex
     for node in tree.postorder():
         if not node.isTip():
             nodeIndex[node] = nextIdx
             nextIdx += 1
         else:
             nodeIndex[node] = int(node.Name)
-    #construct tree matrix by another postorder traversal
+    # construct tree matrix by another postorder traversal
     tree_matrix = []
     queue = deque(tree.postorder())
     while len(queue) > 0:
@@ -207,8 +204,9 @@ def nwk2guidetree(
         if not curNode.isTip():
             leftChild = curNode.Children[0]
             rightChild = curNode.Children[1]
-            tree_matrix.append([nodeIndex[leftChild],nodeIndex[rightChild],0.5,0.5])
+            tree_matrix.append([nodeIndex[leftChild], nodeIndex[rightChild], 0.5, 0.5])
     return tree_matrix
+
 
 def selectNodes(tree, selIndices):
     selNodes = []
@@ -217,47 +215,49 @@ def selectNodes(tree, selIndices):
             selNodes.append(leaf)
     return selNodes
 
+
 def treePath(node):
     path = [node]
     while not node.isRoot():
         node = node.Parent
-        path.insert(0,node)
+        path.insert(0, node)
     return path
 
-def constructSubtree(paths,index,curNode,indexMap):
-    #create a map [node -> all paths containing that node at index position]
+
+def constructSubtree(paths, index, curNode, indexMap):
+    # create a map [node -> all paths containing that node at index position]
     partition = {}
     for node in {path[index] for path in paths}:
         partition[node] = [path for path in paths if path[index] == node]
-    #partition = {(node,[path for path in paths if path[index] == node]) for node in {path[index] for path in paths}}
     if len(partition) == 1:
-        #no split, we simply go on to the next index in paths
-        constructSubtree(paths,index + 1,curNode,indexMap)
+        # no split, we simply go on to the next index in paths
+        constructSubtree(paths, index + 1, curNode, indexMap)
     else:
-        #split according to the partition, creating a new node where necessary
+        # split according to the partition, creating a new node where necessary
         for node in partition.keys():
             if len(partition[node]) == 1:
-                #we have arrived at a leaf (or a unary branch above it), copy the leaf
-                newLeafName = str(indexMap[int(partition[node][0][-1].Name)]) 
+                # we have arrived at a leaf (or a unary branch above it), copy the leaf
+                newLeafName = str(indexMap[int(partition[node][0][-1].Name)])
                 newLeaf = cg.tree.TreeNode(Name=newLeafName)
                 newLeaf.orig = partition[node][0][-1]
                 curNode.Children.append(newLeaf)
                 newLeaf.Parent = curNode
-            else:               
+            else:
                 newNode = cg.tree.TreeNode()
                 newNode.orig = node
                 curNode.Children.append(newNode)
                 newNode.Parent = curNode
-                constructSubtree(partition[node],index + 1,newNode,indexMap)         
+                constructSubtree(partition[node], index + 1, newNode, indexMap)
 
-def subGuideTree(tree,selIndices):
-    selNodes = selectNodes(tree,selIndices)
-    indexMap = dict(zip(selIndices,range(0,len(selIndices))))
+
+def subGuideTree(tree, selIndices):
+    selNodes = selectNodes(tree, selIndices)
+    indexMap = dict(zip(selIndices, range(0, len(selIndices))))
     paths = [treePath(node) for node in selNodes]
-    #print str(paths)
+    # print str(paths)
     subtree = cg.tree.TreeNode()
     subtree.orig = tree.root()
-    constructSubtree(paths,1,subtree,indexMap)
+    constructSubtree(paths, 1, subtree, indexMap)
     return subtree
 
 
@@ -273,28 +273,25 @@ def nwk2tree_matrix(newick):
     """
     if type(newick) == str:
         tree = cg.LoadTree(treestring=newick)
-    elif hasattr(newick,'root'):
+    elif hasattr(newick, 'root'):
         tree = newick
 
     taxa = [t for t in sorted(
         tree.taxa,
-        key=lambda x:len(tree.getConnectingEdges('root',x)),
-        reverse = True
-        )]
+        key=lambda x: len(tree.getConnectingEdges('root', x)),
+        reverse=True
+    )]
 
-    tax2id = dict(zip(taxa,range(len(taxa))))
+    tax2id = dict(zip(taxa, range(len(taxa))))
     nodes = [t for t in tree.getNodeNames() if t not in taxa]
-    
+
     nodes = sorted(
-            nodes,
-            key = lambda x:len(tree.getNodeMatchingName(x).tips()),
-            )
+        nodes,
+        key=lambda x: len(tree.getNodeMatchingName(x).tips()),
+    )
     matrix = []
 
-    counts = dict(zip(taxa,range(len(tree.taxa))))
-    
     for node in nodes:
-        
         n = tree.getNodeMatchingName(node)
         children = n.Children
         names = [c.Name for c in children]
@@ -304,6 +301,6 @@ def nwk2tree_matrix(newick):
         tax2id[node] = idx
         obs = len(n.tips())
         dst = obs * 1.0
-        matrix += [[idxA,idxB,dst,obs]]
-    
-    return matrix,taxa
+        matrix += [[idxA, idxB, dst, obs]]
+
+    return matrix, taxa

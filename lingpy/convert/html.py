@@ -18,13 +18,8 @@ from lingpy.sequence.sound_classes import pid, token2class, tokens2class, ipa2to
 from lingpy import util
 from lingpy import log
 
-import numpy as np
 
-
-def colorRange(
-    number,
-    brightness=300,
-):
+def colorRange(number, brightness=300):
     """
     Function returns different colors for the given range.
 
@@ -137,13 +132,10 @@ def alm2html(
         dc = len(set([l[0] for l in m]))
 
         if colored:
-            colors = dict([(a, b) for a, b in zip(
+            colors = {a: b for a, b in zip(
                 sorted(set([int(l[0]) for l in m])),
-                colorRange(
-                    dc,
-                    brightness=400
-                ),
-            )])
+                colorRange(dc, brightness=400),
+            )}
         else:
             colors = []
             white = True
@@ -161,9 +153,7 @@ def alm2html(
         iID = m[0][3]
 
         # start writing the stuff to string
-        tmp_str += table.format(
-            NAME=iName,
-            ID=iID)
+        tmp_str += table.format(NAME=iName, ID=iID)
         # define the basic string for the insertion
         bas = ' <tr class="{0}{2} taxon" taxon="{3}">\n{1}'
 
@@ -217,10 +207,8 @@ def alm2html(
 
                     if char == '-':
                         d = 'dolgo_GAP'
-                        c = '#bbbbbb'
                     else:
                         d = 'dolgo_' + token2class(char, rcParams['dolgo'])
-                        c = token2class(char, rcParams['_color'])
 
                         # bad check for three classes named differently
                         if d == 'dolgo__':
@@ -824,8 +812,6 @@ def psa2html(filename, **kw):
                     d = 'dolgo_ERROR'
             classes += [residue.format(char, d)]
         return ''.join(classes)
-
-    tr = '<tr class="psa">{0}</tr>'
 
     out = '<table>\n'  # codecs.open(kw['filename'], 'w', 'utf-8')
     for i, (a, b, c) in enumerate(alignments):

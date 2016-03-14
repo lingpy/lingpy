@@ -9,6 +9,7 @@ from tempfile import NamedTemporaryFile
 from functools import partial
 import json
 import itertools
+import types
 
 from pathlib import Path
 from six import text_type, PY3
@@ -46,8 +47,10 @@ def join(sep, *args, **kw):
     """
     Convenience shortcut. Strings to be joined do not have to be passed as list or tuple.
 
-    Note: An implicit conversion of objects to strings is performed as well.
+    .. note:: An implicit conversion of objects to strings is performed as well.
     """
+    if len(args) == 1 and isinstance(args[0], (list, tuple, types.GeneratorType)):
+        args = args[0]
     condition = kw.get('condition', lambda x: True)
     return sep.join(['%s' % arg for arg in args if condition(arg)])
 
