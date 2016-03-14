@@ -1,10 +1,9 @@
 from unittest import TestCase
 
-from lingpy.tests.util import test_data
 from lingpy.basic.tree import Tree, random_tree
 
+
 def test_random_tree():
-    
     taxa = list('abcdefg')
 
     t1 = Tree(random_tree(taxa, branch_lengths=False))
@@ -14,30 +13,23 @@ def test_random_tree():
     assert str(t1) != str(t2)
     assert ':' in str(t2) and ':' not in str(t1)
 
-class TestTree(object):
 
-    def setup(self):
-
+class TestTree(TestCase):
+    def setUp(self):
         self.tree = Tree('((a,b),(c,d),e)')
-
         assert sorted(self.tree.taxa) == list('abcde')
-    
-    def test_getDistanceToRoot(self):
 
-        
+    def test_getDistanceToRoot(self):
         assert self.tree.getDistanceToRoot('a') == 2
 
     def test_get_LCA(self):
-
-        assert str(self.tree.get_LCA('a','b')) == '(a,b);'
+        assert str(self.tree.get_LCA('a', 'b')) == '(a,b);'
 
     def test_get_distance(self):
-
         treeA = Tree('((a:1,b:1):1,(c:1,d:1):1)')
         treeB = Tree('((a:1,c:1):1,(b:1,d:1):1)')
 
-        assert treeA.get_distance(treeB,'grf') == 1.0
-        assert treeA.get_distance(treeB,'rf') == 1.0
-        assert treeA.get_distance(treeB,'symmetric') == 2
-        assert treeA.get_distance(treeB,'grf') == 1.0
-
+        assert treeA.get_distance(treeB, 'grf') == 1.0
+        assert treeA.get_distance(treeB, 'rf') == 1.0
+        assert treeA.get_distance(treeB, 'symmetric') == 2
+        assert treeA.get_distance(treeB, 'grf') == 1.0

@@ -1,16 +1,7 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-08-26 10:42
-# modified : 2014-11-07 11:01
-from __future__ import unicode_literals
 """
 Test the TreBor borrowing detection algorithm.
 """
-
-__author__="Johann-Mattis List"
-__date__="2014-11-07"
-
-
+from __future__ import unicode_literals
 import os
 from collections import defaultdict
 

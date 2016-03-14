@@ -1,41 +1,33 @@
-from __future__ import unicode_literals
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
-
-from .. import log
-from .. import util
-
+from __future__ import unicode_literals
 import re
 
-def scorer2str(
-        scorer
-        ):
+from lingpy import util
+
+
+def scorer2str(scorer):
     """
     Convert a scoring function to a string.
     """
-    
-    # get sorted representation of characters
-    chars = sorted(
-            scorer.chars2int
-            )
 
-    # get the matrix
-    matrix = scorer.matrix
-    
+    # get sorted representation of characters
+    chars = sorted(scorer.chars2int)
     out = ''
 
     # write stuff to string
-    for i,charA in enumerate(chars):
+    for i, charA in enumerate(chars):
         out += charA
-        for j,charB in enumerate(chars):
-            out += '\t{0:.2f}'.format(scorer[charA,charB])
+        for j, charB in enumerate(chars):
+            out += '\t{0:.2f}'.format(scorer[charA, charB])
         out += '\n'
 
     return out
 
+
 def msa2str(msa, wordlist=False, comment="#",
-        _arange='{stamp}{comment}\n{meta}{comment}\n{body}', merge=False):
+            _arange='{stamp}{comment}\n{meta}{comment}\n{body}', merge=False):
     """
     Function converts an MSA object into a string.
     """
@@ -46,22 +38,22 @@ def msa2str(msa, wordlist=False, comment="#",
         stamp = msa.stamp
     else:
         stamp = ''
-    
-    def mergeit(m,alm,gap='-'):
+
+    def mergeit(m, alm, gap='-'):
         """
         Merge a given string according to the merging dictionary m.
         """
-        new_alm = ['' for i in range(max(m.values())+1)]
-        for i,s in enumerate(alm):
-            
+        new_alm = ['' for i in range(max(m.values()) + 1)]
+        for i, s in enumerate(alm):
+
             new_alm[m[i]] += s
             if '-' in new_alm[m[i]] and len(new_alm[m[i]]) > 1:
-                new_alm[m[i]] = new_alm[m[i]].replace('-','')
+                new_alm[m[i]] = new_alm[m[i]].replace('-', '')
 
         return new_alm
 
     meta = ''
-    
+
     # define global vars for alignment and taxa for convenience
     if wordlist or isinstance(msa, dict):
         taxa = msa['taxa']
@@ -73,24 +65,22 @@ def msa2str(msa, wordlist=False, comment="#",
     alm_length = len(alms[0])
 
     # add merge in output as feature
-    if hasattr(msa,'merge') or 'merge' in msa:
+    if hasattr(msa, 'merge') or 'merge' in msa:
         if merge:
             try:
                 merger = msa['merge']
             except:
                 merger = msa.merge
-            
+
             new_alms = []
 
-            merges = [x for x in range(len(alms[0]))]
             for alm in alms:
-                new_alms += [mergeit(merger,alm)]
+                new_alms += [mergeit(merger, alm)]
             alms = new_alms
         else:
-            merger = dict([(i,i) for i in range(len(alms[0]))])
+            merger = dict([(i, i) for i in range(len(alms[0]))])
     else:
-        merger = dict([(i,i) for i in range(len(alms[0]))])
-
+        merger = dict([(i, i) for i in range(len(alms[0]))])
 
     body = ''
 
@@ -98,41 +88,41 @@ def msa2str(msa, wordlist=False, comment="#",
     # after comment
     if wordlist:
         # get formatter
-        formatter = max([len(t) for t in msa['taxa']+['COLUMNID']])
-        for a,b,c in zip(msa['ID'], taxa, alms):
-            body += '{0}\t{1}'.format(a, b.ljust(formatter,'.'))+'\t'
-            body += '\t'.join(c)+'\n'
+        formatter = max([len(t) for t in msa['taxa'] + ['COLUMNID']])
+        for a, b, c in zip(msa['ID'], taxa, alms):
+            body += '{0}\t{1}'.format(a, b.ljust(formatter, '.')) + '\t'
+            body += '\t'.join(c) + '\n'
         alm_len = len(c)
 
     elif isinstance(msa, dict):
         # get formatter
         formatter = max([len(t) for t in msa['taxa']])
-        body += msa['dataset']+'\n'
-        body += msa['seq_id']+'\n'
-        for a,b in zip(taxa, alms): 
-            body += a.ljust(formatter,'.')+'\t'
-            body += '\t'.join(b)+'\n'
+        body += msa['dataset'] + '\n'
+        body += msa['seq_id'] + '\n'
+        for a, b in zip(taxa, alms):
+            body += a.ljust(formatter, '.') + '\t'
+            body += '\t'.join(b) + '\n'
         alm_len = len(b)
     else:
         # get formatter
         formatter = max([len(t) for t in msa.taxa])
-        body += msa.dataset+'\n'
-        body += msa.seq_id+'\n'
-        for a,b in zip(taxa, alms):
-            body += a.ljust(formatter,'.')+'\t'
-            body += '\t'.join(b)+'\n'
+        body += msa.dataset + '\n'
+        body += msa.seq_id + '\n'
+        for a, b in zip(taxa, alms):
+            body += a.ljust(formatter, '.') + '\t'
+            body += '\t'.join(b) + '\n'
         alm_len = len(b)
-    
+
     if 'local' in msa:
         local = msa['local']
-    elif hasattr(msa,'local'):
+    elif hasattr(msa, 'local'):
         local = msa.local
     else:
         local = False
 
     if 'swaps' in msa:
         swaps = msa['swaps']
-    elif hasattr(msa,'swaps'):
+    elif hasattr(msa, 'swaps'):
         swaps = msa.swaps
     else:
         swaps = False
@@ -144,21 +134,16 @@ def msa2str(msa, wordlist=False, comment="#",
     else:
         consensus = False
 
-    if 'reference' in msa:
-        reference = msa['reference']
-    elif hasattr(msa, 'reference'):
-        reference = msa.reference
-    else:
-        reference = False
-
     if wordlist:
-        meta += '0\t'+'COLUMNID'.ljust(formatter,'.')+'\t'+'\t'.join([str(i+1)
-            for i in range(alm_len)])
+        meta += '0\t' + 'COLUMNID'.ljust(formatter, '.') + '\t' + '\t'.join([str(i + 1)
+                                                                             for i in
+                                                                             range(
+                                                                                 alm_len)])
         meta += '\n#\n'
 
     if local:
         if wordlist:
-            meta += '{0}\t{1}\t'.format(0,'LOCAL'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0, 'LOCAL'.ljust(formatter, '.'))
         else:
             meta += '{0}\t'.format('LOCAL'.ljust(formatter, '.'))
         tmp = []
@@ -167,42 +152,43 @@ def msa2str(msa, wordlist=False, comment="#",
                 tmp += ['*']
             else:
                 tmp += ['.']
-        meta += '\t'.join(mergeit(merger,tmp))+'\n'
+        meta += '\t'.join(mergeit(merger, tmp)) + '\n'
     if swaps:
         if wordlist:
-            meta += '{0}\t{1}\t'.format(0,'CROSSED'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0, 'CROSSED'.ljust(formatter, '.'))
         else:
             meta += '{0}\t'.format('SWAPS'.ljust(formatter, '.'))
         tmp = alm_length * ['.']
         for swap in swaps:
-            a,b,c = swap
+            a, b, c = swap
             tmp[a] = '+'
             tmp[b] = '-'
             tmp[c] = '+'
-        meta += '\t'.join(mergeit(merger, tmp, gap=''))+'\n'
+        meta += '\t'.join(mergeit(merger, tmp, gap='')) + '\n'
 
     if consensus:
         if wordlist:
-            meta += '{0}\t{1}\t'.format(0,'CONSENSUS'.ljust(formatter, '.'))
+            meta += '{0}\t{1}\t'.format(0, 'CONSENSUS'.ljust(formatter, '.'))
         else:
             meta += '{0}\t'.format('CONSE'.ljust(formatter, '.'))
-        meta += '\t'.join(mergeit(merger, consensus, gap=''))+'\n'
+        meta += '\t'.join(mergeit(merger, consensus, gap='')) + '\n'
 
     return _arange.format(
-            stamp=stamp,
-            meta=meta,
-            body=body,
-            comment=comment
-            )
+        stamp=stamp,
+        meta=meta,
+        body=body,
+        comment=comment
+    )
+
 
 def matrix2dst(
-        matrix,
-        taxa = None,
-        stamp = '',
-        filename = '',
-        taxlen = 10,
-        comment = '#'
-     ):
+    matrix,
+    taxa=None,
+    stamp='',
+    filename='',
+    taxlen=10,
+    comment='#'
+):
     """
     Convert matrix to dst-format.
 
@@ -236,24 +222,24 @@ def matrix2dst(
         
     """
     if not taxa:
-        taxa = ['t_{0}'.format(i+1) for i in range(len(matrix))]
+        taxa = ['t_{0}'.format(i + 1) for i in range(len(matrix))]
 
     out = ' {0}\n'.format(len(taxa))
-    for i,taxon in enumerate(taxa):
+    for i, taxon in enumerate(taxa):
 
         # check for zero-taxlen
         if taxlen == 0:
             dummy = '{0}\t'
             idx = len(taxon)
-            joinchar = '\t' # normally in Phylip this is a space
+            joinchar = '\t'  # normally in Phylip this is a space
         else:
-            dummy = '{0:'+str(taxlen)+'}'
-            idx = taxlen+1
+            dummy = '{0:' + str(taxlen) + '}'
+            idx = taxlen + 1
             joinchar = ' '
 
-        out += dummy.format(taxon)[:idx]+joinchar
+        out += dummy.format(taxon)[:idx] + joinchar
         out += joinchar.join(['{0:.2f}'.format(d) for d in
-            matrix[i]])
+                              matrix[i]])
         out += '\n'
     if stamp:
         out += '{1} {0}'.format(stamp, comment)
@@ -264,11 +250,11 @@ def matrix2dst(
 
 
 def pap2nex(
-        taxa,
-        paps,
-        missing=0,
-        filename=''
-        ):
+    taxa,
+    paps,
+    missing=0,
+    filename=''
+):
     """
     Function converts a list of paps into nexus file format.
 
@@ -286,13 +272,13 @@ def pap2nex(
           >>> paps = {1:[1,0], 2:[1,0], 3:[1,0]} # two languages, three paps
     
     missing : {str, int} (default=0)
-        Indicate how missing characters are represented in the original data.    
+        Indicate how missing characters are represented in the original data.
 
     """
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
     out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
     out += "MATRIX\n\n{3}\n;\n\nEND;"
-    
+
     # get longest taxon
     maxTax = max([len(taxon) for taxon in taxa])
 
@@ -307,20 +293,20 @@ def pap2nex(
 
     # create the matrix
     matrix = ""
-    
-    for i,taxon in enumerate(taxa):
+
+    for i, taxon in enumerate(taxa):
         tmp = '{0:XXX} '
-        matrix += tmp.replace('XXX',str(maxTax)).format(taxon)
+        matrix += tmp.replace('XXX', str(maxTax)).format(taxon)
         matrix += ''.join([str(itm[i]) for itm in new_paps])
         matrix += '\n'
-    
+
     if not filename:
         return out.format(
-                len(taxa),
-                len(paps),
-                missing,
-                matrix
-                )
+            len(taxa),
+            len(paps),
+            missing,
+            matrix
+        )
     util.write_text_file(
         filename + '.nex',
         out.format(len(taxa), len(paps), missing, matrix))
@@ -328,25 +314,26 @@ def pap2nex(
 
 
 def pap2csv(
-        taxa,
-        paps,
-        filename=''
-        ):
+    taxa,
+    paps,
+    filename=''
+):
     """
     Write paps created by the Wordlist class to a csv-file.
     """
-    
-    out = "ID\t"+'\t'.join(taxa)+'\n'
-    for key in sorted(paps, key=lambda x: int(re.sub(r'[^0-9]+','',str(x)))):
+
+    out = "ID\t" + '\t'.join(taxa) + '\n'
+    for key in sorted(paps, key=lambda x: int(re.sub(r'[^0-9]+', '', str(x)))):
         out += '{0}\t{1}\n'.format(
             key,
             '\t'.join(str(i) for i in paps[key])
-            )
-    
+        )
+
     if not filename:
         return out
     util.write_text_file(filename + '.csv', out)
     return
+
 
 def multistate2nex(taxa, matrix, filename=''):
     """
@@ -364,7 +351,7 @@ def multistate2nex(taxa, matrix, filename=''):
         otherwise, it specifies the name of the file to which the data will be
         written.
     """
-    
+
     # set up the nexus template
     nexus = """#NEXUS
 
@@ -382,23 +369,23 @@ END;
 
     # calculate maximal length of taxon strings
     tlen = max([len(t) for t in taxa])
-    
+
     # calculate the matrix-text in the nexus template
     matrix_text = ""
     for taxon, line in zip(taxa, matrix):
         ntaxon = taxon + tlen * ' ' + ' '
         ntaxon = ntaxon[:tlen]
-        matrix_text += "{0} {1}\n".format(ntaxon,''.join(line))
-    
+        matrix_text += "{0} {1}\n".format(ntaxon, ''.join(line))
+
     if filename:
         util.write_text_file(
-                filename,
-                nexus.format(
-                    ntax = len(taxa),
-                    nchar = len(matrix[0]),
-                    matrix = matrix_text
-                    )
-                )
+            filename,
+            nexus.format(
+                ntax=len(taxa),
+                nchar=len(matrix[0]),
+                matrix=matrix_text
+            )
+        )
     else:
         raise ValueError("[!] A wrong filename was specified!")
     return

@@ -1,18 +1,11 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-04-09 08:39
-# modified : 2013-07-17 19:55
 """
 Conversion routines for the GML format.
 """
+from __future__ import unicode_literals, print_function, division
 
-__author__="Johann-Mattis List"
-__date__="2013-07-17"
+from lingpy import log
+from lingpy import util
 
-import codecs
-from ..settings import rcParams
-from .. import log
-from .. import util
 try:
     import networkx as nx
 except:
@@ -25,7 +18,8 @@ except:
 
 import numpy as np
 
-from ..thirdparty import cogent as cg
+from lingpy.thirdparty import cogent as cg
+
 
 def networkx2igraph(graph):
     """Helper function converts networkx graph to igraph graph object."""
@@ -39,14 +33,16 @@ def networkx2igraph(graph):
         newgraph.add_edge(nodes[node1], nodes[node2], **data)
     return newgraph
 
+
 def igraph2networkx(graph):
     newgraph = nx.Graph()
     for node in graph.vs:
         newgraph.add_node(node['name'], **node.attributes())
     for edge in graph.es:
         newgraph.add_edge(graph.vs[edge.source]['name'],
-                graph.vs[edge.target]['name'], **edge.attributes())
+                          graph.vs[edge.target]['name'], **edge.attributes())
     return newgraph
+
 
 def _graph_or_file(graph, filename):
     if filename:
@@ -54,13 +50,14 @@ def _graph_or_file(graph, filename):
         return
     return graph
 
+
 def gls2gml(
-        gls,
-        graph,
-        tree,
-        filename='',
-        verbose=True
-        ):
+    gls,
+    graph,
+    tree,
+    filename='',
+    verbose=True
+):
     """
     Create GML-representation of a given gain-loss-scenario (GLS).
 
@@ -79,7 +76,7 @@ def gls2gml(
 
     # create a mapper for the ids and the string-names
     mapper = {}
-    for node,data in graph.nodes(data=True):
+    for node, data in graph.nodes(data=True):
         mapper[data['label']] = node
 
     # create a graph
@@ -87,10 +84,10 @@ def gls2gml(
 
     # sort the gls according to the number of tips
     gls_srt = sorted(
-            gls,
-            key=lambda x:len(tree.getNodeMatchingName(x[0]).tips()),
-            reverse=True
-            )
+        gls,
+        key=lambda x: len(tree.getNodeMatchingName(x[0]).tips()),
+        reverse=True
+    )
 
     # set the basic event frame, depending on the state of the root
     if gls_srt[0][1] == 1 and gls_srt[0][0] == 'root':
@@ -101,7 +98,7 @@ def gls2gml(
         state = 'l'
 
     # let all nodes inherit these parameters
-    for node,data in graph.nodes(data=True):
+    for node, data in graph.nodes(data=True):
         data['graphics']['fill'] = this_color
         data['graphics']['type'] = 'ellipse'
         data['graphics']['w'] = 20.0
@@ -109,7 +106,7 @@ def gls2gml(
         data['origin'] = 0
         data['state'] = state
 
-        g.add_node(node,**data)
+        g.add_node(node, **data)
 
     # assign the root as starting point
     data = graph.node[mapper['root']]
@@ -117,11 +114,11 @@ def gls2gml(
     data['graphics']['w'] = 50.0
     data['graphics']['h'] = 50.0
     data['state'] = state
-    g.add_node(mapper['root'],**data)
+    g.add_node(mapper['root'], **data)
 
     # iterate over the nodes involved in change and assign the values to their
     # children
-    for name,event in gls_srt:
+    for name, event in gls_srt:
         if event == 1:
             this_fill = '#ffffff'
             state = 'O'
@@ -137,7 +134,7 @@ def gls2gml(
             data = g.node[mapper[node]]
             data['graphics']['fill'] = this_fill
             data['state'] = state.lower()
-            g.add_node(mapper[node],**data)
+            g.add_node(mapper[node], **data)
 
         # change the size of the root of the subtree
         g.node[mapper[name]]['graphics']['h'] = 50.0
@@ -147,22 +144,23 @@ def gls2gml(
         g.node[mapper[name]]['state'] = state
 
     # add the edges to the tree
-    for edgeA,edgeB,data in graph.edges(data=True):
+    for edgeA, edgeB, data in graph.edges(data=True):
         # for computers with new networkx version
         try:
             del data['graphics']['Line']
         except:
             pass
-        #if 'label' not in data:
-        g.add_edge(edgeA,edgeB,**data)
+        # if 'label' not in data:
+        g.add_edge(edgeA, edgeB, **data)
 
     return _graph_or_file(g, filename)
 
+
 def nwk2gml(
-        treefile,
-        filename='',
-        verbose=True
-        ):
+    treefile,
+    filename='',
+    verbose=True
+):
     """
     Function converts a tree in newick format to a network in gml-format.
 
@@ -178,10 +176,10 @@ def nwk2gml(
     graph : networkx.Graph
 
     """
-    
+
     # create an empty graph
     graph = nx.DiGraph()
-    
+
     # load the tree
     if type(treefile) == str:
         try:
@@ -199,30 +197,31 @@ def nwk2gml(
 
     # iterate over the nodes and add them and the edges to the graph
     for node in nodes:
-        
+
         # add the node (just as a precaution)
         if node in taxa:
-            graph.add_node(node,tip=True)
+            graph.add_node(node, tip=True)
         else:
-            graph.add_node(node,tip=False)
+            graph.add_node(node, tip=False)
 
         # get the parent of the node
         parent = tree.getNodeMatchingName(node).Parent
 
         # add the edge if the parent is not None
         if parent:
-            graph.add_edge(parent.Name,node)
+            graph.add_edge(parent.Name, node)
 
     return _graph_or_file(graph, filename)
 
+
 def radial_layout(
-        treestring,
-        change = lambda x:x**1.75,
-        degree = 100,
-        filename = '',
-        start = 0,
-        root = 'root'
-        ):
+    treestring,
+    change=lambda x: x ** 1.75,
+    degree=100,
+    filename='',
+    start=0,
+    root='root'
+):
     """
     Function calculates a simple radial tree layout.
 
@@ -266,20 +265,20 @@ def radial_layout(
 
     # define private function for centering of nodes
     def get_center(nodes):
-        
+
         # first sort all values since we need max and min of the theta values
         xvals = sorted([n[0] for n in nodes])
-        
+
         # get minimum and maximum
-        xA,xB = xvals[0],xvals[-1]
+        xA, xB = xvals[0], xvals[-1]
 
         # calculate the new coordinates, the radius is simply decreased by 1
         y = min([n[1] for n in nodes]) - 1
-        
-        # the theta-value is calculated by the following formula
-        x = ( xA + abs(xA - xB) / 2 )
 
-        return x,y
+        # the theta-value is calculated by the following formula
+        x = (xA + abs(xA - xB) / 2)
+
+        return x, y
 
     # get the tree
     if type(treestring) == str:
@@ -295,9 +294,9 @@ def radial_layout(
 
     # get the paths in order to find out the radius of the tree
     paths = {}
-    
+
     for l in leaves:
-        path = tree.getConnectingEdges(root,l)
+        path = tree.getConnectingEdges(root, l)
         try:
             paths[len(path)] += [l]
         except:
@@ -309,20 +308,20 @@ def radial_layout(
     # get the initial coordinates
     coords = {}
 
-    for node,x in zip(leaves,np.linspace(pstart,pend,len(leaves))):
-        coords[node] = (x,maxL,0)
+    for node, x in zip(leaves, np.linspace(pstart, pend, len(leaves))):
+        coords[node] = (x, maxL, 0)
 
     # assign leaves to queue
-    queue = [(l,0) for l in leaves]
+    queue = [(l, 0) for l in leaves]
 
     # make the visited list
     visited = []
 
     # start the loop
     while queue:
-        
+
         # get the node
-        node,dim = queue.pop(0)
+        node, dim = queue.pop(0)
 
         # increase the dimension by 1
         dim += 1
@@ -333,7 +332,7 @@ def radial_layout(
 
             # get the parent and all children
             children = [child.Name for child in
-                    tree.getNodeMatchingName(node).Parent.Children]
+                        tree.getNodeMatchingName(node).Parent.Children]
 
             # iterate over children
             goon = True
@@ -346,29 +345,29 @@ def radial_layout(
 
             # goon, if this is possible
             if not goon:
-                queue += [(node,dim)]
+                queue += [(node, dim)]
             else:
 
-                x,y = get_center(
-                       [coords[child] for child in children]
-                       )
+                x, y = get_center(
+                    [coords[child] for child in children]
+                )
                 parent = tree.getNodeMatchingName(node).Parent.Name
                 if parent == root:
-                    coords[parent] = (x,y,dim+1)
+                    coords[parent] = (x, y, dim + 1)
                 else:
-                    coords[parent] = (x,y,dim)
+                    coords[parent] = (x, y, dim)
 
                 visited += [child for child in children]
-                
+
                 if parent != root:
-                    queue += [(parent,dim)]
-    
+                    queue += [(parent, dim)]
+
     # convert tree to graph
-    graph = nwk2gml(treestring,filename=None)
-    
+    graph = nwk2gml(treestring, filename=None)
+
     # iterate over the graph and assign the data
-    for n,d in graph.nodes(data=True):
-        x,y,z = coords[n]
+    for n, d in graph.nodes(data=True):
+        x, y, z = coords[n]
 
         # change coordinates
         xN = change(y) * np.cos(x)
@@ -383,7 +382,7 @@ def radial_layout(
         elif 180 >= angle > 90:
             zorder = angle - 90
         elif 180 < angle <= 270:
-            zorder = angle -90
+            zorder = angle - 90
         elif 270 < angle:
             zorder = 90 + (360 - angle)
 
@@ -399,13 +398,13 @@ def radial_layout(
 
         # assign the data to the graph
         d['graphics'] = {
-                'x':xN,
-                'y':yN,
-                'z':z,
-                'angle':angle,
-                's':s,
-                'zorder':int(zorder)
-                }
+            'x': xN,
+            'y': yN,
+            'z': z,
+            'angle': angle,
+            's': s,
+            'zorder': int(zorder)
+        }
 
         # don't forget the label
         d['label'] = n

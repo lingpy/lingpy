@@ -1,14 +1,6 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-12 10:27
-# modified : 2013-11-12 10:27
 """
 Test wordlist module.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-11-12"
-
 from six import text_type
 
 from lingpy import Wordlist
@@ -26,9 +18,9 @@ class TestWordlist(WithTempDir):
     def test_calculate(self):
         self.wordlist.calculate('dst')
 
-        assert hasattr(self.wordlist,'distances')
+        assert hasattr(self.wordlist, 'distances')
         assert sum([self.wordlist.distances[x][x] for x in
-            range(self.wordlist.width)]) == 0
+                    range(self.wordlist.width)]) == 0
 
         self.wordlist.calculate('tree')
 
@@ -36,7 +28,7 @@ class TestWordlist(WithTempDir):
 
         self.wordlist.calculate('groups')
 
-        assert hasattr(self.wordlist,'groups')
+        assert hasattr(self.wordlist, 'groups')
         assert type(self.wordlist.groups) == dict
 
     def test_coverage(self):
@@ -75,7 +67,7 @@ class TestWordlist(WithTempDir):
         etd2 = self.wordlist.get_etymdict(ref='cogid', entry='ipa', loans=True)
 
         assert len(etd1) > len(etd2) and len(set([abs(x) for x in etd1])) == \
-                len(etd2)
+                                         len(etd2)
         assert len([x for x in etd2 if x < 0]) == 0
 
         # make "fuzzy" cognate sets
@@ -93,7 +85,7 @@ class TestWordlist(WithTempDir):
     def test_get_paps(self):
         paps = self.wordlist.get_paps(ref="cogid", loans=True)
         cogs = self.wordlist.get_etymdict(ref="cogid", loans=True)
-        
+
         for key in cogs:
             if abs(key) in paps:
                 assert True
