@@ -152,6 +152,7 @@ class LexStat(Wordlist):
             "defaults": False,
             "no_bscorer": False,
             "errors": "errors.log",
+            "expans_nasals": False
         }
         kw.update(keywords)
 
