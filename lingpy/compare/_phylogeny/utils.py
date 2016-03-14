@@ -1,26 +1,11 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-09-25 11:47
-# modified : 2013-11-22 15:43
 """
 Utility functions for borrowing detection with the PhyBo class.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-11-22"
-
+from __future__ import unicode_literals, division, print_function
 
 from lingpy import log
 
-try:
-    import networkx as nx
-except:
-    log.missing_module('networkx')
 try:
     import scipy.stats as sps
 except:
@@ -28,14 +13,14 @@ except:
 
 
 def tstats(
-        wordlist,
-        glm = '',
-        network = False,
-        acs = False,
-        tree = False,
-        singletons = True,
-        return_dists = False
-        ):
+    wordlist,
+    glm='',
+    network=False,
+    acs=False,
+    tree=False,
+    singletons=True,
+    return_dists=False
+):
     """
     Calculate transmission statistics for a given MLN.
     """
@@ -43,52 +28,48 @@ def tstats(
     # check for attributes
     # return if no glm and no network is given
     if not glm and not network:
-        print("[i] You must specify at least one network or a gain-loss model.")
-        return
+        raise ValueError("You must specify at least one network or a gain-loss model.")
 
     # check for acs and network
     if glm:
-        #network = wordlist.graph[glm]
+        # network = wordlist.graph[glm]
         acs = wordlist.acs[glm]
-    
+
     # check for tree
     if not tree:
         tree = wordlist.tree
 
     # add the distributions of the leaves to the acs
     for t in tree.taxa:
-        paps = wordlist.get_list(taxa=t,entry='pap',flat=True)
-        cons = wordlist.get_list(taxa=t,entry='concept',flat=True)
-        
-        acs[t] = [(p,c) for p,c in zip(paps,cons)]
+        paps = wordlist.get_list(taxa=t, entry='pap', flat=True)
+        cons = wordlist.get_list(taxa=t, entry='concept', flat=True)
+
+        acs[t] = [(p, c) for p, c in zip(paps, cons)]
 
     # now we apply a simple way to resolve directions by taking the first
     # occurence of links in the tree to be the innovation, and all dependent
     # links to be the source of borrowings
-    
-    # create a graph
-    g = nx.Graph()
 
     # create a queue
     queue = ['root']
 
     # make dictionary of innovated chars: these are currently all present in the
     # root, we order list as [inheritance,innovation,transfer]
-    tracer = dict([(c[0],[0,1,0]) for c in acs['root']])
+    tracer = dict([(c[0], [0, 1, 0]) for c in acs['root']])
     states = {}
 
     # start to iterate
     while queue:
-        
+
         # get current node
         node = queue.pop(0)
-        
+
         # get the children
         children = tree.getNodeMatchingName(node).Children
 
         # get the chars of the node
         node_chars = list(set([c[0] for c in acs[node]]))
-        
+
         # if there are children
         for child in children:
 
@@ -100,13 +81,13 @@ def tstats(
 
             # get the chars of the child
             chars = list(set([c[0] for c in acs[name]]))
-            
+
             inn = 0
             ret = 0
             bor = 0
             # iterate over chars and decide where they come from
             for char in chars:
-                
+
                 if char not in wordlist.singletons or not singletons:
                     # if char is inherited, increase the score
                     if char in node_chars:
@@ -115,58 +96,58 @@ def tstats(
 
                     # if occurs the first time, it is an innovation
                     elif char not in tracer:
-                        tracer[char] = [0,1,0]
+                        tracer[char] = [0, 1, 0]
                         inn += 1
 
                     # if it is in the tracer
                     elif char not in node_chars and char in tracer:
-                        tracer[char][2] += 1 
+                        tracer[char][2] += 1
                         bor += 1
-            
-            states[name] = [ret,inn,bor]
-            print(name,inn,ret,bor,str(child))
+
+            states[name] = [ret, inn, bor]
+            print(name, inn, ret, bor, str(child))
 
     # calculate the scores
     ret = sum([c[0] for c in tracer.values()])
     inn = sum([c[1] for c in tracer.values()])
     tra = sum([c[2] for c in tracer.values()])
-    
-    total = inn + tra
+
     ipn = inn / len(acs)
     tpn = tra / len(acs)
-    
+
     total2 = ipn + tpn
 
-    log.info("Innovations: {0}, {1:.2f}, {2:.2f}".format(inn,ipn,ipn/total2))
-    log.info("Transferred: {0}, {1:.2f}, {2:.2f}".format(tra,tpn,tpn/total2))
+    log.info("Innovations: {0}, {1:.2f}, {2:.2f}".format(inn, ipn, ipn / total2))
+    log.info("Transferred: {0}, {1:.2f}, {2:.2f}".format(tra, tpn, tpn / total2))
 
     if return_dists:
         leaves = []
         nodes = []
         for node in [n for n in tree.getNodeNames() if n != 'root']:
-            innovations = states[node][1]+states[node][2]
+            innovations = states[node][1] + states[node][2]
             if node in tree.taxa:
                 leaves += [innovations]
             else:
                 nodes += [innovations]
 
         # evaluate using mwu
-        p,r = sps.mstats.kruskalwallis(leaves,nodes)
+        p, r = sps.mstats.kruskalwallis(leaves, nodes)
 
-        return p,r
-    
-    return inn,tra,tracer
-    
-def get_acs(wordlist,glm,homoplasy=0,**keywords):
+        return p, r
+
+    return inn, tra, tracer
+
+
+def get_acs(wordlist, glm, homoplasy=0, **keywords):
     """
     Calculate ancestral cognate distributions.
     """
     gls = wordlist.gls[glm]
-    
+
     queue = ['root']
     acs = dict(
-            root = []
-            )
+        root=[]
+    )
     for char in gls:
         positives = [x[0] for x in gls[char][0] if x[1] == 1]
         if 'root' in positives:
@@ -184,7 +165,7 @@ def get_acs(wordlist,glm,homoplasy=0,**keywords):
             acs[child_name] = []
 
             for char in gls:
-                
+
                 positives = [x[0] for x in gls[char][0] if x[1] == 1]
                 negatives = [x[0] for x in gls[char][0] if x[1] == 0]
 
@@ -200,31 +181,25 @@ def get_acs(wordlist,glm,homoplasy=0,**keywords):
                         acs[child_name] += [char]
                     except KeyError:
                         acs[child_name] = [char]
-    
+
     dist = []
     for t in acs:
         if t not in wordlist.taxa:
             acs[t] = sorted(set(acs[t]))
-            
             forms = len(acs[t])
-            concepts = len(
-                    set(
-                        [wordlist.pap2con[x] for x in acs[t]]
-                        )
-                    )
-            dist += [int(forms - forms * homoplasy+0.5)]
+            dist += [int(forms - forms * homoplasy + 0.5)]
 
-    return acs,dist
+    return acs, dist
 
-def check_stats(models,wordlist):
-    
+
+def check_stats(models, wordlist):
     results = []
     for m in models:
-        p,z = tstats(wordlist,m,return_dists=True)
-        results += [[m,p,z]]
-    
-    f = open('results_tstats.txt','w')
-    for a,b,c in results:
-        f.write('{0}\t{1:.2f}\t{2:.2f}\n'.format(a,b,c))
-        print('{0}\t{1:.2f}\t{2:.2f}\n'.format(a,b,c),end='')
+        p, z = tstats(wordlist, m, return_dists=True)
+        results += [[m, p, z]]
+
+    f = open('results_tstats.txt', 'w')
+    for a, b, c in results:
+        f.write('{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c))
+        print('{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c), end='')
     f.close()

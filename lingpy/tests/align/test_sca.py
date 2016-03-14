@@ -52,10 +52,8 @@ class TestAlignments(WithTempDir):
             tokensA = self.alm[key, 'tokensa'].split(' ')
             tokensB = self.alm[key, 'tokensb'].split(' ')
 
-            new_tokensA = lp.ipa2tokens(ipa, merge_vowels=True,
-                    merge_geminates=False)
-            new_tokensB = lp.ipa2tokens(ipa, merge_vowels=False,
-                    merge_geminates=False)
+            new_tokensA = lp.ipa2tokens(ipa, merge_vowels=True, merge_geminates=False)
+            new_tokensB = lp.ipa2tokens(ipa, merge_vowels=False, merge_geminates=False)
             assert tokensA == new_tokensA
             assert tokensB == new_tokensB
 
@@ -64,7 +62,7 @@ class TestAlignments(WithTempDir):
         self.alm.align()
 
         # iterate and align using the multiple function
-        for key,value in self.alm.msa['cogid'].items():
+        for key, value in self.alm.msa['cogid'].items():
             # first compare simple alignments
             msaA = lp.SCA(value)
             msaB = lp.Multiple(value['seqs'])
@@ -72,8 +70,8 @@ class TestAlignments(WithTempDir):
             assert msaA == msaB
 
             # now compare with different flag
-            msaA = lp.Multiple([self.alm[idx,'tokensb'] for idx in value['ID']])
-            msaB = lp.Multiple([''.join(s) for s in value['seqs']],merge_vowels=False)
+            msaA = lp.Multiple([self.alm[idx, 'tokensb'] for idx in value['ID']])
+            msaB = lp.Multiple([''.join(s) for s in value['seqs']], merge_vowels=False)
             msaA.lib_align()
             msaB.lib_align()
             assert msaA == msaB
@@ -92,17 +90,10 @@ class TestAlignments(WithTempDir):
         self.alm.get_consensus(consensus="consensus")
 
         # check whether Turkish strings are identical
-        assert self.alm.get_list(
-                    language="Turkish",
-                    entry="consensus",
-                    flat=True
-                    ) == \
-                            [''.join(x) for x in self.alm.get_list(
-                                language="Turkish",
-                                entry="tokens",
-                                flat=True
-                                )
-                                ]
+        self.assertEqual(
+            self.alm.get_list(language="Turkish", entry="consensus", flat=True),
+            [''.join(x) for x in
+             self.alm.get_list(language="Turkish", entry="tokens", flat=True)])
 
     def test_output(self):
         self.alm.align()

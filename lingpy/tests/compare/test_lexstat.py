@@ -22,15 +22,16 @@ class TestLexStat(WithTempDir):
 
     def test_init(self):
         self._make_one({0: ['ID', 'doculect', 'concept', 'IPA'],
-            1: ['1', 'deu', 'hand', 'hant']}, model='sca')
+                        1: ['1', 'deu', 'hand', 'hant']}, model='sca')
         ls = self._make_one({0: ['ID', 'doculect', 'concept', 'IPA'],
-            1: ['1', 'deu', 'hand', 'hant']})
+                             1: ['1', 'deu', 'hand', 'hant']})
         self.assertIn('lexstat', repr(ls))
         self._make_one(ls)
         self._make_one({0: ['ID', 'doculect', 'concept', 'tokens'],
-            1: ['1', 'deu', 'hand', 'hant']})
+                        1: ['1', 'deu', 'hand', 'hant']})
         self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect',
-            'concept'], 1: ['1', 'deu', 'hand']})
+                                                        'concept'],
+                                                    1: ['1', 'deu', 'hand']})
         self._make_one(test_data('phybo.qlc'), check=True)
         with patch('lingpy.compare.lexstat.log', self.log):
             self._make_one(test_data('KSL.qlc'), check=True)
@@ -68,8 +69,8 @@ class TestLexStat(WithTempDir):
                     ovalues = set(tuple(v) for v in obj['---'.join(key)])
                     if name != 'pairs':
                         self.assertEquals(values, ovalues)
-    
-    def test_init3(self): # with kw check=True
+
+    def test_init3(self):  # with kw check=True
         bad_file = Path(test_data('bad_file.tsv'))
         assert_raises(ValueError, LexStat, bad_file.as_posix())
         ls = self._make_one(bad_file.as_posix(), check=True, apply_checks=True)
@@ -77,7 +78,7 @@ class TestLexStat(WithTempDir):
         cleaned = bad_file.parent.joinpath(bad_file.name + '_cleaned.qlc')
         self.assertTrue(cleaned.exists())
         os.remove(cleaned.as_posix())
-        assert_raises(ValueError, LexStat, {0:['concept', 'language', 'ipa']})
+        assert_raises(ValueError, LexStat, {0: ['concept', 'language', 'ipa']})
 
     def test_getitem(self):
         self.assertIsNone(self.lex['xyz'])
@@ -102,9 +103,9 @@ class TestLexStat(WithTempDir):
             self.lex.cluster(method="sca", guess_threshold=True, gt_mode='nulld')
 
         assert 'scaid' in self.lex.header \
-            and 'lexstatid' in self.lex.header \
-            and 'editid' in self.lex.header \
-            and 'turchinid' in self.lex.header
+               and 'lexstatid' in self.lex.header \
+               and 'editid' in self.lex.header \
+               and 'turchinid' in self.lex.header
 
     def test_align_pairs(self):
         self.lex.align_pairs('English', 'German', method='sca', pprint=False)
@@ -155,8 +156,8 @@ class TestLexStat(WithTempDir):
             2: ['2', 'eng', 'hand', 'hand'],
             3: ['3', 'xyz', 'hand', 'xyz']})
         lex.cluster(ref='cogid', method='sca', threshold=0.5)
-        self.assertEquals(lex[1,'cogid'], lex[2, 'cogid'])
-        
+        self.assertEquals(lex[1, 'cogid'], lex[2, 'cogid'])
+
         rc(schema='asjp')
         lex = self._make_one({
             0: ['ID', 'concept', 'ipa', 'doculect'],
@@ -169,5 +170,5 @@ class TestLexStat(WithTempDir):
             7: ['5430', 'Abend::N', 'afd3n', 'DAN'],
         })
         lex.cluster(method='sca', threshold=0.5, ref='cogid')
-        self.assertEquals(lex[1,'cogid'], lex[2,'cogid'], lex[3,'cogid'])
+        self.assertEquals(lex[1, 'cogid'], lex[2, 'cogid'], lex[3, 'cogid'])
         rc(schema='ipa')

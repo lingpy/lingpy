@@ -1,25 +1,21 @@
 # *-* coding: utf-8 *-*
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2014-12-02 15:37
-# modified : 2014-12-02 15:37
 """
 Testing multiple module.
 """
 from __future__ import print_function, division, unicode_literals
+from unittest import TestCase
 
 from lingpy.align import Multiple, mult_align
 
 
-def test_mult_align():
-    m = mult_align(['waldemar','woldemort','vladimir'])
-    assert ''.join(m[0]) == 'wal-demar-'
-
-
-class TestMultiple(object):
-    def setup(self):
+class Tests(TestCase):
+    def setUp(self):
         self.seqs = ['waldemar', 'woldemort', 'vladimir']
         self.msa = Multiple(self.seqs)
+
+    def test_mult_align(self):
+        self.assertEqual(
+            ''.join(mult_align(['waldemar', 'woldemort', 'vladimir'])[0]), 'wal-demar-')
 
     def test___get__(self):
         self.msa.lib_align()

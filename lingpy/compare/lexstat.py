@@ -239,8 +239,9 @@ class LexStat(Wordlist):
         # transformation, which is important for the calculation of the
         # v-scale in lexstat.get_scorer
         if 'vowels' not in self._meta:
-            self._meta['vowels'] = ' '.join(sorted(set([self._transform[v] for v
-                in 'XYZT_']))) if hasattr(self, '_transform') else 'VT_'
+            self._meta['vowels'] = ' '.join(sorted(set([
+                self._transform[v] for v in 'XYZT_']))) \
+                if hasattr(self, '_transform') else 'VT_'
 
         if "duplicates" not in self.header:
             duplicates = {}
@@ -269,9 +270,12 @@ class LexStat(Wordlist):
             if not self.chars:
                 raise ValueError("Your input data does not contain any entries!")
             self.bad_chars = [char for char in self.chars if char[2] == '0']
-            if len(self.bad_chars) / len(self.chars) > rcParams['lexstat_bad_chars_limit']:
-                raise ValueError("{0:.0f}% of the unique characters in your word list are not recognized by {1}. You should re-load with check=True!".format(
-                    100 * len(self.bad_chars) / len(self.chars), util.PROG))
+            if len(self.bad_chars) / len(self.chars) > \
+                    rcParams['lexstat_bad_chars_limit']:
+                raise ValueError(
+                    "{0:.0f}% of the unique characters in your word list are not "
+                    "recognized by {1}. You should re-load with check=True!".format(
+                        100 * len(self.bad_chars) / len(self.chars), util.PROG))
 
         if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
@@ -1173,7 +1177,7 @@ class LexStat(Wordlist):
                 if kw['guess_threshold'] and kw['gt_mode'] == 'item':
                     t = clustering.best_threshold(matrix, kw['gt_trange'])
                 # FIXME: considering new function here JML
-                #elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
+                # elif kw['guess_threshold'] and kw['gt_mode'] == 'nullditem':
                 #    pass
                 else:
                     t = threshold
@@ -1182,7 +1186,7 @@ class LexStat(Wordlist):
 
                 # specific clustering for fuzzy methods, currently not yet
                 # supported
-                #if cluster_method in ['fuzzy']:  # ['link_communities','lc','lcl']:
+                # if cluster_method in ['fuzzy']:  # ['link_communities','lc','lcl']:
                 #    clusters = [[d + k for d in c[i]] for i in range(len(matrix))]
                 #    tests = []
                 #    for clrx in clusters:
@@ -1191,7 +1195,7 @@ class LexStat(Wordlist):
                 #    k = max(tests)
                 #    for idxA, idxB in zip(indices, clusters):
                 #        clr[idxA] = idxB
-                #else:
+                # else:
                 if 1:
                     # extract the clusters
                     clusters = [c[i] + k for i in range(len(matrix))]
