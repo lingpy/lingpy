@@ -1,6 +1,7 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
 import lingpy
+from lingpy import *
 import argparse
 from six import text_type as str
 
@@ -32,7 +33,8 @@ parser_settings = subparsers.add_parser('settings')
 parser_alignments = subparsers.add_parser('alignments')
 
 
-for p in [parser_pairwise, parser_multiple, parser_lexstat, parser_alignments]:
+for p in [parser_pairwise, parser_multiple, parser_lexstat, parser_alignments,
+        parser_wordlist]:
     # we take care of pairwise first
     p.add_argument('-i', '--input-file', action='store', 
             help="Select your input file.")
@@ -148,6 +150,76 @@ parser_lexstat.add_argument('--ratio', action='store', nargs=2, type=int,
         default=[2,1],
         help='Select the ratio between the logodds and the sound class scorer.')
 
+# wordlist parameters
+parser_wordlist.add_argument('--check', action='store_true', default=False, 
+        help='Check the content of your wordlist.')
+parser_wordlist.add_argument('--stats', action='store_true', default=False, 
+        help='Retrieve basic statistics of your wordlist.')
+parser_wordlist.add_argument('-t', '--transform', action='store_true', default=False,
+        help='Transform your wordlist.')
+parser_wordlist.add_argument('-c','--cognate-identifier', action='store',
+        default='cogid', 
+        help='Select the name for the column with the cognate judgments.')
+parser_wordlist.add_argument('--cluster-method', action='store',
+        default='upgma', 
+        choices=['upgma', 'single', 'complete', 'mcl', 'ward',
+        'link_clustering'],
+        help='Select the name of the cluster method you want to use.')
+parser_wordlist.add_argument('--colums', action='store', nargs='+',
+        help="Select the columns and the order in which you want to write your wordlist file.")
+parser_wordlist.add_argument('--add-row', action='store', nargs=3, default=['ipa',
+    'tokens', 'ipa2tokens'], 
+    help='Add rows to wordlist by converting source with target via function.')
+parser_wordlist.add_argument('--calculate', action='store', default='',
+        choices=['dst', 'tree', 'diversity'],
+        help="Calculate a tree from the wordlist.")
+parser_wordlist.add_argument('--format', action='store', default='tsv', 
+        choices=['dst', 'taxa', 'paps.nex', 'nwk', 'cluster', 'starling',
+        'multistate.nex', 'separated'],
+        help="Select the output format.")
+parser_wordlist.add_argument('--tree-calc', action='store', choices=['ugpma', 'neighbor'],
+        default='upgma', help="Select the tree cluster method you want to use for the guide tree.")
+parser_wordlist.add_argument('--missing', action='store', default='?',
+        help="Missing value for the output to Nexus files.")
+
+def wordlist(args):
+    """
+    Load a wordlist and carry out simple checks.
+    """
+    if args.input_file:
+        if args.check:
+            wl = lingpy.compare.lexstat.LexStat(args.input_file, check=True)
+        else:
+            wl = lingpy.basic.wordlist.Wordlist(args.input_file)
+
+        # process stuff according to arguments, will surely need to be further
+        # refined
+        if args.stats:
+            print('---BASIC---')
+            print('Height:  {0}'.format(wl.height))
+            print('Width:   {0}'.format(wl.width))
+            print('Length:  {0}'.format(len(wl)))
+            print('')
+            print('---COVERAGE---')
+            for k, v in wl.coverage(stats='absolute').items():
+                print('{0:20}  :  {1}'.format(k, v))
+            print('')
+        if args.calculate:
+            wl.calculate(args.calculate, ref=args.cognate_identifier,
+                    tree_calc=args.tree_calc)
+            if args.output == 'stdout':
+                if args.calculate == 'tree':
+                    print('---TREE---')
+                    print(wl.tree.asciiArt())
+                if args.calculate == 'diversity':
+                    print('---DIVERSITY---')
+                    print(wl.diversity)
+
+        if args.output == 'file':
+            wl.output(args.format, filename=args.output_file,
+                    ref=args.cognate_identifier, missing=args.missing)
+
+        return wl.height, wl.width, len(wl) 
 
 def alignments(args):
     """
@@ -371,5 +443,7 @@ def main():
         lexstat(args)
     if args.subcommand == 'alignments':
         alignments(args)
+    if args.subcommand == 'wordlist':
+        wordlist(args)
 
 

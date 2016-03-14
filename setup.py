@@ -82,6 +82,9 @@ setup(
     tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
     author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill)",
     author_email="mattis.list@lingpy.org",
+    entry_points={
+        'console_scripts' : ['lingpy=lingpy.cli:main'],
+    },
     keywords=[
         "historical linguistics",
         "sequence alignment",

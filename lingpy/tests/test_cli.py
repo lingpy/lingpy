@@ -1,6 +1,7 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
-from lingpy.cli import parser, pairwise, multiple, settings, lexstat, alignments
+from lingpy.cli import parser, pairwise, multiple, settings, lexstat, \
+        alignments, wordlist
 from lingpy.tests.util import test_data, WithTempDir
 from six import text_type as str
 
@@ -8,6 +9,15 @@ class test_cli(WithTempDir):
     
     def tearDown(self):
         WithTempDir.tearDown(self)
+
+    def test_wordlist(self):
+        self.setUp()
+        args = parser.parse_args(['wordlist', '-i', test_data('KSL.qlc'),
+            '--stats', '--calculate', 'diversity'])
+        h, w, l = wordlist(args)
+        assert h == 200
+        assert w == 7
+        assert l == 1400
 
     def test_alignments(self):
         self.setUp()
