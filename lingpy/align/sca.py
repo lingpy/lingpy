@@ -641,7 +641,7 @@ class Alignments(Wordlist):
                     d['alignment'] = normalize_alignment(d['alignment'])
                     self._meta['msa'][ref][key] = d
 
-    def reduce_alignments(self, ref='cogid'):
+    def reduce_alignments(self, alignment='alignment', ref='cogid'):
         """
         Function reduces alignments which contain columns that are marked to be \
                 ignored by the user.
@@ -656,7 +656,7 @@ class Alignments(Wordlist):
         guarantee that the alignments with with we want to work are at the same
         place in the dictionary.
         """
-        if 'alignment' not in self.header:
+        if alignment not in self.header:
             raise ValueError(
                 'No alignments found in your data. ' +
                 'You carry out an alignment analysis first!')
@@ -666,16 +666,16 @@ class Alignments(Wordlist):
         D = {}
 
         for k, d in self._meta['msa'][ref].items():
-            ralms = reduce_alignment(d['alignment'])
-            if len(ralms[0]) != len(d['alignment'][0]):
+            ralms = reduce_alignment(d[alignment])
+            if len(ralms[0]) != len(d[alignment][0]):
                 log.warn('Found an alignment that could be reduced.')
-            d['_alignment'] = ralms
-            for idx, alm in zip(d['ID'], d['_alignment']):
+            d['_'+alignment] = ralms
+            for idx, alm in zip(d['ID'], d['_'+alignment]):
                 D[idx] = alm
         for k in self:
             if k not in D:
                 D[k] = ['']
-        self.add_entries('_alignment', D, lambda x: x)
+        self.add_entries('_'+alignment, D, lambda x: x)
 
     def _msa2col(self, ref='cogid'):
         """

@@ -467,7 +467,7 @@ class Multiple(object):
 
         # create a newick-representation of the string
         self.tree = LoadTree(cluster._tree2nwk(
-            self.tree_matrix, [''.join(c) for c in self._classes], False))
+            self.tree_matrix, [''.join(str(c)) for c in self._classes], False))
 
     def _align_profile(
             self,
@@ -1922,7 +1922,8 @@ class Multiple(object):
         return False
 
 
-def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False, pprint=False):
+def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False,
+        pprint=False):
     """
     A short-cut method for multiple alignment analyses.
 

@@ -171,7 +171,9 @@ class LexStat(Wordlist):
         # tokens
         if "tokens" not in self.header:
             self.add_entries(
-                "tokens", "ipa", lambda x: ipa2tokens(x, merge_vowels=kw['merge_vowels']))
+                "tokens", "ipa", lambda x: ipa2tokens(x,
+                    merge_vowels=kw['merge_vowels'],
+                    expand_nasals=kw['expand_nasals']))
 
         # add a debug procedure for tokens
         if kw["check"]:
@@ -799,7 +801,7 @@ class LexStat(Wordlist):
         """
         kw = dict(
             method='lexstat',
-            mode="global",
+            mode="overlap",
             scale=0.5,
             factor=0.3,
             restricted_chars='_T',

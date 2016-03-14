@@ -447,7 +447,7 @@ def plot_concept_evolution(
             top             = 0.95,
             bottom          = 0.05,
             right           = 0.95,
-            colormap        = mpl.cm.jet,
+            cmap            = mpl.cm.jet,
             edgewidth       = 5,
             radius          = 2.5,
             outer_radius    = 0.5,
@@ -1164,9 +1164,7 @@ def plot_heatmap(
                 ]
             )
             
-            #[0.15,0.1,0.7,0.7])
-
-    cmap = mpl.cm.jet
+    cmap = keywords['cmap'] 
     im = ax2.matshow(matrix, aspect='auto', origin='lower',
                 interpolation='nearest', cmap=keywords['cmap'],
                 vmax=keywords['vmax'], vmin=keywords['vmin']
