@@ -1,16 +1,10 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-
 """
 Basic functions for HTML-plots.
 """
-
+from __future__ import unicode_literals, print_function, division
 import os
 import colorsys
-import codecs
 import webbrowser
 import json
 import re
@@ -18,19 +12,19 @@ from functools import partial
 
 from six import text_type
 
-from ..settings import rcParams
-from ..read.qlc import read_msa
-from ..sequence.sound_classes import pid, token2class, tokens2class, ipa2tokens
-from .. import util
-from .. import log
+from lingpy.settings import rcParams
+from lingpy.read.qlc import read_msa
+from lingpy.sequence.sound_classes import pid, token2class, tokens2class, ipa2tokens
+from lingpy import util
+from lingpy import log
 
 import numpy as np
 
 
 def colorRange(
-        number,
-        brightness = 300,
-        ):
+    number,
+    brightness=300,
+):
     """
     Function returns different colors for the given range.
 
@@ -42,10 +36,10 @@ def colorRange(
 
     # get the hsv codes for the given range
     hsv = [(x * 1.0 / number, 0.5, 0.5) for x in range(number)]
-    
+
     # convert hsv to rgb
     rgb = list(map(lambda x: colorsys.hsv_to_rgb(*x), hsv))
-    
+
     # convert rgb to html
     for i in range(number):
         rgb[i] = tuple([int(rgb[i][k] * brightness) for k in range(3)])
@@ -60,19 +54,19 @@ template_path = partial(util.data_path, 'templates')
 
 
 def alm2html(
-        infile,
-        title = '',
-        shorttitle = '',
-        filename='',
-        colored= False,
-        verbose = True,
-        show = True,
-        main_template = '',
-        table_template = '',
-        dataset = '',
-        confidence = False,
-        **keywords
-        ):
+    infile,
+    title='',
+    shorttitle='',
+    filename='',
+    colored=False,
+    verbose=True,
+    show=True,
+    main_template='',
+    table_template='',
+    dataset='',
+    confidence=False,
+    **keywords
+):
     """
     Convert files in ``alm``-format into colored ``html``-format.
 
@@ -110,7 +104,7 @@ def alm2html(
     # create the outfile
     if not filename:
         filename = rcParams['filename']
-    
+
     # read in the templates
     html = util.read_text_file(main_template or template_path('alm2html.html'))
     if not table_template:
@@ -124,7 +118,7 @@ def alm2html(
     label = lambda x: keywords['labels'][x] if x in keywords['labels'] else x
 
     # check for windows-compatibility
-    data = data.replace(os.linesep,'\n')[:-1]
+    data = data.replace(os.linesep, '\n')[:-1]
 
     # split the data into blocks
     blocks = data.split('\n\n')
@@ -141,39 +135,39 @@ def alm2html(
 
         # create colordict for different colors
         dc = len(set([l[0] for l in m]))
-        
+
         if colored:
-            colors = dict([(a,b) for a,b in zip(
+            colors = dict([(a, b) for a, b in zip(
                 sorted(set([int(l[0]) for l in m])),
                 colorRange(
                     dc,
-                    brightness = 400
-                    ),
-                )])
+                    brightness=400
+                ),
+            )])
         else:
             colors = []
             white = True
             for i in sorted(set([abs(int(l[0])) for l in m])):
                 if white:
-                    colors.append((i,'white'))
+                    colors.append((i, 'white'))
                     white = False
                 else:
-                    colors.append((i,'gray'))
+                    colors.append((i, 'gray'))
                     white = True
             colors = dict(colors)
-        
+
         # get the basic item and its id
         iName = m[0][2]
         iID = m[0][3]
 
         # start writing the stuff to string
         tmp_str += table.format(
-                NAME=iName,
-                ID = iID)
+            NAME=iName,
+            ID=iID)
         # define the basic string for the insertion
         bas = ' <tr class="{0}{2} taxon" taxon="{3}">\n{1}'
 
-        for tracer,l in enumerate(m):
+        for tracer, l in enumerate(m):
             # check whether the current line is a borrowing
             if int(l[0]) < 0:
                 loan_line = ' loan'
@@ -186,46 +180,46 @@ def alm2html(
 
             # check alignments for confidence scores
             ipa_string = ''.join([cell.split('/')[0] for cell in
-                l[4:]]).replace('-', '')
+                                  l[4:]]).replace('-', '')
 
             tmp += '  <td>{0}</td>\n'.format(ipa_string)
             tmp += '  <td class="{0}">\n'.format(colors[abs(int(l[0]))])
             tmp += '   <table class="{0}">\n'.format(colors[abs(int(l[0]))])
             tmp += '    <tr>\n{0}    </tr>\n   </table>\n  </td>\n </tr>\n'
-            
+
             # check whether another entry follows that is also an alignment,
             # otherwise, there's no need to display a word as an alignment
             cognate_set = False
-            if tracer < len(m)-1:
-                if abs(int(m[tracer+1][0])) == abs(int(l[0])):
+            if tracer < len(m) - 1:
+                if abs(int(m[tracer + 1][0])) == abs(int(l[0])):
                     cognate_set = True
             if tracer > 0:
-                if abs(int(m[tracer-1][0])) == abs(int(l[0])):
+                if abs(int(m[tracer - 1][0])) == abs(int(l[0])):
                     cognate_set = True
-            
+
             # fill out html for the cognate sets
             if cognate_set:
 
                 alm = ''
                 for char in l[4:]:
-                    
+
                     # check for confidence scores
                     if '/' in char:
                         try:
-                            char,conf,num = char.split('/')
+                            char, conf, num = char.split('/')
                             conf = int(conf)
                         except ValueError:
                             print(char.split('/'))
                             raise ValueError("Something is wrong with %s." % (char))
 
                     else:
-                        char,conf,rgb = char,(255,255,255),0.0
-                    
+                        char, conf, rgb = char, (255, 255, 255), 0.0
+
                     if char == '-':
                         d = 'dolgo_GAP'
                         c = '#bbbbbb'
                     else:
-                        d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+                        d = 'dolgo_' + token2class(char, rcParams['dolgo'])
                         c = token2class(char, rcParams['_color'])
 
                         # bad check for three classes named differently
@@ -235,24 +229,24 @@ def alm2html(
                             d = 'dolgo_TONE'
                         elif d == 'dolgo_0':
                             d = 'dolgo_ERROR'
-                    
+
                     if confidence:
                         alm += '     '
                         alm += '<td class="char {1}" confidence={0} '.format(
-                                conf,
-                                d
-                                )
+                            conf,
+                            d
+                        )
                         alm += 'char="{0}" '.format(char)
-                        alm += 'onclick="'+"show('{0}')".format(num)+'" '
+                        alm += 'onclick="' + "show('{0}')".format(num) + '" '
                         alm += 'num="{0}"'.format(num)
                         alm += '>\n      {0}\n     </td>\n'.format(char)
                     else:
                         alm += '     '
-                        alm += '<td class="char {0}">{1}</td>\n'.format(d,char)
+                        alm += '<td class="char {0}">{1}</td>\n'.format(d, char)
             else:
                 alm = '      '
                 alm += '<td class="{0}">--</td>\n'.format(colors[abs(int(l[0]))])
-            
+
             # format the alignment
             try:
                 tmp = tmp.format(alm)
@@ -262,7 +256,7 @@ def alm2html(
             # check for last line, where a new line should be inserted (not the
             # fastest solution, but plotting is not a matter of time, and it
             # suffices it's current purpose
-            if tracer < len(m)-1:
+            if tracer < len(m) - 1:
                 pass
             else:
                 if confidence:
@@ -270,14 +264,14 @@ def alm2html(
 
                 tmp += ' <tr class="empty"><td colspan="4" class="empty">'
                 tmp += '<hr class="empty" /></td></tr>\n'
-            
+
             # format the whole string
             tmp_str += bas.format(
-                    colors[abs(int(l[0]))],
-                    tmp,
-                    loan_line,
-                    l[1]
-                    )
+                colors[abs(int(l[0]))],
+                tmp,
+                loan_line,
+                l[1]
+            )
 
     if not title:
         title = "LexStat - Automatic Cognate Judgments"
@@ -286,32 +280,32 @@ def alm2html(
 
     # check for json-attribute
     if keywords['json']:
-        keywords['json'] = 'var myjson = '+json.dumps(keywords['json'],
-                indent=1)
+        keywords['json'] = 'var myjson = ' + json.dumps(keywords['json'],
+                                                        indent=1)
 
     html = html.format(
-            shorttitle = shorttitle,
-            title = title,
-            table = tmp_str,
-            dataset = dataset,
-            javascript = js,
-            css = css,
-            **keywords
-            )
+        shorttitle=shorttitle,
+        title=title,
+        table=tmp_str,
+        dataset=dataset,
+        javascript=js,
+        css=css,
+        **keywords
+    )
     util.write_text_file(filename + '.html', html)
     if show:
-        url = 'file://'+os.path.abspath(os.curdir)+'/'+filename+'.html'
+        url = 'file://' + os.path.abspath(os.curdir) + '/' + filename + '.html'
         webbrowser.open(url)
     return
 
 
 def msa2html(
-        msa,
-        shorttitle = '',
-        filename = '',
-        template = '',
-        **keywords
-        ):
+    msa,
+    shorttitle='',
+    filename='',
+    template='',
+    **keywords
+):
     """
     Convert files in ``msa``-format into colored ``html``-format.
 
@@ -400,20 +394,20 @@ def msa2html(
         msa = read_msa(msa, **keywords)
     else:
         raise ValueError('[!] No filename specified.')
-    
+
     # load dataset, etc.
     dataset = msa['dataset']
-    
+
     # calculate pid score, if it is not passed as argument
     if 'pid_score' not in keywords:
         pid_score = 0
         count = 0
-        for i,seqA in enumerate(msa['alignment']):
-            for j,seqB in enumerate(msa['alignment']):
+        for i, seqA in enumerate(msa['alignment']):
+            for j, seqB in enumerate(msa['alignment']):
                 if i < j:
-                    pid_score += pid(seqA,seqB,mode=keywords['pid_mode'])
+                    pid_score += pid(seqA, seqB, mode=keywords['pid_mode'])
                     count += 1
-        pid_score = int(100 * pid_score / count+0.5)
+        pid_score = int(100 * pid_score / count + 0.5)
     else:
         pid_score = keywords['pid_score']
 
@@ -423,7 +417,7 @@ def msa2html(
     # define the titles etc.
     if not shorttitle:
         shorttitle = 'SCA'
-    
+
     # determine the length of the longest taxon
     taxl = max([len(t) for t in msa['taxa']])
 
@@ -437,7 +431,7 @@ def msa2html(
     td_residue = '<td class="residue {1}">{0}</td>'
     td_swap = '<td class="residue swap {1}">{0}</td>'
     td_unaligned = '<td class="residue noalign {1}">{0}</td>'
-    
+
     # check for swaps in the alignment
     if 'swaps' in msa:
         swaps = []
@@ -452,32 +446,32 @@ def msa2html(
         local = ['.'] * len(msa['alignment'][0])
         for i in msa['local']:
             local[i] = '*'
-    
+
     # get two sorting schemas for the sequences
     if keywords['class_sort']:
 
         classes = [tokens2class(ipa2tokens(seq), rcParams['asjp']) for seq in msa['seqs']]
         seqs = dict(
-                [(a[1],b) for a,b in zip(
-                    sorted(
-                        zip(classes,msa['seqs']),
-                        key = lambda x: x[0] #list(zip(x[0],x[1]))
-                        ),
-                    range(1,len(msa['seqs'])+1)
-                    )]
-                )
+            [(a[1], b) for a, b in zip(
+                sorted(
+                    zip(classes, msa['seqs']),
+                    key=lambda x: x[0]  # list(zip(x[0],x[1]))
+                ),
+                range(1, len(msa['seqs']) + 1)
+            )]
+        )
     else:
-        seqs = dict(zip(sorted(msa['seqs']), range(1,len(msa['seqs'])+1)))
-    taxa = dict(zip(sorted(msa['taxa']), range(1,len(msa['taxa'])+1)))
+        seqs = dict(zip(sorted(msa['seqs']), range(1, len(msa['seqs']) + 1)))
+    taxa = dict(zip(sorted(msa['taxa']), range(1, len(msa['taxa']) + 1)))
 
     # set up a list to store unique alignments
     alignments = []
 
     # start iteration
-    for i,taxon in enumerate(msa['taxa']):
+    for i, taxon in enumerate(msa['taxa']):
         tmp = ''
         tmp += td_taxon.format(taxon)
-        
+
         # append alignment to alignments
         alignment = ''.join(msa['alignment'][i])
         sequence = msa['seqs'][i]
@@ -487,12 +481,12 @@ def msa2html(
             unique = 'true'
             alignments += [alignment]
 
-        for j,char in enumerate(msa['alignment'][i]):
+        for j, char in enumerate(msa['alignment'][i]):
             if char == '-':
                 d = 'dolgo_GAP'
                 c = '#bbbbbb'
             else:
-                d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+                d = 'dolgo_' + token2class(char, rcParams['dolgo'])
                 c = token2class(char, rcParams['_color'])
 
                 # bad check for three classes named differently
@@ -512,32 +506,32 @@ def msa2html(
         out += tr.format(tmp, unique, taxa[taxon], seqs[sequence])
 
     html = html.format(
-            table = out,
-            dataset = dataset,
-            pid = pid_score,
-            file = infile,
-            sequence = seq_id,
-            shorttitle = shorttitle,
-            width=len(msa['alignment'][0]),
-            table_width='{0}'.format(len(msa['alignment'][0])* 50 + 8 * taxl),
-            taxa = len(msa['alignment']),
-            uniseqs=len(set(msa['seqs'])),
-            css = css,
-            js = js
-            )
-    
+        table=out,
+        dataset=dataset,
+        pid=pid_score,
+        file=infile,
+        sequence=seq_id,
+        shorttitle=shorttitle,
+        width=len(msa['alignment'][0]),
+        table_width='{0}'.format(len(msa['alignment'][0]) * 50 + 8 * taxl),
+        taxa=len(msa['alignment']),
+        uniseqs=len(set(msa['seqs'])),
+        css=css,
+        js=js
+    )
+
     if not filename:
         filename = rcParams['filename']
 
     if not filename.endswith('.html'):
-        filename = filename+'.html'
+        filename = filename + '.html'
 
     if keywords['compact']:
-        html = html.replace('\n',' ')
-        html = re.sub(r'\s+',r' ',html)
-        html = html.replace('> ','>')
-        html = html.replace(' >','>')
-    
+        html = html.replace('\n', ' ')
+        html = re.sub(r'\s+', r' ', html)
+        html = html.replace('> ', '>')
+        html = html.replace(' >', '>')
+
     if keywords['write_to_file']:
         # check, whether the outfile already exists
         util.write_text_file(filename, html)
@@ -546,13 +540,13 @@ def msa2html(
 
 
 def string2html(
-        taxon,
-        string,
-        swaps = [],
-        tax_len = None,
-        path = '',
-        template = ''
-        ):
+    taxon,
+    string,
+    swaps=[],
+    tax_len=None,
+    path='',
+    template=''
+):
     """
     Function converts an (aligned) string into colored html-format.
 
@@ -566,23 +560,23 @@ def string2html(
     tr = '<tr class="msa">\n{0}\n</tr>'
 
     # set the td_taxon-line
-    td_taxon = '<td class="taxon" width="'+str(15 * tax_len)+'">{0}</td>\n'
+    td_taxon = '<td class="taxon" width="' + str(15 * tax_len) + '">{0}</td>\n'
 
     # get the percentage scaling factor
     perc = int(80 / len(string) + 0.5)
 
     # get vals for residue and swaps
-    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
-            '<font color="{2}">{0}</font></td>\n'
-    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
-            'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
+    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">' + \
+                 '<font color="{2}">{0}</font></td>\n'
+    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"' + \
+              'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
 
     # start with filling the taxon
     out = ''
     out += td_taxon.format(taxon)
-    
+
     # go on with the colors
-    for i,char in enumerate(string):
+    for i, char in enumerate(string):
         try:
             c = rcParams['_color'][char]
             fg = '#000000'
@@ -591,26 +585,26 @@ def string2html(
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
             except:
-                input("Unknown character '"+char+"', press ANY key to continue. " )
+                input("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
         if i in swaps:
-            out += td_swap.format(char,c,fg)
+            out += td_swap.format(char, c, fg)
         else:
-            out += td_residue.format(char,c,fg)
+            out += td_residue.format(char, c, fg)
 
     return out
 
 
 def msa2tex(
-        infile,
-        template = '',
-        path = '',
-        filename = '',
-        verbose = True,
-        **keywords
-        ):
+    infile,
+    template='',
+    path='',
+    filename='',
+    verbose=True,
+    **keywords
+):
     """
     Convert an MSA to a tabular representation which can easily be used in
     LaTeX documents.
@@ -630,28 +624,29 @@ def msa2tex(
     if 'pid_score' not in keywords:
         pid_score = 0
         count = 0
-        for i,seqA in enumerate(msa['alignment']):
-            for j,seqB in enumerate(msa['alignment']):
+        for i, seqA in enumerate(msa['alignment']):
+            for j, seqB in enumerate(msa['alignment']):
                 if i < j:
-                    pid_score += pid(seqA,seqB,mode=keywords['pid_mode'])
+                    pid_score += pid(seqA, seqB, mode=keywords['pid_mode'])
                     count += 1
-        pid_score = int(100 * pid_score / count+0.5)
+        pid_score = int(100 * pid_score / count + 0.5)
     else:
         pid_score = keywords['pid_score']
 
     dataset = msa['dataset']
     infile = msa['infile']
     seq_id = msa['seq_id']
-    
+
     # determine the length of the longest taxon
     taxl = max([len(t) for t in msa['taxa']])
-    
+
     height = len(msa['alignment'])
     width = len(msa['alignment'][0])
-    
-    start = r'\tabular{l'+width*'c'+'}\n'
-    start += r'\bf\ttfamily Taxon & \multicolumn{'+str(width)+r'}{l}{\bf\ttfamily Alignment}\\'+'\n'
-    
+
+    start = r'\tabular{l' + width * 'c' + '}\n'
+    start += r'\bf\ttfamily Taxon & \multicolumn{' + str(
+        width) + r'}{l}{\bf\ttfamily Alignment}\\' + '\n'
+
     # check for swaps in the alignment
     if 'swaps' in msa:
         swaps = []
@@ -661,11 +656,11 @@ def msa2tex(
         swaps = []
 
     body = start
-    for i,taxon in enumerate(msa['taxa']):
-        body += r'\ttfamily '+taxon.replace('_',r'\_')
-        for j,char in enumerate(msa['alignment'][i]):
+    for i, taxon in enumerate(msa['taxa']):
+        body += r'\ttfamily ' + taxon.replace('_', r'\_')
+        for j, char in enumerate(msa['alignment'][i]):
             if char != '-':
-                cls = token2class(char,rcParams['dolgo']) 
+                cls = token2class(char, rcParams['dolgo'])
             elif char == '-':
                 cls = 'X'
             if char == '_':
@@ -673,30 +668,30 @@ def msa2tex(
             if cls == '_':
                 cls = '2'
             if j not in swaps:
-                body += r'&\cellcolor{col'+cls+r'}'+char
+                body += r'&\cellcolor{col' + cls + r'}' + char
             else:
                 if char != '-':
-                    body += r'&\cellcolor{col'+cls+r'}\color{white}\bf '+char
+                    body += r'&\cellcolor{col' + cls + r'}\color{white}\bf ' + char
                 else:
-                    body += r'&\cellcolor{col'+cls+r'}\bf '+char
-        body += r'\\'+'\n'
+                    body += r'&\cellcolor{col' + cls + r'}\bf ' + char
+        body += r'\\' + '\n'
 
-    body += r'&'+'&'.join([r'\color{white}XXX' for i in range(width)])+r'\\'+'\n'
-    body += r'\endtabular'+'\n'
-    
+    body += r'&' + '&'.join([r'\color{white}XXX' for i in range(width)]) + r'\\' + '\n'
+    body += r'\endtabular' + '\n'
+
     # create the parameters etc.
     w = 1.5 * width + taxl * 0.25
     h = 0.5 * height + 1.0
 
-    tex = tex.replace('<+WIDTH+>','{0:2f}'.format(w))
-    tex = tex.replace('<+HEIGHT+>','{0:2f}'.format(h))
+    tex = tex.replace('<+WIDTH+>', '{0:2f}'.format(w))
+    tex = tex.replace('<+HEIGHT+>', '{0:2f}'.format(h))
 
     # create the rput stuff
-    tex = tex.replace('<+NEWX+>','{0:.2f}'.format(w/2.0))
-    tex = tex.replace('<+NEWY+>','{0:.2f}'.format((h-0.5)/2.0))
+    tex = tex.replace('<+NEWX+>', '{0:.2f}'.format(w / 2.0))
+    tex = tex.replace('<+NEWY+>', '{0:.2f}'.format((h - 0.5) / 2.0))
 
     # insert the rest
-    tex = tex.replace('<+CONTENT+>',body)
+    tex = tex.replace('<+CONTENT+>', body)
 
     # write to file
     if not filename:
@@ -706,12 +701,12 @@ def msa2tex(
 
 
 def tokens2html(
-        string,
-        swaps = [],
-        tax_len = None,
-        path = '',
-        template = ''
-        ):
+    string,
+    swaps=[],
+    tax_len=None,
+    path='',
+    template=''
+):
     """
     Function converts an (aligned) string into colored html-format.
 
@@ -723,16 +718,16 @@ def tokens2html(
     perc = int(80 / len(string) + 0.5)
 
     # get vals for residue and swaps
-    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">'+\
-            '<font color="{2}">{0}</font></td>\n'
-    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"'+\
-            'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
+    td_residue = '<td class="residue" width="50" align="center" bgcolor="{1}">' + \
+                 '<font color="{2}">{0}</font></td>\n'
+    td_swap = '<td class="residue swap" style="border:solid 3px black" width="50"' + \
+              'align="center" bgcolor="{1}"><font color="{2}">{0}</font></td>\n'
 
     # start with filling the taxon
     out = '<table>'
-    
+
     # go on with the colors
-    for i,char in enumerate(string):
+    for i, char in enumerate(string):
         try:
             c = rcParams['_color'][char]
             fg = '#000000'
@@ -741,16 +736,16 @@ def tokens2html(
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
             except:
-                input("Unknown character '"+char+"', press ANY key to continue. " )
+                input("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
         if i in swaps:
-            out += td_swap.format(char,c,fg)
+            out += td_swap.format(char, c, fg)
         else:
-            out += td_residue.format(char,c,fg)
+            out += td_residue.format(char, c, fg)
 
-    return out+'</table>'
+    return out + '</table>'
 
 
 def psa2html(filename, **kw):
@@ -784,28 +779,28 @@ def psa2html(filename, **kw):
     while i <= len(data) - 3:
         try:
             seq_ids.append(data[i])
-            
-            datA = data[i+1].split('\t')
-            datB = data[i+2].split('\t')
-            
+
+            datA = data[i + 1].split('\t')
+            datB = data[i + 2].split('\t')
+
             taxonA = datA[0].strip('.')
             taxonB = datB[0].strip('.')
             almA = datA[1:]
             almB = datB[1:]
-            
-            taxa.append((taxonA,taxonB))
+
+            taxa.append((taxonA, taxonB))
             pairs.append(
-                    (
-                        '.'.join([k for k in almA if k != '-']),
-                        '.'.join([k for k in almB if k != '-'])
-                        )
-                    )
+                (
+                    '.'.join([k for k in almA if k != '-']),
+                    '.'.join([k for k in almB if k != '-'])
+                )
+            )
             alignments.append(
-                    (
-                        [str(a) for a in almA],
-                        [str(b) for b in almB],
-                        0)
-                    )
+                (
+                    [str(a) for a in almA],
+                    [str(b) for b in almB],
+                    0)
+            )
             i += 4
         except:
             log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
@@ -814,11 +809,11 @@ def psa2html(filename, **kw):
     def get_classes(alm):
         classes = []
         residue = '<div class="residue {1}">{0}</div>'
-        for j,char in enumerate(alm):
+        for j, char in enumerate(alm):
             if char == '-':
                 d = 'dolgo_GAP'
             else:
-                d = 'dolgo_'+token2class(char, rcParams['dolgo'])
+                d = 'dolgo_' + token2class(char, rcParams['dolgo'])
 
                 # bad check for three classes named differently
                 if d == 'dolgo__':
@@ -829,23 +824,22 @@ def psa2html(filename, **kw):
                     d = 'dolgo_ERROR'
             classes += [residue.format(char, d)]
         return ''.join(classes)
-    
+
     tr = '<tr class="psa">{0}</tr>'
 
-    out = '<table>\n' #codecs.open(kw['filename'], 'w', 'utf-8')
-    for i,(a,b,c) in enumerate(alignments):
-        
+    out = '<table>\n'  # codecs.open(kw['filename'], 'w', 'utf-8')
+    for i, (a, b, c) in enumerate(alignments):
         clsA = get_classes(a)
         clsB = get_classes(b)
 
-        ids = int(100 * pid(a,b)+0.5)
+        ids = int(100 * pid(a, b) + 0.5)
 
         out += '<tr class="head">'
         out += '<td colspan=2 class="head"><b>Alignment {0}:</b> <i>{1}</i>, PID: {2}</td></tr>'.format(
-                i+1,
-                seq_ids[i],
-                ids
-                )
+            i + 1,
+            seq_ids[i],
+            ids
+        )
         out += '<tr class="psa">'
         out += '<td class="taxon">{0}</td>'.format(taxa[i][0])
         out += '<td class="psa">{0}</td>'.format(clsA)
@@ -855,15 +849,15 @@ def psa2html(filename, **kw):
         out += '<td class="psa">{0}</td>'.format(clsB)
         out += '</tr>'
         out += '<tr><td colspan=2></td></tr>'
-    
+
     out += '</table>'
-    
+
     html = template.format(alignments=out, css=css)
 
     if kw['compact']:
-        html = html.replace('\n',' ')
-        html = re.sub(r'\s+',r' ',html)
-        html = html.replace('> ','>')
-        html = html.replace(' >','>')
+        html = html.replace('\n', ' ')
+        html = re.sub(r'\s+', r' ', html)
+        html = html.replace('> ', '>')
+        html = html.replace(' >', '>')
 
     util.write_text_file(kw['filename'], html)
