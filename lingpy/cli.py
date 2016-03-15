@@ -117,6 +117,16 @@ def add_mode_option(p, choices):
     add_option(p, 'mode', 'global', 'Alignment mode', choices=choices, short_opt='m')
 
 
+def add_align_method_option(p):
+    add_option(
+        p,
+        'align-method',
+        'library',
+        "Select how you want to align, based on a library (T-COFFEE), or " +
+        "in a classical progressive way.",
+        choices=['library', 'progressive'])
+
+
 class wordlist(Command):
     """
     Load a wordlist and carry out simple checks.
@@ -138,7 +148,7 @@ class wordlist(Command):
             p,
             'columns',
             None,
-            "Select the columns and the order in which you want to write your wordlist file.",
+            "Select the columns and the order in which you want to write your wordlist.",
             nargs='+')
         add_option(
             p,
@@ -219,13 +229,7 @@ class alignments(Command):
         add_tree_calc_option(p)
         add_option(p, 'gap-weight', 0.5, 'Gap weight.')
         add_format_option(p, 'tsv', ['msa', 'html', 'tsv'])
-        add_option(
-            p,
-            'align-method',
-            'library',
-            "Select how you want to align, based on a library (T-COFFEE), or " +
-            "in a classical progressive way.",
-            choices=['library', 'progressive'])
+        add_align_method_option(p)
         add_option(p, 'iterate', False, "Postprocess using iteration methods.")
         add_cognate_identifier_option(p, 'lingpyid')
         add_option(
@@ -256,7 +260,8 @@ class alignments(Command):
                        tree_calc=args.tree_calc,
                        restricted_chars=args.restricted_chars, mode=args.mode)
             alms.output(args.format, filename=args.output_file, ignore='all')
-            return alms.msa[args.cognate_identifier]
+        else:
+            print('an input file is required')
 
 
 class settings(Command):
@@ -344,7 +349,9 @@ class lexstat(Command):
             if args.verbose:
                 print("[i] Clustered the data.")
             lex.output('tsv', filename=args.output_file)
-        return len(lex.get_etymdict(ref=args.cognate_identifier))
+            return len(lex.get_etymdict(ref=args.cognate_identifier))
+        else:
+            print('an input file is required')
 
 
 class pairwise(Command):
@@ -369,8 +376,12 @@ class pairwise(Command):
         add_shared_args(p)
         add_strings_option(p, 2)
         add_mode_option(p, ['global', 'local', 'overlap', 'dialign'])
-        p.add_argument('-d', '--distance', action='store_true', default=False,
-                                     help="Choose whether you want distances or similarities to be reported.")
+        add_option(
+            p,
+            'distance',
+            False,
+            "Choose whether you want distances or similarities to be reported.",
+            short_opt='d')
         add_method_option(p, 'basic', ['sca', 'basic'], spec='basic')
 
     def __call__(self, args):
@@ -408,6 +419,8 @@ class pairwise(Command):
                 pairs.output('psa', filename=args.output_file)
             else:
                 print(output)
+        else:
+            print('either strings or an input file must be specified')
 
 
 class multiple(Command):
@@ -425,20 +438,21 @@ class multiple(Command):
         add_mode_option(p, ['global', 'overlap', 'dialign'])
         add_method_option(p, 'basic', ['sca', 'basic'], spec='basic')
         add_tree_calc_option(p)
-        p.add_argument('--gap-weight', action='store', type=float,
-                                     default=0.5,
-                                     help="Select the tree cluster method you want to use for the guide tree.")
+        add_option(
+            p,
+            'gap-weight',
+            0.5,
+            "Select the tree cluster method you want to use for the guide tree.")
         add_format_option(p, 'msa', ['msa', 'html', 'tex', 'psa'])
-        p.add_argument('--align-method', action='store', default='library',
-                                     choices=['library', 'progressive'],
-                                     help="Select how you want to align, based on a library (T-COFFEE), or " + \
-                                          "in a classical progressive way.")
-        p.add_argument('--iteration', action='store', nargs="+", default=[],
-                                     choices=['orphans', 'clusters', 'similar-gap-sites',
-                                              'all-sequences'],
-                                     help="Select method for postprocessing.")
-        p.add_argument('--swap-check', action='store_true', default=False,
-                                     help="Indicate whether you want to search for swapped sites automatically.")
+        add_align_method_option(p)
+        add_option(
+            p,
+            'iteration',
+            [],
+            "Select method for postprocessing.",
+            nargs="+",
+            choices=['orphans', 'clusters', 'similar-gap-sites', 'all-sequences'])
+        add_option(p, 'swap-check', False, "Search for swapped sites automatically.")
 
     def __call__(self, args):
         def align_msa(msa, args):
@@ -465,22 +479,25 @@ class multiple(Command):
                     gop=args.gop,
                     tree_calc=args.tree_calc,
                     scoredict=False,
-                    scale=args.scale,
-                )
+                    scale=args.scale)
             elif args.method == 'sca':
-                msa = lingpy.align.multiple.Multiple(args.strings,
-                                                     merge_vowels=not args.no_merged_vowels,
-                                                     expand_nasals=args.expand_nasals,
-                                                     model=args.model)
+                msa = lingpy.align.multiple.Multiple(
+                    args.strings,
+                    merge_vowels=not args.no_merged_vowels,
+                    expand_nasals=args.expand_nasals,
+                    model=args.model)
                 align_msa(msa, args)
                 alms = msa.alm_matrix
 
             self.output(args, '\n'.join(['\t'.join(seq) for seq in alms]))
             return alms
 
-        if args.input_file:
-            msa = lingpy.align.sca.MSA(args.input_file, merge_vowels=not args.no_merged_vowels,
-                                       expand_nasals=args.expand_nasals, model=args.model)
+        elif args.input_file:
+            msa = lingpy.align.sca.MSA(
+                args.input_file,
+                merge_vowels=not args.no_merged_vowels,
+                expand_nasals=args.expand_nasals,
+                model=args.model)
             if args.method == 'basic':
                 seqs = [str(''.join(t)) for t in msa.tokens]
                 print(seqs)
@@ -503,6 +520,8 @@ class multiple(Command):
                 for taxon, alm in zip(msa.taxa, msa.alm_matrix):
                     print('{0}\t{1}'.format(taxon, '\t'.join(alm)))
             return msa.taxa, msa.alm_matrix
+        else:
+            print('either strings or an input file must be specified')
 
 
 class help(Command):

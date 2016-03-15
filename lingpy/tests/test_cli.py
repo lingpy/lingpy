@@ -31,20 +31,13 @@ class Tests(WithTempDir):
         self.assertIn('Height:  200', output)
 
     def test_alignments(self):
-        alms = main('alignments', '-i',
-                                  test_data('KSL.qlc'), '-c', 'cogid', '--output-file',
-                                  self.tmp_path('alignments').as_posix())
-        assert 'German' in alms[1]['taxa']
-        assert len(alms[952]['alignment'][0]) == len(alms[952]['alignment'][1])
+        tmp = self.tmp_path('alignments')
 
-        # test html output and scorer which was computed before
-        alms = main('alignments', '-i',
-                                  test_data('KSL3.qlc'), '-c', 'cogid', '--output-file',
-                                  self.tmp_path('alignments').as_posix(), '--format',
-                                  'html',
-                                  '--use-logodds')
-        assert 'German' in alms[78]['taxa']
-        assert len(alms[884]['alignment'][0]) == len(alms[884]['alignment'][1])
+        def cmd(i, rem=''):
+            return 'alignments -i {0} -c cogid -o {1} {2}'.format(i, tmp.as_posix(), rem)
+
+        self.run_cli(cmd(test_data('KSL.qlc')))
+        self.run_cli(cmd(test_data('KSL3.qlc'), ' --format html --use-logodds'))
 
     def test_multiple(self):
         # first test, align string, no output, no input
