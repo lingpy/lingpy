@@ -1,127 +1,119 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
-from lingpy.cli import parser, pairwise, multiple, settings, lexstat, \
-        alignments, wordlist
-from lingpy.tests.util import test_data, WithTempDir
-from six import text_type as str
+import sys
+from contextlib import contextmanager
 
-class test_cli(WithTempDir):
-    
-    def tearDown(self):
-        WithTempDir.tearDown(self)
+from six import StringIO
+
+from lingpy.cli import main
+from lingpy.tests.util import test_data, WithTempDir
+
+
+@contextmanager
+def capture(*args):
+    out, sys.stdout = sys.stdout, StringIO()
+    main(*args)
+    sys.stdout.seek(0)
+    yield sys.stdout.read()
+    sys.stdout = out
+
+
+class Tests(WithTempDir):
+    def run_cli(self, *args):
+        if len(args) == 1:
+            args = args[0].split()
+        with capture(*args) as output:
+            return output
 
     def test_wordlist(self):
-        self.setUp()
-        args = parser.parse_args(['wordlist', '-i', test_data('KSL.qlc'),
-            '--stats', '--calculate', 'diversity'])
-        h, w, l = wordlist(args)
-        assert h == 200
-        assert w == 7
-        assert l == 1400
+        output = self.run_cli(
+            'wordlist -i {0} --stats --calculate diversity'.format(test_data('KSL.qlc')))
+        self.assertIn('Height:  200', output)
 
     def test_alignments(self):
-        self.setUp()
-        args = parser.parse_args(['alignments', '-i',
-            test_data('KSL.qlc'), '-c', 'cogid', '--output-file',
-            self.tmp_path('alignments').as_posix()])
-        alms = alignments(args)
+        alms = main('alignments', '-i',
+                                  test_data('KSL.qlc'), '-c', 'cogid', '--output-file',
+                                  self.tmp_path('alignments').as_posix())
         assert 'German' in alms[1]['taxa']
         assert len(alms[952]['alignment'][0]) == len(alms[952]['alignment'][1])
-        
+
         # test html output and scorer which was computed before
-        args = parser.parse_args(['alignments', '-i',
-            test_data('KSL3.qlc'), '-c', 'cogid', '--output-file',
-            self.tmp_path('alignments').as_posix(), '--format', 'html',
-            '--use-logodds'])
-        alms = alignments(args)
+        alms = main('alignments', '-i',
+                                  test_data('KSL3.qlc'), '-c', 'cogid', '--output-file',
+                                  self.tmp_path('alignments').as_posix(), '--format',
+                                  'html',
+                                  '--use-logodds')
         assert 'German' in alms[78]['taxa']
         assert len(alms[884]['alignment'][0]) == len(alms[884]['alignment'][1])
 
-
-        self.tearDown()
     def test_multiple(self):
-    
-        self.setUp()
-        
         # first test, align string, no output, no input
-        args = parser.parse_args(['multiple', '-s', 'woldemort', 'waldemar', 'walter'])
-        mlt = multiple(args)
-        assert len(mlt) == 3
-        assert len(mlt[0]) == len('woldemort')
-    
+        output = self.run_cli('multiple -s woldemort waldemar walter')
+        self.assertIn('w\ta\tl\tt\te\t-\t-\tr\t-', output)
+
         # second test, test output as file, no input, vary method as sca
-        args = parser.parse_args(['multiple', '-s', 'woldemort', 'waldemar',
-            'walter', '--method', 'sca', '--output-file',
-            self.tmp_path('out.msa').as_posix()])
-        mlt = multiple(args)
+        mlt = main('multiple', '-s', 'woldemort', 'waldemar',
+                                  'walter', '--method', 'sca', '--output-file',
+                                  self.tmp_path('out.msa').as_posix())
         assert mlt[0] == list('woldemort')
-    
+
         # third test, test output and input
         # second test, test output as file, no input, vary method as sca
-        args = parser.parse_args(['multiple', '-i', test_data('harryp.msa'), 
-            '--method', 'sca', '--output-file',
-            self.tmp_path('out2.msa').as_posix(), '--align-method', 'library'])
-        mlt = multiple(args)
+        mlt = main('multiple', '-i', test_data('harryp.msa'),
+                                  '--method', 'sca', '--output-file',
+                                  self.tmp_path('out2.msa').as_posix(), '--align-method',
+                                  'library')
         assert len(mlt[0]) == 7
-       
+
         # fourth test, test output and input with method=basic
-        args = parser.parse_args(['multiple', '-i', test_data('harryp.msa'), 
-            '--method', 'basic', '--output-file',
-            self.tmp_path('out2.msa').as_posix()])
-        mlt = multiple(args)
+        mlt = main('multiple', '-i', test_data('harryp.msa'),
+                                  '--method', 'basic', '--output-file',
+                                  self.tmp_path('out2.msa').as_posix())
         assert len(mlt[0]) == 7
         assert len([x for x in mlt[1][-1] if x != '-']) == 4
-        self.tearDown()
-    
+
     def test_pairwise(self):
-    
-        self.setUp()
-    
         # first test, align string, no output, no input
-        args = parser.parse_args(['pairwise', '-s', 'woldemort', 'waldemar'])
-        pair = pairwise(args)
-        assert len(pair) == 3
-        assert len(pair[1]) == len('woldemort')
-    
+        output = self.run_cli('pairwise -s woldemort waldemar')
+        self.assertEqual(
+            [line.split('\t') for line in output.split('\n')][:2],
+            [
+                ['w', 'o', 'l', 'd', 'e', 'm', 'o', 'r', 't'],
+                ['w', 'a', 'l', 'd', 'e', 'm', 'a', 'r', '-'],
+            ])
+
         # second test, test output as file, no input, vary method as sca
-        args = parser.parse_args(['pairwise', '-s', 'woldemort', 'waldemar', 
-            '--method', 'sca', '--output-file',
-            self.tmp_path('out.psa').as_posix(), '--distance'])
-        pair = pairwise(args)
-        assert pair[0] == list('woldemort')
-    
+        tmp = self.tmp_path('test1')
+        self.run_cli(
+            'pairwise -s woldemort waldemar --method sca -o {0} --distance'.format(
+                tmp.as_posix()))
+        assert tmp.exists()
+
         # third test, test output and input
         # second test, test output as file, no input, vary method as sca
-        args = parser.parse_args(['pairwise', '-i', test_data('harry_potter.psa'), 
-            '--method', 'sca', '--output-file',
-            self.tmp_path('out2.psa').as_posix(), '--mode', 'overlap'])
-        pair = pairwise(args)
-        assert len(pair[0]) == 3
-        assert pair[0][0] == list('w-aldemar')
-       
-        # fourth test, test output and input with method=basic
-        args = parser.parse_args(['pairwise', '-i', test_data('harry_potter.psa'), 
-            '--method', 'basic', '--output-file',
-            self.tmp_path('out2.psa').as_posix()])
-        pair = pairwise(args)
-        assert len(pair[1][0]) == len('woldemort')+1
-        assert [isinstance(x[2], (float,)) for x in pair]
-        self.tearDown()
-    
-    def test_settings(self):
-    
-        args = parser.parse_args(['settings', '-p', 'lexstat_threshold', 'lexstat_runs',
-            'wrgswf'])
-        parms = settings(args)
-        assert parms[-1][1].startswith('PARAMETER NOT ')
-    
-    def test_lexstat(self):
-        self.setUp()
-        args = parser.parse_args(['lexstat', '-i',
-            test_data('KSL.qlc'), 
-            '--output-file', self.tmp_path('lexstat').as_posix()])
-        cogs = lexstat(args)
-        assert cogs == 1080
-        self.tearDown()
-    
+        tmp = self.tmp_path('test2')
+        self.run_cli('pairwise -i {0} --method sca -o {1} -m overlap'.format(
+            test_data('harry_potter.psa'), tmp.as_posix()))
+        #
+        # FIXME: It should not be the case that an output file is soecified, but the
+        # output is actually written to a different file!
+        #
+        assert tmp.parent.joinpath(tmp.name + '.psa').exists()
 
+        # fourth test, test output and input with method=basic
+        tmp = self.tmp_path('test3')
+        self.run_cli('pairwise -i {0} --method basic -o {1}'.format(
+            test_data('harry_potter.psa'), tmp.as_posix()))
+        assert tmp.parent.joinpath(tmp.name + '.psa').exists()
+
+    def test_settings(self):
+        output = self.run_cli('settings -p lexstat_threshold lexstat_runs')
+        self.assertNotIn('gop', output)
+        self.assertIn('lexstat_runs', output)
+        self.assertIn('lexstat_threshold', output)
+
+    def test_lexstat(self):
+        cogs = main('lexstat', '-i',
+                                  test_data('KSL.qlc'),
+                                  '--output-file', self.tmp_path('lexstat').as_posix())
+        assert cogs == 1080
