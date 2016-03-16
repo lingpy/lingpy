@@ -6,13 +6,11 @@ from __future__ import print_function, division, unicode_literals
 from collections import namedtuple, defaultdict
 from itertools import combinations
 
-# external modules
 import numpy as np
 
-# internal modules
-from ..algorithm import misc
-from .. import log
-from ..util import write_text_file, cached_property, setdefaults
+from lingpy.algorithm import misc
+from lingpy import log
+from lingpy.util import write_text_file, cached_property, setdefaults
 
 
 class Eval(object):
@@ -32,7 +30,7 @@ class EvalMSA(Eval):
     gold, test : :py:class:`~lingpy.align.sca.MSA`
         The :py:class:`~lingpy.compare.Multiple` objects which shall be
         compared. The first object should be the gold standard and the second
-        object should be the test set. 
+        object should be the test set.
 
     Notes
     -----
@@ -67,7 +65,7 @@ class EvalMSA(Eval):
 
     def c_score(self, mode=1):
         r"""
-        Calculate the column (C) score. 
+        Calculate the column (C) score.
 
         Parameters
         ----------
@@ -178,7 +176,7 @@ class EvalMSA(Eval):
 
         The SP score (see :evobib:`Thompson1999`) is calculated by dividing the number of
         identical residue pairs in reference and test alignment by the total
-        number of residue pairs in the reference alignment. 
+        number of residue pairs in the reference alignment.
 
         See also
         --------
@@ -218,17 +216,17 @@ class EvalMSA(Eval):
         """
         
         if self.gold == self.test:
-            self.sp = 1.0 
-            self.o1 = 1.0 
-            self.o2 = 1.0 
-            self.o_ = 1.0 
-            self.jc = 1.0 
-            self.cg1 = 1.0 
-            self.cg2 = 1.0 
-            self.cg_ = 1.0 
+            self.sp = 1.0
+            self.o1 = 1.0
+            self.o2 = 1.0
+            self.o_ = 1.0
+            self.jc = 1.0
+            self.cg1 = 1.0
+            self.cg2 = 1.0
+            self.cg_ = 1.0
             self.cgf = 1.0
             self.pip = 1.0
-            return 
+            return
 
         # replace all characters by numbers
         almsGold = np.zeros((len(self.gold.alm_matrix), len(self.gold.alm_matrix[0])))
@@ -240,7 +238,7 @@ class EvalMSA(Eval):
         # cluster all sequences which are identical, implicit weighting is
         # done otherwise, i.e. identical (pid = 100) sequences are clustered
         # into one sequence in order to avoid getting good scores when there
-        # are too many highly identical sequences. 
+        # are too many highly identical sequences.
         # XXX this part of the calculation has never really been testend. I
         # leave it untouched for the moment, since it won't be activated,
         # anyway, but we should come back to this and either follow up the idea
@@ -385,7 +383,7 @@ class EvalPSA(Eval):
     gold, test : :py:class:`lingpy.align.sca.PSA`
         The :py:class:`Pairwise <lingpy.compare.Pairwise>` objects which shall be
         compared. The first object should be the gold standard and the second
-        object should be the test set.    
+        object should be the test set.
     
     Notes
     -----
@@ -409,7 +407,7 @@ class EvalPSA(Eval):
         mode : { 1, 2 }
             Select between mode ``1``, where all sequences are compared with
             each other, and mode ``2``, where only whole alignments are
-            compared.  
+            compared.
 
         Returns
         -------
@@ -506,7 +504,7 @@ class EvalPSA(Eval):
                 sps_list.append(0)
             cs_list.append((2 * columns) / (len(pairsGold) + len(pairsTest)))  # new
         
-        # calculate the scores        
+        # calculate the scores
         sop = crp / rrp
         jac = crp / urp
         self.o1 = sop
@@ -520,7 +518,7 @@ class EvalPSA(Eval):
 
     def c_score(self):
         """
-        Calculate column (C) score. 
+        Calculate column (C) score.
 
         Returns
         -------
@@ -555,7 +553,7 @@ class EvalPSA(Eval):
         ----
         The SP score (see :evobib:`Thompson1999`) is calculated by dividing the number of
         identical residue pairs in reference and test alignment by the total
-        number of residue pairs in the reference alignment. 
+        number of residue pairs in the reference alignment.
         
         See also
         --------

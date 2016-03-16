@@ -7,8 +7,8 @@ import codecs
 from itertools import combinations
 from collections import defaultdict
 
-from .. import log
-from ..util import identity
+from lingpy import log
+from lingpy.util import identity
 
 
 def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
@@ -50,7 +50,7 @@ def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     --------
     diff
     pairs
-    """       
+    """
     # clean cache of lexstat object
     lex._clean_cache()
 
@@ -202,7 +202,7 @@ def diff(
     Returns
     -------
     t : tuple
-        A nested tuple consisting of two further tuples. The first 
+        A nested tuple consisting of two further tuples. The first
         containing precision, recall, and harmonic mean
         (F-scores), the second containing the same values for the pair-scores.
 
@@ -217,7 +217,7 @@ def diff(
     .. This function also calculates the "transformation" score. This score is
     .. based on the calculation of steps that are needed to transform one cluster
     .. for one set of meanings into the other. Ideally, if there are *n* different
-    .. cognate sets covering one gloss in the gold standard, the minimal length of 
+    .. cognate sets covering one gloss in the gold standard, the minimal length of
     .. a mapping to convert the *m* cognate sets of the test set into the gold standard
     .. is *n*. In this case, both gold standard and test set are identical.
     .. However, if gold standard and test set differ, the number of mappings
@@ -316,8 +316,9 @@ def diff(
             fn = "no" if recP[-1] == 1.0 else "yes"
 
             if tofile:
-                f.write("Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
-                    concept, fp, fn))
+                f.write(
+                    "Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
+                        concept, fp, fn))
 
             # get the words
             words = [lex[i, 'ipa'] for i in idxs]
