@@ -1,19 +1,15 @@
 """
 Module provides functions to read in various formats from the Phylip package.
 """
-
-from ..settings import *
-
+from __future__ import unicode_literals, print_function, division
 import re
-from ..algorithm import misc
-from .csv import csv2list
-from ..util import read_text_file
 
-def read_dst(
-        filename,
-        taxlen = 10,
-        comment = '#'
-        ):
+from lingpy.algorithm import misc
+from lingpy.read.csv import csv2list
+from lingpy.util import read_text_file
+
+
+def read_dst(filename, taxlen=10, comment='#'):
     """
     Function reads files in Phylip dst-format.
 
@@ -44,21 +40,22 @@ def read_dst(
         lines = [f for f in filename.split('\n') if f.strip()]
     else:
         lines = read_text_file(filename, normalize="NFC", lines=True)
-    
-    taxa,matrix = [],[]
-    
+
+    taxa, matrix = [], []
+
     for line in lines[1:]:
         if not line.startswith(comment):
             if taxlen > 0:
                 taxa.append(line[:taxlen].strip())
                 matrix.append([float(val) for val in
-                    re.split('\s+',line[taxlen+1:].strip())])
+                               re.split('\s+', line[taxlen + 1:].strip())])
             else:
                 splits = line.split('\t')
                 taxa.append(splits[0])
                 matrix.append([float(val.strip()) for val in splits[1:]])
 
     return taxa, matrix
+
 
 def read_scorer(infile):
     """
@@ -73,7 +70,7 @@ def read_scorer(infile):
         sound segments (or sound classes) and positive values indicating high
         similarity. The matrix should be symmetric, columns should be separated
         by tabstops, and the first column should provide the alphabet for which
-        the scoring function is defined. 
+        the scoring function is defined.
 
     Returns
     -------
@@ -86,14 +83,7 @@ def read_scorer(infile):
     if "\t" in infile and "\n" in infile:
         data = [x.split('\t') for x in infile.split('\n') if x]
     else:
-        # read data
         data = csv2list(infile)
 
-    # get the chars
-    chars = [l[0] for l in data]
-    
-    # get the matrix
-    matrix = [[float(x) for x in l[1:]] for l in data if l]
-
-    return misc.ScoreDict(chars,matrix)
-
+    return misc.ScoreDict(
+        [l[0] for l in data], [[float(x) for x in l[1:]] for l in data if l])

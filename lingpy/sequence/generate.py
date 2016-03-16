@@ -1,23 +1,14 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-13 08:02
-# modified : 2013-03-13 08:02
 """
 Module provides simple basic classes for sequence generation using Markov models.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-03-13"
-
-# builtin
+from __future__ import unicode_literals, division, print_function
 import random
 
-# internal
-#from ..data import *
-from ..settings import rcParams
-from .sound_classes import *
-
 import numpy as np
+
+from lingpy.settings import rcParams
+from lingpy.sequence.sound_classes import ipa2tokens, prosodic_string, tokens2class
+
 
 class MCBasic(object):
     """
@@ -31,18 +22,13 @@ class MCBasic(object):
 
     """
 
-    def __init__(
-            self,
-            seqs
-            ):
-
+    def __init__(self, seqs):
         self.seqs = seqs
-        
+
         # create distribution
         self.dist = {}
         for seq in self.seqs:
-
-            for i,(s1,s2) in enumerate(zip(['#']+seq,seq+['$'])):
+            for i, (s1, s2) in enumerate(zip(['#'] + seq, seq + ['$'])):
                 try:
                     self.dist[s1] += [s2]
                 except:
@@ -52,30 +38,25 @@ class MCBasic(object):
         """
         Create random sequence from the distribution.
         """
-        # out sequence
         out = []
 
         # get the start sequence 
         startS = random.choice(self.dist['#'])
 
-        # add start to out
         out += [startS]
 
-        # start looping
         i = 0
         while True:
-
-            # get nextS
             nextS = random.choice(self.dist[out[-1]])
 
             # check for terminal symbol
             if nextS == '$':
                 break
-            
+
             out += [nextS]
             i += 1
-
         return out
+
 
 class MCPhon(MCBasic):
     """
@@ -95,17 +76,17 @@ class MCPhon(MCBasic):
         list is empty, the profiles are generated automatically.
 
     """
-    
+
     def __init__(
-            self,
-            words,
-            tokens=False,
-            prostrings=[],
-            classes = False,
-            class_model = rcParams['model'],
-            **keywords
-            ):
-        
+        self,
+        words,
+        tokens=False,
+        prostrings=[],
+        classes=False,
+        class_model=rcParams['model'],
+        **keywords
+    ):
+
         self.model = class_model
         self.words = words
         self.tokens = []
@@ -113,11 +94,11 @@ class MCPhon(MCBasic):
         self.classes = []
 
         # start filling the dictionary
-        for i,w in enumerate(words):
-            
+        for i, w in enumerate(words):
+
             # check for tokenized string
             if not tokens:
-                tk = ipa2tokens(w,**keywords)
+                tk = ipa2tokens(w, **keywords)
             else:
                 tk = w[:]
             self.tokens += [tk]
@@ -127,34 +108,23 @@ class MCPhon(MCBasic):
                 p = prostrings[i]
             else:
                 p = prosodic_string(
-                        tokens2class(
-                            tk,
-                            model=rcParams['art'],
-                            **keywords
-                            ),
-                        **keywords
-                        )
+                    tokens2class(tk, model=rcParams['art'], **keywords), **keywords)
             # create classes
             if classes:
-                c = tokens2class(tk,model=class_model)
-                bigrams = list(zip(p,c))
+                c = tokens2class(tk, model=class_model)
+                bigrams = list(zip(p, c))
                 self.classes += [c]
             else:
                 # zip the stuff
-                bigrams = list(zip(p,tk))
-            
+                bigrams = list(zip(p, tk))
+
             # start appending the stuff
             self.bigrams += [bigrams]
 
             # init the mother object
-            MCBasic.__init__(self,self.bigrams)
+            MCBasic.__init__(self, self.bigrams)
 
-    def get_string(
-            self,
-            new=True,
-            tokens=False,
-            **keywordstokens2class
-            ):
+    def get_string(self, new=True, tokens=False, **keywordstokens2class):
         """
         Generate a string from the Markov chain created from the training data.
         
@@ -167,7 +137,7 @@ class MCPhon(MCBasic):
             If set to *True* he full list of tokens that was internally used to
             represent the sequences as a Markov chain is returned.
         """
-        
+
         # create the first string
         out = self.walk()
 
@@ -180,29 +150,21 @@ class MCPhon(MCBasic):
         if tokens:
             return out
         else:
-            return ' '.join([i[1] for i in  out])
-    
-    def evaluate_string(self,string,tokens=False,**keywords):
-        
+            return ' '.join([i[1] for i in out])
+
+    def evaluate_string(self, string, tokens=False, **keywords):
         if not tokens:
             tokens = ipa2tokens(string)
-        prostring = prosodic_string(tokens)
         score = 1
         dist = self.dist['#']
-        
+
         prostring = prosodic_string(
-            tokens2class(
-               tokens,
-               model=rcParams['art'],
-               **keywords
-               ),
-            **keywords
-            )       
+            tokens2class(tokens, model=rcParams['art'], **keywords), **keywords)
         if self.classes:
-            c = tokens2class(tokens,model=self.model)
-            teststring = list(zip(prostring,c))
+            c = tokens2class(tokens, model=self.model)
+            teststring = list(zip(prostring, c))
         else:
-            teststring = list(zip(prostring,tokens))
+            teststring = list(zip(prostring, tokens))
 
         scores = []
 
@@ -214,20 +176,8 @@ class MCPhon(MCBasic):
             score = score * s
             scores += [s]
             dist = self.dist[segment]
-        freq = dist.count('$') + 1
-        allf = len(dist) + 1
         score = score * s
         scores += [s]
-        #try:
         lscore = np.log10(score)
-        #except:
-        #    lscore = 0
         lscore = lscore / len(tokens)
-
-        return score,lscore #np.log10(score)
-
-
-
-
-
-
+        return score, lscore  # np.log10(score)
