@@ -41,3 +41,7 @@ $ python setup.py develop
 ```
 This will install LingPy in ["develpment mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
 i.e. you will be able edit the sources in the cloned repository and import the altered code just as the regular python package.
+
+## Trouble Shooting
+
+We're currently working on a new release of LingPy which will be pushed to PyPi and also be installable via PIP, etc. The current LingPy on Github is rather stable and much more advanced than older versions, also supporting cross-platforms and both Python versions. If you run into any problems with installing LingPy for the moment, please make sure that you followed our quick installation instructions above and did **not** use any of the outdated releases. We might publish an official intermediate release in order to make sure that the well-known installation errors when installing LingPy in older versions via PIP do not occur, but for the moment, please download the current state of LingPy from github and manually install.
