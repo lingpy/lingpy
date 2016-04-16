@@ -308,10 +308,7 @@ class LexStat(Wordlist):
                 if i < j:
                     for c in sorted(set(dictA).intersection(dictB)):
                         for idxA, idxB in product(dictA[c], dictB[c]):
-                            dA = self[idxA, "duplicates"]
-                            dB = self[idxB, "duplicates"]
-                            if dA != 1 and dB != 1:
-                                self.pairs[taxonA, taxonB] += [(idxA, idxB)]
+                            self.pairs[taxonA, taxonB] += [(idxA, idxB)]
                 elif i == j:
                     for c in sorted(dictA):
                         for idx in dictA[c]:
