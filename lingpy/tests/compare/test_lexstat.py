@@ -172,3 +172,12 @@ class TestLexStat(WithTempDir):
         lex.cluster(method='sca', threshold=0.5, ref='cogid')
         self.assertEquals(lex[1, 'cogid'], lex[2, 'cogid'], lex[3, 'cogid'])
         rc(schema='ipa')
+
+    def test_pairs(self):
+        pairs = self.lex.pairs['English', 'German']
+        for key1, key2 in pairs:
+            self.assertEqual(self.lex[key1][0], 'English')
+            self.assertEqual(self.lex[key2][0], 'German')
+            self.assertEqual(self.lex[key1][1], self.lex[key2][1])
+            self.assertEqual(self.lex[key1][2], self.lex[key2][2])
+        self.assertEqual(len(pairs), 200)
