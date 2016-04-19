@@ -64,7 +64,6 @@ class Workflow(object):
             threshold=rcParams['lexstat_threshold'],
             tree_calc=rcParams['align_tree_calc'],
             vscale=rcParams['lexstat_vscale'],
-            classes=False,
             outfile=False,
             sonar=True,
         )

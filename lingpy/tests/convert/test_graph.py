@@ -32,5 +32,5 @@ def test_igraph2networkx():
         G.add_edges([('a', 'b'), ('c', 'd')])
 
         N = lcg.igraph2networkx(G)
-        assert len(N.nodes()) == 4
-        assert len(N.edges()) == 2
+        assert len(list(N.nodes())) == 4
+        assert len(list(N.edges())) == 2

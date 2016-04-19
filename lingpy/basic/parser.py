@@ -150,14 +150,25 @@ class QLCParser(object):
                 check = []
                 for head, i in heads:
                     if i not in check:
+                        logstring = 'Problem with row {0} in col {1}, expected' +\
+                            ' «{4}» as datatype but received «{3}» ' +\
+                            ' (ROW: {2}, entry {5}).'
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
-                        except:  # pragma: no cover
+                        except KeyError:  # pragma: no cover
                             log.warn(
-                                'Problem with row {0} in col {1}, expected' +
-                                ' «{4}» as datatype but received «{3}» ' +
-                                ' (ROW: {2}, entry {5}).'.format(
+                                logstring.format(
+                                    key,
+                                    i,
+                                    '|'.join([str(x) for x in self._data[key]]),
+                                    self._data[key][i],
+                                    self._class[head],
+                                    head))
+
+                        except ValueError:
+                            log.warn(
+                                logstring.format(
                                     key,
                                     i,
                                     '|'.join([str(x) for x in self._data[key]]),
