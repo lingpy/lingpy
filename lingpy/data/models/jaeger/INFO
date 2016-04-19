@@ -1,1 +1,7 @@
-Version of 2013-09-32 provided by G. Jäger
+PMI-ASJP Sound Class Model
+==========================
+@description: Sound-Class model based on PMI scores calculated for ASJP data.
+@source: Jaeger (2015)
+@url: http://www.pnas.org/content/112/41/12752.abstract
+@date: 2016-03-29
+@vowels: eEIauoi

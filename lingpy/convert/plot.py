@@ -934,6 +934,7 @@ def plot_heatmap(
         steps=20,
         xrotation=90,
         colorbar=True,
+        matrix=False,
         colorbar_label="Shared Cognates",
         figsize=(10, 5),
         colorbar_shrink=0.75,
@@ -1135,7 +1136,6 @@ def plot_heatmap(
                         matrix[i][j] = 1.0
                     else:
                         matrix[i][j] = len(set(cogs))
-
     ax2 = fig.add_axes(
         [
             left,  # keywords['left']+0.25 * keywords['width']+0.05,

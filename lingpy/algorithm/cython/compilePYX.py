@@ -1,7 +1,6 @@
 import os
 from sys import argv
 
-
 def pyx2py(infile, debug=False):
 
     with open(infile+'.pyx') as f:
@@ -54,9 +53,6 @@ def pyx2py(infile, debug=False):
 
     with open('_'+infile+'.py','w') as f:
         f.write(''.join(newlines))
-
-                    
-
 
 def main():
     
