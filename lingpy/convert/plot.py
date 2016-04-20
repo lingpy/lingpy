@@ -28,7 +28,6 @@ from lingpy.thirdparty import cogent as cg
 from lingpy.convert.tree import nwk2tree_matrix
 from lingpy.convert.graph import gls2gml, radial_layout
 
-
 def plot_gls(
     gls,
     treestring,
@@ -307,7 +306,7 @@ def plot_tree(
     # get xlim and ylim
     xvals, yvals = [], []
     # start iterating over edges
-    for nA, nB, d in graph.edges(data=True) + keywords['edge_list']:
+    for nA, nB, d in list(graph.edges(data=True)) + keywords['edge_list']:
 
         # get the coordinates
         xA = graph.node[nA]['graphics']['x']
@@ -469,7 +468,6 @@ def plot_concept_evolution(
         markeredgewidth=2.5,
         wedgeedgewidth=2,
         gain_linestyle='dotted',
-        # show_labels     = False,
         loss_linestyle='solid',
         ax_linewidth=0,
         labels={},
@@ -485,10 +483,7 @@ def plot_concept_evolution(
         hedge_width=5,
         hedge_linestyle='dashed',
     )
-
-    for k in defaults:
-        if k not in keywords:
-            keywords[k] = defaults[k]
+    keywords.update(defaults)
 
     # set filename as variable for convenience
     filename = keywords['filename']

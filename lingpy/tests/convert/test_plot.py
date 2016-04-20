@@ -1,3 +1,5 @@
+# *-* coding: utf-8 *-*
+from __future__ import unicode_literals, print_function, division
 from six import text_type
 from lingpy.tests.util import WithTempDir 
 from lingpy.tests.util import test_data
