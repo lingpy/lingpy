@@ -1,15 +1,18 @@
 # *-* coding: utf-8 *-*
 from __future__ import unicode_literals, print_function, division
 from six import text_type
-import matplotlib
-# Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
+from mock import MagicMock, patch
 from lingpy.tests.util import WithTempDir 
 from lingpy.tests.util import test_data
 from lingpy.convert import tree
 from lingpy.basic.tree import Tree
 from lingpy.convert.plot import *
 from lingpy.basic.wordlist import Wordlist
+
+class Plt(MagicMock):
+    def plot(self, *args, **kw):
+        return [MagicMock()]
+
 
 class TestPlot(WithTempDir):
 
@@ -46,22 +49,14 @@ class TestPlot(WithTempDir):
         
         self.tree = "((((((((Taiyuan,Pingyao,Huhehaote),((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,Wulumuqi)),(((Tianjin,Jinan),Qingdao),Beijing,Haerbin)),(((Guiyang,Kunming),Chengdu,Wuhan),(Nanjing,Hefei)))),(Xiangtan,Changsha)),Nanchang),(Shexian,Tunxi)),((Shanghai,Suzhou,Hangzhou),Wenzhou)),(((Xianggang,Guangzhou),Nanning),(Meixian,Taoyuan))),((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));"
 
-    
-    def test_plot_gls(self):
+    @patch('lingpy.convert.plot.mpl', new=MagicMock())
+    @patch('lingpy.convert.plot.plt', new=Plt())
+    def test_plots(self):
 
         plot_gls(self.gls, self.tree, filename=text_type(self.tmp_path('test')))
-
-    def test_plot_tree(self):
-
         plot_tree(self.tree, filename=text_type(self.tmp_path('test')))
-    
-    def test_plot_concept_evolution(self):
-
         plot_concept_evolution(self.scenarios, self.tree,
                 filename=text_type(self.tmp_path('test')))
-
-    def test_plot_heatmap(self):
-        
         wl = Wordlist(test_data('KSL.qlc'))
         wl.calculate('tree')
         plot_heatmap(wl,
