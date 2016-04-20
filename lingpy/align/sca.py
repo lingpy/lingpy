@@ -540,6 +540,12 @@ class Alignments(Wordlist):
 
     Attributes
     ----------
+    msa : dict
+        A dictionary storing multiple alignments as dictionaries which can be
+        directly opened and aligned with help of the ~lingpy.align.sca.SCA 
+        function. The alignment objects are referenced by a key which is
+        identical with the "reference" (ref-keyword) of the alignment, that is
+        the name of the column which contains the cognate identifiers.
 
 
     Notes
@@ -556,23 +562,26 @@ class Alignments(Wordlist):
             row='concept',
             col='doculect',
             conf='',
-            ref='cogid',
             modify_ref=False,
             _interactive=True,
+            ref="cogid",
             **keywords):
         # keywords, "strings" locates, where the reference for the alignments
         # is to be found
-        kw = {"segments": "tokens", "alignment": "alignment", "transcription" :
-                "ipa"}
+        kw = {"segments": "tokens", "alignment": "alignment", "transcription":
+                "ipa", "ref": "cogid"}
         kw.update(keywords)
 
         # initialize the wordlist
         Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
-        self._alignment = self._alias[kw['alignment']]
-        self._segments = self._alias[kw['segments']]
-        self._ref = self._alias[ref]
-        self._transcription = self._alias[kw['transcription']]
+        self._alignment = kw['alignment'] if kw['alignment'] in \
+            self.header else self._alias[kw['alignment']]
+        self._segments = kw['segments'] if kw['segments'] in self.header else \
+                self._alias[kw['segments']]
+        self._ref = ref if ref in self.header else self._alias[ref]
+        self._transcription = kw['transcription'] if kw['transcription'] in \
+                self.header else self._alias[kw['transcription']]
 
         # check whether fuzzy (partial) alignment or normal alignment is
         # carried out, if a new namespace is used, we assume it to be plain
@@ -593,12 +602,13 @@ class Alignments(Wordlist):
                 raise ValueError("No valid source for segments could be found.")
         
         self.etd = {}
-        self.add_alignments(ref, modify_ref=modify_ref)
+        self.add_alignments(ref=self._ref, modify_ref=modify_ref)
 
-    def add_alignments(self, ref, modify_ref=False):
+    def add_alignments(self, ref=False, modify_ref=False):
         """
         Function adds a new set of alignments to the data.
         """
+        ref = ref or self._ref
         # check for cognate-id or alignment-id in header
         try:
             self.etd[ref] = self.get_etymdict(ref=ref, modify_ref=modify_ref)

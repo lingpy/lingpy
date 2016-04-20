@@ -30,7 +30,7 @@ __version__ = "2.4.1-alpha"
 from lingpy.settings import rc
 
 # general imports
-from lingpy.basic import Wordlist, Tree, Workflow
+from lingpy.basic import Wordlist, Tree
 
 # import converts
 # from .convert import *

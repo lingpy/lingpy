@@ -62,16 +62,13 @@ class TestAlignments(WithTempDir):
             assert tokensB == new_tokensB
     
     def test_align(self):
-        self.alm.add_entries('cugid', self.alm._ref, lambda x: str(x))
+        self.alm.add_entries('cugid', self.alm._ref, lambda x: text_type(x))
         self.alm.add_alignments(ref="cugid")
 
         # align all sequences using standard params
         self.alm.align()
         self.alm.align(ref="cugid", alignment="alignment2")
         assert self.alm.msa["cugid"]["1"]["ID"] == self.alm.msa["cogid"][1]["ID"]
-
-
-
 
         # iterate and align using the multiple function
         for key, value in self.alm.msa['cogid'].items():
@@ -119,8 +116,6 @@ def test_get_consensus():
     cons4 = lp.align.sca.get_consensus(msa, local="peaks")
     cons5 = lp.align.sca.get_consensus(msa, local="gaps")
 
-
-    print(cons, cons2, cons3, cons4, cons5)
     assert cons == [x for x in cons2 if x != '-']
     assert cons3[:2] == cons[:2]
     assert cons4[0] == 'h'

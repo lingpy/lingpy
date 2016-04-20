@@ -6,7 +6,6 @@ import argparse
 from six import text_type as str
 from six import with_metaclass
 
-
 class CommandMeta(type):
     """
     A metaclass which keeps track of subclasses, if they have all-lowercase names.
