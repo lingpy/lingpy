@@ -12,7 +12,6 @@ Sequence Modelling
    :maxdepth: 1
    
    sequence/sound_classes
-   sequence/tokenizer
    sequence/generate
    data/data
    data/derive
@@ -22,7 +21,6 @@ Dataset Handling
 .. toctree::
    :maxdepth: 1
    
-   basic/dictionary
    basic/wordlist
 
 Sequence Comparison
@@ -49,6 +47,14 @@ Language Comparison
    algorithm/clustering
    compare/lexstat
    compare/phylogeny
+
+Handling Phylogenetic Trees
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
+   basic/tree
 
 Plotting Data
 ^^^^^^^^^^^^^

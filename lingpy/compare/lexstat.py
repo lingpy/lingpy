@@ -103,7 +103,6 @@ class LexStat(Wordlist):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-
     vowels : str (default="VT_")
         For scoring function creation using the
         ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
@@ -115,25 +114,68 @@ class LexStat(Wordlist):
         "transform" keyword, you also need to change the vowel string, to make
         sure that "vscale" works as wanted in the
         ~lingpy.compare.lexstat.LexStat.get_scorer function.
-
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
         file **errors**, defaulting to ``errors.log``. See also ``apply_checks``
-
     apply_checks : bool (default=False)
         If set to **True**, any errors identified by `check` will be handled
         silently.
-
     no_bscorer: bool (default=False)
         If set to **True**, this will suppress the creation of a
         language-specific scoring function (which may become quite large and is
         additional ballast if the method "lexstat" is not used after all. If
         you use the "lexstat" method, however, this needs to be set to
         **False**.
-
     errors : str
         The name of the error log.
+
+    Attributes
+    ----------
+    pairs : dict
+        A dictionary with tuples of language names as key and indices as value, \
+        pointing to unique combinations of words with the same meaning in all \
+        language pairs.
+    model : :py:class:`~lingpy.data.model.Model`
+        The sound class model instance which serves to convert the phonetic
+        data into sound classes.
+    chars : list
+        A list of all unique language-specific character types in the
+        instantiated LexStat object. The characters in this list consist of
+
+        * the language identifier (numeric, referenced as "langid" as a
+          default, but customizable via the keyword "langid")
+        * the sound class symbol for the respective IPA transcription value
+        * the prosodic class value
+
+        All values are represented in the above order as one string, separated
+        by a dot. Gaps are also included in this collection. They are
+        traditionally represented as "X" for the sound class and "-" for the
+        prosodic string.
+    rchars : list
+        A list containing all unique character types across languages. In
+        contrast to the chars-attribute, the "rchars" (raw chars) do not
+        contain the language identifier, thus they only consist of two values,
+        separated by a dot, namely, the sound class symbol, and the prosodic
+        class value.
+    scorer : dict
+        A collection of :py:class:`~lingpy.algorithm.cython.misc.ScoreDict`
+        objects, which are used to score the strings. LexStat distinguishes two
+        different scoring functions:
+
+        * rscorer: A "raw" scorer that is not language-specific and consists
+          only of sound class values and prosodic string values. This scorer is
+          traditionally used to carry out the first alignment in order to
+          calculate the language-specific scorer. It is directly accessible as an
+          attribute of the LexStat class
+          (:py:class:`~lingpy.compare.lexstat.lexstat.rscorer`). The characters
+          which constitute the values in this scorer are accessible via the
+          "rchars" attribue of each lexstat class.
+        * bscorer: The language-specific scorer. This scorer is made of unique
+          language-specific characters. These are accessible via the "chars"
+          attribute of each LexStat class. As the "rscorer", the "bscorer" can
+          also be accessed directly as an attribute of the LexStat class 
+          (:py:class:`~lingpy.compare.lexstat.lexstat.bscorer`).
 
     Notes
     -----
@@ -261,7 +303,6 @@ class LexStat(Wordlist):
             self._meta['vowels'] = ' '.join(sorted(set([
                 self._transform[v] for v in 'XYZT_']))) \
                 if hasattr(self, '_transform') else 'VT_'
-
         if self._duplicates not in self.header:
             duplicates = {}
             for taxon in self.taxa:
@@ -276,7 +317,6 @@ class LexStat(Wordlist):
         if not hasattr(self, 'freqs'):
             self.chars = set()
             self.freqs = {}
-
             for taxon in self.taxa:
                 self.freqs[taxon] = Counter()
                 for word in self.get_list(col=taxon, entry=self._numbers, flat=True):
@@ -305,11 +345,9 @@ class LexStat(Wordlist):
                 self.chars, self.model)
         elif not kw['no_bscorer']:
             self.bscorer = self._meta['scorer']['bscorer']
-
         if not hasattr(self, "rscorer"):
             self._meta['scorer']['rscorer'] = self.rscorer = get_score_dict(
                 self.rchars, self.model)
-
         if 'scorer' in self._meta:
             if 'cscorer' in self._meta['scorer']:
                 self.cscorer = self._meta['scorer']['cscorer']

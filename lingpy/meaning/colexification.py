@@ -210,6 +210,26 @@ def compare_colexifications(wordlist, entry='ipa', concept='concept'):
 def partition_colexifications(G, weight='weight'):
     """
     Use a simple partition algorithm to cluster the nodes.
+
+    Parameters
+    ----------
+    G : :py:class:`networkx.Graph`
+        A networkx-Graph object, as produced by the 
+        :py:class:`lingpy.meaning.colexification.colexification_network`
+        method.
+    weight : str (default="weight")
+        The name of the attribute storing the weights.
+
+    Returns
+    -------
+    data : tuple
+        A tuple consisting of two dictionaries, one with integers for
+        partitions as keys and one with nodes as keys and partitions as values.
+
+    Note
+    ----
+    This method requires the community package (a networkx plugin) to be
+    installed.
     """
 
     # check whether keyword "weight" is actually in the graph.

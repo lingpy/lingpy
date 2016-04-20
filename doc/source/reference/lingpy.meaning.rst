@@ -12,18 +12,18 @@ lingpy.meaning.basvoc module
     :undoc-members:
     :show-inheritance:
 
-lingpy.meaning.concepticon module
----------------------------------
+lingpy.meaning.colexification module
+------------------------------------
 
-.. automodule:: lingpy.meaning.concepticon
+.. automodule:: lingpy.meaning.colexification
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.meaning.concepts module
-------------------------------
+lingpy.meaning.glosses module
+-----------------------------
 
-.. automodule:: lingpy.meaning.concepts
+.. automodule:: lingpy.meaning.glosses
     :members:
     :undoc-members:
     :show-inheritance:

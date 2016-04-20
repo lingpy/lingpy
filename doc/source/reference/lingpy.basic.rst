@@ -4,14 +4,6 @@ lingpy.basic package
 Submodules
 ----------
 
-lingpy.basic.dictionary module
-------------------------------
-
-.. automodule:: lingpy.basic.dictionary
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 lingpy.basic.ops module
 -----------------------
 
@@ -24,14 +16,6 @@ lingpy.basic.parser module
 --------------------------
 
 .. automodule:: lingpy.basic.parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-lingpy.basic.spreadsheet module
--------------------------------
-
-.. automodule:: lingpy.basic.spreadsheet
     :members:
     :undoc-members:
     :show-inheritance:

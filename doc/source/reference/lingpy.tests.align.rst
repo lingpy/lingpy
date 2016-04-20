@@ -4,6 +4,22 @@ lingpy.tests.align package
 Submodules
 ----------
 
+lingpy.tests.align.test_multiple module
+---------------------------------------
+
+.. automodule:: lingpy.tests.align.test_multiple
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.tests.align.test_pairwise module
+---------------------------------------
+
+.. automodule:: lingpy.tests.align.test_pairwise
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy.tests.align.test_sca module
 ----------------------------------
 

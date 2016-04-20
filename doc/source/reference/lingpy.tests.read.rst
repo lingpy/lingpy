@@ -12,10 +12,26 @@ lingpy.tests.read.test_csv module
     :undoc-members:
     :show-inheritance:
 
+lingpy.tests.read.test_phylip module
+------------------------------------
+
+.. automodule:: lingpy.tests.read.test_phylip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy.tests.read.test_qlc module
 ---------------------------------
 
 .. automodule:: lingpy.tests.read.test_qlc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.tests.read.test_starling module
+--------------------------------------
+
+.. automodule:: lingpy.tests.read.test_starling
     :members:
     :undoc-members:
     :show-inheritance:
