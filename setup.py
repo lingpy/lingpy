@@ -79,7 +79,7 @@ setup(
     packages=find_packages(pkg_location),
     package_dir=pkg_dir,
     install_requires=requires,
-    tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
+    tests_require=['nose', 'coverage', 'mock'],
     author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill)",
     author_email="mattis.list@lingpy.org",
     entry_points={
