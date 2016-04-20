@@ -5,9 +5,21 @@ from pathlib import Path
 from mock import patch, Mock
 from nose.tools import assert_raises
 from lingpy import LexStat, rc
+from lingpy.compare.lexstat import char_from_charstring, get_score_dict
 from lingpy.util import jsonload
 from lingpy.tests.util import test_data, WithTempDir, get_log
 
+def test_char_from_charstring():
+    assert char_from_charstring('a.b.c') == "b"
+    assert char_from_charstring('a.b') == "a"
+    assert_raises(ValueError, char_from_charstring, "a")
+
+def test_get_score_dict():
+    chars = ["1.A.-", "2.B.-"]
+    model = rc("sca")
+    sd = get_score_dict(chars, model)
+    assert sd['A','B'] == -22.5
+    
 
 class TestLexStat(WithTempDir):
     def setUp(self):
@@ -108,7 +120,17 @@ class TestLexStat(WithTempDir):
                and 'turchinid' in self.lex.header
 
     def test_align_pairs(self):
-        self.lex.align_pairs('English', 'German', method='sca', pprint=False)
+        assert not self.lex.align_pairs('English', 'German', method='sca', pprint=False) 
+        assert self.lex.align_pairs(1, 2, method='sca', pprint=False)[-1] > 0.85
+    
+    def test__get_matrices(self):
+
+        matrix = list(self.lex._get_matrices(concept="hand", method="sca"))[0]
+        assert len(matrix) == 7
+        
+        matrix = list(self.lex._get_matrices(concept="hand",
+            method="turchin"))[0]
+        assert matrix[0][1] == 1
 
     def test_get_subset(self):
         self.lex.get_subset([])
