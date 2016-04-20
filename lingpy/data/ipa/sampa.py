@@ -1,51 +1,36 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
-import types
-
-from ...settings import *
-from lingpy import log
-
-
+"""
+The regular expression used in the sampa2unicode-converter  is taken from an
+algorithm for the conversion of XSAMPA to IPA (Unicode) by Peter
+Kleiweg <http://www.let.rug.nl/~kleiweg/L04/devel/python/xsampa.html>.
+@author: Peter Kleiweg
+@date: 2007/07/19
+"""
+from __future__ import print_function, division, unicode_literals
 import re
 import sys
-import os
 import codecs
 
-# data for sampa2ipa (Peter Kleiwegs implementation)
-path = os.path.split(    
-        os.path.abspath(        
-            __file__       
-            )        
-        )[0]
+from lingpy.util import data_path
 
-f = codecs.open(path + '/sampa.csv','r','utf-8')
+
+# data for sampa2ipa (Peter Kleiwegs implementation)
 xsdata = []
 _xsKeys = [' ']
 xs = {' ': ' '}
 
-for line in f:
+for line in codecs.open(data_path('ipa', 'sampa.csv'), 'r', 'utf-8'):
     line = line.strip('\n').strip('\r')
     if line and not line.startswith('#'):
         key,val = line.split('\t')
         if key in xs and xs[key] != val:
             raise ValueError("Keys encode too many values.")
         _xsKeys.append(key)
-        xs[key] = eval('"""'+val+'"""')
+        xs[key] = eval('"""' + val + '"""')
 
 _kk = []
 for _k in _xsKeys:
     _kk.append(re.escape(_k))
-_kk.sort(reverse = True)  # long before short
+_kk.sort(reverse=True)  # long before short
 _xsPat = '|'.join(_kk)
 reXS = re.compile('(' + _xsPat + ')|(.)')
-"""
-The regular expression used in the sampa2unicode-converter 
-is taken from an
-algorithm for the conversion of XSAMPA to IPA (Unicode) by Peter 
-Kleiweg <http://www.let.rug.nl/~kleiweg/L04/devel/python/xsampa.html>.
-@author: Peter Kleiweg
-@date: 2007/07/19
-"""

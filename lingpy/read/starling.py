@@ -3,9 +3,9 @@ Basic parser for Starling data.
 """
 from __future__ import unicode_literals, division, print_function
 
-from .csv import csv2list
-from .. import log
-from ..util import identity
+from lingpy.read.csv import csv2list
+from lingpy import log
+from lingpy.util import identity
 
 
 def star2qlc(filename, clean_taxnames=False, debug=False):
@@ -36,12 +36,12 @@ def star2qlc(filename, clean_taxnames=False, debug=False):
         else:
             log.info("Everything went fine, carrying on with function call.")
 
-    # determine language names in header   
+    # determine language names in header
     taxa = []
     for i in range(len(header) - 1):
         prev = header[i]
         post = header[i + 1]
-        
+
         if prev in post and '#' in post:
             taxa += [prev]
 
@@ -53,7 +53,7 @@ def star2qlc(filename, clean_taxnames=False, debug=False):
 
         if prev == 'Word':
             wrdIdx = i
-    
+
     log.info('starling, indices (%s, %s, %s)' % (lngIdx, numIdx, wrdIdx))
     log.info('starling, taxa: %s' % taxa)
 
@@ -72,35 +72,32 @@ def star2qlc(filename, clean_taxnames=False, debug=False):
         # switch to next cognate set if there is a switch in concepts
         if current_concept != gloss and len(cognate_sets) != 0:
             max_cog = max(cognate_sets)
-            cognate_counter = max_cog 
+            cognate_counter = max_cog
             cognate_sets = []
             current_concept = gloss
         else:
-            log.debug('starling, indices (%s, %s, %s)' % (gloss,
-                current_concept, cognate_counter))
+            log.debug('starling, indices (%s, %s, %s)' % (
+                gloss, current_concept, cognate_counter))
 
         for i in range(lngIdx, len(header), 2):
             word = line[i]
-            
+
             if '{' in word:
                 ipa = word[:word.index('{')].strip()
                 ortho = word[word.index('{') + 1:word.index('}')].strip()
             else:
                 ipa = word
                 ortho = word
-            
+
             cogid = int(line[i + 1])
 
             if cogid != 0 and word:
-                
                 if cogid > 0:
                     cogid = cogid + cognate_counter
-                else:
-                    pass
 
                 # append cognate sets, essential for raising the counter
                 cognate_sets += [int(cogid)]
-                
+
                 taxon = cleant(header[i])
 
                 D[idx] = [taxon, gloss, gnum, word, ortho, ipa, cogid]

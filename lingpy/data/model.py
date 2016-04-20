@@ -2,22 +2,14 @@
 Module for handling sequence models.
 """
 from __future__ import division, print_function, unicode_literals
-import re
 import os
+import re
 
-from lingpy._settings import rcParams
-from lingpy.log import *
-try:
-    from .derive import compile_model, compile_dvt
-except ImportError:
-    missing_module('networkx')
-
-from ..algorithm import misc
-from ..read import *
-from ..convert import *
-from .. import cache
-from .. import compat
-from .. import util
+from lingpy.data.derive import compile_model, compile_dvt
+from lingpy.read import read_scorer
+from lingpy import cache
+from lingpy import compat
+from lingpy import util
 
 
 class Model(object):
@@ -39,13 +31,13 @@ class Model(object):
         * 'art - the sound-class model which is used for the calculation of
           sonority profiles and prosodic strings (see :evobib:`List2012`), and
         * '_color" - the sound-class model which is used for the coloring of
-          sound-tokens when creating html-output.  
+          sound-tokens when creating html-output.
     
     Notes
     -----
     Models are loaded from binary files which can be found in the
     :file:`data/models/` folder of the LingPy package. A model has two
-    essential attributes: 
+    essential attributes:
     
     * :py:attr:`converter` -- a dictionary with IPA-tokens as keys and
       sound-class characters as values, and
@@ -90,10 +82,10 @@ class Model(object):
 
     Check, how the letter ``a`` is converted in the various models:
 
-    >>> for m in [asjp,sca,dolgo,art]: 
+    >>> for m in [asjp,sca,dolgo,art]:
     >>> for m in [asjp,sca,dolgo,art]:
     ...     print('{0} > {1} ({2})'.format('a',m.converter['a'],m.name))
-    ... 
+    ...
     a > a (asjp)
     a > A (sca)
     a > V (dolgo)
@@ -115,39 +107,39 @@ class Model(object):
 
     """
 
-    def __init__(self, model, path =None):
+    def __init__(self, model, path=None):
         new_path = lambda *cmps: \
             os.path.join(path or util.data_path('models'), model, *cmps)
         self.name = model
 
         # try to load the converter
         try:
-            self.converter = cache.load(model+'.converter')
-        except: 
-            compile_model(model,path)
-            self.converter = cache.load(model+'.converter')
-        
+            self.converter = cache.load(model + '.converter')
+        except:
+            compile_model(model, path)
+            self.converter = cache.load(model + '.converter')
+
         # give always preference to scorer matrix files
         if os.path.isfile(new_path('matrix')):
             self.scorer = read_scorer(new_path('matrix'))
         elif os.path.isfile(new_path('scorer.bin')):
             try:
-                self.scorer = cache.load(model+'.scorer')
+                self.scorer = cache.load(model + '.scorer')
             except compat.FileNotFoundError:
                 pass
         # if none of the above fits, leave it
-        else: 
+        else:
             pass
-        
+
         # read information from the info-file
         self.info = {}
-        
+
         info = util.read_text_file(new_path('INFO'))
-        data = ['description','compiler','source','date','vowels','tones']
-        
+        data = ['description', 'compiler', 'source', 'date', 'vowels', 'tones']
+
         for line in data:
             try:
-                self.info[line] = re.findall('@'+line+': (.*)',info)[0]
+                self.info[line] = re.findall('@' + line + ': (.*)', info)[0]
             except:
                 self.info[line] = 'unknown'
 
@@ -158,63 +150,53 @@ class Model(object):
             self.tones = self.info['tones']
 
     def __str__(self):
-        
         out = 'Model:    {0}\nInfo:     {1}\nSource:   {2}\n'
         out += 'Compiler: {3}\nDate:     {4}'
         out = out.format(
-                self.name,
-                self.info['description'],
-                self.info['source'],
-                self.info['compiler'],
-                self.info['date']
-                )
+            self.name,
+            self.info['description'],
+            self.info['source'],
+            self.info['compiler'],
+            self.info['date']
+        )
         return out
 
     def __repr__(self):
-
-        return '<sca-model "'+self.name+'">'
+        return '<sca-model "' + self.name + '">'
 
     def __getitem__(self, x):
-
         return self.converter[x]
 
-    def __contains__(self,x):
+    def __contains__(self, x):
+        return x in self.converter
 
-        if x in self.converter:
-            return True
-        else:
-            return False
-
-    def __eq__(self,x):
+    def __eq__(self, x):
         """
         Compare a sound-class model with another model.
         """
+        return self.__repr__() == x.__repr__()
 
-        if self.__repr__() == x.__repr__():
-            return True
-        else:
-            return False
-
-    def __call__(self,x,y):
+    def __call__(self, x, y):
         """
         Use the call-shortcut to retrieve the scoring function.
         """
-        return self.scorer[x,y]
+        return self.scorer[x, y]
+
 
 def load_dvt(path=''):
     """
     Function loads the default characters for IPA diacritics and IPA vowels of LingPy.
     """
     # check for specific evolaemp path which sues asjp alphabet instead of IPA
-    if path in ['el','evolaemp']:
+    if path in ['el', 'evolaemp']:
         fn = 'dvt_el'
     else:
         fn = 'dvt'
-    
+
     try:
         dvt = cache.load(fn)
     except:
         compile_dvt(path)
-        dvt = cache.load(fn) 
-    
+        dvt = cache.load(fn)
+
     return dvt

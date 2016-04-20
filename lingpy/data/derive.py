@@ -1,8 +1,4 @@
 # *-* coding: utf-8 *-*
-# These lines were automatically added by the 3to2-conversion.
-from __future__ import print_function
-from __future__ import division
-from __future__ import unicode_literals
 """
 Module for the derivation of sound class models.
 
@@ -11,21 +7,21 @@ All models are defined in simple text files. In order to guarantee their quick
 access when loading the library, the models are compiled and stored in binary
 files.
 """
-
+from __future__ import division, print_function, unicode_literals
 import os
 
-from ..settings import rcParams
-from ..algorithm import misc
-from ..convert.strings import scorer2str
-from ..read import *
-from .. import cache
-from .. import util
-from .. import log
+from lingpy.algorithm import misc
+from lingpy.convert.strings import scorer2str
+from lingpy.read.phylip import read_scorer
+from lingpy import cache
+from lingpy import util
+from lingpy import log
 
 try:
     import networkx as nx
 except ImportError:
     log.missing_module('networkx')
+
 
 def _read(filename, normalize=None):
     res = {}
@@ -37,7 +33,7 @@ def _read(filename, normalize=None):
 
 def _import_sound_classes(filename):
     """
-    Function imports individually defined sound classes from a text file and 
+    Function imports individually defined sound classes from a text file and
     creates a replacement dictionary from these sound classes.
     """
     sc_repl_dict = {}
@@ -59,16 +55,12 @@ def _import_score_tree(filename):
         graph.add_node(key, val=values[0])
         for value in values[1:]:
             if value != '-':
-                node,weight = value.split(':')
-                graph.add_edge(key,node,weight=int(weight))
+                node, weight = value.split(':')
+                graph.add_edge(key, node, weight=int(weight))
     return graph
 
-def _fop(
-        graph, 
-        start, 
-        end, 
-        path=[]
-        ):
+
+def _fop(graph, start, end, path=[]):
     """
     Function returns all paths (_fop=find_all_paths) which connect to nodes in a network.
     """
@@ -83,16 +75,10 @@ def _fop(
             newpaths = _fop(graph, node, end, path)
             for newpath in newpaths:
                 paths.append(newpath)
-    if paths != []:
-        return paths
-    else:
-        return []
+    return paths
 
-def _find_dir_path(
-        graph,
-        start,
-        end
-        ):
+
+def _find_dir_path(graph, start, end):
     """
     Function finds the path connecting two nodes in a directed graph under the
     condition that the two nodes are connected either directly or by a common
@@ -100,41 +86,41 @@ def _find_dir_path(
     """
 
     # first possibility: there is a direct path between the two nodes
-    #if nx.shortest_path(graph,start,end) != False:
+    # if nx.shortest_path(graph,start,end) != False:
     try:
-        check = nx.shortest_path(graph,start,end)
+        check = nx.shortest_path(graph, start, end)
     except:
         check = False
 
     if check == False:
-        
-        #return nx.shortest_path(graph,start,end)
-    #else:
-    #except:
+
+        # return nx.shortest_path(graph,start,end)
+        # else:
+        # except:
         # second possibility: there is a direct path between the two nodes, but
         # it starts from the other node
-        #if nx.shortest_path(graph,end,start) != False:
+        # if nx.shortest_path(graph,end,start) != False:
         try:
-            check = nx.shortest_path(graph,end,start)
+            check = nx.shortest_path(graph, end, start)
         except:
             check = False
-            #return nx.shortest_path(graph,end,start)
+            # return nx.shortest_path(graph,end,start)
         # third possibility: there is no direct path between the nodes in
         # neither direction, but there is a path in an undirected graph
         if check == False:
-            if _fop(graph.to_undirected(),start,end) != []:
+            if _fop(graph.to_undirected(), start, end) != []:
                 # here, we simply check, whether with in all paths connecting the
                 # two nodes there is a node which directly connects to both nodes
                 # (i.e. which is the ancestor of both nodes). If this is the case,
                 # the respective shortest path is what we are looking for.
-                paths = _fop(graph.to_undirected(),start,end)
+                paths = _fop(graph.to_undirected(), start, end)
                 current_path_length = max([len(path) for path in paths])
                 shortest_paths = nx.shortest_path(graph)
                 current_path = []
                 for path in paths:
                     for node in path[1:-1]:
-                        if start in shortest_paths[node].keys() and end in\
-                                shortest_paths[node].keys():
+                        if start in shortest_paths[node].keys() \
+                                and end in shortest_paths[node].keys():
                             if len(path) <= current_path_length:
                                 current_path_length = len(path)
                                 current_path = path
@@ -151,25 +137,22 @@ def _find_dir_path(
     else:
         return check
 
-def _get_path_length(
-        graph,
-        path
-        ):
+
+def _get_path_length(graph, path):
     """
     Function returns the length of a path in a weighted graph.
     """
 
     if path == False:
         return False
-    edges = zip(path[:-1],path[1:])
+    edges = zip(path[:-1], path[1:])
     counter = 0
-    for node1,node2 in edges:
+    for node1, node2 in edges:
         counter += graph.to_undirected()[node1][node2]['weight']
     return counter
 
-def _make_scoring_dictionary(
-        graph,
-        ):
+
+def _make_scoring_dictionary(graph):
     """
     Function creates a scoring dictionary for individually defined sound
     classes and individually created scoring trees by counting the path length
@@ -179,13 +162,21 @@ def _make_scoring_dictionary(
     # the scoring dictionary which will be returned by the function
     score_dict = {}
 
+    def get_starting_value(graph, node1, node2, max_, default):
+        distance = _get_path_length(
+            graph, _find_dir_path(graph, node1, node2))
+        # make sure that the distance doesn't exceed the default value.
+        if distance is False or distance > max_:
+            return default
+        return max_ + default - distance
+
     # iterate over all nodes in the previously created graph of sound class
     # transitions
     for node1 in graph.nodes():
         for node2 in graph.nodes():
             # check, whether the key has already been created
             try:
-                score_dict[(node1,node2)]
+                score_dict[(node1, node2)]
             # if not, create the key
             except KeyError:
                 # if the nodes are the same, assign them the values for
@@ -193,7 +184,7 @@ def _make_scoring_dictionary(
                 # these values might be made changeable in later versions
                 if node1 == node2:
                     # for vowels and glides, the same starting value is assumed
-                    if graph.node[node1]['val'] in ['v','g']:
+                    if graph.node[node1]['val'] in ['v', 'g']:
                         value = 5
                     # make sure, that tones do not score
                     elif graph.node[node1]['val'] == 't':
@@ -203,7 +194,6 @@ def _make_scoring_dictionary(
                 # if the nodes are different, see, if there is a connection
                 # between them defined in the directed network
                 else:
-                    
                     # treat vowel-vowel and consonant-consonant matches
                     # differently
                     if graph.node[node1]['val'] == graph.node[node2]['val']:
@@ -211,149 +201,81 @@ def _make_scoring_dictionary(
                         # for vowels and glides, the starting value to subtract the
                         # weighted pathlength from is the vowel-vowel-identity
                         # score
-                        if graph.node[node1]['val'] in ['v','g']:
-                            distance = _get_path_length(
-                                    graph,
-                                    _find_dir_path(
-                                        graph,
-                                        node1, 
-                                        node2
-                                        )
-                                    )
+                        if graph.node[node1]['val'] in ['v', 'g']:
                             # make sure that the distance doesn't exceed the
                             # default value for vowel-vowel matches, which
                             # should be zero, if there is no connection in the
                             # path defined
-                            if distance == False or distance > 5:
-                                value = 0
-                            else:
-                                value = 5 - distance
-
+                            value = get_starting_value(graph, node1, node2, 5, 0)
 
                         # for consonants, the starting value is the
                         # consonant-consonant score
                         elif graph.node[node1]['val'] == 'c':
-                            distance = _get_path_length(
-                                    graph,
-                                    _find_dir_path(
-                                        graph,
-                                        node1, 
-                                        node2
-                                        )
-                                    )
-                            # make sure that the minimum value of C-C-matches
-                            # is zero
-                            if distance == False or distance > 10:
-                                value = 0
-                            else:
-                                value = 10 - distance
+                            # make sure that the minimum value of C-C-matches is zero
+                            value = get_starting_value(graph, node1, node2, 10, 0)
                         else:
-                            # make sure that tone-tone classes score with zero 
+                            # make sure that tone-tone classes score with zero
                             value = 1
                     # for vowel-consonant, vowel-glide and glide-consonant
                     # matches, the starting value is the vowel-vowel score (may
-                    # also be changed in later versions) 
+                    # also be changed in later versions)
                     else:
+                        choices = [graph.node[node1]['val'], graph.node[node2]['val']]
+
                         # make sure to exclude tones from all matchings in
                         # order to force the algorithm to align tones with
                         # tones or gaps and with nothing else
-                        if 't' in [
-                                graph.node[node1]['val'],
-                                graph.node[node2]['val']
-                                ]:
+                        if 't' in choices:
                             value = -20
                         # matches of glides with different classes
-                        elif 'g' in [
-                                graph.node[node1]['val'],
-                                graph.node[node2]['val']
-                                ]:
-                            # glides and vowels
-                            if 'v' in [
-                                    graph.node[node1]['val'],
-                                    graph.node[node2]['val']
-                                    ]:
-                                distance = _get_path_length(
-                                        graph,
-                                        _find_dir_path(
-                                            graph,
-                                            node1,
-                                            node2
-                                            )
-                                        )
-                                if distance == False or distance > 10:
-                                    value = -5
-                                else:
-                                    value = 5 - distance
-                            # glides and consonants
-                            elif 'c' in [
-                                    graph.node[node1]['val'],
-                                    graph.node[node2]['val']
-                                    ]:
-                                distance = _get_path_length(
-                                        graph,
-                                        _find_dir_path(
-                                            graph,
-                                            node1,
-                                            node2
-                                            )
-                                        )
-                                if distance == False or distance > 10:
-                                    value = -5
-                                else:
-                                    value = 5 - distance
-                        else:
-                            distance = _get_path_length(
-                                    graph,
-                                    _find_dir_path(
-                                        graph, 
-                                        node1,
-                                        node2
-                                        )
-                                    )
-                            if distance == False or distance > 15:
-                                value = -10
+                        elif 'g' in choices:
+                            # glides and vowels or glides and consonants
+                            if 'v' in choices or 'c' in choices:
+                                value = get_starting_value(graph, node1, node2, 10, -5)
                             else:
-                                value = 5 - distance
-                
-                score_dict[(node1,node2)] = value
-                score_dict[(node2,node1)] = value
-    
+                                raise ValueError
+                        else:
+                            value = get_starting_value(graph, node1, node2, 15, -10)
+
+                score_dict[(node1, node2)] = value
+                score_dict[(node2, node1)] = value
+
     # add the characters for gaps in the multiple alignment process
     # note that gaps and gaps should be scored by zero according to Feng &
     # Doolittle. so far I have scored them as -1, and scoring gaps as zero made
     # the alignments getting worse, probably because most tests have been based
-    # on profiles. we probably need a very good gap score. 
+    # on profiles. we probably need a very good gap score.
     for node in graph.nodes():
         # missing data
-        score_dict[(node,'0')] = 0
-        score_dict[('0',node)] = 0
+        score_dict[(node, '0')] = 0
+        score_dict[('0', node)] = 0
 
         # swaps
-        score_dict[(node,'+')] = -100
-        score_dict[('+',node)] = -100
+        score_dict[(node, '+')] = -100
+        score_dict[('+', node)] = -100
 
         # specific values
         if graph.node[node]['val'] == 'v':
-            score_dict[(node,'X')] = 0
-            score_dict[('X',node)] = 0
+            score_dict[(node, 'X')] = 0
+            score_dict[('X', node)] = 0
         elif graph.node[node]['val'] == 'g':
-            score_dict[(node,'X')] = 0
-            score_dict[('X',node)] = 0    
+            score_dict[(node, 'X')] = 0
+            score_dict[('X', node)] = 0
         else:
-            score_dict[(node,'X')] = 0
-            score_dict[('X',node)] = 0
-    
-    score_dict[('X','+')] = -5
-    score_dict[('+','X')] = -5
-    score_dict[('+','+')] = 0
-    score_dict[('0','0')] = 0
-    score_dict[('0','X')] = 0
-    score_dict[('X','0')] = 0
+            score_dict[(node, 'X')] = 0
+            score_dict[('X', node)] = 0
+
+    score_dict[('X', '+')] = -5
+    score_dict[('+', 'X')] = -5
+    score_dict[('+', '+')] = 0
+    score_dict[('0', '0')] = 0
+    score_dict[('0', 'X')] = 0
+    score_dict[('X', '0')] = 0
 
     # define the gaps
-    score_dict[('X','X')] = 0
-
+    score_dict[('X', 'X')] = 0
     return score_dict
+
 
 def _export_score_dict(score_dict):
     """
@@ -368,10 +290,7 @@ def _export_score_dict(score_dict):
     util.write_text_file('score_dict.csv', '\n'.join('\t'.join(row) for row in rows))
 
 
-def compile_model(
-        model,
-        path = None
-        ):
+def compile_model(model, path=None):
     """
     Function compiles customized sound-class models.
 
@@ -417,21 +336,21 @@ def compile_model(
             E : ɛ, æ, ɜ, ɐ, ʌ, e, ᴇ, ə, ɘ, ɤ, è, é, ē, ě, ê, ɚ
             D : θ, ð, ŧ, þ, đ
             G : x, ɣ, χ
-            ...    
+            ...
     
     :file:`matrix`
         A scoring matrix indicating the alignment scores of all sound-class
         characters defined by the model. The scoring is structured as a simple
         tab-delimited text file. The first cell contains the character names,
         the following cells contain the scores in redundant form (with both
-        triangles being filled):: 
+        triangles being filled)::
 
             B  10.0 -10.0   5.0 ...
             E -10.0   5.0 -10.0 ...
             F   5.0 -10.0  10.0 ...
             ...
 
-    :file:`scorer` 
+    :file:`scorer`
         The ``scorer`` file (which is optional) contains the graph of
         class-transitions which is used for the calculation of the scoring
         dictionary. Each class is listed in a separate line, followed by the
@@ -455,7 +374,7 @@ def compile_model(
     conversion of IPA-characters to sound classes and a scoring dictionary are
     created and stored as a binary.  The model can be loaded with help of the
     :py:class:`~lingpy.data.model.Model` class and used in the various classes
-    and functions provided by the library. 
+    and functions provided by the library.
     
     See also
     --------
@@ -463,7 +382,7 @@ def compile_model(
     compile_dvt
 
     """
-    log.info("Compiling model <"+model+">...")
+    log.info("Compiling model <" + model + ">...")
     # get the path to the models
     new_path = lambda *cmps: os.path.join(path or util.data_path('models'), model, *cmps)
 
@@ -471,45 +390,38 @@ def compile_model(
 
     # load the sound classes
     sound_classes = _import_sound_classes(new_path('converter'))
-    
+
     # dump the data
-    cache.dump(sound_classes, model+'.converter')
+    cache.dump(sound_classes, model + '.converter')
     log.info("... successfully created the converter.")
 
     # try to load the scoring function or the score tree
     scorer = False
-    
+
     if os.path.isfile(new_path('matrix')):
         scorer = read_scorer(new_path('matrix'))
     elif os.path.isfile(new_path('scorer')):
         score_tree = _import_score_tree(new_path('scorer'))
-    
+
         # calculate the scoring dictionary
         score_dict = _make_scoring_dictionary(score_tree)
 
         # make score_dict a ScoreDict instance
         chars = sorted(set([s[0] for s in score_dict.keys()]))
         matrix = [[0 for i in range(len(chars))] for j in
-                range(len(chars))]
-        for i,charA in enumerate(chars):
-            for j,charB in enumerate(chars):
-                if i < j:
-                    try:
-                        matrix[i][j] = score_dict[charA,charB]
-                        matrix[j][i] = score_dict[charB,charA]
-                    except KeyError:
-                        matrix[i][j] = -100
-                        matrix[j][i] = -100
-                elif i == j:
-                    matrix[i][j] = score_dict[charA,charB]        
+                  range(len(chars))]
+        for (i, charA), (j, charB) in util.multicombinations2(enumerate(chars)):
+            if i < j:
+                matrix[i][j] = score_dict.get((charA, charB), -100)
+                matrix[j][i] = score_dict.get((charB, charA), -100)
+            elif i == j:
+                matrix[i][j] = score_dict[charA, charB]
 
-        scorer = misc.ScoreDict(chars,matrix)
-        
-        # create the matrix file
+        scorer = misc.ScoreDict(chars, matrix)
         util.write_text_file(new_path('matrix'), scorer2str(scorer))
 
     if scorer:
-        cache.dump(scorer, model+'.scorer')
+        cache.dump(scorer, model + '.scorer')
         log.info("... successfully created the scorer.")
     else:
         log.info("... no scoring dictionary defined.")
@@ -563,7 +475,7 @@ def compile_dvt(path=''):
     tones = _read_string('tones')
 
     dvt = (diacritics, vowels, tones)
-    
+
     if path in ['evolaemp', 'el']:
         cache.dump(dvt, 'dvt_el')
     else:
