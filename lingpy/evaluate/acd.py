@@ -11,7 +11,7 @@ from lingpy import log
 from lingpy.util import identity
 
 
-def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
+def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -26,10 +26,12 @@ def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     test : str (default='lexstatid')
         The name of the column containing the automatically implemented cognate
         assignments.
-    loans : bool (default=True)
-        If set to c{False}, loans (indicated by negative IDs in the gold
-        standard) will be treated as separate cognates, otherwise, loans will
-        be treated as cognates.
+    modify_ref : function (default=False)
+        Use a function to modify the reference. If your cognate identifiers
+        are numerical, for example, and negative values are assigned as
+        loans, but you want to suppress this behaviour, just set this
+        keyword to "abs", and all cognate IDs will be converted to their
+        absolute value.
     pprint : bool (default=True)
         Print out the results
 
@@ -55,10 +57,10 @@ def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     lex._clean_cache()
 
     # if loans are treated as homologs
-    evl = abs if loans else identity
+    evl = modify_ref if modify_ref else identity
 
     def get_scores(one, other):
-        for _, line in lex.get_etymdict(ref=one, loans=loans).items():
+        for _, line in lex.get_etymdict(ref=one, modify_ref=modify_ref).items():
             line = [value for value in [evl(x[0]) for x in line if x != 0]]
             # check for linesize
             if len(line) > 1:
@@ -97,7 +99,7 @@ def bcubes(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     return BCP, BCR, FSC
 
 
-def pairs(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
+def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     """
     Compute pair scores for the evaluation of cognate detection algorithms.
     
@@ -111,10 +113,12 @@ def pairs(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     test : str (default='lexstatid')
         The name of the column containing the automatically implemented cognate
         assignments.
-    loans : bool (default=True)
-        If set to c{False}, loans (indicated by negative IDs in the gold
-        standard) will be treated as separate cognates, otherwise, loans will
-        be treated as cognates.
+    modify_ref : function (default=False)
+        Use a function to modify the reference. If your cognate identifiers
+        are numerical, for example, and negative values are assigned as
+        loans, but you want to suppress this behaviour, just set this
+        keyword to "abs", and all cognate IDs will be converted to their
+        absolute value.
     pprint : bool (default=True)
         Print out the results
 
@@ -135,10 +139,10 @@ def pairs(lex, gold='cogid', test='lexstatid', loans=False, pprint=True):
     bcubes
     """
     # if loans are treated as homologs
-    evl = abs if loans else identity
+    evl = modify_ref if modify_ref else identity
 
     def get_pairs(ref):
-        for key, line in lex.get_etymdict(ref=ref, loans=loans).items():
+        for key, line in lex.get_etymdict(ref=ref, modify_ref=modify_ref).items():
             line = [value for value in [evl(x[0]) for x in line if x != 0]]
             for a, b in combinations(line, r=2):
                 yield tuple(sorted([a, b]))
@@ -168,7 +172,7 @@ def diff(
         lex,
         gold='cogid',
         test='lexstatid',
-        loans=False,
+        modify_ref=False,
         pprint=True,
         filename='',
         tofile=True,
@@ -185,10 +189,12 @@ def diff(
     test : str (default='lexstatid')
         The name of the column containing the automatically implemented cognate
         assignments.
-    loans : bool (default=True)
-        If set to c{False}, loans (indicated by negative IDs in the gold
-        standard) will be treated as separate cognates, otherwise, loans will
-        be treated as cognates.
+    modify_ref : function (default=False)
+        Use a function to modify the reference. If your cognate identifiers
+        are numerical, for example, and negative values are assigned as
+        loans, but you want to suppress this behaviour, just set this
+        keyword to "abs", and all cognate IDs will be converted to their
+        absolute value.
     pprint : bool (default=True)
         Print out the results
     filename : str (default='')
@@ -242,7 +248,7 @@ def diff(
     pairs
     """
     filename = filename or lex.filename
-    loan = abs if loans else identity
+    loan = modify_ref if modify_ref else identity
 
     # open file
     if tofile:

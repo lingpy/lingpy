@@ -494,10 +494,7 @@ class PSA(Pairwise):
 
                         for x, y in zip(a, b):
                             if '-' not in (x, y):
-                                try:
-                                    scores += [self.model(x, y)]
-                                except:
-                                    self._set_model(model=keywords['model'])
+                                scores += [self.model(x, y)]
                                 idxA += 1
                                 idxB += 1
                             else:
@@ -534,8 +531,16 @@ class Alignments(Wordlist):
         A string defining the path to the configuration file.
     ref : string (default='cogid')
         The name of the column that stores the cognate IDs.
-    loans : bool (default=True)
-        Specify whether loans should be included in the cognate sets.
+    modify_ref : function (default=False)
+        Use a function to modify the reference. If your cognate identifiers
+        are numerical, for example, and negative values are assigned as
+        loans, but you want to suppress this behaviour, just set this
+        keyword to "abs", and all cognate IDs will be converted to their
+        absolute value.
+
+    Attributes
+    ----------
+
 
     Notes
     -----
@@ -552,48 +557,55 @@ class Alignments(Wordlist):
             col='doculect',
             conf='',
             ref='cogid',
-            loans=True,
+            modify_ref=False,
             _interactive=True,
             **keywords):
         # keywords, "strings" locates, where the reference for the alignments
         # is to be found
-        kw = {"strings": "tokens", "alignment": "alignment"}
+        kw = {"segments": "tokens", "alignment": "alignment", "transcription" :
+                "ipa"}
         kw.update(keywords)
 
         # initialize the wordlist
         Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
-        self._alignment = kw['alignment']  # defines where alignments are stored
-        self._tokens = kw['strings']
+        self._alignment = self._alias[kw['alignment']]
+        self._segments = self._alias[kw['segments']]
+        self._ref = self._alias[ref]
+        self._transcription = self._alias[kw['transcription']]
 
         # check whether fuzzy (partial) alignment or normal alignment is
-        # carried out
-        self._mode = 'fuzzy' if self._class_string[ref] not in ['str', 'int'] else 'plain'
+        # carried out, if a new namespace is used, we assume it to be plain
+        self._mode = 'fuzzy' if ref in self._class_string and self._class_string[ref] \
+                not in ['str', 'int'] else 'plain'
+        # store loan-status
+        self._modify_ref = modify_ref
 
-        # check for reference / cognates
-        if 'cognates' in keywords:
-            log.deprecated('cognates', 'ref')
-            ref = keywords['cognates']
+        if self._segments not in self._header:
+            if self._transcription in self.header:
+                self.add_entries(self._segments, self._transcription,
+                        ipa2tokens)
+            elif self._alignment in self.header:
+                self.add_entries(self._segments, self._alignment, 
+                        lambda x: ' '.join([y for y in x if y not in
+                            rcParams['gap_symbol']]))
+            else:
+                raise ValueError("No valid source for segments could be found.")
+        
+        self.etd = {}
+        self.add_alignments(ref, modify_ref=modify_ref)
 
-        # change ref to rcParams
-        if ref != rcParams['ref']:
-            rcParams['ref'] = ref
-
+    def add_alignments(self, ref, modify_ref=False):
+        """
+        Function adds a new set of alignments to the data.
+        """
         # check for cognate-id or alignment-id in header
         try:
-            self.etd = {ref: self.get_etymdict(ref=ref, loans=loans)}
-        # else raise error
+            self.etd[ref] = self.get_etymdict(ref=ref, modify_ref=modify_ref)
         except:
             raise ValueError("Did not find a cognate ID in the input file.")
 
-        # store loan-status
-        self._loans = loans
-
-        try:
-            stridx = self.header[kw['strings']]
-        except:
-            log.warn("No valid source for strings could be found.")
-
+        stridx = self.header[self._segments]
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
             self._meta['msa'] = {ref: {}}
@@ -617,8 +629,8 @@ class Alignments(Wordlist):
 
                     # set up the data
                     for seq in seqids:
-                        if kw['alignment'] in self.header:
-                            this_string = self[seq][self.header[kw['alignment']]]
+                        if self._alignment in self.header:
+                            this_string = self[seq][self.header[self._alignment]]
                         else:
                             this_string = self[seq][stridx]
                         if isinstance(this_string, text_type):
@@ -640,7 +652,7 @@ class Alignments(Wordlist):
                     d['alignment'] = normalize_alignment(d['alignment'])
                     self._meta['msa'][ref][key] = d
 
-    def reduce_alignments(self, alignment='alignment', ref='cogid'):
+    def reduce_alignments(self, alignment=False, ref=False):
         """
         Function reduces alignments which contain columns that are marked to be \
                 ignored by the user.
@@ -655,10 +667,13 @@ class Alignments(Wordlist):
         guarantee that the alignments with with we want to work are at the same
         place in the dictionary.
         """
+        alignments = alignment or self._alignment
+        ref = ref or self._ref
+
         if alignment not in self.header:
             raise ValueError(
                 'No alignments found in your data. ' +
-                'You carry out an alignment analysis first!')
+                'You should carry out an alignment analysis first!')
 
         # dictionary to add new alignments class afterwards for providing quick
         # access
@@ -676,11 +691,14 @@ class Alignments(Wordlist):
                 D[k] = ['']
         self.add_entries('_'+alignment, D, lambda x: x)
 
-    def _msa2col(self, ref='cogid'):
+    def _msa2col(self, ref=False, alignment=False):
         """
         Add alignments to column (space-separated) in order to make it easy to
         parse them in the wordlist editor.
         """
+        ref = ref or self._ref
+        aligment = alignment or self._alignment
+
         tmp = {}
         # plain mode, that means, no partial alignments
         if self._mode == 'plain':
@@ -694,10 +712,10 @@ class Alignments(Wordlist):
 
             missing = [idx for idx in self if idx not in tmp]
             for m in missing:
-                if 'tokens' in self.header:
-                    tmp[m] = self[m, 'tokens']
-                elif 'ipa' in self.header:
-                    tmp[m] = ipa2tokens(self[m, 'ipa'])
+                if self._segments in self.header:
+                    tmp[m] = self[m, self._segments]
+                elif self._transcription in self.header:
+                    tmp[m] = ipa2tokens(self[m, self._transcription])
                 elif self._alignment in self.header:
                     tmp[m] = self[m, self._alignment]
                 else:
@@ -718,13 +736,13 @@ class Alignments(Wordlist):
                         idx = msa['ID'].index(key)
                         tmp[key] += msa['alignment'][idx]
                     else:
-                        tmp[key] += tokens2morphemes(self[key, self._tokens])[i]
+                        tmp[key] += tokens2morphemes(self[key, self._segments])[i]
                     # add morpheme separator as long as we don't add the last
                     # element
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(self._alignment, tmp, lambda x: x)
+        self.add_entries(alignment, tmp, lambda x: x)
 
     def align(self, **keywords):
         """
@@ -801,30 +819,34 @@ class Alignments(Wordlist):
             strings of sequences.
         """
         kw = dict(
-            method='progressive',
-            iteration=False,
-            swap_check=False,
-            output=False,
-            model=rcParams['sca'],
-            mode=rcParams['align_mode'],
-            modes=rcParams['align_modes'],
-            gop=rcParams['align_gop'],
-            scale=rcParams['align_scale'],
-            factor=rcParams['align_factor'],
-            tree_calc=rcParams['align_tree_calc'],
-            gap_weight=rcParams['gap_weight'],
-            restricted_chars=rcParams['restricted_chars'],
+            alignment=False,
             classes=rcParams['classes'],
-            sonar=rcParams['sonar'],
-            scoredict=rcParams['scorer'],
-            ref=rcParams['ref'],
-            plots=False,
-            filename=self.filename,
-            show=False,
-            style='plain',
             defaults=False,
+            factor=rcParams['align_factor'],
+            filename=self.filename,
+            gap_weight=rcParams['gap_weight'],
+            gop=rcParams['align_gop'],
+            iteration=False,
+            method='progressive',
+            mode=rcParams['align_mode'],
+            model=rcParams['sca'],
+            modes=rcParams['align_modes'],
+            output=False,
+            plots=False,
+            ref=False,
+            restricted_chars=rcParams['restricted_chars'],
+            scale=rcParams['align_scale'],
+            scoredict=rcParams['scorer'],
+            show=False,
+            sonar=rcParams['sonar'],
+            style='plain',
+            swap_check=False,
+            tree_calc=rcParams['align_tree_calc'],
         )
         kw.update(keywords)
+        kw['ref'] = kw['ref'] or self._ref
+        kw['alignment'] = kw['alignment'] or self._alignment
+
         if kw['defaults']:
             return kw
 
@@ -890,7 +912,7 @@ class Alignments(Wordlist):
             self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
                 m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
 
-        self._msa2col(ref=kw['ref'])
+        self._msa2col(ref=kw['ref'], alignment=kw['alignment'])
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
         """
@@ -926,8 +948,9 @@ class Alignments(Wordlist):
             dataset=self.filename,
             show=False,
             filename=self.filename,
-            ref=rcParams['ref'],
+            ref=False,
             confidence=False)
+        keywords['ref'] = keywords['ref'] or self._ref
 
         with util.TemporaryPath(suffix='.alm') as tmp:
             self.output(
@@ -1133,8 +1156,8 @@ class Alignments(Wordlist):
             for concept in self.concepts:
                 out += '\n'
                 indices = self.get_list(row=concept, flat=True)
-                if self._loans:
-                    cogids = [abs(self[i, ref]) for i in indices]
+                if self._modify_ref:
+                    cogids = [self._modify_ref(self[i, ref]) for i in indices]
                 else:
                     cogids = [self[i, ref] for i in indices]
                 cogids = sorted(set(cogids))
@@ -1245,18 +1268,6 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
         A consensus string of the given MSA.
     """
 
-    def rep_weights(char1, char2, _):
-        if char1 == char2:
-            return 0
-
-        if char1 == '-':
-            return 0.1 if char2 in vowels else 0.8
-
-        if char2 == "-":
-            return 0.3 if char1 in vowels else 0.1
-
-        return 0.1
-
     util.setdefaults(
         keywords,
         model=rcParams['sca'],
@@ -1264,7 +1275,6 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
         mode='majority',
         gap_score=-10,
         weights=[1 for i in range(len(msa[0]))],
-        rep_weights=rep_weights,
         local=False)
 
     # transform the matrix
@@ -1278,7 +1288,7 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
             for line in matrix:
                 sim = []
                 for (i, charA), (j, charB) in util.combinations2(enumerate(line)):
-                    if charA not in '-' and charB not in '-':
+                    if charA not in rcParams['gap_symbol'] and charB not in rcParams['gap_symbol']:
                         sim.append(keywords['model'](
                             tokens2class([charA], keywords['model'])[0],
                             tokens2class([charB], keywords['model'])[0]
@@ -1330,8 +1340,8 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
     if not classes:
         for col in matrix:
             count = Counter(col)
-            if '-' in count:
-                count['-'] *= keywords['gap_scale']
+            if rcParams['gap_symbol'] in count:
+                count[rcParams['gap_symbol']] *= keywords['gap_scale']
             cons.append(count.most_common(1)[0][0])
     elif classes:
         for i, col in enumerate(classes):
@@ -1339,8 +1349,8 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
             for j, c in enumerate(col):
                 tmpB[matrix[i][j]] += 1
             # half the weight of gaps
-            if '-' in tmpA:
-                tmpA['-'] *= keywords['gap_scale']
+            if rcParams['gap_symbol'] in tmpA:
+                tmpA[rcParams['gap_symbol']] *= keywords['gap_scale']
             chars = tmpA.most_common()
             # if mode is set to 'maximize', calculate the score
             if keywords['mode'] == 'maximize':
@@ -1352,7 +1362,8 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
                             if '-' not in (c, c2):
                                 score += keywords['model'](c, c2)
                             else:
-                                if (c, c2) == ('-', '-'):
+                                if (c, c2) == (rcParams['gap_symbol'],
+                                        rcParams['gap_symbol']):
                                     score += 0
                                 else:
                                     score += keywords['gap_score'] * \
@@ -1378,13 +1389,14 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
 
             # apply check for gaps here, if there are more gaps than in the
             # full column, take the gaps, otherwise, take the next char
-            if chars[0] == '-':
-                if tmp['-'] > sum([tmp[x] for x in tmp if x != '-']):
-                    cchar = '-'
+            if chars[0] == rcParams['gap_symbol']:
+                if tmp[rcParams['gap_symbol']] > sum([tmp[x] for x in tmp if x != \
+                    rcParams['gap_symbol']]):
+                    cchar = rcParams['gap_symbol']
                 else:
                     cchar = chars[1]
             else:
                 cchar = chars[0]
             cons.append(cchar)
 
-    return cons if gaps else [c for c in cons if c != '-']  # cons.replace('-','')
+    return cons if gaps else [c for c in cons if c != rcParams['gap_symbol']]  

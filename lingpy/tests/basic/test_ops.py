@@ -16,7 +16,8 @@ class TestOps(WithTempDir):
     def test_wl2dict(self):
         from lingpy.basic.ops import wl2dict
 
-        res = wl2dict(self.wordlist, dict(s1='taxon', s2='cogid'), [(('1',), '{0}')])
+        res = wl2dict(self.wordlist, dict(s1=['concept','{0}'], s2=['cogid',
+            '{0}']), [('ipa', '{0}')])
 
     def test_wl2dst(self):
         from lingpy.basic.ops import wl2dst

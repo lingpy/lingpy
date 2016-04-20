@@ -27,4 +27,9 @@ class Tests(WithTempDir):
 
         res = diff(self.lex, test='cogid', tofile=False, pprint=False)
         self.assertAlmostEquals(res, ((1.0, 1.0, 1.0), (1.0, 1.0, 1.0)))
-        diff(self.lex, test='cogid', filename='%s' % self.tmp_path('test_acd'), pprint=False)
+        self.lex.add_entries('cugid', 'cogid', lambda x: x+1 if x % 2 else x*x)
+        d1 = diff(self.lex, gold='cogid', test='cogid', filename='%s' % self.tmp_path('test_acd'), pprint=False)
+        d2 = diff(self.lex, gold='cugid', test='cogid', filename='%s' %
+                self.tmp_path('test_acd'), pprint=False, tofile=False)
+
+        assert d2[0] != 1

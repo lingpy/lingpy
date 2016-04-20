@@ -83,18 +83,8 @@ class Wordlist(QLCParserWithRowsAndCols):
         """
         Method allows quick access to the data by passing the integer key.
         """
-        try:
-            return self._get_cached(idx)
-        except KeyError:
-            try:
-                # return data entry with specified key word
-                self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                return self._cache[idx]
-            except:
-                if idx in self._meta:
-                    self._cache[idx] = self._meta[idx]
-                    return self._cache[idx]
-
+        return self._get_cached(idx)
+ 
     def add_entries(
             self,
             entry,
@@ -446,7 +436,8 @@ class Wordlist(QLCParserWithRowsAndCols):
             self,
             ref="cogid",
             entry='',
-            loans=False):
+            modify_ref=False
+            ):
         """
         Return an etymological dictionary representation of the word list.
 
@@ -458,11 +449,13 @@ class Wordlist(QLCParserWithRowsAndCols):
         entry : string (default = '')
             The entry-type which shall be selected.
 
-        loans : bool (default=False)
-            Treat all negative cognate ids as if they were positive ones.
-            Negative IDs can be used to indicate borrowings, or, more
-            accurately, xenologs.
-
+        modify_ref : function (default=False)
+            Use a function to modify the reference. If your cognate identifiers
+            are numerical, for example, and negative values are assigned as
+            loans, but you want to suppress this behaviour, just set this
+            keyword to "abs", and all cognate IDs will be converted to their
+            absolute value.
+            
         Returns
         -------
         etym_dict : dict
@@ -478,59 +471,47 @@ class Wordlist(QLCParserWithRowsAndCols):
         cognate set for each of the IDs.
 
         """
-
-        # make an alias for the reference
-        ref = (self._alias[ref], loans)
-
-        # make converting function for loans
-        f = abs if loans else util.identity
-
+        ref = self._alias[ref] 
+        f = modify_ref or util.identity
+        
         # create an etymdict object
-        if ref not in self._etym_dict:
-            self._etym_dict[ref] = {}
+        etym_dict = {}
 
-            # get the index for the cognate id
-            cogIdx = self._header[ref[0]]
+        # get the index for the cognate id
+        cogIdx = self._header[ref]
 
-            # iterate over all data
-            for key in self:
-                cogids = self[key][cogIdx]
-                colIdx = self.cols.index(self[key][self._colIdx])
-                # check if data is not a list or tuple, if this is the case,
-                # make it a fake-list, so we can treat it just as all the other
-                # instances of fuzzy cognates (output is the same, though)
-                if isinstance(cogids, (str, int, float)):
-                    cogids = [cogids]
-
-                for cog in cogids:
-                    cogid = f(cog)
-                    # we initialize with zero here, since this corresponds to a
-                    # missing entry in our data
-                    if cogid not in self._etym_dict[ref]:
-                        self._etym_dict[ref][cogid] = [0 for i in range(self.width)]
-                    # assign new values for the current session
-                    try:
-                        self._etym_dict[ref][cogid][colIdx] += [key]
-                    except:
-                            self._etym_dict[ref][cogid][colIdx] = [key]
+        # iterate over all data
+        for key in self:
+            cogids = self[key][cogIdx]
+            colIdx = self.cols.index(self[key][self._colIdx])
+            # check if data is not a list or tuple, if this is the case,
+            # make it a fake-list, so we can treat it just as all the other
+            # instances of fuzzy cognates (output is the same, though)
+            if isinstance(cogids, (str, int, float)):
+                cogids = [cogids]
+            for cog in cogids:
+                cogid = f(cog)
+                # we initialize with zero here, since this corresponds to a
+                # missing entry in our data
+                if cogid not in etym_dict:
+                    etym_dict[cogid] = [0 for i in range(self.width)]
+                # assign new values for the current session
+                new_value = etym_dict[cogid][colIdx] or []
+                etym_dict[cogid][colIdx] = new_value + [key]
         if entry:
             # create the output
-            etym_dict = {}
-
+            _etym_dict = {}
             # get the index of the header
             idx = self._header[entry]
-
             # retrieve the values
-            for key, values in self._etym_dict[ref].items():
-                etym_dict[key] = []
+            for key, values in etym_dict.items():
+                _etym_dict[key] = []
                 for value in values:
                     if value != 0:
-                        etym_dict[key].append([self[v][idx] for v in value])
+                        _etym_dict[key].append([self[v][idx] for v in value])
                     else:
-                        etym_dict[key].append(0)
-        else:
-            etym_dict = self._etym_dict[ref]
-
+                        _etym_dict[key].append(0)
+            return _etym_dict
         return etym_dict
 
     def get_paps(
@@ -538,7 +519,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             ref='cogid',
             entry='concept',
             missing=0,
-            loans=False):
+            modify_ref=False):
         """
         Function returns a list of present-absent-patterns of a given word list.
 
@@ -551,7 +532,8 @@ class Wordlist(QLCParserWithRowsAndCols):
         missing : string,int (default = 0)
             The marker for missing items.
         """
-        etym_dict = self.get_etymdict(ref=ref, entry=entry, loans=loans)
+        etym_dict = self.get_etymdict(ref=ref, entry=entry,
+                modify_ref=modify_ref)
         paps, missed = {}, {}
 
         # retrieve the values
@@ -645,27 +627,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         """
         renumber(self, source, target, override=override)
 
-    def _clean(
-            self,
-            source,
-            f=lambda x: ''.join([t for t in x if t not in '()[] {},;:'])):
-        """
-        Clean given names of doculects to make them work in Newick.
-
-        Notes
-        -----
-        The function basically removes all brackes, whitespace, and the like
-        from the taxon names in a wordlist. This is quite important for later
-        calculation of trees and the like, since the Newick representation
-        format requires taxon-names to contain no brackets, and other
-        characters such as colons or dots. It is also useful for display, since
-        language names like "German (Standard)" do not look really appealing in
-        basic applications.
-        """
-
-        if self._alias[source] == 'doculect':
-            clean_taxnames(self, self._alias[source], f)
-
     def _output(self, fileformat, **keywords):
         """
         Internal function that eases its modification by daughter classes.
@@ -683,7 +644,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             fileformat=fileformat,
             filename=rcParams['filename'],
             formatter='concept',
-            loans=False,
+            modify_ref=False,
             meta=self._meta,
             missing=0,
             ref='cogid',
