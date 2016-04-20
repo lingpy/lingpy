@@ -19,7 +19,6 @@ from lingpy.read.qlc import read_msa, normalize_alignment, reduce_alignment
 from lingpy.settings import rcParams
 from lingpy.basic.wordlist import Wordlist
 from lingpy.convert import html
-from lingpy.convert.tree import subGuideTree
 from lingpy.convert.strings import msa2str
 from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, class2tokens, prosodic_string, prosodic_weights,
@@ -1215,7 +1214,7 @@ def SCA(infile, **keywords):
     return parent
 
 
-def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keywords):
+def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
     """
     Calculate a consensus string of a given MSA.
 
@@ -1223,9 +1222,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
     ----------
     msa : {c{list} ~lingpy.align.multiple.Multiple}
         Either an MSA object or an MSA matrix.
-    tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
-        A tree object or a Newick string along which the consensus shall be
-        calculated.
     gaps : c{bool} (default=False)
         If set to c{True}, return the gap positions in the consensus.
     taxa : {c{list} bool} (default=False)
@@ -1248,14 +1244,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
     cons : c{str}
         A consensus string of the given MSA.
     """
-    vowels = [
-        'a', 'e', 'i', 'o', 'u', 'E', 'I',
-        '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-        'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-        'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-        'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-        'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ',
-    ]
 
     def rep_weights(char1, char2, _):
         if char1 == char2:
@@ -1336,274 +1324,67 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
         elif hasattr(msa, 'ipa2cls'):
             msa.ipa2cls(model=keywords['model'])
             classes = misc.transpose(msa.classes)
-
     # if no tree is passed, it is a simple majority-rule principle that outputs
     # the consensus string
     cons = []
-
-    if not tree:
-        if not classes:
-            for col in matrix:
-                count = Counter(col)
-                if '-' in count:
-                    count['-'] *= keywords['gap_scale']
-                cons.append(count.most_common(1)[0][0])
-        elif classes:
-            for i, col in enumerate(classes):
-                tmpA, tmpB = Counter(col), defaultdict(int)
-
+    if not classes:
+        for col in matrix:
+            count = Counter(col)
+            if '-' in count:
+                count['-'] *= keywords['gap_scale']
+            cons.append(count.most_common(1)[0][0])
+    elif classes:
+        for i, col in enumerate(classes):
+            tmpA, tmpB = Counter(col), defaultdict(int)
+            for j, c in enumerate(col):
+                tmpB[matrix[i][j]] += 1
+            # half the weight of gaps
+            if '-' in tmpA:
+                tmpA['-'] *= keywords['gap_scale']
+            chars = tmpA.most_common()
+            # if mode is set to 'maximize', calculate the score
+            if keywords['mode'] == 'maximize':
+                tmpC = {}
                 for j, c in enumerate(col):
-                    tmpB[matrix[i][j]] += 1
-
-                # half the weight of gaps
-                if '-' in tmpA:
-                    tmpA['-'] *= keywords['gap_scale']
-
-                chars = tmpA.most_common()
-
-                # if mode is set to 'maximize', calculate the score
-                if keywords['mode'] == 'maximize':
-                    tmpC = {}
-                    for j, c in enumerate(col):
-                        if c not in tmpC:
-                            score = 0
-                            for k, c2 in enumerate(col):
-                                if '-' not in (c, c2):
-                                    score += keywords['model'](c, c2)
-                                else:
-                                    if (c, c2) == ('-', '-'):
-                                        score += 0
-                                    else:
-                                        score += keywords['gap_score'] * \
-                                            keywords['weights'][i]
-
-                            tmpC[c] = score / len(col)
-
-                    chars = [(c, n) for c, n in sorted(
-                        tmpC.items(), key=lambda x:(x[1], tmpA[x[0]]), reverse=True)]
-
-                # check for identical classes
-                maxV = chars.pop(0)
-
-                clss = [maxV[0]]
-                while chars:
-                    newV = chars.pop(0)
-                    if newV[1] == maxV[1]:
-                        clss += [newV[0]]
-                    else:
-                        break
-
-                tmp = Counter()
-                for j, c in enumerate(col):
-                    if c in clss:
-                        tmp.update([matrix[i][j]])
-
-                chars = [c for c, n in tmp.most_common(2)]
-
-                # apply check for gaps here, if there are more gaps than in the
-                # full column, take the gaps, otherwise, take the next char
-                if chars[0] == '-':
-                    if tmp['-'] > sum([tmp[x] for x in tmp if x != '-']):
-                        cchar = '-'
-                    else:
-                        cchar = chars[1]
-                else:
-                    cchar = chars[0]
-
-                cons.append(cchar)
-    # otherwise, we use a bottom-up parsimony approach to determine the best
-    # match
-    elif tree:
-        # hack: this operates on the non-transposed alm_matrix
-        matrix = misc.transpose(matrix)
-        # if the taxa are defined, extract the sub-guidetree accordingly
-        if taxa:
-            taxon_to_id = {text_type(name): i for i, name in
-                           enumerate(leaf.Name for leaf in tree.tips())}
-            tree = tree.deepcopy()
-            for leaf in tree.tips():
-                leaf.Name = text_type(taxon_to_id[leaf.Name])
-            newIndices = [taxon_to_id[text_type(taxon)] for taxon in taxa]
-            tree = subGuideTree(tree, newIndices)
-        # otherwise, the leaves of the guide trees are expected to have integer IDs
-        for node in tree.postorder():
-            if node.isTip():
-                node.alignment = [matrix[int(node.Name)]]
-                node.size = 1
-            else:
-                node.alignment = node.Children[0].alignment + node.Children[1].alignment
-                node.size = node.Children[0].size + node.Children[1].size
-        for node in tree.postorder():
-            node.distribution = []
-        for i in range(0, len(matrix[0])):
-            for node in tree.postorder():
-                if node.isTip():
-                    node.distribution.append({matrix[int(node.Name)][i]: 1.0})
-                else:
-                    node.distribution.append({})
-                    child1 = node.Children[0]
-                    child2 = node.Children[1]
-                    for phoneme in set(child1.distribution[i].keys()) | \
-                            set(child2.distribution[i].keys()):
-                        value = 0.0
-                        if phoneme in child1.distribution[i].keys():
-                            value += child1.size * child1.distribution[i][phoneme]
-                        if phoneme in child2.distribution[i].keys():
-                            value += child2.size * child2.distribution[i][phoneme]
-                        value /= node.size
-                        node.distribution[i][phoneme] = value
-        recon_alg = "sankoff_parsimony"
-        for node in tree.postorder():
-            node.reconstructed = []
-        if recon_alg == "modified_consensus":
-            for i in range(0, len(matrix[0])):
-                for node in tree.postorder():
-                    dist = node.distribution[i]
-                    maxValue = max(dist.values())
-                    maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                    if len(maxKeys) == 1 or node.isRoot():
-                        node.reconstructed.append(maxKeys[0])
-                    else:
-                        parentDist = node.Parent.distribution[i]
-                        maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                        node.reconstructed.append(maxKey)
-        elif recon_alg == "binary_decision":
-            for i in range(0, len(matrix[0])):
-                for node in tree.postorder():
-                    if node.isTip():
-                        # just retrieve the original at the leaves
-                        dist = node.distribution[i]
-                        maxValue = max(dist.values())
-                        maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                        node.reconstructed.append(maxKeys[0])
-                    else:
-                        leftVariant = node.Children[0].reconstructed[i]
-                        rightVariant = node.Children[1].reconstructed[i]
-                        # if one of both is '-', take the other one (preference for
-                        # segment loss)
-                        # BUT: epenthesis is allowed
-                        if leftVariant == '-' and rightVariant not in vowels:
-                            node.reconstructed.append(rightVariant)
-                        elif rightVariant == '-' and leftVariant not in vowels:
-                            node.reconstructed.append(leftVariant)
-                        else:
-                            # let the distribution decide otherwise
-                            dist = node.distribution[i]
-                            maxValue = max(dist.values())
-                            maxKeys = [
-                                key for key in dist.keys() if dist[key] == maxValue]
-                            if len(maxKeys) == 1 or node.isRoot():
-                                node.reconstructed.append(maxKeys[0])
+                    if c not in tmpC:
+                        score = 0
+                        for k, c2 in enumerate(col):
+                            if '-' not in (c, c2):
+                                score += keywords['model'](c, c2)
                             else:
-                                parentDist = node.Parent.distribution[i]
-                                maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                                node.reconstructed.append(maxKey)
-        elif recon_alg == "sankoff_parsimony":
-            systematizationBonus = True
-            distributionBonus = True
-            for node in tree.postorder():
-                node.sankoffTable = []
-                node.sankoffPointers = []
-            for i in range(0, len(matrix[0])):
-                def sankoff_value(sankoffTable, char):
-                    if char in sankoffTable.keys():
-                        return sankoffTable[char]
-                    return 65535  # approximation to Integer.MAX_INT
-                mtx = keywords["rep_weights"]
-                # apply the Sankoff algorithm, store backpointers
-                for node in tree.postorder():
-                    node.sankoffTable.append(dict())
-                    dist = node.distribution[i]
-                    if node.isTip():
-                        # just retrieve the original at the leaves (needs to be
-                        # reconstructed from the differences)
-                        maxValue = max(dist.values())
-                        maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                        node.sankoffTable[i][maxKeys[0]] = 0
-                        if systematizationBonus:
-                            node.orig.best_replacements = {}
-                    else:
-                        node.sankoffPointers.append(dict())
-                        sankoff1 = node.Children[0].sankoffTable[i]
-                        sankoff2 = node.Children[1].sankoffTable[i]
-                        recon1 = node.Children[0].reconstructed
-                        recon2 = node.Children[1].reconstructed
-                        for char in set(sankoff1.keys()) | set(sankoff2.keys()):
-                            minSankoffValue = 65536
-                            backPointers = ['-', '-']
-                            for char1 in sankoff1.keys():
-                                for char2 in sankoff2.keys():
-                                    bonusFactor1 = 1.0
-                                    bonusFactor2 = 1.0
-                                    if systematizationBonus:
-                                        if hasattr(node.Children[0].orig, "best_replacements") and char + char1 in node.Children[0].orig.best_replacements.keys():
-                                            bonusFactor1 /= 1 + node.Children[0].orig.best_replacements[char + char1]
-                                        if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
-                                            bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char + char2]
-                                    if distributionBonus:
-                                        bonusFactor1 /= node.distribution[i][char]
-                                        bonusFactor2 /= node.distribution[i][char]
-                                    char1no5 = char1
-                                    char2no5 = char2
-                                    if char1no5 == "5":
-                                        char1no5 = "N"
-                                    if char2no5 == "5":
-                                        char2no5 = "N"
-                                    proso1 = prosodic_string(recon1 + [char1no5])[-1]
-                                    proso2 = prosodic_string(recon2 + [char2no5])[-1]
-                                    sankoffValue = mtx(char, char1, proso1) * bonusFactor1 + sankoff1[char1] + mtx(char, char2, proso2) * bonusFactor2 + sankoff2[char2]
-                                    if (sankoffValue < minSankoffValue):
-                                        minSankoffValue = sankoffValue
-                                        backPointers[0] = char1
-                                        backPointers[1] = char2
-                            node.sankoffTable[i][char] = minSankoffValue
-                            node.sankoffPointers[i][char] = backPointers
-                        if systematizationBonus:
-                            if not hasattr(node.Children[0].orig, "best_replacements"):
-                                node.Children[0].orig.best_replacements = {}
-                            if not hasattr(node.Children[1].orig, "best_replacements"):
-                                node.Children[1].orig.best_replacements = {}
-                            minValue = min(node.sankoffTable[i].values())
-                            minKeys = [key for key in node.sankoffTable[i].keys()
-                                       if node.sankoffTable[i][key] == minValue]
-                            for char in minKeys:
-                                minValue1 = min(node.Children[0].sankoffTable[i].values())
-                                for char1 in [
-                                    key for key in node.Children[0].sankoffTable[i].keys()
-                                    if node.Children[0].sankoffTable[i][key] == minValue1
-                                ]:
-                                    if char + char1 not in node.Children[0].orig.best_replacements.keys():
-                                        node.Children[0].orig.best_replacements[char + char1] = 1
-                                    else:
-                                        node.Children[0].orig.best_replacements[char + char1] += 1
-                                minValue2 = min(node.Children[1].sankoffTable[i].values())
-                                for char2 in [
-                                    key for key in node.Children[1].sankoffTable[i].keys()
-                                    if node.Children[1].sankoffTable[i][key] == minValue2
-                                ]:
-                                    if char + char2 not in node.Children[1].orig.best_replacements.keys():
-                                        node.Children[1].orig.best_replacements[char + char2] = 1
-                                    else:
-                                        node.Children[1].orig.best_replacements[char + char2] += 1
-                # read out the backpointers for an optimal reconstruction
-                minValue = min(tree.sankoffTable[i].values())
-                minKeys = [key for key in tree.sankoffTable[i].keys()
-                           if tree.sankoffTable[i][key] == minValue]
-                reconChar = minKeys[0]
+                                if (c, c2) == ('-', '-'):
+                                    score += 0
+                                else:
+                                    score += keywords['gap_score'] * \
+                                        keywords['weights'][i]
 
-                def reconstruct_by_sankoff(node, char):
-                    if char == "5":
-                        node.reconstructed.append("N")
-                    else:
-                        node.reconstructed.append(char)
-                    if not node.isTip():
-                        reconstruct_by_sankoff(
-                            node.Children[0], node.sankoffPointers[i][char][0])
-                        reconstruct_by_sankoff(
-                            node.Children[1], node.sankoffPointers[i][char][1])
-                reconstruct_by_sankoff(tree, reconChar)
-        else:
-            log.error("Unknown reconstruction method: " + recon_alg)
-        cons = "".join(tree.reconstructed)
+                        tmpC[c] = score / len(col)
+                chars = [(c, n) for c, n in sorted(
+                    tmpC.items(), key=lambda x:(x[1], tmpA[x[0]]), reverse=True)]
+            # check for identical classes
+            maxV = chars.pop(0)
+            clss = [maxV[0]]
+            while chars:
+                newV = chars.pop(0)
+                if newV[1] == maxV[1]:
+                    clss += [newV[0]]
+                else:
+                    break
+            tmp = Counter()
+            for j, c in enumerate(col):
+                if c in clss:
+                    tmp.update([matrix[i][j]])
+            chars = [c for c, n in tmp.most_common(2)]
+
+            # apply check for gaps here, if there are more gaps than in the
+            # full column, take the gaps, otherwise, take the next char
+            if chars[0] == '-':
+                if tmp['-'] > sum([tmp[x] for x in tmp if x != '-']):
+                    cchar = '-'
+                else:
+                    cchar = chars[1]
+            else:
+                cchar = chars[0]
+            cons.append(cchar)
 
     return cons if gaps else [c for c in cons if c != '-']  # cons.replace('-','')

@@ -30,11 +30,8 @@ for line in f:
     line = line.strip('\n').strip('\r')
     if line and not line.startswith('#'):
         key,val = line.split('\t')
-        try:
-            assert key not in xs
-        except:
-            sys.stderr.write(key + '\n')
-            sys.stderr.flush()
+        if key in xs and xs[key] != val:
+            raise ValueError("Keys encode too many values.")
         _xsKeys.append(key)
         xs[key] = eval('"""'+val+'"""')
 
