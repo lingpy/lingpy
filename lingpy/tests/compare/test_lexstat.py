@@ -121,7 +121,7 @@ class TestLexStat(WithTempDir):
 
     def test_align_pairs(self):
         assert not self.lex.align_pairs('English', 'German', method='sca', pprint=False) 
-        assert self.lex.align_pairs(1, 2, method='sca', pprint=False)[-1] > 0.85
+        assert self.lex.align_pairs(1, 2, method='sca', pprint=False)[-1] > 0.5
     
     def test__get_matrices(self):
 

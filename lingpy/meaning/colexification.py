@@ -3,18 +3,10 @@ Module offers methods to handle colexification patterns in wordlist objects.
 """
 from collections import defaultdict
 
+import networkx as nx
+
 from lingpy import log
 from lingpy.util import combinations2, dotjoin, join
-
-try:
-    import networkx as nx
-except ImportError:
-    log.missing_module('networkx')
-try:
-    import community
-except ImportError:
-    log.missing_module('community')
-
 
 def _get_colexifications(wordlist, entry='ipa', concept='concept', family='family'):
     """
@@ -77,7 +69,7 @@ def _get_statistics(wordlist, entry='ipa', concept='concept', family='family'):
 
 def _get_colexifications_by_taxa(colexifications):
     colex = defaultdict(set)
-    for c1, c2, t, entry in colexifications:
+    for c1, c2, t, fam, entry in colexifications:
         colex[t].add((c1, c2))
         colex[t].add((c2, c1))
     return colex
@@ -130,7 +122,7 @@ def _make_graph(colexifications, bipartite=False):
             try:
                 G.edge[nindex][c1]['weight'] += 1
                 G.edge[nindex][c2]['weight'] += 1
-            except:
+            except KeyError:
                 G.add_node(nindex, ntype='word', entry=entry, doculect=t, family=f)
                 G.add_node(c1, ntype='concept')
                 G.add_node(c2, ntype='concept')
@@ -206,47 +198,7 @@ def compare_colexifications(wordlist, entry='ipa', concept='concept'):
     colexifications = _get_colexifications(wordlist, entry, concept)
     return _make_matrix(wordlist.cols, _get_colexifications_by_taxa(colexifications))
 
-
-def partition_colexifications(G, weight='weight'):
-    """
-    Use a simple partition algorithm to cluster the nodes.
-
-    Parameters
-    ----------
-    G : :py:class:`networkx.Graph`
-        A networkx-Graph object, as produced by the 
-        :py:class:`lingpy.meaning.colexification.colexification_network`
-        method.
-    weight : str (default="weight")
-        The name of the attribute storing the weights.
-
-    Returns
-    -------
-    data : tuple
-        A tuple consisting of two dictionaries, one with integers for
-        partitions as keys and one with nodes as keys and partitions as values.
-
-    Note
-    ----
-    This method requires the community package (a networkx plugin) to be
-    installed.
-    """
-
-    # check whether keyword "weight" is actually in the graph.
-    if weight != 'weight':
-        for a, b, c in G.edges(data=True):
-            if 'weight' not in c:
-                c['weight'] = c[weight]
-
-    partition = community.best_partition(G)
-    converted = defaultdict(list)
-    for node in partition:
-        converted[partition[node]].append(node)
-
-    return converted, partition
-
-
-def evaluate_colexifications(G, weight='word_weight', outfile=None):
+def evaluate_colexifications(G, weight='wordWeight', outfile=None):
     """
     Function calculates most frequent colexifications in a wordlist.
 
@@ -257,7 +209,7 @@ def evaluate_colexifications(G, weight='word_weight', outfile=None):
         G.edges(data=True), key=lambda x: x[2][weight])]
 
     # now get the degree for the nodes
-    nodes = sorted(G.degree(weight=weight).items(), key=lambda x: x[1])
+    nodes = sorted(dict(G.degree(weight=weight)).items(), key=lambda x: x[1])
 
     if not outfile:
         return nodes, edges
