@@ -1,6 +1,9 @@
 # *-* coding: utf-8 *-*
 from __future__ import unicode_literals, print_function, division
 from six import text_type
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
 from lingpy.tests.util import WithTempDir 
 from lingpy.tests.util import test_data
 from lingpy.convert import tree
@@ -46,30 +49,29 @@ class TestPlot(WithTempDir):
     
     def test_plot_gls(self):
 
-        plot_gls(self.gls, self.tree, filename=text_type(test_data('test')))
-
+        plot_gls(self.gls, self.tree, filename=text_type(self.tmp_path('test')))
 
     def test_plot_tree(self):
 
-        plot_tree(self.tree, filename=text_type(test_data('test')))
+        plot_tree(self.tree, filename=text_type(self.tmp_path('test')))
     
     def test_plot_concept_evolution(self):
 
         plot_concept_evolution(self.scenarios, self.tree,
-                filename=text_type(test_data('test')))
+                filename=text_type(self.tmp_path('test')))
 
     def test_plot_heatmap(self):
         
         wl = Wordlist(test_data('KSL.qlc'))
         wl.calculate('tree')
         plot_heatmap(wl,
-                filename=text_type(test_data('test')), ref="cogid",
+                filename=text_type(self.tmp_path('test')), ref="cogid",
                 refB="cogid", steps=1)
         plot_heatmap(wl,
-                filename=text_type(test_data('test')), ref="cogid",
+                filename=text_type(self.tmp_path('test')), ref="cogid",
                 normalized='jaccard', steps=1)
         plot_heatmap(wl,
-                filename=text_type(test_data('test')), ref="cogid",
+                filename=text_type(self.tmp_path('test')), ref="cogid",
                 normalized='swadesh', steps=1)
 
 
