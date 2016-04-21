@@ -7,10 +7,7 @@ from six import text_type
 from lingpy import log
 from lingpy import util
 
-try:
-    import networkx as nx
-except:
-    log.missing_module('networkx')
+import networkx as nx
 
 try:
     import igraph as ig

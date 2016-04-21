@@ -8,11 +8,7 @@ from lingpy.settings import rcParams
 from lingpy import log
 
 import numpy as np
-
-try:
-    import networkx as nx
-except ImportError:
-    log.missing_module('networkx')
+import networkx as nx
 try:
     import matplotlib.pyplot as plt
     import matplotlib as mpl

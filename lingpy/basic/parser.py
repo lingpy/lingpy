@@ -469,7 +469,6 @@ class QLCParserWithRowsAndCols(QLCParser):
             self._cache[idx] = self._data[idx[0]][self.header[self._alias[idx[1]]]]
             return self._cache[idx]
         except KeyError:
-            print(idx)
             if idx[0] in self._data and idx[1] in self.header:
                 self._cache[idx] = self._data[idx[0]][self.header[idx[1]]]
                 return self._cache[idx]

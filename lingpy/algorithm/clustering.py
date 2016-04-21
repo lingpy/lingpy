@@ -7,6 +7,7 @@ from itertools import combinations
 
 from six import text_type
 import numpy as np
+import networkx as nx
 
 try:
     from .cython import misc as misc
@@ -22,13 +23,6 @@ from lingpy.thirdparty import linkcomm as lc
 from lingpy.thirdparty import cogent as cg
 from lingpy import log
 from lingpy import util
-
-try:  # pragma: no cover
-    import networkx as nx
-except ImportError:
-    nx = None
-    log.missing_module('networkx')
-
 
 def flat_upgma(threshold, matrix, taxa=None, revert=False):
     """
@@ -91,7 +85,6 @@ def flat_upgma(threshold, matrix, taxa=None, revert=False):
 
     """
     return cluster.flat_upgma(threshold, matrix, taxa or [], revert)
-
 
 def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
     """

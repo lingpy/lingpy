@@ -17,11 +17,7 @@ from lingpy import cache
 from lingpy import util
 from lingpy import log
 
-try:
-    import networkx as nx
-except ImportError:
-    log.missing_module('networkx')
-
+import networkx as nx
 
 def _read(filename, normalize=None):
     res = {}

@@ -18,6 +18,8 @@ from lingpy import compat
 from lingpy import util
 from lingpy import log
 
+import networkx as nx
+
 # mpl is only used for specific plots, we can therefor make a safe import
 try:  # pragma: no cover
     import matplotlib as mpl
@@ -32,10 +34,7 @@ try:  # pragma: no cover
 except ImportError:
     bmp = None
     log.missing_module('basemap')
-try:
-    import networkx as nx
-except ImportError:
-    log.missing_module('networkx')
+
 try:
     import scipy as sp
 except ImportError:
