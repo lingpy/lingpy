@@ -92,8 +92,9 @@ def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
 
     Parameters
     ----------
-    method : { "upgma", "single", "complete" }
-        Select between 'ugpma', 'single', and 'complete'.
+    method : { "upgma", "single", "complete", "ward"}
+        Select between 'ugpma', 'single', and 'complete'. You can also test
+        "ward", but there's no guarantee that this is the correct algorithm.
 
     threshold : float
         The threshold which terminates the algorithm.
@@ -335,9 +336,6 @@ def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
     link_clustering
 
     """
-    if nx is None:
-        log.missing_module('networkx')
-        return
     g = nx.Graph()
 
     for taxon in taxa:
@@ -459,7 +457,6 @@ def matrix2groups(threshold, matrix, taxa, cluster_method="upgma"):
             out[taxa[i]] = n
     return out
 
-
 def _get_wad(matrix, threshold, use_log=False):
     """
     Get weighted average degree.
@@ -485,7 +482,6 @@ def _get_wad(matrix, threshold, use_log=False):
 
     if degreeDict:
         return deg_sum / len(degreeDict)
-
 
 def find_threshold(matrix, thresholds=[i * 0.05 for i in range(1, 19)][::-1], logs=True):
     """
@@ -667,7 +663,7 @@ def link_clustering(
                 adjacency[taxB].add(taxA)
                 edges.add((taxB, taxA))
                 weights[taxA, taxB] = -np.log2((1 - matrix[i][j])**2)
-
+                weights[taxB, taxA] = -np.log2((1 - matrix[i][j])**2)
     weights = weights or None
 
     if edges:
@@ -1125,7 +1121,6 @@ def best_threshold(matrix, trange=(0.3, 0.7, 0.05)):
 
     if len(delis) == len(pds):
         return 0.5 * (trange[1] - trange[0])
-
     for d in delis[::-1]:
         del pds[d]
 

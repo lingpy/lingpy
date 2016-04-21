@@ -8,9 +8,9 @@ class components():
         self.vs = nodes
     def subgraphs(self):
         return [Igraph.Graph([v['name']]) for v in self.vs]
+
 class Igraph(MagicMock):
     pass
-
     class Graph():
         def __init__(self, vs=[]):
             self.vs = [{'name':v} for v in vs]
@@ -21,8 +21,9 @@ class Igraph(MagicMock):
         def community_infomap(self, *args, **kw):
             return components(self.vs)
 class Cluster(MagicMock):
+    pass
     def dbscan(self, *args, **kw):
-        return (None, [i for i in range(len(args[0]))])
+        return (None, [-1 for i in range(len(args[0]))])
     class AffinityPropagation():
         def __init__(self, *args, **kw):
             pass
@@ -31,7 +32,6 @@ class Cluster(MagicMock):
 
 
 class Tests(object):
-
     def setUp(self):
 
         self.matrix = [[0.0, 0.5, 0.67, 0.8, 0.2],
@@ -44,15 +44,18 @@ class Tests(object):
     @patch("lingpy.algorithm.extra.cluster", new=Cluster()) 
     @patch("lingpy.algorithm.extra.igraph", new=Igraph())
     def test_clustering(self):
-        cluster1 = dbscan(0.25, self.matrix, self.taxa)
-        cluster2 = dbscan(0.25, self.matrix, self.taxa, revert=True)
-        cluster3 = affinity_propagation(0.5, self.matrix, self.taxa)
-        cluster4 = affinity_propagation(0.5, self.matrix, self.taxa, revert=True)
-        cluster5 = infomap_clustering(0.4, self.matrix, self.taxa)
-        cluster6 = infomap_clustering(0.4, self.matrix, self.taxa, revert=True)
-        assert cluster2[0] != cluster2[4]
-        assert cluster4[0] != cluster4[4]
-        assert cluster6[0] != cluster6[4]
+        if not cluster:
+            cluster1 = dbscan(0.25, self.matrix, self.taxa)
+            cluster2 = dbscan(0.25, self.matrix, self.taxa, revert=True)
+            cluster3 = affinity_propagation(0.5, self.matrix, self.taxa)
+            cluster4 = affinity_propagation(0.5, self.matrix, self.taxa, revert=True)
+            assert cluster2[0] != cluster2[4]
+            assert cluster4[0] != cluster4[4]
+
+        if not igraph:
+            cluster5 = infomap_clustering(0.4, self.matrix, self.taxa)
+            cluster6 = infomap_clustering(0.4, self.matrix, self.taxa, revert=True)
+            assert cluster6[0] != cluster6[4]
 
     def test_dbscan(self):
         if cluster:

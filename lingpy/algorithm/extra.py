@@ -10,7 +10,6 @@ try:
 except ImportError:
     log.missing_module('sklearn')
     cluster = False
-
 try:
     import igraph
 except ImportError:
@@ -63,15 +62,12 @@ def dbscan(
     but urge to be careful when using the code and checking properly our
     implementation in the source code.
     """
-    from sklearn import cluster
-    if not cluster:
-        raise ValueError("The package scikitlearn is needed to run this analysis.")
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
 
     core_samples, labels = cluster.dbscan(
         matrix, eps=threshold, min_samples=min_samples, metric='precomputed')
-
+    
     # change to our internal cluster style
     idx = max(labels) + 1
     if idx == 0:
