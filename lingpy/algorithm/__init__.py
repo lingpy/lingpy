@@ -2,7 +2,6 @@
 Package for specific algorithms and time-intensive routines.
 """
 # flake8: noqa
-from lingpy.algorithm.distance import *
 from lingpy.settings import rcParams
 from lingpy.algorithm.clustering import *
 from lingpy.algorithm._tree import _TreeDist as TreeDist

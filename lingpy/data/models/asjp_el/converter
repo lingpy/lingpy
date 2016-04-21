@@ -10,7 +10,7 @@ d : d
 s : s
 z : z
 c : c
-n : n, 5
+n : n, 5, 4
 r : r
 l : l
 S : S
@@ -21,10 +21,10 @@ H : H
 y : y
 k : k
 g : g
-x : x
+x : x, X
 N : N
 q : q
-G : X
+G : G
 h : h
 7 : 7
 L : L

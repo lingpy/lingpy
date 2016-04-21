@@ -135,10 +135,8 @@ class Multiple(object):
         # XXX this should be evaluated, maybe it is not needed in the future.
         if number == error[0]:
             return error[1]
-
         if number == '+':
             return "+"
-
         try:
             idxA, idxB = [int(i) - 1 for i in number.split('.')]
 
@@ -156,7 +154,7 @@ class Multiple(object):
                 return self._numbers[idxA][idxB]
             if value == '_prosodics':
                 return self._prosodics[idxA][idxB]
-        except:
+        except ValueError:
             if value == 'tokens':
                 return self.tokens[int(number) - 1]
             if value == 'sonars':

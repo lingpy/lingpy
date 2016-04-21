@@ -150,14 +150,25 @@ class QLCParser(object):
                 check = []
                 for head, i in heads:
                     if i not in check:
+                        logstring = 'Problem with row {0} in col {1}, expected' +\
+                            ' «{4}» as datatype but received «{3}» ' +\
+                            ' (ROW: {2}, entry {5}).'
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
-                        except:  # pragma: no cover
+                        except KeyError:  # pragma: no cover
                             log.warn(
-                                'Problem with row {0} in col {1}, expected' +
-                                ' «{4}» as datatype but received «{3}» ' +
-                                ' (ROW: {2}, entry {5}).'.format(
+                                logstring.format(
+                                    key,
+                                    i,
+                                    '|'.join([str(x) for x in self._data[key]]),
+                                    self._data[key][i],
+                                    self._class[head],
+                                    head))
+
+                        except ValueError:
+                            log.warn(
+                                logstring.format(
                                     key,
                                     i,
                                     '|'.join([str(x) for x in self._data[key]]),
@@ -447,11 +458,24 @@ class QLCParserWithRowsAndCols(QLCParser):
             return self._cache[idx]
 
         if idx in self._data:
-            # return full data entry as list
             self._cache[idx] = self._data[idx]
             return self._cache[idx]
 
-        raise KeyError()
+        if idx in self._meta:
+            self._cache[idx] = self._meta[idx]
+            return self._meta[idx]
+
+        try:
+            self._cache[idx] = self._data[idx[0]][self.header[self._alias[idx[1]]]]
+            return self._cache[idx]
+        except KeyError:
+            if idx[0] in self._data and idx[1] in self.header:
+                self._cache[idx] = self._data[idx[0]][self.header[idx[1]]]
+                return self._cache[idx]
+            else:
+                raise KeyError
+        except TypeError:
+            raise KeyError()
 
     def get_entries(self, entry):
         """

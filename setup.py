@@ -35,23 +35,23 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
         extension_prefix = os.path.join(*extension_path)
         extension_modules = [
             Extension(
-                os.path.join('.'.join(extension_path),'calign'),
+                os.path.join('.'.join(extension_path + ['calign'])),
                 [os.path.join(extension_prefix,'calign.c')]
                 ),
             Extension(
-                 os.path.join('.'.join(extension_path),'malign'),
+                 os.path.join('.'.join(extension_path + ['malign'])),
                 [os.path.join(extension_prefix,'malign.c')]
                 ),
             Extension(
-                os.path.join('.'.join(extension_path),'talign'),
+                os.path.join('.'.join(extension_path + ['talign'])),
                 [os.path.join(extension_prefix,'talign.c')]
                 ),
             Extension(
-                os.path.join('.'.join(extension_path),'cluster'),
+                os.path.join('.'.join(extension_path + ['cluster'])),
                 [os.path.join(extension_prefix,'cluster.c')]
                 ),
             Extension(
-                os.path.join('.'.join(extension_path),'misc'),
+                os.path.join('.'.join(extension_path + ['misc'])),
                 [os.path.join(extension_prefix,'misc.c')]
                 ),
             ]
@@ -79,7 +79,7 @@ setup(
     packages=find_packages(pkg_location),
     package_dir=pkg_dir,
     install_requires=requires,
-    tests_require=['regex', 'nltk', 'nose', 'coverage', 'mock'],
+    tests_require=['nose', 'coverage', 'mock'],
     author="Johann-Mattis List and Robert Forkel (with contributions by Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill)",
     author_email="mattis.list@lingpy.org",
     entry_points={

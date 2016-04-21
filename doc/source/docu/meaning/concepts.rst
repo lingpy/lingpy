@@ -7,17 +7,16 @@ Functions
 ---------
 
 .. autosummary::
-
-   ~lingpy.meaning.concepts.spanish_swadesh_list
-   ~lingpy.meaning.concepts.extract_component_as_wordlist
+  
+   ~lingpy.meaning.glosses.parse_gloss
+   ~lingpy.meaning.glosses.compare_concepts
+   ~lingpy.meaning.glosses.compare_conceptlists
+   ~lingpy.meaning.colexification.colexification_network
+   ~lingpy.meaning.colexification.partition_colexifications
 
 Classes
 -------
 
 .. autosummary::
 
-   ~ConceptGraph
-   ~ConceptComparerBase
-   ~ConceptComparerStringMatch
-   ~ConceptComparerSpanishStem  
    ~BasVoc

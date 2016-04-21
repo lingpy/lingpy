@@ -21,12 +21,17 @@ class TestPSA(WithTempDir):
         fname = text_type(self.tmp_path('test'))
         psa.output(fileformat='psa', filename=fname)
 
+
         psq = self.tmp_path('test.psq')
         write_text_file(psq, '\n')
         psa = PSA(text_type(psq))
         fname = text_type(self.tmp_path('test'))
         psa.output(fileformat='psq', filename=fname)
 
+        psa = PSA(text_type(test_data('harry_potter.psa')))
+        psa.align()
+        psa.output(fileformat="psa", filename=fname, scores=True)
+        psa.output(fileformat="psq", filename=fname)
 
 class TestMSA(WithTempDir):
     def test_output(self):
@@ -38,7 +43,6 @@ class TestMSA(WithTempDir):
         for fmt in 'msa psa msq html tex'.split():
             for s, u in product([True, False], [True, False]):
                 msa.output(fileformat=fmt, filename=fname, sorted_seqs=s, unique_seqs=u)
-
 
 class TestAlignments(WithTempDir):
     def setUp(self):
@@ -56,10 +60,15 @@ class TestAlignments(WithTempDir):
             new_tokensB = lp.ipa2tokens(ipa, merge_vowels=False, merge_geminates=False)
             assert tokensA == new_tokensA
             assert tokensB == new_tokensB
-
+    
     def test_align(self):
+        self.alm.add_entries('cugid', self.alm._ref, lambda x: text_type(x))
+        self.alm.add_alignments(ref="cugid")
+
         # align all sequences using standard params
         self.alm.align()
+        self.alm.align(ref="cugid", alignment="alignment2")
+        assert self.alm.msa["cugid"]["1"]["ID"] == self.alm.msa["cogid"][1]["ID"]
 
         # iterate and align using the multiple function
         for key, value in self.alm.msa['cogid'].items():
@@ -80,12 +89,6 @@ class TestAlignments(WithTempDir):
         # align all sequences using standard params
         self.alm.align()
 
-        tree = TreeNode(
-            Name='root',
-            Children=[TreeNode(Name=line.split('\t')[1]) for line in
-                      read_config_file(test_data('KSL2.qlc'))])
-
-        self.alm.get_consensus(consensus="consensus", tree=tree)
         self.alm.get_consensus(consensus="consensus", classes=True)
         self.alm.get_consensus(consensus="consensus")
 
@@ -99,3 +102,22 @@ class TestAlignments(WithTempDir):
         self.alm.align()
         self.alm.output('qlc', filename=text_type(self.tmp_path('test')))
         self.alm.output('html', filename=text_type(self.tmp_path('test')))
+
+def test_get_consensus():
+    
+    strings = ['harry', 'harald','gari']
+    classes = lp.algorithm.misc.transpose([list('H--ARY'), list('HARALT'),
+        list('KAR--I')])
+    
+    msa = lp.align.multiple.mult_align(strings)
+    cons = lp.align.sca.get_consensus(msa)
+    cons2 = lp.align.sca.get_consensus(msa, gaps=True)
+    cons3 = lp.align.sca.get_consensus(msa, classes=classes)
+    cons4 = lp.align.sca.get_consensus(msa, local="peaks")
+    cons5 = lp.align.sca.get_consensus(msa, local="gaps")
+
+    assert cons == [x for x in cons2 if x != '-']
+    assert cons3[:2] == cons[:2]
+    assert cons4[0] == 'h'
+    assert cons5[0] == 'h'
+

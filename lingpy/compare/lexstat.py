@@ -103,7 +103,6 @@ class LexStat(Wordlist):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-
     vowels : str (default="VT_")
         For scoring function creation using the
         ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
@@ -115,25 +114,68 @@ class LexStat(Wordlist):
         "transform" keyword, you also need to change the vowel string, to make
         sure that "vscale" works as wanted in the
         ~lingpy.compare.lexstat.LexStat.get_scorer function.
-
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
         file **errors**, defaulting to ``errors.log``. See also ``apply_checks``
-
     apply_checks : bool (default=False)
         If set to **True**, any errors identified by `check` will be handled
         silently.
-
     no_bscorer: bool (default=False)
         If set to **True**, this will suppress the creation of a
         language-specific scoring function (which may become quite large and is
         additional ballast if the method "lexstat" is not used after all. If
         you use the "lexstat" method, however, this needs to be set to
         **False**.
-
     errors : str
         The name of the error log.
+
+    Attributes
+    ----------
+    pairs : dict
+        A dictionary with tuples of language names as key and indices as value, \
+        pointing to unique combinations of words with the same meaning in all \
+        language pairs.
+    model : :py:class:`~lingpy.data.model.Model`
+        The sound class model instance which serves to convert the phonetic
+        data into sound classes.
+    chars : list
+        A list of all unique language-specific character types in the
+        instantiated LexStat object. The characters in this list consist of
+
+        * the language identifier (numeric, referenced as "langid" as a
+          default, but customizable via the keyword "langid")
+        * the sound class symbol for the respective IPA transcription value
+        * the prosodic class value
+
+        All values are represented in the above order as one string, separated
+        by a dot. Gaps are also included in this collection. They are
+        traditionally represented as "X" for the sound class and "-" for the
+        prosodic string.
+    rchars : list
+        A list containing all unique character types across languages. In
+        contrast to the chars-attribute, the "rchars" (raw chars) do not
+        contain the language identifier, thus they only consist of two values,
+        separated by a dot, namely, the sound class symbol, and the prosodic
+        class value.
+    scorer : dict
+        A collection of :py:class:`~lingpy.algorithm.cython.misc.ScoreDict`
+        objects, which are used to score the strings. LexStat distinguishes two
+        different scoring functions:
+
+        * rscorer: A "raw" scorer that is not language-specific and consists
+          only of sound class values and prosodic string values. This scorer is
+          traditionally used to carry out the first alignment in order to
+          calculate the language-specific scorer. It is directly accessible as an
+          attribute of the LexStat class
+          (:py:class:`~lingpy.compare.lexstat.lexstat.rscorer`). The characters
+          which constitute the values in this scorer are accessible via the
+          "rchars" attribue of each lexstat class.
+        * bscorer: The language-specific scorer. This scorer is made of unique
+          language-specific characters. These are accessible via the "chars"
+          attribute of each LexStat class. As the "rscorer", the "bscorer" can
+          also be accessed directly as an attribute of the LexStat class 
+          (:py:class:`~lingpy.compare.lexstat.lexstat.bscorer`).
 
     Notes
     -----
@@ -152,9 +194,29 @@ class LexStat(Wordlist):
             "defaults": False,
             "no_bscorer": False,
             "errors": "errors.log",
-            "expand_nasals": False
+            "expand_nasals": False,
+            "segments" : "tokens",
+            "numbers" : "numbers",
+            "classes" : "classes",
+            "transcription" : "ipa",
+            "prostrings" : "prostrings",
+            "weights" : "weights",
+            "sonars" : "sonars",
+            "langid" : "langid",
+            "duplicates" : "duplicates"
         }
         kw.update(keywords)
+
+        # make segments, numbers and classes persistent across classes
+        self._segments = kw['segments']
+        self._numbers = kw['numbers']
+        self._classes = kw['classes']
+        self._weights = kw['weights']
+        self._prostrings = kw['prostrings']
+        self._sonars = kw['sonars']
+        self._langid = kw['langid']
+        self._duplicates = kw['duplicates']
+        self._transcription = kw['transcription']
 
         if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
@@ -166,19 +228,18 @@ class LexStat(Wordlist):
 
         # initialize the wordlist
         Wordlist.__init__(self, filename)
-        assert "tokens" in self.header or "ipa" in self.header
+        assert self._segments in self.header or self._transcription in self.header
 
-        # check for basic input data
-        # tokens
-        if "tokens" not in self.header:
+        # create tokens if they are missing
+        if self._segments not in self.header:
             self.add_entries(
-                "tokens", "ipa", lambda x: ipa2tokens(x,
+                self._segments, self._transcription, lambda x: ipa2tokens(x,
                     merge_vowels=kw['merge_vowels'],
                     expand_nasals=kw['expand_nasals']))
 
         # add a debug procedure for tokens
         if kw["check"]:
-            errors = list(_check_tokens((key, self[key, "tokens"]) for key in self))
+            errors = list(_check_tokens((key, self[key, self._segments]) for key in self))
             if errors:
                 lines = ["ID\tTokens\tError-Type"]
                 for key, msg, line in errors:
@@ -201,43 +262,40 @@ class LexStat(Wordlist):
                 log.info("No obvious errors found in the data.")
 
         # sonority profiles
-        if "sonars" not in self.header:
+        if self._sonars not in self.header:
             self.add_entries(
-                "sonars",
-                "tokens",
+                self._sonars,
+                self._segments,
                 lambda x: [int(i) for i in tokens2class(
                     x, rcParams['art'], stress=rcParams['stress'])])
-        if "prostrings" not in self.header:
-            self.add_entries("prostrings", "sonars", lambda x: prosodic_string(x))
+        if self._prostrings not in self.header:
+            self.add_entries(self._prostrings, self._sonars, lambda x: prosodic_string(x))
         # get sound class strings
-        if "classes" not in self.header:
+        if self._classes not in self.header:
             self.add_entries(
-                "classes", "tokens", lambda x: ''.join(tokens2class(x, kw["model"])))
+                self._classes, self._segments, lambda x: ''.join(tokens2class(x, kw["model"])))
         # create IDs for the languages
-        if "langid" not in self.header:
+        if self._langid not in self.header:
             transform = dict(zip(self.taxa, [str(i + 1) for i in range(self.width)]))
-            self.add_entries("langid", "taxa", lambda x: transform[x])
+            self.add_entries(self._langid, self._col_name, lambda x: transform[x])
         # get the numbers for all strings
-        if "numbers" not in self.header:
+        if self._numbers not in self.header:
             # change the discriminative potential of the sound-class string
             # tuples, note that this is still wip, we have to tweak around with
             # this in order to find an optimum for the calculation
             self._transform = kw['transform']
             self.add_entries(
-                "numbers",
-                "langid,classes,prostrings",
+                self._numbers,
+                self._langid + ',' + self._classes + ',' + self._prostrings,
                 lambda x, y: [charstring(x[y[0]], a, self._transform[b])
                               for a, b in zip(x[y[1]], x[y[2]])])
-
         # check for weights
-        if "weights" not in self.header:
-            self.add_entries("weights", "prostrings", lambda x: prosodic_weights(x))
-
+        if self._weights not in self.header:
+            self.add_entries(self._weights, self._prostrings, lambda x: prosodic_weights(x))
         # check for duplicates
         # first, check for item 'words' in data, if this is not given, create it
-        if 'ipa' not in self.header:
-            self.add_entries('ipa', 'tokens', lambda x: ''.join(x))
-
+        if self._transcription not in self.header:
+            self.add_entries(self._transcription, self._segments, lambda x: ''.join(x))
         # add information regarding vowels in the data based on the
         # transformation, which is important for the calculation of the
         # v-scale in lexstat.get_scorer
@@ -245,25 +303,23 @@ class LexStat(Wordlist):
             self._meta['vowels'] = ' '.join(sorted(set([
                 self._transform[v] for v in 'XYZT_']))) \
                 if hasattr(self, '_transform') else 'VT_'
-
-        if "duplicates" not in self.header:
+        if self._duplicates not in self.header:
             duplicates = {}
             for taxon in self.taxa:
                 words = set()
                 for idx in self.get_list(col=taxon, flat=True):
-                    word = self[idx, 'ipa']
+                    word = self[idx, self._transcription]
                     duplicates[idx] = 1 if word in words else 0
                     words.add(word)
-            self.add_entries("duplicates", duplicates, lambda x: x)
+            self.add_entries(self._duplicates, duplicates, lambda x: x)
 
         # create an index
         if not hasattr(self, 'freqs'):
             self.chars = set()
             self.freqs = {}
-
             for taxon in self.taxa:
                 self.freqs[taxon] = Counter()
-                for word in self.get_list(col=taxon, entry='numbers', flat=True):
+                for word in self.get_list(col=taxon, entry=self._numbers, flat=True):
                     self.freqs[taxon].update(word)
                 self.chars = self.chars.union(self.freqs[taxon].keys())
 
@@ -289,11 +345,9 @@ class LexStat(Wordlist):
                 self.chars, self.model)
         elif not kw['no_bscorer']:
             self.bscorer = self._meta['scorer']['bscorer']
-
         if not hasattr(self, "rscorer"):
             self._meta['scorer']['rscorer'] = self.rscorer = get_score_dict(
                 self.rchars, self.model)
-
         if 'scorer' in self._meta:
             if 'cscorer' in self._meta['scorer']:
                 self.cscorer = self._meta['scorer']['cscorer']
@@ -308,14 +362,14 @@ class LexStat(Wordlist):
                 if i < j:
                     for c in sorted(set(dictA).intersection(dictB)):
                         for idxA, idxB in product(dictA[c], dictB[c]):
-                            dA = self[idxA, "duplicates"]
-                            dB = self[idxB, "duplicates"]
+                            dA = self[idxA, self._duplicates]
+                            dB = self[idxB, self._duplicates]
                             if dA != 1 and dB != 1:
                                 self.pairs[taxonA, taxonB] += [(idxA, idxB)]
                 elif i == j:
                     for c in sorted(dictA):
                         for idx in dictA[c]:
-                            dAB = self[idx, "duplicates"]
+                            dAB = self[idx, self._duplicates]
                             if dAB != 1:
                                 self.pairs[taxonA, taxonA] += [(idx, idx)]
 
@@ -426,9 +480,9 @@ class LexStat(Wordlist):
                         
                     corrs, self._included[tA, tB] = calign.corrdist(
                         threshold,
-                        [self[pair, "numbers"] for pair in pairs],
-                        [self[pair, "weights"] for pair in pairs],
-                        [self[pair, "prostrings"] for pair in pairs],
+                        [self[pair, self._numbers] for pair in pairs],
+                        [self[pair, self._weights] for pair in pairs],
+                        [self[pair, self._prostrings] for pair in pairs],
                         gop,
                         scale,
                         kw['factor'],
@@ -482,7 +536,8 @@ class LexStat(Wordlist):
                     log.info("Analyzing taxon {0}.".format(taxon))
 
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
-                    prostrings = self.get_list(col=taxon, entry="prostrings", flat=True)
+                    prostrings = self.get_list(col=taxon,
+                            entry=self._prostrings, flat=True)
                     m = MCPhon(tokens, True, prostrings)
                     words = []
                     j, k = 0, 0
@@ -552,9 +607,9 @@ class LexStat(Wordlist):
                     corrdist[tA, tB] = defaultdict(float)
 
                     # get the number pairs etc.
-                    numbers = [self[pair, 'numbers'] for pair in self.pairs[tA, tB]]
-                    gops = [self[pair, 'weights'] for pair in self.pairs[tA, tB]]
-                    prostrings = [self[pair, 'prostrings'] for pair in self.pairs[tA, tB]]
+                    numbers = [self[pair, self._numbers] for pair in self.pairs[tA, tB]]
+                    gops = [self[pair, self._weights] for pair in self.pairs[tA, tB]]
+                    prostrings = [self[pair, self._prostrings] for pair in self.pairs[tA, tB]]
 
                     sample = [(x, y)
                               for x in range(len(numbers)) for y in range(len(numbers))]
@@ -844,27 +899,27 @@ class LexStat(Wordlist):
         distance = 1 if kw['distance'] else 0
 
         # get the language ids
-        lA = self[idxA, 'langid']
-        lB = self[idxB, 'langid']
+        lA = self[idxA, self._langid]
+        lB = self[idxB, self._langid]
 
         if kw['method'] == 'lexstat':
             scorer = self.cscorer
             gop = 1.0
-            weightsA = [self.cscorer[charstring(lA), n] for n in self[idxA, 'numbers']]
-            weightsB = [self.cscorer[charstring(lB), n] for n in self[idxB, 'numbers']]
+            weightsA = [self.cscorer[charstring(lA), n] for n in self[idxA, self._numbers]]
+            weightsB = [self.cscorer[charstring(lB), n] for n in self[idxB, self._numbers]]
         else:
             gop = kw['gop']
-            weightsA = self[idxA, 'weights']
-            weightsB = self[idxB, 'weights']
+            weightsA = self[idxA, self._weights]
+            weightsB = self[idxB, self._weights]
             scorer = self.bscorer
 
         almA, almB, d = calign.align_pair(
-            self[idxA, 'numbers'],
-            self[idxB, 'numbers'],
+            self[idxA, self._numbers],
+            self[idxB, self._numbers],
             weightsA,
             weightsB,
-            self[idxA, 'prostrings'],
-            self[idxB, 'prostrings'],
+            self[idxA, self._prostrings],
+            self[idxB, self._prostrings],
             gop,
             kw['scale'],
             kw['factor'],
@@ -887,8 +942,8 @@ class LexStat(Wordlist):
         if kw['return_raw']:
             return almA, almB, d
 
-        almA = class2tokens(self[idxA, 'tokens'], almA)
-        almB = class2tokens(self[idxB, 'tokens'], almB)
+        almA = class2tokens(self[idxA, self._segments], almA)
+        almB = class2tokens(self[idxB, self._segments], almB)
         if kw['pprint']:
             print('\t'.join(almA))
             print('\t'.join(almB))
@@ -937,14 +992,14 @@ class LexStat(Wordlist):
 
             # define the function with help of lambda
             function = lambda idxA, idxB: calign.align_pair(
-                self[idxA, 'numbers'],
-                self[idxB, 'numbers'],
+                self[idxA, self._numbers],
+                self[idxB, self._numbers],
                 [self.cscorer[charstring(self[idxB, 'langid']), n]
-                 for n in self[idxA, 'numbers']],
+                 for n in self[idxA, self._numbers]],
                 [self.cscorer[charstring(self[idxA, 'langid']), n]
-                 for n in self[idxB, 'numbers']],
-                self[idxA, 'prostrings'],
-                self[idxB, 'prostrings'],
+                 for n in self[idxB, self._numbers]],
+                self[idxA, self._prostrings],
+                self[idxB, self._prostrings],
                 1,
                 scale,
                 factor,
@@ -955,12 +1010,12 @@ class LexStat(Wordlist):
         elif method == 'sca':
             # define the function with help of lambda
             function = lambda idxA, idxB: calign.align_pair(
-                [n.split('.', 1)[1] for n in self[idxA, 'numbers']],
-                [n.split('.', 1)[1] for n in self[idxB, 'numbers']],
-                self[idxA, 'weights'],
-                self[idxB, 'weights'],
-                self[idxA, 'prostrings'],
-                self[idxB, 'prostrings'],
+                [n.split('.', 1)[1] for n in self[idxA, self._numbers]],
+                [n.split('.', 1)[1] for n in self[idxB, self._numbers]],
+                self[idxA, self._weights],
+                self[idxB, self._weights],
+                self[idxA, self._prostrings],
+                self[idxB, self._prostrings],
                 gop,
                 scale,
                 factor,
@@ -969,16 +1024,16 @@ class LexStat(Wordlist):
                 restricted_chars,
                 1)[2]
         elif method == 'edit-dist':
-            entry = kw.get('entry', 'tokens')
+            entry = kw.get('entry', self._segments)
             function = lambda idxA, idxB: edit_dist(
                 self[idxA, entry], self[idxB, entry], True, restriction)
         elif method == 'turchin':
             function = lambda idxA, idxB: turchin(
-                self[idxA, 'tokens'], self[idxB, 'tokens'])
+                self[idxA, self._segments], self[idxB, self._segments])
         elif method == 'custom':
             function = lambda idxA, idxB: talign.align_pair(
-                self[idxA, 'utokens'],
-                self[idxB, 'utokens'],
+                self[idxA, 'user_tokens'],
+                self[idxB, 'user_tokens'],
                 gop,
                 scale,
                 keywords['external_scorer'],
@@ -999,8 +1054,8 @@ class LexStat(Wordlist):
                     log.warn(
                         "Encountered Zero-Division for the comparison of "
                         "{0} and {1}".format(
-                            ''.join(self[idxA, "tokens"]),
-                            ''.join(self[idxB, "tokens"])))
+                            ''.join(self[idxA, self._segments]),
+                            ''.join(self[idxB, self._segments])))
                     d = 100
 
                 matrix += [d]
@@ -1245,7 +1300,7 @@ class LexStat(Wordlist):
                 gop=gop)
         else:
             function = lambda x, y: edit_dist(
-                self[x, 'tokens'], self[y, 'tokens'], normalized=edit_dist_normalized)
+                self[x, self._segments], self[y, self._segments], normalized=edit_dist_normalized)
 
         for taxA, taxB in util.combinations2(self.taxa):
             distances = []

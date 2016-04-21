@@ -1,14 +1,3 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-10 18:33
-# modified : 2013-05-25 23:39
-"""
-Basic module for sound-class based alignment analyses.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2013-05-25"
-
 # we start with basic alignment functions
 def globalign(
         list seqA,

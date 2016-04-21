@@ -19,7 +19,6 @@ from lingpy.read.qlc import read_msa, normalize_alignment, reduce_alignment
 from lingpy.settings import rcParams
 from lingpy.basic.wordlist import Wordlist
 from lingpy.convert import html
-from lingpy.convert.tree import subGuideTree
 from lingpy.convert.strings import msa2str
 from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, class2tokens, prosodic_string, prosodic_weights,
@@ -495,10 +494,7 @@ class PSA(Pairwise):
 
                         for x, y in zip(a, b):
                             if '-' not in (x, y):
-                                try:
-                                    scores += [self.model(x, y)]
-                                except:
-                                    self._set_model(model=keywords['model'])
+                                scores += [self.model(x, y)]
                                 idxA += 1
                                 idxB += 1
                             else:
@@ -535,8 +531,22 @@ class Alignments(Wordlist):
         A string defining the path to the configuration file.
     ref : string (default='cogid')
         The name of the column that stores the cognate IDs.
-    loans : bool (default=True)
-        Specify whether loans should be included in the cognate sets.
+    modify_ref : function (default=False)
+        Use a function to modify the reference. If your cognate identifiers
+        are numerical, for example, and negative values are assigned as
+        loans, but you want to suppress this behaviour, just set this
+        keyword to "abs", and all cognate IDs will be converted to their
+        absolute value.
+
+    Attributes
+    ----------
+    msa : dict
+        A dictionary storing multiple alignments as dictionaries which can be
+        directly opened and aligned with help of the ~lingpy.align.sca.SCA 
+        function. The alignment objects are referenced by a key which is
+        identical with the "reference" (ref-keyword) of the alignment, that is
+        the name of the column which contains the cognate identifiers.
+
 
     Notes
     -----
@@ -552,49 +562,60 @@ class Alignments(Wordlist):
             row='concept',
             col='doculect',
             conf='',
-            ref='cogid',
-            loans=True,
+            modify_ref=False,
             _interactive=True,
+            ref="cogid",
             **keywords):
         # keywords, "strings" locates, where the reference for the alignments
         # is to be found
-        kw = {"strings": "tokens", "alignment": "alignment"}
+        kw = {"segments": "tokens", "alignment": "alignment", "transcription":
+                "ipa", "ref": "cogid"}
         kw.update(keywords)
 
         # initialize the wordlist
         Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
-        self._alignment = kw['alignment']  # defines where alignments are stored
-        self._tokens = kw['strings']
+        self._alignment = kw['alignment'] if kw['alignment'] in \
+            self.header else self._alias[kw['alignment']]
+        self._segments = kw['segments'] if kw['segments'] in self.header else \
+                self._alias[kw['segments']]
+        self._ref = ref if ref in self.header else self._alias[ref]
+        self._transcription = kw['transcription'] if kw['transcription'] in \
+                self.header else self._alias[kw['transcription']]
 
         # check whether fuzzy (partial) alignment or normal alignment is
-        # carried out
-        self._mode = 'fuzzy' if self._class_string[ref] not in ['str', 'int'] else 'plain'
+        # carried out, if a new namespace is used, we assume it to be plain
+        self._mode = 'fuzzy' if ref in self._class_string and self._class_string[ref] \
+                not in ['str', 'int'] else 'plain'
+        # store loan-status
+        self._modify_ref = modify_ref
 
-        # check for reference / cognates
-        if 'cognates' in keywords:
-            log.deprecated('cognates', 'ref')
-            ref = keywords['cognates']
+        if self._segments not in self._header:
+            if self._transcription in self.header:
+                self.add_entries(self._segments, self._transcription,
+                        ipa2tokens)
+            elif self._alignment in self.header:
+                self.add_entries(self._segments, self._alignment, 
+                        lambda x: ' '.join([y for y in x if y not in
+                            rcParams['gap_symbol']]))
+            else:
+                raise ValueError("No valid source for segments could be found.")
+        
+        self.etd = {}
+        self.add_alignments(ref=self._ref, modify_ref=modify_ref)
 
-        # change ref to rcParams
-        if ref != rcParams['ref']:
-            rcParams['ref'] = ref
-
+    def add_alignments(self, ref=False, modify_ref=False):
+        """
+        Function adds a new set of alignments to the data.
+        """
+        ref = ref or self._ref
         # check for cognate-id or alignment-id in header
         try:
-            self.etd = {ref: self.get_etymdict(ref=ref, loans=loans)}
-        # else raise error
+            self.etd[ref] = self.get_etymdict(ref=ref, modify_ref=modify_ref)
         except:
             raise ValueError("Did not find a cognate ID in the input file.")
 
-        # store loan-status
-        self._loans = loans
-
-        try:
-            stridx = self.header[kw['strings']]
-        except:
-            log.warn("No valid source for strings could be found.")
-
+        stridx = self.header[self._segments]
         # create the alignments by assembling the ids of all sequences
         if 'msa' not in self._meta:
             self._meta['msa'] = {ref: {}}
@@ -618,8 +639,8 @@ class Alignments(Wordlist):
 
                     # set up the data
                     for seq in seqids:
-                        if kw['alignment'] in self.header:
-                            this_string = self[seq][self.header[kw['alignment']]]
+                        if self._alignment in self.header:
+                            this_string = self[seq][self.header[self._alignment]]
                         else:
                             this_string = self[seq][stridx]
                         if isinstance(this_string, text_type):
@@ -641,7 +662,7 @@ class Alignments(Wordlist):
                     d['alignment'] = normalize_alignment(d['alignment'])
                     self._meta['msa'][ref][key] = d
 
-    def reduce_alignments(self, alignment='alignment', ref='cogid'):
+    def reduce_alignments(self, alignment=False, ref=False):
         """
         Function reduces alignments which contain columns that are marked to be \
                 ignored by the user.
@@ -656,10 +677,13 @@ class Alignments(Wordlist):
         guarantee that the alignments with with we want to work are at the same
         place in the dictionary.
         """
+        alignments = alignment or self._alignment
+        ref = ref or self._ref
+
         if alignment not in self.header:
             raise ValueError(
                 'No alignments found in your data. ' +
-                'You carry out an alignment analysis first!')
+                'You should carry out an alignment analysis first!')
 
         # dictionary to add new alignments class afterwards for providing quick
         # access
@@ -677,11 +701,14 @@ class Alignments(Wordlist):
                 D[k] = ['']
         self.add_entries('_'+alignment, D, lambda x: x)
 
-    def _msa2col(self, ref='cogid'):
+    def _msa2col(self, ref=False, alignment=False):
         """
         Add alignments to column (space-separated) in order to make it easy to
         parse them in the wordlist editor.
         """
+        ref = ref or self._ref
+        aligment = alignment or self._alignment
+
         tmp = {}
         # plain mode, that means, no partial alignments
         if self._mode == 'plain':
@@ -695,10 +722,10 @@ class Alignments(Wordlist):
 
             missing = [idx for idx in self if idx not in tmp]
             for m in missing:
-                if 'tokens' in self.header:
-                    tmp[m] = self[m, 'tokens']
-                elif 'ipa' in self.header:
-                    tmp[m] = ipa2tokens(self[m, 'ipa'])
+                if self._segments in self.header:
+                    tmp[m] = self[m, self._segments]
+                elif self._transcription in self.header:
+                    tmp[m] = ipa2tokens(self[m, self._transcription])
                 elif self._alignment in self.header:
                     tmp[m] = self[m, self._alignment]
                 else:
@@ -719,13 +746,13 @@ class Alignments(Wordlist):
                         idx = msa['ID'].index(key)
                         tmp[key] += msa['alignment'][idx]
                     else:
-                        tmp[key] += tokens2morphemes(self[key, self._tokens])[i]
+                        tmp[key] += tokens2morphemes(self[key, self._segments])[i]
                     # add morpheme separator as long as we don't add the last
                     # element
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(self._alignment, tmp, lambda x: x)
+        self.add_entries(alignment, tmp, lambda x: x)
 
     def align(self, **keywords):
         """
@@ -802,30 +829,34 @@ class Alignments(Wordlist):
             strings of sequences.
         """
         kw = dict(
-            method='progressive',
-            iteration=False,
-            swap_check=False,
-            output=False,
-            model=rcParams['sca'],
-            mode=rcParams['align_mode'],
-            modes=rcParams['align_modes'],
-            gop=rcParams['align_gop'],
-            scale=rcParams['align_scale'],
-            factor=rcParams['align_factor'],
-            tree_calc=rcParams['align_tree_calc'],
-            gap_weight=rcParams['gap_weight'],
-            restricted_chars=rcParams['restricted_chars'],
+            alignment=False,
             classes=rcParams['classes'],
-            sonar=rcParams['sonar'],
-            scoredict=rcParams['scorer'],
-            ref=rcParams['ref'],
-            plots=False,
-            filename=self.filename,
-            show=False,
-            style='plain',
             defaults=False,
+            factor=rcParams['align_factor'],
+            filename=self.filename,
+            gap_weight=rcParams['gap_weight'],
+            gop=rcParams['align_gop'],
+            iteration=False,
+            method='progressive',
+            mode=rcParams['align_mode'],
+            model=rcParams['sca'],
+            modes=rcParams['align_modes'],
+            output=False,
+            plots=False,
+            ref=False,
+            restricted_chars=rcParams['restricted_chars'],
+            scale=rcParams['align_scale'],
+            scoredict=rcParams['scorer'],
+            show=False,
+            sonar=rcParams['sonar'],
+            style='plain',
+            swap_check=False,
+            tree_calc=rcParams['align_tree_calc'],
         )
         kw.update(keywords)
+        kw['ref'] = kw['ref'] or self._ref
+        kw['alignment'] = kw['alignment'] or self._alignment
+
         if kw['defaults']:
             return kw
 
@@ -891,7 +922,7 @@ class Alignments(Wordlist):
             self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
                 m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
 
-        self._msa2col(ref=kw['ref'])
+        self._msa2col(ref=kw['ref'], alignment=kw['alignment'])
 
     def get_confidence(self, scorer, ref="lexstatid", gap_weight=0.25):
         """
@@ -927,8 +958,9 @@ class Alignments(Wordlist):
             dataset=self.filename,
             show=False,
             filename=self.filename,
-            ref=rcParams['ref'],
+            ref=False,
             confidence=False)
+        keywords['ref'] = keywords['ref'] or self._ref
 
         with util.TemporaryPath(suffix='.alm') as tmp:
             self.output(
@@ -1134,8 +1166,8 @@ class Alignments(Wordlist):
             for concept in self.concepts:
                 out += '\n'
                 indices = self.get_list(row=concept, flat=True)
-                if self._loans:
-                    cogids = [abs(self[i, ref]) for i in indices]
+                if self._modify_ref:
+                    cogids = [self._modify_ref(self[i, ref]) for i in indices]
                 else:
                     cogids = [self[i, ref] for i in indices]
                 cogids = sorted(set(cogids))
@@ -1215,7 +1247,7 @@ def SCA(infile, **keywords):
     return parent
 
 
-def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keywords):
+def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
     """
     Calculate a consensus string of a given MSA.
 
@@ -1223,9 +1255,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
     ----------
     msa : {c{list} ~lingpy.align.multiple.Multiple}
         Either an MSA object or an MSA matrix.
-    tree : {c{str} ~lingpy.thirdparty.cogent.PhyloNode}
-        A tree object or a Newick string along which the consensus shall be
-        calculated.
     gaps : c{bool} (default=False)
         If set to c{True}, return the gap positions in the consensus.
     taxa : {c{list} bool} (default=False)
@@ -1248,26 +1277,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
     cons : c{str}
         A consensus string of the given MSA.
     """
-    vowels = [
-        'a', 'e', 'i', 'o', 'u', 'E', 'I',
-        '3', 'ɛ', 'æ', 'ɜ', 'ɐ', 'ʌ',
-        'ᴇ', 'ə', 'ɘ', 'ɤ', 'ᴀ', 'ã',
-        'ɑ', 'ɪ', 'ɨ', 'ɿ', 'ʅ', 'ɯ',
-        'œ', 'ɞ', 'ɔ', 'ø', 'ɵ', 'õ',
-        'ɶ', 'ɷ', 'ʏ', 'ʉ', 'ᴜ', 'ʊ',
-    ]
-
-    def rep_weights(char1, char2, _):
-        if char1 == char2:
-            return 0
-
-        if char1 == '-':
-            return 0.1 if char2 in vowels else 0.8
-
-        if char2 == "-":
-            return 0.3 if char1 in vowels else 0.1
-
-        return 0.1
 
     util.setdefaults(
         keywords,
@@ -1276,7 +1285,6 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
         mode='majority',
         gap_score=-10,
         weights=[1 for i in range(len(msa[0]))],
-        rep_weights=rep_weights,
         local=False)
 
     # transform the matrix
@@ -1290,7 +1298,7 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
             for line in matrix:
                 sim = []
                 for (i, charA), (j, charB) in util.combinations2(enumerate(line)):
-                    if charA not in '-' and charB not in '-':
+                    if charA not in rcParams['gap_symbol'] and charB not in rcParams['gap_symbol']:
                         sim.append(keywords['model'](
                             tokens2class([charA], keywords['model'])[0],
                             tokens2class([charB], keywords['model'])[0]
@@ -1336,274 +1344,69 @@ def get_consensus(msa, tree=False, gaps=False, taxa=False, classes=False, **keyw
         elif hasattr(msa, 'ipa2cls'):
             msa.ipa2cls(model=keywords['model'])
             classes = misc.transpose(msa.classes)
-
     # if no tree is passed, it is a simple majority-rule principle that outputs
     # the consensus string
     cons = []
-
-    if not tree:
-        if not classes:
-            for col in matrix:
-                count = Counter(col)
-                if '-' in count:
-                    count['-'] *= keywords['gap_scale']
-                cons.append(count.most_common(1)[0][0])
-        elif classes:
-            for i, col in enumerate(classes):
-                tmpA, tmpB = Counter(col), defaultdict(int)
-
+    if not classes:
+        for col in matrix:
+            count = Counter(col)
+            if rcParams['gap_symbol'] in count:
+                count[rcParams['gap_symbol']] *= keywords['gap_scale']
+            cons.append(count.most_common(1)[0][0])
+    elif classes:
+        for i, col in enumerate(classes):
+            tmpA, tmpB = Counter(col), defaultdict(int)
+            for j, c in enumerate(col):
+                tmpB[matrix[i][j]] += 1
+            # half the weight of gaps
+            if rcParams['gap_symbol'] in tmpA:
+                tmpA[rcParams['gap_symbol']] *= keywords['gap_scale']
+            chars = tmpA.most_common()
+            # if mode is set to 'maximize', calculate the score
+            if keywords['mode'] == 'maximize':
+                tmpC = {}
                 for j, c in enumerate(col):
-                    tmpB[matrix[i][j]] += 1
-
-                # half the weight of gaps
-                if '-' in tmpA:
-                    tmpA['-'] *= keywords['gap_scale']
-
-                chars = tmpA.most_common()
-
-                # if mode is set to 'maximize', calculate the score
-                if keywords['mode'] == 'maximize':
-                    tmpC = {}
-                    for j, c in enumerate(col):
-                        if c not in tmpC:
-                            score = 0
-                            for k, c2 in enumerate(col):
-                                if '-' not in (c, c2):
-                                    score += keywords['model'](c, c2)
-                                else:
-                                    if (c, c2) == ('-', '-'):
-                                        score += 0
-                                    else:
-                                        score += keywords['gap_score'] * \
-                                            keywords['weights'][i]
-
-                            tmpC[c] = score / len(col)
-
-                    chars = [(c, n) for c, n in sorted(
-                        tmpC.items(), key=lambda x:(x[1], tmpA[x[0]]), reverse=True)]
-
-                # check for identical classes
-                maxV = chars.pop(0)
-
-                clss = [maxV[0]]
-                while chars:
-                    newV = chars.pop(0)
-                    if newV[1] == maxV[1]:
-                        clss += [newV[0]]
-                    else:
-                        break
-
-                tmp = Counter()
-                for j, c in enumerate(col):
-                    if c in clss:
-                        tmp.update([matrix[i][j]])
-
-                chars = [c for c, n in tmp.most_common(2)]
-
-                # apply check for gaps here, if there are more gaps than in the
-                # full column, take the gaps, otherwise, take the next char
-                if chars[0] == '-':
-                    if tmp['-'] > sum([tmp[x] for x in tmp if x != '-']):
-                        cchar = '-'
-                    else:
-                        cchar = chars[1]
-                else:
-                    cchar = chars[0]
-
-                cons.append(cchar)
-    # otherwise, we use a bottom-up parsimony approach to determine the best
-    # match
-    elif tree:
-        # hack: this operates on the non-transposed alm_matrix
-        matrix = misc.transpose(matrix)
-        # if the taxa are defined, extract the sub-guidetree accordingly
-        if taxa:
-            taxon_to_id = {text_type(name): i for i, name in
-                           enumerate(leaf.Name for leaf in tree.tips())}
-            tree = tree.deepcopy()
-            for leaf in tree.tips():
-                leaf.Name = text_type(taxon_to_id[leaf.Name])
-            newIndices = [taxon_to_id[text_type(taxon)] for taxon in taxa]
-            tree = subGuideTree(tree, newIndices)
-        # otherwise, the leaves of the guide trees are expected to have integer IDs
-        for node in tree.postorder():
-            if node.isTip():
-                node.alignment = [matrix[int(node.Name)]]
-                node.size = 1
-            else:
-                node.alignment = node.Children[0].alignment + node.Children[1].alignment
-                node.size = node.Children[0].size + node.Children[1].size
-        for node in tree.postorder():
-            node.distribution = []
-        for i in range(0, len(matrix[0])):
-            for node in tree.postorder():
-                if node.isTip():
-                    node.distribution.append({matrix[int(node.Name)][i]: 1.0})
-                else:
-                    node.distribution.append({})
-                    child1 = node.Children[0]
-                    child2 = node.Children[1]
-                    for phoneme in set(child1.distribution[i].keys()) | \
-                            set(child2.distribution[i].keys()):
-                        value = 0.0
-                        if phoneme in child1.distribution[i].keys():
-                            value += child1.size * child1.distribution[i][phoneme]
-                        if phoneme in child2.distribution[i].keys():
-                            value += child2.size * child2.distribution[i][phoneme]
-                        value /= node.size
-                        node.distribution[i][phoneme] = value
-        recon_alg = "sankoff_parsimony"
-        for node in tree.postorder():
-            node.reconstructed = []
-        if recon_alg == "modified_consensus":
-            for i in range(0, len(matrix[0])):
-                for node in tree.postorder():
-                    dist = node.distribution[i]
-                    maxValue = max(dist.values())
-                    maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                    if len(maxKeys) == 1 or node.isRoot():
-                        node.reconstructed.append(maxKeys[0])
-                    else:
-                        parentDist = node.Parent.distribution[i]
-                        maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                        node.reconstructed.append(maxKey)
-        elif recon_alg == "binary_decision":
-            for i in range(0, len(matrix[0])):
-                for node in tree.postorder():
-                    if node.isTip():
-                        # just retrieve the original at the leaves
-                        dist = node.distribution[i]
-                        maxValue = max(dist.values())
-                        maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                        node.reconstructed.append(maxKeys[0])
-                    else:
-                        leftVariant = node.Children[0].reconstructed[i]
-                        rightVariant = node.Children[1].reconstructed[i]
-                        # if one of both is '-', take the other one (preference for
-                        # segment loss)
-                        # BUT: epenthesis is allowed
-                        if leftVariant == '-' and rightVariant not in vowels:
-                            node.reconstructed.append(rightVariant)
-                        elif rightVariant == '-' and leftVariant not in vowels:
-                            node.reconstructed.append(leftVariant)
-                        else:
-                            # let the distribution decide otherwise
-                            dist = node.distribution[i]
-                            maxValue = max(dist.values())
-                            maxKeys = [
-                                key for key in dist.keys() if dist[key] == maxValue]
-                            if len(maxKeys) == 1 or node.isRoot():
-                                node.reconstructed.append(maxKeys[0])
+                    if c not in tmpC:
+                        score = 0
+                        for k, c2 in enumerate(col):
+                            if '-' not in (c, c2):
+                                score += keywords['model'](c, c2)
                             else:
-                                parentDist = node.Parent.distribution[i]
-                                maxKey = max(maxKeys, key=(lambda key: parentDist[key]))
-                                node.reconstructed.append(maxKey)
-        elif recon_alg == "sankoff_parsimony":
-            systematizationBonus = True
-            distributionBonus = True
-            for node in tree.postorder():
-                node.sankoffTable = []
-                node.sankoffPointers = []
-            for i in range(0, len(matrix[0])):
-                def sankoff_value(sankoffTable, char):
-                    if char in sankoffTable.keys():
-                        return sankoffTable[char]
-                    return 65535  # approximation to Integer.MAX_INT
-                mtx = keywords["rep_weights"]
-                # apply the Sankoff algorithm, store backpointers
-                for node in tree.postorder():
-                    node.sankoffTable.append(dict())
-                    dist = node.distribution[i]
-                    if node.isTip():
-                        # just retrieve the original at the leaves (needs to be
-                        # reconstructed from the differences)
-                        maxValue = max(dist.values())
-                        maxKeys = [key for key in dist.keys() if dist[key] == maxValue]
-                        node.sankoffTable[i][maxKeys[0]] = 0
-                        if systematizationBonus:
-                            node.orig.best_replacements = {}
-                    else:
-                        node.sankoffPointers.append(dict())
-                        sankoff1 = node.Children[0].sankoffTable[i]
-                        sankoff2 = node.Children[1].sankoffTable[i]
-                        recon1 = node.Children[0].reconstructed
-                        recon2 = node.Children[1].reconstructed
-                        for char in set(sankoff1.keys()) | set(sankoff2.keys()):
-                            minSankoffValue = 65536
-                            backPointers = ['-', '-']
-                            for char1 in sankoff1.keys():
-                                for char2 in sankoff2.keys():
-                                    bonusFactor1 = 1.0
-                                    bonusFactor2 = 1.0
-                                    if systematizationBonus:
-                                        if hasattr(node.Children[0].orig, "best_replacements") and char + char1 in node.Children[0].orig.best_replacements.keys():
-                                            bonusFactor1 /= 1 + node.Children[0].orig.best_replacements[char + char1]
-                                        if hasattr(node.Children[1].orig, "best_replacements") and char + char2 in node.Children[1].orig.best_replacements.keys():
-                                            bonusFactor2 /= 1 + node.Children[1].orig.best_replacements[char + char2]
-                                    if distributionBonus:
-                                        bonusFactor1 /= node.distribution[i][char]
-                                        bonusFactor2 /= node.distribution[i][char]
-                                    char1no5 = char1
-                                    char2no5 = char2
-                                    if char1no5 == "5":
-                                        char1no5 = "N"
-                                    if char2no5 == "5":
-                                        char2no5 = "N"
-                                    proso1 = prosodic_string(recon1 + [char1no5])[-1]
-                                    proso2 = prosodic_string(recon2 + [char2no5])[-1]
-                                    sankoffValue = mtx(char, char1, proso1) * bonusFactor1 + sankoff1[char1] + mtx(char, char2, proso2) * bonusFactor2 + sankoff2[char2]
-                                    if (sankoffValue < minSankoffValue):
-                                        minSankoffValue = sankoffValue
-                                        backPointers[0] = char1
-                                        backPointers[1] = char2
-                            node.sankoffTable[i][char] = minSankoffValue
-                            node.sankoffPointers[i][char] = backPointers
-                        if systematizationBonus:
-                            if not hasattr(node.Children[0].orig, "best_replacements"):
-                                node.Children[0].orig.best_replacements = {}
-                            if not hasattr(node.Children[1].orig, "best_replacements"):
-                                node.Children[1].orig.best_replacements = {}
-                            minValue = min(node.sankoffTable[i].values())
-                            minKeys = [key for key in node.sankoffTable[i].keys()
-                                       if node.sankoffTable[i][key] == minValue]
-                            for char in minKeys:
-                                minValue1 = min(node.Children[0].sankoffTable[i].values())
-                                for char1 in [
-                                    key for key in node.Children[0].sankoffTable[i].keys()
-                                    if node.Children[0].sankoffTable[i][key] == minValue1
-                                ]:
-                                    if char + char1 not in node.Children[0].orig.best_replacements.keys():
-                                        node.Children[0].orig.best_replacements[char + char1] = 1
-                                    else:
-                                        node.Children[0].orig.best_replacements[char + char1] += 1
-                                minValue2 = min(node.Children[1].sankoffTable[i].values())
-                                for char2 in [
-                                    key for key in node.Children[1].sankoffTable[i].keys()
-                                    if node.Children[1].sankoffTable[i][key] == minValue2
-                                ]:
-                                    if char + char2 not in node.Children[1].orig.best_replacements.keys():
-                                        node.Children[1].orig.best_replacements[char + char2] = 1
-                                    else:
-                                        node.Children[1].orig.best_replacements[char + char2] += 1
-                # read out the backpointers for an optimal reconstruction
-                minValue = min(tree.sankoffTable[i].values())
-                minKeys = [key for key in tree.sankoffTable[i].keys()
-                           if tree.sankoffTable[i][key] == minValue]
-                reconChar = minKeys[0]
+                                if (c, c2) == (rcParams['gap_symbol'],
+                                        rcParams['gap_symbol']):
+                                    score += 0
+                                else:
+                                    score += keywords['gap_score'] * \
+                                        keywords['weights'][i]
 
-                def reconstruct_by_sankoff(node, char):
-                    if char == "5":
-                        node.reconstructed.append("N")
-                    else:
-                        node.reconstructed.append(char)
-                    if not node.isTip():
-                        reconstruct_by_sankoff(
-                            node.Children[0], node.sankoffPointers[i][char][0])
-                        reconstruct_by_sankoff(
-                            node.Children[1], node.sankoffPointers[i][char][1])
-                reconstruct_by_sankoff(tree, reconChar)
-        else:
-            log.error("Unknown reconstruction method: " + recon_alg)
-        cons = "".join(tree.reconstructed)
+                        tmpC[c] = score / len(col)
+                chars = [(c, n) for c, n in sorted(
+                    tmpC.items(), key=lambda x:(x[1], tmpA[x[0]]), reverse=True)]
+            # check for identical classes
+            maxV = chars.pop(0)
+            clss = [maxV[0]]
+            while chars:
+                newV = chars.pop(0)
+                if newV[1] == maxV[1]:
+                    clss += [newV[0]]
+                else:
+                    break
+            tmp = Counter()
+            for j, c in enumerate(col):
+                if c in clss:
+                    tmp.update([matrix[i][j]])
+            chars = [c for c, n in tmp.most_common(2)]
 
-    return cons if gaps else [c for c in cons if c != '-']  # cons.replace('-','')
+            # apply check for gaps here, if there are more gaps than in the
+            # full column, take the gaps, otherwise, take the next char
+            if chars[0] == rcParams['gap_symbol']:
+                if tmp[rcParams['gap_symbol']] > sum([tmp[x] for x in tmp if x != \
+                    rcParams['gap_symbol']]):
+                    cchar = rcParams['gap_symbol']
+                else:
+                    cchar = chars[1]
+            else:
+                cchar = chars[0]
+            cons.append(cchar)
+
+    return cons if gaps else [c for c in cons if c != rcParams['gap_symbol']]  

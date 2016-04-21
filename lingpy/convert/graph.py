@@ -2,14 +2,12 @@
 Conversion routines for the GML format.
 """
 from __future__ import unicode_literals, print_function, division
+from six import text_type
 
 from lingpy import log
 from lingpy import util
 
-try:
-    import networkx as nx
-except:
-    log.missing_module('networkx')
+import networkx as nx
 
 try:
     import igraph as ig
@@ -71,7 +69,7 @@ def gls2gml(
         A tree object. 
     """
     # check for tree-formatting
-    if type(tree) == str:
+    if type(tree) == text_type:
         tree = cg.LoadTree(treestring=tree)
 
     # create a mapper for the ids and the string-names
@@ -181,7 +179,7 @@ def nwk2gml(
     graph = nx.DiGraph()
 
     # load the tree
-    if type(treefile) == str:
+    if type(treefile) == text_type:
         try:
             tree = cg.LoadTree(treefile)
         except:
@@ -281,7 +279,7 @@ def radial_layout(
         return x, y
 
     # get the tree
-    if type(treestring) == str:
+    if type(treestring) == text_type:
         try:
             tree = cg.LoadTree(treestring)
         except:

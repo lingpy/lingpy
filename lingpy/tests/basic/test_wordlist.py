@@ -2,6 +2,7 @@
 Test wordlist module.
 """
 from six import text_type
+from nose.tools import assert_raises
 
 from lingpy import Wordlist
 from lingpy.tests.util import test_data, WithTempDir
@@ -23,6 +24,7 @@ class TestWordlist(WithTempDir):
                     range(self.wordlist.width)]) == 0
 
         self.wordlist.calculate('tree')
+        assert str(self.wordlist.tree).endswith(';')
 
         assert sorted(self.wordlist.tree.taxa) == sorted(self.wordlist.cols)
 
@@ -31,21 +33,32 @@ class TestWordlist(WithTempDir):
         assert hasattr(self.wordlist, 'groups')
         assert type(self.wordlist.groups) == dict
 
+
+
     def test_coverage(self):
         self.wordlist.coverage()
         self.wordlist.coverage(stats='ratio')
         self.wordlist.coverage(stats='mean')
 
     def test_get_list(self):
-        gerL = self.wordlist.get_list(col='German', entry='ipa', flat=True)
+        gerL = self.wordlist.get_list(doculect='German', entry='ipa', flat=True)
         gerD = self.wordlist.get_dict(col='German', entry='ipa')
+        gerT = self.wordlist.get_list(doculect='German', entry="ipa")
 
         assert sorted(gerL) == sorted([v[0] for v in gerD.values()])
+        assert sorted(gerT) == sorted(gerL)
+
+        hand1 = self.wordlist.get_list(concept="hand", entry="ipa", flat=True)
+        hand2 = self.wordlist.get_dict(row="hand", entry="ipa")
+        assert sorted(hand1) == sorted([v[0] for v in hand2.values()])
+
+        assert_raises(ValueError, self.wordlist.get_list, **{"row" : "Hand"})
 
     def test_get_dict(self):
         gerD = self.wordlist.get_dict(col='German')
 
         assert sorted(gerD.keys()) == sorted(self.wordlist.rows)
+        assert_raises(ValueError, self.wordlist.get_dict, **{"row" : "Hand"})
 
     def test_renumber(self):
         self.wordlist.renumber('cogid', 'dummy')
@@ -63,8 +76,9 @@ class TestWordlist(WithTempDir):
         assert len(ger[0]) == self.wordlist.width
 
     def test_get_etymdict(self):
-        etd1 = self.wordlist.get_etymdict(ref='cogid', entry='ipa', loans=False)
-        etd2 = self.wordlist.get_etymdict(ref='cogid', entry='ipa', loans=True)
+        etd1 = self.wordlist.get_etymdict(ref='cogid', entry='ipa', modify_ref=False)
+        etd2 = self.wordlist.get_etymdict(ref='cogid', entry='ipa',
+                modify_ref=abs)
 
         assert len(etd1) > len(etd2) and len(set([abs(x) for x in etd1])) == \
                                          len(etd2)
@@ -74,17 +88,17 @@ class TestWordlist(WithTempDir):
         self.wordlist.add_entries('fuzzyid', 'cogid', lambda x: [x])
 
         etd3 = self.wordlist.get_etymdict(
-            ref='fuzzyid', entry='ipa', loans=False)
+            ref='fuzzyid', entry='ipa', modify_ref=False)
         etd4 = self.wordlist.get_etymdict(
-            ref='fuzzyid', entry='ipa', loans=True)
+            ref='fuzzyid', entry='ipa', modify_ref=abs)
         for key in etd1:
             assert etd1[key] == etd3[key]
         for key in etd2:
             self.assertEquals(etd2[key], etd4[key])
 
     def test_get_paps(self):
-        paps = self.wordlist.get_paps(ref="cogid", loans=True)
-        cogs = self.wordlist.get_etymdict(ref="cogid", loans=True)
+        paps = self.wordlist.get_paps(ref="cogid", modify_ref=abs)
+        cogs = self.wordlist.get_etymdict(ref="cogid", modify_ref=abs)
 
         for key in cogs:
             if abs(key) in paps:
@@ -95,14 +109,18 @@ class TestWordlist(WithTempDir):
 
     def test_output(self):
         fn = text_type(self.tmp_path('test'))
-        for fmt in 'csv taxa tre dst starling paps.nex paps.csv separated multistate.nex groups'.split():
+        for fmt in 'tsv taxa tre dst starling paps.nex paps.csv separated multistate.nex groups'.split():
             kw = {'ref': 'word'} if fmt == 'starling' else {}
             self.wordlist.output(fmt, filename=fn, **kw)
             if fmt == 'starling':
                 self.wordlist.output(fmt, filename=fn, cognates='cogid', **kw)
-            if fmt == 'csv':
+            if fmt == 'tsv':
                 kw['subset'] = True
                 self.wordlist.output(fmt, filename=fn, cols=[], rows={}, **kw)
+                self.wordlist.output(fmt, filename=fn,
+                        cols=sorted(self.wordlist.header)[:2], rows=dict(ID=" > 10"),
+                            **kw)
+
 
     def test_export(self):
         fn = text_type(self.tmp_path('test'))
