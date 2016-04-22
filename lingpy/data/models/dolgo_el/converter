@@ -1,13 +1,13 @@
 V : a, e, i, o, u, E, 3
 K : k, g, x, X, C, c, q, j
 P : p, b, f, v
-H : H, h, 7
+H : H, h, 7, !
 J : y
 M : m
 N : n, 5, N, 4
 S : s, z, S, Z
 R : r, l, R, L
-T : t, d, 8
+T : t, d, 8, T
 W : w
 + : +
 1 : 1

@@ -403,18 +403,6 @@ def wl2qlc(
         normalize="NFC")
     return
 
-
-def wl2csv(
-        header,
-        data,
-        filename='',
-        formatter='concept',
-        verbose=True,
-        **keywords):
-    log.deprecated('wl2csv', '')
-    return wl2qlc(header, data, filename, formatter, **keywords)
-
-
 def tsv2triple(wordlist, outfile=None):
     """
     Function converts a wordlist to a triple data structure.
