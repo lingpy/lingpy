@@ -28,12 +28,11 @@ class TestOps(WithTempDir):
         self.assertIsInstance(res, list)
 
     def test_wl2qlc(self):
-        from lingpy.basic.ops import wl2qlc, wl2csv
+        from lingpy.basic.ops import wl2qlc
 
         stamp = 'test-stamp'
         out = self.tmp_path('test')
 
-        wl2csv(self.wordlist.header, self.wordlist._data, filename=out.as_posix())
         wl2qlc(self.wordlist.header, self.wordlist._data, filename=out.as_posix(), stamp=stamp)
         out = self.tmp_path('test.qlc')
         with out.open(encoding='utf8') as fp:
