@@ -14,11 +14,13 @@ try:
     import matplotlib as mpl
 except:
     log.missing_module('matplotlib')
+    plt = False
 
 try:
     import scipy.cluster.hierarchy as sch
 except:
     log.missing_module('scipy')
+    sch = False
 
 from lingpy.thirdparty import cogent as cg
 from lingpy.convert.tree import nwk2tree_matrix
