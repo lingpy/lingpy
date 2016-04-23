@@ -54,8 +54,6 @@ def alm2html(
     shorttitle='',
     filename='',
     colored=False,
-    verbose=True,
-    show=True,
     main_template='',
     table_template='',
     dataset='',
@@ -281,9 +279,6 @@ def alm2html(
         **keywords
     )
     util.write_text_file(filename + '.html', html)
-    if show:
-        url = 'file://' + os.path.abspath(os.curdir) + '/' + filename + '.html'
-        webbrowser.open(url)
     return
 
 
@@ -526,18 +521,16 @@ def msa2html(
     else:
         return html
 
-
 def string2html(
     taxon,
     string,
     swaps=[],
-    tax_len=None,
-    path='',
-    template=''
-):
+    tax_len=None
+    ):
     """
     Function converts an (aligned) string into colored html-format.
-
+    
+    @deprecated
     """
 
     # determine the length of the string
@@ -588,9 +581,7 @@ def string2html(
 def msa2tex(
     infile,
     template='',
-    path='',
     filename='',
-    verbose=True,
     **keywords
 ):
     """
@@ -687,17 +678,20 @@ def msa2tex(
 
     util.write_text_file(filename + '.tex', tex)
 
-
 def tokens2html(
     string,
     swaps=[],
     tax_len=None,
-    path='',
-    template=''
 ):
     """
     Function converts an (aligned) string into colored html-format.
 
+    Notes
+    -----
+    This function is currently not used by any other program. So it might be
+    useful to just deprecate it.
+
+    @deprecated
     """
     # set the tr-line
     tr = '<tr class="msa">\n{0}\n</tr>'
@@ -736,7 +730,7 @@ def tokens2html(
     return out + '</table>'
 
 
-def psa2html(filename, **kw):
+def psa2html(infile, **kw):
     """
     Function converts a PSA-file into colored html-format.
     """
@@ -745,14 +739,14 @@ def psa2html(filename, **kw):
         template=False,
         css=False,
         comment='#',
-        filename=filename.replace('.psa', '.html'),
+        filename=infile[:-4]+'.html',
         compact=True)
 
     template = util.read_text_file(kw['template'] or template_path('psa.html'))
     css = util.read_text_file(kw['css'] or template_path('psa.css'))
 
     data = []
-    for line in util.read_text_file(filename, lines=True):
+    for line in util.read_text_file(infile, lines=True):
         if not line.startswith(kw['comment']):
             data.append(line)
 

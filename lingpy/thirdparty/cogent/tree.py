@@ -321,6 +321,8 @@ class TreeNode(object):
     def traverse(self, self_before=True, self_after=False, include_self=True):
         """Returns iterator over descendants. Iterative: safe for large trees.
 
+        Notes
+        -----
         self_before includes each node before its descendants if True.
         self_after includes each node after its descendants if True.
         include_self includes the initial node if True.
@@ -463,7 +465,9 @@ class TreeNode(object):
     def traverse_recursive(self, self_before=True, self_after=False, \
         include_self=True):
         """Returns iterator over descendants. IMPORTANT: read notes below.
-
+        
+        Notes
+        -----
         traverse_recursive is slower than traverse, and can lead to stack
         errors. However, you _must_ use traverse_recursive if you plan to
         modify the tree topology as you walk over it (e.g. in post-order),
@@ -518,7 +522,10 @@ class TreeNode(object):
     def siblings(self):
         """Returns all nodes that are children of the same parent as self.
         
-        Note: excludes self from the list. Dynamically calculated.
+        Notes
+        -----
+        Excludes self from the list. Dynamically calculated.
+        
         """
         if self._parent is None:
             return []
@@ -1366,12 +1373,17 @@ class TreeNode(object):
     def asciiArt(self, show_internal=True, compact=False, labels=False):
         """Returns a string containing an ascii drawing of the tree.
         
-        Arguments:
-        - show_internal: includes internal edge names.
-        - compact: use exactly one line per tip.
-        - labels: specify specific labels for all nodes in the tree.
+        Parameters
+        ----------
+        show_internal: bool
+            includes internal edge names.
+        compact: bool
+            use exactly one line per tip.
+        labels: {bool, list}
+            specify specific labels for all nodes in the tree.
 
-        Notes:
+        Notes
+        -----
         The labels-keyword was added to the function by JML.
         """
         # XXX added labels-keywords JML
@@ -1554,7 +1566,9 @@ class TreeNode(object):
             
         Other is expected to be a tree object compatible with PhyloNode.
         
-        Note: names present in only one of the two trees will count as 
+        Notes
+        -----
+        Names present in only one of the two trees will count as 
         mismatches: if you don't want this behavior, strip out the non-matching
         tips first.
         """
@@ -1818,12 +1832,13 @@ class PhyloNode(TreeNode):
     def balanced(self):
         """Tree 'rooted' here with no neighbour having > 50% of the edges.
         
-        Usage:
-            Using a balanced tree can substantially improve performance of
-            the likelihood calculations. Note that the resulting tree has a
-            different orientation with the effect that specifying clades or
-            stems for model parameterisation should be done using the
-            'outgroup_name' argument.
+        Notes
+        -----
+        Using a balanced tree can substantially improve performance of
+        the likelihood calculations. Note that the resulting tree has a
+        different orientation with the effect that specifying clades or
+        stems for model parameterisation should be done using the
+        'outgroup_name' argument.
         """
         # this should work OK on ordinary 3-way trees, not so sure about
         # other cases.  Given 3 neighbours, if one has > 50% of edges it
@@ -2264,7 +2279,9 @@ def LoadTree(filename=None, treestring=None, tip_names=None, underscore_unmunge=
         - treestring: a newick or xml formatted tree string.
         - tip_names: a list of tip names.
 
-    Note: underscore_unmunging is turned off by default, although it is part
+    Notes
+    -----
+    Underscore_unmunging is turned off by default, although it is part
     of the Newick format. Set underscore_unmunge to True to replace underscores
     with spaces in all names read.
     """

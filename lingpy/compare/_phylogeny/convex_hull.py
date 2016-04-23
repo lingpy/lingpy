@@ -1,8 +1,8 @@
 """
 Compute the convex hull for a given set of points.
 
-Note
-----
+Notes
+-----
 
 This code has been taken from: http://www.scipy.org/Cookbook/Finding_Convex_Hull
 
@@ -42,19 +42,23 @@ def area_of_triangle(p1, p2, p3):
 def convex_hull(points, graphic=True, smidgen=0.0075):
     """
     Calculate subset of points that make a convex hull around points
-
-Recursively eliminates points that lie inside two neighbouring points until only convex
-hull is remaining.
-
-:Parameters:
+    
+    Notes
+    -----
+    Recursively eliminates points that lie inside two neighbouring points until only convex
+    hull is remaining.
+    
+    Parameters
+    ----------
     points : ndarray (2 x m)
         array of points for which to find hull
     graphic : bool
         use pylab to show progress?
     smidgen : float
         offset for graphic number labels - useful values depend on your data range
-
-:Returns:
+    
+    Returns
+    -------
     hull_points : ndarray (2 x n)
         convex hull surrounding points
     """
