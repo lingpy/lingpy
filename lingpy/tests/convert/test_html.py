@@ -25,16 +25,17 @@ class Tests(WithTempDir):
 
     def test_strings_and_tokens2html(self):
 
-        tokens2html(list('hary'))
+        tokens2html(list('haXy'))
         tokens2html(list('hary'), swaps=[1,2])
         tokens2html(list('hary'), tax_len=20)
         string2html('English', list('hary'))
-        string2html('English', list('hary'), swaps=[1,2])
+        string2html('English', list('haXy'), swaps=[1,2])
         string2html('English', list('hary'), tax_len=20)
 
     def test_psa2html(self):
 
         psa2html(test_data('harry_potter.psa'),
                 filename=text_type(self.tmp_path('alm')))
-
+        psa2html(test_data('harry_potter_bad.psa'),
+                filename=text_type(self.tmp_path('alm')))
     

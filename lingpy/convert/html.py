@@ -565,8 +565,8 @@ def string2html(
             try:
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
-            except:
-                input("Unknown character '" + char + "', press ANY key to continue. ")
+            except KeyError:
+                log.warn("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
@@ -717,8 +717,8 @@ def tokens2html(
             try:
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
-            except:
-                input("Unknown character '" + char + "', press ANY key to continue. ")
+            except KeyError:
+                log.warn("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
@@ -783,8 +783,9 @@ def psa2html(infile, **kw):
                     [str(b) for b in almB],
                     0)
             )
+            assert len(alignments[-1][0]) == len(alignments[-1][1])
             i += 4
-        except:
+        except AssertionError:
             log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
             i += 1
 

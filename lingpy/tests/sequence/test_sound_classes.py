@@ -7,8 +7,9 @@ from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
-        get_n_ngrams, pgrams, syllabify, tokens2morphemes
+        get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse
 from lingpy import rc, csv2list
+from six import text_type
 
 """
 Tests for the SCA module
@@ -111,12 +112,22 @@ def test_class2tokens():
     tokens = 'tʰ ɔ x t ə r'.split(' ')
 
     out = class2tokens(classes, tokens)
+    out2 = class2tokens([['T'],['-VKTV-'],['R']], 'th o x t e r'.split(),
+            local=True)
 
     assert out[1] == '-' and out[-2] == '-'
 
 def test_pid():
 
-    assert pid('mattis', 'maTTIs') == 0.5
+    assert pid('mattis', 'maTTIs', 1) == 0.5
+    assert pid('mattis', 'maTTIs', 2) == 0.5
+    assert pid('mattis', 'maTTIs', 3) == 0.5
+    assert pid('mattis', 'maTTIs', 4) == 0.5
+    assert pid('m-', '-m', mode=1) == 0
+    assert pid('m-', '-m', mode=2) == 0
+    assert pid('m', '-', mode=3) == 0
+    assert pid('m-', '-m', mode=4) == 0
+
 
 def test_check_tokens():
 
@@ -186,3 +197,14 @@ def test_tokens2morphemes():
     assert len(tokens2morphemes(seq4, sep='murks')) == 2
     assert_raises(ValueError, tokens2morphemes, "t i a o")
 
+def test_onoparse():
+
+    seq1 = "a k e r ts a n"
+    seq2 = seq1.split(' ')
+    out1 = ono_parse(seq1, output='pprint')
+    out2 = ono_parse(seq2, output='prostring')
+    out3 = ono_parse(seq1)
+   
+    assert isinstance(out1, text_type)
+    assert out3[0] == ('-', '#')
+    assert out2 == 'VCvcC>$'

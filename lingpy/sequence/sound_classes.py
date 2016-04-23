@@ -5,6 +5,7 @@ Module provides various methods for the handling of sound classes.
 from __future__ import print_function, division, unicode_literals
 
 import re
+from six import text_type
 
 from lingpy import log
 from lingpy.util import setdefaults
@@ -457,7 +458,9 @@ def _pprint_ono(ono):
     """
     Helper function for string output of ono-parsed words.
     """
-
+    if rcParams['morpheme_separator'] in ono:
+        return ' '.join([x[0] if not isinstance(x, text_type) else
+            x for x in ono])
     out = []
     for k in ono:
         out.append(k[0] or '-')
@@ -467,7 +470,7 @@ def _pprint_ono(ono):
     return ' '.join(out)
 
 
-def ono_parse(word, output=''):
+def ono_parse(word, output='', **keywords):
     """
     Carry out a rough onset-nucleus-offset parse of a word in IPA.
     
@@ -487,8 +490,10 @@ def ono_parse(word, output=''):
 
 
     """
-
-    tokens = ipa2tokens(word)
+    if isinstance(word, text_type):
+        tokens = ipa2tokens(word, **keywords)
+    else:
+        tokens = [x for x in word]
     syllabified = syllabify(tokens)
     prostring = prosodic_string(tokens, _output='CcV')
     syllables = _split_syllables(syllabified, prostring)
