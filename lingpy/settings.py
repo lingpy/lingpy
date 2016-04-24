@@ -92,8 +92,6 @@ rcParams.update(alignments)
 
 # dictionary stores basic parameters that are used during a LingPy session
 rcParamsUpd = dict(
-    verbose=False,
-    debug=False,
     schema='qlc',
     asjp=Model('asjp'),
     sca=Model('sca'),
@@ -162,15 +160,7 @@ def rc(rval=None, **keywords):
         "asjp", this means that sequences will be treated as sequences in ASJP
         code, otherwise, they will be treated as sequences written in basic
         IPA.
-    verbose : bool (default=False)
-        Use this keyword in order to switch to verbose output. This will be
-        useful when using complex methods, in order to understand what the
-        program is actually doing.
-    debug : bool (default=False)
-        Use this keyword to switch to debug-mode. It will give specific,
-        internal output that is much more technical than the output resulting
-        from "verbose".
-
+    
     Notes
     -----
     This function is the standard way to communicate with the *rcParams*
@@ -188,10 +178,18 @@ def rc(rval=None, **keywords):
 
     >>> from lingpy import *
 
-    Change basic values. Switch to verbose output, for example:
+    Switch from IPA transcriptions to ASJP transcriptions:
 
-    >>> rc(verbose=True)
-    Successfully changed parameters.
+    >>> rc(schema="asjp")
+    
+    You can check which "basic orthography" is currently loaded:
+
+    >>> rc(basic_orthography)
+    'asjp'
+    >>> rc(schema='ipa')
+    >>> rc(basic_orthography)
+    'fuzzy'
+
     """
     from lingpy import log
 

@@ -124,7 +124,7 @@ class MCPhon(MCBasic):
             # init the mother object
             MCBasic.__init__(self, self.bigrams)
 
-    def get_string(self, new=True, tokens=False, **keywordstokens2class):
+    def get_string(self, new=True, tokens=False):
         """
         Generate a string from the Markov chain created from the training data.
         

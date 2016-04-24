@@ -1,5 +1,6 @@
 from unittest import TestCase
 import lingpy.meaning as lpm
+from nose.tools import assert_raises
 
 
 class TestBasVoc(TestCase):
@@ -11,6 +12,20 @@ class TestBasVoc(TestCase):
 
         self.assertRaises(IOError, basvoc, 'x')
 
+    def test_get_dict(self):
+
+        dct = self.basvoc.get_dict(col='jachontov', entry='item')
+        dct = self.basvoc.get_dict(swadesh_list='jachontov', entry='item')
+        assert dct[576][0] == 'blood'
+        dct = self.basvoc.get_dict(row=576, entry='item')
+        assert dct['swadesh100'][0] == 'blood'
+        assert_raises(ValueError, self.basvoc.get_dict, row='bla', col='bli')
+        assert_raises(ValueError, self.basvoc.get_dict)
+    
+    def test__getitem(self):
+
+        assert_raises(KeyError, self.basvoc.__getitem__, 'wrgs')
+    
     def test_get_list(self):
         jach = self.basvoc.get_list('jachontov', 'number', 'item')
         for a, b in [['94', 'water'], ['25', 'eye'], ['45', 'know'], ['86', 'this'],

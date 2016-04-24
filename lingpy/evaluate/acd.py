@@ -103,7 +103,8 @@ def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     """
     Compute pair scores for the evaluation of cognate detection algorithms.
     
-    .. , following Bouchard-Côté et al. (2013).
+    Parameters
+    ----------
     lex : :py:class:`lingpy.compare.lexstat.LexStat`
         The :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
         computation. It should have two columns indicating cognate IDs.

@@ -54,8 +54,7 @@ def gls2gml(
     graph,
     tree,
     filename='',
-    verbose=True
-):
+    ):
     """
     Create GML-representation of a given gain-loss-scenario (GLS).
 
@@ -157,8 +156,7 @@ def gls2gml(
 def nwk2gml(
     treefile,
     filename='',
-    verbose=True
-):
+    ):
     """
     Function converts a tree in newick format to a network in gml-format.
 

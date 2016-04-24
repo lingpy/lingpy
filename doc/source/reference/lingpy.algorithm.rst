@@ -19,14 +19,6 @@ lingpy.algorithm.clustering module
     :undoc-members:
     :show-inheritance:
 
-lingpy.algorithm.distance module
---------------------------------
-
-.. automodule:: lingpy.algorithm.distance
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 lingpy.algorithm.extra module
 -----------------------------
 

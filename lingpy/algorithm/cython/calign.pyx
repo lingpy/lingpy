@@ -1719,8 +1719,6 @@ def align_profile(
             almA,almB,sim = dialign(
                     listA,
                     listB,
-                    gopA,
-                    gopB,
                     proA,
                     proB,
                     M,
