@@ -199,7 +199,6 @@ def compare_concepts(c1, c2):
     c2g = parse_gloss(c2, output='dict')
 
     sims = []
-
     for a in c1g:
         for b in c2g:
             # first-order-match: identical glosses
@@ -209,9 +208,8 @@ def compare_concepts(c1, c2):
             elif a['main'] == b['gloss'] or a['gloss'] == b['main'] or \
                     a['main'] == b['main']:
                 # best match if pos matches
-                if a['pos'] == b['pos']:
+                if a['pos'] == b['pos'] and a['pos']:
                     sims += [(a['gloss'], b['gloss'], 2)]  # [(i,j,2)]
-
                 # less good match if pos mismatches
                 else:
                     sims += [(a['gloss'], b['gloss'], 3)]  # [(i,j,3)]
@@ -224,10 +222,9 @@ def compare_concepts(c1, c2):
                 sims += [(a['gloss'], b['gloss'], 6)]  # [(i,j,6)]
             elif a['longest_part'] in b['parts']:
                 sims += [(a['gloss'], b['gloss'], 7)]  # [(i,j,7)]
-            else:
+            elif not sims:
                 sims += [('?', '?', 8)]
     return sims
-
 
 def compare_conceptlists(
         list1,
@@ -235,7 +232,6 @@ def compare_conceptlists(
         output='',
         match=None,
         filename='matches',
-        debug=False,
         **keywords):
     """
     Function compares two concept lists and outputs suggestions for mapping.
@@ -346,7 +342,6 @@ def compare_conceptlists(
                 # best match if pos matches
                 if a['pos'] == b['pos']:
                     sims += [(i, j, 2)]
-
                 # less good match if pos mismatches
                 else:
                     sims += [(i, j, 3)]
@@ -391,7 +386,6 @@ def compare_conceptlists(
 
     if not output:
         return out
-
     elif output == 'tsv':
         added = []
         txt = ['\t'.join(comph) + '\t{0}\t{1}\t{2}\n'.format(
@@ -429,6 +423,3 @@ def compare_conceptlists(
 
         out = [txt[0]] + sorted(txt[1:], key=lambda x: x[x.index('\t')])
         write_text_file(filename, ''.join(out))
-
-    if debug:
-        return sims
