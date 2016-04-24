@@ -11,7 +11,6 @@ all LingPy modules:
        not defined otherwise by the user), such as
           
           * specific debugging messages (warnings, messages, errors)
-          * specific flags (verbose, debug)
           * default values, such as "gop" (gap opening penalty), "scale" (scaling factor
           * by which extended gaps are penalized), or "figsize" (the default size of
           * figures if data is plotted using matplotlib).
