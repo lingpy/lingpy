@@ -1,13 +1,6 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-11 08:01
-# modified : 2013-03-11 08:01
 """
-Module provides miscellaneous alignment algorithms.
+This module provides various alignment functions in an optimized version.
 """
-
-__author__="Johann-Mattis List"
-__date__="2013-03-11"
 
 def nw_align(
         seqA,

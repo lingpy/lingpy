@@ -20,6 +20,6 @@ class Tests():
         error_message = '\n'
         for model in failures:
             error_message += model+'\n'
-            error_message += ' // '.join(failures[model])+'\n\n'
+            error_message += ' // '.join(['«'+x+'»' for x in failures[model]])+'\n\n'
         raise ValueError(error_message)
 

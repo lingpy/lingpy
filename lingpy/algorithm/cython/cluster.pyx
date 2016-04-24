@@ -1,14 +1,3 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-11 18:38
-# modified : 2014-02-26 09:51
-"""
-This module provides functions for basic cluster algorithms.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2014-02-26"
-
 try:
     from .misc import transpose,squareform
 except:

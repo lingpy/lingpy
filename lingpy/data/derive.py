@@ -33,11 +33,16 @@ def _import_sound_classes(filename):
     creates a replacement dictionary from these sound classes.
     """
     sc_repl_dict = {}
+    errors = []
     for key, values in _read(filename, normalize='NFC').items():
         for value in values:
             log.info('%s' % ((value, key),))
+            if value in sc_repl_dict and sc_repl_dict[value] != key:
+                errors += [value]
             sc_repl_dict[value] = key
-
+    if errors:
+        raise ValueError("Values {0} in file {1} are multiply defined!".format(
+            ' // '.join(sorted(set(errors))), filename))
     return sc_repl_dict
 
 
