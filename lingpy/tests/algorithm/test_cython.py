@@ -52,7 +52,7 @@ class Tests():
         almA, almB, sim = _talign.semi_globalign(self.seqA, self.seqB, self.m,
                 self.n, self.gop, self.scale, self.scorer)
         assert round(sim, 2) == 4.0
-        almA, almB, sim = _talign.lo_calign(self.seqA, self.seqB, self.m,
+        almA, almB, sim = _talign.localign(self.seqA, self.seqB, self.m,
                 self.n, self.gop, self.scale, self.scorer)
         assert round(sim, 2) == 4.0
         almA, almB, sim = _talign.dialign(self.seqA, self.seqB, self.m,
@@ -98,7 +98,7 @@ class Tests():
         assert sim == 4
         alms = _malign.we_align(self.seqA, self.seqB, self.scorer, self.gap)
         assert alms[0][-1] == 4
-        alms = _malign.struc_talign('abab', 'cdcd')
+        alms = _malign.structalign('abab', 'cdcd')
         assert len(alms[0]) == 1
         assert alms[1] == 2
         sim = _malign.restricted_edit_dist(list('vava'),
@@ -118,7 +118,7 @@ class Tests():
                 self.gopB, self.proA, self.proB, self.m,
                 self.n, self.scale, self.factor, self.scorer)
         assert round(sim, 2) == 4.9
-        almA, almB, sim = _calign.lo_calign(self.seqA, self.seqB, self.gopA,
+        almA, almB, sim = _calign.localign(self.seqA, self.seqB, self.gopA,
                 self.gopB, self.proA, self.proB, self.m,
                 self.n, self.scale, self.factor, self.scorer)
         assert round(sim, 2) == 4.9
@@ -135,7 +135,7 @@ class Tests():
                 self.gopB2, self.proA2, self.proB2, len(self.seqA2),
                 len(self.seqB2), self.scale, self.factor, self.scorer, '1')
         assert round(sim, 2) == 5.2
-        almA, almB, sim = _calign.secondary_lo_calign(self.seqA2, self.seqB2, self.gopA2,
+        almA, almB, sim = _calign.secondary_localign(self.seqA2, self.seqB2, self.gopA2,
                 self.gopB2, self.proA2, self.proB2, len(self.seqA2),
                 len(self.seqB2), self.scale, self.factor, self.scorer, '1')
         assert round(sim, 2) == 6.2
