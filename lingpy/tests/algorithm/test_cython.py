@@ -168,8 +168,8 @@ class Tests():
             alignments = _calign.align_pairs([[self.seqA, self.seqB]],
                     [[self.weightA, self.weightB]], 
                     [[self.proA, self.proB]], self.gop, self.scale, self.factor,
-                        self.scorer, mode, '1', 0)
-            assert alignments[0][-1] > 1
+                        self.scorer, mode, '1', 1)
+            assert alignments[0][-1] < 1
             alignments = _calign.align_pairs([[self.seqA2, self.seqB2]],
                     [[self.weightA2, self.weightB2]], 
                     [[self.proA2, self.proB2]], self.gop, self.scale, self.factor,

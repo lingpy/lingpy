@@ -5,6 +5,8 @@ Module provides classes and functions for pairwise alignment analyses.
 from __future__ import division, print_function, unicode_literals
 
 from six import text_type
+import logging
+from lingpy import log
 
 from lingpy.util import setdefaults, multicombinations2
 from lingpy.settings import rcParams
@@ -233,7 +235,8 @@ class Pairwise(object):
 
         # print the alignments, if this is chosen
         if keywords['pprint']:
-            print(self)
+            if log.get_level() <= logging.INFO:
+                print(self)
 
 
 def _get_scorer(seqA, seqB):
