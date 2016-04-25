@@ -1,3 +1,4 @@
+from __future__ import division, unicode_literals
 """
 Calculate confidence scores for the scoring functions in alignment plots.
 """

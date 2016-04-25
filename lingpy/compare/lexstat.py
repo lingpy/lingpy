@@ -4,7 +4,6 @@ import random
 from itertools import product
 
 from collections import Counter, defaultdict
-from math import factorial
 from copy import copy
 
 from six import text_type
@@ -456,7 +455,7 @@ class LexStat(Wordlist):
                     cluster_method=kw['cluster_method'],
                     ref=kw['ref'])
 
-        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+        tasks = (self.width ** 2 / 2) 
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
             for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                 progress.update()
@@ -520,7 +519,7 @@ class LexStat(Wordlist):
             else 'shuffle'
 
         corrdist = {}
-        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+        tasks = (self.width ** 2) / 2
 
         if method == 'markov':
             seqs, pros, weights = {}, {}, {}
@@ -597,7 +596,7 @@ class LexStat(Wordlist):
                             corrdist[tA, tB][a, b] += d / len(kw['modes'])
         # use shuffle approach otherwise
         else:
-            tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+            tasks = self.width ** 2 / 2
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
                 for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                     progress.update()
