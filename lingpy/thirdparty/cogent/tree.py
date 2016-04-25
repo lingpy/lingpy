@@ -1,3 +1,4 @@
+from six import text_type
 """Classes for storing and manipulating a phylogenetic tree.
 
 These trees can be either strictly binary, or have polytomies
@@ -133,7 +134,7 @@ class TreeNode(object):
         try:
             return cmp(self.Name, other.Name)
         except AttributeError:
-            return cmp(type(self), type(other))
+            return cmp(text_type(type(self)), text_type(type(other)))
 
     def compareByNames(self, other):
         """Equality test for trees by name"""
@@ -757,7 +758,7 @@ class TreeNode(object):
         
         #get a list of internal nodes
         node_list = [node for node in self.traverse() if node.Children]
-        node_list.sort()
+        node_list = sorted(node_list, key=lambda x: str(x))
         
         #get a list of tip names if one is not supplied
         if not tip_list:
@@ -809,7 +810,7 @@ class TreeNode(object):
         in the array"""
         #get a list of internal nodes
         node_list = [node for node in self.traverse() if node.Children]
-        node_list.sort()
+        node_list = sorted(node_list, key=lambda x: str(x))
         
         #get a list of tips() Name if one is not supplied
         if not dec_list:
@@ -824,29 +825,6 @@ class TreeNode(object):
                 if dec in children:
                     result[i,j] = 1
         return result, node_list
-    
-    def removeDeleted(self,is_deleted):
-        """Removes all nodes where is_deleted tests true.
-        
-        Internal nodes that have no children as a result of removing deleted
-        are also removed.
-        """
-        #Traverse tree
-        for node in list(self.traverse(self_before=False,self_after=True)):
-            #if node is deleted
-            if is_deleted(node):
-                #Store current parent
-                curr_parent=node.Parent
-                #Set current node's parent to None (this deletes node)
-                node.Parent=None
-                #While there are no chilren at node and not at root
-                while (curr_parent is not None) and (not curr_parent.Children):
-                    #Save old parent
-                    old_parent=curr_parent
-                    #Get new parent
-                    curr_parent=curr_parent.Parent
-                    #remove old node from tree
-                    old_parent.Parent=None
     
     def prune(self):
         """Reconstructs correct topology after nodes have been removed.
@@ -1628,36 +1606,6 @@ class TreeNode(object):
             if len(node.Children) > 1: #not single child
                 update_result()
         return result+result.T, tip_order 
-
-    #def compareByTipDistances(self, other, dist_f=distance_from_r):
-    #    """Compares self to other using tip-to-tip distance matrices.
-
-    #    Value returned is dist_f(m1, m2) for the two matrices. Default is
-    #    to use the Pearson correlation coefficient, with +1 giving a distance
-    #    of 0 and -1 giving a distance of +1 (the madimum possible value).
-    #    Depending on the application, you might instead want to use
-    #    distance_from_r_squared, which counts correlations of both +1 and -1
-    #    as identical (0 distance).
-    #    
-    #    Note: automatically strips out the names that don't match (this is
-    #    necessary for this method because the distance between non-matching 
-    #    names and matching names is undefined in the tree where they don't 
-    #    match, and because we need to reorder the names in the two trees to 
-    #    match up the distance matrices).
-    #    """
-    #    self_names = [i.Name for i in self.tips()]
-    #    other_names = [i.Name for i in other.tips()]
-    #    common_names = frozenset(self_names) & frozenset(other_names)
-    #    if not common_names:
-    #        raise ValueError, "No names in common between the two trees."""
-    #    if len(common_names) <= 2:
-    #        return 1    #the two trees must match by definition in this case
-    #    #figure out correct order of the two name matrices
-    #    self_order = [self_names.index(i) for i in common_names]
-    #    other_order = [other_names.index(i) for i in common_names]
-    #    self_matrix = self.tipToTipDistances()[0][self_order][:,self_order]
-    #    other_matrix = other.tipToTipDistances()[0][other_order][:,other_order]
-    #    return dist_f(self_matrix, other_matrix)
 
 class PhyloNode(TreeNode):
 

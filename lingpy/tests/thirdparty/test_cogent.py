@@ -4,11 +4,13 @@ Test thirdparty modules.
 """
 from __future__ import unicode_literals, print_function, division
 from unittest import TestCase
+from nose.tools import assert_raises
 from collections import defaultdict
 
 from six import PY3
 
 from lingpy.thirdparty.cogent import LoadTree
+from lingpy.thirdparty.cogent.newick import TreeParseError
 from lingpy.tests.util import test_data
 
 
@@ -69,6 +71,46 @@ class TreeTests(TestCase):
         self.assertRaises(TreeError, tree.getSubTree, [])
         tree.get_LCA(tree.getNodeNames()[0])
         tree.getNewickRecursive()
+    
+    def test_more_trees(self):
+
+        tree = LoadTree('((a:1,b:1):2,(c:3,d:4):5);')
+        tree2 = LoadTree('((a,b),(c,d));')
+        assert tree.sameShape(tree)
+        tree.tipToTipDistances()
+        tree.getMaxTipTipDistance()
+        tree.maxTipTipDistance()
+        tree.getSubTree(['a','b','c'])
+        assert tree.compareName(tree2) == 0 
+        assert tree.compareName(tree) == 0
+        assert tree.compareName('(a,b),(c,d));') != 0
+
+        tree.descendantArray()
+        tree.nameUnnamedNodes()
+        tree.makeTreeArray()
+        tree.getNewickRecursive(with_distances=True, semicolon=False,
+                escape_name=False)
+
+        assert 'a' in tree.getNodesDict()
+        assert 'b' in tree.taxa
+        assert tree.getDistances()['a', 'b'] == 2
+        assert tree.getMaxTipTipDistance()[0] == 12
+        assert tree.maxTipTipDistance()[0] == 12
+
+
+        ntree = tree.copyRecursive()
+        ntree2 = tree2.copy()
+        assert ntree.sameShape(ntree2)
+        assert 'a' in tree.getNodeNames()
+
+        assert_raises(TreeParseError, LoadTree, '(a,b;');
+        assert_raises(TreeParseError, LoadTree, treestring="(a,b'");
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'");
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'\n");
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b-c'");
+        assert_raises(TreeParseError, LoadTree, "(a,b),('c_d',e);")
+        new_tree = LoadTree("((a,b),('',e));")
+        new_tree.nameUnnamedNodes()
 
 
 class PhyloNodeTests(TestCase):
