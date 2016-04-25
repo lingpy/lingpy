@@ -39,33 +39,12 @@ http://www.python.org for details.
 How to cite LingPy?
 -------------------
 
-If you are using LingPy in its 2.0 or higher version for non-commercial, scientific projects,
-please cite the following paper:
+If you are using LingPy, please cite the library as follows:
 
-.. raw:: html
-
-   <ul>
-   <li>
-   	List, Johann-Mattis & Steven Moran (2013): An Open Source Toolkit for Quantitative 
-   	Historical Linguistics. In: <i> Proceedings of the 51st Annual Meeting of the Association 
-   	for Computational Linguistics: System Demonstrations</i>, August 4-9, Sofia, Bulgaria. 
-   	13-18.
-   	<a href="http://aclweb.org/anthology/P/P13/P13-4003.pdf" target="_blank">[PDF]</a>
-   	<a href="http://aclweb.org/anthology/P/P13/P13-4003.bib" target="_blank">[BIB]</a>
-       </li>
-       </ul>
-
-Additionally, please cite the library in its current state along with the version that you used:
-
-.. raw:: html
-
-   <ul>
-   <li> List, Johann-Mattis and Forkel, Robert (2014): LingPy. Python
-   Library for Automatic Tasks in Historical Linguistics. In collaboration with Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, and Simon Greenhill. Version 2.4 (Uploaded on XXXX-XX-XX). URL:
-   <a href="http://lingpy.org">http://www.lingpy.org</a>, DOI: <a href="XXX">XXX</a>.
-   </li>
-   </ul>
-
+  |quoteas|
+  
+  .. image:: https://zenodo.org/badge/5137/lingpy/lingpy.svg
+   :target: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy
 
 What's next?
 -------------------------

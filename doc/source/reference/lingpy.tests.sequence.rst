@@ -4,6 +4,14 @@ lingpy.tests.sequence package
 Submodules
 ----------
 
+lingpy.tests.sequence.test_generate module
+------------------------------------------
+
+.. automodule:: lingpy.tests.sequence.test_generate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy.tests.sequence.test_sound_classes module
 -----------------------------------------------
 

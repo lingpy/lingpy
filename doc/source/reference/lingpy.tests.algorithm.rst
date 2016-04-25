@@ -12,10 +12,18 @@ lingpy.tests.algorithm.test_clustering module
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.algorithm.test_distance module
--------------------------------------------
+lingpy.tests.algorithm.test_cython module
+-----------------------------------------
 
-.. automodule:: lingpy.tests.algorithm.test_distance
+.. automodule:: lingpy.tests.algorithm.test_cython
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy.tests.algorithm.test_extra module
+----------------------------------------
+
+.. automodule:: lingpy.tests.algorithm.test_extra
     :members:
     :undoc-members:
     :show-inheritance:

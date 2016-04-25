@@ -12,7 +12,6 @@ Functions
    ~lingpy.meaning.glosses.compare_concepts
    ~lingpy.meaning.glosses.compare_conceptlists
    ~lingpy.meaning.colexification.colexification_network
-   ~lingpy.meaning.colexification.partition_colexifications
 
 Classes
 -------

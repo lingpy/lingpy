@@ -13,13 +13,12 @@ Borrowing Detection (:py:mod:`~lingpy.compare.phylogeny`)
       ~lingpy.basic.wordlist.Wordlist.calculate
       ~lingpy.basic.wordlist.Wordlist.export
       ~lingpy.basic.wordlist.Wordlist.get_dict
-      ~lingpy.basic.wordlist.Wordlist.get_entries
+      ~lingpy.basic.parser.QLCParser.get_entries
       ~lingpy.basic.wordlist.Wordlist.get_etymdict
       ~lingpy.basic.wordlist.Wordlist.get_list
       ~lingpy.basic.wordlist.Wordlist.get_paps
       ~lingpy.basic.wordlist.Wordlist.output
       ~lingpy.basic.wordlist.Wordlist.renumber
-      ~lingpy.basic.wordlist.Wordlist.tokenize
       ~lingpy.compare.phylogeny.PhyBo.analyze
       ~lingpy.compare.phylogeny.PhyBo.get_AVSD
       ~lingpy.compare.phylogeny.PhyBo.get_CVSD
@@ -33,4 +32,4 @@ Borrowing Detection (:py:mod:`~lingpy.compare.phylogeny`)
       ~lingpy.compare.phylogeny.PhyBo.plot_MLN
       ~lingpy.compare.phylogeny.PhyBo.plot_MSN
       ~lingpy.compare.phylogeny.PhyBo.plot_concept_evolution
-      ~lingpy.compare.phylogeny.PhyBo.plot_concepts
+      ~lingpy.compare.phylogeny.PhyBo.plot_two_concepts
