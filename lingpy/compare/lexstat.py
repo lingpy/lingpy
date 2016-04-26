@@ -354,6 +354,7 @@ class LexStat(Wordlist):
         # make the language pairs
         if not hasattr(self, "pairs"):
             self.pairs = {}
+            same_vals = set()
             for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.taxa)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
@@ -361,10 +362,17 @@ class LexStat(Wordlist):
                 if i < j:
                     for c in sorted(set(dictA).intersection(dictB)):
                         for idxA, idxB in product(dictA[c], dictB[c]):
-                            dA = self[idxA, self._duplicates]
-                            dB = self[idxB, self._duplicates]
-                            if dA != 1 and dB != 1:
+                            this_pair = '{0}-{1}/{2}-{3}/{4}-{5}'.format(
+                                    self[idxA][self._rowIdx],
+                                    ''.join(self[idxA, self._segments]),
+                                    self[idxB][self._rowIdx],
+                                    ''.join(self[idxB, self._segments]),
+                                    taxonA,
+                                    taxonB
+                                    )
+                            if this_pair not in same_vals:
                                 self.pairs[taxonA, taxonB] += [(idxA, idxB)]
+                                same_vals.add(this_pair)
                 elif i == j:
                     for c in sorted(dictA):
                         for idx in dictA[c]:
@@ -399,7 +407,7 @@ class LexStat(Wordlist):
                 self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
                 return self._cache[idx]
             except KeyError:
-                pass
+                return 
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -455,7 +463,7 @@ class LexStat(Wordlist):
                     cluster_method=kw['cluster_method'],
                     ref=kw['ref'])
 
-        tasks = (self.width ** 2 / 2) 
+        tasks = self.width ** 2 / 2 
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
             for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                 progress.update()

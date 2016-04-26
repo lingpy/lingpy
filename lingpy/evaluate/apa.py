@@ -42,7 +42,7 @@ class EvalMSA(Eval):
 
     See also
     --------
-    lingpy.evaluate.apa.EvalPSA
+    ~lingpy.evaluate.apa.EvalPSA
     """
     @cached_property()
     def c_scores(self):
@@ -104,7 +104,8 @@ class EvalMSA(Eval):
 
         See also
         --------
-        lingpy.evaluate.apa.EvalPSA.c_score
+        ~lingpy.evaluate.apa.EvalPSA.c_score
+
 
         """
         if mode == 1:
@@ -134,7 +135,7 @@ class EvalMSA(Eval):
 
         See also
         --------
-        lingpy.evaluate.apa.EvalPSA.r_score
+        ~lingpy.evaluate.apa.EvalPSA.r_score
         """
         goods = [i for i in range(len(self.gold.alm_matrix)) if
                  ''.join(self.gold.alm_matrix[i]) == ''.join(self.test.alm_matrix[i])]
@@ -180,7 +181,7 @@ class EvalMSA(Eval):
 
         See also
         --------
-        lingpy.evaluate.apa.EvalPSA.sp_score
+        ~lingpy.evaluate.apa.EvalPSA.sp_score
         """
         if not hasattr(self, 'sp'):
             self._pair_scores()
@@ -395,7 +396,7 @@ class EvalPSA(Eval):
 
     See also
     --------
-    lingpy.evaluate.apa.EvalMSA
+    ~lingpy.evaluate.apa.EvalMSA
     """
     def r_score(self, mode=1):
         """
@@ -422,7 +423,8 @@ class EvalPSA(Eval):
 
         See also
         --------
-        lingpy.evaluate.apa.EvalMSA.r_score
+        ~lingpy.evaluate.apa.EvalMSA.r_score
+
         """
         score = 0.0
 
@@ -534,7 +536,7 @@ class EvalPSA(Eval):
 
         See also
         --------
-        lingpy.test.evaluate.EvalMSA.c_score
+        ~lingpy.evaluate.EvalMSA.c_score
 
         """
         return self.pairwise_column_scores.pic
@@ -557,7 +559,7 @@ class EvalPSA(Eval):
         
         See also
         --------
-        lingpy.test.evaluate.EvalMSA.sp_score
+        ~lingpy.evaluate.EvalMSA.sp_score
 
         """
         return self.pairwise_column_scores.sop
@@ -580,7 +582,7 @@ class EvalPSA(Eval):
         
         See also
         --------
-        lingpy.test.evaluate.EvalMSA.jc_score
+        ~lingpy.evaluate.EvalMSA.jc_score
 
         """
         return self.pairwise_column_scores.jac

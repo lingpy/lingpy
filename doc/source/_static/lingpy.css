@@ -160,3 +160,11 @@ div.section {
   text-align: justify;
   max-width: 750px;
 }
+
+.quoteas {
+	text-align: justify;
+	background-color: burlywood;
+	border-radius: 25px;
+	color: darkblue;
+	padding: 5px;
+}

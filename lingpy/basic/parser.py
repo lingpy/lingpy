@@ -473,7 +473,7 @@ class QLCParserWithRowsAndCols(QLCParser):
                 self._cache[idx] = self._data[idx[0]][self.header[idx[1]]]
                 return self._cache[idx]
             else:
-                raise KeyError
+                return #raise KeyError
         except TypeError:
             raise KeyError()
 

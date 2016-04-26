@@ -18,27 +18,11 @@ import lingpy
 import mock
 
 MOCK_MODULES = [
-    'scipy', 
-    #'lingpy.plugins',
-    #'lingpy.algorithm.extra',
-    #'lingpy.algorithm.cython.calign',
-    #'lingpy.algorithm.cython.cluster',
-    #'lingpy.algorithm.cython.malign',
-    #'lingpy.algorithm.cython.misc',
-    #'lingpy.algorithm.cython.talign',
-    #'lingpy.evaluate.apa.lingpy.evaluate.EvalMSA',
-    #'lingpy.evaluate.apa.lingpy.evaluate.EvalPSA',
-    #'matplotlib', 
-    #'matplotlib.pyplot',
-    #'matplotlib.patches',
-    #'mpl_toolkits',
-    #'mpl_toolkits.mplot3d',
-    #'mpl_toolkits.basemap',
-    #'networkx',
-    #'numpy.testing',
-    'scipy.spatial.distance',
-    'scipy.cluster.hierarchy',
-    'scipy.stats']
+    #'scipy', 
+    #'scipy.spatial.distance',
+    #'scipy.cluster.hierarchy',
+    #'scipy.stats'
+    ]
 
 for mod_name in MOCK_MODULES:
     sys.modules[mod_name] = mock.MagicMock()
@@ -100,7 +84,8 @@ today = str(datetime.datetime.today()).split(' ')[0]
 rst_prolog = """
 .. |authors| replace:: {authors}
 .. |contributors| replace:: {collaborators}
-.. |quoteas| replace:: List, Johann-Mattis and Forkel, Robert ({year}): *LingPy.  A Python library for historical linguistics*. Version {version}. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy.  With collaborations by {collaborators}. Jena: Max Planck Institute for the Science of Human History.
+.. |quoteas| replace:: List, Johann-Mattis and Forkel, Robert ({year}): **LingPy.  A Python library for historical linguistics**. Version {version}. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy.  With collaborations by {collaborators}. Jena: Max Planck Institute for the Science of Human History.
+
 """.format(
         year=str(datetime.datetime.today()).split('-')[0],
         version=lingpy.__version__,
