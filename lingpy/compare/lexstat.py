@@ -354,7 +354,7 @@ class LexStat(Wordlist):
         # make the language pairs
         if not hasattr(self, "pairs"):
             self.pairs = {}
-            same_vals = set()
+            self._same_vals = defaultdict(list)
             for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.taxa)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
@@ -362,17 +362,15 @@ class LexStat(Wordlist):
                 if i < j:
                     for c in sorted(set(dictA).intersection(dictB)):
                         for idxA, idxB in product(dictA[c], dictB[c]):
-                            this_pair = '{0}-{1}/{2}-{3}/{4}-{5}'.format(
-                                    self[idxA][self._rowIdx],
+                            this_pair = '{0}-{1}/{2}-{3}'.format(
                                     ''.join(self[idxA, self._segments]),
-                                    self[idxB][self._rowIdx],
-                                    ''.join(self[idxB, self._segments]),
                                     taxonA,
+                                    ''.join(self[idxB, self._segments]),
                                     taxonB
                                     )
-                            if this_pair not in same_vals:
+                            if not self._same_vals[this_pair]:
                                 self.pairs[taxonA, taxonB] += [(idxA, idxB)]
-                                same_vals.add(this_pair)
+                            self._same_vals[this_pair] += [(idxA, idxB)]
                 elif i == j:
                     for c in sorted(dictA):
                         for idx in dictA[c]:
