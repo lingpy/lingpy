@@ -7,9 +7,9 @@ import codecs
 from itertools import combinations
 from collections import defaultdict
 
+import logging
 from lingpy import log
 from lingpy.util import identity
-
 
 def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     """
@@ -17,9 +17,10 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
 
     Parameters
     ----------
-    lex : :py:class:`lingpy.compare.lexstat.LexStat`
-        The :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
-        computation. It should have two columns indicating cognate IDs.
+    lex : :py:class:`lingpy.basic.wordlist.Wordlist`
+        A :py:class:`lingpy.basic.wordlist.Wordlist` class or a daughter class,
+        (like the :py:class:`~lingpy.compare.lexstat.LexStat` class used for the
+        computation). It should have two columns indicating cognate IDs.
     gold : str (default='cogid')
         The name of the column containing the gold standard cognate
         assignments.
@@ -85,7 +86,7 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     FSC = 2 * ((BCP * BCR) / (BCP + BCR))
 
     # print the results if this option is chosen
-    if pprint:
+    if pprint and log.get_level() <= logging.INFO:
         print('*****************************')
         print('* B-Cubed-Scores            *')
         print('* ------------------------- *')
@@ -98,6 +99,88 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     lex._clean_cache()
     return BCP, BCR, FSC
 
+def partial_bcubes(wordlist, gold, test, pprint=True):
+    """
+    Compute B-Cubed scores for test and reference datasets for partial cognate\
+            detection.
+
+    Parameters
+    ----------
+    wordlist : :py:class:`~lingpy.basic.wordlist.Wordlist`
+        A :py:class:`~lingpy.basic.wordlist.Wordlist`, or one of it's daughter
+        classes (like, e.g., the :py:class:`~lingpy.compare.partial.Partial`
+        class used for computation of partial cognates. It should have two
+        columns indicating cognate IDs.
+    gold : str (default='cogid')
+        The name of the column containing the gold standard cognate
+        assignments.
+    test : str (default='lexstatid')
+        The name of the column containing the automatically implemented cognate
+        assignments.
+    pprint : bool (default=True)
+        Print out the results
+
+    Returns
+    -------
+    t : tuple
+        A tuple consisting of the precision, the recall, and the harmonic mean
+        (F-scores).
+
+    Notes
+    -----
+    B-Cubed scores were first described by :evobib:`Bagga1998` as part of an
+    algorithm. Later on, :evobib:`Amigo2009` showed that they can also used as
+    to compare cluster decisions. :evobib:`Hauer2011` applied the B-Cubed
+    scores first to the task of automatic cognate detection.
+    
+    See also
+    --------
+    bcubes
+    diff
+    pairs
+    """
+    
+    # here's the point with bcubes for fuzzy: if we compare, we need to make
+    # sure we count whether one instance is identical, not whether all of them
+    # are identical!
+    
+    def get_scores(one, other):
+        scores = []
+        multiple_items = []
+        for k,v in wordlist.get_etymdict(ref=one).items():
+            _idxs = [val for val in v if val != 0]
+            # now we need to get the position in the index
+            poss,idxs = [],[]
+            for val in _idxs:
+                if len(val) > 1:
+                    multiple_items += [len(val)]
+                for idx in val:
+                    new_pos = [i for i,cog in zip(range(len(wordlist[idx,one])),
+                        wordlist[idx,one]) if cog == k]
+                    idxs += [idx for x in new_pos]
+                    poss += new_pos
+            if len(idxs) > 1:
+                other_idxs = [wordlist[idx,other][pos] for pos,idx in zip(poss,idxs)]
+                for idx in other_idxs:
+                    scores += [other_idxs.count(idx) / len(idxs)]
+            else: 
+                scores += [1]
+        return sum(scores) / len(scores)
+
+    bcr = get_scores(gold, test)
+    bcp = get_scores(test, gold)
+    bcf = 2 * ((bcp * bcr) / (bcp + bcr))
+
+    # print the results if this option is chosen
+    if pprint and log.get_level() <= logging.INFO:
+        print('*****************************')
+        print('* B-Cubed-Scores            *')
+        print('* ------------------------- *')
+        print('* B-Cubed-Precision: {0:.4f} *'.format(bcp))
+        print('* B-Cubed-Recall:    {0:.4f} *'.format(bcr))
+        print('* B-Cubed-F-Scores:  {0:.4f} *'.format(bcf))
+        print('*****************************')
+    return bcp, bcr, bcf
 
 def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     """
@@ -157,7 +240,7 @@ def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     fs = 2 * (pp * pr) / (pp + pr)
 
     # print the results if this option is chosen
-    if pprint:
+    if pprint and log.get_level() <= logging.INFO:
         print('**************************')
         print('* Pair-Scores            *')
         print('* ---------------------- *')
@@ -357,7 +440,7 @@ def diff(
     pr = sum(recP) / len(recP)
     pf = 2 * (pp * pr) / (pp + pr)
 
-    if pprint:
+    if pprint and log.get_level() <= logging.INFO:
         print('**************************')
         print('* B-Cubed-Scores         *')
         print('* ---------------------- *')

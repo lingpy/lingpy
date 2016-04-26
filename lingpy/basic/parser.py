@@ -358,7 +358,6 @@ class QLCParser(object):
             for key in self:
                 _apply(key, self[key][idx], **keywords)
 
-
 class QLCParserWithRowsAndCols(QLCParser):
     def __init__(self, filename, row, col, conf):
         QLCParser.__init__(self, filename, conf=conf)

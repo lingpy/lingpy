@@ -24,8 +24,9 @@ class TestBasVoc(TestCase):
     
     def test__getitem(self):
 
-        assert_raises(KeyError, self.basvoc.__getitem__, 'wrgs')
-    
+        #assert_raises(KeyError, self.basvoc.__getitem__, 'wrgs')
+        assert self.basvoc.__getitem__('wrgs') is None
+        
     def test_get_list(self):
         jach = self.basvoc.get_list('jachontov', 'number', 'item')
         for a, b in [['94', 'water'], ['25', 'eye'], ['45', 'know'], ['86', 'this'],

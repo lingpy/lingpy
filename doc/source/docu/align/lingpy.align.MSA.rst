@@ -5,8 +5,13 @@ lingpy.align.MSA
 
 .. autoclass:: MSA
 
-   
-   .. rubric:: Methods
+    .. rubric:: Methods
+   .. autosummary::
+
+      ~lingpy.align.sca.MSA.output
+      ~lingpy.align.sca.MSA.ipa2cls  
+
+   .. rubric:: Inherited Methods
    .. autosummary::
 
       ~lingpy.align.multiple.Multiple.get_pairwise_alignments 
@@ -20,8 +25,6 @@ lingpy.align.MSA
       ~lingpy.align.multiple.Multiple.prog_align 	
       ~lingpy.align.multiple.Multiple.sum_of_pairs 	
       ~lingpy.align.multiple.Multiple.swap_check
-      ~lingpy.align.sca.MSA.output
-      ~lingpy.align.sca.MSA.ipa2cls
    
 
    

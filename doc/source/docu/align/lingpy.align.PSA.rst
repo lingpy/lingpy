@@ -5,14 +5,16 @@ lingpy.align.PSA
 
 .. autoclass:: PSA
 
-   
    .. rubric:: Methods
    .. autosummary::
    
-      ~lingpy.align.pairwise.Pairwise.align
+
       ~lingpy.align.sca.PSA.output 
    
-   
+   .. rubric:: Iniherited Methods
+   .. autosummary::
+
+       ~lingpy.align.pairwise.Pairwise.align  
 
    
    

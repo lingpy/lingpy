@@ -122,8 +122,9 @@ class Wordlist(QLCParserWithRowsAndCols):
         and to modify it with help of a function.
 
         """
-        self._add_entries(entry, source, function, override, **keywords)
         self._clean_cache()
+        self._add_entries(entry, source, function, override, **keywords)
+
 
     def get_dict(
             self,
