@@ -46,7 +46,7 @@ Language Comparison
    
    algorithm/clustering
    compare/lexstat
-   compare/partial
+   compare/dummo
    compare/phylogeny
 
 Handling Phylogenetic Trees

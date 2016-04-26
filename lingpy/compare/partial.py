@@ -1,6 +1,7 @@
 # *-* coding: utf-8 *-*
 """
 Module provides a class for partial cognate detection, expanding the LexStat class.
+
 """
 from __future__ import print_function, division, unicode_literals
 from collections import defaultdict
@@ -12,6 +13,7 @@ import networkx as nx
 
 import lingpy
 from lingpy.algorithm import clustering, extra
+from lingpy.compare.lexstat import LexStat
 try:
     from lingpy.algorithm.cython import calign
 except ImportError:
@@ -48,7 +50,7 @@ def _get_slices(tokens, **keywords):
         out += [(start, len(tokens))]
     return out
 
-class Partial(lingpy.compare.lexstat.LexStat):
+class Partial(LexStat):
     """
     Extended class for automatic detection of partial cognates.
 
@@ -66,13 +68,12 @@ class Partial(lingpy.compare.lexstat.LexStat):
         A dictionary that indicates how prosodic strings should be simplified
         (or generally transformed), using a simple key-value structure with the
         key referring to the original prosodic context and the value to the new
-        value.
-        Currently, prosodic strings (see
+        value.  Currently, prosodic strings (see
         :py:meth:`~lingpy.sequence.sound_classes.prosodic_string`) offer 11
         different prosodic contexts. Since not all these are helpful in
-        preliminary analyses for cognate detection, it is useful to merge some
-        of these contexts into one. The default settings distinguish only 5
-        instead of 11 available contexts, namely:
+        preliminary analyses for cognate detection, it is useful to merge
+        some of these contexts into one. The default settings distinguish only
+        5 instead of 11 available contexts, namely:
 
         * ``C`` for all consonants in prosodically ascending position,
         * ``c`` for all consonants in prosodically descending position,
@@ -83,17 +84,17 @@ class Partial(lingpy.compare.lexstat.LexStat):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-    vowels : str (default="VT_")
+    vowels : str (default="VT\_")
         For scoring function creation using the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
-        possibility to use reduced scores for the matching of tones and vowels
-        by modifying the "vscale" parameter, which is set to 0.5 as a default.
-        In order to make sure that vowels and tones are properly detected, make
-        sure your prosodic string representation of vowels matches the one in
-        this keyword. Thus, if you change the prosodic strings using the
-        "transform" keyword, you also need to change the vowel string, to make
-        sure that "vscale" works as wanted in the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function.
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
+        have the possibility to use reduced scores for the matching of tones
+        and vowels by modifying the "vscale" parameter, which is set to 0.5 as
+        a default.  In order to make sure that vowels and tones are properly
+        detected, make sure your prosodic string representation of vowels
+        matches the one in this keyword. Thus, if you change the prosodic
+        strings using the "transform" keyword, you also need to change the
+        vowel string, to make sure that "vscale" works as wanted in the
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function.
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
@@ -156,6 +157,11 @@ class Partial(lingpy.compare.lexstat.LexStat):
           attribute of each LexStat class. As the "rscorer", the "bscorer" can
           also be accessed directly as an attribute of the LexStat class 
           (:py:class:`~lingpy.compare.lexstat.lexstat.bscorer`).
+
+    Notes
+    -----
+    This method automatically infers partial cognate sets from data which was
+    previously morphologically segmented. 
 
     """
 

@@ -104,7 +104,7 @@ class LexStat(Wordlist):
         identical with the ones you define in your transform dictionary.
     vowels : str (default="VT_")
         For scoring function creation using the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you have the
         possibility to use reduced scores for the matching of tones and vowels
         by modifying the "vscale" parameter, which is set to 0.5 as a default.
         In order to make sure that vowels and tones are properly detected, make
@@ -112,7 +112,7 @@ class LexStat(Wordlist):
         this keyword. Thus, if you change the prosodic strings using the
         "transform" keyword, you also need to change the vowel string, to make
         sure that "vscale" works as wanted in the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function.
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function.
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the

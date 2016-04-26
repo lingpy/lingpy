@@ -11,12 +11,11 @@ Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
       ~lingpy.compare.lexstat.LexStat.align_pairs
       ~lingpy.compare.lexstat.LexStat.cluster
       ~lingpy.compare.lexstat.LexStat.get_distances
-      ~lingpy.compare.lexstat.LexStat.get_entries
       ~lingpy.compare.lexstat.LexStat.get_random_distances
       ~lingpy.compare.lexstat.LexStat.get_scorer
       ~lingpy.compare.lexstat.LexStat.output
 
-   .. rubric:: Inherited Methods
+   .. rubric:: Inherited WordList Methods
    .. autosummary::
 
       ~lingpy.basic.parser.QLCParser.pickle
