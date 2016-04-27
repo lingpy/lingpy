@@ -1,3 +1,4 @@
+from __future__ import unicode_literals, division
 try:
     from .misc import transpose,squareform
 except:

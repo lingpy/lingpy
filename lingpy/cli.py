@@ -499,7 +499,6 @@ class multiple(Command):
                 model=args.model)
             if args.method == 'basic':
                 seqs = [str(''.join(t)) for t in msa.tokens]
-                print(seqs)
                 alms = lingpy.align.multiple.mult_align(
                     seqs,
                     pprint=False,

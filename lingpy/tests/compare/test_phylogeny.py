@@ -9,12 +9,12 @@ from mock import MagicMock, patch
 import lingpy
 from lingpy.compare.phylogeny import PhyBo
 from lingpy.tests.util import WithTempDir
+from lingpy.tests.util import test_data
 
 
 class Plt(MagicMock):
     def plot(self, *args, **kw):
         return [MagicMock()]
-
 
 class Nx(MagicMock):
     def Graph(self, *args, **kw):
@@ -47,6 +47,9 @@ class TestPhyBo(WithTempDir):
 
     def test_get_GLS(self):
         phy = PhyBo(self.inputfile, output_dir=self.tmp)
+        phy2 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp,
+                tree=test_data('phylogeny.tre'))
+        phy3 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp)
         
         # test default scenario
         phy.get_GLS()
@@ -67,6 +70,7 @@ class TestPhyBo(WithTempDir):
         phy.get_GLS(mode='topdown', force=True)
         assert phy.gls['t-3']['29:3'][1] < 3
         assert phy.gls['t-3']['8:1'][1] == 2
+        phy.get_GLS(mode='weighted', force=True)
 
         glm = list(phy.stats.keys())[0]
         phy.get_stats(glm)
@@ -75,24 +79,33 @@ class TestPhyBo(WithTempDir):
     @patch('lingpy.compare.phylogeny.gls2gml', new=MagicMock())
     @patch('lingpy.compare.phylogeny.plot_tree', new=MagicMock())
     @patch('lingpy.compare.phylogeny.bmp', new=Bmp())
-    @patch('lingpy.compare.phylogeny.nx', new=Nx())
     @patch('lingpy.compare.phylogeny.plt', new=Plt())
     @patch('lingpy.compare.phylogeny.sp', new=Sp())
     def test_plot(self):
         phy = PhyBo(self.inputfile, output_dir=self.tmp)
         phy.get_GLS()
         glm = list(phy.stats.keys())[0]
-        phy.plot_concept_evolution(glm)
         phy.plot_GLS(glm)
         phy.plot_ACS(glm)
-        phy.get_MLN(glm)
-        phy.graph = defaultdict(lambda: Graph())
+        for method in ['bc', 'td', 'mr']:
+            phy.get_MLN(glm, method=method)
+        #phy.graph = defaultdict(lambda: Graph())
         phy.plot_MLN(glm)
-        phy.analyze()
+        phy.plot_MLN_3d(glm)
+        phy.analyze(runs=[('weighted', (2,1))], output_gml=True,
+                output_plot=True)
         phy.get_IVSD()
-        phy.get_MSN()
-        glm = list(phy.geograph.keys())[0]
-        phy.geograph[glm] = MagicMock(
-            edges=lambda **kw: [(MagicMock(), MagicMock(), defaultdict(lambda: 2))])
-        phy._meta['conf'] = dict(linescale=2, groups_colors=defaultdict(lambda: 'a'))
-        phy.plot_MSN(glm)
+        phy.get_ACS(phy.best_model)
+        phy.get_MSN(phy.best_model)
+        phy.get_MSN(phy.best_model, deep_nodes=True)
+        phy.plot_MSN(phy.best_model, conf=phy.conf)
+        phy.plot_two_concepts('I', '15:2', '16:2')
+        edge1, edge2 = list(phy.graph[phy.best_model].edges())[0]
+        phy.get_edge(phy.best_model, edge1, edge2)
+        phy.get_edge(phy.best_model, 'Beijing', 'Shanghai')
+        phy.get_edge(phy.best_model, edge1, edge2, msn=True)
+        phy.get_PDC('w-2-1', aligned_output=True)
+        phy.plot_concept_evolution(phy.best_model, concept="I")
+
+
+

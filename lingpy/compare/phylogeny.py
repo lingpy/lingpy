@@ -519,6 +519,8 @@ class PhyBo(Wordlist):
         util.write_text_file(self._output_path(name), content, log=log)
 
     def _config(self):
+        if 'conf' in self._meta:
+            return self._meta['conf']
         try:
             return util.jsonload(self.dataset + '.json')
         except:
@@ -2746,7 +2748,7 @@ class PhyBo(Wordlist):
         nodeA,
         nodeB,
         entries='',
-        mln=False
+        msn=False
     ):
         """
         Return the edge data for a given gain-loss model.
@@ -2761,7 +2763,7 @@ class PhyBo(Wordlist):
             entries = entries.split(',')
 
         # get the graph locally for convenience
-        if not mln:
+        if not msn:
             graph = self.graph[glm]
         else:
             graph = self.geograph[glm]
@@ -2774,7 +2776,7 @@ class PhyBo(Wordlist):
             return
 
         # check the edge
-        if not mln:
+        if not msn:
             if edge['label'] == 'horizontal':
                 cogs = edge['cogs'].split(',')
             else:
@@ -3989,8 +3991,10 @@ class PhyBo(Wordlist):
         # calculate all resulting edges, using convex hull as
         # approximation
         geoGraph = nx.Graph()
+        for node, data in graph.nodes(data=True):
+            geoGraph.add_node(node, **data)
 
-        edges = graph.edges(data=True)
+        edges = list(graph.edges(data=True))
         with util.ProgressBar('MINIMAL SPATIAL NETWORK', len(edges)) as progress:
             for nA, nB, d in edges:
                 progress.update()
@@ -4565,7 +4569,7 @@ class PhyBo(Wordlist):
         plt.clf()
         log.file_written(filename + '.' + fileformat)
 
-    def plot_concepts(
+    def plot_two_concepts(
         self,
         concept,
         cogA,
@@ -4583,24 +4587,12 @@ class PhyBo(Wordlist):
         usetex=True
     ):
         """
-        Plot the Minimal Spatial Network.
+        Plot the evolution of two concepts in space.
 
-        Parameters
-        ----------
-        glm : str
-            A string that encodes which model should be plotted.
-        filename : str
-            The name of the file to which the plot shall be written.
-        fileformat : str
-            The output format of the plot.
-        threshold : int (default=1)
-            The threshold for the minimal amount of shared links that shall be
-            plotted.
-        only : list (default=[])
-            The list of taxa whose connections with other taxa should be
-            plotted.
-        usetex : bool (default=True)
-            Specify whether LaTeX shall be used for the plot.
+        Notes
+        -----
+        This function may be useful to contrast patterns of different words in
+        geographic space.
 
         """
         # usetex
@@ -4611,8 +4603,8 @@ class PhyBo(Wordlist):
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
-        if 'coords' in self.entries:
-            pass
+        if 'coords' in self._meta:
+            coords = self.coords
 
         else:
             coords = csv2dict(
@@ -5265,8 +5257,8 @@ class PhyBo(Wordlist):
                             zorder=300
                         )
 
-                plt.xlim((min(xvals) - 10, max(xvals) + 10))
-                plt.ylim((min(yvals) - 10, max(yvals) + 10))
+                plt.xlim((min(xvals or [0]) - 10, max(xvals or [0]) + 10))
+                plt.ylim((min(yvals or [0]) - 10, max(yvals or [0]) + 10))
 
                 legend1 = plt.legend(legendEntriesA, legendTextA, loc='upper right',
                                      numpoints=1)

@@ -1,0 +1,27 @@
+ID	DOCULECT	CONCEPT	SEGMENTS	PARTIAL_COGNATE_SETS	PARTIALIDS2
+1	Tasha_Tujia	all	x u ²⁴ + n i ⁵⁵	1 2	1 2
+2	Duogu_Tujia	all	x u ²⁴ n i ⁴⁴	1 2	1 2
+3	Dianfang_Tujia	all	x u ³⁵ + n i ⁵⁵	1 2	1 2
+4	Boluo_Tujia	all	b u ¹³ l i ⁵³	3 4	3 4
+5	Tanxi_Tujia	all	b u ¹³	3	1
+6	Tasha_Tujia	ashes	p u ²¹ tɕʰ i ²⁴	5 6	5 6
+7	Duogu_Tujia	ashes	p u ²¹ tsʰ i ⁵³	5 6	5 6
+8	Dianfang_Tujia	ashes	p u ²¹ tsʰ i ³⁵	5 6	5 6
+9	Boluo_Tujia	ashes	m u ²¹ tsʰ i ⁵³	7 6	5 6
+10	Tanxi_Tujia	ashes	m u ¹³ tsʰ i ⁵⁵	7 6	5 6
+11	Tasha_Tujia	bark	kʰ a ²¹ tʰ a ²⁴ pʰ a ²¹	8 9 10	7 8 9
+12	Tasha_Tujia	belly	m ɤ ²¹ tsʰ i ²¹ kʰ ɤ ⁵⁵	11 12 13	12 10 11
+13	Duogu_Tujia	belly	m ɨ e ²¹	11	12
+14	Dianfang_Tujia	belly	m ɨ e ²¹	11	12
+15	Boluo_Tujia	belly	m ɨ e ²¹ tɕ i ⁵³	11 12	12 10
+16	Tanxi_Tujia	belly	m ɨ e ¹³ tɕ i ⁵⁵	11 12	12 10
+17	Tasha_Tujia	big	tsʰ i ²¹	14	13
+18	Duogu_Tujia	big	tsʰ i ⁵³	14	13
+19	Dianfang_Tujia	big	tsʰ i ⁵⁵	14	13
+20	Boluo_Tujia	big	tɕʰ i ³³	14	13
+21	Tanxi_Tujia	big	tɕʰ i ³³	14	13
+22	Tasha_Tujia	bird	n j ɛ ²⁴ p i ⁵⁵	15 16	14 15
+23	Duogu_Tujia	bird	n i e ²¹ p i ⁵³	15 16	14 15
+24	Dianfang_Tujia	bird	n e ³⁵ p i ³⁵	15 16	14 15
+25	Boluo_Tujia	bird	k ɨ ²¹ ts o ²¹ n ũ ∼ ²¹	17 18 19	18 16 17
+26	Tanxi_Tujia	bird	k ɨ ²¹ ts o ²¹	17 18	18 16

@@ -32,7 +32,8 @@ class Tests():
         self.gopB2 = [-2, -1, -1, -1, -1, -1, -0.5]
         self.weightA = [1.5, 1, 1, 1]
         self.weightB = [1.5, 1, 1, 1, 1, 0.5]
-
+        self.weightA2 = [1.5, 1, 1, 1, 1]
+        self.weightB2 = [1.5, 1, 1, 1, 1, 1, 0.5]
         self.proA = 'abbc'
         self.proB = 'abbbbc'
         self.proA2 = 'ab1bc'
@@ -43,6 +44,9 @@ class Tests():
         self.profileA = [['a', 'b'], ['a', 'b']]
         self.profileB = [['b', 'a', 'b', 'a', 'b', 'a'], 
                 ['b', 'a', 'b', 'a', 'X', 'X']]
+        self.profileA2 = [['a', '1', 'b'], ['a', '1', 'b']]
+        self.profileB2 = [['b', 'a', 'b', '1', 'a', 'b', 'a'], 
+                ['b', 'a', 'b', '1', 'a', 'X', 'X']]
 
     def test__talign(self):
 
@@ -156,9 +160,19 @@ class Tests():
                     [self.proA, self.proB], self.gop, self.scale, self.factor,
                         self.scorer, '1', mode)
             assert alignments[0][-1] < 1
+            alignments = _calign.align_pairwise([self.seqA2, self.seqB2],
+                    [self.weightA2, self.weightB2], 
+                    [self.proA2, self.proB2], self.gop, self.scale, self.factor,
+                        self.scorer, '1', mode)
+            assert alignments[0][-1] < 1 
             alignments = _calign.align_pairs([[self.seqA, self.seqB]],
                     [[self.weightA, self.weightB]], 
                     [[self.proA, self.proB]], self.gop, self.scale, self.factor,
+                        self.scorer, mode, '1', 1)
+            assert alignments[0][-1] < 1
+            alignments = _calign.align_pairs([[self.seqA2, self.seqB2]],
+                    [[self.weightA2, self.weightB2]], 
+                    [[self.proA2, self.proB2]], self.gop, self.scale, self.factor,
                         self.scorer, mode, '1', 0)
             assert alignments[0][-1] > 1
 
@@ -167,6 +181,11 @@ class Tests():
                     self.weightA, self.weightB, self.proA, self.proB, self.gop,
                     self.scale, self.factor, self.scorer, '1', mode, 0.5)
             assert profiles[-1] == 0.0
+            profiles = _calign.align_profile(self.profileA2, self.profileB2,
+                    self.weightA2, self.weightB2, self.proA2, self.proB2, self.gop,
+                    self.scale, self.factor, self.scorer, '1', mode, 0.5)
+            assert len(profiles) == 3
+
 
         assert _calign.score_profile(
                 ['a', 'a'], ['a', 'a'], self.scorer, 0
@@ -179,4 +198,27 @@ class Tests():
 
 
 
+    def test_corrdist(self):
 
+        threshold = 0.5
+        seqs1 = [[self.seqA, self.seqB]]
+        seqs2 = [[self.seqA2, self.seqB2]]
+        gops1 = [[self.weightA, self.weightB]]
+        gops2 = [[self.weightA2, self.weightB2]]
+        pros1 = [[self.proA, self.proB]]
+        pros2 = [[self.proA2, self.proB2]]
+
+        for mode in ['global', 'local', 'dialign', 'overlap']:
+            
+            corr1 = _calign.corrdist(0.5, seqs1, gops1, pros1, self.gop,
+                    self.scale,
+                    self.factor, self.scorer, mode, '1')
+            corr2 = _calign.corrdist(0.5, seqs2, gops2, pros2, self.gop,
+                    self.scale,
+                    self.factor, self.scorer, mode, '1')
+            assert corr1[0]['b', 'b'] == 2
+            assert corr2[0]['a', 'a'] == 2 
+
+
+
+       

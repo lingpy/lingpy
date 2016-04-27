@@ -15,7 +15,6 @@ Subpackages
     lingpy.evaluate
     lingpy.meaning
     lingpy.model
-    lingpy.plugins
     lingpy.read
     lingpy.sequence
     lingpy.tests

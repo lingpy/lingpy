@@ -4,7 +4,6 @@ import random
 from itertools import product
 
 from collections import Counter, defaultdict
-from math import factorial
 from copy import copy
 
 from six import text_type
@@ -105,7 +104,7 @@ class LexStat(Wordlist):
         identical with the ones you define in your transform dictionary.
     vowels : str (default="VT_")
         For scoring function creation using the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function, you have the
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you have the
         possibility to use reduced scores for the matching of tones and vowels
         by modifying the "vscale" parameter, which is set to 0.5 as a default.
         In order to make sure that vowels and tones are properly detected, make
@@ -113,7 +112,7 @@ class LexStat(Wordlist):
         this keyword. Thus, if you change the prosodic strings using the
         "transform" keyword, you also need to change the vowel string, to make
         sure that "vscale" works as wanted in the
-        ~lingpy.compare.lexstat.LexStat.get_scorer function.
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function.
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
@@ -355,6 +354,7 @@ class LexStat(Wordlist):
         # make the language pairs
         if not hasattr(self, "pairs"):
             self.pairs = {}
+            self._same_vals = defaultdict(list)
             for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.taxa)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
@@ -362,10 +362,15 @@ class LexStat(Wordlist):
                 if i < j:
                     for c in sorted(set(dictA).intersection(dictB)):
                         for idxA, idxB in product(dictA[c], dictB[c]):
-                            dA = self[idxA, self._duplicates]
-                            dB = self[idxB, self._duplicates]
-                            if dA != 1 and dB != 1:
+                            this_pair = '{0}-{1}/{2}-{3}'.format(
+                                    ''.join(self[idxA, self._segments]),
+                                    taxonA,
+                                    ''.join(self[idxB, self._segments]),
+                                    taxonB
+                                    )
+                            if not self._same_vals[this_pair]:
                                 self.pairs[taxonA, taxonB] += [(idxA, idxB)]
+                            self._same_vals[this_pair] += [(idxA, idxB)]
                 elif i == j:
                     for c in sorted(dictA):
                         for idx in dictA[c]:
@@ -400,7 +405,7 @@ class LexStat(Wordlist):
                 self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
                 return self._cache[idx]
             except KeyError:
-                pass
+                return 
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -456,7 +461,7 @@ class LexStat(Wordlist):
                     cluster_method=kw['cluster_method'],
                     ref=kw['ref'])
 
-        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+        tasks = self.width ** 2 / 2 
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
             for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                 progress.update()
@@ -520,7 +525,7 @@ class LexStat(Wordlist):
             else 'shuffle'
 
         corrdist = {}
-        tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+        tasks = (self.width ** 2) / 2
 
         if method == 'markov':
             seqs, pros, weights = {}, {}, {}
@@ -597,7 +602,7 @@ class LexStat(Wordlist):
                             corrdist[tA, tB][a, b] += d / len(kw['modes'])
         # use shuffle approach otherwise
         else:
-            tasks = factorial(len(self.taxa) + 1) / 2 / factorial(len(self.taxa) - 1)
+            tasks = self.width ** 2 / 2
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
                 for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
                     progress.update()

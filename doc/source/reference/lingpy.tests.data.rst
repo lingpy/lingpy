@@ -12,6 +12,14 @@ lingpy.tests.data.test_derive module
     :undoc-members:
     :show-inheritance:
 
+lingpy.tests.data.test_sound_class_models module
+------------------------------------------------
+
+.. automodule:: lingpy.tests.data.test_sound_class_models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

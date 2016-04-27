@@ -953,8 +953,8 @@ class Alignments(Wordlist):
         """
         util.setdefaults(
             keywords,
-            title='LexStat - Automatic Cognate Judgments',
-            shorttitle="LexStat",
+            title='LingPy - Automatic Cognate Judgments and Alignments',
+            shorttitle="LingPy",
             dataset=self.filename,
             show=False,
             filename=self.filename,

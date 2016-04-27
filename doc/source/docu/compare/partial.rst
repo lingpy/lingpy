@@ -1,13 +1,18 @@
-Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
-===============================================================
+Partial Cognate Detection (:py:class:`~lingpy.compare.partial.Partial`)
+======================================================================
 
-.. currentmodule:: lingpy.compare.lexstat
 
-.. autoclass:: LexStat
+.. autoclass:: lingpy.compare.partial.Partial
 
    .. rubric:: Methods
    .. autosummary::
 
+      ~lingpy.compare.partial.Partial.partial_cluster
+      ~lingpy.compare.partial.Partial.add_cognate_ids
+   
+   .. rubric:: Inherited LexStat Methods
+   .. autosummary::
+      
       ~lingpy.compare.lexstat.LexStat.align_pairs
       ~lingpy.compare.lexstat.LexStat.cluster
       ~lingpy.compare.lexstat.LexStat.get_distances
@@ -34,4 +39,4 @@ Cognate Detection (:py:class:`~lingpy.compare.lexstat.LexStat`)
       ~lingpy.basic.wordlist.Wordlist.get_paps
       ~lingpy.basic.wordlist.Wordlist.output
       ~lingpy.basic.wordlist.Wordlist.renumber
-
+   

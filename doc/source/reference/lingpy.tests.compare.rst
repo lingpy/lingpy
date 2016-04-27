@@ -12,6 +12,14 @@ lingpy.tests.compare.test_lexstat module
     :undoc-members:
     :show-inheritance:
 
+lingpy.tests.compare.test_partial module
+----------------------------------------
+
+.. automodule:: lingpy.tests.compare.test_partial
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy.tests.compare.test_phylogeny module
 ------------------------------------------
 

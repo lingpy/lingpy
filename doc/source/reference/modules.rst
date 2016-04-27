@@ -1,5 +1,5 @@
-Reference
-=========
+lingpy
+======
 
 .. toctree::
    :maxdepth: 4

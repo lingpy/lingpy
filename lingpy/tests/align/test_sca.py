@@ -6,7 +6,7 @@ from itertools import product
 
 from six import text_type
 
-from lingpy import Alignments, MSA, PSA
+from lingpy import Alignments, MSA, PSA, LexStat
 import lingpy as lp
 from lingpy.tests.util import test_data, WithTempDir
 from lingpy.util import write_text_file, read_config_file
@@ -48,6 +48,7 @@ class TestAlignments(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.alm = Alignments(test_data('KSL2.qlc'), loans=False, _interactive=False)
+        self.alm.align()
     
     def test_ipa2tokens(self):
         # iterate over the keys
@@ -66,7 +67,6 @@ class TestAlignments(WithTempDir):
         self.alm.add_alignments(ref="cugid")
 
         # align all sequences using standard params
-        self.alm.align()
         self.alm.align(ref="cugid", alignment="alignment2")
         assert self.alm.msa["cugid"]["1"]["ID"] == self.alm.msa["cogid"][1]["ID"]
 
@@ -87,7 +87,6 @@ class TestAlignments(WithTempDir):
 
     def test_get_consensus(self):
         # align all sequences using standard params
-        self.alm.align()
 
         self.alm.get_consensus(consensus="consensus", classes=True)
         self.alm.get_consensus(consensus="consensus")
@@ -98,9 +97,17 @@ class TestAlignments(WithTempDir):
             [''.join(x) for x in
              self.alm.get_list(language="Turkish", entry="tokens", flat=True)])
 
+    def test_get_confidence(self):
+
+        lex = LexStat(test_data('KSL3.qlc'))
+        tmpDict = dict([(k,lex[k,'numbers']) for k in lex])
+        self.alm.add_entries('numbers', tmpDict, lambda x: x) 
+        corrs = self.alm.get_confidence(lex.rscorer, ref='cogid')
+        self.alm.output('html', filename=text_type(self.tmp_path('alm')),
+                confidence=True)
+
     def test_output(self):
-        self.alm.align()
-        self.alm.output('qlc', filename=text_type(self.tmp_path('test')))
+        self.alm.output('tsv', filename=text_type(self.tmp_path('test')))
         self.alm.output('html', filename=text_type(self.tmp_path('test')))
 
 def test_get_consensus():

@@ -358,7 +358,6 @@ class QLCParser(object):
             for key in self:
                 _apply(key, self[key][idx], **keywords)
 
-
 class QLCParserWithRowsAndCols(QLCParser):
     def __init__(self, filename, row, col, conf):
         QLCParser.__init__(self, filename, conf=conf)
@@ -473,7 +472,7 @@ class QLCParserWithRowsAndCols(QLCParser):
                 self._cache[idx] = self._data[idx[0]][self.header[idx[1]]]
                 return self._cache[idx]
             else:
-                raise KeyError
+                return #raise KeyError
         except TypeError:
             raise KeyError()
 
