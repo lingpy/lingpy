@@ -414,7 +414,7 @@ def tokens2morphemes(tokens, **keywords):
                 and '+' not in class_string and '_' not in class_string:
             new_tokens = []
             for i, token in enumerate(tokens):
-                if class_string[i] == 'T' and i != len(class_string) - 1:
+                if class_string[i] == kw['tone'] and i != len(class_string) - 1:
                     new_tokens += [token, kw['sep']]
                 else:
                     new_tokens += [token]

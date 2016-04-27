@@ -14,6 +14,7 @@ import networkx as nx
 import lingpy
 from lingpy.algorithm import clustering, extra
 from lingpy.compare.lexstat import LexStat
+from lingpy.util import combinations2
 try:
     from lingpy.algorithm.cython import calign
 except ImportError:
@@ -200,44 +201,47 @@ class Partial(LexStat):
             separators=lingpy.settings.rcParams['morpheme_separator']+'+_#'
         )
         kw.update(keywords)
-
-        if method == 'lexstat':
-            # define the function with help of lambda
-            function = lambda idxA, idxB, sA, sB: calign.align_pair(
-                    self[idxA, self._numbers][sA[0]:sA[1]],
-                    self[idxB, self._numbers][sB[0]:sB[1]],
-                    [self.cscorer[_charstring(self[idxB, self._langid]), n]
-                        for n in self[idxA, self._numbers][sA[0]:sA[1]]],
-                    [self.cscorer[_charstring(self[idxA, self._langid]), n]
-                        for n in self[idxB, self._numbers][sB[0]:sB[1]]],
-                    self[idxA, self._prostrings][sA[0]:sA[1]],
-                    self[idxB, self._prostrings][sB[0]:sB[1]],
-                    1,
-                    scale,
-                    factor,
-                    self.cscorer,
-                    mode,
-                    restricted_chars,
-                    1)[2]
-        elif method == 'sca':
-            # define the function with help of lambda
-            function = lambda idxA, idxB, sA, sB: calign.align_pair(
-                    [n.split('.', 1)[1] for n in self[idxA,
-                        self._numbers][sA[0]:sA[1]]],
-                    [n.split('.', 1)[1] for n in self[idxB,
-                        self._numbers][sB[0]:sB[1]]],
+        
+        def function(idxA, idxB, sA, sB, **keywords):
+            if method == 'lexstat':
+                args = [
+                        self[idxA, self._numbers][sA[0]:sA[1]],
+                        self[idxB, self._numbers][sB[0]:sB[1]],
+                        [self.cscorer[_charstring(
+                            self[idxB, self._langid]
+                            ), n]
+                            for n in self[idxA, self._numbers][sA[0]:sA[1]]],
+                        [self.cscorer[_charstring(
+                            self[idxA, self._langid]), n]
+                            for n in self[idxB, self._numbers][sB[0]:sB[1]]],
+                        self[idxA, self._prostrings][sA[0]:sA[1]],
+                        self[idxB, self._prostrings][sB[0]:sB[1]],
+                        1,
+                        scale,
+                        factor,
+                        self.cscorer,
+                        mode,
+                        restricted_chars,
+                        1]
+            elif method == 'sca':
+                args = [
+                        [n.split('.', 1)[1] for n in self[idxA,
+                            self._numbers][sA[0]:sA[1]]],
+                        [n.split('.', 1)[1] for n in self[idxB,
+                            self._numbers][sB[0]:sB[1]]],
                         self[idxA, self._weights][sA[0]:sA[1]],
                         self[idxB, self._weights][sB[0]:sB[1]],
                         self[idxA, self._prostrings][sA[0]:sA[1]],
                         self[idxB, self._prostrings][sB[0]:sB[1]],
-                    gop,
-                    scale,
-                    factor,
-                    self.rscorer,
-                    mode,
-                    restricted_chars,
-                    1)[2]
-
+                        gop,
+                        scale,
+                        factor,
+                        self.rscorer,
+                        mode,
+                        restricted_chars,
+                        1]
+            return calign.align_pair(*args)[2]
+        
         concepts = [concept] if concept else sorted(self.rows)
         
         # we have two basic constraints in the algorithm:
@@ -253,7 +257,7 @@ class Partial(LexStat):
             tracer = []
             
             # first assemble all partial parts
-            trace = {} # stores where the stuff is in the matrix
+            trace = defaultdict(list) # stores where the stuff is in the matrix
             count = 0
             for idx in indices:
                 
@@ -266,10 +270,7 @@ class Partial(LexStat):
 
                 for i,slc in enumerate(slices):
                     tracer += [(idx, i, slc)]
-                    try:
-                        trace[idx] += [(i, slc, count)]
-                    except KeyError:
-                        trace[idx] = [(i, slc, count)]
+                    trace[idx] += [(i, slc, count)]
                     count += 1
             
             if kw['imap_mode']:
@@ -450,23 +451,21 @@ class Partial(LexStat):
                     for i,(idx,pos,slc) in enumerate(trace):
                         _g.add_node((i,idx,pos))
                     remove_edges = []
-                    for i,n1 in enumerate(_g.nodes()):
-                        for j,n2 in enumerate(_g.nodes()):
-                            if i < j:
-                                if C[n1[1]][n1[2]] == C[n2[1]][n2[2]]:
-                                    _g.add_edge(n1, n2)
-                                    if n1[1] == n2[1]:
-                                        # get scores for n1 and n2 with all the rest in
-                                        # the matrix to decide for one
-                                        sn1, sn2 = 0, 0
-                                        for i,row in enumerate(matrix):
-                                            sn1 += matrix[i][n1[0]]
-                                            sn2 += matrix[i][n2[0]]
-                                        sn1 = sn1 / len(matrix)
-                                        sn2 = sn2 / len(matrix)
-                                        if sn1 <= sn2:
-                                            remove_edges += [n2]
-                                        else:
+                    for (i, n1), (j, n2) in combinations2(enumerate(_g.nodes())):
+                        if C[n1[1]][n1[2]] == C[n2[1]][n2[2]]:
+                            _g.add_edge(n1, n2)
+                            if n1[1] == n2[1]:
+                                # get scores for n1 and n2 with all the rest in
+                                # the matrix to decide for one
+                                sn1, sn2 = 0, 0
+                                for i,row in enumerate(matrix):
+                                    sn1 += matrix[i][n1[0]]
+                                    sn2 += matrix[i][n2[0]]
+                                sn1 = sn1 / len(matrix)
+                                sn2 = sn2 / len(matrix)
+                                if sn1 <= sn2:
+                                    remove_edges += [n2]
+                                else:
                                             remove_edges += [n1]
                     for node in remove_edges:
                         for edge in sorted(_g.edge[node]):
@@ -530,11 +529,9 @@ class Partial(LexStat):
                 # get connected components
                 g = nx.Graph()
                 g.add_nodes_from(idxs)
-                for i, cogsA in zip(idxs, srcs):
-                    for j,cogsB in zip(idxs, srcs):
-                        if i < j:
-                            if [x for x in cogsA if x in cogsB]:
-                                g.add_edge(i, j)
+                for (i, cogsA), (j, cogsB) in combinations2(zip(idxs, srcs)):
+                     if [x for x in cogsA if x in cogsB]:
+                         g.add_edge(i, j)
                 for i,comps in enumerate(nx.connected_components(g)):
                     for comp in comps:
                         D[comp] = idx + i

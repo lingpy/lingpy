@@ -22,7 +22,7 @@ class Tests(WithTempDir):
             assert isinstance(matrix[0][0], (float, int))
         
         if lingpy.algorithm.extra.igraph:
-            for concept, tracer, matrix in self._part.get_partial_matrices(
+            for concept, tracer, matrix in self.part._get_partial_matrices(
                     cluster_method='infomap'):
                 assert isinstance(concept, text_type)
                 assert [x[0] for x in tracer]

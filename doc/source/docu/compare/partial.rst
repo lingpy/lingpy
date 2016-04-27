@@ -1,4 +1,4 @@
-Partial Cognate Detection (:py:class:`lingpy.compare.partial.Partial`)
+Partial Cognate Detection (:py:class:`~lingpy.compare.partial.Partial`)
 ======================================================================
 
 
