@@ -11,7 +11,28 @@ import logging
 from lingpy import log
 from lingpy.util import identity
 
-def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
+def _get_bcubed_score(one, other):
+    tmp = defaultdict(list)
+    for x, y in zip(one, other):
+        tmp[x].append(y)
+    bcp = 0.0
+    for x in tmp:
+        for y in tmp[x]:
+            bcp += tmp[x].count(y) / len(tmp[x])
+    return bcp / len(other)
+
+def _get_cogs(ref, concept, modify_ref, wordlist):
+    idxs = wordlist.get_list(row=concept, flat=True)
+    bidx = [i + 1 for i in range(len(idxs))]
+    cogs = wordlist.get_list(row=concept, entry=ref, flat=True)
+    tmp = {}
+    for a, b in zip(cogs, bidx):
+        if modify_ref(a) not in tmp:
+            tmp[(a)] = b
+    return [tmp[modify_ref(i)] for i in cogs]
+
+def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 
+        per_concept=False):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -35,6 +56,9 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
         absolute value.
     pprint : bool (default=True)
         Print out the results
+    per_concept : bool (default=False)
+        Compute b-cubed scores per concep and not for the whole data in one
+        piece.
 
     Returns
     -------
@@ -54,19 +78,19 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     diff
     pairs
     """
-    # clean cache of lexstat object
-    lex._clean_cache()
+    # clean cache of wordliststat object
+    wordlist._clean_cache()
 
     # if loans are treated as homologs
     evl = modify_ref if modify_ref else identity
-
+    
     def get_scores(one, other):
-        for _, line in lex.get_etymdict(ref=one, modify_ref=modify_ref).items():
+        for _, line in wordlist.get_etymdict(ref=one, modify_ref=modify_ref).items():
             line = [value for value in [evl(x[0]) for x in line if x != 0]]
             # check for linesize
             if len(line) > 1:
                 # get cognate-ids in the other set for the line
-                other_line = [evl(lex[idx, other]) for idx in line]
+                other_line = [evl(wordlist[idx, other]) for idx in line]
 
                 # get the recall
                 for idx in other_line:
@@ -74,16 +98,31 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
             else:
                 yield 1.0
 
-    # b-cubed recall
-    bcr = list(get_scores(gold, test))
-
-    # b-cubed precision
-    bcp = list(get_scores(test, gold))
+    if per_concept:
+        bcr, bcp, fsc = [], [], []
+        for concept in wordlist.rows:
+            idxsG = _get_cogs(gold, concept, evl, wordlist)
+            idxsT = _get_cogs(test, concept, evl, wordlist)
+            r = _get_bcubed_score(idxsG, idxsT)
+            p = _get_bcubed_score(idxsT, idxsG)
+            f = 2 * ((r * p) / (p + r))
+            bcr += [r]
+            bcp += [p]
+            fsc += [f]
+            if pprint and log.get_level() <= logging.INFO:
+                print('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
+                    concept, p, r, f))
+    else:
+        # b-cubed recall
+        bcr = list(get_scores(gold, test))
+        # b-cubed precision
+        bcp = list(get_scores(test, gold))
+        fsc = []
 
     # calculate general scores
     BCP = sum(bcp) / len(bcp)
     BCR = sum(bcr) / len(bcr)
-    FSC = 2 * ((BCP * BCR) / (BCP + BCR))
+    FSC = sum(fsc) / len(fsc) if fsc else 2 * ((BCP * BCR) / (BCP + BCR))
 
     # print the results if this option is chosen
     if pprint and log.get_level() <= logging.INFO:
@@ -96,7 +135,7 @@ def bcubes(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
         print('*****************************')
 
     # clean cache again
-    lex._clean_cache()
+    wordlist._clean_cache()
     return BCP, BCR, FSC
 
 def partial_bcubes(wordlist, gold, test, pprint=True):
@@ -253,14 +292,14 @@ def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
 
 
 def diff(
-        lex,
+        wordlist,
         gold='cogid',
         test='lexstatid',
         modify_ref=False,
         pprint=True,
         filename='',
         tofile=True,
-        fuzzy=False):
+        transcription="ipa"):
     r"""
     Write differences in classifications on an item-basis to file.
 
@@ -288,6 +327,9 @@ def diff(
     tofile : bool (default=True)
         If set to c{False}, no data will be written to file, but instead, the
         data will be returned.
+    transcription : str (default="ipa")
+        The file in which the transcriptions are located (should be a string,
+        no segmentized version, for convenience of writing to file).
 
     Returns
     -------
@@ -331,7 +373,7 @@ def diff(
     bcubes
     pairs
     """
-    filename = filename or lex.filename
+    filename = filename or wordlist.filename
     loan = modify_ref if modify_ref else identity
 
     # open file
@@ -339,22 +381,11 @@ def diff(
         f = codecs.open(filename + '.diff', 'w', 'utf-8')
 
     # get a formatter for language names
-    lform = '{0:' + str(max([len(l) for l in lex.cols])) + '}'
+    lform = '{0:' + str(max([len(l) for l in wordlist.cols])) + '}'
     
     preT, recT = [], []
     preB, recB = [], []
     preP, recP = [], []
-
-    def get_cogs(ref, bidx):
-        cogs = lex.get_list(row=concept, entry=ref, flat=True)
-        if fuzzy:
-            cogs = [i[0] for i in cogs]
-
-        tmp = {}
-        for a, b in zip(cogs, bidx):
-            if loan(a) not in tmp:
-                tmp[loan(a)] = b
-        return [tmp[loan(i)] for i in cogs]
 
     def get_pairs(cogs, idxs):
         tmp = defaultdict(list)
@@ -364,23 +395,13 @@ def diff(
             for yA, yB in combinations(tmp[x], r=2):
                 yield tuple(sorted([yA, yB]))
 
-    def get_bcubed_score(one, other):
-        tmp = defaultdict(list)
-        for x, y in zip(one, other):
-            tmp[x].append(y)
-        bcp = 0.0
-        for x in tmp:
-            for y in tmp[x]:
-                bcp += tmp[x].count(y) / len(tmp[x])
-        return bcp / len(idxs)
-
-    for concept in lex.concepts:
-        idxs = lex.get_list(row=concept, flat=True)
+    for concept in wordlist.rows:
+        idxs = wordlist.get_list(row=concept, flat=True)
         # get the basic index for all seqs
         bidx = [i + 1 for i in range(len(idxs))]
 
-        cogsG = get_cogs(gold, bidx)
-        cogsT = get_cogs(test, bidx)
+        cogsG = _get_cogs(gold, concept, loan, wordlist)
+        cogsT = _get_cogs(test, concept, loan, wordlist)
 
         if cogsG != cogsT:
             # calculate the transformation distance of the sets
@@ -391,10 +412,10 @@ def diff(
             recT += [tramG / tramGT]
 
             # calculate the bcubed precision for the sets
-            preB += [get_bcubed_score(cogsT, cogsG)]
+            preB += [_get_bcubed_score(cogsT, cogsG)]
 
             # calculate b-cubed recall
-            recB += [get_bcubed_score(cogsG, cogsT)]
+            recB += [_get_bcubed_score(cogsG, cogsT)]
 
             # calculate pair precision
             pairsG = set(get_pairs(cogsG, idxs))
@@ -411,8 +432,8 @@ def diff(
                         concept, fp, fn))
 
             # get the words
-            words = [lex[i, 'ipa'] for i in idxs]
-            langs = [lex[i, 'taxa'] for i in idxs]
+            words = [wordlist[i, 'ipa'] for i in idxs]
+            langs = [wordlist[i, 'taxa'] for i in idxs]
 
             # get a word-formater
             wform = '{0:' + str(max([len(w) for w in words])) + '}'

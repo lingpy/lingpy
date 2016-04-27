@@ -21,7 +21,7 @@
 /lingpy/lingpy-*.qlc
 /lingpy/plugins
 /lingpy/plugins/
-/lingpy/_plugins/
+/lingpy/_plugins
 /lingpy/tests/output/*.csv
 /lingpy/tests/output/*.dst
 /lingpy/tests/output/*.html
