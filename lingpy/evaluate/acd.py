@@ -9,7 +9,7 @@ from collections import defaultdict
 
 import logging
 from lingpy import log
-from lingpy.util import identity
+from lingpy.util import identity, print_stuff
 
 def _get_bcubed_score(one, other):
     tmp = defaultdict(list)
@@ -31,8 +31,22 @@ def _get_cogs(ref, concept, modify_ref, wordlist):
             tmp[(a)] = b
     return [tmp[modify_ref(i)] for i in cogs]
 
+def _format_results(results, p, r, f):
+    """
+    Print out the results of an analysis.
+    """
+
+    return """**************************')
+* {0:7}-Scores         *
+* ---------------------- *
+* Precision:     {1:.4f} *
+* Recall:        {2:.4f} *
+* F-Scores:      {3:.4f} *
+**************************'""".format(
+        results, p, r, f)
+
 def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 
-        per_concept=False):
+        per_concept=False, _return_string=False):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -109,9 +123,9 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
             bcr += [r]
             bcp += [p]
             fsc += [f]
-            if pprint and log.get_level() <= logging.INFO:
-                print('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
-                    concept, p, r, f))
+            if pprint:
+                print_stuff('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
+                    concept, p, r, f), return_string=_return_string)
     else:
         # b-cubed recall
         bcr = list(get_scores(gold, test))
@@ -123,22 +137,16 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     BCP = sum(bcp) / len(bcp)
     BCR = sum(bcr) / len(bcr)
     FSC = sum(fsc) / len(fsc) if fsc else 2 * ((BCP * BCR) / (BCP + BCR))
-
-    # print the results if this option is chosen
-    if pprint and log.get_level() <= logging.INFO:
-        print('*****************************')
-        print('* B-Cubed-Scores            *')
-        print('* ------------------------- *')
-        print('* B-Cubed-Precision: {0:.4f} *'.format(BCP))
-        print('* B-Cubed-Recall:    {0:.4f} *'.format(BCR))
-        print('* B-Cubed-F-Scores:  {0:.4f} *'.format(FSC))
-        print('*****************************')
+    
+    if pprint:
+        out = _format_results('B-Cubed', BCP, BCR, FSC)
+        print_stuff(out, return_string=_return_string)
 
     # clean cache again
     wordlist._clean_cache()
     return BCP, BCR, FSC
 
-def partial_bcubes(wordlist, gold, test, pprint=True):
+def partial_bcubes(wordlist, gold, test, pprint=True, _return_string=False):
     """
     Compute B-Cubed scores for test and reference datasets for partial cognate\
             detection.
@@ -209,19 +217,14 @@ def partial_bcubes(wordlist, gold, test, pprint=True):
     bcr = get_scores(gold, test)
     bcp = get_scores(test, gold)
     bcf = 2 * ((bcp * bcr) / (bcp + bcr))
-
-    # print the results if this option is chosen
-    if pprint and log.get_level() <= logging.INFO:
-        print('*****************************')
-        print('* B-Cubed-Scores            *')
-        print('* ------------------------- *')
-        print('* B-Cubed-Precision: {0:.4f} *'.format(bcp))
-        print('* B-Cubed-Recall:    {0:.4f} *'.format(bcr))
-        print('* B-Cubed-F-Scores:  {0:.4f} *'.format(bcf))
-        print('*****************************')
+    
+    if pprint:
+        out = _format_results('B-Cubed', bcp, bcr, bcf)
+        print_stuff(out, return_string=_return_string)
     return bcp, bcr, bcf
 
-def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
+def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True,
+        _return_string=False):
     """
     Compute pair scores for the evaluation of cognate detection algorithms.
     
@@ -279,14 +282,9 @@ def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True):
     fs = 2 * (pp * pr) / (pp + pr)
 
     # print the results if this option is chosen
-    if pprint and log.get_level() <= logging.INFO:
-        print('**************************')
-        print('* Pair-Scores            *')
-        print('* ---------------------- *')
-        print('* Pair-Precision: {0:.4f} *'.format(pp))
-        print('* Pair-Recall:    {0:.4f} *'.format(pr))
-        print('* Pair-F-Scores:  {0:.4f} *'.format(fs))
-        print('**************************')
+    if pprint:
+        out = _format_results('Pairs', pp, pr, fs)
+        print_stuff(out, return_string=_return_string)
     
     return pp, pr, fs
 
@@ -299,7 +297,8 @@ def diff(
         pprint=True,
         filename='',
         tofile=True,
-        transcription="ipa"):
+        transcription="ipa",
+        _return_string=False):
     r"""
     Write differences in classifications on an item-basis to file.
 
@@ -460,24 +459,14 @@ def diff(
     pp = sum(preP) / len(preP)
     pr = sum(recP) / len(recP)
     pf = 2 * (pp * pr) / (pp + pr)
-
-    if pprint and log.get_level() <= logging.INFO:
-        print('**************************')
-        print('* B-Cubed-Scores         *')
-        print('* ---------------------- *')
-        print('* B-C.-Precision: {0:.4f} *'.format(bp))
-        print('* B-C.-Recall:    {0:.4f} *'.format(br))
-        print('* B-C.-F-Scores:  {0:.4f} *'.format(bf))
-        print('**************************')
-        print('')
-        print('**************************')
-        print('* Pair-Scores            *')
-        print('* ---------------------- *')
-        print('* Pair-Precision: {0:.4f} *'.format(pp))
-        print('* Pair-Recall:    {0:.4f} *'.format(pr))
-        print('* Pair-F-Scores:  {0:.4f} *'.format(pf))
-        print('**************************')
     
+    if pprint:
+        out1 = _format_results('B-Cubed', bp, br, bf)
+        out2 = _format_results('Pair', pp, pr, pf)
+        out = print_stuff(out1+out2, return_string=_return_string)
+        if out:
+            return out
+
     if tofile:
         f.write('B-Cubed Scores:\n')
         f.write('Precision: {0:.4f}\n'.format(bp))

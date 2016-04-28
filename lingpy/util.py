@@ -176,6 +176,11 @@ def read_text_file(path, normalize=None, lines=False):
         else:
             return _normalize(fp.read())
 
+def print_stuff(stuff, return_string=False):
+    if get_level() <= logging.INFO and not return_string:
+        print(stuff)
+        return
+    return str(stuff)
 
 def read_config_file(path, **kw):
     """Read lines of a file ignoring commented lines and empty lines. """

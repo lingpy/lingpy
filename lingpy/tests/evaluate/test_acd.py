@@ -23,10 +23,17 @@ class Tests(WithTempDir):
         res = bcubes(self.lex, test='cogid', pprint=False)
         self.assertAlmostEquals(res, (1.0, 1.0, 1.0))
 
+        res = bcubes(self.lex, 'cogid', 'cogid', pprint=True,
+                _return_string=True, per_concept=True)
+
+
     def test_partial_bcubes(self):
         from lingpy.evaluate.acd import partial_bcubes
         res = partial_bcubes(self.part, 'pid1', 'pid2', pprint=False)
         assert [round(x, 2) for x in res] == [0.92, 0.98, 0.95]
+
+        res = partial_bcubes(self.part, 'pid1', 'pid2', pprint=True,
+                _return_string=True)
         
     def test_pairs(self):
         from lingpy.evaluate.acd import pairs
@@ -43,5 +50,6 @@ class Tests(WithTempDir):
         d1 = diff(self.lex, gold='cogid', test='cogid', filename='%s' % self.tmp_path('test_acd'), pprint=False)
         d2 = diff(self.lex, gold='cugid', test='cogid', filename='%s' %
                 self.tmp_path('test_acd'), pprint=False, tofile=False)
-
+        d3 = diff(self.lex, gold='cugid', test='cogid', filename='%s' %
+                self.tmp_path('test_acd'), pprint=False, tofile=True)
         assert d2[0] != 1

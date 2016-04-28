@@ -19,7 +19,7 @@ from lingpy.sequence.sound_classes import (
 )
 from lingpy.settings import rcParams
 from lingpy import log
-from lingpy.util import setdefaults, identity, dotjoin
+from lingpy.util import setdefaults, identity, dotjoin, print_stuff
 
 
 class Multiple(object):
@@ -1921,7 +1921,7 @@ class Multiple(object):
 
 
 def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False,
-        pprint=False):
+        pprint=False, _return_string=False):
     """
     A short-cut method for multiple alignment analyses.
 
@@ -1961,7 +1961,8 @@ def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False,
         tree_calc=tree_calc,
         scale=scale,
         scoredict=scoredict or {})
-    if pprint:  # pragma: no cover
-        print(m)
 
+    if pprint:  # pragma: no cover
+        out = print_stuff(m, return_string=_return_string)
+        return out
     return m.alm_matrix
