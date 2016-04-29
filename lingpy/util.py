@@ -46,8 +46,11 @@ def multicombinations2(iterable):
 def join(sep, *args, **kw):
     """
     Convenience shortcut. Strings to be joined do not have to be passed as list or tuple.
-
-    .. note:: An implicit conversion of objects to strings is performed as well.
+    
+    Notes
+    -----
+    An implicit conversion of objects to strings is performed as well.
+    
     """
     if len(args) == 1 and isinstance(args[0], (list, tuple, types.GeneratorType)):
         args = args[0]
@@ -62,7 +65,14 @@ tabjoin = partial(join, '\t')
 def confirm(question, default=False):
     """
     Ask user a yes/no question and return their response as True or False.
+    
+    Parameters
+    ----------
+    question : str
+        The question you want to answer.
 
+    Notes
+    -----
     ``question`` should be a simple, grammatically complete question such as
     "Do you wish to continue?", and will have a string similar to " [Y/n] "
     appended automatically. This function will *not* append a question mark for
@@ -72,7 +82,7 @@ def confirm(question, default=False):
     is not recognized as "yes" or "no", "no" is assumed. This can be changed by
     specifying ``default=True``.
 
-    .. note:: Adapted from fabric.contrib.console.confirm
+    Adapted from fabric.contrib.console.confirm
     """
     response = input("%s [%s] " % (question, "Y/n" if default else "y/N")).lower()
     if response in rcParams['answer_yes']:
@@ -107,10 +117,18 @@ data_path = partial(lingpy_path, 'data')
 
 def _str_path(path, mkdir=False):
     """Get a file-system path as text_type, suitable for passing into io.open.
-
-    :param path: A fs path either as Path instance or as text_type.
-    :param mkdir: If True, create the directories within the path.
-    :return: The path as text_type.
+    
+    Parameters
+    ----------
+    path : {text_type, Path}
+        A fs path either as Path instance or as text_type.
+    mkdir : bool (default=False)
+        If True, create the directories within the path.
+    
+    Returns
+    -------
+    path : text_type
+        The path as text_type.
     """
     res = text_type(path) if isinstance(path, Path) else path
     if mkdir:
@@ -122,10 +140,19 @@ def _str_path(path, mkdir=False):
 
 def write_text_file(path, content, normalize=None, log=True):
     """Write a text file encoded in utf-8.
+    
+    Parameters
+    ----------
+    path : str
+        File-system path of the file.
+    content : str
+        The text content to be written.
+    normalize : { None, "NFC", "NFD" } (default=False)
+        If not `None` a valid unicode normalization mode must be passed.
+    log : bool (default=True)
+        Indicate whether you want to log the result of the file writing
+        process.
 
-    :param path: File-system path of the file.
-    :content: The text content to be written.
-    :param normalize: If not `None` a valid unicode normalization mode must be passed.
     """
     if not isinstance(content, text_type):
         content = lines_to_text(content)
@@ -133,7 +160,6 @@ def write_text_file(path, content, normalize=None, log=True):
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
     if log:
         file_written(_str_path(path))
-
 
 def lines_to_text(lines):
     return ''.join(line if line.endswith('\n') else line + '\n' for line in lines)
@@ -159,13 +185,22 @@ def read_text_file(path, normalize=None, lines=False):
 
     Parameters
     ----------
-    :param path: File-system path of the file.
-    :param normalize: If not `None` a valid unicode normalization mode must be passed.
-    :param lines: Flag signalling whether to return a list of lines (without
+    path : { Path, str }
+        File-system path of the file.
+    normalize : { None, "NFC", "NFC" }
+        If not `None` a valid unicode normalization mode must be passed.
+    linse : bool (default=False)
+        Flag signalling whether to return a list of lines (without
       the line-separation character).
-    :return: File content as unicode object or list of lines as unicode objects.
-
-    .. note:: The whole file is read into memory.
+    
+    Returns
+    -------
+    file_content : { list, str }
+        File content as unicode object or list of lines as unicode objects.
+    
+    Notes
+    -----
+    The whole file is read into memory.
     """
     def _normalize(chunk):
         return unicodedata.normalize(normalize, chunk) if normalize else chunk
@@ -176,11 +211,11 @@ def read_text_file(path, normalize=None, lines=False):
         else:
             return _normalize(fp.read())
 
-def print_stuff(stuff, return_string=False):
-    if get_level() <= logging.INFO and not return_string:
-        print(stuff)
-        return
-    return str(stuff)
+def as_string(obj, pprint=False):
+    obj = text_type(obj)
+    if get_level() <= logging.INFO and pprint:
+        print(obj)
+    return obj
 
 def read_config_file(path, **kw):
     """Read lines of a file ignoring commented lines and empty lines. """
@@ -191,13 +226,16 @@ def read_config_file(path, **kw):
 
 class ProgressBar(object):
     """A progress bar using console output.
+    
+    Notes
+    -----
+    Usage example::
 
-    Usage:
+        >>> with ProgressBar('here is the title', 50) as pb:
+        >>>     for i in range(50):
+        >>>         # do stuff
+        >>>         pb.update()
 
-    >>> with ProgressBar('here is the title', 50) as pb:
-    >>>     for i in range(50):
-    >>>         # do stuff
-    >>>         pb.update()
     """
     def __init__(self, title, task_count, cols=100):
         self.log = get_level() <= logging.INFO
@@ -234,9 +272,13 @@ class ProgressBar(object):
 
 def setdefaults(d, **kw):
     """Shortcut for a common idiom, setting multiple default values at once.
-
-    :param d: Dictionary to be updated.
-    :param kw: Dictionary with default values.
+    
+    Parameters
+    ----------
+    d : dict
+        Dictionary to be updated.
+    kw : dict
+        Dictionary with default values.
     """
     for k, v in kw.items():
         d.setdefault(k, v)
@@ -246,7 +288,9 @@ class cached_property(object):
 
     """
     Decorator for read-only properties evaluated only once.
-
+    
+    Notes
+    -----
     It can be used to create a cached property like this::
 
         import random
@@ -270,7 +314,7 @@ class cached_property(object):
 
         del instance._cache[<property name>]
 
-    inspired by the recipe by Christopher Arndt in the PythonDecoratorLibrary
+    Inspired by the recipe by Christopher Arndt in the PythonDecoratorLibrary
     """
 
     def __call__(self, fget):
@@ -294,9 +338,13 @@ def identity(x):
 
 def jsondump(obj, path, **kw):
     """python 2 + 3 compatible version of json.dump.
-
-    :param obj: The object to be dumped.
-    :param path: The path of the JSON file to be written.
+    
+    Parameters
+    ----------
+    obj : object
+        The object to be dumped.
+    path : { str, Path }
+        The path of the JSON file to be written.
     """
     _kw = dict(mode='w')
     if PY3:  # pragma: no cover
@@ -307,8 +355,11 @@ def jsondump(obj, path, **kw):
 
 def jsonload(path, **kw):
     """python 2 + 3 compatible version of json.load.
-
-    :return: The python object read from path.
+    
+    Returns
+    -------
+    obj : object
+        The python object read from path.
     """
     _kw = {}
     if PY3:  # pragma: no cover

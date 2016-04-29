@@ -57,7 +57,7 @@ class TestLexStat(WithTempDir):
                 3: ['3', 'xyz', 'hand', 'hund', 'h u n d'],
             }, check=True, errors='%s' % error_log)
             assert error_log.exists()
-            self.assertTrue(lex.filename.endswith('_cleaned.qlc'))
+            self.assertTrue(lex.filename.endswith('_cleaned.tsv'))
             self.assertTrue(os.path.exists(lex.filename))
             os.remove(lex.filename)
             self.assertEquals(len(lex._meta['errors']), 2)
@@ -87,7 +87,7 @@ class TestLexStat(WithTempDir):
         assert_raises(ValueError, LexStat, bad_file.as_posix())
         ls = self._make_one(bad_file.as_posix(), check=True, apply_checks=True)
         assert hasattr(ls, 'errors')
-        cleaned = bad_file.parent.joinpath(bad_file.name + '_cleaned.qlc')
+        cleaned = bad_file.parent.joinpath(bad_file.name + '_cleaned.tsv')
         self.assertTrue(cleaned.exists())
         os.remove(cleaned.as_posix())
         assert_raises(ValueError, LexStat, {0: ['concept', 'language', 'ipa']})

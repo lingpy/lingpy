@@ -5,10 +5,7 @@ Module provides classes and functions for pairwise alignment analyses.
 from __future__ import division, print_function, unicode_literals
 
 from six import text_type
-import logging
-from lingpy import log
-
-from lingpy.util import setdefaults, multicombinations2
+from lingpy.util import setdefaults, multicombinations2, as_string 
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, prosodic_string, tokens2class, prosodic_weights, class2tokens,
@@ -234,10 +231,7 @@ class Pairwise(object):
                 sim))
 
         # print the alignments, if this is chosen
-        if keywords['pprint']:
-            if log.get_level() <= logging.INFO:
-                print(self)
-
+        as_string(self, pprint=keywords['pprint'])
 
 def _get_scorer(seqA, seqB):
     scorer = {}

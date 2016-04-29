@@ -9,7 +9,7 @@ from collections import defaultdict
 
 import logging
 from lingpy import log
-from lingpy.util import identity, print_stuff
+from lingpy.util import identity, as_string 
 
 def _get_bcubed_score(one, other):
     tmp = defaultdict(list)
@@ -46,7 +46,7 @@ def _format_results(results, p, r, f):
         results, p, r, f)
 
 def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 
-        per_concept=False, _return_string=False):
+        per_concept=False):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -123,9 +123,9 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
             bcr += [r]
             bcp += [p]
             fsc += [f]
-            if pprint:
-                print_stuff('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
-                    concept, p, r, f), return_string=_return_string)
+            
+            as_string('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
+                    concept, p, r, f), pprint=pprint)
     else:
         # b-cubed recall
         bcr = list(get_scores(gold, test))
@@ -138,15 +138,13 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     BCR = sum(bcr) / len(bcr)
     FSC = sum(fsc) / len(fsc) if fsc else 2 * ((BCP * BCR) / (BCP + BCR))
     
-    if pprint:
-        out = _format_results('B-Cubed', BCP, BCR, FSC)
-        print_stuff(out, return_string=_return_string)
+    as_string(_format_results('B-Cubed', BCP, BCR, FSC), pprint=pprint)
 
     # clean cache again
     wordlist._clean_cache()
     return BCP, BCR, FSC
 
-def partial_bcubes(wordlist, gold, test, pprint=True, _return_string=False):
+def partial_bcubes(wordlist, gold, test, pprint=True):
     """
     Compute B-Cubed scores for test and reference datasets for partial cognate\
             detection.
@@ -218,9 +216,8 @@ def partial_bcubes(wordlist, gold, test, pprint=True, _return_string=False):
     bcp = get_scores(test, gold)
     bcf = 2 * ((bcp * bcr) / (bcp + bcr))
     
-    if pprint:
-        out = _format_results('B-Cubed', bcp, bcr, bcf)
-        print_stuff(out, return_string=_return_string)
+    as_string(_format_results('B-Cubed', bcp, bcr, bcf), 
+            pprint=pprint)
     return bcp, bcr, bcf
 
 def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True,
@@ -282,9 +279,7 @@ def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True,
     fs = 2 * (pp * pr) / (pp + pr)
 
     # print the results if this option is chosen
-    if pprint:
-        out = _format_results('Pairs', pp, pr, fs)
-        print_stuff(out, return_string=_return_string)
+    as_string(_format_results('Pairs', pp, pr, fs), pprint=pprint)
     
     return pp, pr, fs
 
@@ -297,8 +292,7 @@ def diff(
         pprint=True,
         filename='',
         tofile=True,
-        transcription="ipa",
-        _return_string=False):
+        transcription="ipa"):
     r"""
     Write differences in classifications on an item-basis to file.
 
@@ -460,12 +454,10 @@ def diff(
     pr = sum(recP) / len(recP)
     pf = 2 * (pp * pr) / (pp + pr)
     
-    if pprint:
-        out1 = _format_results('B-Cubed', bp, br, bf)
-        out2 = _format_results('Pair', pp, pr, pf)
-        out = print_stuff(out1+out2, return_string=_return_string)
-        if out:
-            return out
+
+    as_string(_format_results('B-Cubed', bp, br, bf) + \
+            _format_results('Pair', pp, pr, pf), 
+            pprint=pprint)
 
     if tofile:
         f.write('B-Cubed Scores:\n')

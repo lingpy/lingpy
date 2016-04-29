@@ -202,7 +202,8 @@ class LexStat(Wordlist):
             "weights" : "weights",
             "sonars" : "sonars",
             "langid" : "langid",
-            "duplicates" : "duplicates"
+            "duplicates" : "duplicates",
+            "tokenize" : ipa2tokens
         }
         kw.update(keywords)
 
@@ -232,9 +233,9 @@ class LexStat(Wordlist):
         # create tokens if they are missing
         if self._segments not in self.header:
             self.add_entries(
-                self._segments, self._transcription, lambda x: ipa2tokens(x,
-                    merge_vowels=kw['merge_vowels'],
-                    expand_nasals=kw['expand_nasals']))
+                self._segments, self._transcription, kw['tokenize'], 
+                merge_vowels=kw['merge_vowels'],    
+                expand_nasals=kw['expand_nasals'])
 
         # add a debug procedure for tokens
         if kw["check"]:
@@ -248,12 +249,12 @@ class LexStat(Wordlist):
                 if kw["apply_checks"] or util.confirm(
                         "There were errors in the input data - exclude them?"):
                     self.output(
-                        'qlc',
+                        'tsv',
                         filename=self.filename + '_cleaned',
                         subset=True,
                         rows={"ID": "not in " + str([i[0] for i in errors])})
                     # load the data in a new LexStat instance and copy the __dict__
-                    lexstat = LexStat(self.filename + '_cleaned.qlc', **kw)
+                    lexstat = LexStat(self.filename + '_cleaned.tsv', **kw)
                     lexstat._meta['errors'] = [i[0] for i in errors]
                     self.__dict__ = copy(lexstat.__dict__)
                 return
