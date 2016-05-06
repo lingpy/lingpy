@@ -18,13 +18,11 @@ class Mock(MagicMock):
             return Mock()
 MOCK_MODULES = [
         "scipy",
-        "numpy",
         "matplotlib"
     ]
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 for mod_name in MOCK_MODULES:
-    sys.modules[mod_name] = mock.MagicMock()
+    sys.modules[mod_name] = MagicMock()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -300,7 +298,7 @@ texinfo_documents = [
 epub_title = project
 epub_author = authors
 epub_publisher = 'Johann-Mattis List, Robert Forkel'
-epub_copyright = '2015, ' + authors
+epub_copyright = '2016, ' + authors
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.

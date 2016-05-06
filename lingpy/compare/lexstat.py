@@ -389,22 +389,16 @@ class LexStat(Wordlist):
         In contrast to the basic wordlist, the LexStat wordlist further allows
         to access item pairs by passing a tuple.
         """
-        if idx in self._cache:
-            return self._cache[idx]
-
         if idx in self._data:
-            self._cache[idx] = self._data[idx]
-            return self._cache[idx]
+            return self._data[idx]
 
         try:
             return (
                 self._data[idx[0][0]][self._header[self._alias[idx[1]]]],
                 self._data[idx[0][1]][self._header[self._alias[idx[1]]]])
-        except:
+        except (IndexError, TypeError, KeyError):
             try:
-                # return data entry with specified key word
-                self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                return self._cache[idx]
+                return self._data[idx[0]][self._header[self._alias[idx[1]]]]
             except KeyError:
                 return 
 

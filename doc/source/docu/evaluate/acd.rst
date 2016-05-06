@@ -14,3 +14,4 @@ Functions
    bcubes
    pairs
    diff
+   npoint_ap

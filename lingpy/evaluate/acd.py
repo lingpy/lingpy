@@ -500,11 +500,11 @@ def npoint_ap(scores, cognates, reverse=False):
     Examples
     --------
     
-    >>> scores = [10, 9, 8, 7, 6]
+    >>> scores = [1, 2, 3, 4, 5]
     >>> cognates = [1, 1, 1, 0, 0]
     >>> from lingpy.evaluate.acd import npoint_ap
     >>> npoint_ap(scores, cognates)
-    1
+    1.0
 
     """
     p = 0.0
