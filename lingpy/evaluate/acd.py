@@ -473,3 +473,50 @@ def diff(
         log.file_written(filename + '.diff')
     else:
         return (bp, br, bf), (pp, pr, pf)
+
+def npoint_ap(scores, cognates, reverse=False):
+    """
+    Calculate the n-point average precision.
+    
+    Parameters
+    ----------
+    scores : list
+        The scores of your algorithm for pairwise string comparison. 
+    cognates : list
+        The cognate codings of the word pairs you compared. 1 indicates that
+        the pair is cognate, 0 indicates that it is not cognate.
+    reverse : bool (default=False)
+        The order of your ranking mechanism. If your algorithm yields high
+        scores for words which are probably cognate, and low scores for
+        non-cognate words, you should set this keyword to "True".
+
+    Notes
+    -----
+    This follows the description in :evobib:`Kondrak2002`. The n-point average
+    precision is useful to compare the discriminative force of different
+    algorithms for string similarity, or to train the parameters of a given
+    algorithm.
+
+    Examples
+    --------
+    
+    >>> scores = [10, 9, 8, 7, 6]
+    >>> cognates = [1, 1, 1, 0, 0]
+    >>> from lingpy.evaluate.acd import npoint_ap
+    >>> npoint_ap(scores, cognates)
+    1
+
+    """
+    p = 0.0
+    cognate_count = 0
+    for k,(score, cognate) in enumerate(sorted(zip(scores, cognates),
+        key=lambda x: x[0], reverse=reverse)):
+        if cognate == 1:
+            cognate_count += 1
+            p += cognate_count / (k+1.0)
+    try: 
+        return p / cognates.count(1)
+    except ZeroDivisionError:
+        log.warn("Encountered Zero Division in npoint_ap, your data seems to contain no cognates.")
+        return 0
+

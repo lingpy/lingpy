@@ -556,7 +556,12 @@ class LexStat(Wordlist):
                         else:
                             j += 1
                             words += [s]
-
+                    if len(words) < kw['rands']:
+                        log.warn("Could not generate enough distinct words for"\
+                                +" the random distribution. Will expand automatically")
+                        while len(words) < kw['rands']:
+                            words += [words[random.randint(0,len(words)-1)]]
+                            
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
                         cls = tokens2class(w.split(' '), self.model)
@@ -593,9 +598,9 @@ class LexStat(Wordlist):
                             # XXX check XXX * len(self.pairs[tA,tB]) / runs
 
                             # check for gaps
-                            if a == '-':
+                            if a == rcParams['gap_symbol']:
                                 a = 'X.-'
-                            elif b == '-':
+                            elif b == rcParams['gap_symbol']:
                                 b = 'X.-'
 
                             a = str(i + 1) + '.' + a
@@ -697,6 +702,22 @@ class LexStat(Wordlist):
         gop : int (default=-2)
             If "preprocessing" is selected, define the gap opening penalty for
             the preprocessing calculation of cognates.
+        unattested : {int, float} (default=-5)
+            If a pair of sounds is not attested in the data, but expected by
+            the alignment algorithm that computes the expected distribution,
+            the score would be -infinity. Yet in order to allow to smooth this
+            behaviour and to reduce the strictness, we set a default negative
+            value which does not necessarily need to be too high, since it may
+            well be that we miss a potentially good pairing in the first runs
+            of alignment analyses. Use this keyword to adjust this parameter.
+        unexpected : {int, float} (default=0.000001)
+            If a pair is encountered in a given alignment but not expected
+            according to the randomized alignments, the score would be not
+            calculable, since we had to divide by zero. For this reason, we set
+            a very small constant, by which the score is divided in this case.
+            Not that this constant is only relevant in those cases where the
+            shuffling procedure was not carried out long enough.
+
         """
         kw = dict(
             method=rcParams['lexstat_scoring_method'],
@@ -717,6 +738,8 @@ class LexStat(Wordlist):
             preprocessing_method=rcParams['lexstat_preprocessing_method'],
             subset=False,
             defaults=False,
+            unattested=-5,
+            unexpected=0.00001
         )
         kw.update(keywords)
         if kw['defaults']:
@@ -735,7 +758,10 @@ class LexStat(Wordlist):
             restricted_chars=kw['restricted_chars'],
             method=kw['method'],
             preprocessing='{0}:{1}:{2}'.format(
-                kw['preprocessing'], kw['cluster_method'], kw['gop']))
+                kw['preprocessing'], kw['cluster_method'], kw['gop']),
+            unattested=kw['unattested'],
+            unexpected=kw['unexpected']
+            )
 
         parstring = '_'.join(
             [
@@ -749,6 +775,8 @@ class LexStat(Wordlist):
                 '{method}',
                 '{preprocessing}',
                 '{preprocessing_threshold}'
+                '{unexpected:.2f}'
+                '{unattested:.2f}'
             ]).format(**params)
 
         # check for existing attributes
@@ -803,14 +831,14 @@ class LexStat(Wordlist):
                 if att and exp:
                     score = np.log2((att ** 2) / (exp ** 2))
                 elif att and not exp:
-                    score = np.log2((att ** 2) / 0.00001)
+                    score = np.log2((att ** 2) / kw['unexpected'])
                 elif exp and not att:
-                    score = -5  # XXX gop ???
+                    score = kw['unattested']  # XXX gop ???
                 else:  # elif not exp and not att:
                     score = -90  # ???
 
                 # combine the scores
-                if '-' not in charA + charB:
+                if rcParams['gap_symbol'] not in charA + charB:
                     sim = self.bscorer[charA, charB]
                 else:
                     sim = gop
