@@ -7,6 +7,7 @@ from __future__ import print_function, division, unicode_literals
 import os
 import numpy as np
 from collections import defaultdict
+import csv
 
 from six import text_type as str
 
@@ -26,7 +27,6 @@ def _write_file(filename, content, ext=None):
     if ext:
         filename = filename + '.' + ext
     util.write_text_file(filename, content)
-
 
 class Wordlist(QLCParserWithRowsAndCols):
     """
@@ -941,3 +941,41 @@ class Wordlist(QLCParserWithRowsAndCols):
             return dict([(a, b / self.height) for a, b in cov.items()])
         if stats == 'mean':
             return sum([a / self.height for a in cov.values()]) / self.width
+
+
+def get_wordlist(path, **keywords):
+    """
+    Load a wordlist from a normal CSV file.
+
+    Parameters
+    ----------
+    path : str
+        The path to your CSV file.
+    delimiter : str
+        The delimiter in the CSV file.
+    quotechar : str
+        The quote character in your data.
+    """
+    kw = dict(
+            delimiter = str(","),
+            quotechar = str(","),
+            conf = "",
+            col = "doculect",
+            row = "concept"
+            )
+    kw.update(keywords)
+
+    D = {}
+    idx = 1
+    with open(path) as csvfile:
+        try:
+            reader = csv.reader(csvfile, delimiter=str(","),
+                quotechar=str('"'))
+        except TypeError:
+            reader = csv.reader(csvfile, delimiter=",",
+                quotechar='"')
+        D[0] = [k.upper() for k in next(reader)]
+        for row in reader:
+            D[idx] = row
+            idx += 1
+    return Wordlist(D)
