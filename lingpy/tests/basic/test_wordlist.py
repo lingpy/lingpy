@@ -131,9 +131,15 @@ class TestWordlist(WithTempDir):
                 self.wordlist.output(fmt, filename=fn,
                         cols=sorted(self.wordlist.header)[:2], rows=dict(ID=" > 10"),
                             **kw)
-
-
     def test_export(self):
         fn = text_type(self.tmp_path('test'))
         for fmt in 'txt tex html'.split():
             self.wordlist.export(fmt, filename=fn)
+
+    def test_get_wordlist(self):
+        from lingpy.basic.wordlist import get_wordlist
+        wl1 = get_wordlist(test_data('mycsvwordlist.csv'))
+        wl2 = get_wordlist(test_data('mycsvwordlistwithoutids.csv'))
+        assert wl1.height == wl2.height
+        for k in wl1:
+            assert wl1[k, 'concept'] == wl2[k, 'concept']

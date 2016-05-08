@@ -7,7 +7,6 @@ from __future__ import print_function, division, unicode_literals
 import os
 import numpy as np
 from collections import defaultdict
-import csv
 
 from six import text_type as str
 
@@ -955,27 +954,48 @@ def get_wordlist(path, **keywords):
         The delimiter in the CSV file.
     quotechar : str
         The quote character in your data.
+    row : str (default = "concept")
+        A string indicating the name of the row that shall be taken as the
+        basis for the tabular representation of the word list.
+
+    col : str (default = "doculect")
+        A string indicating the name of the column that shall be taken as the
+        basis for the tabular representation of the word list.
+
+    conf : string (default='')
+        A string defining the path to the configuration file.
+    
+    Notes
+    -----
+    This function returns a Wordlist object. In contrast to the normal way to
+    load a wordlist from a tab-separated file, however, this allows to directly
+    load a wordlist from any "normal" csv-file, with your own specified
+    delimiters and quote characters. If the first cell in the first row of your
+    CSV file is not named "ID", the integer identifiers, which are required by
+    LingPy will be automatically created.
+
     """
     kw = dict(
             delimiter = str(","),
-            quotechar = str(","),
+            quotechar = str('"'),
             conf = "",
             col = "doculect",
-            row = "concept"
+            row = "concept",
             )
     kw.update(keywords)
-
+    data = util.read_csv_file(path, kw['delimiter'], kw['quotechar'],
+            normalize="NFC")
+    header = data[0]
+    data = data[1:]
     D = {}
-    idx = 1
-    with open(path) as csvfile:
-        try:
-            reader = csv.reader(csvfile, delimiter=str(","),
-                quotechar=str('"'))
-        except TypeError:
-            reader = csv.reader(csvfile, delimiter=",",
-                quotechar='"')
-        D[0] = [k.upper() for k in next(reader)]
-        for row in reader:
+    if header[0] == 'ID':
+        D[0] = header[1:]
+        for row in data:
+            D[row[0]] = row[1:]
+    else:
+        D[0] = header
+        idx = 1
+        for row in data:
             D[idx] = row
             idx += 1
     return Wordlist(D)

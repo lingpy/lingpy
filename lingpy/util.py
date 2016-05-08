@@ -10,6 +10,7 @@ from functools import partial
 import json
 import itertools
 import types
+import csv
 
 from pathlib import Path
 from six import text_type, PY3
@@ -32,7 +33,6 @@ def combinations2(iterable):
     Convenience shortcut
     """
     return itertools.combinations(iterable, 2)
-
 
 def multicombinations2(iterable):
     """
@@ -177,6 +177,38 @@ class TextFile(object):
         self.fp.close()
         if self.log:
             file_written(_str_path(self.path))
+
+def read_csv_file(path, delimiter=",", quotechar='"',
+        normalize=None):
+    """
+    Load a normal CSV file.
+
+    Parameters
+    ----------
+    path : str
+        The path to your CSV file.
+    delimiter : str
+        The delimiter in the CSV file.
+    quotechar : str
+        The quote character in your data.
+    normalize : { None, "NFC", "NFC" }
+        If not `None` a valid unicode normalization mode must be passed.
+
+    """
+    def _normalize(chunk):
+        return chunk #unicodedata.normalize(normalize, chunk) if normalize else chunk
+    
+    if PY3:
+        with io.open(_str_path(path), 'r', encoding='utf8') as fp:
+            reader = csv.reader(fp, delimiter=delimiter,
+                quotechar=quotechar)
+            return [[_normalize(cell) for cell in row] for row in reader]
+    else:
+        with open(_str_path(path), 'rb') as fp:
+            reader = csv.reader(fp, delimiter=bytes(delimiter),
+                    quotechar=bytes(quotechar))
+            return [row for row in reader]
+
 
 
 def read_text_file(path, normalize=None, lines=False):
