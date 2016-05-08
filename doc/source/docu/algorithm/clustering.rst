@@ -15,4 +15,6 @@ Functions
    mcl
    neighbor
    upgma
+   lingpy.algorithm.extra.infomap_clustering
+   lingpy.algorithm.extra.affinity_propagation
 

@@ -92,9 +92,6 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     diff
     pairs
     """
-    # clean cache of wordliststat object
-    wordlist._clean_cache()
-
     # if loans are treated as homologs
     evl = modify_ref if modify_ref else identity
     
@@ -140,8 +137,6 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     
     as_string(_format_results('B-Cubed', BCP, BCR, FSC), pprint=pprint)
 
-    # clean cache again
-    wordlist._clean_cache()
     return BCP, BCR, FSC
 
 def partial_bcubes(wordlist, gold, test, pprint=True):

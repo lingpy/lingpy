@@ -141,6 +141,13 @@ class QLCParser(object):
         # integer
         self._data = {
             int(k): v for k, v in input_data.items() if k != 0 and str(k).isnumeric()}
+        # check for same length of all columns
+        check_errors = ''
+        for k, v in self._data.items():
+            if len(v) != len(self.header):
+                check_errors += 'Row {0} in your data contains {1} fields (expected {2})\n'.format(k, len(v), len(self.header))
+        if check_errors:
+            raise ValueError(check_errors)
 
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
@@ -156,7 +163,7 @@ class QLCParser(object):
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
-                        except KeyError:  # pragma: no cover
+                        except KeyError: 
                             log.warn(
                                 logstring.format(
                                     key,
@@ -165,7 +172,6 @@ class QLCParser(object):
                                     self._data[key][i],
                                     self._class[head],
                                     head))
-
                         except ValueError:
                             log.warn(
                                 logstring.format(
@@ -192,20 +198,73 @@ class QLCParser(object):
     def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
+
+        Parameters
+        ----------
+        idx : { int, str, tuple }
+            The index which you pass to the method, which can be either an
+            integer which will return the respective line of your parsed
+            data, or a string, which allows to accept all values which are
+            stored in the _meta-attribute of your parsed data, or a tuple,
+            consisting of an integer key for the line and a string key for the
+            respective field.
+
+        Examples
+        --------
+        Load LingPy and the test_data function which gives us access to the
+        files in the test dataset accompanying LingPy (we use a Wordlist
+        object, but this works likewise with QLCParser, LexStat, and
+        Alignments)::
+
+            >>> from lingpy import *
+            >>> from lingpy.tests.util import test_data
+            >>> wl = Wordlist(test_data('KSL.qlc'))
+
+        Get the first line in the data::
+        
+            >>> wl[1]
+            ['Albanian', 'all', '1', 'gjithë', 'ɟiθ', ['ɟ', 'i', 'θ'], 4]
+
+        Get the first line in the data and specify the value for the "doculect"
+        column::
+            >>> wl[1,'doculect']
+            'Albanian'
+        
+        Get the attribute "doculect" which is stored in the _meta-attribute of
+        the Wordlist object and contains all language names in the data::
+
+            >>> wl.doculect
+            ['Albanian', 'English', 'French', 'German', 'Hawaiian', 'Navajo', 'Turkish']
+        
+        Notes
+        -----
+        This method raises a KeyError if
+        * you pass two indices and the first index is not a valid ID for any
+            line in your data,
+        * you pass one index and this index does neither correspond to a valid
+            line ID in your data, nor to a valid key of the _meta-attribute of the
+            Parser object.
+        It returns None if you pass a valid index, but the column in your data
+        does not exist.
         """
         if idx in self._data:
-            # return full data entry as list
             return self._data[idx]
-
-        if isinstance(idx, (list, tuple)) and len(idx) == 2:
-            if idx[0] in self._data and idx[1] in self._alias:
-                # return data entry with specified key word
-                return self._data[idx[0]][self._header[self._alias[idx[1]]]]
-
         if idx in self._meta:
             return self._meta[idx]
+        if isinstance(idx, tuple) and len(idx) == 2:
+            try:
+                return self._data[idx[0]][self.header[self._alias[idx[1]]]]
+            except KeyError:
+                if idx[0] in self._data:
+                    return
+                else:
+                    raise KeyError("No line with ID {0} specified could be found.".format(
+                        idx[0])) 
+        raise KeyError("No entry with the specified key {0} could be found".format(
+            idx))
 
-        raise KeyError("[ERROR] The key {0} does not exist!".format(idx))
+
+        #raise KeyError("[ERROR] The key {0} does not exist!".format(idx))
 
     def __len__(self):
         """
@@ -422,8 +481,6 @@ class QLCParserWithRowsAndCols(QLCParser):
 
         self._array = np.array(tmp_list)
 
-        self._cache = {}
-
     def __getattr__(self, attr):
         """
         Define how attributes are overloaded.
@@ -449,33 +506,6 @@ class QLCParserWithRowsAndCols(QLCParser):
 
         raise AttributeError("%r object has no attribute %r" % (self.__class__, attr))
 
-    def _get_cached(self, idx):
-        """
-        Method allows quick access to the data by passing the integer key.
-        """
-        if idx in self._cache:
-            return self._cache[idx]
-
-        if idx in self._data:
-            self._cache[idx] = self._data[idx]
-            return self._cache[idx]
-
-        if idx in self._meta:
-            self._cache[idx] = self._meta[idx]
-            return self._meta[idx]
-
-        try:
-            self._cache[idx] = self._data[idx[0]][self.header[self._alias[idx[1]]]]
-            return self._cache[idx]
-        except KeyError:
-            if idx[0] in self._data and idx[1] in self.header:
-                self._cache[idx] = self._data[idx[0]][self.header[idx[1]]]
-                return self._cache[idx]
-            else:
-                return #raise KeyError
-        except TypeError:
-            raise KeyError()
-
     def get_entries(self, entry):
         """
         Return all entries matching the given entry-type as a two-dimensional list.
@@ -486,22 +516,9 @@ class QLCParserWithRowsAndCols(QLCParser):
             The entry-type of the data that shall be returned in tabular
             format.
         """
-        if self._alias[entry] in self._cache:
-            return self._cache[self._alias[entry]]
-
         if entry in self._header:
             entries = []
             for row in self._array:
                 entries.append(
                     [self[cell][self._header[entry]] if cell != 0 else 0 for cell in row])
-
-            # add entries to cache
-            self._cache[self._alias[entry]] = entries
             return entries
-
-    def _clean_cache(self):
-        """
-        Function cleans the cache.
-        """
-        del self._cache
-        self._cache = {}

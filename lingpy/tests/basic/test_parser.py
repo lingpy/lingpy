@@ -6,6 +6,7 @@ from collections import defaultdict
 from mock import patch, Mock
 
 from lingpy.tests.util import test_data
+from lingpy.util import data_path
 from lingpy.basic.parser import QLCParser, QLCParserWithRowsAndCols
 
 
@@ -19,9 +20,17 @@ class TestParser(TestCase):
         self.assertRaises(IOError, QLCParser, 'not-extisting-file')
         self.assertRaises(TypeError, QLCParser, None)
         self.assertRaises(ValueError, QLCParserWithRowsAndCols, {0: ['a']}, 'x', 'y', {})
-
-    #def test__tokenize(self):
-    #    self.parser._tokenize(target='ttokens', source='gloss')
+        
+        self.assertRaises(ValueError, QLCParserWithRowsAndCols, 
+                {0: ['concept', 'language', 'bla'],
+                    1 : ['bla', 'blu']}, 'concept', 'language', '')
+        
+        p2 = QLCParserWithRowsAndCols(test_data('bad_file2.tsv'), 'concept',
+            'language', data_path('conf', 'wordlist.rc'))
+        assert p2.get_entries('cogid')[0][-1] == 'ff'
+        self.assertRaises(KeyError, p2.__getitem__, tuple([2000, 'bla']))
+        assert p2[3, 'language'] == 'l3'
+        assert p2[3, 'nothing'] is None
 
     def test_getitem(self):
         key = list(self.parser._data.keys())[0]
@@ -30,13 +39,16 @@ class TestParser(TestCase):
         self.assertRaises(KeyError, itemgetter(None), self.parser)
         self.parser._meta['aaa'] = 3
         assert self.parser['aaa']
+        self.assertRaises(KeyError, self.parser.__getitem__, 2000)
+        self.assertRaises(KeyError, self.parser.__getitem__, tuple([2000,
+            'bla']))
 
     def test_get_entries(self):
-        parser = QLCParserWithRowsAndCols(test_data('KSL.qlc'), 'gloss', 'cogid', {})
+        parser = QLCParserWithRowsAndCols(test_data('KSL.qlc'), 'concept', 'cogid', {})
         assert parser.get_entries('cogid')
 
     def test_getattr(self):
-        parser = QLCParserWithRowsAndCols(test_data('KSL.qlc'), 'gloss', 'cogid', {})
+        parser = QLCParserWithRowsAndCols(test_data('KSL.qlc'), 'concept', 'cogid', {})
         assert parser.cogid
 
     def test_cache(self):
@@ -63,25 +75,17 @@ class TestParser(TestCase):
         self.assertRaises(
             ValueError, self.parser.add_entries, '', 'taxon', lambda t: t.lower())
             
-        self.parser.add_entries('lTaxon', 'taxon', lambda t: t.lower(), override=True)
+        self.parser.add_entries('lTaxon', 'doculect', lambda t: t.lower(), override=True)
         assert 'ltaxon' in self.parser.entries
 
         with patch('lingpy.basic.parser.confirm', Mock(return_value=True)):
-            self.parser.add_entries('ltaxon', 'taxon', lambda t: t.lower())
+            self.parser.add_entries('ltaxon', 'doculect', lambda t: t.lower())
 
-        self.parser.add_entries('tg', 'taxon,gloss', lambda v, id_: ''.join(v))
+        self.parser.add_entries('tg', 'doculect,concept', lambda v, id_: ''.join(v))
         self.assertRaises(
-            ValueError, self.parser.add_entries, 'll', 'taxon,gloss', lambda x, y: 1 / 0)
+            ValueError, self.parser.add_entries, 'll', 'doculect,concept', lambda x, y: 1 / 0)
         self.parser.add_entries('ti', defaultdict(int), lambda i: i + 1)
         assert 'ti' in self.parser.entries
         self.parser.add_entries('tg', defaultdict(int), lambda i: i + 1, override=True)
-        self.parser.add_entries('tg', 'taxon,gloss', lambda v, id_: 'abc', override=True)
+        self.parser.add_entries('tg', 'doculect,concept', lambda v, id_: 'abc', override=True)
 
-    def test__cache(self):
-        parser = QLCParserWithRowsAndCols(test_data('KSL.qlc'), 'gloss', 'cogid', {})
-        idx = list(parser._data.keys())[0]
-        parser._get_cached(idx)
-        parser._get_cached(idx)
-        parser._clean_cache()
-        parser._data.pop(idx)
-        self.assertRaises(KeyError, parser._get_cached, idx)

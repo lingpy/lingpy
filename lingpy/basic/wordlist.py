@@ -78,12 +78,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         if 'taxa' in self._alias:
             if self._alias['taxa'] not in self._meta:
                 self._meta[self._alias['taxa']] = self.cols
-
-    def __getitem__(self, idx):
-        """
-        Method allows quick access to the data by passing the integer key.
-        """
-        return self._get_cached(idx)
  
     def add_entries(
             self,
@@ -122,7 +116,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         and to modify it with help of a function.
 
         """
-        self._clean_cache()
         self._add_entries(entry, source, function, override, **keywords)
 
 
@@ -210,10 +203,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         if row or col:
             key = row or col
             attr = 'col' if col else 'row'
-
-            if (key, entry) in self._cache:
-                return self._cache[key, entry]
-
             if key not in getattr(self, attr + 's'):
                 raise ValueError("The {0} you selected is not available!".format(attr))
 
@@ -222,8 +211,6 @@ class Wordlist(QLCParserWithRowsAndCols):
             if entry:
                 entries = {key: [self[i][self._header[entry]] for i in value]
                            for key, value in entries.items()}
-
-            self._cache[row, entry] = entries
             return entries
 
         if col:
@@ -231,22 +218,17 @@ class Wordlist(QLCParserWithRowsAndCols):
             for i, j in [(self[i][self._rowIdx], i)
                          for i in self._array[:, self.cols.index(col)] if i != 0]:
                 data[i].append(j)
-
             entries = data
             if entry:
                 entries = {key: [self[i][self._header[entry]] for i in value]
                            for key, value in entries.items()}
-
-            self._cache[col, entry] = entries
             return entries
 
         for key in [k for k in keywords if k in self._alias]:
             if self._alias[key] == self._col_name:
                 return self.get_dict(col=keywords[key], entry=entry)
-
             if self._alias[key] == self._row_name:
                 return self.get_dict(row=keywords[key], entry=entry)
-
         raise ValueError("[!] Neither rows nor columns are selected!")
 
     def get_list(
@@ -334,12 +316,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         """
         # if row is chosen
         if row and not col:
-            # first try to return what's in the cache
-            try:
-                return self._cache[row, entry, flat]
-            except:
-                pass
-
             # otherwise, start searching
             if row not in self.rows:
                 raise ValueError("The row {0} you selected is not available.".format(row))
@@ -349,7 +325,6 @@ class Wordlist(QLCParserWithRowsAndCols):
 
                 # if only row is chosen, return the ids
                 if not entry:
-
                     # check for flat representation
                     if flat:
                         entries = [i for i in data.flatten() if i != 0]
@@ -360,7 +335,6 @@ class Wordlist(QLCParserWithRowsAndCols):
                 else:
                     # get the index for the entry in the data dictionary
                     idx = self._header[entry]
-
                     if flat:
                         # get the entries
                         entries = [self[i][idx] for i in data.flatten() if i != 0]
@@ -371,20 +345,10 @@ class Wordlist(QLCParserWithRowsAndCols):
                             for j, cell in enumerate(line):
                                 if cell != 0:
                                     entries[i][j] = self[cell][idx]
-
-                # append entries to cache
-                self._cache[row, entry, flat] = entries
-
                 return entries
 
         # if column is chosen
         elif col and not row:
-            # try to return the cache
-            try:
-                return self._cache[col, entry, flat]
-            except:
-                pass
-
             if col not in self.cols:
                 raise ValueError(
                     "The column {0} you selected is not available!".format(col))
@@ -401,7 +365,6 @@ class Wordlist(QLCParserWithRowsAndCols):
 
                     if flat:
                         entries = [self[i][idx] for i in data if i != 0]
-
                     else:
                         entries = []
                         for i in data:
@@ -409,11 +372,7 @@ class Wordlist(QLCParserWithRowsAndCols):
                                 entries.append(self[i][idx])
                             else:
                                 entries.append(0)
-
-            self._cache[col, entry, flat] = entries
-
             return entries
-
         elif row and col:
             raise ValueError(
                 "You should specify only one value for either row or for col!")
@@ -422,15 +381,11 @@ class Wordlist(QLCParserWithRowsAndCols):
                 if self._alias[key] == self._col_name:
                     entries = self.get_list(
                         col=keywords[key], entry=entry, flat=flat)
-                    self._cache[col, entry, flat] = entries
                     return entries
-
                 elif self._alias[key] == self._row_name:
                     entries = self.get_list(
                         row=keywords[key], entry=entry, flat=flat)
-                    self._cache[col, entry, flat] = entries
                     return entries
-
             raise ValueError("Neither rows nor columns are selected!")
 
     def get_etymdict(
@@ -674,8 +629,6 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         # csv-output
         if fileformat in ['csv', 'qlc', 'tsv']:
-            if fileformat == 'csv':
-                log.deprecated('csv', 'qlc')
 
             # get the header line
             header = sorted(

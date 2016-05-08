@@ -385,9 +385,26 @@ class LexStat(Wordlist):
     def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
+        
+        Notes
+        -----
+        In contrast to the basic wordlist and parser classes, the LexStat 
+        wordlist further allows to access item pairs by passing a tuple
+        consisting of two pairs of an index with its corresponding column name. 
 
-        In contrast to the basic wordlist, the LexStat wordlist further allows
-        to access item pairs by passing a tuple.
+        Examples
+        --------
+        Load LingPy and the test_data function to get access to the test data
+        files shipped with LingPy::
+            >>> from lingpy import *
+            >>> from lingpy.tests.util import test_data
+
+        Instantiate a LexStat object::
+            >>> lex = LexStat(test_data('KSL.qlc'))
+        
+        Retrieve the IPA column for line 1 and line2 in the data:
+
+            >>> lex[(1,'ipa'), (2, 'ipa')]
         """
         if idx in self._data:
             return self._data[idx]

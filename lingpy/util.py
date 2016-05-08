@@ -61,7 +61,6 @@ def join(sep, *args, **kw):
 dotjoin = partial(join, '.')
 tabjoin = partial(join, '\t')
 
-
 def confirm(question, default=False):
     """
     Ask user a yes/no question and return their response as True or False.
