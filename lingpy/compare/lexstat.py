@@ -19,13 +19,13 @@ from lingpy.basic import Wordlist
 from lingpy.align.pairwise import turchin, edit_dist
 from lingpy.convert.strings import scorer2str
 from lingpy.algorithm import clustering
+from lingpy.algorithm import extra
 from lingpy.algorithm import calign
 from lingpy.algorithm import talign
 from lingpy.algorithm import misc
 from lingpy import util
 from lingpy.util import charstring
 from lingpy import log
-
 
 def _check_tokens(key_and_tokens):
     """Generator for error reports on token strings.
@@ -418,6 +418,8 @@ class LexStat(Wordlist):
                 return self._data[idx[0]][self._header[self._alias[idx[1]]]]
             except KeyError:
                 return 
+            except TypeError:
+                raise KeyError("The key {0} could not be found.".format(idx))
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -1195,7 +1197,8 @@ class LexStat(Wordlist):
             method, cluster_method, threshold)
         self._stamp += '# Cluster: ' + self.params['cluster']
 
-        if method not in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom']:
+        if method not in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom',
+                'infomap', 'lcl', 'link_clustering', 'lc']:
             raise ValueError("[!] The method you selected is not available.")
 
         # set up clustering algorithm, first the simple basics
@@ -1206,24 +1209,32 @@ class LexStat(Wordlist):
                 cluster_method, y, x, revert=True)
         elif cluster_method == 'mcl':
             fclust = lambda x, y: clustering.mcl(
-                y,
-                x,
-                list(range(len(x))),
-                max_steps=kw['max_steps'],
-                inflation=kw['inflation'],
-                expansion=kw['expansion'],
-                add_self_loops=kw['add_self_loops'],
-                logs=kw['mcl_logs'],
-                revert=True)
+                    y,
+                    x,
+                    list(range(len(x))),
+                    max_steps=kw['max_steps'],
+                    inflation=kw['inflation'],
+                    expansion=kw['expansion'],
+                    add_self_loops=kw['add_self_loops'],
+                    logs=kw['mcl_logs'],
+                    revert=True
+                    )
+        elif cluster_method == 'infomap':
+            fclust = lambda x, y: extra.infomap_clustering(
+                    y,
+                    x,
+                    list(range(len(x))),
+                    revert=True
+                    )
         elif cluster_method in ['lcl', 'link_clustering', 'lc']:
             fclust = lambda x, y: clustering.link_clustering(
-                y,
-                x,
-                list(range(len(x))),
-                revert=True,
-                fuzzy=False,
-                matrix_type=kw['matrix_type'],
-                link_threshold=kw['link_threshold'])
+                    y,
+                    x,
+                    list(range(len(x))),
+                    revert=True,
+                    fuzzy=False,
+                    matrix_type=kw['matrix_type'],
+                    link_threshold=kw['link_threshold'])
 
         # make a dictionary that stores the clusters for later update
         clr = {}

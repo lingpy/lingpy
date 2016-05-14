@@ -1,15 +1,3 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@gmail.com
-# created  : 2013-03-13 08:18
-# modified : 2013-03-13 08:18
-"""
-Module provides miscellaneous functions and routines.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2013-03-13"
-
-
 # [autouncomment] cdef extern from "math.h": 
 from numpy import sqrt
 # [autouncomment]     double sqrt( double x)
@@ -80,6 +68,28 @@ class ScoreDict(object):
         The of all character tokens for the scoring dictionary.
     matrix : list
         A two-dimensional scoring matrix.
+
+    Notes
+    -----
+    Since this class has dictionary syntax, you can always also just create a
+    dictionary in order to store your scoring functions. Scoring dictionaries
+    should contain a tuple of segments to be compared as a key, and a or
+    integer as a value, with negative values indicating dissimilarity, and
+    positive values similarity.
+
+    Examples
+    --------
+    Initialize a ScoreDict object::
+        >>> from lingpy.algorith.cython.misc import ScoreDict
+        >>> scorer = ScoreDict(['a', 'b'], [1, -1, -1, 1])
+        
+    Retrieve scores::
+        >>> scorer['a', 'b']
+        -1
+        >>> scorer['a', 'a']
+        1
+        >>> scorer['a', 'X']
+        -22.5
 
     """
     def __init__(

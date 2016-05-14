@@ -47,15 +47,21 @@ class Wordlist(QLCParserWithRowsAndCols):
         basis for the tabular representation of the word list.
 
     conf : string (default='')
-        A string defining the path to the configuration file.
+        A string defining the path to the configuration file (more information
+        in the notes).
 
     Notes
     -----
-    A word list is created from a dictionary containing the data. Two keywords
-    (row and col) define, which of the dimensions of the original data should
-    be used as row and as column of the tabular display. A configuration file
-    can be used to change basic names and aliases for the data being used, and
-    the classes (data types) of the entries.
+    A word list is created from a dictionary containing the data. 
+    The idea is a three-dimensional representation of (linguistic) data.
+    The first dimension is called **col** (*column*, usually "language"), the
+    second one is called **row** (*row*, usually "concept"), the third is
+    called **entry**, and in contrast to the first two dimensions, which have
+    to consist of unique items, it contains flexible values, such as "ipa"
+    (phonetic sequence), "cogid" (identifier for cognate sets), "tokens"
+    (tokenized representation of phonetic sequences). The LingPy website offers
+    some tutorials for word lists which we recommend to read in case you are
+    looking for more information.
 
     A couple of methods is provided along with the word list class in order to
     access the multi-dimensional input data. The main idea is to provide an

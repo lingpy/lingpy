@@ -1,7 +1,6 @@
-from __future__ import unicode_literals, division
 try:
     from .misc import transpose,squareform
-except:
+except ImportError:
     from ._misc import transpose,squareform
 
 def flat_upgma(
@@ -61,8 +60,8 @@ def flat_upgma(
 
     See also
     --------
-    lingpy.algorithm.clusters.upgma
-    lingpy.algorithm.clusters.neighbor
+    ~lingpy.algorithm.clustering.upgma
+    ~lingpy.algorithm.clustering.neighbor
 
     """
 # [autouncomment]     cdef int i,key
@@ -146,8 +145,8 @@ def flat_cluster(
 
     See also
     --------
-    lingpy.algorithm.clusters.upgma
-    lingpy.algorithm.clusters.neighbor
+    ~lingpy.algorithm.clustering.upgma
+    ~lingpy.algorithm.clustering.neighbor
 
     """
 # [autouncomment]     cdef int i,key
@@ -353,8 +352,8 @@ def upgma(
 
     See also
     --------
-    lingpy.algorithm.cluster.neighbor
-    lingpy.algorithm.cluster.flat_upgma
+    ~lingpy.algorithm.clustering.neighbor
+    ~lingpy.algorithm.clustering.flat_upgma
    
     """
 # [autouncomment]     cdef int i,a,b
@@ -500,8 +499,8 @@ def neighbor(
 
     See also
     --------
-    lingpy.algorithm.cluster.upgma
-    lingpy.algorithm.cluster.flat_upgma
+    ~lingpy.algorithm.clustering.upgma
+    ~lingpy.algorithm.clustering.flat_upgma
     """
 # [autouncomment]     cdef int i,a,b
 # [autouncomment]     cdef float c,d

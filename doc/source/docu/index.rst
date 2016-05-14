@@ -27,7 +27,8 @@ Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
-   
+    
+   align/helpers
    align/pairwise
    align/multiple
 

@@ -81,7 +81,7 @@ setup(
     install_requires=requires,
     tests_require=['nose', 'coverage', 'mock'],
     author="Johann-Mattis List and Robert Forkel",
-    author_email="mattis.list@lingpy.org",
+    author_email="info@lingpy.org",
     entry_points={
         'console_scripts' : ['lingpy=lingpy.cli:main'],
     },

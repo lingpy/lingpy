@@ -1,5 +1,5 @@
-lingpy package
-==============
+Reference
+=========
 
 Subpackages
 -----------

@@ -102,7 +102,6 @@ def add_method_option(p, default, choices, spec=''):
         "The %s method you want to use." % spec,
         choices=choices)
 
-
 def add_format_option(p, default, choices):
     add_option(p, 'format', default, "Output format.", choices=choices)
 
@@ -489,7 +488,6 @@ class multiple(Command):
                 alms = msa.alm_matrix
 
             self.output(args, '\n'.join(['\t'.join(seq) for seq in alms]))
-            return alms
 
         elif args.input_file:
             msa = lingpy.align.sca.MSA(

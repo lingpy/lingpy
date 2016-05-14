@@ -212,7 +212,8 @@ def read_csv_file(path, delimiter=",", quotechar='"',
 
 
 def read_text_file(path, normalize=None, lines=False):
-    """Read a text file encoded in utf-8.
+    """
+    Read a text file encoded in utf-8.
 
     Parameters
     ----------
@@ -220,9 +221,9 @@ def read_text_file(path, normalize=None, lines=False):
         File-system path of the file.
     normalize : { None, "NFC", "NFC" }
         If not `None` a valid unicode normalization mode must be passed.
-    linse : bool (default=False)
+    lines : bool (default=False)
         Flag signalling whether to return a list of lines (without
-      the line-separation character).
+        the line-separation character).
     
     Returns
     -------
@@ -232,6 +233,7 @@ def read_text_file(path, normalize=None, lines=False):
     Notes
     -----
     The whole file is read into memory.
+    
     """
     def _normalize(chunk):
         return unicodedata.normalize(normalize, chunk) if normalize else chunk
@@ -356,6 +358,8 @@ class cached_property(object):
         return self
 
     def __get__(self, inst, owner):
+        if inst is None:
+            return
         if not hasattr(inst, '_cache'):
             inst._cache = {}
         if self.__name__ not in inst._cache:

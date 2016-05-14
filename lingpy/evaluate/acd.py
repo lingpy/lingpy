@@ -36,13 +36,13 @@ def _format_results(results, p, r, f):
     Print out the results of an analysis.
     """
 
-    return """**************************')
-* {0:7}-Scores         *
-* ---------------------- *
+    return """*************************')
+* {0:7}-Scores        *
+* --------------------- *
 * Precision:     {1:.4f} *
 * Recall:        {2:.4f} *
 * F-Scores:      {3:.4f} *
-**************************'""".format(
+*************************'""".format(
         results, p, r, f)
 
 def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 

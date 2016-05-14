@@ -14,13 +14,84 @@ def globalign(
         ):
     """
     Carry out global alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    
+    Notes
+    -----
+    This is the function that is called to carry out global alignment analyses
+    when using many of LingPy's classes for alignment analyses, like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. It differs from classical
+    Needleman-Wunsch alignment (compare :evobib:`Needleman1970`) in a couple of aspects.
+    These include, among others, the use of a gap extension *scale* rather than
+    a gap extension penalty (the scale consecutively reduces the gap penalty
+    and thus lets gap penalties approach zero if gapped regions are large), the
+    use of individual gap opening penalties for all positions of a sequence,
+    and the use of prosodic strings, and prosodic factors that raise scores
+    when segments occur in the same prosodic environment. 
+
+    If one sets certain of these parameters to zero or one and uses the same
+    gap opening penalties, however, the function will
+    behave like the traditional Needleman-Wunsch algorithm, and since it is
+    implemented in Cython, it will work faster than a pure Python
+    implementation for alignment algorithms.
+    
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+
+    Examples
+    --------
+    We show that the Needleman-Wunsch algorithms yields the same result as the
+    globalign algorithm, provided we adjust the parameters::
+        >>> from lingpy.algorithm.cython.calign import globalign
+        >>> from lingpy.align.pairwise import nw_align
+        >>> nw_align('abab', 'baba')
+        (['a', 'b', 'a', 'b', '-'], ['-', 'b', 'a', 'b', 'a'], 1)
+
+        >>> globalign(list('abab'), list('baba'), 4 * [-1], 4 * [-1], 'aaaa', 'aaaa', 4, 4, 1, 0, {("a","b"):-1, ("b","a"): -1, ("a","a"): 1, ("b", "b"): 1})
+        (['a', 'b', 'a', 'b', '-'], ['-', 'b', 'a', 'b', 'a'], 1.0)
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
     cdef int i,j
 
     # declare floats
-    cdef float gapA,gapB,match,sim
+    cdef float gapA, gapB, match, sim
 
     # declare lists
     cdef list almA = []
@@ -119,7 +190,82 @@ def secondary_globalign(
         str r # restricted_chars
         ):
     """
-    Carry out global alignment of two sequences.
+    Carry out global alignment of two sequences with secondary sequence structures.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    r : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+    
+    Notes
+    -----
+    This is the function that is called to carry out global alignment analyses
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. It differs from classical
+    Needleman-Wunsch alignment (compare :evobib:`Needleman1970`) in a couple of aspects.
+    These include, among others, the use of a gap extension *scale* rather than
+    a gap extension penalty (the scale consecutively reduces the gap penalty
+    and thus lets gap penalties approach zero if gapped regions are large), the
+    use of individual gap opening penalties for all positions of a sequence,
+    and the use of prosodic strings, and prosodic factors that raise scores
+    when segments occur in the same prosodic environment. 
+
+    If one sets certain of these parameters to zero or one and uses the same
+    gap opening penalties, however, the function will
+    behave like the traditional Needleman-Wunsch algorithm, and since it is
+    implemented in Cython, it will work faster than a pure Python
+    implementation for alignment algorithms.
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+
+    Examples
+    --------
+    We compare globalign with secondary_globalign::
+        >>> from lingpy.algorithm.cython.calign import globalign, secondary_globalign
+        >>> globalign(list('abab'), list('baba'), 4 * [-1], 4 * [-1], 'aaaa', 'aaaa', 4, 4, 1, 0, {("a","b"):-1, ("b","a"): -1, ("a","a"): 1, ("b", "b"): 1})
+        (['a', 'b', 'a', 'b', '-'], ['-', 'b', 'a', 'b', 'a'], 1.0)
+        >>> secondary_globalign(list('ab.ab'), list('ba.ba'), 5 * [-1], 5 * [-1], 'ab.ab', 'ba.ba', 5, 5, 1, 0, {("a","b"):-1, ("b","a"): -1, ("a","a"): 1, ("b", "b"): 1, ("a",".") : -1, ("b","."):-1, (".","."):0, (".", "b"): -1, (".", "a"):-1}, '.')
+        (['a', 'b', '-', '.', 'a', 'b', '-'],
+        ['-', 'b', 'a', '.', '-', 'b', 'a'],
+        -2.0)
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -232,6 +378,64 @@ def semi_globalign(
         ):
     """
     Carry out semi-global alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    
+    Notes
+    -----
+    This is the function that is called to carry out semi-global alignment
+    analyses (keyword "overlap")
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Semi-global alignment means
+    that the suffixes or prefixes in one of the words are not penalized. 
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+
+    Examples
+    --------
+    We compare globalign with semi_globalign::
+        >>> from lingpy.algorithm.cython.calign import globalign, semi_globalign
+        >>> globalign(list('abab'), list('baba'), 4 * [-1], 4 * [-1], 'aaaa', 'aaaa', 4, 4, 1, 0, {("a","b"):-1, ("b","a"): -1, ("a","a"): 1, ("b", "b"): 1})
+        (['a', 'b', 'a', 'b', '-'], ['-', 'b', 'a', 'b', 'a'], 1.0)
+        >>> semi_globalign(list('abab'), list('baba'), 4 * [-1], 4 * [-1], 'aaaa', 'aaaa', 4, 4, 1, 0, {("a","b"):-1, ("b","a"): -1, ("a","a"): 1, ("b", "b"): 1})
+        (['a', 'b', 'a', 'b', '-'], ['-', 'b', 'a', 'b', 'a'], 3.0)
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -339,7 +543,60 @@ def secondary_semi_globalign(
         str r # restricted_chars
         ):
     """
-    Carry out global alignment of two sequences.
+    Carry out semi-global alignment of two sequences with sensitivity to secondary sequence structures.
+    
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    r : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+
+    
+    Notes
+    -----
+    This is the function that is called to carry out semi-global alignment
+    analyses (keyword "overlap")
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Semi-global alignment means
+    that the suffixes or prefixes in one of the words are not penalized. 
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -456,6 +713,58 @@ def localign(
         ):
     """
     Carry out semi-global alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+
+    
+    Notes
+    -----
+    This is the function that is called to carry out local alignment
+    analyses
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Local alignment means
+    that only the best matching substring between two sequences is returned
+    (compare :evobib:`Smith1981`), also called the Smith-Waterman algorithm. 
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score. The alignments
+        are each a list of suffix, alignment, and prefix.
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -585,7 +894,61 @@ def secondary_localign(
         str r # restricted_chars
         ):
     """
-    Carry out global alignment of two sequences.
+    Carry out lobal alignment of two sequences with sensitivity to secondary sequence structures.
+    
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    r : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+        
+    Notes
+    -----
+    This is the function that is called to carry out local alignment
+    analyses
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Local alignment means
+    that only the best matching substring between two sequences is returned
+    (compare :evobib:`Smith1981`), also called the Smith-Waterman algorithm. 
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score. The alignments
+        are each a list of suffix, alignment, and prefix.
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.dialign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -720,7 +1083,54 @@ def dialign(
         object scorer
         ):
     """
-    Carry out semi-global alignment of two sequences.
+    Carry out dialign alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+        
+    Notes
+    -----
+    This is the function that is called to carry out local dialign alignment
+    analyses (keyword "dialign")
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Dialign (see
+    :evobib:`Morgenstern1996`) is an alignment algorithm that does not require
+    gap penalties and generally works in a rather local fashion.
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.secondary_dialign
+
     """
 
     # declare integers
@@ -823,7 +1233,58 @@ def secondary_dialign(
         str r # restricted chars
         ):
     """
-    Carry out semi-global alignment of two sequences.
+    Carry out dialign alignment of two sequences with sensitivity for secondary \
+    sequence structures.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    M, N : int
+        The lengths of seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`~lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    r : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+        
+    Notes
+    -----
+    This is the function that is called to carry out local dialign alignment
+    analyses (keyword "dialign")
+    when using many of LingPy's classes for alignment analyses which is at the
+    same time sensitive for secondary sequence structures (see the description
+    of secondary alignment in :evobib:`List2014d` for details), like
+    :py:class:`~lingpy.align.pairwise.Pairwise`,
+    :py:class:`~lingpy.align.multiple.Multiple`, or
+    :py:class:`~lingpy.compare.lexstat.LexStat`. Dialign (see
+    :evobib:`Morgenstern1996`) is an alignment algorithm that does not require
+    gap penalties and generally works in a rather local fashion.
+
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two alignments and the alignment score.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.globalign
+    ~lingpy.algorithm.cython.calign.secondary_globalign
+    ~lingpy.algorithm.cython.calign.semi_globalign
+    ~lingpy.algorithm.cython.calign.secondary_semi_globalign
+    ~lingpy.algorithm.cython.calign.localign
+    ~lingpy.algorithm.cython.calign.secondary_localign
+    ~lingpy.algorithm.cython.calign.dialign
+
     """
 
     # declare integers
@@ -943,6 +1404,54 @@ def align_pair(
         ):
     """
     Align a pair of sequences.
+    
+    Parameters
+    ----------
+    seqA, seqB : list
+        The list containing the sequences.
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    restricted_chars : str
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+    distance : int (default=0)
+        Select whether you want to calculate the normalized distance or the
+        similarity between two strings (following :evobib:`Downey2008` for
+        normalization).
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity or distance.
+    
+    Notes
+    -----
+    This is a utility function that allows calls any of the four classical
+    alignment functions (:py:class:`lingpy.algorithm.cython.calign.globalign`
+    :py:class:`lingpy.algorithm.cython.calign.semi_globalign`,
+    :py:class:`lingpy.algorithm.cython.calign.localign`,
+    :py:class:`lingpy.algorithm.cython.calign.dialign`,) and their secondary counterparts.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.align_pairwise
+    ~lingpy.algorithm.cython.calign.align_pairs
+
+
     """
     # define basic types
     cdef int i
@@ -1123,6 +1632,48 @@ def align_pairwise(
         ):
     """
     Align a list of sequences pairwise.
+
+    Parameters
+    ----------
+    seqs : list
+        The list containing the sequences.
+    gops : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    pros : list 
+        The prosodic strings which have the same length as seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    r : str
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+    
+    Returns
+    -------
+    alignments : list
+        A list of tuples of size 4, containing the alignment, the
+        similarity and the distance for each sequence pair.
+
+    Notes
+    -----
+    This function computes alignments of all possible pairs passed in the list
+    of sequences and is basically used in LingPy's module for multiple
+    alignment analyses (:py:class:`lingpy.align.multiple`).
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.align_pairs
+    ~lingpy.algorithm.cython.calign.align_pair
+
     """
     # define basic stuff
     cdef list alignments = []
@@ -1468,6 +2019,53 @@ def align_pairs(
         ):
     """
     Align multiple sequence pairs.
+
+    Parameters
+    ----------
+    seqs : list
+        A two-dimensional list containing one pair of sequences each. 
+    gops : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    pros : list 
+        The prosodic strings which have the same length as seqA and seqB.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in seqA and seqB.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    restricted_chars : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+    distance : int (default=0)
+        Select whether you want to calculate the normalized distance or the
+        similarity between two strings (following :evobib:`Downey2008` for
+        normalization). If you set this value to 2, both distances and
+        similarities will be returned.
+
+    Returns
+    -------
+    alignments : list
+        A list of tuples of size 3 or 4, containing the alignments, and the
+        similarity or the distance (or both, if distance is set to 2).
+
+    Notes
+    -----
+    This function computes alignments of all pairs passed in the list
+    of sequence pairs (a two-dimensional list with two sequences each)
+    and is basically used in LingPy's module for cognate detection
+    (:py:class:`lingpy.compare.lexstat.LexStat`).
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.align_pairwise
+    ~lingpy.algorithm.cython.calign.align_pair
     """
     # basic defs
     cdef int i,j,M,N,lP
@@ -1649,6 +2247,57 @@ def align_profile(
         ):
     """
     Align two profiles using the basic modes.
+
+    Parameters
+    ----------
+    profileA, profileB : list
+        Two-dimensional list for each of the profiles. 
+    gopA, gopB : list
+        The gap opening penalties (individual for each sequence, therefore
+        passed as a list of floats or integers).
+    proA, proB : str
+        The prosodic strings which have the same length as profileA and profileB.
+    gop : int
+        The general gap opening penalty which will be used to introduce a gap
+        between the two profiles.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    restricted_chars : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+        They need to be computed by computing a consensus string from all
+        prosodic strings in the profile.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    gap_weight : float
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+
+    Notes
+    -----
+    This function computes alignments of two profiles of multiple sequences
+    (see :evobib:`Durbin2002` for details on profiles)
+    and is basically used in LingPy's module for multiple alignment
+    (:py:class:`lingpy.align.multiple`).
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned profiles, and the overall similarity of the profiles.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.score_profile
+    ~lingpy.algorithm.cython.calign.swap_score_profile
+
     """
 
     # basic defs
@@ -1783,6 +2432,33 @@ def score_profile(
         ):
     """
     Basic function for the scoring of profiles.
+
+    Parameters
+    ----------
+    colA, colB : list
+        The two columns of a profile.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    gap_weight : float (default=0.0)
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+    
+    Notes
+    -----
+    This function handles how profiles are scored.
+    
+    Returns
+    -------
+    score : float
+        The score for the profile
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.align_profile
+    ~lingpy.algorithm.cython.calign.swap_score_profile
+
     """
     # basic definitions
     cdef int i,j
@@ -1813,7 +2489,36 @@ def swap_score_profile(
         int swap_penalty = -5
         ):
     """
-    Basic function for the scoring of profiles.
+    Basic function for the scoring of profiles which contain swapped sequences.
+
+    Parameters
+    ----------
+    colA, colB : list
+        The two columns of a profile.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    gap_weight : float (default=0.0)
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+    swap_penalty : int (default=-5)
+        The swap penalty applied to swapped columns.
+    
+    Notes
+    -----
+    This function handles how profiles with swapped segments are scored.
+
+    Returns
+    -------
+    score : float
+        The score for the profile.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.calign.align_profile
+    ~lingpy.algorithm.cython.calign.score_profile
+
     """
     # basic definitions
     cdef int i,j
@@ -1860,6 +2565,50 @@ def corrdist(
         ):
     """
     Create a correspondence distribution for a given language pair.
+
+    Parameters
+    ----------
+    threshold : float
+        The threshold of sequence distance which determines whether a sequence
+        pair is included or excluded from the calculation of the distribution.
+    seqs : list
+        The sequences passed as a two-dimensional list of sequence pairs.
+    gops : list
+        The gap opening penalties, passed as individual lists of penalties for each
+        sequence.
+    pros : list
+        The list of prosodic strings for each sequence.
+    gop : int
+        The general gap opening penalty which will be used to introduce a gap
+        between the two profiles.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    factor : float
+        The factor by which matches are increased when two segments occur in
+        the same prosodic position of an alignment.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    restricted_chars : { str }
+        The string containing restricted characters. Restricted characters
+        occur, as a rule, in the prosodic strings, not in the normal sequence.
+        They need to be computed by computing a consensus string from all
+        prosodic strings in the profile.
+    
+    Notes
+    -----
+    This function is the core of the
+    :py:class:`~lingpy.compare.lexstat.LexStat` function to compute
+    distributions of aligned segment pairs.
+    
+    Returns
+    -------
+    results : tuple
+        A dictionary containing the distribution, and the number of included
+        sequences. 
     """
 
     # basic defs
@@ -2031,6 +2780,6 @@ def corrdist(
                 except:
                     corrs[almA[j],almB[j]] = 1
 
-    return corrs,included
+    return corrs, included
 
 

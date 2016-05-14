@@ -385,8 +385,8 @@ def structalign(
         segments in the input sequences. Currently, the use of restricted chars
         may fail to yield an alignment.
 
-    Note
-    ----
+    Notes
+    -----
     Structural alignment is hereby understood as an alignment of two sequences
     whose alphabets differ. The algorithm returns all alignments with minimal
     edit distance. Edit distance in this context refers to the number of edit

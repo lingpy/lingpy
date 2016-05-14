@@ -5,7 +5,7 @@ import json
 from lingpy.algorithm import misc
 from lingpy.read.phylip import read_dst, read_scorer
 from lingpy.thirdparty import cogent as cg
-from lingpy.log import warn
+from lingpy.log import warn, debug
 from lingpy.util import read_text_file, setdefaults
 
 
@@ -101,7 +101,7 @@ def normalize_alignment(alignment):
         for i in range(len(alignment)):
             lgtxt += '[!] ' + ' '.join(alignment[i]) + '->'
             lgtxt += ' '.join(alm_clone[i]) + '\n'
-        warn(lgtxt)
+        debug(lgtxt)
         return alm_clone
     else:
         return alignment
