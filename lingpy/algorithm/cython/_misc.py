@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 # [autouncomment] cdef extern from "math.h": 
 from numpy import sqrt
 # [autouncomment]     double sqrt( double x)

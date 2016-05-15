@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 """
 This module provides various alignment functions in an optimized version.
 """
