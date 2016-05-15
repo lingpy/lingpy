@@ -1,5 +1,5 @@
 Multiple Alignment (:py:mod:`~lingpy.align.multiple`)
-=======================================================
+=====================================================
 
 
 Functions
@@ -14,7 +14,6 @@ Classes
 -------
 
 .. autosummary::
-   :toctree:
 
    ~lingpy.align.Multiple
    ~lingpy.align.MSA

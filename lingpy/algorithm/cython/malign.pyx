@@ -10,6 +10,34 @@ def nw_align(
         ):
     """
     Align two sequences using the Needleman-Wunsch algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as list.
+    scorer : dict
+        A dictionary containing tuples of two segments as key and numbers as
+        values.
+    gap : int
+        The gap penalty.
+    
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two aligned sequences, and the similarity score.
+
+    Notes
+    -----
+    This function is a very straightforward implementation of the
+    Needleman-Wunsch algorithm (:evobib:`Needleman1970`). We recommend to use
+    the function if you want to test your own scoring dictionaries and profit
+    from a fast implementation (as we use Cython, the implementation is indeed
+    faster than pure Python implementations, as long as you use Python 3 and
+    have Cython installed). If you want to test the NW algorithm without
+    specifying a scoring dictionary, we recommend to have a look at our wrapper
+    function with the same name in the :py:class:`~lingpy.align.pairwise`
+    module.
+
     """
     
     # get the lengths of the strings
@@ -89,6 +117,28 @@ def edit_dist(
         ):
     """
     Return the edit-distance between two strings.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as list.
+    normalized : bool
+        Indicate whether you want the normalized or the unnormalized edit
+        distance to be returned.
+
+    Note
+    ----
+    This function computes the edit distance between two list type objects. We
+    recommend to use it if you need a fast implementation. Otherwise,
+    especially, if you want to pass strings, we recommend to have a look at the
+    wrapper function with the same name in the
+    :py:class:`~lingpy.align.pairwise` module.
+
+    Returns
+    -------
+    dist : { int, float }
+        Either the normalized or the unnormalized edit distance.
+
     """
     
     cdef int M = len(seqA)
@@ -138,6 +188,34 @@ def sw_align(
         ):
     """
     Align two sequences using the Smith-Waterman algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as list.
+    scorer : dict
+        A dictionary containing tuples of two segments as key and numbers as
+        values.
+    gap : int
+        The gap penalty.
+    
+    Returns
+    -------
+    alignment : tuple
+        A tuple of the two aligned sequences, and the similarity score.
+
+    Notes
+    -----
+    This function is a very straightforward implementation of the
+    Smith-Waterman algorithm (:evobib:`Smith1981`). We recommend to use
+    the function if you want to test your own scoring dictionaries and profit
+    from a fast implementation (as we use Cython, the implementation is indeed
+    faster than pure Python implementations, as long as you use Python 3 and
+    have Cython installed). If you want to test the SW algorithm without
+    specifying a scoring dictionary, we recommend to have a look at our wrapper
+    function with the same name in the :py:class:`~lingpy.align.pairwise`
+    module.
+
     """
     # basic stuff
     cdef int i,j
@@ -243,6 +321,37 @@ def we_align(
         ):
     """
     Align two sequences using the Waterman-Eggert algorithm.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The input sequences passed as a list.
+    scorer : dict
+        A dictionary containing tuples of two segments as key and numbers as
+        values.
+    gap : int 
+        The gap penalty.
+
+    Notes
+    -----
+    This function is a very straightforward implementation of the
+    Waterman-Eggert algorithm (:evobib:`Waterman1987`). We recommend to use
+    the function if you want to test your own scoring dictionaries and profit
+    from a fast implementation (as we use Cython, the implementation is indeed
+    faster than pure Python implementations, as long as you use Python 3 and
+    have Cython installed). If you want to test the WE algorithm without
+    specifying a scoring dictionary, we recommend to have a look at our wrapper
+    function with the same name in the :py:class:`~lingpy.align.pairwise`
+    module.
+
+    Returns
+    -------
+    alignments : list
+        A list consisting of tuples. Each tuple gives the alignment of one of
+        the subsequences of the input sequences. Each tuple contains the
+        aligned part of the first, the aligned part of the second sequence, and
+        the score of the alignment.
+
     """
     # basic defs
     cdef int lenA,lenB,i,j,null,igap,jgap
@@ -493,11 +602,30 @@ def restricted_edit_dist(
         ):
     r"""
     Return the restricted edit-distance between two strings.
+    
+    Parameters
+    ----------
+    seqA, seqB : list
+        The two sequences passed as list.
+    resA, resB : str
+        The restrictions passed as a string with the same length as the
+        corresponding sequence. We note a restriction if the
+        strings show different symbols in their restriction string. If the
+        symbols are identical, it is modeled as a non-restriction.
+    normalized : bool
+        Determine whether you want to return the normalized or the unnormalized
+        edit distance.
 
     Notes
     -----
     Restrictions follow the definition of :evobib:`Heeringa2006`: Segments that
-    are not allowed to match are given a penalty of :math:`\infty`.
+    are not allowed to match are given a penalty of :math:`\infty`. We model
+    restrictions as strings, for example consisting of letters "c" and "v". So
+    the sequence "woldemort" could be modeled as "cvccvcvcc", and when aligning
+    it with the sequence "walter" and its restriction string "cvccvc", the
+    matching of those segments in the sequences in which the segments of the
+    restriction string differ, would be heavily penalized, thus prohibiting an
+    alignment of "vowels" and "consonants" ("v" and "c").
     """
     
     cdef int M = len(seqA)

@@ -13,8 +13,8 @@ def reduce_alignment(alignment):
     """
     Function reduces a given alignment.
     
-    Note
-    ----
+    Notes
+    -----
     Reduction here means that the output alignment consists only of those parts
     which have not been marked to be ignored by the user (parts in brackets).
     It requires that all data is properly coded. If reduction fails, this will

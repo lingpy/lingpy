@@ -1,3 +1,6 @@
+"""
+Script handles compilation of Cython files to C and also to C-Extension modules.
+"""
 import os
 from sys import argv
 

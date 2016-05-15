@@ -963,22 +963,20 @@ def get_wordlist(path, **keywords):
     row : str (default = "concept")
         A string indicating the name of the row that shall be taken as the
         basis for the tabular representation of the word list.
-
     col : str (default = "doculect")
         A string indicating the name of the column that shall be taken as the
         basis for the tabular representation of the word list.
-
     conf : string (default='')
         A string defining the path to the configuration file.
     
     Notes
     -----
-    This function returns a Wordlist object. In contrast to the normal way to
-    load a wordlist from a tab-separated file, however, this allows to directly
-    load a wordlist from any "normal" csv-file, with your own specified
-    delimiters and quote characters. If the first cell in the first row of your
-    CSV file is not named "ID", the integer identifiers, which are required by
-    LingPy will be automatically created.
+    This function returns a :py:class:`~lingpy.basic.wordlist.Wordlist` object.
+    In contrast to the normal way to load a wordlist from a tab-separated file,
+    however, this allows to directly load a wordlist from any "normal"
+    csv-file, with your own specified delimiters and quote characters. If the
+    first cell in the first row of your CSV file is not named "ID", the integer
+    identifiers, which are required by LingPy will be automatically created.
 
     """
     kw = dict(

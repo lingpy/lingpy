@@ -159,7 +159,7 @@ html_short_title = project
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-html_favicon = "favicon.png"
+html_favicon = "favicon.ico"
 html_logo = "lingpy-logo.svg"
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -338,7 +338,5 @@ epub_copyright = '2016, ' + authors
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     'http://docs.python.org/': None,
-    'http://docs.scipy.org/doc/':None,
-    'http://docs.numpy.org/doc/':None,
     }
 numpydoc_show_class_members=False

@@ -1,7 +1,7 @@
-Helper Functions (:py:class:`~lingpy.algorithm.cython.calign`, and :py:class:`~lingpy.algorith.cython.misc`)
-============================================================================================================
+Helper Functions for SCA Alignment (:py:class:`~lingpy.algorithm.cython.calign`, and :py:class:`~lingpy.algorith.cython.misc`)
+==============================================================================================================================
 
-The helper functions and classes below play an important role in all alignment algorithms in LingPy.
+The helper functions and classes below play an important role in all SCA alignment algorithms in LingPy (:evobib:`List2012b`).
 They are implemented both in pure Python and in Cython (only supported for Python 3), in order to
 allow for faster implementations of the core alignment functions. Instead of using these functions
 directly, we recommend to use the more general functions which you can find in the

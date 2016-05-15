@@ -963,7 +963,7 @@ static PyObject *__pyx_codeobj__32;
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_1globalign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_globalign[] = "\n    Carry out global alignment of two sequences.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_globalign[] = "\n    Carry out global alignment of two sequences.\n\n    Parameters\n    ----------\n    seqA, seqB : list\n        The sequences to be aligned, passed as lists.\n    M, N : int\n        The length of the two sequences.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n\n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity score.\n    \n    Notes\n    -----\n    This algorithm carries out classical Needleman-Wunsch alignment\n    (:evobib:`Needleman1970`).\n    \n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.semi_globalign\n    ~lingpy.algorithm.cython.talign.localign\n    ~lingpy.algorithm.cython.talign.dialign\n\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_1globalign = {"globalign", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_1globalign, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_globalign};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_1globalign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqA = 0;
@@ -1099,93 +1099,93 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
   int __pyx_t_12;
   __Pyx_RefNannySetupContext("globalign", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":22
+  /* "lingpy/algorithm/cython/talign.pyx":53
  * 
  *     # declare lists
  *     cdef list almA = []             # <<<<<<<<<<<<<<
  *     cdef list almB = []
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almA = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":23
+  /* "lingpy/algorithm/cython/talign.pyx":54
  *     # declare lists
  *     cdef list almA = []
  *     cdef list almB = []             # <<<<<<<<<<<<<<
  * 
  *     # create matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almB = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":26
+  /* "lingpy/algorithm/cython/talign.pyx":57
  * 
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 26, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 57, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 26, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 57, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 26, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 57, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_matrix = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":27
+  /* "lingpy/algorithm/cython/talign.pyx":58
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  * 
  *     # modify matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 27, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 27, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 58, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 27, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_traceback = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":30
+  /* "lingpy/algorithm/cython/talign.pyx":61
  * 
  *     # modify matrix and traceback
  *     traceback[0][0] = 1             # <<<<<<<<<<<<<<
  *     for i in range(1,M+1):
  *         matrix[0][i] = matrix[0][i-1] + gop * scale
  */
-  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":31
+  /* "lingpy/algorithm/cython/talign.pyx":62
  *     # modify matrix and traceback
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -1196,45 +1196,45 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":32
+    /* "lingpy/algorithm/cython/talign.pyx":63
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):
  *         matrix[0][i] = matrix[0][i-1] + gop * scale             # <<<<<<<<<<<<<<
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_5 = (__pyx_v_i - 1);
-    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_7 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_7 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 32, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_t_7, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":33
+    /* "lingpy/algorithm/cython/talign.pyx":64
  *     for i in range(1,M+1):
  *         matrix[0][i] = matrix[0][i-1] + gop * scale
  *         traceback[0][i] = 2             # <<<<<<<<<<<<<<
  *     for i in range(1,N+1):
  *         matrix[i][0] = matrix[i-1][0] + gop * scale
  */
-    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 33, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 33, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 64, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":34
+  /* "lingpy/algorithm/cython/talign.pyx":65
  *         matrix[0][i] = matrix[0][i-1] + gop * scale
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -1245,7 +1245,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":35
+    /* "lingpy/algorithm/cython/talign.pyx":66
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):
  *         matrix[i][0] = matrix[i-1][0] + gop * scale             # <<<<<<<<<<<<<<
@@ -1253,37 +1253,37 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  * 
  */
     __pyx_t_5 = (__pyx_v_i - 1);
-    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_5, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_7 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 35, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_7, 0, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 35, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_7, 0, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 66, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":36
+    /* "lingpy/algorithm/cython/talign.pyx":67
  *     for i in range(1,N+1):
  *         matrix[i][0] = matrix[i-1][0] + gop * scale
  *         traceback[i][0] = 3             # <<<<<<<<<<<<<<
  * 
  *     # start the loop
  */
-    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 36, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 67, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_4, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 36, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_4, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 67, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":39
+  /* "lingpy/algorithm/cython/talign.pyx":70
  * 
  *     # start the loop
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -1294,7 +1294,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":40
+    /* "lingpy/algorithm/cython/talign.pyx":71
  *     # start the loop
  *     for i in range(1,N+1):
  *         for j in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -1305,7 +1305,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
     for (__pyx_t_6 = 1; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "lingpy/algorithm/cython/talign.pyx":43
+      /* "lingpy/algorithm/cython/talign.pyx":74
  * 
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -1313,19 +1313,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  *             else:
  */
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 74, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       if (__pyx_t_9) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":44
+        /* "lingpy/algorithm/cython/talign.pyx":75
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:
  *                 gapA = matrix[i-1][j] + gop * scale             # <<<<<<<<<<<<<<
@@ -1333,22 +1333,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  *                 gapA = matrix[i-1][j] + gop
  */
         __pyx_t_8 = (__pyx_v_i - 1);
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 75, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 75, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 75, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 44, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 75, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_gapA = __pyx_t_10;
 
-        /* "lingpy/algorithm/cython/talign.pyx":43
+        /* "lingpy/algorithm/cython/talign.pyx":74
  * 
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -1358,7 +1358,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
         goto __pyx_L19;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":46
+      /* "lingpy/algorithm/cython/talign.pyx":77
  *                 gapA = matrix[i-1][j] + gop * scale
  *             else:
  *                 gapA = matrix[i-1][j] + gop             # <<<<<<<<<<<<<<
@@ -1367,67 +1367,67 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       /*else*/ {
         __pyx_t_8 = (__pyx_v_i - 1);
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 46, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 77, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_7 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 46, __pyx_L1_error)
+        __pyx_t_7 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 77, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 46, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 77, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __pyx_v_gapA = __pyx_t_10;
       }
       __pyx_L19:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":49
+      /* "lingpy/algorithm/cython/talign.pyx":80
  * 
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  */
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 49, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       if (__pyx_t_9) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":50
+        /* "lingpy/algorithm/cython/talign.pyx":81
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:
  *                 gapB = matrix[i][j-1] + gop * scale             # <<<<<<<<<<<<<<
  *             else:
  *                 gapB = matrix[i][j-1] + gop
  */
-        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 50, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __pyx_t_8 = (__pyx_v_j - 1);
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_7, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_7 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 50, __pyx_L1_error)
+        __pyx_t_7 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 50, __pyx_L1_error)
+        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_gapB = __pyx_t_10;
 
-        /* "lingpy/algorithm/cython/talign.pyx":49
+        /* "lingpy/algorithm/cython/talign.pyx":80
  * 
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
@@ -1437,7 +1437,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
         goto __pyx_L20;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":52
+      /* "lingpy/algorithm/cython/talign.pyx":83
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  *                 gapB = matrix[i][j-1] + gop             # <<<<<<<<<<<<<<
@@ -1445,25 +1445,25 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  *             # get the score
  */
       /*else*/ {
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __pyx_t_8 = (__pyx_v_j - 1);
-        __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 52, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 52, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+        __pyx_t_1 = PyNumber_Add(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 52, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_gapB = __pyx_t_10;
       }
       __pyx_L20:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":55
+      /* "lingpy/algorithm/cython/talign.pyx":86
  * 
  *             # get the score
  *             match = matrix[i-1][j-1] + scorer[seqA[j-1],seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -1471,27 +1471,27 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  *             # determine minimal cost
  */
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 55, __pyx_L1_error)
+        __PYX_ERR(0, 86, __pyx_L1_error)
       }
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 55, __pyx_L1_error)
+        __PYX_ERR(0, 86, __pyx_L1_error)
       }
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
@@ -1499,18 +1499,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
       PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_7);
       __pyx_t_1 = 0;
       __pyx_t_7 = 0;
-      __pyx_t_7 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_7 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_Add(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_Add(__pyx_t_4, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 55, __pyx_L1_error)
+      __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 86, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_v_match = __pyx_t_10;
 
-      /* "lingpy/algorithm/cython/talign.pyx":58
+      /* "lingpy/algorithm/cython/talign.pyx":89
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -1528,34 +1528,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
       __pyx_L22_bool_binop_done:;
       if (__pyx_t_9) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":59
+        /* "lingpy/algorithm/cython/talign.pyx":90
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 59, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 90, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 59, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 90, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 59, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 90, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":60
+        /* "lingpy/algorithm/cython/talign.pyx":91
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3             # <<<<<<<<<<<<<<
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 60, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 91, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 60, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 91, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":58
+        /* "lingpy/algorithm/cython/talign.pyx":89
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -1565,7 +1565,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
         goto __pyx_L21;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":61
+      /* "lingpy/algorithm/cython/talign.pyx":92
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -1575,34 +1575,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
       __pyx_t_9 = ((__pyx_v_match >= __pyx_v_gapB) != 0);
       if (__pyx_t_9) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":62
+        /* "lingpy/algorithm/cython/talign.pyx":93
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  *                 matrix[i][j] = match             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 1
  *             else:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 62, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 93, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 62, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 93, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 62, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 93, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":63
+        /* "lingpy/algorithm/cython/talign.pyx":94
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1             # <<<<<<<<<<<<<<
  *             else:
  *                 matrix[i][j] = gapB
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 63, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 94, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 63, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 94, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":61
+        /* "lingpy/algorithm/cython/talign.pyx":92
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -1612,7 +1612,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
         goto __pyx_L21;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":65
+      /* "lingpy/algorithm/cython/talign.pyx":96
  *                 traceback[i][j] = 1
  *             else:
  *                 matrix[i][j] = gapB             # <<<<<<<<<<<<<<
@@ -1620,47 +1620,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  * 
  */
       /*else*/ {
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 65, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 96, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 65, __pyx_L1_error)
+        __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 96, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 65, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_7, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 96, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":66
+        /* "lingpy/algorithm/cython/talign.pyx":97
  *             else:
  *                 matrix[i][j] = gapB
  *                 traceback[i][j] = 2             # <<<<<<<<<<<<<<
  * 
  *     # get the similarity
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 66, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 97, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 66, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 97, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
       __pyx_L21:;
     }
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":69
+  /* "lingpy/algorithm/cython/talign.pyx":100
  * 
  *     # get the similarity
  *     sim = matrix[N][M]             # <<<<<<<<<<<<<<
  * 
  *     # carry out the traceback
  */
-  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_v_sim = __pyx_t_10;
 
-  /* "lingpy/algorithm/cython/talign.pyx":72
+  /* "lingpy/algorithm/cython/talign.pyx":103
  * 
  *     # carry out the traceback
  *     while i > 0 or j > 0:             # <<<<<<<<<<<<<<
@@ -1679,44 +1679,44 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
     __pyx_L26_bool_binop_done:;
     if (!__pyx_t_9) break;
 
-    /* "lingpy/algorithm/cython/talign.pyx":73
+    /* "lingpy/algorithm/cython/talign.pyx":104
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_7, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_7, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_7); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     if (__pyx_t_9) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":74
+      /* "lingpy/algorithm/cython/talign.pyx":105
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:
  *             almA += ['-']             # <<<<<<<<<<<<<<
  *             almB += [seqB[i-1]]
  *             i -= 1
  */
-      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 105, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_7, 0, __pyx_kp_s_);
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 105, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":75
+      /* "lingpy/algorithm/cython/talign.pyx":106
  *         if traceback[i][j] == 3:
  *             almA += ['-']
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -1725,23 +1725,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 75, __pyx_L1_error)
+        __PYX_ERR(0, 106, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 75, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 106, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":76
+      /* "lingpy/algorithm/cython/talign.pyx":107
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -1750,7 +1750,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":73
+      /* "lingpy/algorithm/cython/talign.pyx":104
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
@@ -1760,26 +1760,26 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
       goto __pyx_L28;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":77
+    /* "lingpy/algorithm/cython/talign.pyx":108
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 108, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 108, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_7, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 108, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 77, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 108, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (__pyx_t_9) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":78
+      /* "lingpy/algorithm/cython/talign.pyx":109
  *             i -= 1
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -1788,23 +1788,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 78, __pyx_L1_error)
+        __PYX_ERR(0, 109, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 109, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 109, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 78, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 109, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":79
+      /* "lingpy/algorithm/cython/talign.pyx":110
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -1813,23 +1813,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 79, __pyx_L1_error)
+        __PYX_ERR(0, 110, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 110, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 110, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 79, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 110, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":80
+      /* "lingpy/algorithm/cython/talign.pyx":111
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -1838,7 +1838,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":81
+      /* "lingpy/algorithm/cython/talign.pyx":112
  *             almB += [seqB[i-1]]
  *             i -= 1
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -1847,7 +1847,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  */
       __pyx_v_j = (__pyx_v_j - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":77
+      /* "lingpy/algorithm/cython/talign.pyx":108
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
@@ -1857,7 +1857,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
       goto __pyx_L28;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":83
+    /* "lingpy/algorithm/cython/talign.pyx":114
  *             j -= 1
  *         else:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -1867,41 +1867,41 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
     /*else*/ {
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 83, __pyx_L1_error)
+        __PYX_ERR(0, 114, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 114, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_7 = PyList_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 114, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_7, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 83, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 114, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":84
+      /* "lingpy/algorithm/cython/talign.pyx":115
  *         else:
  *             almA += [seqA[j-1]]
  *             almB += ['-']             # <<<<<<<<<<<<<<
  *             j -= 1
  * 
  */
-      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 84, __pyx_L1_error)
+      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 115, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_11, 0, __pyx_kp_s_);
-      __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 84, __pyx_L1_error)
+      __pyx_t_7 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 115, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":85
+      /* "lingpy/algorithm/cython/talign.pyx":116
  *             almA += [seqA[j-1]]
  *             almB += ['-']
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -1913,23 +1913,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
     __pyx_L28:;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":88
+  /* "lingpy/algorithm/cython/talign.pyx":119
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_t_7 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_7 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  __pyx_t_11 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_11 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_7));
   __pyx_t_7 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
   __pyx_t_11 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":91
+  /* "lingpy/algorithm/cython/talign.pyx":122
  * 
  *     # return alignments
  *     return almA,almB,sim             # <<<<<<<<<<<<<<
@@ -1937,9 +1937,9 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
  * def semi_globalign(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 91, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF(__pyx_v_almA);
   __Pyx_GIVEREF(__pyx_v_almA);
@@ -1979,7 +1979,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":93
+/* "lingpy/algorithm/cython/talign.pyx":124
  *     return almA,almB,sim
  * 
  * def semi_globalign(             # <<<<<<<<<<<<<<
@@ -1989,7 +1989,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_globalign(CYTHON_UN
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_3semi_globalign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_2semi_globalign[] = "\n    Carry out semi-global alignment of two sequences.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_2semi_globalign[] = "\n    Carry out semi-global alignment of two sequences.\n\n    Parameters\n    ----------\n    seqA, seqB : list\n        The sequences to be aligned, passed as lists.\n    M, N : int\n        The length of the two sequences.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    \n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity score.\n\n    Notes\n    -----\n    This algorithm carries out semi-global alignment \n    (:evobib:`Durbin2002`).\n    \n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.globalign\n    ~lingpy.algorithm.cython.talign.localign\n    ~lingpy.algorithm.cython.talign.dialign\n\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_3semi_globalign = {"semi_globalign", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_3semi_globalign, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_2semi_globalign};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_3semi_globalign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqA = 0;
@@ -2027,36 +2027,36 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_3semi_globalign(PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seqB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 1); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 1); __PYX_ERR(0, 124, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_M)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 2); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 2); __PYX_ERR(0, 124, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_N)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 3); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 3); __PYX_ERR(0, 124, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 4); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 4); __PYX_ERR(0, 124, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 5); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 5); __PYX_ERR(0, 124, __pyx_L3_error)
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 6); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, 6); __PYX_ERR(0, 124, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "semi_globalign") < 0)) __PYX_ERR(0, 93, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "semi_globalign") < 0)) __PYX_ERR(0, 124, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
       goto __pyx_L5_argtuple_error;
@@ -2071,22 +2071,22 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_3semi_globalign(PyO
     }
     __pyx_v_seqA = ((PyObject*)values[0]);
     __pyx_v_seqB = ((PyObject*)values[1]);
-    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 96, __pyx_L3_error)
-    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 97, __pyx_L3_error)
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 98, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 99, __pyx_L3_error)
+    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 127, __pyx_L3_error)
+    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 128, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 129, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 130, __pyx_L3_error)
     __pyx_v_scorer = values[6];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 93, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("semi_globalign", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 124, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.semi_globalign", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 94, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 95, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 126, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(__pyx_self, __pyx_v_seqA, __pyx_v_seqB, __pyx_v_M, __pyx_v_N, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer);
 
   /* function exit code */
@@ -2125,93 +2125,93 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   int __pyx_t_12;
   __Pyx_RefNannySetupContext("semi_globalign", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":113
+  /* "lingpy/algorithm/cython/talign.pyx":175
  * 
  *     # declare lists
  *     cdef list almA = []             # <<<<<<<<<<<<<<
  *     cdef list almB = []
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 175, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almA = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":114
+  /* "lingpy/algorithm/cython/talign.pyx":176
  *     # declare lists
  *     cdef list almA = []
  *     cdef list almB = []             # <<<<<<<<<<<<<<
  * 
  *     # create matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 176, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almB = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":117
+  /* "lingpy/algorithm/cython/talign.pyx":179
  * 
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 179, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 117, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 179, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 117, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 179, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 117, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 179, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_matrix = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":118
+  /* "lingpy/algorithm/cython/talign.pyx":180
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  * 
  *     # modify matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 180, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 118, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 118, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 180, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 118, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 180, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_traceback = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":121
+  /* "lingpy/algorithm/cython/talign.pyx":183
  * 
  *     # modify matrix and traceback
  *     traceback[0][0] = 1             # <<<<<<<<<<<<<<
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2
  */
-  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 121, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 183, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":122
+  /* "lingpy/algorithm/cython/talign.pyx":184
  *     # modify matrix and traceback
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -2222,20 +2222,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":123
+    /* "lingpy/algorithm/cython/talign.pyx":185
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2             # <<<<<<<<<<<<<<
  *     for i in range(1,N+1):
  *         traceback[i][0] = 3
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 123, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 123, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 185, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":124
+  /* "lingpy/algorithm/cython/talign.pyx":186
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -2246,20 +2246,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":125
+    /* "lingpy/algorithm/cython/talign.pyx":187
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):
  *         traceback[i][0] = 3             # <<<<<<<<<<<<<<
  * 
  *     # start the loop
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 187, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 125, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 187, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":128
+  /* "lingpy/algorithm/cython/talign.pyx":190
  * 
  *     # start the loop
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -2270,7 +2270,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":129
+    /* "lingpy/algorithm/cython/talign.pyx":191
  *     # start the loop
  *     for i in range(1,N+1):
  *         for j in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -2281,7 +2281,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
     for (__pyx_t_6 = 1; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "lingpy/algorithm/cython/talign.pyx":132
+      /* "lingpy/algorithm/cython/talign.pyx":194
  * 
  *             # calculate costs for gapA
  *             if j == M:             # <<<<<<<<<<<<<<
@@ -2291,7 +2291,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       __pyx_t_7 = ((__pyx_v_j == __pyx_v_M) != 0);
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":133
+        /* "lingpy/algorithm/cython/talign.pyx":195
  *             # calculate costs for gapA
  *             if j == M:
  *                 gapA = matrix[i-1][j]             # <<<<<<<<<<<<<<
@@ -2299,16 +2299,16 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  *                 gapA = matrix[i-1][j] + gop * scale
  */
         __pyx_t_8 = (__pyx_v_i - 1);
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 195, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 133, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 195, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 133, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 195, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_gapA = __pyx_t_9;
 
-        /* "lingpy/algorithm/cython/talign.pyx":132
+        /* "lingpy/algorithm/cython/talign.pyx":194
  * 
  *             # calculate costs for gapA
  *             if j == M:             # <<<<<<<<<<<<<<
@@ -2318,7 +2318,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L19;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":134
+      /* "lingpy/algorithm/cython/talign.pyx":196
  *             if j == M:
  *                 gapA = matrix[i-1][j]
  *             elif traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -2326,19 +2326,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  *             else:
  */
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 196, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 196, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 196, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 134, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 196, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":135
+        /* "lingpy/algorithm/cython/talign.pyx":197
  *                 gapA = matrix[i-1][j]
  *             elif traceback[i-1][j] == 3:
  *                 gapA = matrix[i-1][j] + gop * scale             # <<<<<<<<<<<<<<
@@ -2346,22 +2346,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  *                 gapA = matrix[i-1][j] + gop
  */
         __pyx_t_8 = (__pyx_v_i - 1);
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 197, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 135, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 135, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 197, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_10 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 135, __pyx_L1_error)
+        __pyx_t_10 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 197, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 135, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 197, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __pyx_v_gapA = __pyx_t_9;
 
-        /* "lingpy/algorithm/cython/talign.pyx":134
+        /* "lingpy/algorithm/cython/talign.pyx":196
  *             if j == M:
  *                 gapA = matrix[i-1][j]
  *             elif traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -2371,7 +2371,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L19;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":137
+      /* "lingpy/algorithm/cython/talign.pyx":199
  *                 gapA = matrix[i-1][j] + gop * scale
  *             else:
  *                 gapA = matrix[i-1][j] + gop             # <<<<<<<<<<<<<<
@@ -2380,24 +2380,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       /*else*/ {
         __pyx_t_8 = (__pyx_v_i - 1);
-        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 199, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_10, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_10, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 199, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 199, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 199, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 137, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 199, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_gapA = __pyx_t_9;
       }
       __pyx_L19:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":140
+      /* "lingpy/algorithm/cython/talign.pyx":202
  * 
  *             # calculate costs for gapB
  *             if i == N:             # <<<<<<<<<<<<<<
@@ -2407,24 +2407,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       __pyx_t_7 = ((__pyx_v_i == __pyx_v_N) != 0);
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":141
+        /* "lingpy/algorithm/cython/talign.pyx":203
  *             # calculate costs for gapB
  *             if i == N:
  *                 gapB = matrix[i][j-1]             # <<<<<<<<<<<<<<
  *             elif traceback[i][j-1] == 2:
  *                 gapB = matrix[i][j-1] + gop * scale
  */
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_t_8 = (__pyx_v_j - 1);
-        __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 203, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 141, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 203, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __pyx_v_gapB = __pyx_t_9;
 
-        /* "lingpy/algorithm/cython/talign.pyx":140
+        /* "lingpy/algorithm/cython/talign.pyx":202
  * 
  *             # calculate costs for gapB
  *             if i == N:             # <<<<<<<<<<<<<<
@@ -2434,50 +2434,50 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L20;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":142
+      /* "lingpy/algorithm/cython/talign.pyx":204
  *             if i == N:
  *                 gapB = matrix[i][j-1]
  *             elif traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  */
-      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 204, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_10, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_10, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 204, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 204, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 204, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":143
+        /* "lingpy/algorithm/cython/talign.pyx":205
  *                 gapB = matrix[i][j-1]
  *             elif traceback[i][j-1] == 2:
  *                 gapB = matrix[i][j-1] + gop * scale             # <<<<<<<<<<<<<<
  *             else:
  *                 gapB = matrix[i][j-1] + gop
  */
-        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __pyx_t_8 = (__pyx_v_j - 1);
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_10, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_10, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_10 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_10 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 143, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_gapB = __pyx_t_9;
 
-        /* "lingpy/algorithm/cython/talign.pyx":142
+        /* "lingpy/algorithm/cython/talign.pyx":204
  *             if i == N:
  *                 gapB = matrix[i][j-1]
  *             elif traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
@@ -2487,7 +2487,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L20;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":145
+      /* "lingpy/algorithm/cython/talign.pyx":207
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  *                 gapB = matrix[i][j-1] + gop             # <<<<<<<<<<<<<<
@@ -2495,25 +2495,25 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  *             # calculate costs for match
  */
       /*else*/ {
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 207, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __pyx_t_8 = (__pyx_v_j - 1);
-        __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 207, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 207, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = PyNumber_Add(__pyx_t_10, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_1 = PyNumber_Add(__pyx_t_10, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 207, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 145, __pyx_L1_error)
+        __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 207, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_gapB = __pyx_t_9;
       }
       __pyx_L20:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":150
+      /* "lingpy/algorithm/cython/talign.pyx":212
  * 
  *             # get the score
  *             match = matrix[i-1][j-1] + scorer[seqA[j-1],seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -2521,27 +2521,27 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  *             # determine minimal cost
  */
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 150, __pyx_L1_error)
+        __PYX_ERR(0, 212, __pyx_L1_error)
       }
       __pyx_t_8 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 150, __pyx_L1_error)
+        __PYX_ERR(0, 212, __pyx_L1_error)
       }
       __pyx_t_8 = (__pyx_v_i - 1);
-      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_8, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_GIVEREF(__pyx_t_1);
       PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
@@ -2549,18 +2549,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_10);
       __pyx_t_1 = 0;
       __pyx_t_10 = 0;
-      __pyx_t_10 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_Add(__pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_Add(__pyx_t_4, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 150, __pyx_L1_error)
+      __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 212, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_v_match = __pyx_t_9;
 
-      /* "lingpy/algorithm/cython/talign.pyx":153
+      /* "lingpy/algorithm/cython/talign.pyx":215
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -2578,34 +2578,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       __pyx_L22_bool_binop_done:;
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":154
+        /* "lingpy/algorithm/cython/talign.pyx":216
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 216, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 154, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 216, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 154, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 216, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":155
+        /* "lingpy/algorithm/cython/talign.pyx":217
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3             # <<<<<<<<<<<<<<
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 155, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 155, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 217, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":153
+        /* "lingpy/algorithm/cython/talign.pyx":215
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -2615,7 +2615,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L21;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":156
+      /* "lingpy/algorithm/cython/talign.pyx":218
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -2625,34 +2625,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       __pyx_t_7 = ((__pyx_v_match >= __pyx_v_gapB) != 0);
       if (__pyx_t_7) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":157
+        /* "lingpy/algorithm/cython/talign.pyx":219
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  *                 matrix[i][j] = match             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 1
  *             else:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 219, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 157, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 219, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 157, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 219, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":158
+        /* "lingpy/algorithm/cython/talign.pyx":220
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1             # <<<<<<<<<<<<<<
  *             else:
  *                 matrix[i][j] = gapB
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 158, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 220, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 158, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 220, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":156
+        /* "lingpy/algorithm/cython/talign.pyx":218
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -2662,7 +2662,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
         goto __pyx_L21;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":160
+      /* "lingpy/algorithm/cython/talign.pyx":222
  *                 traceback[i][j] = 1
  *             else:
  *                 matrix[i][j] = gapB             # <<<<<<<<<<<<<<
@@ -2670,47 +2670,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  * 
  */
       /*else*/ {
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 160, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 222, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 160, __pyx_L1_error)
+        __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 222, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 160, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_10, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 222, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":161
+        /* "lingpy/algorithm/cython/talign.pyx":223
  *             else:
  *                 matrix[i][j] = gapB
  *                 traceback[i][j] = 2             # <<<<<<<<<<<<<<
  * 
  *     # get the similarity
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 161, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 223, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 161, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 223, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
       __pyx_L21:;
     }
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":164
+  /* "lingpy/algorithm/cython/talign.pyx":226
  * 
  *     # get the similarity
  *     sim = matrix[N][M]             # <<<<<<<<<<<<<<
  * 
  *     # carry out the traceback
  */
-  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 164, __pyx_L1_error)
+  __pyx_t_9 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_9 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 226, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   __pyx_v_sim = __pyx_t_9;
 
-  /* "lingpy/algorithm/cython/talign.pyx":167
+  /* "lingpy/algorithm/cython/talign.pyx":229
  * 
  *     # carry out the traceback
  *     while i > 0 or j > 0:             # <<<<<<<<<<<<<<
@@ -2729,44 +2729,44 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
     __pyx_L26_bool_binop_done:;
     if (!__pyx_t_7) break;
 
-    /* "lingpy/algorithm/cython/talign.pyx":168
+    /* "lingpy/algorithm/cython/talign.pyx":230
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 168, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 230, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_10, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 168, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_10, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 230, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 168, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 230, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 168, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_10); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 230, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     if (__pyx_t_7) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":169
+      /* "lingpy/algorithm/cython/talign.pyx":231
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:
  *             almA += ['-']             # <<<<<<<<<<<<<<
  *             almB += [seqB[i-1]]
  *             i -= 1
  */
-      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 231, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_10, 0, __pyx_kp_s_);
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 231, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":170
+      /* "lingpy/algorithm/cython/talign.pyx":232
  *         if traceback[i][j] == 3:
  *             almA += ['-']
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -2775,23 +2775,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 170, __pyx_L1_error)
+        __PYX_ERR(0, 232, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 232, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 232, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 232, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":171
+      /* "lingpy/algorithm/cython/talign.pyx":233
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -2800,7 +2800,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":168
+      /* "lingpy/algorithm/cython/talign.pyx":230
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
@@ -2810,26 +2810,26 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       goto __pyx_L28;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":172
+    /* "lingpy/algorithm/cython/talign.pyx":234
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_10, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_10, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 172, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_7 < 0)) __PYX_ERR(0, 234, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (__pyx_t_7) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":173
+      /* "lingpy/algorithm/cython/talign.pyx":235
  *             i -= 1
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -2838,23 +2838,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 173, __pyx_L1_error)
+        __PYX_ERR(0, 235, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 173, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 235, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":174
+      /* "lingpy/algorithm/cython/talign.pyx":236
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -2863,23 +2863,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 174, __pyx_L1_error)
+        __PYX_ERR(0, 236, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 236, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 236, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 174, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 236, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":175
+      /* "lingpy/algorithm/cython/talign.pyx":237
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -2888,7 +2888,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":176
+      /* "lingpy/algorithm/cython/talign.pyx":238
  *             almB += [seqB[i-1]]
  *             i -= 1
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -2897,7 +2897,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  */
       __pyx_v_j = (__pyx_v_j - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":172
+      /* "lingpy/algorithm/cython/talign.pyx":234
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
@@ -2907,7 +2907,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
       goto __pyx_L28;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":178
+    /* "lingpy/algorithm/cython/talign.pyx":240
  *             j -= 1
  *         else:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -2917,41 +2917,41 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
     /*else*/ {
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 178, __pyx_L1_error)
+        __PYX_ERR(0, 240, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 178, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 240, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 178, __pyx_L1_error)
+      __pyx_t_10 = PyList_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 240, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_10, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 178, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_10); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 240, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_11));
       __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":179
+      /* "lingpy/algorithm/cython/talign.pyx":241
  *         else:
  *             almA += [seqA[j-1]]
  *             almB += ['-']             # <<<<<<<<<<<<<<
  *             j -= 1
  * 
  */
-      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 179, __pyx_L1_error)
+      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 241, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_11, 0, __pyx_kp_s_);
-      __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 179, __pyx_L1_error)
+      __pyx_t_10 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 241, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_10));
       __pyx_t_10 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":180
+      /* "lingpy/algorithm/cython/talign.pyx":242
  *             almA += [seqA[j-1]]
  *             almB += ['-']
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -2963,23 +2963,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
     __pyx_L28:;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":183
+  /* "lingpy/algorithm/cython/talign.pyx":245
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_t_10 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_t_10 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__4); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_11 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_t_11 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_10));
   __pyx_t_10 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_11));
   __pyx_t_11 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":186
+  /* "lingpy/algorithm/cython/talign.pyx":248
  * 
  *     # return alignments
  *     return almA,almB,sim             # <<<<<<<<<<<<<<
@@ -2987,9 +2987,9 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
  * def localign(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 248, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 186, __pyx_L1_error)
+  __pyx_t_10 = PyTuple_New(3); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 248, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_INCREF(__pyx_v_almA);
   __Pyx_GIVEREF(__pyx_v_almA);
@@ -3004,7 +3004,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   __pyx_t_10 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":93
+  /* "lingpy/algorithm/cython/talign.pyx":124
  *     return almA,almB,sim
  * 
  * def semi_globalign(             # <<<<<<<<<<<<<<
@@ -3030,7 +3030,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":188
+/* "lingpy/algorithm/cython/talign.pyx":250
  *     return almA,almB,sim
  * 
  * def localign(             # <<<<<<<<<<<<<<
@@ -3040,7 +3040,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_2semi_globalign(CYT
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_5localign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_4localign[] = "\n    Carry out semi-global alignment of two sequences.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_4localign[] = "\n    Carry out semi-global alignment of two sequences.\n    \n    Parameters\n    ----------\n    seqA, seqB : list\n        The sequences to be aligned, passed as lists.\n    M, N : int\n        The length of the two sequences.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    \n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity score.\n\n    Notes\n    -----\n    This algorithm carries out local alignment \n    (:evobib:`Smith1981`).\n    \n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.globalign\n    ~lingpy.algorithm.cython.talign.semi_globalign\n    ~lingpy.algorithm.cython.talign.dialign\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_5localign = {"localign", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_5localign, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_4localign};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_5localign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqA = 0;
@@ -3078,36 +3078,36 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_5localign(PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seqB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 1); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 1); __PYX_ERR(0, 250, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_M)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 2); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 2); __PYX_ERR(0, 250, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_N)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 3); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 3); __PYX_ERR(0, 250, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 4); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 4); __PYX_ERR(0, 250, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 5); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 5); __PYX_ERR(0, 250, __pyx_L3_error)
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 6); __PYX_ERR(0, 188, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, 6); __PYX_ERR(0, 250, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "localign") < 0)) __PYX_ERR(0, 188, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "localign") < 0)) __PYX_ERR(0, 250, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
       goto __pyx_L5_argtuple_error;
@@ -3122,22 +3122,22 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_5localign(PyObject 
     }
     __pyx_v_seqA = ((PyObject*)values[0]);
     __pyx_v_seqB = ((PyObject*)values[1]);
-    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 191, __pyx_L3_error)
-    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 192, __pyx_L3_error)
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 193, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 194, __pyx_L3_error)
+    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 253, __pyx_L3_error)
+    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 254, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 255, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[5]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 256, __pyx_L3_error)
     __pyx_v_scorer = values[6];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 188, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("localign", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 250, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.localign", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 189, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 190, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 251, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 252, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(__pyx_self, __pyx_v_seqA, __pyx_v_seqB, __pyx_v_M, __pyx_v_N, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer);
 
   /* function exit code */
@@ -3180,81 +3180,81 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   Py_ssize_t __pyx_t_13;
   __Pyx_RefNannySetupContext("localign", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":211
+  /* "lingpy/algorithm/cython/talign.pyx":303
  * 
  *     # declare lists
  *     cdef list almA = []             # <<<<<<<<<<<<<<
  *     cdef list almB = []
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 211, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almA = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":212
+  /* "lingpy/algorithm/cython/talign.pyx":304
  *     # declare lists
  *     cdef list almA = []
  *     cdef list almB = []             # <<<<<<<<<<<<<<
  * 
  *     # create matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 212, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 304, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almB = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":215
+  /* "lingpy/algorithm/cython/talign.pyx":307
  * 
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 215, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 307, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 215, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 307, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 215, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 307, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 215, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 307, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_matrix = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":216
+  /* "lingpy/algorithm/cython/talign.pyx":308
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  * 
  *     # set similarity to zero
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 216, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 308, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 216, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 216, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 308, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 216, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 308, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_traceback = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":219
+  /* "lingpy/algorithm/cython/talign.pyx":311
  * 
  *     # set similarity to zero
  *     sim = 0.0             # <<<<<<<<<<<<<<
@@ -3263,7 +3263,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
   __pyx_v_sim = 0.0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":222
+  /* "lingpy/algorithm/cython/talign.pyx":314
  * 
  *     # start the loop
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -3274,7 +3274,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":223
+    /* "lingpy/algorithm/cython/talign.pyx":315
  *     # start the loop
  *     for i in range(1,N+1):
  *         for j in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -3285,7 +3285,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
     for (__pyx_t_6 = 1; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "lingpy/algorithm/cython/talign.pyx":226
+      /* "lingpy/algorithm/cython/talign.pyx":318
  * 
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -3293,19 +3293,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             else:
  */
       __pyx_t_7 = (__pyx_v_i - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 226, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 226, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_4, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 226, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 318, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":227
+        /* "lingpy/algorithm/cython/talign.pyx":319
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:
  *                 gapA = matrix[i-1][j] + gop * scale             # <<<<<<<<<<<<<<
@@ -3313,22 +3313,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *                 gapA = matrix[i-1][j] + gop
  */
         __pyx_t_7 = (__pyx_v_i - 1);
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 227, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 227, __pyx_L1_error)
+        __pyx_t_1 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 227, __pyx_L1_error)
+        __pyx_t_9 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 227, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 319, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         __pyx_v_gapA = __pyx_t_10;
 
-        /* "lingpy/algorithm/cython/talign.pyx":226
+        /* "lingpy/algorithm/cython/talign.pyx":318
  * 
  *             # calculate costs for gapA
  *             if traceback[i-1][j] == 3:             # <<<<<<<<<<<<<<
@@ -3338,7 +3338,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
         goto __pyx_L15;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":229
+      /* "lingpy/algorithm/cython/talign.pyx":321
  *                 gapA = matrix[i-1][j] + gop * scale
  *             else:
  *                 gapA = matrix[i-1][j] + gop             # <<<<<<<<<<<<<<
@@ -3347,67 +3347,67 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
       /*else*/ {
         __pyx_t_7 = (__pyx_v_i - 1);
-        __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 229, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 321, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_9, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 229, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_9, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 321, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 229, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 321, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 229, __pyx_L1_error)
+        __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_9); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 321, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 229, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 321, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_gapA = __pyx_t_10;
       }
       __pyx_L15:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":232
+      /* "lingpy/algorithm/cython/talign.pyx":324
  * 
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  */
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_7 = (__pyx_v_j - 1);
-      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 324, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_9, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_9, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 324, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 232, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 324, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":233
+        /* "lingpy/algorithm/cython/talign.pyx":325
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:
  *                 gapB = matrix[i][j-1] + gop * scale             # <<<<<<<<<<<<<<
  *             else:
  *                 gapB = matrix[i][j-1] + gop
  */
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 233, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 325, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __pyx_t_7 = (__pyx_v_j - 1);
-        __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 233, __pyx_L1_error)
+        __pyx_t_9 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 325, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 233, __pyx_L1_error)
+        __pyx_t_4 = PyFloat_FromDouble((__pyx_v_gop * __pyx_v_scale)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 325, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        __pyx_t_1 = PyNumber_Add(__pyx_t_9, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 233, __pyx_L1_error)
+        __pyx_t_1 = PyNumber_Add(__pyx_t_9, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 233, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 325, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
         __pyx_v_gapB = __pyx_t_10;
 
-        /* "lingpy/algorithm/cython/talign.pyx":232
+        /* "lingpy/algorithm/cython/talign.pyx":324
  * 
  *             # calculate costs for gapB
  *             if traceback[i][j-1] == 2:             # <<<<<<<<<<<<<<
@@ -3417,7 +3417,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
         goto __pyx_L16;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":235
+      /* "lingpy/algorithm/cython/talign.pyx":327
  *                 gapB = matrix[i][j-1] + gop * scale
  *             else:
  *                 gapB = matrix[i][j-1] + gop             # <<<<<<<<<<<<<<
@@ -3425,25 +3425,25 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             # calculate costs for match
  */
       /*else*/ {
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_t_7 = (__pyx_v_j - 1);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 235, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 235, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_9 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 235, __pyx_L1_error)
+        __pyx_t_9 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_9);
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 235, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 327, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         __pyx_v_gapB = __pyx_t_10;
       }
       __pyx_L16:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":240
+      /* "lingpy/algorithm/cython/talign.pyx":332
  * 
  *             # get the score
  *             match = matrix[i-1][j-1] + scorer[seqA[j-1],seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -3451,27 +3451,27 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             # determine minimal cost
  */
       __pyx_t_7 = (__pyx_v_i - 1);
-      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __pyx_t_7 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_9, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_9, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 240, __pyx_L1_error)
+        __PYX_ERR(0, 332, __pyx_L1_error)
       }
       __pyx_t_7 = (__pyx_v_j - 1);
-      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 240, __pyx_L1_error)
+        __PYX_ERR(0, 332, __pyx_L1_error)
       }
       __pyx_t_7 = (__pyx_v_i - 1);
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_GIVEREF(__pyx_t_9);
       PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9);
@@ -3479,18 +3479,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_4);
       __pyx_t_9 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_4 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_4 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_Add(__pyx_t_1, __pyx_t_4); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 240, __pyx_L1_error)
+      __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 332, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __pyx_v_match = __pyx_t_10;
 
-      /* "lingpy/algorithm/cython/talign.pyx":243
+      /* "lingpy/algorithm/cython/talign.pyx":335
  * 
  *             # determine minimal cost
  *             if gapA >= match and gapA >= gapB and gapA >= 0.0:             # <<<<<<<<<<<<<<
@@ -3514,34 +3514,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       __pyx_L18_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":244
+        /* "lingpy/algorithm/cython/talign.pyx":336
  *             # determine minimal cost
  *             if gapA >= match and gapA >= gapB and gapA >= 0.0:
  *                 matrix[i][j] = gapA             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 3
  *             elif match >= gapB and match >= 0.0:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 244, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 336, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 244, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 336, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 244, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 336, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":245
+        /* "lingpy/algorithm/cython/talign.pyx":337
  *             if gapA >= match and gapA >= gapB and gapA >= 0.0:
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3             # <<<<<<<<<<<<<<
  *             elif match >= gapB and match >= 0.0:
  *                 matrix[i][j] = match
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 245, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 337, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 245, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 337, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":243
+        /* "lingpy/algorithm/cython/talign.pyx":335
  * 
  *             # determine minimal cost
  *             if gapA >= match and gapA >= gapB and gapA >= 0.0:             # <<<<<<<<<<<<<<
@@ -3551,7 +3551,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
         goto __pyx_L17;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":246
+      /* "lingpy/algorithm/cython/talign.pyx":338
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB and match >= 0.0:             # <<<<<<<<<<<<<<
@@ -3569,34 +3569,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       __pyx_L21_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":247
+        /* "lingpy/algorithm/cython/talign.pyx":339
  *                 traceback[i][j] = 3
  *             elif match >= gapB and match >= 0.0:
  *                 matrix[i][j] = match             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 1
  *             elif gapB >= 0.0:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 247, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 339, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 247, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 339, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 247, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 339, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":248
+        /* "lingpy/algorithm/cython/talign.pyx":340
  *             elif match >= gapB and match >= 0.0:
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1             # <<<<<<<<<<<<<<
  *             elif gapB >= 0.0:
  *                 matrix[i][j] = gapB
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 248, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 340, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 248, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 340, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":246
+        /* "lingpy/algorithm/cython/talign.pyx":338
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB and match >= 0.0:             # <<<<<<<<<<<<<<
@@ -3606,7 +3606,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
         goto __pyx_L17;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":249
+      /* "lingpy/algorithm/cython/talign.pyx":341
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1
  *             elif gapB >= 0.0:             # <<<<<<<<<<<<<<
@@ -3616,34 +3616,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       __pyx_t_8 = ((__pyx_v_gapB >= 0.0) != 0);
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":250
+        /* "lingpy/algorithm/cython/talign.pyx":342
  *                 traceback[i][j] = 1
  *             elif gapB >= 0.0:
  *                 matrix[i][j] = gapB             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 2
  *             else:
  */
-        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 250, __pyx_L1_error)
+        __pyx_t_11 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 250, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 250, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_4, __pyx_v_j, __pyx_t_11, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 342, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":251
+        /* "lingpy/algorithm/cython/talign.pyx":343
  *             elif gapB >= 0.0:
  *                 matrix[i][j] = gapB
  *                 traceback[i][j] = 2             # <<<<<<<<<<<<<<
  *             else:
  *                 matrix[i][j] = 0.0
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 251, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 343, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 251, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 343, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":249
+        /* "lingpy/algorithm/cython/talign.pyx":341
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1
  *             elif gapB >= 0.0:             # <<<<<<<<<<<<<<
@@ -3653,7 +3653,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
         goto __pyx_L17;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":253
+      /* "lingpy/algorithm/cython/talign.pyx":345
  *                 traceback[i][j] = 2
  *             else:
  *                 matrix[i][j] = 0.0             # <<<<<<<<<<<<<<
@@ -3661,63 +3661,63 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  * 
  */
       /*else*/ {
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 253, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 345, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_float_0_0, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 253, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_float_0_0, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 345, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":254
+        /* "lingpy/algorithm/cython/talign.pyx":346
  *             else:
  *                 matrix[i][j] = 0.0
  *                 traceback[i][j] = 0             # <<<<<<<<<<<<<<
  * 
  *             if matrix[i][j] >= sim:
  */
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 254, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 346, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_0, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 254, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_11, __pyx_v_j, __pyx_int_0, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 346, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
       __pyx_L17:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":256
+      /* "lingpy/algorithm/cython/talign.pyx":348
  *                 traceback[i][j] = 0
  * 
  *             if matrix[i][j] >= sim:             # <<<<<<<<<<<<<<
  *                 sim = matrix[i][j]
  *                 k = i
  */
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 348, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 348, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 348, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_1 = PyObject_RichCompare(__pyx_t_4, __pyx_t_11, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __pyx_t_1 = PyObject_RichCompare(__pyx_t_4, __pyx_t_11, Py_GE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 348, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 256, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 348, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":257
+        /* "lingpy/algorithm/cython/talign.pyx":349
  * 
  *             if matrix[i][j] >= sim:
  *                 sim = matrix[i][j]             # <<<<<<<<<<<<<<
  *                 k = i
  *                 l = j
  */
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 257, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 349, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 257, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 349, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
+        __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 349, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_v_sim = __pyx_t_10;
 
-        /* "lingpy/algorithm/cython/talign.pyx":258
+        /* "lingpy/algorithm/cython/talign.pyx":350
  *             if matrix[i][j] >= sim:
  *                 sim = matrix[i][j]
  *                 k = i             # <<<<<<<<<<<<<<
@@ -3726,7 +3726,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
         __pyx_v_k = __pyx_v_i;
 
-        /* "lingpy/algorithm/cython/talign.pyx":259
+        /* "lingpy/algorithm/cython/talign.pyx":351
  *                 sim = matrix[i][j]
  *                 k = i
  *                 l = j             # <<<<<<<<<<<<<<
@@ -3735,7 +3735,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
         __pyx_v_l = __pyx_v_j;
 
-        /* "lingpy/algorithm/cython/talign.pyx":256
+        /* "lingpy/algorithm/cython/talign.pyx":348
  *                 traceback[i][j] = 0
  * 
  *             if matrix[i][j] >= sim:             # <<<<<<<<<<<<<<
@@ -3746,23 +3746,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
     }
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":262
+  /* "lingpy/algorithm/cython/talign.pyx":354
  * 
  *     # get the similarity
  *     sim = matrix[k][l]             # <<<<<<<<<<<<<<
  * 
  *     # reset i,j
  */
-  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_k, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 262, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_k, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 354, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_l, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 262, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_l, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 354, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 262, __pyx_L1_error)
+  __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 354, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_sim = __pyx_t_10;
 
-  /* "lingpy/algorithm/cython/talign.pyx":265
+  /* "lingpy/algorithm/cython/talign.pyx":357
  * 
  *     # reset i,j
  *     i,j = k,l             # <<<<<<<<<<<<<<
@@ -3774,131 +3774,131 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   __pyx_v_i = __pyx_t_3;
   __pyx_v_j = __pyx_t_6;
 
-  /* "lingpy/algorithm/cython/talign.pyx":268
+  /* "lingpy/algorithm/cython/talign.pyx":360
  * 
  *     # append stuff to almA and almB
  *     almA += [[x for x in seqA[j:]]]             # <<<<<<<<<<<<<<
  *     almB += [[x for x in seqB[i:]]]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (unlikely(__pyx_v_seqA == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 268, __pyx_L1_error)
+    __PYX_ERR(0, 360, __pyx_L1_error)
   }
-  __pyx_t_11 = __Pyx_PyList_GetSlice(__pyx_v_seqA, __pyx_v_j, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyList_GetSlice(__pyx_v_seqA, __pyx_v_j, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __pyx_t_4 = __pyx_t_11; __Pyx_INCREF(__pyx_t_4); __pyx_t_13 = 0;
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   for (;;) {
     if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_4)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_11 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_11); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 268, __pyx_L1_error)
+    __pyx_t_11 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_13); __Pyx_INCREF(__pyx_t_11); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 360, __pyx_L1_error)
     #else
-    __pyx_t_11 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 268, __pyx_L1_error)
+    __pyx_t_11 = PySequence_ITEM(__pyx_t_4, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 360, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 268, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 360, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_x, ((PyObject*)__pyx_t_11));
     __pyx_t_11 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 268, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 360, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 268, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 360, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_1));
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":269
+  /* "lingpy/algorithm/cython/talign.pyx":361
  *     # append stuff to almA and almB
  *     almA += [[x for x in seqA[j:]]]
  *     almB += [[x for x in seqB[i:]]]             # <<<<<<<<<<<<<<
  * 
  *     # append empty seq for alms to almA and almB
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (unlikely(__pyx_v_seqB == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 269, __pyx_L1_error)
+    __PYX_ERR(0, 361, __pyx_L1_error)
   }
-  __pyx_t_4 = __Pyx_PyList_GetSlice(__pyx_v_seqB, __pyx_v_i, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_PyList_GetSlice(__pyx_v_seqB, __pyx_v_i, PY_SSIZE_T_MAX); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_11 = __pyx_t_4; __Pyx_INCREF(__pyx_t_11); __pyx_t_13 = 0;
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   for (;;) {
     if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_11)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_13); __Pyx_INCREF(__pyx_t_4); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 269, __pyx_L1_error)
+    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_13); __Pyx_INCREF(__pyx_t_4); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 361, __pyx_L1_error)
     #else
-    __pyx_t_4 = PySequence_ITEM(__pyx_t_11, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 269, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(__pyx_t_11, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 361, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 269, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 361, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_x, ((PyObject*)__pyx_t_4));
     __pyx_t_4 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 269, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 361, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 269, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 361, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_1));
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":272
+  /* "lingpy/algorithm/cython/talign.pyx":364
  * 
  *     # append empty seq for alms to almA and almB
  *     almA += [[]]             # <<<<<<<<<<<<<<
  *     almB += [[]]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 364, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 272, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 364, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_1));
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":273
+  /* "lingpy/algorithm/cython/talign.pyx":365
  *     # append empty seq for alms to almA and almB
  *     almA += [[]]
  *     almB += [[]]             # <<<<<<<<<<<<<<
  * 
  *     while traceback[i][j] != 0:
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 273, __pyx_L1_error)
+  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 365, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_1);
   PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 273, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 365, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_1));
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":275
+  /* "lingpy/algorithm/cython/talign.pyx":367
  *     almB += [[]]
  * 
  *     while traceback[i][j] != 0:             # <<<<<<<<<<<<<<
@@ -3906,37 +3906,37 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  * 
  */
   while (1) {
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 275, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 367, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_RichCompare(__pyx_t_11, __pyx_int_0, Py_NE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 275, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_t_11, __pyx_int_0, Py_NE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 367, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 275, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 367, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (!__pyx_t_8) break;
 
-    /* "lingpy/algorithm/cython/talign.pyx":276
+    /* "lingpy/algorithm/cython/talign.pyx":368
  * 
  *     while traceback[i][j] != 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
  * 
  *             almA[1] += ['-']
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 276, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 368, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":278
+      /* "lingpy/algorithm/cython/talign.pyx":370
  *         if traceback[i][j] == 3:
  * 
  *             almA[1] += ['-']             # <<<<<<<<<<<<<<
@@ -3944,21 +3944,21 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             i -= 1
  */
       __pyx_t_13 = 1;
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 278, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 370, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 278, __pyx_L1_error)
+      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 370, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_11, 0, __pyx_kp_s_);
-      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 278, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 370, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 278, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 370, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":279
+      /* "lingpy/algorithm/cython/talign.pyx":371
  * 
  *             almA[1] += ['-']
  *             almB[1] += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -3966,28 +3966,28 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *         elif traceback[i][j] == 1:
  */
       __pyx_t_13 = 1;
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 279, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 371, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 279, __pyx_L1_error)
+        __PYX_ERR(0, 371, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 279, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 371, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 279, __pyx_L1_error)
+      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 371, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 279, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 371, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_11, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 279, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_11, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 371, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":280
+      /* "lingpy/algorithm/cython/talign.pyx":372
  *             almA[1] += ['-']
  *             almB[1] += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -3996,7 +3996,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":276
+      /* "lingpy/algorithm/cython/talign.pyx":368
  * 
  *     while traceback[i][j] != 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
@@ -4006,26 +4006,26 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       goto __pyx_L30;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":281
+    /* "lingpy/algorithm/cython/talign.pyx":373
  *             almB[1] += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += [seqB[i-1]]
  */
-    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 281, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 373, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 281, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_11, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 373, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 281, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_EqObjC(__pyx_t_1, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 373, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 281, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_11); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 373, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":282
+      /* "lingpy/algorithm/cython/talign.pyx":374
  *             i -= 1
  *         elif traceback[i][j] == 1:
  *             almA[1] += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -4033,28 +4033,28 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             i -= 1
  */
       __pyx_t_13 = 1;
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 282, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 374, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 282, __pyx_L1_error)
+        __PYX_ERR(0, 374, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 374, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 282, __pyx_L1_error)
+      __pyx_t_4 = PyList_New(1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 374, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_1);
       PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_1);
       __pyx_t_1 = 0;
-      __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_11, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 282, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_InPlaceAdd(__pyx_t_11, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 374, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_1, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 282, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_1, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 374, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":283
+      /* "lingpy/algorithm/cython/talign.pyx":375
  *         elif traceback[i][j] == 1:
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -4062,28 +4062,28 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             j -= 1
  */
       __pyx_t_13 = 1;
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 283, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 375, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 283, __pyx_L1_error)
+        __PYX_ERR(0, 375, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 283, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 375, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 283, __pyx_L1_error)
+      __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 375, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_GIVEREF(__pyx_t_4);
       PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_4);
       __pyx_t_4 = 0;
-      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 283, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_1, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 375, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 283, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 375, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":284
+      /* "lingpy/algorithm/cython/talign.pyx":376
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -4092,7 +4092,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":285
+      /* "lingpy/algorithm/cython/talign.pyx":377
  *             almB[1] += [seqB[i-1]]
  *             i -= 1
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -4101,7 +4101,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
       __pyx_v_j = (__pyx_v_j - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":281
+      /* "lingpy/algorithm/cython/talign.pyx":373
  *             almB[1] += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
@@ -4111,26 +4111,26 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       goto __pyx_L30;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":287
+    /* "lingpy/algorithm/cython/talign.pyx":379
  *             j -= 1
  * 
  *         elif traceback[i][j] == 2:             # <<<<<<<<<<<<<<
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += ['-']
  */
-    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 379, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
-    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_GetItemInt(__pyx_t_4, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 379, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyInt_EqObjC(__pyx_t_11, __pyx_int_2, 2, 0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 379, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyObject_IsTrue(__pyx_t_4); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 379, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":288
+      /* "lingpy/algorithm/cython/talign.pyx":380
  * 
  *         elif traceback[i][j] == 2:
  *             almA[1] += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -4138,28 +4138,28 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *             j -= 1
  */
       __pyx_t_13 = 1;
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almA, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 288, __pyx_L1_error)
+        __PYX_ERR(0, 380, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_GIVEREF(__pyx_t_11);
       PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 288, __pyx_L1_error)
+      __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_11, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 288, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, __pyx_t_13, __pyx_t_11, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 380, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":289
+      /* "lingpy/algorithm/cython/talign.pyx":381
  *         elif traceback[i][j] == 2:
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += ['-']             # <<<<<<<<<<<<<<
@@ -4167,21 +4167,21 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  *         else:
  */
       __pyx_t_13 = 1;
-      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 289, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_almB, __pyx_t_13, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 381, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 289, __pyx_L1_error)
+      __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 381, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_1, 0, __pyx_kp_s_);
-      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_11, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 289, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_t_11, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 381, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 289, __pyx_L1_error)
+      if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, __pyx_t_13, __pyx_t_4, Py_ssize_t, 1, PyInt_FromSsize_t, 1, 1, 1) < 0)) __PYX_ERR(0, 381, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":290
+      /* "lingpy/algorithm/cython/talign.pyx":382
  *             almA[1] += [seqA[j-1]]
  *             almB[1] += ['-']
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -4190,7 +4190,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  */
       __pyx_v_j = (__pyx_v_j - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":287
+      /* "lingpy/algorithm/cython/talign.pyx":379
  *             j -= 1
  * 
  *         elif traceback[i][j] == 2:             # <<<<<<<<<<<<<<
@@ -4200,7 +4200,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
       goto __pyx_L30;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":292
+    /* "lingpy/algorithm/cython/talign.pyx":384
  *             j -= 1
  *         else:
  *             break             # <<<<<<<<<<<<<<
@@ -4214,121 +4214,121 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   }
   __pyx_L29_break:;
 
-  /* "lingpy/algorithm/cython/talign.pyx":295
+  /* "lingpy/algorithm/cython/talign.pyx":387
  * 
  *     # revert the alms
  *     almA[1] = almA[1][::-1]             # <<<<<<<<<<<<<<
  *     almB[1] = almB[1][::-1]
  * 
  */
-  __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almA, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_almA, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 387, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = PyObject_GetItem(__pyx_t_4, __pyx_slice__6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_t_4, __pyx_slice__6); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 387, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, 1, __pyx_t_1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1) < 0)) __PYX_ERR(0, 295, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_v_almA, 1, __pyx_t_1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1) < 0)) __PYX_ERR(0, 387, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":296
+  /* "lingpy/algorithm/cython/talign.pyx":388
  *     # revert the alms
  *     almA[1] = almA[1][::-1]
  *     almB[1] = almB[1][::-1]             # <<<<<<<<<<<<<<
  * 
  *     # append the rest
  */
-  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almB, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_almB, 1, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_4 = PyObject_GetItem(__pyx_t_1, __pyx_slice__7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_t_1, __pyx_slice__7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, 1, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 1, 0, 1) < 0)) __PYX_ERR(0, 296, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_v_almB, 1, __pyx_t_4, long, 1, __Pyx_PyInt_From_long, 1, 0, 1) < 0)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":299
+  /* "lingpy/algorithm/cython/talign.pyx":391
  * 
  *     # append the rest
  *     almA += [[x for x in seqA[0:j]]]             # <<<<<<<<<<<<<<
  *     almB += [[x for x in seqB[0:i]]]
  * 
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (unlikely(__pyx_v_seqA == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 299, __pyx_L1_error)
+    __PYX_ERR(0, 391, __pyx_L1_error)
   }
-  __pyx_t_1 = __Pyx_PyList_GetSlice(__pyx_v_seqA, 0, __pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyList_GetSlice(__pyx_v_seqA, 0, __pyx_v_j); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_11 = __pyx_t_1; __Pyx_INCREF(__pyx_t_11); __pyx_t_13 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   for (;;) {
     if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_11)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_1 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 299, __pyx_L1_error)
+    __pyx_t_1 = PyList_GET_ITEM(__pyx_t_11, __pyx_t_13); __Pyx_INCREF(__pyx_t_1); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 391, __pyx_L1_error)
     #else
-    __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 299, __pyx_L1_error)
+    __pyx_t_1 = PySequence_ITEM(__pyx_t_11, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 299, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 391, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_x, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 299, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 391, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_4);
   PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 299, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_11); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 391, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_4));
   __pyx_t_4 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":300
+  /* "lingpy/algorithm/cython/talign.pyx":392
  *     # append the rest
  *     almA += [[x for x in seqA[0:j]]]
  *     almB += [[x for x in seqB[0:i]]]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   if (unlikely(__pyx_v_seqB == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 300, __pyx_L1_error)
+    __PYX_ERR(0, 392, __pyx_L1_error)
   }
-  __pyx_t_11 = __Pyx_PyList_GetSlice(__pyx_v_seqB, 0, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_11 = __Pyx_PyList_GetSlice(__pyx_v_seqB, 0, __pyx_v_i); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __pyx_t_1 = __pyx_t_11; __Pyx_INCREF(__pyx_t_1); __pyx_t_13 = 0;
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
   for (;;) {
     if (__pyx_t_13 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_11 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_13); __Pyx_INCREF(__pyx_t_11); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 300, __pyx_L1_error)
+    __pyx_t_11 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_13); __Pyx_INCREF(__pyx_t_11); __pyx_t_13++; if (unlikely(0 < 0)) __PYX_ERR(0, 392, __pyx_L1_error)
     #else
-    __pyx_t_11 = PySequence_ITEM(__pyx_t_1, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 300, __pyx_L1_error)
+    __pyx_t_11 = PySequence_ITEM(__pyx_t_1, __pyx_t_13); __pyx_t_13++; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 300, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 392, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_x, ((PyObject*)__pyx_t_11));
     __pyx_t_11 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 300, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_v_x))) __PYX_ERR(0, 392, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_GIVEREF(__pyx_t_4);
   PyList_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
   __pyx_t_4 = 0;
-  __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 300, __pyx_L1_error)
+  __pyx_t_4 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 392, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_4));
   __pyx_t_4 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":303
+  /* "lingpy/algorithm/cython/talign.pyx":395
  * 
  *     # return alignments
  *     return almA[::-1],almB[::-1],sim             # <<<<<<<<<<<<<<
@@ -4336,13 +4336,13 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
  * def dialign(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_4 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__8); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_1 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_1 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
-  __pyx_t_9 = PyTuple_New(3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_t_9 = PyTuple_New(3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_4);
   PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_4);
@@ -4357,7 +4357,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   __pyx_t_9 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":188
+  /* "lingpy/algorithm/cython/talign.pyx":250
  *     return almA,almB,sim
  * 
  * def localign(             # <<<<<<<<<<<<<<
@@ -4384,7 +4384,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":305
+/* "lingpy/algorithm/cython/talign.pyx":397
  *     return almA[::-1],almB[::-1],sim
  * 
  * def dialign(             # <<<<<<<<<<<<<<
@@ -4394,7 +4394,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_4localign(CYTHON_UN
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_7dialign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_6dialign[] = "\n    Carry out semi-global alignment of two sequences.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_6dialign[] = "\n    Carry out dialign alignment of two sequences.\n\n    Parameters\n    ----------\n    seqA, seqB : list\n        The sequences to be aligned, passed as lists.\n    M, N : int\n        The length of the two sequences.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    \n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity score.\n\n    Notes\n    -----\n    This algorithm carries out dialign alignment \n    (:evobib:`Morgenstern1996`).\n    \n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.globalign\n    ~lingpy.algorithm.cython.talign.semi_globalign\n    ~lingpy.algorithm.cython.talign.localign\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_7dialign = {"dialign", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_7dialign, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_6dialign};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_7dialign(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqA = 0;
@@ -4430,31 +4430,31 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_7dialign(PyObject *
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seqB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 1); __PYX_ERR(0, 305, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 1); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_M)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 2); __PYX_ERR(0, 305, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 2); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_N)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 3); __PYX_ERR(0, 305, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 3); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 4); __PYX_ERR(0, 305, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 4); __PYX_ERR(0, 397, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 5); __PYX_ERR(0, 305, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, 5); __PYX_ERR(0, 397, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "dialign") < 0)) __PYX_ERR(0, 305, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "dialign") < 0)) __PYX_ERR(0, 397, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 6) {
       goto __pyx_L5_argtuple_error;
@@ -4468,21 +4468,21 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_7dialign(PyObject *
     }
     __pyx_v_seqA = ((PyObject*)values[0]);
     __pyx_v_seqB = ((PyObject*)values[1]);
-    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 308, __pyx_L3_error)
-    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 309, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 310, __pyx_L3_error)
+    __pyx_v_M = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_M == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 400, __pyx_L3_error)
+    __pyx_v_N = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_N == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 401, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L3_error)
     __pyx_v_scorer = values[5];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 305, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("dialign", 1, 6, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 397, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.dialign", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 306, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 307, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 398, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 399, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(__pyx_self, __pyx_v_seqA, __pyx_v_seqB, __pyx_v_M, __pyx_v_N, __pyx_v_scale, __pyx_v_scorer);
 
   /* function exit code */
@@ -4528,93 +4528,93 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   int __pyx_t_15;
   __Pyx_RefNannySetupContext("dialign", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":324
+  /* "lingpy/algorithm/cython/talign.pyx":444
  * 
  *     # declare lists
  *     cdef list almA = []             # <<<<<<<<<<<<<<
  *     cdef list almB = []
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 324, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 444, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almA = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":325
+  /* "lingpy/algorithm/cython/talign.pyx":445
  *     # declare lists
  *     cdef list almA = []
  *     cdef list almB = []             # <<<<<<<<<<<<<<
  * 
  *     # create matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 325, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 445, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_almB = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":328
+  /* "lingpy/algorithm/cython/talign.pyx":448
  * 
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 328, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 448, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 328, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 448, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 328, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 448, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 328, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 448, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_matrix = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":329
+  /* "lingpy/algorithm/cython/talign.pyx":449
  *     # create matrix and traceback
  *     cdef list matrix = [[0.0 for i in range(M+1)] for j in range(N+1)]
  *     cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]             # <<<<<<<<<<<<<<
  * 
  *     # modify matrix and traceback
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 329, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 449, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_2 = (__pyx_v_N + 1);
   for (__pyx_t_3 = 0; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_j = __pyx_t_3;
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 329, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 449, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_5 = (__pyx_v_M + 1);
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 329, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 449, __pyx_L1_error)
     }
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 329, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 449, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   }
   __pyx_v_traceback = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":332
+  /* "lingpy/algorithm/cython/talign.pyx":452
  * 
  *     # modify matrix and traceback
  *     traceback[0][0] = 1             # <<<<<<<<<<<<<<
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2
  */
-  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 452, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 332, __pyx_L1_error)
+  if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 452, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":333
+  /* "lingpy/algorithm/cython/talign.pyx":453
  *     # modify matrix and traceback
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -4625,20 +4625,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":334
+    /* "lingpy/algorithm/cython/talign.pyx":454
  *     traceback[0][0] = 1
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2             # <<<<<<<<<<<<<<
  *     for i in range(1,N+1):
  *         traceback[i][0] = 3
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 454, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 334, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, __pyx_v_i, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 454, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":335
+  /* "lingpy/algorithm/cython/talign.pyx":455
  *     for i in range(1,M+1):
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -4649,20 +4649,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":336
+    /* "lingpy/algorithm/cython/talign.pyx":456
  *         traceback[0][i] = 2
  *     for i in range(1,N+1):
  *         traceback[i][0] = 3             # <<<<<<<<<<<<<<
  * 
  *     # start the loop
  */
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 336, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 456, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 336, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_t_1, 0, __pyx_int_3, long, 1, __Pyx_PyInt_From_long, 0, 0, 1) < 0)) __PYX_ERR(0, 456, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":339
+  /* "lingpy/algorithm/cython/talign.pyx":459
  * 
  *     # start the loop
  *     for i in range(1,N+1):             # <<<<<<<<<<<<<<
@@ -4673,7 +4673,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   for (__pyx_t_3 = 1; __pyx_t_3 < __pyx_t_2; __pyx_t_3+=1) {
     __pyx_v_i = __pyx_t_3;
 
-    /* "lingpy/algorithm/cython/talign.pyx":340
+    /* "lingpy/algorithm/cython/talign.pyx":460
  *     # start the loop
  *     for i in range(1,N+1):
  *         for j in range(1,M+1):             # <<<<<<<<<<<<<<
@@ -4684,7 +4684,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
     for (__pyx_t_6 = 1; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
 
-      /* "lingpy/algorithm/cython/talign.pyx":343
+      /* "lingpy/algorithm/cython/talign.pyx":463
  * 
  *             # calculate costs for gapA
  *             gapA = matrix[i-1][j]             # <<<<<<<<<<<<<<
@@ -4692,33 +4692,33 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  *             # calculate costs for gapB
  */
       __pyx_t_7 = (__pyx_v_i - 1);
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 343, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 463, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 343, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 463, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 343, __pyx_L1_error)
+      __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 463, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_v_gapA = __pyx_t_8;
 
-      /* "lingpy/algorithm/cython/talign.pyx":346
+      /* "lingpy/algorithm/cython/talign.pyx":466
  * 
  *             # calculate costs for gapB
  *             gapB = matrix[i][j-1]             # <<<<<<<<<<<<<<
  * 
  *             # calculate costs for match
  */
-      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 346, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 466, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __pyx_t_7 = (__pyx_v_j - 1);
-      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 346, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_4, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 466, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 346, __pyx_L1_error)
+      __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 466, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_v_gapB = __pyx_t_8;
 
-      /* "lingpy/algorithm/cython/talign.pyx":349
+      /* "lingpy/algorithm/cython/talign.pyx":469
  * 
  *             # calculate costs for match
  *             sim = 0.0             # <<<<<<<<<<<<<<
@@ -4727,7 +4727,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       __pyx_v_sim = 0.0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":350
+      /* "lingpy/algorithm/cython/talign.pyx":470
  *             # calculate costs for match
  *             sim = 0.0
  *             o = 1             # <<<<<<<<<<<<<<
@@ -4736,7 +4736,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       __pyx_v_o = 1;
 
-      /* "lingpy/algorithm/cython/talign.pyx":351
+      /* "lingpy/algorithm/cython/talign.pyx":471
  *             sim = 0.0
  *             o = 1
  *             for k in range(min(i,j)):             # <<<<<<<<<<<<<<
@@ -4754,7 +4754,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
       for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_9; __pyx_t_11+=1) {
         __pyx_v_k = __pyx_t_11;
 
-        /* "lingpy/algorithm/cython/talign.pyx":352
+        /* "lingpy/algorithm/cython/talign.pyx":472
  *             o = 1
  *             for k in range(min(i,j)):
  *                 match = matrix[i-k-1][j-k-1]             # <<<<<<<<<<<<<<
@@ -4762,17 +4762,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  *                     # get temporary match
  */
         __pyx_t_7 = ((__pyx_v_i - __pyx_v_k) - 1);
-        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 352, __pyx_L1_error)
+        __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 472, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_t_7 = ((__pyx_v_j - __pyx_v_k) - 1);
-        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 352, __pyx_L1_error)
+        __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_1, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 0, 1, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 472, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 352, __pyx_L1_error)
+        __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 472, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
         __pyx_v_match = __pyx_t_8;
 
-        /* "lingpy/algorithm/cython/talign.pyx":353
+        /* "lingpy/algorithm/cython/talign.pyx":473
  *             for k in range(min(i,j)):
  *                 match = matrix[i-k-1][j-k-1]
  *                 for l in range(k,-1,-1):             # <<<<<<<<<<<<<<
@@ -4782,30 +4782,30 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
         for (__pyx_t_10 = __pyx_v_k; __pyx_t_10 > -1L; __pyx_t_10-=1) {
           __pyx_v_l = __pyx_t_10;
 
-          /* "lingpy/algorithm/cython/talign.pyx":355
+          /* "lingpy/algorithm/cython/talign.pyx":475
  *                 for l in range(k,-1,-1):
  *                     # get temporary match
  *                     match += scorer[seqA[j-l-1],seqB[i-l-1]]             # <<<<<<<<<<<<<<
  * 
  *                 p = k+1
  */
-          __pyx_t_4 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_4 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           if (unlikely(__pyx_v_seqA == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 355, __pyx_L1_error)
+            __PYX_ERR(0, 475, __pyx_L1_error)
           }
           __pyx_t_7 = ((__pyx_v_j - __pyx_v_l) - 1);
-          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           if (unlikely(__pyx_v_seqB == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 355, __pyx_L1_error)
+            __PYX_ERR(0, 475, __pyx_L1_error)
           }
           __pyx_t_7 = ((__pyx_v_i - __pyx_v_l) - 1);
-          __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_7, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_12);
-          __pyx_t_13 = PyTuple_New(2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_13 = PyTuple_New(2); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_13);
           __Pyx_GIVEREF(__pyx_t_1);
           PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_1);
@@ -4813,19 +4813,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
           PyTuple_SET_ITEM(__pyx_t_13, 1, __pyx_t_12);
           __pyx_t_1 = 0;
           __pyx_t_12 = 0;
-          __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_13); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_13); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_12);
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-          __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_t_4, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_13);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-          __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_13); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 355, __pyx_L1_error)
+          __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_13); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 475, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
           __pyx_v_match = __pyx_t_8;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":357
+        /* "lingpy/algorithm/cython/talign.pyx":477
  *                     match += scorer[seqA[j-l-1],seqB[i-l-1]]
  * 
  *                 p = k+1             # <<<<<<<<<<<<<<
@@ -4834,7 +4834,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
         __pyx_v_p = (__pyx_v_k + 1);
 
-        /* "lingpy/algorithm/cython/talign.pyx":358
+        /* "lingpy/algorithm/cython/talign.pyx":478
  * 
  *                 p = k+1
  *                 if match > sim:             # <<<<<<<<<<<<<<
@@ -4844,7 +4844,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
         __pyx_t_14 = ((__pyx_v_match > __pyx_v_sim) != 0);
         if (__pyx_t_14) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":359
+          /* "lingpy/algorithm/cython/talign.pyx":479
  *                 p = k+1
  *                 if match > sim:
  *                     sim = match             # <<<<<<<<<<<<<<
@@ -4853,7 +4853,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
           __pyx_v_sim = __pyx_v_match;
 
-          /* "lingpy/algorithm/cython/talign.pyx":360
+          /* "lingpy/algorithm/cython/talign.pyx":480
  *                 if match > sim:
  *                     sim = match
  *                     o = p             # <<<<<<<<<<<<<<
@@ -4862,7 +4862,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
           __pyx_v_o = __pyx_v_p;
 
-          /* "lingpy/algorithm/cython/talign.pyx":358
+          /* "lingpy/algorithm/cython/talign.pyx":478
  * 
  *                 p = k+1
  *                 if match > sim:             # <<<<<<<<<<<<<<
@@ -4872,7 +4872,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
         }
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":363
+      /* "lingpy/algorithm/cython/talign.pyx":483
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -4890,34 +4890,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
       __pyx_L25_bool_binop_done:;
       if (__pyx_t_14) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":364
+        /* "lingpy/algorithm/cython/talign.pyx":484
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  */
-        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_gapA); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 484, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 364, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 484, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 364, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 484, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":365
+        /* "lingpy/algorithm/cython/talign.pyx":485
  *             if gapA > match and gapA >= gapB:
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3             # <<<<<<<<<<<<<<
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  */
-        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 365, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 485, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 365, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_3, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 485, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":363
+        /* "lingpy/algorithm/cython/talign.pyx":483
  * 
  *             # determine minimal cost
  *             if gapA > match and gapA >= gapB:             # <<<<<<<<<<<<<<
@@ -4927,7 +4927,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
         goto __pyx_L24;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":366
+      /* "lingpy/algorithm/cython/talign.pyx":486
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -4937,34 +4937,34 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
       __pyx_t_14 = ((__pyx_v_match >= __pyx_v_gapB) != 0);
       if (__pyx_t_14) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":367
+        /* "lingpy/algorithm/cython/talign.pyx":487
  *                 traceback[i][j] = 3
  *             elif match >= gapB:
  *                 matrix[i][j] = match             # <<<<<<<<<<<<<<
  *                 traceback[i][j] = 1
  *             else:
  */
-        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_match); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 487, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 367, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 487, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 367, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 487, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":368
+        /* "lingpy/algorithm/cython/talign.pyx":488
  *             elif match >= gapB:
  *                 matrix[i][j] = match
  *                 traceback[i][j] = 1             # <<<<<<<<<<<<<<
  *             else:
  *                 matrix[i][j] = gapB
  */
-        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 368, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 488, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 368, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_1, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 488, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":366
+        /* "lingpy/algorithm/cython/talign.pyx":486
  *                 matrix[i][j] = gapA
  *                 traceback[i][j] = 3
  *             elif match >= gapB:             # <<<<<<<<<<<<<<
@@ -4974,7 +4974,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
         goto __pyx_L24;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":370
+      /* "lingpy/algorithm/cython/talign.pyx":490
  *                 traceback[i][j] = 1
  *             else:
  *                 matrix[i][j] = gapB             # <<<<<<<<<<<<<<
@@ -4982,47 +4982,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  * 
  */
       /*else*/ {
-        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 370, __pyx_L1_error)
+        __pyx_t_13 = PyFloat_FromDouble(__pyx_v_gapB); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 490, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 370, __pyx_L1_error)
+        __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 490, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 370, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_12, __pyx_v_j, __pyx_t_13, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 490, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":371
+        /* "lingpy/algorithm/cython/talign.pyx":491
  *             else:
  *                 matrix[i][j] = gapB
  *                 traceback[i][j] = 2             # <<<<<<<<<<<<<<
  * 
  *     # get the similarity
  */
-        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 371, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 491, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 371, __pyx_L1_error)
+        if (unlikely(__Pyx_SetItemInt(__pyx_t_13, __pyx_v_j, __pyx_int_2, int, 1, __Pyx_PyInt_From_int, 0, 1, 1) < 0)) __PYX_ERR(0, 491, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       }
       __pyx_L24:;
     }
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":374
+  /* "lingpy/algorithm/cython/talign.pyx":494
  * 
  *     # get the similarity
  *     sim = matrix[N][M]             # <<<<<<<<<<<<<<
  * 
  *     # carry out the traceback
  */
-  __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_matrix, __pyx_v_N, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_13);
-  __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_13, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_13, __pyx_v_M, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_12);
   __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_12); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 374, __pyx_L1_error)
+  __pyx_t_8 = __pyx_PyFloat_AsFloat(__pyx_t_12); if (unlikely((__pyx_t_8 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 494, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
   __pyx_v_sim = __pyx_t_8;
 
-  /* "lingpy/algorithm/cython/talign.pyx":377
+  /* "lingpy/algorithm/cython/talign.pyx":497
  * 
  *     # carry out the traceback
  *     while i > 0 or j > 0:             # <<<<<<<<<<<<<<
@@ -5041,44 +5041,44 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
     __pyx_L29_bool_binop_done:;
     if (!__pyx_t_14) break;
 
-    /* "lingpy/algorithm/cython/talign.pyx":378
+    /* "lingpy/algorithm/cython/talign.pyx":498
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 378, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 498, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
-    __pyx_t_13 = __Pyx_GetItemInt(__pyx_t_12, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 378, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_GetItemInt(__pyx_t_12, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 498, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_13);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_12 = __Pyx_PyInt_EqObjC(__pyx_t_13, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 378, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyInt_EqObjC(__pyx_t_13, __pyx_int_3, 3, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 498, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 378, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_12); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 498, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
     if (__pyx_t_14) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":379
+      /* "lingpy/algorithm/cython/talign.pyx":499
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:
  *             almA += ['-']             # <<<<<<<<<<<<<<
  *             almB += [seqB[i-1]]
  *             i -= 1
  */
-      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 379, __pyx_L1_error)
+      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 499, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_12, 0, __pyx_kp_s_);
-      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 379, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 499, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":380
+      /* "lingpy/algorithm/cython/talign.pyx":500
  *         if traceback[i][j] == 3:
  *             almA += ['-']
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -5087,23 +5087,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 380, __pyx_L1_error)
+        __PYX_ERR(0, 500, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 380, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 500, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
-      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 380, __pyx_L1_error)
+      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 500, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_GIVEREF(__pyx_t_13);
       PyList_SET_ITEM(__pyx_t_12, 0, __pyx_t_13);
       __pyx_t_13 = 0;
-      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 380, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 500, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":381
+      /* "lingpy/algorithm/cython/talign.pyx":501
  *             almA += ['-']
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -5112,7 +5112,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":378
+      /* "lingpy/algorithm/cython/talign.pyx":498
  *     # carry out the traceback
  *     while i > 0 or j > 0:
  *         if traceback[i][j] == 3:             # <<<<<<<<<<<<<<
@@ -5122,26 +5122,26 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
       goto __pyx_L31;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":382
+    /* "lingpy/algorithm/cython/talign.pyx":502
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  */
-    __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 382, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_traceback, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_13);
-    __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_13, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 382, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_GetItemInt(__pyx_t_13, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_12);
     __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-    __pyx_t_13 = __Pyx_PyInt_EqObjC(__pyx_t_12, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 382, __pyx_L1_error)
+    __pyx_t_13 = __Pyx_PyInt_EqObjC(__pyx_t_12, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_13);
     __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_13); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 382, __pyx_L1_error)
+    __pyx_t_14 = __Pyx_PyObject_IsTrue(__pyx_t_13); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 502, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
     if (__pyx_t_14) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":383
+      /* "lingpy/algorithm/cython/talign.pyx":503
  *             i -= 1
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -5150,23 +5150,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 383, __pyx_L1_error)
+        __PYX_ERR(0, 503, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 383, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 503, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
-      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 383, __pyx_L1_error)
+      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 503, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_GIVEREF(__pyx_t_13);
       PyList_SET_ITEM(__pyx_t_12, 0, __pyx_t_13);
       __pyx_t_13 = 0;
-      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 383, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 503, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":384
+      /* "lingpy/algorithm/cython/talign.pyx":504
  *         elif traceback[i][j] == 1:
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]             # <<<<<<<<<<<<<<
@@ -5175,23 +5175,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 384, __pyx_L1_error)
+        __PYX_ERR(0, 504, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_i - 1);
-      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 384, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 504, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
-      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 384, __pyx_L1_error)
+      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 504, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_GIVEREF(__pyx_t_13);
       PyList_SET_ITEM(__pyx_t_12, 0, __pyx_t_13);
       __pyx_t_13 = 0;
-      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 384, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 504, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":385
+      /* "lingpy/algorithm/cython/talign.pyx":505
  *             almA += [seqA[j-1]]
  *             almB += [seqB[i-1]]
  *             i -= 1             # <<<<<<<<<<<<<<
@@ -5200,7 +5200,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       __pyx_v_i = (__pyx_v_i - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":386
+      /* "lingpy/algorithm/cython/talign.pyx":506
  *             almB += [seqB[i-1]]
  *             i -= 1
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -5209,7 +5209,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  */
       __pyx_v_j = (__pyx_v_j - 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":382
+      /* "lingpy/algorithm/cython/talign.pyx":502
  *             almB += [seqB[i-1]]
  *             i -= 1
  *         elif traceback[i][j] == 1:             # <<<<<<<<<<<<<<
@@ -5219,7 +5219,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
       goto __pyx_L31;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":388
+    /* "lingpy/algorithm/cython/talign.pyx":508
  *             j -= 1
  *         else:
  *             almA += [seqA[j-1]]             # <<<<<<<<<<<<<<
@@ -5229,41 +5229,41 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
     /*else*/ {
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 388, __pyx_L1_error)
+        __PYX_ERR(0, 508, __pyx_L1_error)
       }
       __pyx_t_2 = (__pyx_v_j - 1);
-      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 388, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_t_2, long, 1, __Pyx_PyInt_From_long, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 508, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
-      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 388, __pyx_L1_error)
+      __pyx_t_12 = PyList_New(1); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 508, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_GIVEREF(__pyx_t_13);
       PyList_SET_ITEM(__pyx_t_12, 0, __pyx_t_13);
       __pyx_t_13 = 0;
-      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 388, __pyx_L1_error)
+      __pyx_t_13 = PyNumber_InPlaceAdd(__pyx_v_almA, __pyx_t_12); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 508, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_13));
       __pyx_t_13 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":389
+      /* "lingpy/algorithm/cython/talign.pyx":509
  *         else:
  *             almA += [seqA[j-1]]
  *             almB += ['-']             # <<<<<<<<<<<<<<
  *             j -= 1
  * 
  */
-      __pyx_t_13 = PyList_New(1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_13 = PyList_New(1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 509, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_INCREF(__pyx_kp_s_);
       __Pyx_GIVEREF(__pyx_kp_s_);
       PyList_SET_ITEM(__pyx_t_13, 0, __pyx_kp_s_);
-      __pyx_t_12 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_13); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 389, __pyx_L1_error)
+      __pyx_t_12 = PyNumber_InPlaceAdd(__pyx_v_almB, __pyx_t_13); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 509, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_12));
       __pyx_t_12 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":390
+      /* "lingpy/algorithm/cython/talign.pyx":510
  *             almA += [seqA[j-1]]
  *             almB += ['-']
  *             j -= 1             # <<<<<<<<<<<<<<
@@ -5275,23 +5275,23 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
     __pyx_L31:;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":393
+  /* "lingpy/algorithm/cython/talign.pyx":513
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_t_12 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__10); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_12 = PyObject_GetItem(__pyx_v_almA, __pyx_slice__10); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_12);
-  __pyx_t_13 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_t_13 = PyObject_GetItem(__pyx_v_almB, __pyx_slice__11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_13);
   __Pyx_DECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_12));
   __pyx_t_12 = 0;
   __Pyx_DECREF_SET(__pyx_v_almB, ((PyObject*)__pyx_t_13));
   __pyx_t_13 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":396
+  /* "lingpy/algorithm/cython/talign.pyx":516
  * 
  *     # return alignments
  *     return almA,almB,sim             # <<<<<<<<<<<<<<
@@ -5299,9 +5299,9 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
  * def align_pair(
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_13 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __pyx_t_13 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 516, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_13);
-  __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 396, __pyx_L1_error)
+  __pyx_t_12 = PyTuple_New(3); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 516, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_12);
   __Pyx_INCREF(__pyx_v_almA);
   __Pyx_GIVEREF(__pyx_v_almA);
@@ -5316,7 +5316,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   __pyx_t_12 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":305
+  /* "lingpy/algorithm/cython/talign.pyx":397
  *     return almA[::-1],almB[::-1],sim
  * 
  * def dialign(             # <<<<<<<<<<<<<<
@@ -5342,7 +5342,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":398
+/* "lingpy/algorithm/cython/talign.pyx":518
  *     return almA,almB,sim
  * 
  * def align_pair(             # <<<<<<<<<<<<<<
@@ -5352,7 +5352,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_6dialign(CYTHON_UNU
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_8align_pair[] = "\n    Align a pair of sequences.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_8align_pair[] = "\n    Align a pair of sequences.\n\n    Parameters\n    ----------\n    seqA, seqB : list\n        The sequences to be aligned, passed as lists.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    mode : { \"global\", \"local\", \"overlap\", \"dialign\" }\n        Select the mode for the alignment analysis (\"overlap\" refers to\n        semi-global alignments).\n    distance : int (default=0)\n        Select whether you want distances or similarities to be returned (0\n        indicates similarities, 1 indicates distances, 2 indicates both).\n\n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity score.\n\n    Notes\n    -----\n    This is a utility function that allows calls any of the four classical\n    alignment functions (:py:class:`lingpy.algorithm.cython.talign.globalign`\n    :py:class:`lingpy.algorithm.cython.talign.semi_globalign`,\n    :py:class:`lingpy.algorithm.cython.talign.lotalign`,\n    :py:class:`lingpy.algorithm.cython.talign.dialign`,) and their secondary counterparts.\n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.align_pairwise\n    ~lingpy.algorithm.cython.talign.align_pairs\n\n    Returns\n    -------\n    alignment : tuple\n        The aligned sequences and the similarity or distance scores, or both.\n\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_9align_pair = {"align_pair", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_8align_pair};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqA = 0;
@@ -5390,27 +5390,27 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair(PyObjec
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_seqB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 1); __PYX_ERR(0, 398, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 1); __PYX_ERR(0, 518, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 2); __PYX_ERR(0, 398, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 2); __PYX_ERR(0, 518, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 3); __PYX_ERR(0, 398, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 3); __PYX_ERR(0, 518, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 4); __PYX_ERR(0, 398, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 4); __PYX_ERR(0, 518, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mode)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 5); __PYX_ERR(0, 398, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, 5); __PYX_ERR(0, 518, __pyx_L3_error)
         }
         case  6:
         if (kw_args > 0) {
@@ -5419,7 +5419,7 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair(PyObjec
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pair") < 0)) __PYX_ERR(0, 398, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pair") < 0)) __PYX_ERR(0, 518, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -5436,27 +5436,27 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_9align_pair(PyObjec
     }
     __pyx_v_seqA = ((PyObject*)values[0]);
     __pyx_v_seqB = ((PyObject*)values[1]);
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 401, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 402, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 521, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 522, __pyx_L3_error)
     __pyx_v_scorer = values[4];
     __pyx_v_mode = ((PyObject*)values[5]);
     if (values[6]) {
-      __pyx_v_distance = __Pyx_PyInt_As_int(values[6]); if (unlikely((__pyx_v_distance == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 405, __pyx_L3_error)
+      __pyx_v_distance = __Pyx_PyInt_As_int(values[6]); if (unlikely((__pyx_v_distance == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 525, __pyx_L3_error)
     } else {
       __pyx_v_distance = ((int)0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 398, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("align_pair", 0, 6, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 518, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.align_pair", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 399, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 400, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 404, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqA), (&PyList_Type), 1, "seqA", 1))) __PYX_ERR(0, 519, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqB), (&PyList_Type), 1, "seqB", 1))) __PYX_ERR(0, 520, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 524, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(__pyx_self, __pyx_v_seqA, __pyx_v_seqB, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer, __pyx_v_mode, __pyx_v_distance);
 
   /* function exit code */
@@ -5498,7 +5498,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
   float __pyx_t_16;
   __Pyx_RefNannySetupContext("align_pair", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":416
+  /* "lingpy/algorithm/cython/talign.pyx":578
  * 
  *     # get length of seqA,seqB
  *     cdef int M = len(seqA)             # <<<<<<<<<<<<<<
@@ -5507,12 +5507,12 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
   if (unlikely(__pyx_v_seqA == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 416, __pyx_L1_error)
+    __PYX_ERR(0, 578, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 416, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 578, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":417
+  /* "lingpy/algorithm/cython/talign.pyx":579
  *     # get length of seqA,seqB
  *     cdef int M = len(seqA)
  *     cdef int N = len(seqB)             # <<<<<<<<<<<<<<
@@ -5521,73 +5521,73 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
   if (unlikely(__pyx_v_seqB == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 417, __pyx_L1_error)
+    __PYX_ERR(0, 579, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_seqB); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 417, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_seqB); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 579, __pyx_L1_error)
   __pyx_v_N = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":420
+  /* "lingpy/algorithm/cython/talign.pyx":582
  * 
  *     # determine the mode
  *     if mode == "global":             # <<<<<<<<<<<<<<
  * 
  *         # carry out the alignment
  */
-  __pyx_t_2 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 420, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 582, __pyx_L1_error)
   __pyx_t_3 = (__pyx_t_2 != 0);
   if (__pyx_t_3) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":423
+    /* "lingpy/algorithm/cython/talign.pyx":585
  * 
  *         # carry out the alignment
  *         almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 423, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 585, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "lingpy/algorithm/cython/talign.pyx":426
+    /* "lingpy/algorithm/cython/talign.pyx":588
  *                 seqA,
  *                 seqB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 gop,
  */
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 426, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 588, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
 
-    /* "lingpy/algorithm/cython/talign.pyx":427
+    /* "lingpy/algorithm/cython/talign.pyx":589
  *                 seqB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 gop,
  *                 scale,
  */
-    __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 427, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 589, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
 
-    /* "lingpy/algorithm/cython/talign.pyx":428
+    /* "lingpy/algorithm/cython/talign.pyx":590
  *                 M,
  *                 N,
  *                 gop,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 scorer
  */
-    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 428, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 590, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "lingpy/algorithm/cython/talign.pyx":429
+    /* "lingpy/algorithm/cython/talign.pyx":591
  *                 N,
  *                 gop,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 scorer
  *                 )
  */
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 429, __pyx_L1_error)
+    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 591, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
 
-    /* "lingpy/algorithm/cython/talign.pyx":431
+    /* "lingpy/algorithm/cython/talign.pyx":593
  *                 scale,
  *                 scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -5606,7 +5606,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_11 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 423, __pyx_L1_error)
+    __pyx_t_11 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 585, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     if (__pyx_t_10) {
       __Pyx_GIVEREF(__pyx_t_10); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_10); __pyx_t_10 = NULL;
@@ -5632,7 +5632,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_7 = 0;
     __pyx_t_8 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_11, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 423, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_11, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 585, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -5646,7 +5646,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 423, __pyx_L1_error)
+        __PYX_ERR(0, 585, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -5662,17 +5662,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_INCREF(__pyx_t_11);
       __Pyx_INCREF(__pyx_t_9);
       #else
-      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 423, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 585, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_11 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 423, __pyx_L1_error)
+      __pyx_t_11 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 585, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_9 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 423, __pyx_L1_error)
+      __pyx_t_9 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 585, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 423, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 585, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_12 = Py_TYPE(__pyx_t_8)->tp_iternext;
@@ -5682,7 +5682,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_GOTREF(__pyx_t_11);
       index = 2; __pyx_t_9 = __pyx_t_12(__pyx_t_8); if (unlikely(!__pyx_t_9)) goto __pyx_L4_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_9);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 423, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 585, __pyx_L1_error)
       __pyx_t_12 = NULL;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L5_unpacking_done;
@@ -5690,20 +5690,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_12 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 423, __pyx_L1_error)
+      __PYX_ERR(0, 585, __pyx_L1_error)
       __pyx_L5_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":423
+    /* "lingpy/algorithm/cython/talign.pyx":585
  * 
  *         # carry out the alignment
  *         almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 423, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 423, __pyx_L1_error)
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 423, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 585, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_11))||((__pyx_t_11) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_11)->tp_name), 0))) __PYX_ERR(0, 585, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 585, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_5);
     __pyx_t_5 = 0;
@@ -5711,7 +5711,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_11 = 0;
     __pyx_v_sim = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":420
+    /* "lingpy/algorithm/cython/talign.pyx":582
  * 
  *     # determine the mode
  *     if mode == "global":             # <<<<<<<<<<<<<<
@@ -5721,68 +5721,68 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     goto __pyx_L3;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":433
+  /* "lingpy/algorithm/cython/talign.pyx":595
  *                 )
  * 
  *     elif mode == "local":             # <<<<<<<<<<<<<<
  * 
  *         # carry out the alignment
  */
-  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 433, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 595, __pyx_L1_error)
   __pyx_t_2 = (__pyx_t_3 != 0);
   if (__pyx_t_2) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":436
+    /* "lingpy/algorithm/cython/talign.pyx":598
  * 
  *         # carry out the alignment
  *         almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 436, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 598, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
 
-    /* "lingpy/algorithm/cython/talign.pyx":439
+    /* "lingpy/algorithm/cython/talign.pyx":601
  *                 seqA,
  *                 seqB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 gop,
  */
-    __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 439, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 601, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
 
-    /* "lingpy/algorithm/cython/talign.pyx":440
+    /* "lingpy/algorithm/cython/talign.pyx":602
  *                 seqB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 gop,
  *                 scale,
  */
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 440, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 602, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "lingpy/algorithm/cython/talign.pyx":441
+    /* "lingpy/algorithm/cython/talign.pyx":603
  *                 M,
  *                 N,
  *                 gop,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 scorer
  */
-    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 441, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 603, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "lingpy/algorithm/cython/talign.pyx":442
+    /* "lingpy/algorithm/cython/talign.pyx":604
  *                 N,
  *                 gop,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 scorer
  *                 )
  */
-    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 442, __pyx_L1_error)
+    __pyx_t_7 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 604, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
 
-    /* "lingpy/algorithm/cython/talign.pyx":444
+    /* "lingpy/algorithm/cython/talign.pyx":606
  *                 scale,
  *                 scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -5801,7 +5801,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_10 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 436, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 598, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     if (__pyx_t_6) {
       __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -5827,7 +5827,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_5 = 0;
     __pyx_t_8 = 0;
     __pyx_t_7 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 436, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 598, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
@@ -5841,7 +5841,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 436, __pyx_L1_error)
+        __PYX_ERR(0, 598, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -5857,17 +5857,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_INCREF(__pyx_t_10);
       __Pyx_INCREF(__pyx_t_7);
       #else
-      __pyx_t_9 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 436, __pyx_L1_error)
+      __pyx_t_9 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 598, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
-      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 436, __pyx_L1_error)
+      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 598, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_7 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L1_error)
+      __pyx_t_7 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 598, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 436, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 598, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_12 = Py_TYPE(__pyx_t_8)->tp_iternext;
@@ -5877,7 +5877,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_GOTREF(__pyx_t_10);
       index = 2; __pyx_t_7 = __pyx_t_12(__pyx_t_8); if (unlikely(!__pyx_t_7)) goto __pyx_L6_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_7);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 436, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 598, __pyx_L1_error)
       __pyx_t_12 = NULL;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L7_unpacking_done;
@@ -5885,20 +5885,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_12 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 436, __pyx_L1_error)
+      __PYX_ERR(0, 598, __pyx_L1_error)
       __pyx_L7_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":436
+    /* "lingpy/algorithm/cython/talign.pyx":598
  * 
  *         # carry out the alignment
  *         almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 436, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 436, __pyx_L1_error)
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 436, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 598, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 598, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 598, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_9);
     __pyx_t_9 = 0;
@@ -5906,7 +5906,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_10 = 0;
     __pyx_v_sim = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":433
+    /* "lingpy/algorithm/cython/talign.pyx":595
  *                 )
  * 
  *     elif mode == "local":             # <<<<<<<<<<<<<<
@@ -5916,68 +5916,68 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     goto __pyx_L3;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":446
+  /* "lingpy/algorithm/cython/talign.pyx":608
  *                 )
  * 
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
  * 
  *         # carry out the alignment
  */
-  __pyx_t_2 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 446, __pyx_L1_error)
+  __pyx_t_2 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_2 < 0)) __PYX_ERR(0, 608, __pyx_L1_error)
   __pyx_t_3 = (__pyx_t_2 != 0);
   if (__pyx_t_3) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":449
+    /* "lingpy/algorithm/cython/talign.pyx":611
  * 
  *         # carry out the alignment
  *         almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 611, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
 
-    /* "lingpy/algorithm/cython/talign.pyx":452
+    /* "lingpy/algorithm/cython/talign.pyx":614
  *                 seqA,
  *                 seqB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 gop,
  */
-    __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 452, __pyx_L1_error)
+    __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 614, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
 
-    /* "lingpy/algorithm/cython/talign.pyx":453
+    /* "lingpy/algorithm/cython/talign.pyx":615
  *                 seqB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 gop,
  *                 scale,
  */
-    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 453, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 615, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
 
-    /* "lingpy/algorithm/cython/talign.pyx":454
+    /* "lingpy/algorithm/cython/talign.pyx":616
  *                 M,
  *                 N,
  *                 gop,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 scorer
  */
-    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 454, __pyx_L1_error)
+    __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 616, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "lingpy/algorithm/cython/talign.pyx":455
+    /* "lingpy/algorithm/cython/talign.pyx":617
  *                 N,
  *                 gop,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 scorer
  *                 )
  */
-    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 455, __pyx_L1_error)
+    __pyx_t_5 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 617, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "lingpy/algorithm/cython/talign.pyx":457
+    /* "lingpy/algorithm/cython/talign.pyx":619
  *                 scale,
  *                 scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -5996,7 +5996,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_6 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 611, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (__pyx_t_11) {
       __Pyx_GIVEREF(__pyx_t_11); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_11); __pyx_t_11 = NULL;
@@ -6022,7 +6022,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_9 = 0;
     __pyx_t_8 = 0;
     __pyx_t_5 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 449, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_6, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 611, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -6036,7 +6036,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 449, __pyx_L1_error)
+        __PYX_ERR(0, 611, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -6052,17 +6052,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_INCREF(__pyx_t_6);
       __Pyx_INCREF(__pyx_t_5);
       #else
-      __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 449, __pyx_L1_error)
+      __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 449, __pyx_L1_error)
+      __pyx_t_6 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 449, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 449, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 611, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_12 = Py_TYPE(__pyx_t_8)->tp_iternext;
@@ -6072,7 +6072,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_GOTREF(__pyx_t_6);
       index = 2; __pyx_t_5 = __pyx_t_12(__pyx_t_8); if (unlikely(!__pyx_t_5)) goto __pyx_L8_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_5);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 449, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_8), 3) < 0) __PYX_ERR(0, 611, __pyx_L1_error)
       __pyx_t_12 = NULL;
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       goto __pyx_L9_unpacking_done;
@@ -6080,20 +6080,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_12 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 449, __pyx_L1_error)
+      __PYX_ERR(0, 611, __pyx_L1_error)
       __pyx_L9_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":449
+    /* "lingpy/algorithm/cython/talign.pyx":611
  * 
  *         # carry out the alignment
  *         almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 449, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 449, __pyx_L1_error)
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 449, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 611, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 611, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 611, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_7);
     __pyx_t_7 = 0;
@@ -6101,7 +6101,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_6 = 0;
     __pyx_v_sim = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":446
+    /* "lingpy/algorithm/cython/talign.pyx":608
  *                 )
  * 
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
@@ -6111,58 +6111,58 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     goto __pyx_L3;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":459
+  /* "lingpy/algorithm/cython/talign.pyx":621
  *                 )
  * 
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
  *         almA,almB,sim = dialign(
  *                 seqA,
  */
-  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 459, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_3 < 0)) __PYX_ERR(0, 621, __pyx_L1_error)
   __pyx_t_2 = (__pyx_t_3 != 0);
   if (__pyx_t_2) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":460
+    /* "lingpy/algorithm/cython/talign.pyx":622
  * 
  *     elif mode == "dialign":
  *         almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 460, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 622, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
 
-    /* "lingpy/algorithm/cython/talign.pyx":463
+    /* "lingpy/algorithm/cython/talign.pyx":625
  *                 seqA,
  *                 seqB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 scale,
  */
-    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 463, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 625, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
 
-    /* "lingpy/algorithm/cython/talign.pyx":464
+    /* "lingpy/algorithm/cython/talign.pyx":626
  *                 seqB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 scorer
  */
-    __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 464, __pyx_L1_error)
+    __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 626, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_7);
 
-    /* "lingpy/algorithm/cython/talign.pyx":465
+    /* "lingpy/algorithm/cython/talign.pyx":627
  *                 M,
  *                 N,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 scorer
  *                 )
  */
-    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 465, __pyx_L1_error)
+    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 627, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
 
-    /* "lingpy/algorithm/cython/talign.pyx":467
+    /* "lingpy/algorithm/cython/talign.pyx":629
  *                 scale,
  *                 scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -6181,7 +6181,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_10 = PyTuple_New(6+__pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 460, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(6+__pyx_t_1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 622, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     if (__pyx_t_9) {
       __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -6204,7 +6204,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_6 = 0;
     __pyx_t_7 = 0;
     __pyx_t_8 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 460, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 622, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -6218,7 +6218,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 460, __pyx_L1_error)
+        __PYX_ERR(0, 622, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -6234,17 +6234,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_INCREF(__pyx_t_10);
       __Pyx_INCREF(__pyx_t_8);
       #else
-      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 460, __pyx_L1_error)
+      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 622, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 460, __pyx_L1_error)
+      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 622, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_8 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 460, __pyx_L1_error)
+      __pyx_t_8 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 622, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       #endif
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 460, __pyx_L1_error)
+      __pyx_t_7 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 622, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __pyx_t_12 = Py_TYPE(__pyx_t_7)->tp_iternext;
@@ -6254,7 +6254,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_GOTREF(__pyx_t_10);
       index = 2; __pyx_t_8 = __pyx_t_12(__pyx_t_7); if (unlikely(!__pyx_t_8)) goto __pyx_L10_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_8);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_7), 3) < 0) __PYX_ERR(0, 460, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_7), 3) < 0) __PYX_ERR(0, 622, __pyx_L1_error)
       __pyx_t_12 = NULL;
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       goto __pyx_L11_unpacking_done;
@@ -6262,20 +6262,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       __pyx_t_12 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 460, __pyx_L1_error)
+      __PYX_ERR(0, 622, __pyx_L1_error)
       __pyx_L11_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":460
+    /* "lingpy/algorithm/cython/talign.pyx":622
  * 
  *     elif mode == "dialign":
  *         almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                 seqA,
  *                 seqB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 460, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 460, __pyx_L1_error)
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 460, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 622, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 622, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 622, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_5);
     __pyx_t_5 = 0;
@@ -6283,7 +6283,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_10 = 0;
     __pyx_v_sim = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":459
+    /* "lingpy/algorithm/cython/talign.pyx":621
  *                 )
  * 
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
@@ -6293,7 +6293,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
   }
   __pyx_L3:;
 
-  /* "lingpy/algorithm/cython/talign.pyx":470
+  /* "lingpy/algorithm/cython/talign.pyx":632
  * 
  *     # calculate distance, if this is needed
  *     if distance > 0:             # <<<<<<<<<<<<<<
@@ -6303,31 +6303,31 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
   __pyx_t_2 = ((__pyx_v_distance > 0) != 0);
   if (__pyx_t_2) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":471
+    /* "lingpy/algorithm/cython/talign.pyx":633
  *     # calculate distance, if this is needed
  *     if distance > 0:
  *         simA = sum([scorer[seqA[i],seqA[i]] for i in range(M)])             # <<<<<<<<<<<<<<
  *         simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])
  * 
  */
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 633, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_14 = __pyx_v_M;
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
       __pyx_v_i = __pyx_t_15;
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 471, __pyx_L1_error)
+        __PYX_ERR(0, 633, __pyx_L1_error)
       }
-      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 471, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 633, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 471, __pyx_L1_error)
+        __PYX_ERR(0, 633, __pyx_L1_error)
       }
-      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 471, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 633, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
-      __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 471, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 633, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_8);
       PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_8);
@@ -6335,49 +6335,49 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_10);
       __pyx_t_8 = 0;
       __pyx_t_10 = 0;
-      __pyx_t_10 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 471, __pyx_L1_error)
+      __pyx_t_10 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 633, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_10))) __PYX_ERR(0, 471, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_10))) __PYX_ERR(0, 633, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
     }
-    __pyx_t_10 = PyTuple_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_10 = PyTuple_New(1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 633, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_10);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_10, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_10, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 633, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 471, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 633, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_simA = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":472
+    /* "lingpy/algorithm/cython/talign.pyx":634
  *     if distance > 0:
  *         simA = sum([scorer[seqA[i],seqA[i]] for i in range(M)])
  *         simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])             # <<<<<<<<<<<<<<
  * 
  *         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  */
-    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_14 = __pyx_v_N;
     for (__pyx_t_15 = 0; __pyx_t_15 < __pyx_t_14; __pyx_t_15+=1) {
       __pyx_v_i = __pyx_t_15;
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 472, __pyx_L1_error)
+        __PYX_ERR(0, 634, __pyx_L1_error)
       }
-      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 472, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
       if (unlikely(__pyx_v_seqB == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 472, __pyx_L1_error)
+        __PYX_ERR(0, 634, __pyx_L1_error)
       }
-      __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 472, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 472, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_GIVEREF(__pyx_t_10);
       PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_10);
@@ -6385,25 +6385,25 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       PyTuple_SET_ITEM(__pyx_t_8, 1, __pyx_t_5);
       __pyx_t_10 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_5 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 472, __pyx_L1_error)
+      __pyx_t_5 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_8); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 472, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 634, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
-    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 634, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_5, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_5, NULL); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 634, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 472, __pyx_L1_error)
+    __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_4); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 634, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __pyx_v_simB = __pyx_t_13;
 
-    /* "lingpy/algorithm/cython/talign.pyx":474
+    /* "lingpy/algorithm/cython/talign.pyx":636
  *         simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])
  * 
  *         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )             # <<<<<<<<<<<<<<
@@ -6414,11 +6414,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_16 = (__pyx_v_simA + __pyx_v_simB);
     if (unlikely(__pyx_t_16 == 0)) {
       PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-      __PYX_ERR(0, 474, __pyx_L1_error)
+      __PYX_ERR(0, 636, __pyx_L1_error)
     }
     __pyx_v_dist = (1.0 - (__pyx_t_13 / __pyx_t_16));
 
-    /* "lingpy/algorithm/cython/talign.pyx":475
+    /* "lingpy/algorithm/cython/talign.pyx":637
  * 
  *         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *         if distance == 1:             # <<<<<<<<<<<<<<
@@ -6428,7 +6428,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     __pyx_t_2 = ((__pyx_v_distance == 1) != 0);
     if (__pyx_t_2) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":476
+      /* "lingpy/algorithm/cython/talign.pyx":638
  *         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *         if distance == 1:
  *             return almA,almB,dist             # <<<<<<<<<<<<<<
@@ -6436,11 +6436,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  *             return almA,almB,sim,dist
  */
       __Pyx_XDECREF(__pyx_r);
-      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 476, __pyx_L1_error) }
-      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 476, __pyx_L1_error) }
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 476, __pyx_L1_error)
+      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 638, __pyx_L1_error) }
+      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 638, __pyx_L1_error) }
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 476, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 638, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_v_almA);
       __Pyx_GIVEREF(__pyx_v_almA);
@@ -6455,7 +6455,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       __pyx_t_5 = 0;
       goto __pyx_L0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":475
+      /* "lingpy/algorithm/cython/talign.pyx":637
  * 
  *         dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *         if distance == 1:             # <<<<<<<<<<<<<<
@@ -6464,7 +6464,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":478
+    /* "lingpy/algorithm/cython/talign.pyx":640
  *             return almA,almB,dist
  *         else:
  *             return almA,almB,sim,dist             # <<<<<<<<<<<<<<
@@ -6473,13 +6473,13 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
     /*else*/ {
       __Pyx_XDECREF(__pyx_r);
-      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 478, __pyx_L1_error) }
-      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 478, __pyx_L1_error) }
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 478, __pyx_L1_error)
+      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 640, __pyx_L1_error) }
+      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 640, __pyx_L1_error) }
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 640, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 478, __pyx_L1_error)
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 640, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_8 = PyTuple_New(4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 478, __pyx_L1_error)
+      __pyx_t_8 = PyTuple_New(4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 640, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_INCREF(__pyx_v_almA);
       __Pyx_GIVEREF(__pyx_v_almA);
@@ -6498,7 +6498,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
       goto __pyx_L0;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":470
+    /* "lingpy/algorithm/cython/talign.pyx":632
  * 
  *     # calculate distance, if this is needed
  *     if distance > 0:             # <<<<<<<<<<<<<<
@@ -6507,7 +6507,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":480
+  /* "lingpy/algorithm/cython/talign.pyx":642
  *             return almA,almB,sim,dist
  *     else:
  *         return almA,almB,sim             # <<<<<<<<<<<<<<
@@ -6516,11 +6516,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
  */
   /*else*/ {
     __Pyx_XDECREF(__pyx_r);
-    if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 480, __pyx_L1_error) }
-    if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 480, __pyx_L1_error) }
-    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 480, __pyx_L1_error)
+    if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 642, __pyx_L1_error) }
+    if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 642, __pyx_L1_error) }
+    __pyx_t_8 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 642, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 480, __pyx_L1_error)
+    __pyx_t_4 = PyTuple_New(3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 642, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_INCREF(__pyx_v_almA);
     __Pyx_GIVEREF(__pyx_v_almA);
@@ -6536,7 +6536,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
     goto __pyx_L0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":398
+  /* "lingpy/algorithm/cython/talign.pyx":518
  *     return almA,almB,sim
  * 
  * def align_pair(             # <<<<<<<<<<<<<<
@@ -6564,7 +6564,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":482
+/* "lingpy/algorithm/cython/talign.pyx":644
  *         return almA,almB,sim
  * 
  * def align_pairwise(             # <<<<<<<<<<<<<<
@@ -6574,7 +6574,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_8align_pair(CYTHON_
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_11align_pairwise(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_10align_pairwise[] = "\n    Align a list of sequences pairwise.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_10align_pairwise[] = "\n    Align all sequences pairwise.\n\n    Parameters\n    ----------\n    seqs : list\n        The sequences to be aligned, passed as lists.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    mode : { \"global\", \"local\", \"overlap\", \"dialign\" }\n        Select the mode for the alignment analysis (\"overlap\" refers to\n        semi-global alignments).\n\n    Returns\n    -------\n    alignments : list\n        A list of tuples, containing the aligned sequences, the similarity\n        and the distance scores.\n\n    Notes\n    -----\n    This function aligns all possible pairs between the sequences you pass to\n    it. It is important for multiple alignment, where it can be used to\n    construct the guide tree.\n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.align_pair\n    ~lingpy.algorithm.cython.talign.align_pairs\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_11align_pairwise = {"align_pairwise", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_11align_pairwise, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_10align_pairwise};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_11align_pairwise(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqs = 0;
@@ -6608,26 +6608,26 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_11align_pairwise(Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 1); __PYX_ERR(0, 482, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 1); __PYX_ERR(0, 644, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 2); __PYX_ERR(0, 482, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 2); __PYX_ERR(0, 644, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 3); __PYX_ERR(0, 482, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 3); __PYX_ERR(0, 644, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mode)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 4); __PYX_ERR(0, 482, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, 4); __PYX_ERR(0, 644, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pairwise") < 0)) __PYX_ERR(0, 482, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pairwise") < 0)) __PYX_ERR(0, 644, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 5) {
       goto __pyx_L5_argtuple_error;
@@ -6639,21 +6639,21 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_11align_pairwise(Py
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
     }
     __pyx_v_seqs = ((PyObject*)values[0]);
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 484, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 485, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 646, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 647, __pyx_L3_error)
     __pyx_v_scorer = values[3];
     __pyx_v_mode = ((PyObject*)values[4]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 482, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("align_pairwise", 1, 5, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 644, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.align_pairwise", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqs), (&PyList_Type), 1, "seqs", 1))) __PYX_ERR(0, 483, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 487, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqs), (&PyList_Type), 1, "seqs", 1))) __PYX_ERR(0, 645, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 649, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(__pyx_self, __pyx_v_seqs, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer, __pyx_v_mode);
 
   /* function exit code */
@@ -6708,19 +6708,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
   int __pyx_t_21;
   __Pyx_RefNannySetupContext("align_pairwise", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":493
+  /* "lingpy/algorithm/cython/talign.pyx":687
  *     """
  *     # define basic stuff
  *     cdef list alignments = []             # <<<<<<<<<<<<<<
  *     cdef int lS = len(seqs)
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 493, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 687, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_alignments = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":494
+  /* "lingpy/algorithm/cython/talign.pyx":688
  *     # define basic stuff
  *     cdef list alignments = []
  *     cdef int lS = len(seqs)             # <<<<<<<<<<<<<<
@@ -6729,46 +6729,46 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
   if (unlikely(__pyx_v_seqs == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 494, __pyx_L1_error)
+    __PYX_ERR(0, 688, __pyx_L1_error)
   }
-  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqs); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 494, __pyx_L1_error)
+  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqs); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 688, __pyx_L1_error)
   __pyx_v_lS = __pyx_t_2;
 
-  /* "lingpy/algorithm/cython/talign.pyx":501
+  /* "lingpy/algorithm/cython/talign.pyx":695
  * 
  *     # get self-scores
  *     cdef list sims = [0.0 for i in range(lS)]             # <<<<<<<<<<<<<<
  *     cdef list lens = [0 for i in range(lS)]
  * 
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 501, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 695, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __pyx_v_lS;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 501, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_float_0_0))) __PYX_ERR(0, 695, __pyx_L1_error)
   }
   __pyx_v_sims = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":502
+  /* "lingpy/algorithm/cython/talign.pyx":696
  *     # get self-scores
  *     cdef list sims = [0.0 for i in range(lS)]
  *     cdef list lens = [0 for i in range(lS)]             # <<<<<<<<<<<<<<
  * 
  *     for i in range(lS):
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 502, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 696, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = __pyx_v_lS;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 502, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_int_0))) __PYX_ERR(0, 696, __pyx_L1_error)
   }
   __pyx_v_lens = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":504
+  /* "lingpy/algorithm/cython/talign.pyx":698
  *     cdef list lens = [0 for i in range(lS)]
  * 
  *     for i in range(lS):             # <<<<<<<<<<<<<<
@@ -6779,7 +6779,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "lingpy/algorithm/cython/talign.pyx":505
+    /* "lingpy/algorithm/cython/talign.pyx":699
  * 
  *     for i in range(lS):
  *         seqA = seqs[i]             # <<<<<<<<<<<<<<
@@ -6788,15 +6788,15 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
     if (unlikely(__pyx_v_seqs == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 505, __pyx_L1_error)
+      __PYX_ERR(0, 699, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 505, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 699, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 505, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 699, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_1));
     __pyx_t_1 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":506
+    /* "lingpy/algorithm/cython/talign.pyx":700
  *     for i in range(lS):
  *         seqA = seqs[i]
  *         k = len(seqA)             # <<<<<<<<<<<<<<
@@ -6805,36 +6805,36 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
     if (unlikely(__pyx_v_seqA == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      __PYX_ERR(0, 506, __pyx_L1_error)
+      __PYX_ERR(0, 700, __pyx_L1_error)
     }
-    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 506, __pyx_L1_error)
+    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 700, __pyx_L1_error)
     __pyx_v_k = __pyx_t_2;
 
-    /* "lingpy/algorithm/cython/talign.pyx":507
+    /* "lingpy/algorithm/cython/talign.pyx":701
  *         seqA = seqs[i]
  *         k = len(seqA)
  *         sim = sum([scorer[seqA[j],seqA[j]] for j in range(k)])             # <<<<<<<<<<<<<<
  *         lens[i] = k
  *         sims[i] = sim
  */
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 701, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_5 = __pyx_v_k;
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_j = __pyx_t_6;
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 507, __pyx_L1_error)
+        __PYX_ERR(0, 701, __pyx_L1_error)
       }
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 507, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       if (unlikely(__pyx_v_seqA == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 507, __pyx_L1_error)
+        __PYX_ERR(0, 701, __pyx_L1_error)
       }
-      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 507, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 507, __pyx_L1_error)
+      __pyx_t_9 = PyTuple_New(2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_GIVEREF(__pyx_t_7);
       PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7);
@@ -6842,61 +6842,61 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       PyTuple_SET_ITEM(__pyx_t_9, 1, __pyx_t_8);
       __pyx_t_7 = 0;
       __pyx_t_8 = 0;
-      __pyx_t_8 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 507, __pyx_L1_error)
+      __pyx_t_8 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_8))) __PYX_ERR(0, 507, __pyx_L1_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_8))) __PYX_ERR(0, 701, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     }
-    __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 701, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_GIVEREF(__pyx_t_1);
     PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_1);
     __pyx_t_1 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 701, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 507, __pyx_L1_error)
+    __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 701, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_sim = __pyx_t_10;
 
-    /* "lingpy/algorithm/cython/talign.pyx":508
+    /* "lingpy/algorithm/cython/talign.pyx":702
  *         k = len(seqA)
  *         sim = sum([scorer[seqA[j],seqA[j]] for j in range(k)])
  *         lens[i] = k             # <<<<<<<<<<<<<<
  *         sims[i] = sim
  * 
  */
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_k); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 508, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_k); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 702, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_lens, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 508, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_lens, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 702, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":509
+    /* "lingpy/algorithm/cython/talign.pyx":703
  *         sim = sum([scorer[seqA[j],seqA[j]] for j in range(k)])
  *         lens[i] = k
  *         sims[i] = sim             # <<<<<<<<<<<<<<
  * 
  *     if mode == "global":
  */
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 509, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 703, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    if (unlikely(__Pyx_SetItemInt(__pyx_v_sims, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 509, __pyx_L1_error)
+    if (unlikely(__Pyx_SetItemInt(__pyx_v_sims, __pyx_v_i, __pyx_t_1, int, 1, __Pyx_PyInt_From_int, 1, 1, 1) < 0)) __PYX_ERR(0, 703, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":511
+  /* "lingpy/algorithm/cython/talign.pyx":705
  *         sims[i] = sim
  * 
  *     if mode == "global":             # <<<<<<<<<<<<<<
  *         # start loop
  *         for i in range(lS):
  */
-  __pyx_t_11 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_11 < 0)) __PYX_ERR(0, 511, __pyx_L1_error)
+  __pyx_t_11 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_11 < 0)) __PYX_ERR(0, 705, __pyx_L1_error)
   __pyx_t_12 = (__pyx_t_11 != 0);
   if (__pyx_t_12) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":513
+    /* "lingpy/algorithm/cython/talign.pyx":707
  *     if mode == "global":
  *         # start loop
  *         for i in range(lS):             # <<<<<<<<<<<<<<
@@ -6907,7 +6907,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "lingpy/algorithm/cython/talign.pyx":514
+      /* "lingpy/algorithm/cython/talign.pyx":708
  *         # start loop
  *         for i in range(lS):
  *             for j in range(lS):             # <<<<<<<<<<<<<<
@@ -6918,7 +6918,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
         __pyx_v_j = __pyx_t_6;
 
-        /* "lingpy/algorithm/cython/talign.pyx":515
+        /* "lingpy/algorithm/cython/talign.pyx":709
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -6928,7 +6928,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_12 = ((__pyx_v_i < __pyx_v_j) != 0);
         if (__pyx_t_12) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":516
+          /* "lingpy/algorithm/cython/talign.pyx":710
  *             for j in range(lS):
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]             # <<<<<<<<<<<<<<
@@ -6937,110 +6937,110 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 516, __pyx_L1_error)
+            __PYX_ERR(0, 710, __pyx_L1_error)
           }
-          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 516, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 710, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 516, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 710, __pyx_L1_error)
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 516, __pyx_L1_error)
+            __PYX_ERR(0, 710, __pyx_L1_error)
           }
-          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 516, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 710, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          if (!(likely(PyList_CheckExact(__pyx_t_8))||((__pyx_t_8) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_8)->tp_name), 0))) __PYX_ERR(0, 516, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_8))||((__pyx_t_8) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_8)->tp_name), 0))) __PYX_ERR(0, 710, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_1));
           __pyx_t_1 = 0;
           __Pyx_XDECREF_SET(__pyx_v_seqB, ((PyObject*)__pyx_t_8));
           __pyx_t_8 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":517
+          /* "lingpy/algorithm/cython/talign.pyx":711
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]             # <<<<<<<<<<<<<<
  *                     lenA,lenB = lens[i],lens[j]
  *                     almA,almB,sim = globalign(
  */
-          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 517, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L1_error)
+          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 517, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 517, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_8); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 711, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __pyx_v_simA = __pyx_t_10;
           __pyx_v_simB = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":518
+          /* "lingpy/algorithm/cython/talign.pyx":712
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]             # <<<<<<<<<<<<<<
  *                     almA,almB,sim = globalign(
  *                             seqA,
  */
-          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 518, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 712, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_8); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 518, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_8); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 712, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 518, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 712, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_8); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 518, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_8); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 712, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           __pyx_v_lenA = __pyx_t_14;
           __pyx_v_lenB = __pyx_t_15;
 
-          /* "lingpy/algorithm/cython/talign.pyx":519
+          /* "lingpy/algorithm/cython/talign.pyx":713
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]
  *                     almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 713, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "lingpy/algorithm/cython/talign.pyx":522
+          /* "lingpy/algorithm/cython/talign.pyx":716
  *                             seqA,
  *                             seqB,
  *                             lenA,             # <<<<<<<<<<<<<<
  *                             lenB,
  *                             gop,
  */
-          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 522, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 716, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
 
-          /* "lingpy/algorithm/cython/talign.pyx":523
+          /* "lingpy/algorithm/cython/talign.pyx":717
  *                             seqB,
  *                             lenA,
  *                             lenB,             # <<<<<<<<<<<<<<
  *                             gop,
  *                             scale,
  */
-          __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 523, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 717, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
 
-          /* "lingpy/algorithm/cython/talign.pyx":524
+          /* "lingpy/algorithm/cython/talign.pyx":718
  *                             lenA,
  *                             lenB,
  *                             gop,             # <<<<<<<<<<<<<<
  *                             scale,
  *                             scorer
  */
-          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 524, __pyx_L1_error)
+          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 718, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
 
-          /* "lingpy/algorithm/cython/talign.pyx":525
+          /* "lingpy/algorithm/cython/talign.pyx":719
  *                             lenB,
  *                             gop,
  *                             scale,             # <<<<<<<<<<<<<<
  *                             scorer
  *                             )
  */
-          __pyx_t_17 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 525, __pyx_L1_error)
+          __pyx_t_17 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 719, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
 
-          /* "lingpy/algorithm/cython/talign.pyx":527
+          /* "lingpy/algorithm/cython/talign.pyx":721
  *                             scale,
  *                             scorer
  *                             )             # <<<<<<<<<<<<<<
@@ -7059,7 +7059,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
               __pyx_t_2 = 1;
             }
           }
-          __pyx_t_19 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 519, __pyx_L1_error)
+          __pyx_t_19 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 713, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
           if (__pyx_t_18) {
             __Pyx_GIVEREF(__pyx_t_18); PyTuple_SET_ITEM(__pyx_t_19, 0, __pyx_t_18); __pyx_t_18 = NULL;
@@ -7085,7 +7085,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_7 = 0;
           __pyx_t_16 = 0;
           __pyx_t_17 = 0;
-          __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_19, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 519, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_19, NULL); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 713, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -7099,7 +7099,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             if (unlikely(size != 3)) {
               if (size > 3) __Pyx_RaiseTooManyValuesError(3);
               else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 519, __pyx_L1_error)
+              __PYX_ERR(0, 713, __pyx_L1_error)
             }
             #if CYTHON_COMPILING_IN_CPYTHON
             if (likely(PyTuple_CheckExact(sequence))) {
@@ -7115,17 +7115,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_INCREF(__pyx_t_19);
             __Pyx_INCREF(__pyx_t_17);
             #else
-            __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 519, __pyx_L1_error)
+            __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 713, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 519, __pyx_L1_error)
+            __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 713, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_19);
-            __pyx_t_17 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 519, __pyx_L1_error)
+            __pyx_t_17 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 713, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_17);
             #endif
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
           } else {
             Py_ssize_t index = -1;
-            __pyx_t_16 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 519, __pyx_L1_error)
+            __pyx_t_16 = PyObject_GetIter(__pyx_t_8); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 713, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_16);
             __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
             __pyx_t_20 = Py_TYPE(__pyx_t_16)->tp_iternext;
@@ -7135,7 +7135,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_GOTREF(__pyx_t_19);
             index = 2; __pyx_t_17 = __pyx_t_20(__pyx_t_16); if (unlikely(!__pyx_t_17)) goto __pyx_L17_unpacking_failed;
             __Pyx_GOTREF(__pyx_t_17);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 519, __pyx_L1_error)
+            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 713, __pyx_L1_error)
             __pyx_t_20 = NULL;
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             goto __pyx_L18_unpacking_done;
@@ -7143,20 +7143,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             __pyx_t_20 = NULL;
             if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 519, __pyx_L1_error)
+            __PYX_ERR(0, 713, __pyx_L1_error)
             __pyx_L18_unpacking_done:;
           }
 
-          /* "lingpy/algorithm/cython/talign.pyx":519
+          /* "lingpy/algorithm/cython/talign.pyx":713
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]
  *                     almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 519, __pyx_L1_error)
-          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 519, __pyx_L1_error)
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_17); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 519, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 713, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 713, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_17); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 713, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
           __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_1));
           __pyx_t_1 = 0;
@@ -7164,7 +7164,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_19 = 0;
           __pyx_v_sim = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":530
+          /* "lingpy/algorithm/cython/talign.pyx":724
  * 
  *                     # get the distance
  *                     dist = 1 - ( 2 * sim / ( simA + simB ) )             # <<<<<<<<<<<<<<
@@ -7175,22 +7175,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_10 = (__pyx_v_simA + __pyx_v_simB);
           if (unlikely(__pyx_t_10 == 0)) {
             PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-            __PYX_ERR(0, 530, __pyx_L1_error)
+            __PYX_ERR(0, 724, __pyx_L1_error)
           }
           __pyx_v_dist = (1.0 - (__pyx_t_13 / __pyx_t_10));
 
-          /* "lingpy/algorithm/cython/talign.pyx":534
+          /* "lingpy/algorithm/cython/talign.pyx":728
  *                     # append it to list
  *                     alignments.append(
  *                             (almA,almB,sim,dist)             # <<<<<<<<<<<<<<
  *                             )
  *                 elif i == j:
  */
-          __pyx_t_8 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 534, __pyx_L1_error)
+          __pyx_t_8 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 728, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
-          __pyx_t_17 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 534, __pyx_L1_error)
+          __pyx_t_17 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 728, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
-          __pyx_t_19 = PyTuple_New(4); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 534, __pyx_L1_error)
+          __pyx_t_19 = PyTuple_New(4); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 728, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
           __Pyx_INCREF(__pyx_v_almA);
           __Pyx_GIVEREF(__pyx_v_almA);
@@ -7205,17 +7205,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_8 = 0;
           __pyx_t_17 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":533
+          /* "lingpy/algorithm/cython/talign.pyx":727
  * 
  *                     # append it to list
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (almA,almB,sim,dist)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_19); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 533, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_19); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 727, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":515
+          /* "lingpy/algorithm/cython/talign.pyx":709
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -7225,7 +7225,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           goto __pyx_L16;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":536
+        /* "lingpy/algorithm/cython/talign.pyx":730
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -7235,7 +7235,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_12 = ((__pyx_v_i == __pyx_v_j) != 0);
         if (__pyx_t_12) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":537
+          /* "lingpy/algorithm/cython/talign.pyx":731
  *                             )
  *                 elif i == j:
  *                     seqA = seqs[i]             # <<<<<<<<<<<<<<
@@ -7244,24 +7244,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 537, __pyx_L1_error)
+            __PYX_ERR(0, 731, __pyx_L1_error)
           }
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 537, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 731, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 537, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 731, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_19));
           __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":539
+          /* "lingpy/algorithm/cython/talign.pyx":733
  *                     seqA = seqs[i]
  *                     alignments.append(
  *                             (seqA,seqA,sims[i],0.0)             # <<<<<<<<<<<<<<
  *                             )
  * 
  */
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 539, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 733, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_17 = PyTuple_New(4); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 539, __pyx_L1_error)
+          __pyx_t_17 = PyTuple_New(4); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 733, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
           __Pyx_INCREF(__pyx_v_seqA);
           __Pyx_GIVEREF(__pyx_v_seqA);
@@ -7276,17 +7276,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           PyTuple_SET_ITEM(__pyx_t_17, 3, __pyx_float_0_0);
           __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":538
+          /* "lingpy/algorithm/cython/talign.pyx":732
  *                 elif i == j:
  *                     seqA = seqs[i]
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (seqA,seqA,sims[i],0.0)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_17); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 538, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_17); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 732, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":536
+          /* "lingpy/algorithm/cython/talign.pyx":730
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -7298,7 +7298,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       }
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":511
+    /* "lingpy/algorithm/cython/talign.pyx":705
  *         sims[i] = sim
  * 
  *     if mode == "global":             # <<<<<<<<<<<<<<
@@ -7308,18 +7308,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     goto __pyx_L11;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":542
+  /* "lingpy/algorithm/cython/talign.pyx":736
  *                             )
  * 
  *     elif mode == "local":             # <<<<<<<<<<<<<<
  *         # start loop
  *         for i in range(lS):
  */
-  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 542, __pyx_L1_error)
+  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 736, __pyx_L1_error)
   __pyx_t_11 = (__pyx_t_12 != 0);
   if (__pyx_t_11) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":544
+    /* "lingpy/algorithm/cython/talign.pyx":738
  *     elif mode == "local":
  *         # start loop
  *         for i in range(lS):             # <<<<<<<<<<<<<<
@@ -7330,7 +7330,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "lingpy/algorithm/cython/talign.pyx":545
+      /* "lingpy/algorithm/cython/talign.pyx":739
  *         # start loop
  *         for i in range(lS):
  *             for j in range(lS):             # <<<<<<<<<<<<<<
@@ -7341,7 +7341,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
         __pyx_v_j = __pyx_t_6;
 
-        /* "lingpy/algorithm/cython/talign.pyx":546
+        /* "lingpy/algorithm/cython/talign.pyx":740
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -7351,7 +7351,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_11 = ((__pyx_v_i < __pyx_v_j) != 0);
         if (__pyx_t_11) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":547
+          /* "lingpy/algorithm/cython/talign.pyx":741
  *             for j in range(lS):
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]             # <<<<<<<<<<<<<<
@@ -7360,110 +7360,110 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 547, __pyx_L1_error)
+            __PYX_ERR(0, 741, __pyx_L1_error)
           }
-          __pyx_t_17 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 547, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 741, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
-          if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 547, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 741, __pyx_L1_error)
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 547, __pyx_L1_error)
+            __PYX_ERR(0, 741, __pyx_L1_error)
           }
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 547, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 741, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 547, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 741, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_17));
           __pyx_t_17 = 0;
           __Pyx_XDECREF_SET(__pyx_v_seqB, ((PyObject*)__pyx_t_19));
           __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":548
+          /* "lingpy/algorithm/cython/talign.pyx":742
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]             # <<<<<<<<<<<<<<
  *                     lenA,lenB = lens[i],lens[j]
  * 
  */
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 548, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 742, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 548, __pyx_L1_error)
+          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 742, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 548, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 742, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 548, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 742, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
           __pyx_v_simA = __pyx_t_10;
           __pyx_v_simB = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":549
+          /* "lingpy/algorithm/cython/talign.pyx":743
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]             # <<<<<<<<<<<<<<
  * 
  *                     # check for secondary structures
  */
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 549, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 743, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_19); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 549, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_19); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 743, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 549, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 743, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_19); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 549, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_19); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 743, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
           __pyx_v_lenA = __pyx_t_15;
           __pyx_v_lenB = __pyx_t_14;
 
-          /* "lingpy/algorithm/cython/talign.pyx":552
+          /* "lingpy/algorithm/cython/talign.pyx":746
  * 
  *                     # check for secondary structures
  *                     almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          __pyx_t_17 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 552, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 746, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
 
-          /* "lingpy/algorithm/cython/talign.pyx":555
+          /* "lingpy/algorithm/cython/talign.pyx":749
  *                             seqA,
  *                             seqB,
  *                             lenA,             # <<<<<<<<<<<<<<
  *                             lenB,
  *                             gop,
  */
-          __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 555, __pyx_L1_error)
+          __pyx_t_8 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 749, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_8);
 
-          /* "lingpy/algorithm/cython/talign.pyx":556
+          /* "lingpy/algorithm/cython/talign.pyx":750
  *                             seqB,
  *                             lenA,
  *                             lenB,             # <<<<<<<<<<<<<<
  *                             gop,
  *                             scale,
  */
-          __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 556, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 750, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "lingpy/algorithm/cython/talign.pyx":557
+          /* "lingpy/algorithm/cython/talign.pyx":751
  *                             lenA,
  *                             lenB,
  *                             gop,             # <<<<<<<<<<<<<<
  *                             scale,
  *                             scorer
  */
-          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 557, __pyx_L1_error)
+          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 751, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
 
-          /* "lingpy/algorithm/cython/talign.pyx":558
+          /* "lingpy/algorithm/cython/talign.pyx":752
  *                             lenB,
  *                             gop,
  *                             scale,             # <<<<<<<<<<<<<<
  *                             scorer
  *                             )
  */
-          __pyx_t_7 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 558, __pyx_L1_error)
+          __pyx_t_7 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 752, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
 
-          /* "lingpy/algorithm/cython/talign.pyx":560
+          /* "lingpy/algorithm/cython/talign.pyx":754
  *                             scale,
  *                             scorer
  *                             )             # <<<<<<<<<<<<<<
@@ -7482,7 +7482,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
               __pyx_t_2 = 1;
             }
           }
-          __pyx_t_18 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 552, __pyx_L1_error)
+          __pyx_t_18 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 746, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           if (__pyx_t_9) {
             __Pyx_GIVEREF(__pyx_t_9); PyTuple_SET_ITEM(__pyx_t_18, 0, __pyx_t_9); __pyx_t_9 = NULL;
@@ -7508,7 +7508,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_1 = 0;
           __pyx_t_16 = 0;
           __pyx_t_7 = 0;
-          __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_18, NULL); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 552, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_18, NULL); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 746, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
@@ -7522,7 +7522,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             if (unlikely(size != 3)) {
               if (size > 3) __Pyx_RaiseTooManyValuesError(3);
               else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 552, __pyx_L1_error)
+              __PYX_ERR(0, 746, __pyx_L1_error)
             }
             #if CYTHON_COMPILING_IN_CPYTHON
             if (likely(PyTuple_CheckExact(sequence))) {
@@ -7538,17 +7538,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_INCREF(__pyx_t_18);
             __Pyx_INCREF(__pyx_t_7);
             #else
-            __pyx_t_17 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 552, __pyx_L1_error)
+            __pyx_t_17 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 746, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_17);
-            __pyx_t_18 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 552, __pyx_L1_error)
+            __pyx_t_18 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 746, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_18);
-            __pyx_t_7 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 552, __pyx_L1_error)
+            __pyx_t_7 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 746, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_7);
             #endif
             __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
           } else {
             Py_ssize_t index = -1;
-            __pyx_t_16 = PyObject_GetIter(__pyx_t_19); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 552, __pyx_L1_error)
+            __pyx_t_16 = PyObject_GetIter(__pyx_t_19); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 746, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_16);
             __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
             __pyx_t_20 = Py_TYPE(__pyx_t_16)->tp_iternext;
@@ -7558,7 +7558,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_GOTREF(__pyx_t_18);
             index = 2; __pyx_t_7 = __pyx_t_20(__pyx_t_16); if (unlikely(!__pyx_t_7)) goto __pyx_L24_unpacking_failed;
             __Pyx_GOTREF(__pyx_t_7);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 552, __pyx_L1_error)
+            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 746, __pyx_L1_error)
             __pyx_t_20 = NULL;
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             goto __pyx_L25_unpacking_done;
@@ -7566,20 +7566,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             __pyx_t_20 = NULL;
             if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 552, __pyx_L1_error)
+            __PYX_ERR(0, 746, __pyx_L1_error)
             __pyx_L25_unpacking_done:;
           }
 
-          /* "lingpy/algorithm/cython/talign.pyx":552
+          /* "lingpy/algorithm/cython/talign.pyx":746
  * 
  *                     # check for secondary structures
  *                     almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 552, __pyx_L1_error)
-          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 552, __pyx_L1_error)
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 552, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 746, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 746, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_7); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 746, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
           __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_17));
           __pyx_t_17 = 0;
@@ -7587,7 +7587,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_18 = 0;
           __pyx_v_sim = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":563
+          /* "lingpy/algorithm/cython/talign.pyx":757
  * 
  *                     # get the distance
  *                     dist = 1 - ( 2 * sim / ( simA + simB ) )             # <<<<<<<<<<<<<<
@@ -7598,22 +7598,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_10 = (__pyx_v_simA + __pyx_v_simB);
           if (unlikely(__pyx_t_10 == 0)) {
             PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-            __PYX_ERR(0, 563, __pyx_L1_error)
+            __PYX_ERR(0, 757, __pyx_L1_error)
           }
           __pyx_v_dist = (1.0 - (__pyx_t_13 / __pyx_t_10));
 
-          /* "lingpy/algorithm/cython/talign.pyx":567
+          /* "lingpy/algorithm/cython/talign.pyx":761
  *                     # append it to list
  *                     alignments.append(
  *                             (almA,almB,sim,dist)             # <<<<<<<<<<<<<<
  *                             )
  *                 elif i == j:
  */
-          __pyx_t_19 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 567, __pyx_L1_error)
+          __pyx_t_19 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 761, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_7 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 567, __pyx_L1_error)
+          __pyx_t_7 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 761, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
-          __pyx_t_18 = PyTuple_New(4); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 567, __pyx_L1_error)
+          __pyx_t_18 = PyTuple_New(4); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 761, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           __Pyx_INCREF(__pyx_v_almA);
           __Pyx_GIVEREF(__pyx_v_almA);
@@ -7628,17 +7628,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_19 = 0;
           __pyx_t_7 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":566
+          /* "lingpy/algorithm/cython/talign.pyx":760
  * 
  *                     # append it to list
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (almA,almB,sim,dist)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_18); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 566, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_18); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 760, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":546
+          /* "lingpy/algorithm/cython/talign.pyx":740
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -7648,7 +7648,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           goto __pyx_L23;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":569
+        /* "lingpy/algorithm/cython/talign.pyx":763
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -7658,7 +7658,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_11 = ((__pyx_v_i == __pyx_v_j) != 0);
         if (__pyx_t_11) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":570
+          /* "lingpy/algorithm/cython/talign.pyx":764
  *                             )
  *                 elif i == j:
  *                     seqA = seqs[i]             # <<<<<<<<<<<<<<
@@ -7667,24 +7667,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 570, __pyx_L1_error)
+            __PYX_ERR(0, 764, __pyx_L1_error)
           }
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 570, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 764, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 570, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 764, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_18));
           __pyx_t_18 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":572
+          /* "lingpy/algorithm/cython/talign.pyx":766
  *                     seqA = seqs[i]
  *                     alignments.append(
  *                             (seqA,seqA,sims[i],0.0)             # <<<<<<<<<<<<<<
  *                             )
  * 
  */
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 572, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 766, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 572, __pyx_L1_error)
+          __pyx_t_7 = PyTuple_New(4); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 766, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_INCREF(__pyx_v_seqA);
           __Pyx_GIVEREF(__pyx_v_seqA);
@@ -7699,17 +7699,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           PyTuple_SET_ITEM(__pyx_t_7, 3, __pyx_float_0_0);
           __pyx_t_18 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":571
+          /* "lingpy/algorithm/cython/talign.pyx":765
  *                 elif i == j:
  *                     seqA = seqs[i]
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (seqA,seqA,sims[i],0.0)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_7); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 571, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_7); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 765, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":569
+          /* "lingpy/algorithm/cython/talign.pyx":763
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -7721,7 +7721,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       }
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":542
+    /* "lingpy/algorithm/cython/talign.pyx":736
  *                             )
  * 
  *     elif mode == "local":             # <<<<<<<<<<<<<<
@@ -7731,18 +7731,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     goto __pyx_L11;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":575
+  /* "lingpy/algorithm/cython/talign.pyx":769
  *                             )
  * 
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
  *         # start loop
  *         for i in range(lS):
  */
-  __pyx_t_11 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_11 < 0)) __PYX_ERR(0, 575, __pyx_L1_error)
+  __pyx_t_11 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_11 < 0)) __PYX_ERR(0, 769, __pyx_L1_error)
   __pyx_t_12 = (__pyx_t_11 != 0);
   if (__pyx_t_12) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":577
+    /* "lingpy/algorithm/cython/talign.pyx":771
  *     elif mode == "overlap":
  *         # start loop
  *         for i in range(lS):             # <<<<<<<<<<<<<<
@@ -7753,7 +7753,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "lingpy/algorithm/cython/talign.pyx":578
+      /* "lingpy/algorithm/cython/talign.pyx":772
  *         # start loop
  *         for i in range(lS):
  *             for j in range(lS):             # <<<<<<<<<<<<<<
@@ -7764,7 +7764,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
         __pyx_v_j = __pyx_t_6;
 
-        /* "lingpy/algorithm/cython/talign.pyx":579
+        /* "lingpy/algorithm/cython/talign.pyx":773
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -7774,7 +7774,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_12 = ((__pyx_v_i < __pyx_v_j) != 0);
         if (__pyx_t_12) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":580
+          /* "lingpy/algorithm/cython/talign.pyx":774
  *             for j in range(lS):
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]             # <<<<<<<<<<<<<<
@@ -7783,110 +7783,110 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 580, __pyx_L1_error)
+            __PYX_ERR(0, 774, __pyx_L1_error)
           }
-          __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 580, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 774, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
-          if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 580, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 774, __pyx_L1_error)
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 580, __pyx_L1_error)
+            __PYX_ERR(0, 774, __pyx_L1_error)
           }
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 580, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 774, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 580, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_18))||((__pyx_t_18) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_18)->tp_name), 0))) __PYX_ERR(0, 774, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_7));
           __pyx_t_7 = 0;
           __Pyx_XDECREF_SET(__pyx_v_seqB, ((PyObject*)__pyx_t_18));
           __pyx_t_18 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":581
+          /* "lingpy/algorithm/cython/talign.pyx":775
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]             # <<<<<<<<<<<<<<
  *                     lenA,lenB = lens[i],lens[j]
  * 
  */
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 581, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 775, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 581, __pyx_L1_error)
+          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 775, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 581, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 775, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 581, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 775, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           __pyx_v_simA = __pyx_t_10;
           __pyx_v_simB = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":582
+          /* "lingpy/algorithm/cython/talign.pyx":776
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]             # <<<<<<<<<<<<<<
  * 
  *                     almA,almB,sim = semi_globalign(
  */
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 582, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 776, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_18); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 582, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_18); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 776, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
-          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 582, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 776, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_18); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 582, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_18); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 776, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           __pyx_v_lenA = __pyx_t_14;
           __pyx_v_lenB = __pyx_t_15;
 
-          /* "lingpy/algorithm/cython/talign.pyx":584
+          /* "lingpy/algorithm/cython/talign.pyx":778
  *                     lenA,lenB = lens[i],lens[j]
  * 
  *                     almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 584, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 778, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
 
-          /* "lingpy/algorithm/cython/talign.pyx":587
+          /* "lingpy/algorithm/cython/talign.pyx":781
  *                             seqA,
  *                             seqB,
  *                             lenA,             # <<<<<<<<<<<<<<
  *                             lenB,
  *                             gop,
  */
-          __pyx_t_19 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 587, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 781, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
 
-          /* "lingpy/algorithm/cython/talign.pyx":588
+          /* "lingpy/algorithm/cython/talign.pyx":782
  *                             seqB,
  *                             lenA,
  *                             lenB,             # <<<<<<<<<<<<<<
  *                             gop,
  *                             scale,
  */
-          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 588, __pyx_L1_error)
+          __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 782, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_17);
 
-          /* "lingpy/algorithm/cython/talign.pyx":589
+          /* "lingpy/algorithm/cython/talign.pyx":783
  *                             lenA,
  *                             lenB,
  *                             gop,             # <<<<<<<<<<<<<<
  *                             scale,
  *                             scorer
  */
-          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 589, __pyx_L1_error)
+          __pyx_t_16 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 783, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
 
-          /* "lingpy/algorithm/cython/talign.pyx":590
+          /* "lingpy/algorithm/cython/talign.pyx":784
  *                             lenB,
  *                             gop,
  *                             scale,             # <<<<<<<<<<<<<<
  *                             scorer
  *                             )
  */
-          __pyx_t_1 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 590, __pyx_L1_error)
+          __pyx_t_1 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 784, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "lingpy/algorithm/cython/talign.pyx":592
+          /* "lingpy/algorithm/cython/talign.pyx":786
  *                             scale,
  *                             scorer
  *                             )             # <<<<<<<<<<<<<<
@@ -7905,7 +7905,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
               __pyx_t_2 = 1;
             }
           }
-          __pyx_t_9 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 584, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_New(7+__pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 778, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           if (__pyx_t_8) {
             __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
@@ -7931,7 +7931,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_17 = 0;
           __pyx_t_16 = 0;
           __pyx_t_1 = 0;
-          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_9, NULL); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 584, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_9, NULL); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 778, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
@@ -7945,7 +7945,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             if (unlikely(size != 3)) {
               if (size > 3) __Pyx_RaiseTooManyValuesError(3);
               else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 584, __pyx_L1_error)
+              __PYX_ERR(0, 778, __pyx_L1_error)
             }
             #if CYTHON_COMPILING_IN_CPYTHON
             if (likely(PyTuple_CheckExact(sequence))) {
@@ -7961,17 +7961,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_INCREF(__pyx_t_9);
             __Pyx_INCREF(__pyx_t_1);
             #else
-            __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 584, __pyx_L1_error)
+            __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 778, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_7);
-            __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 584, __pyx_L1_error)
+            __pyx_t_9 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 778, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_9);
-            __pyx_t_1 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 584, __pyx_L1_error)
+            __pyx_t_1 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 778, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
             #endif
             __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
           } else {
             Py_ssize_t index = -1;
-            __pyx_t_16 = PyObject_GetIter(__pyx_t_18); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 584, __pyx_L1_error)
+            __pyx_t_16 = PyObject_GetIter(__pyx_t_18); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 778, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_16);
             __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
             __pyx_t_20 = Py_TYPE(__pyx_t_16)->tp_iternext;
@@ -7981,7 +7981,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_GOTREF(__pyx_t_9);
             index = 2; __pyx_t_1 = __pyx_t_20(__pyx_t_16); if (unlikely(!__pyx_t_1)) goto __pyx_L31_unpacking_failed;
             __Pyx_GOTREF(__pyx_t_1);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 584, __pyx_L1_error)
+            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_16), 3) < 0) __PYX_ERR(0, 778, __pyx_L1_error)
             __pyx_t_20 = NULL;
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             goto __pyx_L32_unpacking_done;
@@ -7989,20 +7989,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
             __pyx_t_20 = NULL;
             if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 584, __pyx_L1_error)
+            __PYX_ERR(0, 778, __pyx_L1_error)
             __pyx_L32_unpacking_done:;
           }
 
-          /* "lingpy/algorithm/cython/talign.pyx":584
+          /* "lingpy/algorithm/cython/talign.pyx":778
  *                     lenA,lenB = lens[i],lens[j]
  * 
  *                     almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                             seqA,
  *                             seqB,
  */
-          if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 584, __pyx_L1_error)
-          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 584, __pyx_L1_error)
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 584, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 778, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 778, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_1); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 778, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_7));
           __pyx_t_7 = 0;
@@ -8010,7 +8010,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_9 = 0;
           __pyx_v_sim = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":595
+          /* "lingpy/algorithm/cython/talign.pyx":789
  * 
  *                     # get the distance
  *                     dist = 1 - ( 2 * sim / ( simA + simB ) )             # <<<<<<<<<<<<<<
@@ -8021,22 +8021,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_10 = (__pyx_v_simA + __pyx_v_simB);
           if (unlikely(__pyx_t_10 == 0)) {
             PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-            __PYX_ERR(0, 595, __pyx_L1_error)
+            __PYX_ERR(0, 789, __pyx_L1_error)
           }
           __pyx_v_dist = (1.0 - (__pyx_t_13 / __pyx_t_10));
 
-          /* "lingpy/algorithm/cython/talign.pyx":599
+          /* "lingpy/algorithm/cython/talign.pyx":793
  *                     # append it to list
  *                     alignments.append(
  *                             (almA,almB,sim,dist)             # <<<<<<<<<<<<<<
  *                             )
  *                 elif i == j:
  */
-          __pyx_t_18 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 599, __pyx_L1_error)
+          __pyx_t_18 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 793, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
-          __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 599, __pyx_L1_error)
+          __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 793, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_9 = PyTuple_New(4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 599, __pyx_L1_error)
+          __pyx_t_9 = PyTuple_New(4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 793, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_INCREF(__pyx_v_almA);
           __Pyx_GIVEREF(__pyx_v_almA);
@@ -8051,17 +8051,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_18 = 0;
           __pyx_t_1 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":598
+          /* "lingpy/algorithm/cython/talign.pyx":792
  * 
  *                     # append it to list
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (almA,almB,sim,dist)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_9); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 598, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_9); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 792, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":579
+          /* "lingpy/algorithm/cython/talign.pyx":773
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -8071,7 +8071,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           goto __pyx_L30;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":601
+        /* "lingpy/algorithm/cython/talign.pyx":795
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -8081,7 +8081,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_12 = ((__pyx_v_i == __pyx_v_j) != 0);
         if (__pyx_t_12) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":602
+          /* "lingpy/algorithm/cython/talign.pyx":796
  *                             )
  *                 elif i == j:
  *                     seqA = seqs[i]             # <<<<<<<<<<<<<<
@@ -8090,24 +8090,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 602, __pyx_L1_error)
+            __PYX_ERR(0, 796, __pyx_L1_error)
           }
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 602, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 796, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 602, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 796, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_9));
           __pyx_t_9 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":604
+          /* "lingpy/algorithm/cython/talign.pyx":798
  *                     seqA = seqs[i]
  *                     alignments.append(
  *                             (seqA,seqA,sims[i],0.0)             # <<<<<<<<<<<<<<
  *                             )
  * 
  */
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 604, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 798, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 604, __pyx_L1_error)
+          __pyx_t_1 = PyTuple_New(4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 798, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_INCREF(__pyx_v_seqA);
           __Pyx_GIVEREF(__pyx_v_seqA);
@@ -8122,17 +8122,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           PyTuple_SET_ITEM(__pyx_t_1, 3, __pyx_float_0_0);
           __pyx_t_9 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":603
+          /* "lingpy/algorithm/cython/talign.pyx":797
  *                 elif i == j:
  *                     seqA = seqs[i]
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (seqA,seqA,sims[i],0.0)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_1); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 603, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_1); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 797, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":601
+          /* "lingpy/algorithm/cython/talign.pyx":795
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -8144,7 +8144,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       }
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":575
+    /* "lingpy/algorithm/cython/talign.pyx":769
  *                             )
  * 
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
@@ -8154,18 +8154,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     goto __pyx_L11;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":607
+  /* "lingpy/algorithm/cython/talign.pyx":801
  *                             )
  * 
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
  *         # start loop
  *         for i in range(lS):
  */
-  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 607, __pyx_L1_error)
+  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 801, __pyx_L1_error)
   __pyx_t_11 = (__pyx_t_12 != 0);
   if (__pyx_t_11) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":609
+    /* "lingpy/algorithm/cython/talign.pyx":803
  *     elif mode == "dialign":
  *         # start loop
  *         for i in range(lS):             # <<<<<<<<<<<<<<
@@ -8176,7 +8176,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
     for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "lingpy/algorithm/cython/talign.pyx":610
+      /* "lingpy/algorithm/cython/talign.pyx":804
  *         # start loop
  *         for i in range(lS):
  *             for j in range(lS):             # <<<<<<<<<<<<<<
@@ -8187,7 +8187,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
         __pyx_v_j = __pyx_t_6;
 
-        /* "lingpy/algorithm/cython/talign.pyx":611
+        /* "lingpy/algorithm/cython/talign.pyx":805
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -8197,7 +8197,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_11 = ((__pyx_v_i < __pyx_v_j) != 0);
         if (__pyx_t_11) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":612
+          /* "lingpy/algorithm/cython/talign.pyx":806
  *             for j in range(lS):
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]             # <<<<<<<<<<<<<<
@@ -8206,100 +8206,100 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 612, __pyx_L1_error)
+            __PYX_ERR(0, 806, __pyx_L1_error)
           }
-          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 612, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 806, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 612, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 806, __pyx_L1_error)
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 612, __pyx_L1_error)
+            __PYX_ERR(0, 806, __pyx_L1_error)
           }
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 612, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 806, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 612, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_9))||((__pyx_t_9) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_9)->tp_name), 0))) __PYX_ERR(0, 806, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_1));
           __pyx_t_1 = 0;
           __Pyx_XDECREF_SET(__pyx_v_seqB, ((PyObject*)__pyx_t_9));
           __pyx_t_9 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":613
+          /* "lingpy/algorithm/cython/talign.pyx":807
  *                 if i < j:
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]             # <<<<<<<<<<<<<<
  *                     lenA,lenB = lens[i],lens[j]
  * 
  */
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 613, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 807, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 613, __pyx_L1_error)
+          __pyx_t_10 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_10 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 807, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 613, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 807, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 613, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_9); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 807, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __pyx_v_simA = __pyx_t_10;
           __pyx_v_simB = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":614
+          /* "lingpy/algorithm/cython/talign.pyx":808
  *                     seqA,seqB = seqs[i],seqs[j]
  *                     simA,simB = sims[i],sims[j]
  *                     lenA,lenB = lens[i],lens[j]             # <<<<<<<<<<<<<<
  * 
  *                     almA,almB,sim = dialign(
  */
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 614, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 808, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 614, __pyx_L1_error)
+          __pyx_t_15 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_15 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 808, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 614, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_GetItemInt_List(__pyx_v_lens, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 808, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 614, __pyx_L1_error)
+          __pyx_t_14 = __Pyx_PyInt_As_int(__pyx_t_9); if (unlikely((__pyx_t_14 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 808, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __pyx_v_lenA = __pyx_t_15;
           __pyx_v_lenB = __pyx_t_14;
 
-          /* "lingpy/algorithm/cython/talign.pyx":616
+          /* "lingpy/algorithm/cython/talign.pyx":810
  *                     lenA,lenB = lens[i],lens[j]
  * 
  *                     almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                            seqA,
  *                            seqB,
  */
-          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 616, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 810, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
 
-          /* "lingpy/algorithm/cython/talign.pyx":619
+          /* "lingpy/algorithm/cython/talign.pyx":813
  *                            seqA,
  *                            seqB,
  *                            lenA,             # <<<<<<<<<<<<<<
  *                            lenB,
  *                            scale,
  */
-          __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 619, __pyx_L1_error)
+          __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_lenA); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 813, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_18);
 
-          /* "lingpy/algorithm/cython/talign.pyx":620
+          /* "lingpy/algorithm/cython/talign.pyx":814
  *                            seqB,
  *                            lenA,
  *                            lenB,             # <<<<<<<<<<<<<<
  *                            scale,
  *                            scorer
  */
-          __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 620, __pyx_L1_error)
+          __pyx_t_7 = __Pyx_PyInt_From_int(__pyx_v_lenB); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 814, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_7);
 
-          /* "lingpy/algorithm/cython/talign.pyx":621
+          /* "lingpy/algorithm/cython/talign.pyx":815
  *                            lenA,
  *                            lenB,
  *                            scale,             # <<<<<<<<<<<<<<
  *                            scorer
  *                            )
  */
-          __pyx_t_16 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 621, __pyx_L1_error)
+          __pyx_t_16 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 815, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
 
-          /* "lingpy/algorithm/cython/talign.pyx":623
+          /* "lingpy/algorithm/cython/talign.pyx":817
  *                            scale,
  *                            scorer
  *                            )             # <<<<<<<<<<<<<<
@@ -8318,7 +8318,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
               __pyx_t_2 = 1;
             }
           }
-          __pyx_t_19 = PyTuple_New(6+__pyx_t_2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 616, __pyx_L1_error)
+          __pyx_t_19 = PyTuple_New(6+__pyx_t_2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 810, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
           if (__pyx_t_17) {
             __Pyx_GIVEREF(__pyx_t_17); PyTuple_SET_ITEM(__pyx_t_19, 0, __pyx_t_17); __pyx_t_17 = NULL;
@@ -8341,7 +8341,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_18 = 0;
           __pyx_t_7 = 0;
           __pyx_t_16 = 0;
-          __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_19, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 616, __pyx_L1_error)
+          __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_1, __pyx_t_19, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 810, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -8355,7 +8355,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             if (unlikely(size != 3)) {
               if (size > 3) __Pyx_RaiseTooManyValuesError(3);
               else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-              __PYX_ERR(0, 616, __pyx_L1_error)
+              __PYX_ERR(0, 810, __pyx_L1_error)
             }
             #if CYTHON_COMPILING_IN_CPYTHON
             if (likely(PyTuple_CheckExact(sequence))) {
@@ -8371,17 +8371,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_INCREF(__pyx_t_19);
             __Pyx_INCREF(__pyx_t_16);
             #else
-            __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 616, __pyx_L1_error)
+            __pyx_t_1 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 810, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_1);
-            __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 616, __pyx_L1_error)
+            __pyx_t_19 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 810, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_19);
-            __pyx_t_16 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 616, __pyx_L1_error)
+            __pyx_t_16 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 810, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_16);
             #endif
             __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           } else {
             Py_ssize_t index = -1;
-            __pyx_t_7 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 616, __pyx_L1_error)
+            __pyx_t_7 = PyObject_GetIter(__pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 810, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_7);
             __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
             __pyx_t_20 = Py_TYPE(__pyx_t_7)->tp_iternext;
@@ -8391,7 +8391,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_GOTREF(__pyx_t_19);
             index = 2; __pyx_t_16 = __pyx_t_20(__pyx_t_7); if (unlikely(!__pyx_t_16)) goto __pyx_L38_unpacking_failed;
             __Pyx_GOTREF(__pyx_t_16);
-            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_7), 3) < 0) __PYX_ERR(0, 616, __pyx_L1_error)
+            if (__Pyx_IternextUnpackEndCheck(__pyx_t_20(__pyx_t_7), 3) < 0) __PYX_ERR(0, 810, __pyx_L1_error)
             __pyx_t_20 = NULL;
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             goto __pyx_L39_unpacking_done;
@@ -8399,20 +8399,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
             __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
             __pyx_t_20 = NULL;
             if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-            __PYX_ERR(0, 616, __pyx_L1_error)
+            __PYX_ERR(0, 810, __pyx_L1_error)
             __pyx_L39_unpacking_done:;
           }
 
-          /* "lingpy/algorithm/cython/talign.pyx":616
+          /* "lingpy/algorithm/cython/talign.pyx":810
  *                     lenA,lenB = lens[i],lens[j]
  * 
  *                     almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                            seqA,
  *                            seqB,
  */
-          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 616, __pyx_L1_error)
-          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 616, __pyx_L1_error)
-          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_16); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 616, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 810, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 810, __pyx_L1_error)
+          __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_16); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 810, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
           __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_1));
           __pyx_t_1 = 0;
@@ -8420,7 +8420,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_19 = 0;
           __pyx_v_sim = __pyx_t_13;
 
-          /* "lingpy/algorithm/cython/talign.pyx":626
+          /* "lingpy/algorithm/cython/talign.pyx":820
  * 
  *                     # get the distance
  *                     dist = 1 - ( 2 * sim / ( simA + simB ) )             # <<<<<<<<<<<<<<
@@ -8431,22 +8431,22 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_10 = (__pyx_v_simA + __pyx_v_simB);
           if (unlikely(__pyx_t_10 == 0)) {
             PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-            __PYX_ERR(0, 626, __pyx_L1_error)
+            __PYX_ERR(0, 820, __pyx_L1_error)
           }
           __pyx_v_dist = (1.0 - (__pyx_t_13 / __pyx_t_10));
 
-          /* "lingpy/algorithm/cython/talign.pyx":630
+          /* "lingpy/algorithm/cython/talign.pyx":824
  *                     # append it to list
  *                     alignments.append(
  *                             (almA,almB,sim,dist)             # <<<<<<<<<<<<<<
  *                             )
  *                 elif i == j:
  */
-          __pyx_t_9 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 630, __pyx_L1_error)
+          __pyx_t_9 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 824, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_16 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 630, __pyx_L1_error)
+          __pyx_t_16 = PyFloat_FromDouble(__pyx_v_dist); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 824, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
-          __pyx_t_19 = PyTuple_New(4); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 630, __pyx_L1_error)
+          __pyx_t_19 = PyTuple_New(4); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 824, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
           __Pyx_INCREF(__pyx_v_almA);
           __Pyx_GIVEREF(__pyx_v_almA);
@@ -8461,17 +8461,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           __pyx_t_9 = 0;
           __pyx_t_16 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":629
+          /* "lingpy/algorithm/cython/talign.pyx":823
  * 
  *                     # append it to list
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (almA,almB,sim,dist)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_19); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 629, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_19); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 823, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":611
+          /* "lingpy/algorithm/cython/talign.pyx":805
  *         for i in range(lS):
  *             for j in range(lS):
  *                 if i < j:             # <<<<<<<<<<<<<<
@@ -8481,7 +8481,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           goto __pyx_L37;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":632
+        /* "lingpy/algorithm/cython/talign.pyx":826
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -8491,7 +8491,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
         __pyx_t_11 = ((__pyx_v_i == __pyx_v_j) != 0);
         if (__pyx_t_11) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":633
+          /* "lingpy/algorithm/cython/talign.pyx":827
  *                             )
  *                 elif i == j:
  *                     seqA = seqs[i]             # <<<<<<<<<<<<<<
@@ -8500,24 +8500,24 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
  */
           if (unlikely(__pyx_v_seqs == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 633, __pyx_L1_error)
+            __PYX_ERR(0, 827, __pyx_L1_error)
           }
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 633, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 827, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 633, __pyx_L1_error)
+          if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 827, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_19));
           __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":635
+          /* "lingpy/algorithm/cython/talign.pyx":829
  *                     seqA = seqs[i]
  *                     alignments.append(
  *                             (seqA,seqA,sims[i],0.0)             # <<<<<<<<<<<<<<
  *                             )
  * 
  */
-          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 635, __pyx_L1_error)
+          __pyx_t_19 = __Pyx_GetItemInt_List(__pyx_v_sims, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 829, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_19);
-          __pyx_t_16 = PyTuple_New(4); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 635, __pyx_L1_error)
+          __pyx_t_16 = PyTuple_New(4); if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 829, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_16);
           __Pyx_INCREF(__pyx_v_seqA);
           __Pyx_GIVEREF(__pyx_v_seqA);
@@ -8532,17 +8532,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
           PyTuple_SET_ITEM(__pyx_t_16, 3, __pyx_float_0_0);
           __pyx_t_19 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":634
+          /* "lingpy/algorithm/cython/talign.pyx":828
  *                 elif i == j:
  *                     seqA = seqs[i]
  *                     alignments.append(             # <<<<<<<<<<<<<<
  *                             (seqA,seqA,sims[i],0.0)
  *                             )
  */
-          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_16); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 634, __pyx_L1_error)
+          __pyx_t_21 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_16); if (unlikely(__pyx_t_21 == -1)) __PYX_ERR(0, 828, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":632
+          /* "lingpy/algorithm/cython/talign.pyx":826
  *                             (almA,almB,sim,dist)
  *                             )
  *                 elif i == j:             # <<<<<<<<<<<<<<
@@ -8554,7 +8554,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
       }
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":607
+    /* "lingpy/algorithm/cython/talign.pyx":801
  *                             )
  * 
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
@@ -8564,7 +8564,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
   }
   __pyx_L11:;
 
-  /* "lingpy/algorithm/cython/talign.pyx":638
+  /* "lingpy/algorithm/cython/talign.pyx":832
  *                             )
  * 
  *     return alignments             # <<<<<<<<<<<<<<
@@ -8576,7 +8576,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
   __pyx_r = __pyx_v_alignments;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":482
+  /* "lingpy/algorithm/cython/talign.pyx":644
  *         return almA,almB,sim
  * 
  * def align_pairwise(             # <<<<<<<<<<<<<<
@@ -8609,7 +8609,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":640
+/* "lingpy/algorithm/cython/talign.pyx":834
  *     return alignments
  * 
  * def align_pairs(             # <<<<<<<<<<<<<<
@@ -8619,7 +8619,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_10align_pairwise(CY
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_12align_pairs[] = "\n    Align multiple sequence pairs.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_12align_pairs[] = "\n    Align multiple sequence pairs.\n\n    Parameters\n    ----------\n    seqs : list\n        The sequences to be aligned, passed as lists.\n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale.\n    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }\n        The scoring dictionary containing scores for all possible segment\n        combinations in the two sequences.\n    mode : { \"global\", \"local\", \"overlap\", \"dialign\" }\n        Select the mode for the alignment analysis (\"overlap\" refers to\n        semi-global alignments).\n    distance : int (default=0)\n        Indicate whether distances or similarities should be returned.\n\n    Returns\n    -------\n    alignments : list\n        A list of tuples, containing the aligned sequences, and the similarity\n        or the distance scores.\n\n    Notes\n    -----\n    This function aligns all pairs which are passed to\n    it. \n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.align_pair\n    ~lingpy.algorithm.cython.talign.align_pairwise\n\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_13align_pairs = {"align_pairs", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_12align_pairs};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_seqs = 0;
@@ -8655,22 +8655,22 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs(PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 1); __PYX_ERR(0, 640, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 1); __PYX_ERR(0, 834, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 2); __PYX_ERR(0, 640, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 2); __PYX_ERR(0, 834, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 3); __PYX_ERR(0, 640, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 3); __PYX_ERR(0, 834, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mode)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 4); __PYX_ERR(0, 640, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, 4); __PYX_ERR(0, 834, __pyx_L3_error)
         }
         case  5:
         if (kw_args > 0) {
@@ -8679,7 +8679,7 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs(PyObj
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pairs") < 0)) __PYX_ERR(0, 640, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_pairs") < 0)) __PYX_ERR(0, 834, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -8694,26 +8694,26 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_13align_pairs(PyObj
       }
     }
     __pyx_v_seqs = ((PyObject*)values[0]);
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 642, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 643, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 836, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[2]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 837, __pyx_L3_error)
     __pyx_v_scorer = values[3];
     __pyx_v_mode = ((PyObject*)values[4]);
     if (values[5]) {
-      __pyx_v_distance = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_distance == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 646, __pyx_L3_error)
+      __pyx_v_distance = __Pyx_PyInt_As_int(values[5]); if (unlikely((__pyx_v_distance == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 840, __pyx_L3_error)
     } else {
       __pyx_v_distance = ((int)0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 640, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("align_pairs", 0, 5, 6, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 834, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.align_pairs", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqs), (&PyList_Type), 1, "seqs", 1))) __PYX_ERR(0, 641, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 645, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_seqs), (&PyList_Type), 1, "seqs", 1))) __PYX_ERR(0, 835, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 839, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(__pyx_self, __pyx_v_seqs, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer, __pyx_v_mode, __pyx_v_distance);
 
   /* function exit code */
@@ -8762,19 +8762,19 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
   int __pyx_t_19;
   __Pyx_RefNannySetupContext("align_pairs", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":655
+  /* "lingpy/algorithm/cython/talign.pyx":883
  *     cdef list seqA,seqB,almA,almB
  *     cdef float sim
  *     cdef list alignments = []             # <<<<<<<<<<<<<<
  * 
  *     # get basic params
  */
-  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 655, __pyx_L1_error)
+  __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 883, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_alignments = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":658
+  /* "lingpy/algorithm/cython/talign.pyx":886
  * 
  *     # get basic params
  *     lP = len(seqs)             # <<<<<<<<<<<<<<
@@ -8783,12 +8783,12 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
  */
   if (unlikely(__pyx_v_seqs == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 658, __pyx_L1_error)
+    __PYX_ERR(0, 886, __pyx_L1_error)
   }
-  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqs); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 658, __pyx_L1_error)
+  __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqs); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 886, __pyx_L1_error)
   __pyx_v_lP = __pyx_t_2;
 
-  /* "lingpy/algorithm/cython/talign.pyx":663
+  /* "lingpy/algorithm/cython/talign.pyx":891
  * 
  *     # carry out alignments
  *     for i in range(lP):             # <<<<<<<<<<<<<<
@@ -8799,7 +8799,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "lingpy/algorithm/cython/talign.pyx":665
+    /* "lingpy/algorithm/cython/talign.pyx":893
  *     for i in range(lP):
  *         # get sequences
  *         seqA,seqB = seqs[i][0],seqs[i][1]             # <<<<<<<<<<<<<<
@@ -8808,30 +8808,30 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
  */
     if (unlikely(__pyx_v_seqs == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 665, __pyx_L1_error)
+      __PYX_ERR(0, 893, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 665, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 893, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 665, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_1, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 893, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 665, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 893, __pyx_L1_error)
     if (unlikely(__pyx_v_seqs == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-      __PYX_ERR(0, 665, __pyx_L1_error)
+      __PYX_ERR(0, 893, __pyx_L1_error)
     }
-    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 665, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_seqs, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 893, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 665, __pyx_L1_error)
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_t_1, 1, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 893, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (!(likely(PyList_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 665, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_6))||((__pyx_t_6) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_6)->tp_name), 0))) __PYX_ERR(0, 893, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_seqA, ((PyObject*)__pyx_t_5));
     __pyx_t_5 = 0;
     __Pyx_XDECREF_SET(__pyx_v_seqB, ((PyObject*)__pyx_t_6));
     __pyx_t_6 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":668
+    /* "lingpy/algorithm/cython/talign.pyx":896
  * 
  *         # get length of seqs
  *         M,N = len(seqA),len(seqB)             # <<<<<<<<<<<<<<
@@ -8840,79 +8840,79 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
  */
     if (unlikely(__pyx_v_seqA == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      __PYX_ERR(0, 668, __pyx_L1_error)
+      __PYX_ERR(0, 896, __pyx_L1_error)
     }
-    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 668, __pyx_L1_error)
+    __pyx_t_2 = PyList_GET_SIZE(__pyx_v_seqA); if (unlikely(__pyx_t_2 == -1)) __PYX_ERR(0, 896, __pyx_L1_error)
     if (unlikely(__pyx_v_seqB == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-      __PYX_ERR(0, 668, __pyx_L1_error)
+      __PYX_ERR(0, 896, __pyx_L1_error)
     }
-    __pyx_t_7 = PyList_GET_SIZE(__pyx_v_seqB); if (unlikely(__pyx_t_7 == -1)) __PYX_ERR(0, 668, __pyx_L1_error)
+    __pyx_t_7 = PyList_GET_SIZE(__pyx_v_seqB); if (unlikely(__pyx_t_7 == -1)) __PYX_ERR(0, 896, __pyx_L1_error)
     __pyx_v_M = __pyx_t_2;
     __pyx_v_N = __pyx_t_7;
 
-    /* "lingpy/algorithm/cython/talign.pyx":670
+    /* "lingpy/algorithm/cython/talign.pyx":898
  *         M,N = len(seqA),len(seqB)
  * 
  *         if mode == "global":             # <<<<<<<<<<<<<<
  *             almA,almB,sim = globalign(
  *                    seqA,
  */
-    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 670, __pyx_L1_error)
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 898, __pyx_L1_error)
     __pyx_t_9 = (__pyx_t_8 != 0);
     if (__pyx_t_9) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":671
+      /* "lingpy/algorithm/cython/talign.pyx":899
  * 
  *         if mode == "global":
  *             almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 671, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 899, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "lingpy/algorithm/cython/talign.pyx":674
+      /* "lingpy/algorithm/cython/talign.pyx":902
  *                    seqA,
  *                    seqB,
  *                    M,             # <<<<<<<<<<<<<<
  *                    N,
  *                    gop,
  */
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 674, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 902, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":675
+      /* "lingpy/algorithm/cython/talign.pyx":903
  *                    seqB,
  *                    M,
  *                    N,             # <<<<<<<<<<<<<<
  *                    gop,
  *                    scale,
  */
-      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 675, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 903, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
 
-      /* "lingpy/algorithm/cython/talign.pyx":676
+      /* "lingpy/algorithm/cython/talign.pyx":904
  *                    M,
  *                    N,
  *                    gop,             # <<<<<<<<<<<<<<
  *                    scale,
  *                    scorer
  */
-      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 676, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 904, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
 
-      /* "lingpy/algorithm/cython/talign.pyx":677
+      /* "lingpy/algorithm/cython/talign.pyx":905
  *                    N,
  *                    gop,
  *                    scale,             # <<<<<<<<<<<<<<
  *                    scorer
  *                    )
  */
-      __pyx_t_12 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 677, __pyx_L1_error)
+      __pyx_t_12 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 905, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
 
-      /* "lingpy/algorithm/cython/talign.pyx":679
+      /* "lingpy/algorithm/cython/talign.pyx":907
  *                    scale,
  *                    scorer
  *                    )             # <<<<<<<<<<<<<<
@@ -8931,7 +8931,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_14 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 671, __pyx_L1_error)
+      __pyx_t_14 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 899, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
       if (__pyx_t_13) {
         __Pyx_GIVEREF(__pyx_t_13); PyTuple_SET_ITEM(__pyx_t_14, 0, __pyx_t_13); __pyx_t_13 = NULL;
@@ -8957,7 +8957,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_10 = 0;
       __pyx_t_11 = 0;
       __pyx_t_12 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_14, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 671, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_14, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 899, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -8971,7 +8971,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 671, __pyx_L1_error)
+          __PYX_ERR(0, 899, __pyx_L1_error)
         }
         #if CYTHON_COMPILING_IN_CPYTHON
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -8987,17 +8987,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_INCREF(__pyx_t_14);
         __Pyx_INCREF(__pyx_t_12);
         #else
-        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 671, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 899, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_14 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 671, __pyx_L1_error)
+        __pyx_t_14 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 899, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_14);
-        __pyx_t_12 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 671, __pyx_L1_error)
+        __pyx_t_12 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 899, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         #endif
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 671, __pyx_L1_error)
+        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 899, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __pyx_t_15 = Py_TYPE(__pyx_t_11)->tp_iternext;
@@ -9007,7 +9007,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_GOTREF(__pyx_t_14);
         index = 2; __pyx_t_12 = __pyx_t_15(__pyx_t_11); if (unlikely(!__pyx_t_12)) goto __pyx_L6_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_12);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 671, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 899, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         goto __pyx_L7_unpacking_done;
@@ -9015,20 +9015,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 671, __pyx_L1_error)
+        __PYX_ERR(0, 899, __pyx_L1_error)
         __pyx_L7_unpacking_done:;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":671
+      /* "lingpy/algorithm/cython/talign.pyx":899
  * 
  *         if mode == "global":
  *             almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 671, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_t_14))||((__pyx_t_14) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_14)->tp_name), 0))) __PYX_ERR(0, 671, __pyx_L1_error)
-      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_12); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 671, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 899, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_14))||((__pyx_t_14) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_14)->tp_name), 0))) __PYX_ERR(0, 899, __pyx_L1_error)
+      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_12); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 899, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
       __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_5));
       __pyx_t_5 = 0;
@@ -9036,7 +9036,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_14 = 0;
       __pyx_v_sim = __pyx_t_16;
 
-      /* "lingpy/algorithm/cython/talign.pyx":670
+      /* "lingpy/algorithm/cython/talign.pyx":898
  *         M,N = len(seqA),len(seqB)
  * 
  *         if mode == "global":             # <<<<<<<<<<<<<<
@@ -9046,68 +9046,68 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       goto __pyx_L5;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":680
+    /* "lingpy/algorithm/cython/talign.pyx":908
  *                    scorer
  *                    )
  *         elif mode == "local":             # <<<<<<<<<<<<<<
  *             almA,almB,sim = localign(
  *                    seqA,
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 680, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_local, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 908, __pyx_L1_error)
     __pyx_t_8 = (__pyx_t_9 != 0);
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":681
+      /* "lingpy/algorithm/cython/talign.pyx":909
  *                    )
  *         elif mode == "local":
  *             almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      __pyx_t_12 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_GetModuleGlobalName(__pyx_n_s_localign); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 909, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
 
-      /* "lingpy/algorithm/cython/talign.pyx":684
+      /* "lingpy/algorithm/cython/talign.pyx":912
  *                    seqA,
  *                    seqB,
  *                    M,             # <<<<<<<<<<<<<<
  *                    N,
  *                    gop,
  */
-      __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 684, __pyx_L1_error)
+      __pyx_t_14 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 912, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_14);
 
-      /* "lingpy/algorithm/cython/talign.pyx":685
+      /* "lingpy/algorithm/cython/talign.pyx":913
  *                    seqB,
  *                    M,
  *                    N,             # <<<<<<<<<<<<<<
  *                    gop,
  *                    scale,
  */
-      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 685, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 913, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "lingpy/algorithm/cython/talign.pyx":686
+      /* "lingpy/algorithm/cython/talign.pyx":914
  *                    M,
  *                    N,
  *                    gop,             # <<<<<<<<<<<<<<
  *                    scale,
  *                    scorer
  */
-      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 686, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 914, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
 
-      /* "lingpy/algorithm/cython/talign.pyx":687
+      /* "lingpy/algorithm/cython/talign.pyx":915
  *                    N,
  *                    gop,
  *                    scale,             # <<<<<<<<<<<<<<
  *                    scorer
  *                    )
  */
-      __pyx_t_10 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 687, __pyx_L1_error)
+      __pyx_t_10 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 915, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
 
-      /* "lingpy/algorithm/cython/talign.pyx":689
+      /* "lingpy/algorithm/cython/talign.pyx":917
  *                    scale,
  *                    scorer
  *                    )             # <<<<<<<<<<<<<<
@@ -9126,7 +9126,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_13 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_13 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 909, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       if (__pyx_t_1) {
         __Pyx_GIVEREF(__pyx_t_1); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_1); __pyx_t_1 = NULL;
@@ -9152,7 +9152,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_5 = 0;
       __pyx_t_11 = 0;
       __pyx_t_10 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 681, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 909, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
@@ -9166,7 +9166,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 681, __pyx_L1_error)
+          __PYX_ERR(0, 909, __pyx_L1_error)
         }
         #if CYTHON_COMPILING_IN_CPYTHON
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -9182,17 +9182,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_INCREF(__pyx_t_13);
         __Pyx_INCREF(__pyx_t_10);
         #else
-        __pyx_t_12 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 681, __pyx_L1_error)
+        __pyx_t_12 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 909, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
-        __pyx_t_13 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 681, __pyx_L1_error)
+        __pyx_t_13 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 909, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_10 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 681, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 909, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         #endif
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 681, __pyx_L1_error)
+        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 909, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __pyx_t_15 = Py_TYPE(__pyx_t_11)->tp_iternext;
@@ -9202,7 +9202,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_GOTREF(__pyx_t_13);
         index = 2; __pyx_t_10 = __pyx_t_15(__pyx_t_11); if (unlikely(!__pyx_t_10)) goto __pyx_L8_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_10);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 681, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 909, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         goto __pyx_L9_unpacking_done;
@@ -9210,20 +9210,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 681, __pyx_L1_error)
+        __PYX_ERR(0, 909, __pyx_L1_error)
         __pyx_L9_unpacking_done:;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":681
+      /* "lingpy/algorithm/cython/talign.pyx":909
  *                    )
  *         elif mode == "local":
  *             almA,almB,sim = localign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      if (!(likely(PyList_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 681, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_13)->tp_name), 0))) __PYX_ERR(0, 681, __pyx_L1_error)
-      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 681, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_12))||((__pyx_t_12) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_12)->tp_name), 0))) __PYX_ERR(0, 909, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_13)->tp_name), 0))) __PYX_ERR(0, 909, __pyx_L1_error)
+      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_10); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 909, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
       __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_12));
       __pyx_t_12 = 0;
@@ -9231,7 +9231,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_13 = 0;
       __pyx_v_sim = __pyx_t_16;
 
-      /* "lingpy/algorithm/cython/talign.pyx":680
+      /* "lingpy/algorithm/cython/talign.pyx":908
  *                    scorer
  *                    )
  *         elif mode == "local":             # <<<<<<<<<<<<<<
@@ -9241,68 +9241,68 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       goto __pyx_L5;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":691
+    /* "lingpy/algorithm/cython/talign.pyx":919
  *                    )
  * 
  *         elif mode == "overlap":             # <<<<<<<<<<<<<<
  *             almA,almB,sim = semi_globalign(
  *                    seqA,
  */
-    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 691, __pyx_L1_error)
+    __pyx_t_8 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_8 < 0)) __PYX_ERR(0, 919, __pyx_L1_error)
     __pyx_t_9 = (__pyx_t_8 != 0);
     if (__pyx_t_9) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":692
+      /* "lingpy/algorithm/cython/talign.pyx":920
  * 
  *         elif mode == "overlap":
  *             almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 692, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 920, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
 
-      /* "lingpy/algorithm/cython/talign.pyx":695
+      /* "lingpy/algorithm/cython/talign.pyx":923
  *                    seqA,
  *                    seqB,
  *                    M,             # <<<<<<<<<<<<<<
  *                    N,
  *                    gop,
  */
-      __pyx_t_13 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 695, __pyx_L1_error)
+      __pyx_t_13 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 923, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
 
-      /* "lingpy/algorithm/cython/talign.pyx":696
+      /* "lingpy/algorithm/cython/talign.pyx":924
  *                    seqB,
  *                    M,
  *                    N,             # <<<<<<<<<<<<<<
  *                    gop,
  *                    scale,
  */
-      __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 696, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 924, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_12);
 
-      /* "lingpy/algorithm/cython/talign.pyx":697
+      /* "lingpy/algorithm/cython/talign.pyx":925
  *                    M,
  *                    N,
  *                    gop,             # <<<<<<<<<<<<<<
  *                    scale,
  *                    scorer
  */
-      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 697, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 925, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
 
-      /* "lingpy/algorithm/cython/talign.pyx":698
+      /* "lingpy/algorithm/cython/talign.pyx":926
  *                    N,
  *                    gop,
  *                    scale,             # <<<<<<<<<<<<<<
  *                    scorer
  *                    )
  */
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 698, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 926, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "lingpy/algorithm/cython/talign.pyx":700
+      /* "lingpy/algorithm/cython/talign.pyx":928
  *                    scale,
  *                    scorer
  *                    )             # <<<<<<<<<<<<<<
@@ -9321,7 +9321,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_1 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 692, __pyx_L1_error)
+      __pyx_t_1 = PyTuple_New(7+__pyx_t_7); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 920, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       if (__pyx_t_14) {
         __Pyx_GIVEREF(__pyx_t_14); PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_14); __pyx_t_14 = NULL;
@@ -9347,7 +9347,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_12 = 0;
       __pyx_t_11 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_1, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 692, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_1, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 920, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
@@ -9361,7 +9361,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 692, __pyx_L1_error)
+          __PYX_ERR(0, 920, __pyx_L1_error)
         }
         #if CYTHON_COMPILING_IN_CPYTHON
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -9377,17 +9377,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_INCREF(__pyx_t_1);
         __Pyx_INCREF(__pyx_t_5);
         #else
-        __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 692, __pyx_L1_error)
+        __pyx_t_10 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 920, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
-        __pyx_t_1 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 692, __pyx_L1_error)
+        __pyx_t_1 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 920, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
-        __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 692, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 920, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         #endif
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 692, __pyx_L1_error)
+        __pyx_t_11 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 920, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __pyx_t_15 = Py_TYPE(__pyx_t_11)->tp_iternext;
@@ -9397,7 +9397,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_GOTREF(__pyx_t_1);
         index = 2; __pyx_t_5 = __pyx_t_15(__pyx_t_11); if (unlikely(!__pyx_t_5)) goto __pyx_L10_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_5);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 692, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_11), 3) < 0) __PYX_ERR(0, 920, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         goto __pyx_L11_unpacking_done;
@@ -9405,20 +9405,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 692, __pyx_L1_error)
+        __PYX_ERR(0, 920, __pyx_L1_error)
         __pyx_L11_unpacking_done:;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":692
+      /* "lingpy/algorithm/cython/talign.pyx":920
  * 
  *         elif mode == "overlap":
  *             almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 692, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 692, __pyx_L1_error)
-      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 692, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_10))||((__pyx_t_10) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_10)->tp_name), 0))) __PYX_ERR(0, 920, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_1)->tp_name), 0))) __PYX_ERR(0, 920, __pyx_L1_error)
+      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 920, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_10));
       __pyx_t_10 = 0;
@@ -9426,7 +9426,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_1 = 0;
       __pyx_v_sim = __pyx_t_16;
 
-      /* "lingpy/algorithm/cython/talign.pyx":691
+      /* "lingpy/algorithm/cython/talign.pyx":919
  *                    )
  * 
  *         elif mode == "overlap":             # <<<<<<<<<<<<<<
@@ -9436,58 +9436,58 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       goto __pyx_L5;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":702
+    /* "lingpy/algorithm/cython/talign.pyx":930
  *                    )
  * 
  *         elif mode == "dialign":             # <<<<<<<<<<<<<<
  *             almA,almB,sim = dialign(
  *                    seqA,
  */
-    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 702, __pyx_L1_error)
+    __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 930, __pyx_L1_error)
     __pyx_t_8 = (__pyx_t_9 != 0);
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":703
+      /* "lingpy/algorithm/cython/talign.pyx":931
  * 
  *         elif mode == "dialign":
  *             almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 703, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 931, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "lingpy/algorithm/cython/talign.pyx":706
+      /* "lingpy/algorithm/cython/talign.pyx":934
  *                    seqA,
  *                    seqB,
  *                    M,             # <<<<<<<<<<<<<<
  *                    N,
  *                    scale,
  */
-      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 706, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 934, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":707
+      /* "lingpy/algorithm/cython/talign.pyx":935
  *                    seqB,
  *                    M,
  *                    N,             # <<<<<<<<<<<<<<
  *                    scale,
  *                    scorer
  */
-      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 707, __pyx_L1_error)
+      __pyx_t_10 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 935, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_10);
 
-      /* "lingpy/algorithm/cython/talign.pyx":708
+      /* "lingpy/algorithm/cython/talign.pyx":936
  *                    M,
  *                    N,
  *                    scale,             # <<<<<<<<<<<<<<
  *                    scorer
  *                    )
  */
-      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 708, __pyx_L1_error)
+      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 936, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
 
-      /* "lingpy/algorithm/cython/talign.pyx":710
+      /* "lingpy/algorithm/cython/talign.pyx":938
  *                    scale,
  *                    scorer
  *                    )             # <<<<<<<<<<<<<<
@@ -9506,7 +9506,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_13 = PyTuple_New(6+__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 703, __pyx_L1_error)
+      __pyx_t_13 = PyTuple_New(6+__pyx_t_7); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 931, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       if (__pyx_t_12) {
         __Pyx_GIVEREF(__pyx_t_12); PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_12); __pyx_t_12 = NULL;
@@ -9529,7 +9529,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_1 = 0;
       __pyx_t_10 = 0;
       __pyx_t_11 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 703, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 931, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -9543,7 +9543,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         if (unlikely(size != 3)) {
           if (size > 3) __Pyx_RaiseTooManyValuesError(3);
           else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-          __PYX_ERR(0, 703, __pyx_L1_error)
+          __PYX_ERR(0, 931, __pyx_L1_error)
         }
         #if CYTHON_COMPILING_IN_CPYTHON
         if (likely(PyTuple_CheckExact(sequence))) {
@@ -9559,17 +9559,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_INCREF(__pyx_t_13);
         __Pyx_INCREF(__pyx_t_11);
         #else
-        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 703, __pyx_L1_error)
+        __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 931, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_13 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 703, __pyx_L1_error)
+        __pyx_t_13 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 931, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_11 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 703, __pyx_L1_error)
+        __pyx_t_11 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 931, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         #endif
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       } else {
         Py_ssize_t index = -1;
-        __pyx_t_10 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 703, __pyx_L1_error)
+        __pyx_t_10 = PyObject_GetIter(__pyx_t_6); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 931, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_10);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
         __pyx_t_15 = Py_TYPE(__pyx_t_10)->tp_iternext;
@@ -9579,7 +9579,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_GOTREF(__pyx_t_13);
         index = 2; __pyx_t_11 = __pyx_t_15(__pyx_t_10); if (unlikely(!__pyx_t_11)) goto __pyx_L12_unpacking_failed;
         __Pyx_GOTREF(__pyx_t_11);
-        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_10), 3) < 0) __PYX_ERR(0, 703, __pyx_L1_error)
+        if (__Pyx_IternextUnpackEndCheck(__pyx_t_15(__pyx_t_10), 3) < 0) __PYX_ERR(0, 931, __pyx_L1_error)
         __pyx_t_15 = NULL;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         goto __pyx_L13_unpacking_done;
@@ -9587,20 +9587,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
         __pyx_t_15 = NULL;
         if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-        __PYX_ERR(0, 703, __pyx_L1_error)
+        __PYX_ERR(0, 931, __pyx_L1_error)
         __pyx_L13_unpacking_done:;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":703
+      /* "lingpy/algorithm/cython/talign.pyx":931
  * 
  *         elif mode == "dialign":
  *             almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                    seqA,
  *                    seqB,
  */
-      if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 703, __pyx_L1_error)
-      if (!(likely(PyList_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_13)->tp_name), 0))) __PYX_ERR(0, 703, __pyx_L1_error)
-      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 703, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 931, __pyx_L1_error)
+      if (!(likely(PyList_CheckExact(__pyx_t_13))||((__pyx_t_13) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_13)->tp_name), 0))) __PYX_ERR(0, 931, __pyx_L1_error)
+      __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 931, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_XDECREF_SET(__pyx_v_almA, ((PyObject*)__pyx_t_5));
       __pyx_t_5 = 0;
@@ -9608,7 +9608,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_13 = 0;
       __pyx_v_sim = __pyx_t_16;
 
-      /* "lingpy/algorithm/cython/talign.pyx":702
+      /* "lingpy/algorithm/cython/talign.pyx":930
  *                    )
  * 
  *         elif mode == "dialign":             # <<<<<<<<<<<<<<
@@ -9618,7 +9618,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
     }
     __pyx_L5:;
 
-    /* "lingpy/algorithm/cython/talign.pyx":713
+    /* "lingpy/algorithm/cython/talign.pyx":941
  * 
  *         # calculate distances if option is chose
  *         if distance > 0:             # <<<<<<<<<<<<<<
@@ -9628,31 +9628,31 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
     __pyx_t_8 = ((__pyx_v_distance > 0) != 0);
     if (__pyx_t_8) {
 
-      /* "lingpy/algorithm/cython/talign.pyx":714
+      /* "lingpy/algorithm/cython/talign.pyx":942
  *         # calculate distances if option is chose
  *         if distance > 0:
  *             simA = sum([scorer[seqA[i],seqA[i]] for i in range(M)])             # <<<<<<<<<<<<<<
  *             simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])
  * 
  */
-      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 714, __pyx_L1_error)
+      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 942, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_17 = __pyx_v_M;
       for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
         __pyx_v_i = __pyx_t_18;
         if (unlikely(__pyx_v_seqA == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 714, __pyx_L1_error)
+          __PYX_ERR(0, 942, __pyx_L1_error)
         }
-        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 714, __pyx_L1_error)
+        __pyx_t_11 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 942, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         if (unlikely(__pyx_v_seqA == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 714, __pyx_L1_error)
+          __PYX_ERR(0, 942, __pyx_L1_error)
         }
-        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 714, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 942, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
-        __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 714, __pyx_L1_error)
+        __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 942, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_GIVEREF(__pyx_t_11);
         PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_11);
@@ -9660,48 +9660,48 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_13);
         __pyx_t_11 = 0;
         __pyx_t_13 = 0;
-        __pyx_t_13 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 714, __pyx_L1_error)
+        __pyx_t_13 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 942, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_13))) __PYX_ERR(0, 714, __pyx_L1_error)
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_13))) __PYX_ERR(0, 942, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       }
-      __pyx_t_13 = PyTuple_New(1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 714, __pyx_L1_error)
+      __pyx_t_13 = PyTuple_New(1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 942, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_13);
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_6);
       __pyx_t_6 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 714, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_13, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 942, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
       __Pyx_XDECREF_SET(__pyx_v_simA, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":715
+      /* "lingpy/algorithm/cython/talign.pyx":943
  *         if distance > 0:
  *             simA = sum([scorer[seqA[i],seqA[i]] for i in range(M)])
  *             simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])             # <<<<<<<<<<<<<<
  * 
  *             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  */
-      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __pyx_t_6 = PyList_New(0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 943, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_17 = __pyx_v_N;
       for (__pyx_t_18 = 0; __pyx_t_18 < __pyx_t_17; __pyx_t_18+=1) {
         __pyx_v_i = __pyx_t_18;
         if (unlikely(__pyx_v_seqB == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 715, __pyx_L1_error)
+          __PYX_ERR(0, 943, __pyx_L1_error)
         }
-        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 715, __pyx_L1_error)
+        __pyx_t_13 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 943, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_13);
         if (unlikely(__pyx_v_seqB == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-          __PYX_ERR(0, 715, __pyx_L1_error)
+          __PYX_ERR(0, 943, __pyx_L1_error)
         }
-        __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 715, __pyx_L1_error)
+        __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_seqB, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 943, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 715, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 943, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_GIVEREF(__pyx_t_13);
         PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_13);
@@ -9709,45 +9709,45 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_t_5);
         __pyx_t_13 = 0;
         __pyx_t_5 = 0;
-        __pyx_t_5 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 715, __pyx_L1_error)
+        __pyx_t_5 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 943, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 715, __pyx_L1_error)
+        if (unlikely(__Pyx_ListComp_Append(__pyx_t_6, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 943, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       }
-      __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 943, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_6);
       PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_6);
       __pyx_t_6 = 0;
-      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_5, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 715, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_builtin_sum, __pyx_t_5, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 943, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_XDECREF_SET(__pyx_v_simB, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":717
+      /* "lingpy/algorithm/cython/talign.pyx":945
  *             simB = sum([scorer[seqB[i],seqB[i]] for i in range(N)])
  * 
  *             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )             # <<<<<<<<<<<<<<
  *             if distance == 1:
  *                 alignments.append((almA,almB,dist))
  */
-      __pyx_t_6 = PyFloat_FromDouble((2.0 * __pyx_v_sim)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 717, __pyx_L1_error)
+      __pyx_t_6 = PyFloat_FromDouble((2.0 * __pyx_v_sim)); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 945, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = PyNumber_Add(__pyx_v_simA, __pyx_v_simB); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 717, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_Add(__pyx_v_simA, __pyx_v_simB); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 945, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_11 = __Pyx_PyNumber_Divide(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 717, __pyx_L1_error)
+      __pyx_t_11 = __Pyx_PyNumber_Divide(__pyx_t_6, __pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 945, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_11, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 717, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_11, 1, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 945, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       __Pyx_XDECREF_SET(__pyx_v_dist, __pyx_t_5);
       __pyx_t_5 = 0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":718
+      /* "lingpy/algorithm/cython/talign.pyx":946
  * 
  *             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *             if distance == 1:             # <<<<<<<<<<<<<<
@@ -9757,16 +9757,16 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __pyx_t_8 = ((__pyx_v_distance == 1) != 0);
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":719
+        /* "lingpy/algorithm/cython/talign.pyx":947
  *             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *             if distance == 1:
  *                 alignments.append((almA,almB,dist))             # <<<<<<<<<<<<<<
  *             else:
  *                 alignments.append((almA,almB,sim,dist))
  */
-        if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 719, __pyx_L1_error) }
-        if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 719, __pyx_L1_error) }
-        __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 719, __pyx_L1_error)
+        if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 947, __pyx_L1_error) }
+        if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 947, __pyx_L1_error) }
+        __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 947, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
         __Pyx_INCREF(__pyx_v_almA);
         __Pyx_GIVEREF(__pyx_v_almA);
@@ -9777,10 +9777,10 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_INCREF(__pyx_v_dist);
         __Pyx_GIVEREF(__pyx_v_dist);
         PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_v_dist);
-        __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_5); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 719, __pyx_L1_error)
+        __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_5); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 947, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-        /* "lingpy/algorithm/cython/talign.pyx":718
+        /* "lingpy/algorithm/cython/talign.pyx":946
  * 
  *             dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
  *             if distance == 1:             # <<<<<<<<<<<<<<
@@ -9790,7 +9790,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         goto __pyx_L19;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":721
+      /* "lingpy/algorithm/cython/talign.pyx":949
  *                 alignments.append((almA,almB,dist))
  *             else:
  *                 alignments.append((almA,almB,sim,dist))             # <<<<<<<<<<<<<<
@@ -9798,11 +9798,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
  *             alignments.append((almA,almB,sim))
  */
       /*else*/ {
-        if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 721, __pyx_L1_error) }
-        if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 721, __pyx_L1_error) }
-        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 721, __pyx_L1_error)
+        if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 949, __pyx_L1_error) }
+        if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 949, __pyx_L1_error) }
+        __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 949, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_5);
-        __pyx_t_11 = PyTuple_New(4); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 721, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(4); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 949, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_INCREF(__pyx_v_almA);
         __Pyx_GIVEREF(__pyx_v_almA);
@@ -9816,12 +9816,12 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
         __Pyx_GIVEREF(__pyx_v_dist);
         PyTuple_SET_ITEM(__pyx_t_11, 3, __pyx_v_dist);
         __pyx_t_5 = 0;
-        __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_11); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 721, __pyx_L1_error)
+        __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_11); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 949, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
       }
       __pyx_L19:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":713
+      /* "lingpy/algorithm/cython/talign.pyx":941
  * 
  *         # calculate distances if option is chose
  *         if distance > 0:             # <<<<<<<<<<<<<<
@@ -9831,7 +9831,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       goto __pyx_L14;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":723
+    /* "lingpy/algorithm/cython/talign.pyx":951
  *                 alignments.append((almA,almB,sim,dist))
  *         else:
  *             alignments.append((almA,almB,sim))             # <<<<<<<<<<<<<<
@@ -9839,11 +9839,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
  *     return alignments
  */
     /*else*/ {
-      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 723, __pyx_L1_error) }
-      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 723, __pyx_L1_error) }
-      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 723, __pyx_L1_error)
+      if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 951, __pyx_L1_error) }
+      if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 951, __pyx_L1_error) }
+      __pyx_t_11 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 951, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_11);
-      __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 723, __pyx_L1_error)
+      __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 951, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_v_almA);
       __Pyx_GIVEREF(__pyx_v_almA);
@@ -9854,13 +9854,13 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
       __Pyx_GIVEREF(__pyx_t_11);
       PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_11);
       __pyx_t_11 = 0;
-      __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_5); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 723, __pyx_L1_error)
+      __pyx_t_19 = __Pyx_PyList_Append(__pyx_v_alignments, __pyx_t_5); if (unlikely(__pyx_t_19 == -1)) __PYX_ERR(0, 951, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
     __pyx_L14:;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":725
+  /* "lingpy/algorithm/cython/talign.pyx":953
  *             alignments.append((almA,almB,sim))
  * 
  *     return alignments             # <<<<<<<<<<<<<<
@@ -9872,7 +9872,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
   __pyx_r = __pyx_v_alignments;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":640
+  /* "lingpy/algorithm/cython/talign.pyx":834
  *     return alignments
  * 
  * def align_pairs(             # <<<<<<<<<<<<<<
@@ -9906,7 +9906,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":728
+/* "lingpy/algorithm/cython/talign.pyx":956
  * 
  * # specific methods for the alignment of profiles
  * def align_profile(             # <<<<<<<<<<<<<<
@@ -9916,7 +9916,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_12align_pairs(CYTHO
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_15align_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_14align_profile[] = "\n    Align two profiles using the basic modes.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_14align_profile[] = "\n    Align two profiles using the basic modes.\n\n    Parameters\n    ----------\n    profileA, profileB : list\n        Two-dimensional list for each of the profiles. \n    gop : int\n        The gap opening penalty.\n    scale : float\n        The gap extension scale by which consecutive gaps are reduced. LingPy\n        uses a scale rather than a constant gap extension penalty. \n    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }\n        The scoring function which needs to provide scores for all\n        segments in the two profiles.\n    mode : { \"global\", \"overlap\", \"dialign\" }\n        Select one of the four basic modes for alignment analyses.\n    gap_weight : float\n        This handles the weight that is given to gaps in a column. If you set\n        it to 0, for example, this means that all gaps will be ignored when\n        determining the score for two columns in the profile.\n\n    Notes\n    -----\n    This function computes alignments of two profiles of multiple sequences\n    (see :evobib:`Durbin2002` for details on profiles)\n    and is important for multiple alignment analyses.\n\n    Returns\n    -------\n    alignment : tuple\n        The aligned profiles, and the overall similarity of the profiles.\n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.score_profile\n    ~lingpy.algorithm.cython.talign.swap_score_profile\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_15align_profile = {"align_profile", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_15align_profile, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_14align_profile};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_15align_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_profileA = 0;
@@ -9954,36 +9954,36 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_15align_profile(PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_profileB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 1); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 1); __PYX_ERR(0, 956, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 2); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 2); __PYX_ERR(0, 956, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scale)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 3); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 3); __PYX_ERR(0, 956, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 4); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 4); __PYX_ERR(0, 956, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mode)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 5); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 5); __PYX_ERR(0, 956, __pyx_L3_error)
         }
         case  6:
         if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gap_weight)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 6); __PYX_ERR(0, 728, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, 6); __PYX_ERR(0, 956, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_profile") < 0)) __PYX_ERR(0, 728, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "align_profile") < 0)) __PYX_ERR(0, 956, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
       goto __pyx_L5_argtuple_error;
@@ -9998,23 +9998,23 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_15align_profile(PyO
     }
     __pyx_v_profileA = ((PyObject*)values[0]);
     __pyx_v_profileB = ((PyObject*)values[1]);
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 731, __pyx_L3_error)
-    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 732, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 959, __pyx_L3_error)
+    __pyx_v_scale = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_scale == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 960, __pyx_L3_error)
     __pyx_v_scorer = values[4];
     __pyx_v_mode = ((PyObject*)values[5]);
-    __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[6]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 735, __pyx_L3_error)
+    __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[6]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 963, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 728, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("align_profile", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 956, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.align_profile", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_profileA), (&PyList_Type), 1, "profileA", 1))) __PYX_ERR(0, 729, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_profileB), (&PyList_Type), 1, "profileB", 1))) __PYX_ERR(0, 730, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 734, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_profileA), (&PyList_Type), 1, "profileA", 1))) __PYX_ERR(0, 957, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_profileB), (&PyList_Type), 1, "profileB", 1))) __PYX_ERR(0, 958, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mode), (&PyString_Type), 1, "mode", 1))) __PYX_ERR(0, 962, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(__pyx_self, __pyx_v_profileA, __pyx_v_profileB, __pyx_v_gop, __pyx_v_scale, __pyx_v_scorer, __pyx_v_mode, __pyx_v_gap_weight);
 
   /* function exit code */
@@ -10070,7 +10070,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
   PyObject *(*__pyx_t_22)(PyObject *);
   __Pyx_RefNannySetupContext("align_profile", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":747
+  /* "lingpy/algorithm/cython/talign.pyx":1010
  *     cdef list listA,listB,almA,almB
  * 
  *     M = len(profileA)             # <<<<<<<<<<<<<<
@@ -10079,12 +10079,12 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
   if (unlikely(__pyx_v_profileA == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 747, __pyx_L1_error)
+    __PYX_ERR(0, 1010, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_profileA); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 747, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_profileA); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 1010, __pyx_L1_error)
   __pyx_v_M = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":748
+  /* "lingpy/algorithm/cython/talign.pyx":1011
  * 
  *     M = len(profileA)
  *     N = len(profileB)             # <<<<<<<<<<<<<<
@@ -10093,12 +10093,12 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
   if (unlikely(__pyx_v_profileB == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 748, __pyx_L1_error)
+    __PYX_ERR(0, 1011, __pyx_L1_error)
   }
-  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_profileB); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 748, __pyx_L1_error)
+  __pyx_t_1 = PyList_GET_SIZE(__pyx_v_profileB); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 1011, __pyx_L1_error)
   __pyx_v_N = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":749
+  /* "lingpy/algorithm/cython/talign.pyx":1012
  *     M = len(profileA)
  *     N = len(profileB)
  *     O = len(profileA[0])             # <<<<<<<<<<<<<<
@@ -10107,15 +10107,15 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
   if (unlikely(__pyx_v_profileA == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 749, __pyx_L1_error)
+    __PYX_ERR(0, 1012, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileA, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 749, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileA, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1012, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 749, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 1012, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_O = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":750
+  /* "lingpy/algorithm/cython/talign.pyx":1013
  *     N = len(profileB)
  *     O = len(profileA[0])
  *     P = len(profileB[0])             # <<<<<<<<<<<<<<
@@ -10124,67 +10124,67 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
   if (unlikely(__pyx_v_profileB == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-    __PYX_ERR(0, 750, __pyx_L1_error)
+    __PYX_ERR(0, 1013, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileB, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 750, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileB, 0, long, 1, __Pyx_PyInt_From_long, 1, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1013, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 750, __pyx_L1_error)
+  __pyx_t_1 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_1 == -1)) __PYX_ERR(0, 1013, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_P = __pyx_t_1;
 
-  /* "lingpy/algorithm/cython/talign.pyx":752
+  /* "lingpy/algorithm/cython/talign.pyx":1015
  *     P = len(profileB[0])
  * 
  *     cdef dict tmp_scorer = {}             # <<<<<<<<<<<<<<
  * 
  *     listA = [i for i in range(M)]
  */
-  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 752, __pyx_L1_error)
+  __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1015, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_v_tmp_scorer = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":754
+  /* "lingpy/algorithm/cython/talign.pyx":1017
  *     cdef dict tmp_scorer = {}
  * 
  *     listA = [i for i in range(M)]             # <<<<<<<<<<<<<<
  *     listB = [i for i in range(N)]
  * 
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 754, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1017, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __pyx_v_M;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 754, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1017, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 754, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 1017, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __pyx_v_listA = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":755
+  /* "lingpy/algorithm/cython/talign.pyx":1018
  * 
  *     listA = [i for i in range(M)]
  *     listB = [i for i in range(N)]             # <<<<<<<<<<<<<<
  * 
  *     for i in range(M):
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 755, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1018, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __pyx_v_N;
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
-    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 755, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1018, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 755, __pyx_L1_error)
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_5))) __PYX_ERR(0, 1018, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __pyx_v_listB = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":757
+  /* "lingpy/algorithm/cython/talign.pyx":1020
  *     listB = [i for i in range(N)]
  * 
  *     for i in range(M):             # <<<<<<<<<<<<<<
@@ -10195,7 +10195,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
   for (__pyx_t_4 = 0; __pyx_t_4 < __pyx_t_3; __pyx_t_4+=1) {
     __pyx_v_i = __pyx_t_4;
 
-    /* "lingpy/algorithm/cython/talign.pyx":758
+    /* "lingpy/algorithm/cython/talign.pyx":1021
  * 
  *     for i in range(M):
  *         for j in range(N):             # <<<<<<<<<<<<<<
@@ -10206,7 +10206,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     for (__pyx_t_7 = 0; __pyx_t_7 < __pyx_t_6; __pyx_t_7+=1) {
       __pyx_v_j = __pyx_t_7;
 
-      /* "lingpy/algorithm/cython/talign.pyx":759
+      /* "lingpy/algorithm/cython/talign.pyx":1022
  *     for i in range(M):
  *         for j in range(N):
  *             sim = 0.0             # <<<<<<<<<<<<<<
@@ -10215,7 +10215,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
       __pyx_v_sim = 0.0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":760
+      /* "lingpy/algorithm/cython/talign.pyx":1023
  *         for j in range(N):
  *             sim = 0.0
  *             count = 0.0             # <<<<<<<<<<<<<<
@@ -10224,7 +10224,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
       __pyx_v_count = 0.0;
 
-      /* "lingpy/algorithm/cython/talign.pyx":761
+      /* "lingpy/algorithm/cython/talign.pyx":1024
  *             sim = 0.0
  *             count = 0.0
  *             for k in range(O):             # <<<<<<<<<<<<<<
@@ -10235,7 +10235,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
         __pyx_v_k = __pyx_t_9;
 
-        /* "lingpy/algorithm/cython/talign.pyx":762
+        /* "lingpy/algorithm/cython/talign.pyx":1025
  *             count = 0.0
  *             for k in range(O):
  *                 for l in range(P):             # <<<<<<<<<<<<<<
@@ -10246,7 +10246,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
         for (__pyx_t_11 = 0; __pyx_t_11 < __pyx_t_10; __pyx_t_11+=1) {
           __pyx_v_l = __pyx_t_11;
 
-          /* "lingpy/algorithm/cython/talign.pyx":763
+          /* "lingpy/algorithm/cython/talign.pyx":1026
  *             for k in range(O):
  *                 for l in range(P):
  *                     charA = profileA[i][k]             # <<<<<<<<<<<<<<
@@ -10255,18 +10255,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
           if (unlikely(__pyx_v_profileA == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 763, __pyx_L1_error)
+            __PYX_ERR(0, 1026, __pyx_L1_error)
           }
-          __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 763, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_GetItemInt_List(__pyx_v_profileA, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1026, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_k, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 763, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_k, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1026, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 763, __pyx_L1_error)
+          if (!(likely(PyString_CheckExact(__pyx_t_5))||((__pyx_t_5) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_5)->tp_name), 0))) __PYX_ERR(0, 1026, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_charA, ((PyObject*)__pyx_t_5));
           __pyx_t_5 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":764
+          /* "lingpy/algorithm/cython/talign.pyx":1027
  *                 for l in range(P):
  *                     charA = profileA[i][k]
  *                     charB = profileB[j][l]             # <<<<<<<<<<<<<<
@@ -10275,47 +10275,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
           if (unlikely(__pyx_v_profileB == Py_None)) {
             PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-            __PYX_ERR(0, 764, __pyx_L1_error)
+            __PYX_ERR(0, 1027, __pyx_L1_error)
           }
-          __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_profileB, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 764, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_GetItemInt_List(__pyx_v_profileB, __pyx_v_j, int, 1, __Pyx_PyInt_From_int, 1, 1, 1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1027, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_5, __pyx_v_l, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 764, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_5, __pyx_v_l, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1027, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-          if (!(likely(PyString_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 764, __pyx_L1_error)
+          if (!(likely(PyString_CheckExact(__pyx_t_2))||((__pyx_t_2) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_2)->tp_name), 0))) __PYX_ERR(0, 1027, __pyx_L1_error)
           __Pyx_XDECREF_SET(__pyx_v_charB, ((PyObject*)__pyx_t_2));
           __pyx_t_2 = 0;
 
-          /* "lingpy/algorithm/cython/talign.pyx":765
+          /* "lingpy/algorithm/cython/talign.pyx":1028
  *                     charA = profileA[i][k]
  *                     charB = profileB[j][l]
  *                     if charA != 'X' and charB != 'X':             # <<<<<<<<<<<<<<
  *                         sim += scorer[charA,charB]
  *                         count += 1.0
  */
-          __pyx_t_13 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 765, __pyx_L1_error)
+          __pyx_t_13 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1028, __pyx_L1_error)
           __pyx_t_14 = (__pyx_t_13 != 0);
           if (__pyx_t_14) {
           } else {
             __pyx_t_12 = __pyx_t_14;
             goto __pyx_L16_bool_binop_done;
           }
-          __pyx_t_14 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 765, __pyx_L1_error)
+          __pyx_t_14 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_14 < 0)) __PYX_ERR(0, 1028, __pyx_L1_error)
           __pyx_t_13 = (__pyx_t_14 != 0);
           __pyx_t_12 = __pyx_t_13;
           __pyx_L16_bool_binop_done:;
           if (__pyx_t_12) {
 
-            /* "lingpy/algorithm/cython/talign.pyx":766
+            /* "lingpy/algorithm/cython/talign.pyx":1029
  *                     charB = profileB[j][l]
  *                     if charA != 'X' and charB != 'X':
  *                         sim += scorer[charA,charB]             # <<<<<<<<<<<<<<
  *                         count += 1.0
  *                     else:
  */
-            __pyx_t_2 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 766, __pyx_L1_error)
+            __pyx_t_2 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1029, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_2);
-            __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 766, __pyx_L1_error)
+            __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1029, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_5);
             __Pyx_INCREF(__pyx_v_charA);
             __Pyx_GIVEREF(__pyx_v_charA);
@@ -10323,18 +10323,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
             __Pyx_INCREF(__pyx_v_charB);
             __Pyx_GIVEREF(__pyx_v_charB);
             PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_v_charB);
-            __pyx_t_15 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 766, __pyx_L1_error)
+            __pyx_t_15 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_5); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1029, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_15);
             __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-            __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 766, __pyx_L1_error)
+            __pyx_t_5 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_15); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1029, __pyx_L1_error)
             __Pyx_GOTREF(__pyx_t_5);
             __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
             __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
-            __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 766, __pyx_L1_error)
+            __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_5); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1029, __pyx_L1_error)
             __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
             __pyx_v_sim = __pyx_t_16;
 
-            /* "lingpy/algorithm/cython/talign.pyx":767
+            /* "lingpy/algorithm/cython/talign.pyx":1030
  *                     if charA != 'X' and charB != 'X':
  *                         sim += scorer[charA,charB]
  *                         count += 1.0             # <<<<<<<<<<<<<<
@@ -10343,7 +10343,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
             __pyx_v_count = (__pyx_v_count + 1.0);
 
-            /* "lingpy/algorithm/cython/talign.pyx":765
+            /* "lingpy/algorithm/cython/talign.pyx":1028
  *                     charA = profileA[i][k]
  *                     charB = profileB[j][l]
  *                     if charA != 'X' and charB != 'X':             # <<<<<<<<<<<<<<
@@ -10353,7 +10353,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
             goto __pyx_L15;
           }
 
-          /* "lingpy/algorithm/cython/talign.pyx":769
+          /* "lingpy/algorithm/cython/talign.pyx":1032
  *                         count += 1.0
  *                     else:
  *                         count += gap_weight             # <<<<<<<<<<<<<<
@@ -10367,7 +10367,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
         }
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":770
+      /* "lingpy/algorithm/cython/talign.pyx":1033
  *                     else:
  *                         count += gap_weight
  *             tmp_scorer[i,j] = sim / count             # <<<<<<<<<<<<<<
@@ -10376,15 +10376,15 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  */
       if (unlikely(__pyx_v_count == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 770, __pyx_L1_error)
+        __PYX_ERR(0, 1033, __pyx_L1_error)
       }
-      __pyx_t_5 = PyFloat_FromDouble((__pyx_v_sim / __pyx_v_count)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 770, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble((__pyx_v_sim / __pyx_v_count)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1033, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 770, __pyx_L1_error)
+      __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1033, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 770, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_j); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1033, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_17 = PyTuple_New(2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 770, __pyx_L1_error)
+      __pyx_t_17 = PyTuple_New(2); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 1033, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_17);
       __Pyx_GIVEREF(__pyx_t_15);
       PyTuple_SET_ITEM(__pyx_t_17, 0, __pyx_t_15);
@@ -10392,74 +10392,74 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       PyTuple_SET_ITEM(__pyx_t_17, 1, __pyx_t_2);
       __pyx_t_15 = 0;
       __pyx_t_2 = 0;
-      if (unlikely(PyDict_SetItem(__pyx_v_tmp_scorer, __pyx_t_17, __pyx_t_5) < 0)) __PYX_ERR(0, 770, __pyx_L1_error)
+      if (unlikely(PyDict_SetItem(__pyx_v_tmp_scorer, __pyx_t_17, __pyx_t_5) < 0)) __PYX_ERR(0, 1033, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     }
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":772
+  /* "lingpy/algorithm/cython/talign.pyx":1035
  *             tmp_scorer[i,j] = sim / count
  * 
  *     if mode == "global":             # <<<<<<<<<<<<<<
  *         almA,almB,sim = globalign(
  *                 listA,
  */
-  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 772, __pyx_L1_error)
+  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_global, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 1035, __pyx_L1_error)
   __pyx_t_13 = (__pyx_t_12 != 0);
   if (__pyx_t_13) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":773
+    /* "lingpy/algorithm/cython/talign.pyx":1036
  * 
  *     if mode == "global":
  *         almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    __pyx_t_17 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 773, __pyx_L1_error)
+    __pyx_t_17 = __Pyx_GetModuleGlobalName(__pyx_n_s_globalign); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 1036, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_17);
 
-    /* "lingpy/algorithm/cython/talign.pyx":776
+    /* "lingpy/algorithm/cython/talign.pyx":1039
  *                 listA,
  *                 listB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 gop,
  */
-    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 776, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1039, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
 
-    /* "lingpy/algorithm/cython/talign.pyx":777
+    /* "lingpy/algorithm/cython/talign.pyx":1040
  *                 listB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 gop,
  *                 scale,
  */
-    __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 777, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1040, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
 
-    /* "lingpy/algorithm/cython/talign.pyx":778
+    /* "lingpy/algorithm/cython/talign.pyx":1041
  *                 M,
  *                 N,
  *                 gop,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 tmp_scorer
  */
-    __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 778, __pyx_L1_error)
+    __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1041, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_18);
 
-    /* "lingpy/algorithm/cython/talign.pyx":779
+    /* "lingpy/algorithm/cython/talign.pyx":1042
  *                 N,
  *                 gop,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 tmp_scorer
  *                 )
  */
-    __pyx_t_19 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 779, __pyx_L1_error)
+    __pyx_t_19 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1042, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_19);
 
-    /* "lingpy/algorithm/cython/talign.pyx":781
+    /* "lingpy/algorithm/cython/talign.pyx":1044
  *                 scale,
  *                 tmp_scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -10478,7 +10478,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_21 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 773, __pyx_L1_error)
+    __pyx_t_21 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1036, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_21);
     if (__pyx_t_20) {
       __Pyx_GIVEREF(__pyx_t_20); PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_20); __pyx_t_20 = NULL;
@@ -10504,7 +10504,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_15 = 0;
     __pyx_t_18 = 0;
     __pyx_t_19 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 773, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_17, __pyx_t_21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1036, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
     __Pyx_DECREF(__pyx_t_17); __pyx_t_17 = 0;
@@ -10518,7 +10518,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 773, __pyx_L1_error)
+        __PYX_ERR(0, 1036, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -10534,17 +10534,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_INCREF(__pyx_t_21);
       __Pyx_INCREF(__pyx_t_19);
       #else
-      __pyx_t_17 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 773, __pyx_L1_error)
+      __pyx_t_17 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 1036, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_17);
-      __pyx_t_21 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 773, __pyx_L1_error)
+      __pyx_t_21 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1036, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_21);
-      __pyx_t_19 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 773, __pyx_L1_error)
+      __pyx_t_19 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1036, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_19);
       #endif
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_18 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 773, __pyx_L1_error)
+      __pyx_t_18 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1036, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_22 = Py_TYPE(__pyx_t_18)->tp_iternext;
@@ -10554,7 +10554,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_GOTREF(__pyx_t_21);
       index = 2; __pyx_t_19 = __pyx_t_22(__pyx_t_18); if (unlikely(!__pyx_t_19)) goto __pyx_L19_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_19);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_18), 3) < 0) __PYX_ERR(0, 773, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_18), 3) < 0) __PYX_ERR(0, 1036, __pyx_L1_error)
       __pyx_t_22 = NULL;
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       goto __pyx_L20_unpacking_done;
@@ -10562,20 +10562,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __pyx_t_22 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 773, __pyx_L1_error)
+      __PYX_ERR(0, 1036, __pyx_L1_error)
       __pyx_L20_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":773
+    /* "lingpy/algorithm/cython/talign.pyx":1036
  * 
  *     if mode == "global":
  *         almA,almB,sim = globalign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 773, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_21))||((__pyx_t_21) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_21)->tp_name), 0))) __PYX_ERR(0, 773, __pyx_L1_error)
-    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 773, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_17))||((__pyx_t_17) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_17)->tp_name), 0))) __PYX_ERR(0, 1036, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_21))||((__pyx_t_21) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_21)->tp_name), 0))) __PYX_ERR(0, 1036, __pyx_L1_error)
+    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_19); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1036, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_17);
     __pyx_t_17 = 0;
@@ -10583,7 +10583,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_21 = 0;
     __pyx_v_sim = __pyx_t_16;
 
-    /* "lingpy/algorithm/cython/talign.pyx":772
+    /* "lingpy/algorithm/cython/talign.pyx":1035
  *             tmp_scorer[i,j] = sim / count
  * 
  *     if mode == "global":             # <<<<<<<<<<<<<<
@@ -10593,68 +10593,68 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     goto __pyx_L18;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":782
+  /* "lingpy/algorithm/cython/talign.pyx":1045
  *                 tmp_scorer
  *                 )
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
  *         almA,almB,sim = semi_globalign(
  *                 listA,
  */
-  __pyx_t_13 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 782, __pyx_L1_error)
+  __pyx_t_13 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_overlap, Py_EQ)); if (unlikely(__pyx_t_13 < 0)) __PYX_ERR(0, 1045, __pyx_L1_error)
   __pyx_t_12 = (__pyx_t_13 != 0);
   if (__pyx_t_12) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":783
+    /* "lingpy/algorithm/cython/talign.pyx":1046
  *                 )
  *     elif mode == "overlap":
  *         almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    __pyx_t_19 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 783, __pyx_L1_error)
+    __pyx_t_19 = __Pyx_GetModuleGlobalName(__pyx_n_s_semi_globalign); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1046, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_19);
 
-    /* "lingpy/algorithm/cython/talign.pyx":786
+    /* "lingpy/algorithm/cython/talign.pyx":1049
  *                 listA,
  *                 listB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 gop,
  */
-    __pyx_t_21 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 786, __pyx_L1_error)
+    __pyx_t_21 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1049, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_21);
 
-    /* "lingpy/algorithm/cython/talign.pyx":787
+    /* "lingpy/algorithm/cython/talign.pyx":1050
  *                 listB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 gop,
  *                 scale,
  */
-    __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 787, __pyx_L1_error)
+    __pyx_t_17 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_17)) __PYX_ERR(0, 1050, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_17);
 
-    /* "lingpy/algorithm/cython/talign.pyx":788
+    /* "lingpy/algorithm/cython/talign.pyx":1051
  *                 M,
  *                 N,
  *                 gop,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 tmp_scorer
  */
-    __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 788, __pyx_L1_error)
+    __pyx_t_18 = __Pyx_PyInt_From_int(__pyx_v_gop); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1051, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_18);
 
-    /* "lingpy/algorithm/cython/talign.pyx":789
+    /* "lingpy/algorithm/cython/talign.pyx":1052
  *                 N,
  *                 gop,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 tmp_scorer
  *                 )
  */
-    __pyx_t_15 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 789, __pyx_L1_error)
+    __pyx_t_15 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1052, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
 
-    /* "lingpy/algorithm/cython/talign.pyx":791
+    /* "lingpy/algorithm/cython/talign.pyx":1054
  *                 scale,
  *                 tmp_scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -10673,7 +10673,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_20 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 783, __pyx_L1_error)
+    __pyx_t_20 = PyTuple_New(7+__pyx_t_1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 1046, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_20);
     if (__pyx_t_2) {
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_20, 0, __pyx_t_2); __pyx_t_2 = NULL;
@@ -10699,7 +10699,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_17 = 0;
     __pyx_t_18 = 0;
     __pyx_t_15 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_19, __pyx_t_20, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 783, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_19, __pyx_t_20, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1046, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_20); __pyx_t_20 = 0;
     __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
@@ -10713,7 +10713,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 783, __pyx_L1_error)
+        __PYX_ERR(0, 1046, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -10729,17 +10729,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_INCREF(__pyx_t_20);
       __Pyx_INCREF(__pyx_t_15);
       #else
-      __pyx_t_19 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 783, __pyx_L1_error)
+      __pyx_t_19 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1046, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_19);
-      __pyx_t_20 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 783, __pyx_L1_error)
+      __pyx_t_20 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 1046, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_20);
-      __pyx_t_15 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 783, __pyx_L1_error)
+      __pyx_t_15 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1046, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
       #endif
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_18 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 783, __pyx_L1_error)
+      __pyx_t_18 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1046, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_22 = Py_TYPE(__pyx_t_18)->tp_iternext;
@@ -10749,7 +10749,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_GOTREF(__pyx_t_20);
       index = 2; __pyx_t_15 = __pyx_t_22(__pyx_t_18); if (unlikely(!__pyx_t_15)) goto __pyx_L21_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_15);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_18), 3) < 0) __PYX_ERR(0, 783, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_18), 3) < 0) __PYX_ERR(0, 1046, __pyx_L1_error)
       __pyx_t_22 = NULL;
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       goto __pyx_L22_unpacking_done;
@@ -10757,20 +10757,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
       __pyx_t_22 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 783, __pyx_L1_error)
+      __PYX_ERR(0, 1046, __pyx_L1_error)
       __pyx_L22_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":783
+    /* "lingpy/algorithm/cython/talign.pyx":1046
  *                 )
  *     elif mode == "overlap":
  *         almA,almB,sim = semi_globalign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 783, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_20))||((__pyx_t_20) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_20)->tp_name), 0))) __PYX_ERR(0, 783, __pyx_L1_error)
-    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_15); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 783, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_19))||((__pyx_t_19) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_19)->tp_name), 0))) __PYX_ERR(0, 1046, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_20))||((__pyx_t_20) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_20)->tp_name), 0))) __PYX_ERR(0, 1046, __pyx_L1_error)
+    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_15); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1046, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_19);
     __pyx_t_19 = 0;
@@ -10778,7 +10778,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_20 = 0;
     __pyx_v_sim = __pyx_t_16;
 
-    /* "lingpy/algorithm/cython/talign.pyx":782
+    /* "lingpy/algorithm/cython/talign.pyx":1045
  *                 tmp_scorer
  *                 )
  *     elif mode == "overlap":             # <<<<<<<<<<<<<<
@@ -10788,58 +10788,58 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     goto __pyx_L18;
   }
 
-  /* "lingpy/algorithm/cython/talign.pyx":792
+  /* "lingpy/algorithm/cython/talign.pyx":1055
  *                 tmp_scorer
  *                 )
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
  *         almA,almB,sim = dialign(
  *                 listA,
  */
-  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 792, __pyx_L1_error)
+  __pyx_t_12 = (__Pyx_PyString_Equals(__pyx_v_mode, __pyx_n_s_dialign, Py_EQ)); if (unlikely(__pyx_t_12 < 0)) __PYX_ERR(0, 1055, __pyx_L1_error)
   __pyx_t_13 = (__pyx_t_12 != 0);
   if (__pyx_t_13) {
 
-    /* "lingpy/algorithm/cython/talign.pyx":793
+    /* "lingpy/algorithm/cython/talign.pyx":1056
  *                 )
  *     elif mode == "dialign":
  *         almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    __pyx_t_15 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 793, __pyx_L1_error)
+    __pyx_t_15 = __Pyx_GetModuleGlobalName(__pyx_n_s_dialign); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1056, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_15);
 
-    /* "lingpy/algorithm/cython/talign.pyx":796
+    /* "lingpy/algorithm/cython/talign.pyx":1059
  *                 listA,
  *                 listB,
  *                 M,             # <<<<<<<<<<<<<<
  *                 N,
  *                 scale,
  */
-    __pyx_t_20 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 796, __pyx_L1_error)
+    __pyx_t_20 = __Pyx_PyInt_From_int(__pyx_v_M); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 1059, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_20);
 
-    /* "lingpy/algorithm/cython/talign.pyx":797
+    /* "lingpy/algorithm/cython/talign.pyx":1060
  *                 listB,
  *                 M,
  *                 N,             # <<<<<<<<<<<<<<
  *                 scale,
  *                 tmp_scorer
  */
-    __pyx_t_19 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 797, __pyx_L1_error)
+    __pyx_t_19 = __Pyx_PyInt_From_int(__pyx_v_N); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1060, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_19);
 
-    /* "lingpy/algorithm/cython/talign.pyx":798
+    /* "lingpy/algorithm/cython/talign.pyx":1061
  *                 M,
  *                 N,
  *                 scale,             # <<<<<<<<<<<<<<
  *                 tmp_scorer
  *                 )
  */
-    __pyx_t_18 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 798, __pyx_L1_error)
+    __pyx_t_18 = PyFloat_FromDouble(__pyx_v_scale); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1061, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_18);
 
-    /* "lingpy/algorithm/cython/talign.pyx":800
+    /* "lingpy/algorithm/cython/talign.pyx":1063
  *                 scale,
  *                 tmp_scorer
  *                 )             # <<<<<<<<<<<<<<
@@ -10858,7 +10858,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
         __pyx_t_1 = 1;
       }
     }
-    __pyx_t_21 = PyTuple_New(6+__pyx_t_1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 793, __pyx_L1_error)
+    __pyx_t_21 = PyTuple_New(6+__pyx_t_1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1056, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_21);
     if (__pyx_t_17) {
       __Pyx_GIVEREF(__pyx_t_17); PyTuple_SET_ITEM(__pyx_t_21, 0, __pyx_t_17); __pyx_t_17 = NULL;
@@ -10881,7 +10881,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_20 = 0;
     __pyx_t_19 = 0;
     __pyx_t_18 = 0;
-    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_15, __pyx_t_21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 793, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_15, __pyx_t_21, NULL); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1056, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_21); __pyx_t_21 = 0;
     __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
@@ -10895,7 +10895,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       if (unlikely(size != 3)) {
         if (size > 3) __Pyx_RaiseTooManyValuesError(3);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 793, __pyx_L1_error)
+        __PYX_ERR(0, 1056, __pyx_L1_error)
       }
       #if CYTHON_COMPILING_IN_CPYTHON
       if (likely(PyTuple_CheckExact(sequence))) {
@@ -10911,17 +10911,17 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_INCREF(__pyx_t_21);
       __Pyx_INCREF(__pyx_t_18);
       #else
-      __pyx_t_15 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 793, __pyx_L1_error)
+      __pyx_t_15 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 1056, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_15);
-      __pyx_t_21 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 793, __pyx_L1_error)
+      __pyx_t_21 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_21)) __PYX_ERR(0, 1056, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_21);
-      __pyx_t_18 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 793, __pyx_L1_error)
+      __pyx_t_18 = PySequence_ITEM(sequence, 2); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1056, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_18);
       #endif
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_19 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 793, __pyx_L1_error)
+      __pyx_t_19 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_19)) __PYX_ERR(0, 1056, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_19);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __pyx_t_22 = Py_TYPE(__pyx_t_19)->tp_iternext;
@@ -10931,7 +10931,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_GOTREF(__pyx_t_21);
       index = 2; __pyx_t_18 = __pyx_t_22(__pyx_t_19); if (unlikely(!__pyx_t_18)) goto __pyx_L23_unpacking_failed;
       __Pyx_GOTREF(__pyx_t_18);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_19), 3) < 0) __PYX_ERR(0, 793, __pyx_L1_error)
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_22(__pyx_t_19), 3) < 0) __PYX_ERR(0, 1056, __pyx_L1_error)
       __pyx_t_22 = NULL;
       __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
       goto __pyx_L24_unpacking_done;
@@ -10939,20 +10939,20 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
       __Pyx_DECREF(__pyx_t_19); __pyx_t_19 = 0;
       __pyx_t_22 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 793, __pyx_L1_error)
+      __PYX_ERR(0, 1056, __pyx_L1_error)
       __pyx_L24_unpacking_done:;
     }
 
-    /* "lingpy/algorithm/cython/talign.pyx":793
+    /* "lingpy/algorithm/cython/talign.pyx":1056
  *                 )
  *     elif mode == "dialign":
  *         almA,almB,sim = dialign(             # <<<<<<<<<<<<<<
  *                 listA,
  *                 listB,
  */
-    if (!(likely(PyList_CheckExact(__pyx_t_15))||((__pyx_t_15) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_15)->tp_name), 0))) __PYX_ERR(0, 793, __pyx_L1_error)
-    if (!(likely(PyList_CheckExact(__pyx_t_21))||((__pyx_t_21) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_21)->tp_name), 0))) __PYX_ERR(0, 793, __pyx_L1_error)
-    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 793, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_15))||((__pyx_t_15) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_15)->tp_name), 0))) __PYX_ERR(0, 1056, __pyx_L1_error)
+    if (!(likely(PyList_CheckExact(__pyx_t_21))||((__pyx_t_21) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "list", Py_TYPE(__pyx_t_21)->tp_name), 0))) __PYX_ERR(0, 1056, __pyx_L1_error)
+    __pyx_t_16 = __pyx_PyFloat_AsFloat(__pyx_t_18); if (unlikely((__pyx_t_16 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1056, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_18); __pyx_t_18 = 0;
     __pyx_v_almA = ((PyObject*)__pyx_t_15);
     __pyx_t_15 = 0;
@@ -10960,7 +10960,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
     __pyx_t_21 = 0;
     __pyx_v_sim = __pyx_t_16;
 
-    /* "lingpy/algorithm/cython/talign.pyx":792
+    /* "lingpy/algorithm/cython/talign.pyx":1055
  *                 tmp_scorer
  *                 )
  *     elif mode == "dialign":             # <<<<<<<<<<<<<<
@@ -10970,7 +10970,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
   }
   __pyx_L18:;
 
-  /* "lingpy/algorithm/cython/talign.pyx":802
+  /* "lingpy/algorithm/cython/talign.pyx":1065
  *                 )
  * 
  *     return almA,almB,sim             # <<<<<<<<<<<<<<
@@ -10978,11 +10978,11 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
  * def score_profile(
  */
   __Pyx_XDECREF(__pyx_r);
-  if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 802, __pyx_L1_error) }
-  if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 802, __pyx_L1_error) }
-  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 802, __pyx_L1_error)
+  if (unlikely(!__pyx_v_almA)) { __Pyx_RaiseUnboundLocalError("almA"); __PYX_ERR(0, 1065, __pyx_L1_error) }
+  if (unlikely(!__pyx_v_almB)) { __Pyx_RaiseUnboundLocalError("almB"); __PYX_ERR(0, 1065, __pyx_L1_error) }
+  __pyx_t_5 = PyFloat_FromDouble(__pyx_v_sim); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 1065, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_18 = PyTuple_New(3); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 802, __pyx_L1_error)
+  __pyx_t_18 = PyTuple_New(3); if (unlikely(!__pyx_t_18)) __PYX_ERR(0, 1065, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_18);
   __Pyx_INCREF(__pyx_v_almA);
   __Pyx_GIVEREF(__pyx_v_almA);
@@ -10997,7 +10997,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
   __pyx_t_18 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":728
+  /* "lingpy/algorithm/cython/talign.pyx":956
  * 
  * # specific methods for the alignment of profiles
  * def align_profile(             # <<<<<<<<<<<<<<
@@ -11030,7 +11030,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":804
+/* "lingpy/algorithm/cython/talign.pyx":1067
  *     return almA,almB,sim
  * 
  * def score_profile(             # <<<<<<<<<<<<<<
@@ -11040,7 +11040,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_14align_profile(CYT
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_16score_profile[] = "\n    Basic function for the scoring of profiles.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_16score_profile[] = "\n    Basic function for the scoring of profiles.\n\n    Parameters\n    ----------\n    colA, colB : list\n        The two columns of a profile.\n    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }\n        The scoring function which needs to provide scores for all\n        segments in the two profiles.\n    gap_weight : float (default=0.0)\n        This handles the weight that is given to gaps in a column. If you set\n        it to 0, for example, this means that all gaps will be ignored when\n        determining the score for two columns in the profile.\n    \n    Notes\n    -----\n    This function handles how profiles are scored.\n    \n    Returns\n    -------\n    score : float\n        The score for the profile\n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.align_profile\n    ~lingpy.algorithm.cython.talign.swap_score_profile\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_17score_profile = {"score_profile", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_16score_profile};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_colA = 0;
@@ -11074,17 +11074,17 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile(PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_colB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 1); __PYX_ERR(0, 804, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 1); __PYX_ERR(0, 1067, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 2); __PYX_ERR(0, 804, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 2); __PYX_ERR(0, 1067, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_gop)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 3); __PYX_ERR(0, 804, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, 3); __PYX_ERR(0, 1067, __pyx_L3_error)
         }
         case  4:
         if (kw_args > 0) {
@@ -11093,7 +11093,7 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile(PyO
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "score_profile") < 0)) __PYX_ERR(0, 804, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "score_profile") < 0)) __PYX_ERR(0, 1067, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -11109,23 +11109,23 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_17score_profile(PyO
     __pyx_v_colA = ((PyObject*)values[0]);
     __pyx_v_colB = ((PyObject*)values[1]);
     __pyx_v_scorer = values[2];
-    __pyx_v_gop = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 808, __pyx_L3_error)
+    __pyx_v_gop = __Pyx_PyInt_As_int(values[3]); if (unlikely((__pyx_v_gop == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1071, __pyx_L3_error)
     if (values[4]) {
-      __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 809, __pyx_L3_error)
+      __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[4]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1072, __pyx_L3_error)
     } else {
       __pyx_v_gap_weight = ((float)0.0);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 804, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("score_profile", 0, 4, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1067, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.score_profile", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colA), (&PyList_Type), 1, "colA", 1))) __PYX_ERR(0, 805, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colB), (&PyList_Type), 1, "colB", 1))) __PYX_ERR(0, 806, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colA), (&PyList_Type), 1, "colA", 1))) __PYX_ERR(0, 1068, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colB), (&PyList_Type), 1, "colB", 1))) __PYX_ERR(0, 1069, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(__pyx_self, __pyx_v_colA, __pyx_v_colB, __pyx_v_scorer, __pyx_v_gop, __pyx_v_gap_weight);
 
   /* function exit code */
@@ -11161,7 +11161,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
   float __pyx_t_13;
   __Pyx_RefNannySetupContext("score_profile", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":819
+  /* "lingpy/algorithm/cython/talign.pyx":1108
  * 
  *     # define the initial score
  *     cdef float score = 0.0             # <<<<<<<<<<<<<<
@@ -11170,7 +11170,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
  */
   __pyx_v_score = 0.0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":822
+  /* "lingpy/algorithm/cython/talign.pyx":1111
  * 
  *     # set a counter
  *     cdef float counter = 0             # <<<<<<<<<<<<<<
@@ -11179,7 +11179,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
  */
   __pyx_v_counter = 0.0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":825
+  /* "lingpy/algorithm/cython/talign.pyx":1114
  * 
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):             # <<<<<<<<<<<<<<
@@ -11191,18 +11191,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
   for (;;) {
     if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 825, __pyx_L1_error)
+    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 1114, __pyx_L1_error)
     #else
-    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 825, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1114, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 825, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 1114, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_charA, ((PyObject*)__pyx_t_4));
     __pyx_t_4 = 0;
     __pyx_v_i = __pyx_t_1;
     __pyx_t_1 = (__pyx_t_1 + 1);
 
-    /* "lingpy/algorithm/cython/talign.pyx":826
+    /* "lingpy/algorithm/cython/talign.pyx":1115
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):             # <<<<<<<<<<<<<<
@@ -11214,47 +11214,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
     for (;;) {
       if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_4)) break;
       #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_7); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 826, __pyx_L1_error)
+      __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_7); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 1115, __pyx_L1_error)
       #else
-      __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 826, __pyx_L1_error)
+      __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1115, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       #endif
-      if (!(likely(PyString_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 826, __pyx_L1_error)
+      if (!(likely(PyString_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 1115, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_charB, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
       __pyx_v_j = __pyx_t_5;
       __pyx_t_5 = (__pyx_t_5 + 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":827
+      /* "lingpy/algorithm/cython/talign.pyx":1116
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X':             # <<<<<<<<<<<<<<
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  */
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 827, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1116, __pyx_L1_error)
       __pyx_t_10 = (__pyx_t_9 != 0);
       if (__pyx_t_10) {
       } else {
         __pyx_t_8 = __pyx_t_10;
         goto __pyx_L8_bool_binop_done;
       }
-      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 827, __pyx_L1_error)
+      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1116, __pyx_L1_error)
       __pyx_t_9 = (__pyx_t_10 != 0);
       __pyx_t_8 = __pyx_t_9;
       __pyx_L8_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":828
+        /* "lingpy/algorithm/cython/talign.pyx":1117
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X':
  *                 score += scorer[charA,charB]             # <<<<<<<<<<<<<<
  *                 counter += 1.0
  *             elif charA == 'X' and charB == 'X':
  */
-        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_score); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 828, __pyx_L1_error)
+        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_score); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1117, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 828, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1117, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_INCREF(__pyx_v_charA);
         __Pyx_GIVEREF(__pyx_v_charA);
@@ -11262,18 +11262,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
         __Pyx_INCREF(__pyx_v_charB);
         __Pyx_GIVEREF(__pyx_v_charB);
         PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_v_charB);
-        __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 828, __pyx_L1_error)
+        __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1117, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 828, __pyx_L1_error)
+        __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1117, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 828, __pyx_L1_error)
+        __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1117, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_v_score = __pyx_t_13;
 
-        /* "lingpy/algorithm/cython/talign.pyx":829
+        /* "lingpy/algorithm/cython/talign.pyx":1118
  *             if charA != 'X' and charB != 'X':
  *                 score += scorer[charA,charB]
  *                 counter += 1.0             # <<<<<<<<<<<<<<
@@ -11282,7 +11282,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
  */
         __pyx_v_counter = (__pyx_v_counter + 1.0);
 
-        /* "lingpy/algorithm/cython/talign.pyx":827
+        /* "lingpy/algorithm/cython/talign.pyx":1116
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X':             # <<<<<<<<<<<<<<
@@ -11292,27 +11292,27 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
         goto __pyx_L7;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":830
+      /* "lingpy/algorithm/cython/talign.pyx":1119
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  *             elif charA == 'X' and charB == 'X':             # <<<<<<<<<<<<<<
  *                 counter += gap_weight
  *             else:
  */
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 830, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1119, __pyx_L1_error)
       __pyx_t_10 = (__pyx_t_9 != 0);
       if (__pyx_t_10) {
       } else {
         __pyx_t_8 = __pyx_t_10;
         goto __pyx_L10_bool_binop_done;
       }
-      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 830, __pyx_L1_error)
+      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1119, __pyx_L1_error)
       __pyx_t_9 = (__pyx_t_10 != 0);
       __pyx_t_8 = __pyx_t_9;
       __pyx_L10_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":831
+        /* "lingpy/algorithm/cython/talign.pyx":1120
  *                 counter += 1.0
  *             elif charA == 'X' and charB == 'X':
  *                 counter += gap_weight             # <<<<<<<<<<<<<<
@@ -11321,7 +11321,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
  */
         __pyx_v_counter = (__pyx_v_counter + __pyx_v_gap_weight);
 
-        /* "lingpy/algorithm/cython/talign.pyx":830
+        /* "lingpy/algorithm/cython/talign.pyx":1119
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  *             elif charA == 'X' and charB == 'X':             # <<<<<<<<<<<<<<
@@ -11331,7 +11331,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
         goto __pyx_L7;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":833
+      /* "lingpy/algorithm/cython/talign.pyx":1122
  *                 counter += gap_weight
  *             else:
  *                 score += float(gop)             # <<<<<<<<<<<<<<
@@ -11341,7 +11341,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
       /*else*/ {
         __pyx_v_score = (__pyx_v_score + ((double)__pyx_v_gop));
 
-        /* "lingpy/algorithm/cython/talign.pyx":834
+        /* "lingpy/algorithm/cython/talign.pyx":1123
  *             else:
  *                 score += float(gop)
  *                 counter += 1.0             # <<<<<<<<<<<<<<
@@ -11352,7 +11352,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
       }
       __pyx_L7:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":826
+      /* "lingpy/algorithm/cython/talign.pyx":1115
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):             # <<<<<<<<<<<<<<
@@ -11362,7 +11362,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":825
+    /* "lingpy/algorithm/cython/talign.pyx":1114
  * 
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):             # <<<<<<<<<<<<<<
@@ -11372,7 +11372,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":835
+  /* "lingpy/algorithm/cython/talign.pyx":1124
  *                 score += float(gop)
  *                 counter += 1.0
  *     return score / counter             # <<<<<<<<<<<<<<
@@ -11382,15 +11382,15 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_counter == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 835, __pyx_L1_error)
+    __PYX_ERR(0, 1124, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble((__pyx_v_score / __pyx_v_counter)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 835, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble((__pyx_v_score / __pyx_v_counter)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":804
+  /* "lingpy/algorithm/cython/talign.pyx":1067
  *     return almA,almB,sim
  * 
  * def score_profile(             # <<<<<<<<<<<<<<
@@ -11415,7 +11415,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
   return __pyx_r;
 }
 
-/* "lingpy/algorithm/cython/talign.pyx":837
+/* "lingpy/algorithm/cython/talign.pyx":1126
  *     return score / counter
  * 
  * def swap_score_profile(             # <<<<<<<<<<<<<<
@@ -11425,7 +11425,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_16score_profile(CYT
 
 /* Python wrapper */
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_18swap_score_profile[] = "\n    Basic function for the scoring of profiles.\n    ";
+static char __pyx_doc_6lingpy_9algorithm_6cython_6talign_18swap_score_profile[] = "\n    Basic function for the scoring of profiles in swapped sequences.\n\n    Parameters\n    ----------\n    colA, colB : list\n        The two columns of a profile.\n    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }\n        The scoring function which needs to provide scores for all\n        segments in the two profiles.\n    gap_weight : float (default=0.0)\n        This handles the weight that is given to gaps in a column. If you set\n        it to 0, for example, this means that all gaps will be ignored when\n        determining the score for two columns in the profile.\n    swap_penalty : int (default=-5)\n        The swap penalty applied to swapped columns.\n    \n    Notes\n    -----\n    This function handles how profiles with swapped segments are scored.\n\n    Returns\n    -------\n    score : float\n        The score for the profile.\n\n    See also\n    --------\n    ~lingpy.algorithm.cython.talign.align_profile\n    ~lingpy.algorithm.cython.talign.score_profile\n\n    ";
 static PyMethodDef __pyx_mdef_6lingpy_9algorithm_6cython_6talign_19swap_score_profile = {"swap_score_profile", (PyCFunction)__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profile, METH_VARARGS|METH_KEYWORDS, __pyx_doc_6lingpy_9algorithm_6cython_6talign_18swap_score_profile};
 static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profile(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_colA = 0;
@@ -11459,12 +11459,12 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profil
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_colB)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, 1); __PYX_ERR(0, 837, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, 1); __PYX_ERR(0, 1126, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_scorer)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, 2); __PYX_ERR(0, 837, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, 2); __PYX_ERR(0, 1126, __pyx_L3_error)
         }
         case  3:
         if (kw_args > 0) {
@@ -11478,7 +11478,7 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profil
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "swap_score_profile") < 0)) __PYX_ERR(0, 837, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "swap_score_profile") < 0)) __PYX_ERR(0, 1126, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -11495,26 +11495,26 @@ static PyObject *__pyx_pw_6lingpy_9algorithm_6cython_6talign_19swap_score_profil
     __pyx_v_colB = ((PyObject*)values[1]);
     __pyx_v_scorer = values[2];
     if (values[3]) {
-      __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 841, __pyx_L3_error)
+      __pyx_v_gap_weight = __pyx_PyFloat_AsFloat(values[3]); if (unlikely((__pyx_v_gap_weight == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1130, __pyx_L3_error)
     } else {
       __pyx_v_gap_weight = ((float)0.0);
     }
     if (values[4]) {
-      __pyx_v_swap_penalty = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_swap_penalty == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 842, __pyx_L3_error)
+      __pyx_v_swap_penalty = __Pyx_PyInt_As_int(values[4]); if (unlikely((__pyx_v_swap_penalty == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 1131, __pyx_L3_error)
     } else {
       __pyx_v_swap_penalty = ((int)-1);
     }
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 837, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("swap_score_profile", 0, 3, 5, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 1126, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("lingpy.algorithm.cython.talign.swap_score_profile", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colA), (&PyList_Type), 1, "colA", 1))) __PYX_ERR(0, 838, __pyx_L1_error)
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colB), (&PyList_Type), 1, "colB", 1))) __PYX_ERR(0, 839, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colA), (&PyList_Type), 1, "colA", 1))) __PYX_ERR(0, 1127, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_colB), (&PyList_Type), 1, "colB", 1))) __PYX_ERR(0, 1128, __pyx_L1_error)
   __pyx_r = __pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profile(__pyx_self, __pyx_v_colA, __pyx_v_colB, __pyx_v_scorer, __pyx_v_gap_weight, __pyx_v_swap_penalty);
 
   /* function exit code */
@@ -11550,7 +11550,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
   float __pyx_t_13;
   __Pyx_RefNannySetupContext("swap_score_profile", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":852
+  /* "lingpy/algorithm/cython/talign.pyx":1170
  * 
  *     # define the initial score
  *     cdef float score = 0.0             # <<<<<<<<<<<<<<
@@ -11559,7 +11559,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
   __pyx_v_score = 0.0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":855
+  /* "lingpy/algorithm/cython/talign.pyx":1173
  * 
  *     # set a counter
  *     cdef float counter = 0             # <<<<<<<<<<<<<<
@@ -11568,7 +11568,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
   __pyx_v_counter = 0.0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":858
+  /* "lingpy/algorithm/cython/talign.pyx":1176
  * 
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):             # <<<<<<<<<<<<<<
@@ -11580,18 +11580,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
   for (;;) {
     if (__pyx_t_3 >= PyList_GET_SIZE(__pyx_t_2)) break;
     #if CYTHON_COMPILING_IN_CPYTHON
-    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 858, __pyx_L1_error)
+    __pyx_t_4 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_3); __Pyx_INCREF(__pyx_t_4); __pyx_t_3++; if (unlikely(0 < 0)) __PYX_ERR(0, 1176, __pyx_L1_error)
     #else
-    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 858, __pyx_L1_error)
+    __pyx_t_4 = PySequence_ITEM(__pyx_t_2, __pyx_t_3); __pyx_t_3++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1176, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     #endif
-    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 858, __pyx_L1_error)
+    if (!(likely(PyString_CheckExact(__pyx_t_4))||((__pyx_t_4) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_4)->tp_name), 0))) __PYX_ERR(0, 1176, __pyx_L1_error)
     __Pyx_XDECREF_SET(__pyx_v_charA, ((PyObject*)__pyx_t_4));
     __pyx_t_4 = 0;
     __pyx_v_i = __pyx_t_1;
     __pyx_t_1 = (__pyx_t_1 + 1);
 
-    /* "lingpy/algorithm/cython/talign.pyx":859
+    /* "lingpy/algorithm/cython/talign.pyx":1177
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):             # <<<<<<<<<<<<<<
@@ -11603,61 +11603,61 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
     for (;;) {
       if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_4)) break;
       #if CYTHON_COMPILING_IN_CPYTHON
-      __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_7); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 859, __pyx_L1_error)
+      __pyx_t_7 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_7); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 1177, __pyx_L1_error)
       #else
-      __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 859, __pyx_L1_error)
+      __pyx_t_7 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1177, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       #endif
-      if (!(likely(PyString_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 859, __pyx_L1_error)
+      if (!(likely(PyString_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None)||(PyErr_Format(PyExc_TypeError, "Expected %.16s, got %.200s", "str", Py_TYPE(__pyx_t_7)->tp_name), 0))) __PYX_ERR(0, 1177, __pyx_L1_error)
       __Pyx_XDECREF_SET(__pyx_v_charB, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
       __pyx_v_j = __pyx_t_5;
       __pyx_t_5 = (__pyx_t_5 + 1);
 
-      /* "lingpy/algorithm/cython/talign.pyx":860
+      /* "lingpy/algorithm/cython/talign.pyx":1178
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X' and charA != '+' and charB != '+':             # <<<<<<<<<<<<<<
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  */
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 860, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1178, __pyx_L1_error)
       __pyx_t_10 = (__pyx_t_9 != 0);
       if (__pyx_t_10) {
       } else {
         __pyx_t_8 = __pyx_t_10;
         goto __pyx_L8_bool_binop_done;
       }
-      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 860, __pyx_L1_error)
+      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1178, __pyx_L1_error)
       __pyx_t_9 = (__pyx_t_10 != 0);
       if (__pyx_t_9) {
       } else {
         __pyx_t_8 = __pyx_t_9;
         goto __pyx_L8_bool_binop_done;
       }
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 860, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_NE)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1178, __pyx_L1_error)
       __pyx_t_10 = (__pyx_t_9 != 0);
       if (__pyx_t_10) {
       } else {
         __pyx_t_8 = __pyx_t_10;
         goto __pyx_L8_bool_binop_done;
       }
-      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 860, __pyx_L1_error)
+      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_NE)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1178, __pyx_L1_error)
       __pyx_t_9 = (__pyx_t_10 != 0);
       __pyx_t_8 = __pyx_t_9;
       __pyx_L8_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":861
+        /* "lingpy/algorithm/cython/talign.pyx":1179
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X' and charA != '+' and charB != '+':
  *                 score += scorer[charA,charB]             # <<<<<<<<<<<<<<
  *                 counter += 1.0
  *             elif charA == '+' or charB == '+':
  */
-        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_score); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 861, __pyx_L1_error)
+        __pyx_t_7 = PyFloat_FromDouble(__pyx_v_score); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 1179, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 861, __pyx_L1_error)
+        __pyx_t_11 = PyTuple_New(2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1179, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_INCREF(__pyx_v_charA);
         __Pyx_GIVEREF(__pyx_v_charA);
@@ -11665,18 +11665,18 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
         __Pyx_INCREF(__pyx_v_charB);
         __Pyx_GIVEREF(__pyx_v_charB);
         PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_v_charB);
-        __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 861, __pyx_L1_error)
+        __pyx_t_12 = PyObject_GetItem(__pyx_v_scorer, __pyx_t_11); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 1179, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_12);
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 861, __pyx_L1_error)
+        __pyx_t_11 = PyNumber_InPlaceAdd(__pyx_t_7, __pyx_t_12); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 1179, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_11);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
         __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-        __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 861, __pyx_L1_error)
+        __pyx_t_13 = __pyx_PyFloat_AsFloat(__pyx_t_11); if (unlikely((__pyx_t_13 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 1179, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
         __pyx_v_score = __pyx_t_13;
 
-        /* "lingpy/algorithm/cython/talign.pyx":862
+        /* "lingpy/algorithm/cython/talign.pyx":1180
  *             if charA != 'X' and charB != 'X' and charA != '+' and charB != '+':
  *                 score += scorer[charA,charB]
  *                 counter += 1.0             # <<<<<<<<<<<<<<
@@ -11685,7 +11685,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
         __pyx_v_counter = (__pyx_v_counter + 1.0);
 
-        /* "lingpy/algorithm/cython/talign.pyx":860
+        /* "lingpy/algorithm/cython/talign.pyx":1178
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):
  *             if charA != 'X' and charB != 'X' and charA != '+' and charB != '+':             # <<<<<<<<<<<<<<
@@ -11695,47 +11695,47 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
         goto __pyx_L7;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":863
+      /* "lingpy/algorithm/cython/talign.pyx":1181
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  *             elif charA == '+' or charB == '+':             # <<<<<<<<<<<<<<
  *                 if charA == '+' and charB == '+':
  *                     score += 0.0
  */
-      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 863, __pyx_L1_error)
+      __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1181, __pyx_L1_error)
       __pyx_t_10 = (__pyx_t_9 != 0);
       if (!__pyx_t_10) {
       } else {
         __pyx_t_8 = __pyx_t_10;
         goto __pyx_L12_bool_binop_done;
       }
-      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 863, __pyx_L1_error)
+      __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1181, __pyx_L1_error)
       __pyx_t_9 = (__pyx_t_10 != 0);
       __pyx_t_8 = __pyx_t_9;
       __pyx_L12_bool_binop_done:;
       if (__pyx_t_8) {
 
-        /* "lingpy/algorithm/cython/talign.pyx":864
+        /* "lingpy/algorithm/cython/talign.pyx":1182
  *                 counter += 1.0
  *             elif charA == '+' or charB == '+':
  *                 if charA == '+' and charB == '+':             # <<<<<<<<<<<<<<
  *                     score += 0.0
  *                     counter += 1.0
  */
-        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 864, __pyx_L1_error)
+        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1182, __pyx_L1_error)
         __pyx_t_10 = (__pyx_t_9 != 0);
         if (__pyx_t_10) {
         } else {
           __pyx_t_8 = __pyx_t_10;
           goto __pyx_L15_bool_binop_done;
         }
-        __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 864, __pyx_L1_error)
+        __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_kp_s__12, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1182, __pyx_L1_error)
         __pyx_t_9 = (__pyx_t_10 != 0);
         __pyx_t_8 = __pyx_t_9;
         __pyx_L15_bool_binop_done:;
         if (__pyx_t_8) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":865
+          /* "lingpy/algorithm/cython/talign.pyx":1183
  *             elif charA == '+' or charB == '+':
  *                 if charA == '+' and charB == '+':
  *                     score += 0.0             # <<<<<<<<<<<<<<
@@ -11744,7 +11744,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
           __pyx_v_score = (__pyx_v_score + 0.0);
 
-          /* "lingpy/algorithm/cython/talign.pyx":866
+          /* "lingpy/algorithm/cython/talign.pyx":1184
  *                 if charA == '+' and charB == '+':
  *                     score += 0.0
  *                     counter += 1.0             # <<<<<<<<<<<<<<
@@ -11753,7 +11753,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
           __pyx_v_counter = (__pyx_v_counter + 1.0);
 
-          /* "lingpy/algorithm/cython/talign.pyx":864
+          /* "lingpy/algorithm/cython/talign.pyx":1182
  *                 counter += 1.0
  *             elif charA == '+' or charB == '+':
  *                 if charA == '+' and charB == '+':             # <<<<<<<<<<<<<<
@@ -11763,27 +11763,27 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
           goto __pyx_L14;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":867
+        /* "lingpy/algorithm/cython/talign.pyx":1185
  *                     score += 0.0
  *                     counter += 1.0
  *                 elif charA == 'X' or charB == 'X':             # <<<<<<<<<<<<<<
  *                     score += swap_penalty # this is the swap cost
  *                     counter += 1.0
  */
-        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 867, __pyx_L1_error)
+        __pyx_t_9 = (__Pyx_PyString_Equals(__pyx_v_charA, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_9 < 0)) __PYX_ERR(0, 1185, __pyx_L1_error)
         __pyx_t_10 = (__pyx_t_9 != 0);
         if (!__pyx_t_10) {
         } else {
           __pyx_t_8 = __pyx_t_10;
           goto __pyx_L17_bool_binop_done;
         }
-        __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 867, __pyx_L1_error)
+        __pyx_t_10 = (__Pyx_PyString_Equals(__pyx_v_charB, __pyx_n_s_X, Py_EQ)); if (unlikely(__pyx_t_10 < 0)) __PYX_ERR(0, 1185, __pyx_L1_error)
         __pyx_t_9 = (__pyx_t_10 != 0);
         __pyx_t_8 = __pyx_t_9;
         __pyx_L17_bool_binop_done:;
         if (__pyx_t_8) {
 
-          /* "lingpy/algorithm/cython/talign.pyx":868
+          /* "lingpy/algorithm/cython/talign.pyx":1186
  *                     counter += 1.0
  *                 elif charA == 'X' or charB == 'X':
  *                     score += swap_penalty # this is the swap cost             # <<<<<<<<<<<<<<
@@ -11792,7 +11792,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
           __pyx_v_score = (__pyx_v_score + __pyx_v_swap_penalty);
 
-          /* "lingpy/algorithm/cython/talign.pyx":869
+          /* "lingpy/algorithm/cython/talign.pyx":1187
  *                 elif charA == 'X' or charB == 'X':
  *                     score += swap_penalty # this is the swap cost
  *                     counter += 1.0             # <<<<<<<<<<<<<<
@@ -11801,7 +11801,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
  */
           __pyx_v_counter = (__pyx_v_counter + 1.0);
 
-          /* "lingpy/algorithm/cython/talign.pyx":867
+          /* "lingpy/algorithm/cython/talign.pyx":1185
  *                     score += 0.0
  *                     counter += 1.0
  *                 elif charA == 'X' or charB == 'X':             # <<<<<<<<<<<<<<
@@ -11811,7 +11811,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
           goto __pyx_L14;
         }
 
-        /* "lingpy/algorithm/cython/talign.pyx":871
+        /* "lingpy/algorithm/cython/talign.pyx":1189
  *                     counter += 1.0
  *                 else:
  *                     score += -1000000             # <<<<<<<<<<<<<<
@@ -11821,7 +11821,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
         /*else*/ {
           __pyx_v_score = (__pyx_v_score + -1000000.0);
 
-          /* "lingpy/algorithm/cython/talign.pyx":872
+          /* "lingpy/algorithm/cython/talign.pyx":1190
  *                 else:
  *                     score += -1000000
  *                     counter += 1.0             # <<<<<<<<<<<<<<
@@ -11832,7 +11832,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
         }
         __pyx_L14:;
 
-        /* "lingpy/algorithm/cython/talign.pyx":863
+        /* "lingpy/algorithm/cython/talign.pyx":1181
  *                 score += scorer[charA,charB]
  *                 counter += 1.0
  *             elif charA == '+' or charB == '+':             # <<<<<<<<<<<<<<
@@ -11842,7 +11842,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
         goto __pyx_L7;
       }
 
-      /* "lingpy/algorithm/cython/talign.pyx":874
+      /* "lingpy/algorithm/cython/talign.pyx":1192
  *                     counter += 1.0
  *             else:
  *                 counter += gap_weight             # <<<<<<<<<<<<<<
@@ -11854,7 +11854,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
       }
       __pyx_L7:;
 
-      /* "lingpy/algorithm/cython/talign.pyx":859
+      /* "lingpy/algorithm/cython/talign.pyx":1177
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):
  *         for j,charB in enumerate(colB):             # <<<<<<<<<<<<<<
@@ -11864,7 +11864,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "lingpy/algorithm/cython/talign.pyx":858
+    /* "lingpy/algorithm/cython/talign.pyx":1176
  * 
  *     # iterate over all chars
  *     for i,charA in enumerate(colA):             # <<<<<<<<<<<<<<
@@ -11874,7 +11874,7 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":876
+  /* "lingpy/algorithm/cython/talign.pyx":1194
  *                 counter += gap_weight
  * 
  *     return score / counter             # <<<<<<<<<<<<<<
@@ -11884,15 +11884,15 @@ static PyObject *__pyx_pf_6lingpy_9algorithm_6cython_6talign_18swap_score_profil
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(__pyx_v_counter == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 876, __pyx_L1_error)
+    __PYX_ERR(0, 1194, __pyx_L1_error)
   }
-  __pyx_t_2 = PyFloat_FromDouble((__pyx_v_score / __pyx_v_counter)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 876, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble((__pyx_v_score / __pyx_v_counter)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1194, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
   goto __pyx_L0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":837
+  /* "lingpy/algorithm/cython/talign.pyx":1126
  *     return score / counter
  * 
  * def swap_score_profile(             # <<<<<<<<<<<<<<
@@ -12018,9 +12018,9 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 26, __pyx_L1_error)
-  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(0, 471, __pyx_L1_error)
-  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 825, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_builtin_sum = __Pyx_GetBuiltinName(__pyx_n_s_sum); if (!__pyx_builtin_sum) __PYX_ERR(0, 633, __pyx_L1_error)
+  __pyx_builtin_enumerate = __Pyx_GetBuiltinName(__pyx_n_s_enumerate); if (!__pyx_builtin_enumerate) __PYX_ERR(0, 1114, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -12030,81 +12030,81 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "lingpy/algorithm/cython/talign.pyx":88
+  /* "lingpy/algorithm/cython/talign.pyx":119
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_slice__2 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_slice__2 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__2)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__2);
   __Pyx_GIVEREF(__pyx_slice__2);
-  __pyx_slice__3 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__3)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_slice__3 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__3)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__3);
   __Pyx_GIVEREF(__pyx_slice__3);
 
-  /* "lingpy/algorithm/cython/talign.pyx":183
+  /* "lingpy/algorithm/cython/talign.pyx":245
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_slice__4 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__4)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_slice__4 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__4)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__4);
   __Pyx_GIVEREF(__pyx_slice__4);
-  __pyx_slice__5 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__5)) __PYX_ERR(0, 183, __pyx_L1_error)
+  __pyx_slice__5 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__5)) __PYX_ERR(0, 245, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__5);
   __Pyx_GIVEREF(__pyx_slice__5);
 
-  /* "lingpy/algorithm/cython/talign.pyx":295
+  /* "lingpy/algorithm/cython/talign.pyx":387
  * 
  *     # revert the alms
  *     almA[1] = almA[1][::-1]             # <<<<<<<<<<<<<<
  *     almB[1] = almB[1][::-1]
  * 
  */
-  __pyx_slice__6 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 295, __pyx_L1_error)
+  __pyx_slice__6 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__6)) __PYX_ERR(0, 387, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__6);
   __Pyx_GIVEREF(__pyx_slice__6);
 
-  /* "lingpy/algorithm/cython/talign.pyx":296
+  /* "lingpy/algorithm/cython/talign.pyx":388
  *     # revert the alms
  *     almA[1] = almA[1][::-1]
  *     almB[1] = almB[1][::-1]             # <<<<<<<<<<<<<<
  * 
  *     # append the rest
  */
-  __pyx_slice__7 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__7)) __PYX_ERR(0, 296, __pyx_L1_error)
+  __pyx_slice__7 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__7)) __PYX_ERR(0, 388, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__7);
   __Pyx_GIVEREF(__pyx_slice__7);
 
-  /* "lingpy/algorithm/cython/talign.pyx":303
+  /* "lingpy/algorithm/cython/talign.pyx":395
  * 
  *     # return alignments
  *     return almA[::-1],almB[::-1],sim             # <<<<<<<<<<<<<<
  * 
  * def dialign(
  */
-  __pyx_slice__8 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_slice__8 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__8)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__8);
   __Pyx_GIVEREF(__pyx_slice__8);
-  __pyx_slice__9 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__9)) __PYX_ERR(0, 303, __pyx_L1_error)
+  __pyx_slice__9 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__9)) __PYX_ERR(0, 395, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__9);
   __Pyx_GIVEREF(__pyx_slice__9);
 
-  /* "lingpy/algorithm/cython/talign.pyx":393
+  /* "lingpy/algorithm/cython/talign.pyx":513
  * 
  *     # turn alignments back
  *     almA,almB = almA[::-1],almB[::-1]             # <<<<<<<<<<<<<<
  * 
  *     # return alignments
  */
-  __pyx_slice__10 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__10)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_slice__10 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__10)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__10);
   __Pyx_GIVEREF(__pyx_slice__10);
-  __pyx_slice__11 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__11)) __PYX_ERR(0, 393, __pyx_L1_error)
+  __pyx_slice__11 = PySlice_New(Py_None, Py_None, __pyx_int_neg_1); if (unlikely(!__pyx_slice__11)) __PYX_ERR(0, 513, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__11);
   __Pyx_GIVEREF(__pyx_slice__11);
 
@@ -12119,113 +12119,113 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__13);
   __pyx_codeobj__14 = (PyObject*)__Pyx_PyCode_New(7, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__13, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_globalign, 2, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__14)) __PYX_ERR(0, 2, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":93
+  /* "lingpy/algorithm/cython/talign.pyx":124
  *     return almA,almB,sim
  * 
  * def semi_globalign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_tuple__15 = PyTuple_Pack(17, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(17, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
-  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(7, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_semi_globalign, 93, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_codeobj__16 = (PyObject*)__Pyx_PyCode_New(7, 0, 17, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__15, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_semi_globalign, 124, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__16)) __PYX_ERR(0, 124, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":188
+  /* "lingpy/algorithm/cython/talign.pyx":250
  *     return almA,almB,sim
  * 
  * def localign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_tuple__17 = PyTuple_Pack(20, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_x, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(20, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_x, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
-  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(7, 0, 20, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_localign, 188, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_codeobj__18 = (PyObject*)__Pyx_PyCode_New(7, 0, 20, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__17, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_localign, 250, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__18)) __PYX_ERR(0, 250, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":305
+  /* "lingpy/algorithm/cython/talign.pyx":397
  *     return almA[::-1],almB[::-1],sim
  * 
  * def dialign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_tuple__19 = PyTuple_Pack(21, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_o, __pyx_n_s_p, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_tmp_match, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(21, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_o, __pyx_n_s_p, __pyx_n_s_gapA, __pyx_n_s_gapB, __pyx_n_s_match, __pyx_n_s_sim, __pyx_n_s_tmp_match, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_matrix, __pyx_n_s_traceback); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
-  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(6, 0, 21, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_dialign, 305, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_codeobj__20 = (PyObject*)__Pyx_PyCode_New(6, 0, 21, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__19, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_dialign, 397, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__20)) __PYX_ERR(0, 397, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":398
+  /* "lingpy/algorithm/cython/talign.pyx":518
  *     return almA,almB,sim
  * 
  * def align_pair(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_tuple__21 = PyTuple_Pack(16, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_distance, __pyx_n_s_i, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_sim, __pyx_n_s_dist, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_M, __pyx_n_s_N); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 398, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(16, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_distance, __pyx_n_s_i, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_sim, __pyx_n_s_dist, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_M, __pyx_n_s_N); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
-  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(7, 0, 16, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pair, 398, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 398, __pyx_L1_error)
+  __pyx_codeobj__22 = (PyObject*)__Pyx_PyCode_New(7, 0, 16, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__21, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pair, 518, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__22)) __PYX_ERR(0, 518, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":482
+  /* "lingpy/algorithm/cython/talign.pyx":644
  *         return almA,almB,sim
  * 
  * def align_pairwise(             # <<<<<<<<<<<<<<
  *         list seqs,
  *         int gop,
  */
-  __pyx_tuple__23 = PyTuple_Pack(22, __pyx_n_s_seqs, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_alignments, __pyx_n_s_lS, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_lenA, __pyx_n_s_lenB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_sim, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_dist, __pyx_n_s_sims, __pyx_n_s_lens); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 482, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(22, __pyx_n_s_seqs, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_alignments, __pyx_n_s_lS, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_lenA, __pyx_n_s_lenB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_sim, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_dist, __pyx_n_s_sims, __pyx_n_s_lens); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 644, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
-  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pairwise, 482, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 482, __pyx_L1_error)
+  __pyx_codeobj__24 = (PyObject*)__Pyx_PyCode_New(5, 0, 22, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__23, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pairwise, 644, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__24)) __PYX_ERR(0, 644, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":640
+  /* "lingpy/algorithm/cython/talign.pyx":834
  *     return alignments
  * 
  * def align_pairs(             # <<<<<<<<<<<<<<
  *         list seqs,
  *         int gop,
  */
-  __pyx_tuple__25 = PyTuple_Pack(20, __pyx_n_s_seqs, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_distance, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_lP, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_sim, __pyx_n_s_alignments, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_dist); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 640, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(20, __pyx_n_s_seqs, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_distance, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_lP, __pyx_n_s_seqA, __pyx_n_s_seqB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_sim, __pyx_n_s_alignments, __pyx_n_s_simA, __pyx_n_s_simB, __pyx_n_s_dist); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 834, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
-  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(6, 0, 20, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pairs, 640, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 640, __pyx_L1_error)
+  __pyx_codeobj__26 = (PyObject*)__Pyx_PyCode_New(6, 0, 20, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__25, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_pairs, 834, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__26)) __PYX_ERR(0, 834, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":728
+  /* "lingpy/algorithm/cython/talign.pyx":956
  * 
  * # specific methods for the alignment of profiles
  * def align_profile(             # <<<<<<<<<<<<<<
  *         list profileA,
  *         list profileB,
  */
-  __pyx_tuple__27 = PyTuple_Pack(24, __pyx_n_s_profileA, __pyx_n_s_profileB, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_gap_weight, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_O, __pyx_n_s_P, __pyx_n_s_sim, __pyx_n_s_count, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_listA, __pyx_n_s_listB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_tmp_scorer); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 728, __pyx_L1_error)
+  __pyx_tuple__27 = PyTuple_Pack(24, __pyx_n_s_profileA, __pyx_n_s_profileB, __pyx_n_s_gop, __pyx_n_s_scale, __pyx_n_s_scorer, __pyx_n_s_mode, __pyx_n_s_gap_weight, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_k, __pyx_n_s_l, __pyx_n_s_M, __pyx_n_s_N, __pyx_n_s_O, __pyx_n_s_P, __pyx_n_s_sim, __pyx_n_s_count, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_listA, __pyx_n_s_listB, __pyx_n_s_almA, __pyx_n_s_almB, __pyx_n_s_tmp_scorer); if (unlikely(!__pyx_tuple__27)) __PYX_ERR(0, 956, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__27);
   __Pyx_GIVEREF(__pyx_tuple__27);
-  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(7, 0, 24, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_profile, 728, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 728, __pyx_L1_error)
+  __pyx_codeobj__28 = (PyObject*)__Pyx_PyCode_New(7, 0, 24, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__27, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_align_profile, 956, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__28)) __PYX_ERR(0, 956, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":804
+  /* "lingpy/algorithm/cython/talign.pyx":1067
  *     return almA,almB,sim
  * 
  * def score_profile(             # <<<<<<<<<<<<<<
  *         list colA,
  *         list colB,
  */
-  __pyx_tuple__29 = PyTuple_Pack(11, __pyx_n_s_colA, __pyx_n_s_colB, __pyx_n_s_scorer, __pyx_n_s_gop, __pyx_n_s_gap_weight, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_score, __pyx_n_s_counter); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 804, __pyx_L1_error)
+  __pyx_tuple__29 = PyTuple_Pack(11, __pyx_n_s_colA, __pyx_n_s_colB, __pyx_n_s_scorer, __pyx_n_s_gop, __pyx_n_s_gap_weight, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_score, __pyx_n_s_counter); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 1067, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__29);
   __Pyx_GIVEREF(__pyx_tuple__29);
-  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(5, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_score_profile, 804, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 804, __pyx_L1_error)
+  __pyx_codeobj__30 = (PyObject*)__Pyx_PyCode_New(5, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__29, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_score_profile, 1067, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__30)) __PYX_ERR(0, 1067, __pyx_L1_error)
 
-  /* "lingpy/algorithm/cython/talign.pyx":837
+  /* "lingpy/algorithm/cython/talign.pyx":1126
  *     return score / counter
  * 
  * def swap_score_profile(             # <<<<<<<<<<<<<<
  *         list colA,
  *         list colB,
  */
-  __pyx_tuple__31 = PyTuple_Pack(11, __pyx_n_s_colA, __pyx_n_s_colB, __pyx_n_s_scorer, __pyx_n_s_gap_weight, __pyx_n_s_swap_penalty, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_score, __pyx_n_s_counter); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 837, __pyx_L1_error)
+  __pyx_tuple__31 = PyTuple_Pack(11, __pyx_n_s_colA, __pyx_n_s_colB, __pyx_n_s_scorer, __pyx_n_s_gap_weight, __pyx_n_s_swap_penalty, __pyx_n_s_i, __pyx_n_s_j, __pyx_n_s_charA, __pyx_n_s_charB, __pyx_n_s_score, __pyx_n_s_counter); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__31);
   __Pyx_GIVEREF(__pyx_tuple__31);
-  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(5, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_swap_score_profile, 837, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 837, __pyx_L1_error)
+  __pyx_codeobj__32 = (PyObject*)__Pyx_PyCode_New(5, 0, 11, 0, 0, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__31, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_home_mattis_projects_scripts_Li, __pyx_n_s_swap_score_profile, 1126, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__32)) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -12349,112 +12349,112 @@ PyMODINIT_FUNC PyInit_talign(void)
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_globalign, __pyx_t_1) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":93
+  /* "lingpy/algorithm/cython/talign.pyx":124
  *     return almA,almB,sim
  * 
  * def semi_globalign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_3semi_globalign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_3semi_globalign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_semi_globalign, __pyx_t_1) < 0) __PYX_ERR(0, 93, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_semi_globalign, __pyx_t_1) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":188
+  /* "lingpy/algorithm/cython/talign.pyx":250
  *     return almA,almB,sim
  * 
  * def localign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_5localign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 188, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_5localign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_localign, __pyx_t_1) < 0) __PYX_ERR(0, 188, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_localign, __pyx_t_1) < 0) __PYX_ERR(0, 250, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":305
+  /* "lingpy/algorithm/cython/talign.pyx":397
  *     return almA[::-1],almB[::-1],sim
  * 
  * def dialign(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_7dialign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 305, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_7dialign, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_dialign, __pyx_t_1) < 0) __PYX_ERR(0, 305, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_dialign, __pyx_t_1) < 0) __PYX_ERR(0, 397, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":398
+  /* "lingpy/algorithm/cython/talign.pyx":518
  *     return almA,almB,sim
  * 
  * def align_pair(             # <<<<<<<<<<<<<<
  *         list seqA,
  *         list seqB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_9align_pair, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 398, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_9align_pair, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pair, __pyx_t_1) < 0) __PYX_ERR(0, 398, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pair, __pyx_t_1) < 0) __PYX_ERR(0, 518, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":482
+  /* "lingpy/algorithm/cython/talign.pyx":644
  *         return almA,almB,sim
  * 
  * def align_pairwise(             # <<<<<<<<<<<<<<
  *         list seqs,
  *         int gop,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_11align_pairwise, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 482, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_11align_pairwise, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 644, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pairwise, __pyx_t_1) < 0) __PYX_ERR(0, 482, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pairwise, __pyx_t_1) < 0) __PYX_ERR(0, 644, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":640
+  /* "lingpy/algorithm/cython/talign.pyx":834
  *     return alignments
  * 
  * def align_pairs(             # <<<<<<<<<<<<<<
  *         list seqs,
  *         int gop,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_13align_pairs, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 640, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_13align_pairs, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 834, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pairs, __pyx_t_1) < 0) __PYX_ERR(0, 640, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_pairs, __pyx_t_1) < 0) __PYX_ERR(0, 834, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":728
+  /* "lingpy/algorithm/cython/talign.pyx":956
  * 
  * # specific methods for the alignment of profiles
  * def align_profile(             # <<<<<<<<<<<<<<
  *         list profileA,
  *         list profileB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_15align_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 728, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_15align_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 956, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_profile, __pyx_t_1) < 0) __PYX_ERR(0, 728, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_align_profile, __pyx_t_1) < 0) __PYX_ERR(0, 956, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":804
+  /* "lingpy/algorithm/cython/talign.pyx":1067
  *     return almA,almB,sim
  * 
  * def score_profile(             # <<<<<<<<<<<<<<
  *         list colA,
  *         list colB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_17score_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 804, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_17score_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1067, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_score_profile, __pyx_t_1) < 0) __PYX_ERR(0, 804, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_score_profile, __pyx_t_1) < 0) __PYX_ERR(0, 1067, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "lingpy/algorithm/cython/talign.pyx":837
+  /* "lingpy/algorithm/cython/talign.pyx":1126
  *     return score / counter
  * 
  * def swap_score_profile(             # <<<<<<<<<<<<<<
  *         list colA,
  *         list colB,
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_19swap_score_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 837, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_6lingpy_9algorithm_6cython_6talign_19swap_score_profile, NULL, __pyx_n_s_lingpy_algorithm_cython_talign); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_swap_score_profile, __pyx_t_1) < 0) __PYX_ERR(0, 837, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_swap_score_profile, __pyx_t_1) < 0) __PYX_ERR(0, 1126, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "lingpy/algorithm/cython/talign.pyx":1

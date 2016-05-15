@@ -278,12 +278,13 @@ def pw_align(
 
     Examples
     --------
-    >>> seqA = 'fat cat'
-    >>> setB = 'catfat'
-    >>> pw_align(seqA, seqB, mode='dialign')
-    (['f', 'a', 't', ' ', 'c', 'a', 't', '-', '-', '-'],
-     ['-', '-', '-', '-', 'c', 'a', 't', 'f', 'a', 't'],
-     3.0)
+    Align two words using the dialign algorithm::
+        >>> seqA = 'fat cat'
+        >>> setB = 'catfat'
+        >>> pw_align(seqA, seqB, mode='dialign')
+        (['f', 'a', 't', ' ', 'c', 'a', 't', '-', '-', '-'],
+         ['-', '-', '-', '-', 'c', 'a', 't', 'f', 'a', 't'],
+         3.0)
 
     """
 

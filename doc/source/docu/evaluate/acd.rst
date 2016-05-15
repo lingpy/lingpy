@@ -12,6 +12,7 @@ Functions
 .. autosummary::
    
    bcubes
+   partial_bcubes
    pairs
    diff
    npoint_ap

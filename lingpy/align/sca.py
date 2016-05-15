@@ -667,8 +667,9 @@ class Alignments(Wordlist):
         Function reduces alignments which contain columns that are marked to be \
                 ignored by the user.
 
-        Note
-        ----
+        Notes
+        -----
+        
         This function changes the data only internally: All alignments are
         checked as to whether they contain data that should be ignored. If this
         is the case, the alignments are then reduced, and stored in a specific

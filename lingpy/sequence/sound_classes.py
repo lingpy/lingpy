@@ -235,22 +235,21 @@ def ipa2tokens(istring, **keywords):
 def syllabify(seq, output="flat", **keywords):
     """
     Carry out a simple syllabification of a sequence, using sonority as a proxy.
-
+    
     Parameters
     ----------
     output: {"flat", "breakpoints", "nested"} (default="flat")
         Define how to output the syllabification. Select between:
-        * "flat": A syllable separator is introduced to mark the syllable
-          boundaries
-        * "breakpoins": A tuple consisting of indices that slice the original
-          sequence into syllables is returned.
-        * "nested": A nested list reflecting the syllable structure is
-          returned.
+        * "flat": A syllable separator is introduced to mark the syllable boundaries
+        * "breakpoins": A tuple consisting of indices that slice the original sequence into syllables is returned.
+        * "nested": A nested list reflecting the syllable structure is returned.
+          
     sep : str (default="◦")
         Select your preferred syllable separator.
     
-    Note
-    ----
+    Notes
+    -----
+
     When analyzing the sequence, we start a new syllable in all cases where we
     reach a deepest point in the sonority hierarchy of the sonority profile of
     the sequence. When passing an aligned string to this function, the gaps
@@ -259,11 +258,13 @@ def syllabify(seq, output="flat", **keywords):
 
     Returns
     -------
+
     syllable : list
         Either a flat list containing a morpheme separator, or a nested list,
         reflecting the syllable structure, or a list of tuples containing the
         indices indicating where the input sequence should be sliced in order
         to split it into syllables.
+
     """
     if output not in ['flat', 'breakpoints', 'nested']:
         raise ValueError(
@@ -432,8 +433,8 @@ def _split_syllables(syllables, tokens):
     """
     Split the output of the syllabify method into subsets.
     
-    Note
-    ----
+    Notes
+    -----
     This is a simple helper function to deal with syllabified content.
     """
 
