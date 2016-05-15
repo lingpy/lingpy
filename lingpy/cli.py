@@ -384,7 +384,12 @@ class pairwise(Command):
 
     def __call__(self, args):
         def make_out(x, y, z):
-            return '\t'.join(x) + '\n' + '\t'.join(y) + '\n{0:.2f}'.format(z)
+            try:
+                return '\t'.join(x) + '\n' + '\t'.join(y) + '\n{0:.2f}'.format(z)
+            except TypeError:
+                out1 = ''.join(x[0])+'\t|\t'+'\t'.join(x[1])+'\t|\t'+''.join(x[2])
+                out2 = ''.join(y[0])+'\t|\t'+'\t'.join(y[1])+'\t|\t'+''.join(y[2])
+                return out1+'\n'+out2+'\n'+'{0:.2f}'.format(z)
 
         if args.strings:
             if args.method == 'basic':
