@@ -12,6 +12,14 @@ lingpy.tests.thirdparty.test_cogent module
     :undoc-members:
     :show-inheritance:
 
+lingpy.tests.thirdparty.test_linkcomm module
+--------------------------------------------
+
+.. automodule:: lingpy.tests.thirdparty.test_linkcomm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

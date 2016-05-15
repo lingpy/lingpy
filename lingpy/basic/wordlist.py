@@ -780,9 +780,9 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         Parameters
         ----------
-        fileformat : {"qlc","tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv"}
+        fileformat : {"tsv","tre","nwk","dst", "taxa", "starling", "paps.nex", "paps.csv"}
             The format that is written to file. This corresponds to the file
-            extension, thus 'qlc' creates a file in qlc-format, 'dst' creates
+            extension, thus 'tsv' creates a file in extended tsv-format, 'dst' creates
             a file in Phylip-distance format, etc.
         filename : str
             Specify the name of the output file (defaults to a filename that
@@ -800,7 +800,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             column will then be checked against statement passed in the
             dictionary, and if it is evaluated to c{True}, the respective row
             will be written to file.
-        cognates : str
+        ref : str
             Name of the column that contains the cognate IDs if 'starling' is
             chosen as an output format.
 
@@ -815,6 +815,23 @@ class Wordlist(QLCParserWithRowsAndCols):
         threshold : float (default=0.6)
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
+
+        ignore : { list, "all" }
+            Modifies the output format in "tsv" output and allows to ignore
+            certain blocks in extended "tsv", like "msa", "taxa", "json", etc.,
+            which should be passed as a list. If you choose "all" as a plain
+            string and not a list, this will ignore all additional blocks and
+            output only plain "tsv".
+        prettify : bool (default=True)
+            Inserts comment characters between concepts in the "tsv" file
+            output format, which makes it easier to see blocks of words
+            denoting the same concept. Switching this off will output the file
+            in plain "tsv". 
+        
+        See also
+        --------
+        ~lingpy.compare.lexstat.LexStat.output
+        ~lingpy.align.sca.Alignments.output
 
         """
         return self._output(fileformat, **keywords)
