@@ -1002,10 +1002,6 @@ class Alignments(Wordlist):
         util.setdefaults(
             keywords, model=rcParams['sca'], gap_scale=1.0, ref=rcParams['ref'])
 
-        # check for deprecated "cognates"
-        if 'cognates' in keywords:
-            log.deprecated('cognates', 'ref')
-
         # switch ref
         if keywords['ref'] != rcParams['ref']:
             rcParams['ref'] = keywords['ref']

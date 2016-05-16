@@ -1834,14 +1834,13 @@ class Multiple(object):
         msaB = self._swap_sum_of_pairs(
             matB, gap_weight=gap_weight, swap_penalty=swap_penalty)
         msaAB = int((msaA + msaB) * 0.5 * 1000000)
-
-        if log.get_level() <= logging.DEBUG:
-            lines = [[self._get(x, '_classes') for x in line] for line in matA]
-            lines.append(msaA)
-            lines.extend([[self._get(x, '_classes') for x in line] for line in matA])
-            lines.append(msaB)
-            lines.append((msaAB, msa))
-            self.log.debug('', extra=dict(lines=lines))
+        self.log.debug('', extra=dict(
+            lines=[[self._get(x, '_classes') for x in line] for line in matA] + \
+                    [msaA] + \
+                    [[self._get(x, '_classes') for x in line] for line in matA] +\
+                    [msaB] +
+                    [msaAB, msa]
+            ))
 
         # return True if the newly calculated sop-score is greater than the previous one
         return msaAB > msa
