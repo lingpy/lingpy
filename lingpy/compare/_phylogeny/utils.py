@@ -106,7 +106,6 @@ def tstats(
                         bor += 1
 
             states[name] = [ret, inn, bor]
-            print(name, inn, ret, bor, str(child))
 
     # calculate the scores
     ret = sum([c[0] for c in tracer.values()])
