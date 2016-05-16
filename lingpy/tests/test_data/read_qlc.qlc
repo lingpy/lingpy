@@ -1,0 +1,191 @@
+# Wordlist
+
+@taxona:b
+@taxona:c
+
+@taxa:a
+@taxa:b
+@taxa:c
+
+<bla id="1" test="1" two="3">
+test
+</bla>
+
+<csv id="taxa">
+test1	test2
+test3	test4
+</csv>
+<msa id="test" consensus="wolde" dataset="test" cogid="2">
+1	Taiyuan	w	o	l	d	e
+2	Pingyao	w	a	l	t	a
+</msa>
+
+<dst>
+  3
+tax          0 1 1
+tux          1 0 1
+tix          1 1 0
+</dst>
+
+# META
+@tree:((((((((Taiyuan,Pingyao,Huhehaote),((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,Wulumuqi)),(((Tianjin,Jinan),Qingdao),Beijing,Haerbin)),(((Guiyang,Kunming),Chengdu,Wuhan),(Nanjing,Hefei)))),(Xiangtan,Changsha)),Nanchang),(Shexian,Tunxi)),((Shanghai,Suzhou,Hangzhou),Wenzhou)),(((Xianggang,Guangzhou),Nanning),(Meixian,Taoyuan))),((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));
+<json>
+{"coords": {"Qingdao": [36.089393, 120.379715], "Shanghai": [31.222902, 121.475372], "Haikou": [20.043869, 110.329399], "Haerbin": [45.846595, 126.551056], "Meixian": [24.5, 115.95], "Jinan": [36.690777, 116.997299], "Xianggang": [22.422645, 114.098396], "Beijing": [40.05, 116.42], "Wenzhou": [28.005496, 120.701179], "Guangzhou": [23.5, 113.1], "Fuzhou": [26.08904, 119.294243], "Huhehaote": [40.855526, 111.743889], "Suzhou": [31.5, 120.0], "Taibei": [25.3, 121.9], "Changsha": [28.85032, 112.943344], "Taiyuan": [37.88423, 113.25], "Xiamen": [24.49421, 118.08918], "Guiyang": [26.71691, 106.638336], "Taoyuan": [24.0, 120.5], "Xi\u2019an": [34.228154, 108.960571], "Hangzhou": [29.25, 119.8], "Hefei": [31.873593, 117.223663], "Yinchuan": [38.546662, 106.240082], "Tunxi": [29.0, 118.0], "Wulumuqi": [43.9, 89.0], "Zhengzhou": [34.807715, 113.639374], "Nanjing": [32.5, 119.0], "Nanning": [22.848716, 108.366165], "Chengdu": [30.605768, 103.970947], "Shexian": [30.589829, 118.428268], "Kunming": [25.049711, 102.72274], "Xiangtan": [27.0, 112.945518], "Tianjin": [39.186072, 117.215424], "Wuhan": [30.624086, 114.305649], "Lanzhou": [36.080515, 103.838425], "Xining": [36.671283, 101.776886], "Nanchang": [28.706609, 115.857468], "Jian\u2019ou": [27.04237, 118.307419], "Pingyao": [37.202058, 111.75], "Shantou": [23.35, 116.666667]}, "conf": {"resolution": "l", "linescale": 0.5, "groups_markers": {"Min": "p", "Hui": "s", "Hakka": "D", "Cantonese": "o", "Jin": "s", "Xiang": "s", "Wu": "D", "Mandarin": "o", "Gan": "p"}, "linewidth": 4, "max_lat": 2.5, "coastline_color": "0.5", "min_lon": -10.0, "continent_color": "0.9", "legend.size": 18, "projection": "merc", "lw": 2, "cmap_max": 250, "alpha": 0.75, "table.column.width": [0.025, 0.13], "taxon.short_labels": {"Qingdao": "Q\u012bngd\u01ceo   ", "Shanghai": "Sh\u00e0ngh\u01cei  ", "Haikou": "H\u01ceik\u01d2u    ", "Haerbin": "Harbin    ", "Meixian": "M\u011bixi\u00e0n   ", "Jinan": "J\u00ecn\u00e1n     ", "Xianggang": "Hongkong  ", "Beijing": "B\u011bij\u012bng   ", "Wenzhou": "W\u00e9nzh\u014du   ", "Guangzhou": "Gu\u01cengzh\u014du ", "Fuzhou": "F\u00f9zh\u014du    ", "Huhehaote": "Hohhot    ", "Suzhou": "S\u00f9zh\u014du    ", "Taibei": "T\u00e1ib\u011bi    ", "Changsha": "Ch\u00e1ngsh\u0101  ", "Taiyuan": "T\u00e0iyu\u00e1n   ", "Xiamen": "Xi\u00e0m\u00e9n    ", "Guiyang": "Gu\u00ecy\u00e1ng   ", "Taoyuan": "T\u00e1oyu\u00e1n   ", "Xi\u2019an": "X\u012b'\u0101n     ", "Hangzhou": "H\u00e1ngzh\u014du  ", "Hefei": "H\u00e9f\u00e8i     ", "Yinchuan": "Y\u012bnchu\u00e0n  ", "Tunxi": "T\u016bnx\u012b     ", "Wulumuqi": "\u00dcr\u00fcmqi    ", "Zhengzhou": "Zh\u00e8ngzh\u014du ", "Nanjing": "N\u00e1nj\u012bng   ", "Nanning": "N\u00e1nn\u00edng   ", "Chengdu": "Ch\u00e9ngd\u016b   ", "Shexian": "Sh\u00e8xi\u00e0n   ", "Kunming": "K\u00f9nm\u00edng   ", "Xiangtan": "Xi\u0101ngt\u00e0n  ", "Tianjin": "Ti\u0101nj\u00ecn   ", "Wuhan": "W\u01d4h\u00e0n     ", "Lanzhou": "L\u00e1nzh\u014du   ", "Xining": "X\u012bn\u00edng    ", "Nanchang": "N\u00e1nch\u00e0ng  ", "Jian\u2019ou": "Ji\u00e0n'\u01d2u   ", "Pingyao": "P\u00edngy\u00e1o   ", "Shantou": "Sh\u0101nt\u00f3u   "}, "table.cell.color": "white", "markersize": 20, "groups_colors": {"Min": "0.625", "Hui": "0.0", "Hakka": "0.75", "Cantonese": "0.125", "Jin": "0.875", "Xiang": "0.5", "Wu": "0.375", "Mandarin": "1.0", "Gan": "0.25"}, "table.cell.height": 0.024, "taxon.labels": {"Qingdao": "Q\u012bngd\u01ceo   \\textnormal{\u9752\u5c9b}", "Shanghai": "Sh\u00e0ngh\u01cei  \\textnormal{\u4e0a\u6d77}", "Haikou": "H\u01ceik\u01d2u    \\textnormal{\u6d77\u53e3}", "Haerbin": "Harbin    \\textnormal{\u54c8\u5c14\u6ee8}", "Meixian": "M\u011bixi\u00e0n   \\textnormal{\u6885\u53bf}", "Jinan": "J\u00ecn\u00e1n     \\textnormal{\u6d4e\u5357}", "Xianggang": "Hongkong  \\textnormal{\u9999\u6e2f}", "Beijing": "B\u011bij\u012bng   \\textnormal{\u5317\u4eac}", "Wenzhou": "W\u00e9nzh\u014du   \\textnormal{\u6e29\u5dde}", "Guangzhou": "Gu\u01cengzh\u014du \\textnormal{\u5e7f\u5dde}", "Fuzhou": "F\u00f9zh\u014du    \\textnormal{\u798f\u5dde}", "Huhehaote": "Hohhot    \\textnormal{\u547c\u548c\u6d69\u7279}", "Suzhou": "S\u00f9zh\u014du    \\textnormal{\u82cf\u5dde}", "Taibei": "T\u00e1ib\u011bi    \\textnormal{\u53f0\u5317}", "Changsha": "Ch\u00e1ngsh\u0101  \\textnormal{\u957f\u6c99}", "Taiyuan": "T\u00e0iyu\u00e1n   \\textnormal{\u592a\u539f}", "Xiamen": "Xi\u00e0m\u00e9n    \\textnormal{\u53a6\u95e8}", "Guiyang": "Gu\u00ecy\u00e1ng   \\textnormal{\u8d35\u9633}", "Taoyuan": "T\u00e1oyu\u00e1n   \\textnormal{\u6843\u56ed}", "Xi\u2019an": "X\u012b'\u0101n     \\textnormal{\u897f\u5b89}", "Hangzhou": "H\u00e1ngzh\u014du  \\textnormal{\u676d\u5dde}", "Hefei": "H\u00e9f\u00e8i     \\textnormal{\u5408\u80a5}", "Yinchuan": "Y\u012bnchu\u00e0n  \\textnormal{\u94f6\u5ddd}", "Tunxi": "T\u016bnx\u012b     \\textnormal{\u5c6f\u6eaa}", "Wulumuqi": "\u00dcr\u00fcmqi    \\textnormal{\u4e4c\u9c81\u6728\u9f50}", "Zhengzhou": "Zh\u00e8ngzh\u014du \\textnormal{\u90d1\u5dde}", "Nanjing": "N\u00e1nj\u012bng   \\textnormal{\u5357\u4eac}", "Nanning": "N\u00e1nn\u00edng   \\textnormal{\u5357\u5b81}", "Chengdu": "Ch\u00e9ngd\u016b   \\textnormal{\u6210\u90fd}", "Shexian": "Sh\u00e8xi\u00e0n   \\textnormal{\u6b59\u53bf}", "Kunming": "K\u00f9nm\u00edng   \\textnormal{\u6606\u660e}", "Xiangtan": "Xi\u0101ngt\u00e0n  \\textnormal{\u6e58\u6f6d}", "Tianjin": "Ti\u0101nj\u00ecn   \\textnormal{\u5929\u6d25}", "Wuhan": "W\u01d4h\u00e0n     \\textnormal{\u6b66\u6c49}", "Lanzhou": "L\u00e1nzh\u014du   \\textnormal{\u5170\u5dde}", "Xining": "X\u012bn\u00edng    \\textnormal{\u897f\u5b81}", "Nanchang": "N\u00e1nch\u00e0ng  \\textnormal{\u5357\u660c}", "Jian\u2019ou": "Ji\u00e0n'\u014du   \\textnormal{\u5efa\u74ef}", "Pingyao": "P\u00edngy\u00e1o   \\textnormal{\u5e73\u9065}", "Shantou": "Sh\u0101nt\u00f3u   \\textnormal{\u6c55\u5934}"}, "legend.location": [0.85, 0.02], "cmap_min": 30, "table.text.color": "black", "table.location": 3, "groups_labels": {"Min": "M\u01d0n", "Hui": "Hu\u012b", "Hakka": "K\u00e8ji\u0101", "Cantonese": "Yu\u00e8", "Jin": "J\u00ecn", "Xiang": "Xi\u00e0ng", "Wu": "W\u00fa", "Mandarin": "Gu\u0101nhu\u00e0", "Gan": "G\u00e0n"}, "min_lat": -2.5, "water_color": "0.2", "table.text.size": 10, "max_lon": 5.0}, "groups": {"Qingdao": "Mandarin", "Shanghai": "Wu", "Haikou": "Min", "Haerbin": "Mandarin", "Meixian": "Hakka", "Jinan": "Mandarin", "Xianggang": "Cantonese", "Beijing": "Mandarin", "Wenzhou": "Wu", "Guangzhou": "Cantonese", "Fuzhou": "Min", "Huhehaote": "Jin", "Suzhou": "Wu", "Taibei": "Min", "Changsha": "Xiang", "Taiyuan": "Jin", "Xiamen": "Min", "Guiyang": "Mandarin", "Taoyuan": "Hakka", "Xi\u2019an": "Mandarin", "Hangzhou": "Wu", "Hefei": "Mandarin", "Yinchuan": "Mandarin", "Tunxi": "Hui", "Wulumuqi": "Mandarin", "Zhengzhou": "Mandarin", "Nanjing": "Mandarin", "Nanning": "Cantonese", "Chengdu": "Mandarin", "Shexian": "Hui", "Kunming": "Mandarin", "Xiangtan": "Xiang", "Tianjin": "Mandarin", "Wuhan": "Mandarin", "Lanzhou": "Mandarin", "Xining": "Mandarin", "Nanchang": "Gan", "Jian\u2019ou": "Min", "Pingyao": "Jin", "Shantou": "Min"}}
+</json>
+<taxa>
+tax1
+tax2
+tax3
+</taxa>
+
+# DATA
+IDX	DOCULECT	TAXONID	CONCEPT	GLOSSID	MANDARIN	ORDER	IPA	COUNTERPART	COGID	NOTE	PARTOFSPEECH	BASIC	PROTO	MCH	STATUS	GROUP_PROTO
+#
+590	Shanghai	01	Dragon Boat Festival	12	端午节	17	tø⁵³⁻⁵⁵ɦŋ̍¹³⁻²¹	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+591	Shanghai	01	Dragon Boat Festival	12	端午节	18	tø⁵³⁻⁵⁵ɦŋ̍¹³⁻³³ʨiɪʔ⁵⁻²¹	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+592	Suzhou	02	Dragon Boat Festival	12	端午节	13	tø⁵⁵ŋ̍³¹ʦiəʔ⁵⁻²	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+593	Hangzhou	03	Dragon Boat Festival	12	端午节	12	tuõ³³ʔu⁵³⁻³³	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+594	Wenzhou	04	Dragon Boat Festival	12	端午节	18	ʥyɔ³¹⁻⁴²ŋ̍³⁵	重五	10	-	preposition	-	重五	ɖjowŋ.ŋu²	?	?
+595	Guangzhou	05	Dragon Boat Festival	12	端午节	16	ŋ̍²³jyt²ʦit³	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+596	Guangzhou	05	Dragon Boat Festival	12	端午节	17	tyn⁵³ŋ̍²³	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+597	Nanning	06	Dragon Boat Festival	12	端午节	12	ŋ̍²⁴yt²²ʦʰɔ⁵⁵ŋ̍²⁴	五月初五	8	-	preposition	-	五月初五	ŋu².ŋjot.ʦʰjo.ŋu²	?	?
+598	Xianggang	07	Dragon Boat Festival	12	端午节	14	ŋ̍¹³jyt²ʦit³	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+599	Xianggang	07	Dragon Boat Festival	12	端午节	15	tyn⁵⁵ŋ̍¹³	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+600	Xiamen	08	Dragon Boat Festival	12	端午节	16	gɔ²²⁻²¹geʔ⁵⁻²¹ʦueʔ	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+601	Xiamen	08	Dragon Boat Festival	12	端午节	17	tuan⁵⁵⁻²²ŋɔ⁵³⁻⁵⁵ʦiat³²	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	i	五月节
+603	Fuzhou	09	Dragon Boat Festival	12	端午节	13	ŋu²⁴²⁻²¹ŋuoʔ⁵⁻⁵³ʦɑiʔ²⁴	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+604	Fuzhou	09	Dragon Boat Festival	12	端午节	14	ŋu²⁴²⁻²¹niʔ⁵⁻⁵³ʦɑiʔ²⁴	五日节	9	-	preposition	-	五日节	ŋu².ȵit.ʦwon	i	五月节
+605	Jian’ou	10	Dragon Boat Festival	12	端午节	11	kua³³ʦai²⁴	过节	4	-	preposition	-	过节	kwa³.ʦwon	i	五月节
+606	Jian’ou	10	Dragon Boat Festival	12	端午节	12	ŋu⁴²ŋyɛ⁴²ʦai²⁴	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+607	Shantou	11	Dragon Boat Festival	12	端午节	14	ŋõu³⁵⁻³¹gueʔ⁵⁻²ʦoiʔ²	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+608	Haikou	12	Dragon Boat Festival	12	端午节	18	ŋɔu³³vue³³ʦe⁵⁵	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+609	Haikou	12	Dragon Boat Festival	12	端午节	19	ŋɔu³³vue³³sɔu²³ŋɔu³³	五月初五	8	(特指)	preposition	-	五月初五	ŋu².ŋjot.ʦʰjo.ŋu²	i	五月节
+610	Taibei	13	Dragon Boat Festival	12	端午节	12	gɔ³³⁻¹¹lit⁴⁴⁻³²ʦieʔ³²	五日节	9	-	preposition	-	五日节	ŋu².ȵit.ʦwon	i	五月节
+611	Taibei	13	Dragon Boat Festival	12	端午节	13	gɔ³³⁻¹¹geʔ⁴⁴⁻³²ʦieʔ³²	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+612	Meixian	14	Dragon Boat Festival	12	端午节	11	n̩³¹ŋiat⁵ʦiet¹	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+613	Taoyuan	15	Dragon Boat Festival	12	端午节	13	ŋ̍³¹ŋiet⁵⁵ʦiet²²	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	r	五月节
+614	Nanchang	16	Dragon Boat Festival	12	端午节	14	ʨiɛʔ⁵	节	7	-	preposition	-	节	ʦwon	?	?
+615	Nanchang	16	Dragon Boat Festival	12	端午节	15	tɵn⁴²u²¹³	端午	3	tɵn⁴²u²¹³(ʨiɛʔ⁵̃)	preposition	-	端午	twan.ŋu²	?	?
+616	Nanchang	16	Dragon Boat Festival	12	端午节	16	tɵn⁴²iɔŋ⁴⁵	端阳	12	tɵn⁴²iɔŋ⁴⁵(ʨiɛʔ⁵)	preposition	-	端阳	twan.jaŋ	?	?
+617	Changsha	17	Dragon Boat Festival	12	端午节	16	tõ³³u⁴¹ʦie²⁴	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+618	Xiangtan	18	Dragon Boat Festival	12	端午节	16	tɔn³³u⁴²i²⁴	端午日	11	-	preposition	-	端午日	twan.ŋu².ȵit	?	?
+619	Xiangtan	18	Dragon Boat Festival	12	端午节	17	tɔn³³ian¹²ʦie²⁴	端阳节	13	-	preposition	-	端阳节	twan.jaŋ.ʦwon	?	?
+620	Shexian	19	Dragon Boat Festival	12	端午节	17	to³¹u³⁵ʦeʔ²¹	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	r	端午节
+621	Tunxi	20	Dragon Boat Festival	12	端午节	16	tuːə¹¹n̩	端午	3	-	preposition	-	端午	twan.ŋu²	i	端午节
+622	Tunxi	20	Dragon Boat Festival	12	端午节	17	tuːə¹¹n̩²⁴ʦiɛ⁵	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	r	端午节
+623	Taiyuan	21	Dragon Boat Festival	12	端午节	14	vu⁵³yəʔ²tuæ̃¹¹vu⁵³	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	r	五月端午
+624	Pingyao	22	Dragon Boat Festival	12	端午节	14	u⁵³yʌʔ⁵³tuɑŋ¹³⁻³¹u⁵³	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	r	五月端午
+625	Huhehaote	23	Dragon Boat Festival	12	端午节	20	tuæ̃³¹⁻³³vu	端午	3	-	preposition	-	端午	twan.ŋu²	i	五月端午
+626	Huhehaote	23	Dragon Boat Festival	12	端午节	21	vu⁵³yaʔ⁴³⁻²¹tuæ̃³¹⁻³³vu	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	r	五月端午
+627	Beijing	24	Dragon Boat Festival	12	端午节	15	u²¹⁴⁻²¹yɛ⁵¹ʨiɛ³⁵	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+628	Beijing	24	Dragon Boat Festival	12	端午节	16	tuan⁵⁵u²ʨiɛ³⁵	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+629	Tianjin	25	Dragon Boat Festival	12	端午节	13	u¹³ye³ʨie⁴⁵	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+630	Jinan	26	Dragon Boat Festival	12	端午节	16	u⁵⁵⁻²¹³yətuã²¹³⁻²¹u	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+631	Jinan	26	Dragon Boat Festival	12	端午节	17	tuã²¹³u⁵⁵	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+632	Qingdao	27	Dragon Boat Festival	12	端午节	14	vu⁵⁵⁻⁴⁵yətã²¹³⁻³¹vu	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+633	Nanjing	28	Dragon Boat Festival	12	端午节	14	u²¹²⁻¹¹yeʔʦieʔ⁵	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+634	Nanjing	28	Dragon Boat Festival	12	端午节	15	tuaŋ³¹u²¹²⁻¹¹ʦieʔ	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+635	Nanjing	28	Dragon Boat Festival	12	端午节	16	uɑr²⁴ʦieʔ⁵	娃儿节	14	-	preposition	-	娃儿节	ʔɛ.ȵe.ʦwon	?	?
+636	Hefei	29	Dragon Boat Festival	12	端午节	12	t̃²¹u²⁴ʨiɐʔ⁵	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+637	Zhengzhou	30	Dragon Boat Festival	12	端午节	18	u⁵³yɛtuaŋ²⁴ur	五月端午儿	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+638	Zhengzhou	30	Dragon Boat Festival	12	端午节	19	tuan²⁴u⁵³ʦiɛ²⁴	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+639	Wuhan	31	Dragon Boat Festival	12	端午节	18	tan⁵⁵u	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+640	Wuhan	31	Dragon Boat Festival	12	端午节	19	tan⁵⁵iaŋ	端阳	12	-	preposition	-	端阳	twan.jaŋ	?	?
+641	Chengdu	32	Dragon Boat Festival	12	端午节	21	tuan⁵⁵u⁵³ʨie³¹	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+642	Chengdu	32	Dragon Boat Festival	12	端午节	22	tuan⁵⁵u⁵³	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+643	Chengdu	32	Dragon Boat Festival	12	端午节	23	tuan⁵⁵iaŋ³¹	端阳	12	-	preposition	-	端阳	twan.jaŋ	?	?
+644	Guiyang	33	Dragon Boat Festival	12	端午节	16	tuan⁵⁵u⁴²	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+645	Guiyang	33	Dragon Boat Festival	12	端午节	17	tuan⁵⁵iaŋ²¹	端阳	12	-	preposition	-	端阳	twan.jaŋ	?	?
+646	Kunming	34	Dragon Boat Festival	12	端午节	16	u⁵³iɛ³¹⁻⁴⁴tuᴀ̃⁴⁴u⁵³	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+647	Haerbin	35	Dragon Boat Festival	12	端午节	13	u²¹³⁻²¹yɛ⁵³ʨiɛ²¹³	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+648	Xi’an	36	Dragon Boat Festival	12	端午节	12	u⁵³yɛ²¹⁻²⁴ʨiɛ²¹	五月节	1	-	preposition	-	五月节	ŋu².ŋjot.ʦwon	?	?
+649	Yinchuan	37	Dragon Boat Festival	12	端午节	20	tan⁴⁴vu	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+650	Yinchuan	37	Dragon Boat Festival	12	端午节	21	tan⁴⁴vuʨie¹³	端午节	2	-	preposition	-	端午节	twan.ŋu².ʦwon	?	?
+651	Yinchuan	37	Dragon Boat Festival	12	端午节	22	vu⁵³⁻³⁵itan⁴⁴vu	五月端午	5	i(<ye)	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+652	Lanzhou	38	Dragon Boat Festival	12	端午节	12	tɑ̃³¹vu²¹	当午	6	-	preposition	-	当午	taŋ³.ŋu²	?	?
+653	Lanzhou	38	Dragon Boat Festival	12	端午节	13	tuɛ̃n³¹iɑ̃²¹	端阳	12	-	preposition	-	端阳	twan.jaŋ	?	?
+654	Xining	39	Dragon Boat Festival	12	端午节	15	tɔ̃⁴⁴v̩⁵³	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+655	Xining	39	Dragon Boat Festival	12	端午节	16	v̩⁵³yutɔ̃⁴⁴v̩⁵³	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+656	Wulumuqi	40	Dragon Boat Festival	12	端午节	15	tuan⁴⁴yɤ	端午	3	-	preposition	-	端午	twan.ŋu²	?	?
+657	Wulumuqi	40	Dragon Boat Festival	12	端午节	16	vu⁵¹⁻¹³yɤtuan⁴⁴	五月端午	5	-	preposition	-	五月端午	ŋu².ŋjot.twan.ŋu²	?	?
+#
+6238	Shanghai	01	I	105	我	164	ŋu¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6239	Suzhou	02	I	105	我	122	ŋəu³¹	吾	18	-	preposition	basic_word	吾	ŋu	i	我
+6240	Hangzhou	03	I	105	我	136	ŋo⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6241	Wenzhou	04	I	105	我	192	ŋ̍³⁵	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6242	Guangzhou	05	I	105	我	146	ŋɔ²³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6243	Nanning	06	I	105	我	139	ŋɔ²⁴	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6244	Xianggang	07	I	105	我	139	ŋɔ¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6245	Xiamen	08	I	105	我	169	gua⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6246	Fuzhou	09	I	105	我	145	nøyŋ⁵³	侬	16	-	preposition	basic_word	侬	nowŋ	i	我
+6247	Fuzhou	09	I	105	我	146	ŋuai	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6248	Jian’ou	10	I	105	我	138	uɛ⁴²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6249	Shantou	11	I	105	我	122	ua⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6250	Haikou	12	I	105	我	179	va²¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6251	Taibei	13	I	105	我	130	gua⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6252	Nanchang	16	I	105	我	154	ŋo²¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6253	Changsha	17	I	105	我	172	ŋo⁴¹	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6254	Xiangtan	18	I	105	我	182	ŋo⁴²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6255	Shexian	19	I	105	我	185	a³¹	卬	17	-	preposition	basic_word	卬	ŋjaŋ²	r	卬
+6257	Tunxi	20	I	105	我	152	a²⁴	我	15	-	preposition	basic_word	我	ŋa²	i	卬
+6258	Taiyuan	21	I	105	我	165	ɣɤ⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6259	Taiyuan	21	I	105	我	166	æ̃⁵³	俺	19	限女性用，一般做定语	preposition	basic_word	俺	ʔjom³	i	我
+6260	Pingyao	22	I	105	我	153	ŋiᴇ⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6261	Huhehaote	23	I	105	我	187	vɤ⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6262	Beijing	24	I	105	我	147	uo²¹⁴	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6263	Tianjin	25	I	105	我	169	uo¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6264	Jinan	26	I	105	我	206	və⁵⁵	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6265	Jinan	26	I	105	我	207	ŋã⁵⁵	俺	19	-	preposition	basic_word	俺	ʔjom³	i	我
+6266	Qingdao	27	I	105	我	131	və⁵⁵	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6267	Qingdao	27	I	105	我	132	ɣã⁵⁵	俺	19	-	preposition	basic_word	俺	ʔjom³	i	我
+6268	Nanjing	28	I	105	我	174	o²¹²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6269	Hefei	29	I	105	我	116	ʊ²⁴	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6270	Zhengzhou	30	I	105	我	184	uo⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6271	Zhengzhou	30	I	105	我	185	an⁵³	俺	19	-	preposition	basic_word	俺	ʔjom³	i	我
+6272	Wuhan	31	I	105	我	210	ŋuo⁴²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6274	Chengdu	32	I	105	我	215	ŋo⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6275	Guiyang	33	I	105	我	184	ŋo⁴²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6276	Kunming	34	I	105	我	145	o⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6277	Haerbin	35	I	105	我	150	uo²¹³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6278	Xi’an	36	I	105	我	122	ŋɤ⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6279	Yinchuan	37	I	105	我	230	və⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6281	Lanzhou	38	I	105	我	143	və⁴⁴²	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6282	Xining	39	I	105	我	181	nɔ⁵³	我	15	-	preposition	basic_word	我	ŋa²	r	我
+6283	Wulumuqi	40	I	105	我	144	vɤ⁵¹	我	15	-	preposition	basic_word	我	ŋa²	r	我
+#
+658	Shanghai	01	Mid-autumn Festival	13	中秋节	19	ʦoŋ⁵³⁻⁵⁵ʨʰiɤ⁵³⁻²¹	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	i	中秋节
+659	Shanghai	01	Mid-autumn Festival	13	中秋节	20	ʦoŋ⁵³⁻⁵⁵ʨʰiɤ⁵³⁻³³ʨiɪʔ⁵⁻²¹	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+660	Suzhou	02	Mid-autumn Festival	13	中秋节	14	po⁵ŋəʔ³pø⁵¹³⁻²¹	八月半	24	-	preposition	-	八月半	pɛt.ŋjot.pan³	i	中秋节
+661	Suzhou	02	Mid-autumn Festival	13	中秋节	15	ʦoŋ⁵⁵ʦʰʏ⁵⁵ʦiəʔ⁵	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+662	Hangzhou	03	Mid-autumn Festival	13	中秋节	13	pɑʔ⁵ɦyəʔ²⁻⁵puõ⁴⁴⁵⁻³³	八月半	24	-	preposition	-	八月半	pɛt.ŋjot.pan³	i	中秋节
+663	Wenzhou	04	Mid-autumn Festival	13	中秋节	19	po²¹³⁻²¹ȵy²¹³⁻²¹zai²¹³⁻²¹ŋ	八月十五	23	-	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	i	中秋节
+664	Wenzhou	04	Mid-autumn Festival	13	中秋节	20	ʨoŋ³³⁻²¹ʨʰɤu³³⁻³⁵ʨi²¹³⁻¹³	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+665	Guangzhou	05	Mid-autumn Festival	13	中秋节	18	ʦoŋ⁵⁵ʦʰɐu⁵⁵	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	i	八月十五
+666	Guangzhou	05	Mid-autumn Festival	13	中秋节	19	pat³jyt²sɐp²m̩²³	八月十五	23	m̩²³<ŋ̍²³	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	r	八月十五
+667	Nanning	06	Mid-autumn Festival	13	中秋节	13	pɛt³³yt²²sɐp²²m̩²⁴	八月十五	23	-	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	r	八月十五
+668	Xianggang	07	Mid-autumn Festival	13	中秋节	16	ʦuŋ⁵⁵ʦʰɐu⁵⁵	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	i	八月十五
+669	Xianggang	07	Mid-autumn Festival	13	中秋节	17	pat³jyt²sɐp²m̩¹³	八月十五	23	m̩¹³(<ŋ̍¹³)	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	r	八月十五
+670	Xiamen	08	Mid-autumn Festival	13	中秋节	19	tiɔŋ⁵⁵⁻²²ʦʰiu⁵⁵⁻²²ʦiat³²	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	i	中秋
+672	Xiamen	08	Mid-autumn Festival	13	中秋节	21	tiɔŋ⁵⁵⁻²²ʦʰiu⁵⁵⁻²²	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	r	中秋
+673	Xiamen	08	Mid-autumn Festival	13	中秋节	22	pueʔ³²⁻⁵³geʔ⁵⁻²¹ʦueʔ³²	八月节	20	-	preposition	-	八月节	pɛt.ŋjot.ʦwon	i	中秋
+674	Fuzhou	09	Mid-autumn Festival	13	中秋节	15	tyŋ⁴⁴ʒieu⁴⁴	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	r	中秋
+675	Fuzhou	09	Mid-autumn Festival	13	中秋节	16	pɛiʔ²⁴⁻²¹ŋuoʔ⁵sɛiʔ⁵⁻²¹ŋou²⁴²	八月十五	23	-	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	i	中秋
+676	Jian’ou	10	Mid-autumn Festival	13	中秋节	13	kua³³tœyŋ⁵⁴ʦʰiu⁵⁴	过中秋	25	-	preposition	-	过中秋	kwa³.ʈjuwŋ.ʦʰjuw	i	中秋
+677	Jian’ou	10	Mid-autumn Festival	13	中秋节	14	pai²⁴ŋyɛ⁴²tœyŋ⁵⁴ʦʰiu⁵⁴	八月中秋	27	-	preposition	-	八月中秋	pɛt.ŋjot.ʈjuwŋ.ʦʰjuw	i	中秋
+678	Shantou	11	Mid-autumn Festival	13	中秋节	15	toŋ³³ʦʰiu³³	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	r	中秋
+679	Haikou	12	Mid-autumn Festival	13	中秋节	20	ʔbi⁵⁵vue³³ʦe⁵⁵	八月节	20	-	preposition	-	八月节	pɛt.ŋjot.ʦwon	i	中秋
+680	Haikou	12	Mid-autumn Festival	13	中秋节	21	ʔbi⁵⁵vue³³tap³ŋɔu³³	八月十五	23	(特指)	preposition	-	八月十五	pɛt.ŋjot.ʥip.ŋu²	i	中秋
+681	Haikou	12	Mid-autumn Festival	13	中秋节	22	toŋ²³siu²³	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	r	中秋
+682	Taibei	13	Mid-autumn Festival	13	中秋节	14	tiɔŋ⁴⁴⁻³³ʦʰiu⁴⁴⁻³³ʦieʔ³²	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	i	中秋
+683	Meixian	14	Mid-autumn Festival	13	中秋节	12	ʦuŋ⁴⁴ʦʰiu⁴⁴⁻³⁵ʦiet¹	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	?	?
+684	Taoyuan	15	Mid-autumn Festival	13	中秋节	14	pɑt²²ŋiet⁵⁵pɑn⁵⁵	八月半	24	-	preposition	-	八月半	pɛt.ŋjot.pan³	?	?
+685	Nanchang	16	Mid-autumn Festival	13	中秋节	17	ʦuŋ⁴²ʨʰiu⁴²	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	?	?
+686	Nanchang	16	Mid-autumn Festival	13	中秋节	18	ʦuŋ⁴²ʨʰiu⁴²ʨiɛʔ⁵	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	?	?
+687	Changsha	17	Mid-autumn Festival	13	中秋节	17	t͡ʂoŋ³³ʦʰiəu³³ʦie²⁴	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+688	Xiangtan	18	Mid-autumn Festival	13	中秋节	18	t͡ʂən³³ʦʰiəɯ³³i²⁴	中秋日	26	-	preposition	-	中秋日	ʈjuwŋ.ʦʰjuw.ȵit	i	中秋节
+689	Xiangtan	18	Mid-autumn Festival	13	中秋节	19	t͡ʂən³³ʦʰiəɯ³³ʦie²⁴	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+690	Shexian	19	Mid-autumn Festival	13	中秋节	18	ts̃ʌ³¹ʦʰiu³¹ʦeʔ²¹	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节
+691	Shexian	19	Mid-autumn Festival	13	中秋节	19	tʌ̃³¹ʦʰiu³¹ʦeʔ²¹	登秋节	28	-	preposition	-	登秋节	toŋ.ʦʰjuw.ʦwon	i	中秋节
+692	Shexian	19	Mid-autumn Festival	13	中秋节	20	tʰo⁴⁴ue⁴⁴ʦeʔ²¹	团圆节	29	-	preposition	-	团圆节	dwan.ɣjen.ʦwon	i	中秋节
+693	Tunxi	20	Mid-autumn Festival	13	中秋节	18	ʦan¹¹⁻²¹ʦʰiu	中秋	22	-	preposition	-	中秋	ʈjuwŋ.ʦʰjuw	i	中秋节
+694	Tunxi	20	Mid-autumn Festival	13	中秋节	19	ʦan¹¹⁻²¹ʦʰiu¹¹ʦiɛ⁵	中秋节	21	-	preposition	-	中秋节	ʈjuwŋ.ʦʰjuw.ʦwon	r	中秋节

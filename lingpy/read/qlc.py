@@ -356,7 +356,7 @@ def read_qlc(infile, comment='#'):
 
                 try:
                     meta['msa'][ref][int(keys['id'])] = tmp_msa
-                except:
+                except ValueError:
                     meta['msa'][ref][keys['id']] = tmp_msa
 
             elif dtype == 'dst':

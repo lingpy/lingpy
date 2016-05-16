@@ -6,12 +6,12 @@ from lingpy import cache
 
 
 SCORER = """\
-p : c, -
+p : c, b:1, f:2
 b : c, -
 f : c, -
 v : c, -
-m : v, -
-w : v, -
+m : v, w:1
+w : v, m:1
 8 : t, -"""
 
 
