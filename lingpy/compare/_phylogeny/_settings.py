@@ -5,7 +5,6 @@ from __future__ import unicode_literals, division, print_function
 
 from lingpy.settings import rcParams
 
-
 rcParams.update(
     phybo_bottom=0.01,
     phybo_cbar_fraction=0.1,
