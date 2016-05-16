@@ -3,16 +3,11 @@ from __future__ import unicode_literals, print_function, division
 from lingpy import log
 
 import numpy as np
-
+import networkx as nx
 try:
     import matplotlib.patches as mplPatches
-except:
+except ImportError:
     log.missing_module('matplotlib')
-
-try:
-    import networkx as nx
-except:
-    log.missing_module('networkx')
 
 from .convex_hull import convex_hull
 
@@ -45,7 +40,7 @@ def seg_intersect(nA, nB):
     num = np.dot(dap, dp)
     try:
         x, y = (num / denom) * db + b1
-    except:
+    except ZeroDivisionError:
         return False
 
     # check whether the point is on both lines
@@ -98,7 +93,8 @@ def getPolygonFromNodes(
         this_line = lineA
         for j, lineB in enumerate(lines):
             if i != j:
-                if seg_intersect(lineA, lineB) and lineA != lineB:
+                if seg_intersect(lineA, lineB) and lineA[0].tolist() != lineB[0].tolist() and \
+                        lineA[1].tolist() != lineB[1].tolist():
                     this_line = False
         if this_line:
             ni_lines.append(this_line)

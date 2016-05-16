@@ -45,10 +45,6 @@ def dbscan(
         The minimal samples parameter of the DBCSCAN method from the SKLEARN
         package.
     
-    Requires
-    --------
-    The scikitlearn package, downloadable from http://scikit-learn.org/.
-
     Returns
     -------
     clusters : dict
@@ -61,6 +57,8 @@ def dbscan(
     distances between points as input. We list it only for completeness here,
     but urge to be careful when using the code and checking properly our
     implementation in the source code.
+    
+    Requires the scikitlearn package, downloadable from http://scikit-learn.org/.
     """
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
@@ -104,10 +102,6 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
         If set to "False", don't return taxon names but simply the language
         identifiers and their labels as a dictionary. Otherwise returns a
         dictionary with labels as keys and list of taxon names as values.
-    
-    Requires
-    --------
-    The scikitlearn package is required, downloadable from http://scikit-learn.org/.
 
     Returns
     -------
@@ -120,6 +114,9 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
 
     Affinity propagation is a clustering method originally proposed by
     :evobib:`Frey2007`.
+
+    Requires the scikitlearn package, downloadable from http://scikit-learn.org/.
+
 
 
     """
@@ -181,10 +178,6 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
         If set to "False", don't return taxon names but simply the language
         identifiers and their labels as a dictionary. Otherwise returns a
         dictionary with labels as keys and list of taxon names as values.
-    
-    Requires
-    --------
-    The igraph package is required, downloadable from http://igraph.org/.
 
     Returns
     -------
@@ -196,6 +189,8 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     -----
     Infomap clustering is a community detection method originally proposed by
     :evobib:`Rosvall2008`.
+
+    Requires the igraph package is required, downloadable from http://igraph.org/.
     """
     if not igraph:
         raise ValueError("The package igraph is needed to run this analysis.")

@@ -517,7 +517,7 @@ class Partial(LexStat):
                 for k in vals:
                     D[k] = idx
                 idx += 1
-            self.add_entries(target, D, lambda x: D[x], override=override)
+            self.add_entries(target, D, lambda x: x, override=override)
         elif idtype == 'loose':
 
             D = {}

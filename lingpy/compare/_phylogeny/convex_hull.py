@@ -15,7 +15,7 @@ import numpy as n
 
 try:
     import pylab as p
-except:
+except ImportError:
     log.missing_module('matplotlib')
 
 

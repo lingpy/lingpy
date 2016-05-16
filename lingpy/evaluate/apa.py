@@ -551,8 +551,9 @@ class EvalPSA(Eval):
         score : float
             The SP score for reference and test alignments.
 
-        Note
-        ----
+        Notes
+        -----
+        
         The SP score (see :evobib:`Thompson1999`) is calculated by dividing the number of
         identical residue pairs in reference and test alignment by the total
         number of residue pairs in the reference alignment.

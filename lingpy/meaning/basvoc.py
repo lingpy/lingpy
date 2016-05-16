@@ -88,30 +88,6 @@ class BasVoc(QLCParserWithRowsAndCols):
             for i, col in enumerate(self.cols):
                 self._meta[col] = self._array[np.nonzero(self._array[:, i]), i][0]
 
-    def __getitem__(self, idx):
-        """
-        Method allows quick access to the data by passing the integer key.
-        """
-        try:
-            return self._get_cached(idx)
-        except KeyError:
-            try:
-                if isinstance(idx[1], (tuple, list)):
-                    self._cache[idx] = [
-                        self._data[idx[0]][self._header[self._alias[i]]] for i in idx[1]]
-                    return self._cache[idx]
-                # return data entry with specified key word
-                return self._data[idx[0]][self._header[self._alias[idx[1]]]]
-            except:
-                try:
-                    if len(idx) == 2:
-                        return [self._data[i][self._header[idx[1]]]
-                                for i in self._meta[idx[0]]]
-                    return [[self._data[i][self._header[x]]
-                             for x in idx[1:]] for i in self._meta[idx[0]]]
-                except:
-                    raise KeyError("[ERROR] Key {0} cannot be interpreted.")
-
     def get_dict(self, col='', row='', entry='', **keywords):
         """
         Return a dictionary representation for a given concept list.
@@ -132,10 +108,6 @@ class BasVoc(QLCParserWithRowsAndCols):
             value.
         """
         if row and not col:
-            try:
-                return self._cache[row, entry]
-            except:
-                pass
 
             if row not in self.rows:
                 raise ValueError("The row {0} you selected is not available!".format(row))
@@ -154,14 +126,9 @@ class BasVoc(QLCParserWithRowsAndCols):
                             except:
                                 entries[key] = [self[i][idx] for i in value]
 
-                self._cache[row, entry] = entries
                 return entries
 
         if col and not row:
-            try:
-                return self._cache[col, entry]
-            except:
-                pass
 
             if col not in self.cols:
                 raise ValueError("[!] The column you selected is not available!")
@@ -189,7 +156,6 @@ class BasVoc(QLCParserWithRowsAndCols):
                             except KeyError:
                                 entries[key] = [self[i][idx] for i in value]
 
-                self._cache[col, entry] = entries
                 return entries
 
         elif row and col:
@@ -198,12 +164,10 @@ class BasVoc(QLCParserWithRowsAndCols):
             for key in [k for k in keywords if k in self._alias]:
                 if self._alias[key] == self._col_name:
                     entries = self.get_dict(col=keywords[key], entry=entry)
-                    self._cache[col, entry] = entries
                     return entries
 
                 elif self._alias[key] == self._row_name:
                     entries = self.get_dict(row=keywords[key], entry=entry)
-                    self._cache[col, entry] = entries
                     return entries
 
             raise ValueError("[!] Neither rows nor columns are selected!")
@@ -255,8 +219,8 @@ class BasVoc(QLCParserWithRowsAndCols):
             The entries ("item", "number", etc.) which shall be selected from
             the lists.
 
-        Example
-        -------
+        Examples
+        --------
         >>> from lingpy.meaning import concepticon
         >>> concepticon.get_sublist('dolgopolsky','jachontov','item')
         ['water',

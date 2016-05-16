@@ -16,7 +16,6 @@ Classes
 -------
 
 .. autosummary::
-   :toctree:
 
    ~lingpy.align.Pairwise
    ~lingpy.align.PSA

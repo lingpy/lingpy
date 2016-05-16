@@ -5,7 +5,7 @@ import json
 from lingpy.algorithm import misc
 from lingpy.read.phylip import read_dst, read_scorer
 from lingpy.thirdparty import cogent as cg
-from lingpy.log import warn
+from lingpy.log import warn, debug
 from lingpy.util import read_text_file, setdefaults
 
 
@@ -13,8 +13,8 @@ def reduce_alignment(alignment):
     """
     Function reduces a given alignment.
     
-    Note
-    ----
+    Notes
+    -----
     Reduction here means that the output alignment consists only of those parts
     which have not been marked to be ignored by the user (parts in brackets).
     It requires that all data is properly coded. If reduction fails, this will
@@ -101,7 +101,7 @@ def normalize_alignment(alignment):
         for i in range(len(alignment)):
             lgtxt += '[!] ' + ' '.join(alignment[i]) + '->'
             lgtxt += ' '.join(alm_clone[i]) + '\n'
-        warn(lgtxt)
+        debug(lgtxt)
         return alm_clone
     else:
         return alignment
@@ -356,7 +356,7 @@ def read_qlc(infile, comment='#'):
 
                 try:
                     meta['msa'][ref][int(keys['id'])] = tmp_msa
-                except:
+                except ValueError:
                     meta['msa'][ref][keys['id']] = tmp_msa
 
             elif dtype == 'dst':

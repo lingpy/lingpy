@@ -48,8 +48,6 @@ class Tests(WithTempDir):
         mlt = main('multiple', '-s', 'woldemort', 'waldemar',
                                   'walter', '--method', 'sca', '--output-file',
                                   self.tmp_path('out.msa').as_posix())
-        assert mlt[0] == list('woldemort')
-
         # third test, test output and input
         # second test, test output as file, no input, vary method as sca
         mlt = main('multiple', '-i', test_data('harryp.msa'),

@@ -17,7 +17,8 @@ from lingpy import util
 from lingpy import log
 
 
-def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts'):
+def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts',
+        ignore_missing=False):
     if mode in ['shared', 'jaccard']:
         listA, listB = [wl.get_list(col=tax, entry=ref) for tax in [taxA, taxB]]
         shared = [x for x in listA if x in listB]
@@ -35,7 +36,7 @@ def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts'):
 
     for concept in getattr(wl, concepts_attr):
         if concept not in dictA or concept not in dictB:
-            missing += 1
+            missing += 1 if not ignore_missing else 0
         elif [k for k in dictA[concept] if k in dictB[concept]]:
             shared += 1
 
@@ -54,6 +55,7 @@ def wl2dst(
         ref='cogid',
         refB='',
         mode='swadesh',
+        ignore_missing=False,
         **keywords):
     """
     Function converts wordlist to distance matrix.
@@ -65,7 +67,8 @@ def wl2dst(
 
     for (i, taxA), (j, taxB) in product(enumerate(getattr(wl, taxa)), repeat=2):
         if i < j:
-            score = get_score(wl, ref, mode, taxA, taxB, concepts_attr=concepts)
+            score = get_score(wl, ref, mode, taxA, taxB,
+                    concepts_attr=concepts, ignore_missing=ignore_missing)
             distances[i][j] = score
             if not refB:
                 distances[j][i] = score
@@ -74,7 +77,8 @@ def wl2dst(
                 distances[i][j] = len(wl.get_list(col=taxA, flat=True))
         elif i > j and refB:
             distances[i][j] = get_score(
-                wl, refB, mode, taxA, taxB, concepts_attr=concepts)
+                wl, refB, mode, taxA, taxB, concepts_attr=concepts,
+                ignore_missing=ignore_missing)
 
     return distances
 
@@ -181,7 +185,6 @@ def clean_taxnames(
 
     wordlist.add_entries('_doculect', 'doculect', lambda x: old2new[x], override=True)
     wordlist.add_entries('doculect', '_doculect', lambda x: new2old[x], override=True)
-
 
 def calculate_data(
         wordlist,

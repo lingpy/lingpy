@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 # we start with basic alignment functions
 def globalign(
         seqA,
@@ -10,6 +11,37 @@ def globalign(
         ):
     """
     Carry out global alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as lists.
+    M, N : int
+        The length of the two sequences.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity score.
+    
+    Notes
+    -----
+    This algorithm carries out classical Needleman-Wunsch alignment
+    (:evobib:`Needleman1970`).
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.semi_globalign
+    ~lingpy.algorithm.cython.talign.localign
+    ~lingpy.algorithm.cython.talign.dialign
+
     """
 
     # declare integers
@@ -101,6 +133,37 @@ def semi_globalign(
         ):
     """
     Carry out semi-global alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as lists.
+    M, N : int
+        The length of the two sequences.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity score.
+
+    Notes
+    -----
+    This algorithm carries out semi-global alignment 
+    (:evobib:`Durbin2002`).
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.globalign
+    ~lingpy.algorithm.cython.talign.localign
+    ~lingpy.algorithm.cython.talign.dialign
+
     """
 
     # declare integers
@@ -196,6 +259,36 @@ def localign(
         ):
     """
     Carry out semi-global alignment of two sequences.
+    
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as lists.
+    M, N : int
+        The length of the two sequences.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity score.
+
+    Notes
+    -----
+    This algorithm carries out local alignment 
+    (:evobib:`Smith1981`).
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.globalign
+    ~lingpy.algorithm.cython.talign.semi_globalign
+    ~lingpy.algorithm.cython.talign.dialign
     """
 
     # declare integers
@@ -311,7 +404,35 @@ def dialign(
         scorer
         ):
     """
-    Carry out semi-global alignment of two sequences.
+    Carry out dialign alignment of two sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as lists.
+    M, N : int
+        The length of the two sequences.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity score.
+
+    Notes
+    -----
+    This algorithm carries out dialign alignment 
+    (:evobib:`Morgenstern1996`).
+    
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.globalign
+    ~lingpy.algorithm.cython.talign.semi_globalign
+    ~lingpy.algorithm.cython.talign.localign
     """
 
     # declare integers
@@ -406,6 +527,48 @@ def align_pair(
         ):
     """
     Align a pair of sequences.
+
+    Parameters
+    ----------
+    seqA, seqB : list
+        The sequences to be aligned, passed as lists.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select the mode for the alignment analysis ("overlap" refers to
+        semi-global alignments).
+    distance : (default=0)
+        Select whether you want distances or similarities to be returned (0
+        indicates similarities, 1 indicates distances, 2 indicates both).
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity score.
+
+    Notes
+    -----
+    This is a utility function that allows calls any of the four classical
+    alignment functions (:py:class:`lingpy.algorithm.cython.talign.globalign`
+    :py:class:`lingpy.algorithm.cython.talign.semi_globalign`,
+    :py:class:`lingpy.algorithm.cython.talign.lotalign`,
+    :py:class:`lingpy.algorithm.cython.talign.dialign`,) and their secondary counterparts.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.align_pairwise
+    ~lingpy.algorithm.cython.talign.align_pairs
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned sequences and the similarity or distance scores, or both.
+
     """
     # define basic types
 # [autouncomment]     cdef int i
@@ -487,7 +650,39 @@ def align_pairwise(
         mode
         ):
     """
-    Align a of sequences pairwise.
+    Align all sequences pairwise.
+
+    Parameters
+    ----------
+    seqs : list
+        The sequences to be aligned, passed as lists.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select the mode for the alignment analysis ("overlap" refers to
+        semi-global alignments).
+
+    Returns
+    -------
+    alignments : list
+        A of tuples, containing the aligned sequences, the similarity
+        and the distance scores.
+
+    Notes
+    -----
+    This function aligns all possible pairs between the sequences you pass to
+    it. It is important for multiple alignment, where it can be used to
+    construct the guide tree.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.align_pair
+    ~lingpy.algorithm.cython.talign.align_pairs
     """
     # define basic stuff
     alignments = []
@@ -647,6 +842,40 @@ def align_pairs(
         ):
     """
     Align multiple sequence pairs.
+
+    Parameters
+    ----------
+    seqs : list
+        The sequences to be aligned, passed as lists.
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale.
+    scorer : { dict, ~lingpy.algorithm.cython.misc.ScoreDict }
+        The scoring dictionary containing scores for all possible segment
+        combinations in the two sequences.
+    mode : { "global", "local", "overlap", "dialign" }
+        Select the mode for the alignment analysis ("overlap" refers to
+        semi-global alignments).
+    distance : (default=0)
+        Indicate whether distances or similarities should be returned.
+
+    Returns
+    -------
+    alignments : list
+        A of tuples, containing the aligned sequences, and the similarity
+        or the distance scores.
+
+    Notes
+    -----
+    This function aligns all pairs which are passed to
+    it. 
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.align_pair
+    ~lingpy.algorithm.cython.talign.align_pairwise
+
     """
     # basic defs
 # [autouncomment]     cdef int i,j,M,N,lP
@@ -736,6 +965,41 @@ def align_profile(
         ):
     """
     Align two profiles using the basic modes.
+
+    Parameters
+    ----------
+    profileA, profileB : list
+        Two-dimensional for each of the profiles. 
+    gop : int
+        The gap opening penalty.
+    scale : float
+        The gap extension scale by which consecutive gaps are reduced. LingPy
+        uses a scale rather than a constant gap extension penalty. 
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    mode : { "global", "overlap", "dialign" }
+        Select one of the four basic modes for alignment analyses.
+    gap_weight : float
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+
+    Notes
+    -----
+    This function computes alignments of two profiles of multiple sequences
+    (see :evobib:`Durbin2002` for details on profiles)
+    and is important for multiple alignment analyses.
+
+    Returns
+    -------
+    alignment : tuple
+        The aligned profiles, and the overall similarity of the profiles.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.score_profile
+    ~lingpy.algorithm.cython.talign.swap_score_profile
     """
 
     # basic defs
@@ -810,6 +1074,32 @@ def score_profile(
         ):
     """
     Basic function for the scoring of profiles.
+
+    Parameters
+    ----------
+    colA, colB : list
+        The two columns of a profile.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    gap_weight : (default=0.0)
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+    
+    Notes
+    -----
+    This function handles how profiles are scored.
+    
+    Returns
+    -------
+    score : float
+        The score for the profile
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.align_profile
+    ~lingpy.algorithm.cython.talign.swap_score_profile
     """
     # basic definitions
 # [autouncomment]     cdef int i,j
@@ -842,7 +1132,36 @@ def swap_score_profile(
         swap_penalty = -1
         ):
     """
-    Basic function for the scoring of profiles.
+    Basic function for the scoring of profiles in swapped sequences.
+
+    Parameters
+    ----------
+    colA, colB : list
+        The two columns of a profile.
+    scorer : { dict, :py:class:`lingpy.algorithm.cython.misc.ScoreDict` }
+        The scoring function which needs to provide scores for all
+        segments in the two profiles.
+    gap_weight : (default=0.0)
+        This handles the weight that is given to gaps in a column. If you set
+        it to 0, for example, this means that all gaps will be ignored when
+        determining the score for two columns in the profile.
+    swap_penalty : (default=-5)
+        The swap penalty applied to swapped columns.
+    
+    Notes
+    -----
+    This function handles how profiles with swapped segments are scored.
+
+    Returns
+    -------
+    score : float
+        The score for the profile.
+
+    See also
+    --------
+    ~lingpy.algorithm.cython.talign.align_profile
+    ~lingpy.algorithm.cython.talign.score_profile
+
     """
     # basic definitions
 # [autouncomment]     cdef int i,j

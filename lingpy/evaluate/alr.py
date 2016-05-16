@@ -1,14 +1,14 @@
 """
 Module provides methods for the evaluation of automatic linguistic reconstruction analyses.
 """
-from __future__ import unicode_literals, division, print_function
+from __future__ import unicode_literals, division
 import logging
 
 from ..settings import rcParams
 from ..align.pairwise import edit_dist
 from ..sequence.sound_classes import ipa2tokens, tokens2class
 from .. import log
-from ..util import setdefaults
+from ..util import setdefaults, as_string
 
 
 def mean_edit_distance(
@@ -52,15 +52,13 @@ def mean_edit_distance(
         # get only valid numbers for index-search
         idx = [idx[0] for idx in idxs if idx != 0][0]
 
-        if log.get_level() <= logging.DEBUG:  # pragma: no cover
-            print(idx, idxs)
+        log.debug('{0}, {1}'.format(idx, idxs))
 
         # get proto and consensus from wordlist
         proto = wordlist[idx, gold]
         consensus = wordlist[idx, test]
 
-        if log.get_level() <= logging.DEBUG:  # pragma: no cover
-            print(proto, consensus)
+        log.debug('{0}, {1}'.format(proto, consensus))
 
         if tokens or classes:
             proto = ipa2tokens(proto, **keywords)
@@ -73,7 +71,7 @@ def mean_edit_distance(
         distances.append(edit_dist(proto, consensus, normalized=False))
 
     med = sum(distances) / len(distances)
-    log.info("MEAN ED: {0:.2f}".format(med))
+    log.info('MEAN ED: {0:.2f}'.format(med))
     return med
 
 

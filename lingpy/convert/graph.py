@@ -239,8 +239,9 @@ def radial_layout(
         A graph representation of the tree with coordinates specified in the
         graphics-attribute of the nodes.
 
-    Note
-    ----
+    Notes
+    -----
+    
     This function creates a radial tree-layout from a given tree specified in
     Newick format.
 

@@ -23,7 +23,6 @@ class Nx(MagicMock):
     def generate_gml(self, *args):
         yield ''
 
-
 class Graph(MagicMock):
     def nodes(self, **kw):
         return [(MagicMock(), dict(label='a', graphics=defaultdict(lambda: 2)))]
@@ -36,7 +35,6 @@ class Sp(MagicMock):
 class Bmp(MagicMock):
     def Basemap(self, *args, **kw):
         return MagicMock(return_value=(0, 1))
-
 
 class TestPhyBo(WithTempDir):
 

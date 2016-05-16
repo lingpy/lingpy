@@ -79,8 +79,8 @@ def _make_matrix(taxa, colex):
     """
     Take colexification data and use it to create a distance matrix.
 
-    Note
-    ----
+    Notes
+    -----
     "colex" is a dictionary with taxon names as keys and colexification data in
     form of tuples of concepts, not necessarily ordered, in both directions, as
     values.

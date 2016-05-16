@@ -1,15 +1,4 @@
-# author   : Johann-Mattis List
-# email    : mattis.list@uni-marburg.de
-# created  : 2013-11-13 13:19
-# modified : 2013-11-13 13:19
-"""
-Test qlc parsing module.
-"""
-
-__author__="Johann-Mattis List"
-__date__="2013-11-13"
-
-from lingpy.read.qlc import read_msa, reduce_alignment
+from lingpy.read.qlc import read_msa, reduce_alignment, read_qlc
 from lingpy.align import MSA
 from lingpy.tests.util import test_data
 
@@ -34,3 +23,6 @@ def test_reduce_msa():
                 ''.join(line) == ''.join(
                         msa.alignment[i])[:msa.alignment[i].index('(')]
 
+def test_read_qlc():
+
+    qlc = read_qlc(test_data('read_qlc.qlc'))

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 
-from lingpy.tests.util import WithTempDir
+from lingpy.tests.util import WithTempDir, test_data
 from lingpy import util
 
 
@@ -60,3 +60,12 @@ class TestJoin(TestCase):
         self.assertEqual(
             util.dotjoin((i for i in range(1, 3)), condition=lambda j: j > 1), '2')
         self.assertEqual(util.dotjoin(i for i in range(1, 3)), '1.2')
+
+def test_as_string():
+
+    out = util.as_string('text', pprint=False)
+    assert out == 'text' 
+
+def test_read_csv_file():
+
+    lines1 = util.read_csv_file(test_data('mycsvwordlist.csv'))

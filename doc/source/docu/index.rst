@@ -13,6 +13,7 @@ Sequence Modelling
    
    sequence/sound_classes
    sequence/generate
+   data/model
    data/data
    data/derive
 
@@ -27,7 +28,10 @@ Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^
 .. toctree::
    :maxdepth: 1
-   
+    
+   align/helpers_sca
+   align/helpers_trad
+   align/helpers_misc
    align/pairwise
    align/multiple
 

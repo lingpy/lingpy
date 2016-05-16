@@ -19,13 +19,13 @@ from lingpy.basic import Wordlist
 from lingpy.align.pairwise import turchin, edit_dist
 from lingpy.convert.strings import scorer2str
 from lingpy.algorithm import clustering
+from lingpy.algorithm import extra
 from lingpy.algorithm import calign
 from lingpy.algorithm import talign
 from lingpy.algorithm import misc
 from lingpy import util
 from lingpy.util import charstring
 from lingpy import log
-
 
 def _check_tokens(key_and_tokens):
     """Generator for error reports on token strings.
@@ -202,7 +202,8 @@ class LexStat(Wordlist):
             "weights" : "weights",
             "sonars" : "sonars",
             "langid" : "langid",
-            "duplicates" : "duplicates"
+            "duplicates" : "duplicates",
+            "tokenize" : ipa2tokens
         }
         kw.update(keywords)
 
@@ -232,9 +233,9 @@ class LexStat(Wordlist):
         # create tokens if they are missing
         if self._segments not in self.header:
             self.add_entries(
-                self._segments, self._transcription, lambda x: ipa2tokens(x,
-                    merge_vowels=kw['merge_vowels'],
-                    expand_nasals=kw['expand_nasals']))
+                self._segments, self._transcription, kw['tokenize'], 
+                merge_vowels=kw['merge_vowels'],    
+                expand_nasals=kw['expand_nasals'])
 
         # add a debug procedure for tokens
         if kw["check"]:
@@ -248,12 +249,12 @@ class LexStat(Wordlist):
                 if kw["apply_checks"] or util.confirm(
                         "There were errors in the input data - exclude them?"):
                     self.output(
-                        'qlc',
+                        'tsv',
                         filename=self.filename + '_cleaned',
                         subset=True,
                         rows={"ID": "not in " + str([i[0] for i in errors])})
                     # load the data in a new LexStat instance and copy the __dict__
-                    lexstat = LexStat(self.filename + '_cleaned.qlc', **kw)
+                    lexstat = LexStat(self.filename + '_cleaned.tsv', **kw)
                     lexstat._meta['errors'] = [i[0] for i in errors]
                     self.__dict__ = copy(lexstat.__dict__)
                 return
@@ -384,28 +385,41 @@ class LexStat(Wordlist):
     def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
+        
+        Notes
+        -----
+        In contrast to the basic wordlist and parser classes, the LexStat 
+        wordlist further allows to access item pairs by passing a tuple
+        consisting of two pairs of an index with its corresponding column name. 
 
-        In contrast to the basic wordlist, the LexStat wordlist further allows
-        to access item pairs by passing a tuple.
+        Examples
+        --------
+        Load LingPy and the test_data function to get access to the test data
+        files shipped with LingPy::
+            >>> from lingpy import *
+            >>> from lingpy.tests.util import test_data
+
+        Instantiate a LexStat object::
+            >>> lex = LexStat(test_data('KSL.qlc'))
+        
+        Retrieve the IPA column for line 1 and line2 in the data:
+
+            >>> lex[(1,'ipa'), (2, 'ipa')]
         """
-        if idx in self._cache:
-            return self._cache[idx]
-
         if idx in self._data:
-            self._cache[idx] = self._data[idx]
-            return self._cache[idx]
+            return self._data[idx]
 
         try:
             return (
                 self._data[idx[0][0]][self._header[self._alias[idx[1]]]],
                 self._data[idx[0][1]][self._header[self._alias[idx[1]]]])
-        except:
+        except (IndexError, TypeError, KeyError):
             try:
-                # return data entry with specified key word
-                self._cache[idx] = self._data[idx[0]][self._header[self._alias[idx[1]]]]
-                return self._cache[idx]
+                return self._data[idx[0]][self._header[self._alias[idx[1]]]]
             except KeyError:
                 return 
+            except TypeError:
+                raise KeyError("The key {0} could not be found.".format(idx))
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -555,7 +569,12 @@ class LexStat(Wordlist):
                         else:
                             j += 1
                             words += [s]
-
+                    if len(words) < kw['rands']:
+                        log.warn("Could not generate enough distinct words for"\
+                                +" the random distribution. Will expand automatically")
+                        while len(words) < kw['rands']:
+                            words += [words[random.randint(0,len(words)-1)]]
+                            
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
                         cls = tokens2class(w.split(' '), self.model)
@@ -592,9 +611,9 @@ class LexStat(Wordlist):
                             # XXX check XXX * len(self.pairs[tA,tB]) / runs
 
                             # check for gaps
-                            if a == '-':
+                            if a == rcParams['gap_symbol']:
                                 a = 'X.-'
-                            elif b == '-':
+                            elif b == rcParams['gap_symbol']:
                                 b = 'X.-'
 
                             a = str(i + 1) + '.' + a
@@ -696,6 +715,22 @@ class LexStat(Wordlist):
         gop : int (default=-2)
             If "preprocessing" is selected, define the gap opening penalty for
             the preprocessing calculation of cognates.
+        unattested : {int, float} (default=-5)
+            If a pair of sounds is not attested in the data, but expected by
+            the alignment algorithm that computes the expected distribution,
+            the score would be -infinity. Yet in order to allow to smooth this
+            behaviour and to reduce the strictness, we set a default negative
+            value which does not necessarily need to be too high, since it may
+            well be that we miss a potentially good pairing in the first runs
+            of alignment analyses. Use this keyword to adjust this parameter.
+        unexpected : {int, float} (default=0.000001)
+            If a pair is encountered in a given alignment but not expected
+            according to the randomized alignments, the score would be not
+            calculable, since we had to divide by zero. For this reason, we set
+            a very small constant, by which the score is divided in this case.
+            Not that this constant is only relevant in those cases where the
+            shuffling procedure was not carried out long enough.
+
         """
         kw = dict(
             method=rcParams['lexstat_scoring_method'],
@@ -716,6 +751,8 @@ class LexStat(Wordlist):
             preprocessing_method=rcParams['lexstat_preprocessing_method'],
             subset=False,
             defaults=False,
+            unattested=-5,
+            unexpected=0.00001
         )
         kw.update(keywords)
         if kw['defaults']:
@@ -734,7 +771,10 @@ class LexStat(Wordlist):
             restricted_chars=kw['restricted_chars'],
             method=kw['method'],
             preprocessing='{0}:{1}:{2}'.format(
-                kw['preprocessing'], kw['cluster_method'], kw['gop']))
+                kw['preprocessing'], kw['cluster_method'], kw['gop']),
+            unattested=kw['unattested'],
+            unexpected=kw['unexpected']
+            )
 
         parstring = '_'.join(
             [
@@ -748,6 +788,8 @@ class LexStat(Wordlist):
                 '{method}',
                 '{preprocessing}',
                 '{preprocessing_threshold}'
+                '{unexpected:.2f}'
+                '{unattested:.2f}'
             ]).format(**params)
 
         # check for existing attributes
@@ -802,14 +844,14 @@ class LexStat(Wordlist):
                 if att and exp:
                     score = np.log2((att ** 2) / (exp ** 2))
                 elif att and not exp:
-                    score = np.log2((att ** 2) / 0.00001)
+                    score = np.log2((att ** 2) / kw['unexpected'])
                 elif exp and not att:
-                    score = -5  # XXX gop ???
+                    score = kw['unattested']  # XXX gop ???
                 else:  # elif not exp and not att:
                     score = -90  # ???
 
                 # combine the scores
-                if '-' not in charA + charB:
+                if rcParams['gap_symbol'] not in charA + charB:
                     sim = self.bscorer[charA, charB]
                 else:
                     sim = gop
@@ -1155,7 +1197,8 @@ class LexStat(Wordlist):
             method, cluster_method, threshold)
         self._stamp += '# Cluster: ' + self.params['cluster']
 
-        if method not in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom']:
+        if method not in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom',
+                'infomap', 'lcl', 'link_clustering', 'lc']:
             raise ValueError("[!] The method you selected is not available.")
 
         # set up clustering algorithm, first the simple basics
@@ -1166,24 +1209,32 @@ class LexStat(Wordlist):
                 cluster_method, y, x, revert=True)
         elif cluster_method == 'mcl':
             fclust = lambda x, y: clustering.mcl(
-                y,
-                x,
-                list(range(len(x))),
-                max_steps=kw['max_steps'],
-                inflation=kw['inflation'],
-                expansion=kw['expansion'],
-                add_self_loops=kw['add_self_loops'],
-                logs=kw['mcl_logs'],
-                revert=True)
+                    y,
+                    x,
+                    list(range(len(x))),
+                    max_steps=kw['max_steps'],
+                    inflation=kw['inflation'],
+                    expansion=kw['expansion'],
+                    add_self_loops=kw['add_self_loops'],
+                    logs=kw['mcl_logs'],
+                    revert=True
+                    )
+        elif cluster_method == 'infomap':
+            fclust = lambda x, y: extra.infomap_clustering(
+                    y,
+                    x,
+                    list(range(len(x))),
+                    revert=True
+                    )
         elif cluster_method in ['lcl', 'link_clustering', 'lc']:
             fclust = lambda x, y: clustering.link_clustering(
-                y,
-                x,
-                list(range(len(x))),
-                revert=True,
-                fuzzy=False,
-                matrix_type=kw['matrix_type'],
-                link_threshold=kw['link_threshold'])
+                    y,
+                    x,
+                    list(range(len(x))),
+                    revert=True,
+                    fuzzy=False,
+                    matrix_type=kw['matrix_type'],
+                    link_threshold=kw['link_threshold'])
 
         # make a dictionary that stores the clusters for later update
         clr = {}
@@ -1465,13 +1516,13 @@ class LexStat(Wordlist):
 
     def output(self, fileformat, **keywords):
         """
-        Write data for lexstat to file.
+        Write data to file.
 
         Parameters
         ----------
-        fileformat : {'csv', 'tre','nwk','dst', 'taxa','starling', 'paps.nex', 'paps.csv'}
+        fileformat : {'tsv', 'tre','nwk','dst', 'taxa','starling', 'paps.nex', 'paps.csv'}
             The format that is written to file. This corresponds to the file
-            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            extension, thus 'tsv' creates a file in tsv-format, 'dst' creates
             a file in Phylip-distance format, etc.
         filename : str
             Specify the name of the output file (defaults to a filename that
@@ -1489,21 +1540,36 @@ class LexStat(Wordlist):
             column will then be checked against statement passed in the
             dictionary, and if it is evaluated to c{True}, the respective row
             will be written to file.
-        cognates : str
+        ref : str
             Name of the column that contains the cognate IDs if 'starling' is
             chosen as an output format.
-
         missing : { str, int } (default=0)
             If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
             will be inserted as an indicator of missing data.
-
         tree_calc : {'neighbor', 'upgma'}
             If no tree has been calculated and 'tre' or 'nwk' is chosen as
             output format, the method that is used to calculate the tree.
-
         threshold : float (default=0.6)
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
+        ignore : { list, "all" }
+            Modifies the output format in "tsv" output and allows to ignore
+            certain blocks in extended "tsv", like "msa", "taxa", "json", etc.,
+            which should be passed as a list. If you choose "all" as a plain
+            string and not a list, this will ignore all additional blocks and
+            output only plain "tsv".
+        prettify : bool (default=True)
+            Inserts comment characters between concepts in the "tsv" file
+            output format, which makes it easier to see blocks of words
+            denoting the same concept. Switching this off will output the file
+            in plain "tsv". 
+
+
+        See also
+        --------
+        ~lingpy.basic.wordlist.Wordlist.output
+        ~lingpy.align.sca.Alignments.output
+
         """
         kw = dict(filename=self.filename, defaults=False)
         kw.update(keywords)

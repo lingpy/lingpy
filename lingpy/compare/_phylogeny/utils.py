@@ -5,10 +5,11 @@ Utility functions for borrowing detection with the PhyBo class.
 from __future__ import unicode_literals, division, print_function
 
 from lingpy import log
+from lingpy.util import write_text_file, as_string
 
 try:
     import scipy.stats as sps
-except:
+except ImportError:
     log.missing_module('scipy')
 
 
@@ -105,7 +106,6 @@ def tstats(
                         bor += 1
 
             states[name] = [ret, inn, bor]
-            print(name, inn, ret, bor, str(child))
 
     # calculate the scores
     ret = sum([c[0] for c in tracer.values()])
@@ -192,14 +192,15 @@ def get_acs(wordlist, glm, homoplasy=0, **keywords):
     return acs, dist
 
 
-def check_stats(models, wordlist):
+def check_stats(models, wordlist, filename='results.txt', pprint=False):
     results = []
     for m in models:
         p, z = tstats(wordlist, m, return_dists=True)
         results += [[m, p, z]]
 
-    f = open('results_tstats.txt', 'w')
+
+    txt = ''
     for a, b, c in results:
-        f.write('{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c))
-        print('{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c), end='')
-    f.close()
+        txt += '{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c)
+    as_string(txt, pprint)
+    if filename: write_text_file(filename, txt)

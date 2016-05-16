@@ -1,7 +1,10 @@
-ID	CONCEPT	LANGUAGE	IPA	TOKENS
-1	hand	l1	fu't	f u ʔ t
-2	hand	l2	fi?t	f i ʔ t
-3	hand	l3	thaKt	th a k t
-4	hand	l4	what?	wh a t ʔ 
-5	hand	l5	whet	wh e t
-6	hand	l6	fa.ke	f a _ k e
+ID	CONCEPT	LANGUAGE	IPA	TOKENS	COGID	MOCK
+1	hand	l1	fu't	f u ʔ t	2	c
+2	hand	l2	fi?t	f i ʔ t	2	b
+3	hand	l3	thaKt	th a k t	2	a
+4	hand	l4	what?	wh a t ʔ	2	x
+5	hand	l5	whet	wh e t	2	
+6	hand	l6	fa.ke	f a _ k e	2	0
+7	hand	l6	what	wh a t	2	a
+8	foot	l1	fot	f o t	1	x
+9	foot	l2	fot	f o t	1	x

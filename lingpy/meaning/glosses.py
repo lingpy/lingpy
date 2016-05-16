@@ -26,30 +26,23 @@ def parse_gloss(gloss, output='list'):
     Returns
     -------
     constituents : {list, dict}
-        A list of tuples, or a list of dictionaries,
-            with each tuple consisting of 6 items, namely:
+        A list of tuples, or a list of dictionaries, with each tuple consisting of 6 items, namely:
         * the main part ("main"),
         * the start character indicating a potential comment ("comment_start"),
-        * the comment (everything occurring in brackets in the input string
-          ("comment"),
-        * the end character indicating the end of a potential comment
-          ("comment_end"),
-        * the part of speech, in case this was specificied by a preceding
-          "the" or a preceding "to" in the mainpart of the string ("pos"),
-        * the prefix, that is, words, like, eg. "be", "in", which may precede the main
-          gloss in concept lists, as in "be quiet" ("prefix"),
-        * the longest constituent, which is identical with the main part if
-            there's no whitespace in the main part, otherwise the longest part
-            part of the main gloss split by whitespace ("longest_part")
-        * the parts of a gloss, if the constituent contains multiple words
-          ("parts")
+        * the comment (everything occurring in brackets in the input string ("comment"),
+        * the end character indicating the end of a potential comment ("comment_end"),
+        * the part of speech, in case this was specificied by a preceding "the" or a preceding "to" in the mainpart of the string ("pos"),
+        * the prefix, that is, words, like, eg. "be", "in", which may precede the main gloss in concept lists, as in "be quiet" ("prefix"),
+        * the longest constituent, which is identical with the main part if there's no whitespace in the main part, otherwise the longest part part of the main gloss split by whitespace ("longest_part")
+        * the parts of a gloss, if the constituent contains multiple words ("parts")
         * the original gloss (for the purpose of testing, labelled "gloss")
-
+        
         If "dict" is chosen as output, this returns a list of dictionaries with
         the keys as specified in brackets above.
 
-    Note
-    ----
+    Notes
+    -----
+
     The basic purpose of this function is to provide a means to make it easier
     to compare meanings across different resources. Often, linguists will
     annotate their resources quite differently, and for one and the same

@@ -1369,31 +1369,31 @@ class TreeNode(object):
                 show_internal=show_internal, compact=compact, labels=labels)
         return '\n'.join(lines)
     
-    def _getXmlLines(self, indent=0, parent_params=None):
-        """Return the xml strings for this edge.
-        """
-        params = {}
-        if parent_params is not None:
-            params.update(parent_params)
-        pad = '  ' * indent
-        xml = ["%s<clade>" % pad]
-        if self.NameLoaded:
-            xml.append("%s   <name>%s</name>" % (pad, self.Name))
-        for (n,v) in self.params.items():
-            if v == params.get(n, None):
-                continue
-            xml.append("%s   <param><name>%s</name><value>%s</value></param>"
-                    % (pad, n, v))
-            params[n] = v
-        for child in self.Children:
-            xml.extend(child._getXmlLines(indent + 1, params))
-        xml.append(pad + "</clade>")
-        return xml
-    
-    def getXML(self):
-        """Return XML formatted tree string."""
-        header = ['<?xml version="1.0"?>']  # <!DOCTYPE ...
-        return '\n'.join(header + self._getXmlLines())
+    #def _getXmlLines(self, indent=0, parent_params=None):
+    #    """Return the xml strings for this edge.
+    #    """
+    #    params = {}
+    #    if parent_params is not None:
+    #        params.update(parent_params)
+    #    pad = '  ' * indent
+    #    xml = ["%s<clade>" % pad]
+    #    if self.NameLoaded:
+    #        xml.append("%s   <name>%s</name>" % (pad, self.Name))
+    #    for (n,v) in self.params.items():
+    #        if v == params.get(n, None):
+    #            continue
+    #        xml.append("%s   <param><name>%s</name><value>%s</value></param>"
+    #                % (pad, n, v))
+    #        params[n] = v
+    #    for child in self.Children:
+    #        xml.extend(child._getXmlLines(indent + 1, params))
+    #    xml.append(pad + "</clade>")
+    #    return xml
+    #
+    #def getXML(self):
+    #    """Return XML formatted tree string."""
+    #    header = ['<?xml version="1.0"?>']  # <!DOCTYPE ...
+    #    return '\n'.join(header + self._getXmlLines())
     
     def writeToFile(self, filename, with_distances=True, format=None):
         """Save the tree to filename
@@ -1563,49 +1563,49 @@ class TreeNode(object):
             return 1
         return 1 - 2*intersection_length/float(total_subsets)
 
-    def tipToTipDistances(self, default_length=1):
-        """Returns distance matrix between all pairs of tips, and a tip order.
-            
-        Warning: .__start and .__stop added to self and its descendants.
+    #def tipToTipDistances(self, default_length=1):
+    #    """Returns distance matrix between all pairs of tips, and a tip order.
+    #        
+    #    Warning: .__start and .__stop added to self and its descendants.
 
-        tip_order contains the actual node objects, not their names (may be
-        confusing in some cases).
-        """
-        ## linearize the tips in postorder.
-        # .__start, .__stop compose the slice in tip_order.
-        tip_order = list(self.tips())
-        for i, tip in enumerate(tip_order):
-            tip.__start, tip.__stop = i, i+1
+    #    tip_order contains the actual node objects, not their names (may be
+    #    confusing in some cases).
+    #    """
+    #    ## linearize the tips in postorder.
+    #    # .__start, .__stop compose the slice in tip_order.
+    #    tip_order = list(self.tips())
+    #    for i, tip in enumerate(tip_order):
+    #        tip.__start, tip.__stop = i, i+1
 
-        num_tips = len(tip_order)
-        result = zeros((num_tips, num_tips), float) #tip by tip matrix
-        tipdistances = zeros((num_tips), float) #distances from tip to curr node
+    #    num_tips = len(tip_order)
+    #    result = zeros((num_tips, num_tips), float) #tip by tip matrix
+    #    tipdistances = zeros((num_tips), float) #distances from tip to curr node
 
-        def update_result(): 
-        # set tip_tip distance between tips of different child
-            for child1, child2 in comb(node.Children, 2):
-                for tip1 in range(child1.__start, child1.__stop):
-                    for tip2 in range(child2.__start, child2.__stop):
-                        result[tip1,tip2] = \
-                            tipdistances[tip1] + tipdistances[tip2]
+    #    def update_result(): 
+    #    # set tip_tip distance between tips of different child
+    #        for child1, child2 in comb(node.Children, 2):
+    #            for tip1 in range(child1.__start, child1.__stop):
+    #                for tip2 in range(child2.__start, child2.__stop):
+    #                    result[tip1,tip2] = \
+    #                        tipdistances[tip1] + tipdistances[tip2]
 
-        for node in self.traverse(self_before=False, self_after=True):
-            if not node.Children:
-                continue
-            ## subtree with solved child wedges
-            starts, stops = [], [] #to calc ._start and ._stop for curr node
-            for child in node.Children:
-                if hasattr(child, 'Length') and child.Length is not None:
-                    child_len = child.Length
-                else:
-                    child_len = default_length
-                tipdistances[child.__start : child.__stop] += child_len
-                starts.append(child.__start); stops.append(child.__stop)
-            node.__start, node.__stop = min(starts), max(stops)
-            ## update result if nessessary
-            if len(node.Children) > 1: #not single child
-                update_result()
-        return result+result.T, tip_order 
+    #    for node in self.traverse(self_before=False, self_after=True):
+    #        if not node.Children:
+    #            continue
+    #        ## subtree with solved child wedges
+    #        starts, stops = [], [] #to calc ._start and ._stop for curr node
+    #        for child in node.Children:
+    #            if hasattr(child, 'Length') and child.Length is not None:
+    #                child_len = child.Length
+    #            else:
+    #                child_len = default_length
+    #            tipdistances[child.__start : child.__stop] += child_len
+    #            starts.append(child.__start); stops.append(child.__stop)
+    #        node.__start, node.__stop = min(starts), max(stops)
+    #        ## update result if nessessary
+    #        if len(node.Children) > 1: #not single child
+    #            update_result()
+    #    return result+result.T, tip_order 
 
 class PhyloNode(TreeNode):
 
@@ -1667,49 +1667,49 @@ class PhyloNode(TreeNode):
         return sum([n.Length for n in self.traverse(include_self=False) \
                                      if n.Length is not None])
 
-    def tipsWithinDistance(self, distance):
-        """Returns tips within specified distance from self
+    #def tipsWithinDistance(self, distance):
+    #    """Returns tips within specified distance from self
 
-        Branch lengths of None will be interpreted as 0
-        """
-        def get_distance(d1, d2):
-            if d2 is None:
-                return d1
-            else:
-                return d1 + d2
+    #    Branch lengths of None will be interpreted as 0
+    #    """
+    #    def get_distance(d1, d2):
+    #        if d2 is None:
+    #            return d1
+    #        else:
+    #            return d1 + d2
 
-        to_process = [(self, 0.0)]
-        tips_to_save = []
+    #    to_process = [(self, 0.0)]
+    #    tips_to_save = []
 
-        curr_node, curr_dist = to_process[0]
+    #    curr_node, curr_dist = to_process[0]
 
-        seen = set([id(self)])
-        while to_process:
-            curr_node, curr_dist = to_process.pop(0)
-           
-            # have we've found a tip within distance?
-            if curr_node.isTip() and curr_node != self:
-                tips_to_save.append(curr_node)
-                continue
-        
-            # add the parent node if it is within distance
-            parent_dist = get_distance(curr_dist, curr_node.Length)
-            if curr_node.Parent is not None and parent_dist <= distance and \
-                    id(curr_node.Parent) not in seen:
-                to_process.append((curr_node.Parent, parent_dist))
-                seen.add(id(curr_node.Parent))
+    #    seen = set([id(self)])
+    #    while to_process:
+    #        curr_node, curr_dist = to_process.pop(0)
+    #       
+    #        # have we've found a tip within distance?
+    #        if curr_node.isTip() and curr_node != self:
+    #            tips_to_save.append(curr_node)
+    #            continue
+    #    
+    #        # add the parent node if it is within distance
+    #        parent_dist = get_distance(curr_dist, curr_node.Length)
+    #        if curr_node.Parent is not None and parent_dist <= distance and \
+    #                id(curr_node.Parent) not in seen:
+    #            to_process.append((curr_node.Parent, parent_dist))
+    #            seen.add(id(curr_node.Parent))
 
-            # add children if we haven't seen them and if they are in distance
-            for child in curr_node.Children:
-                if id(child) in seen:
-                    continue
-                seen.add(id(child))
+    #        # add children if we haven't seen them and if they are in distance
+    #        for child in curr_node.Children:
+    #            if id(child) in seen:
+    #                continue
+    #            seen.add(id(child))
 
-                child_dist = get_distance(curr_dist, child.Length)
-                if child_dist <= distance:
-                    to_process.append((child, child_dist))
+    #            child_dist = get_distance(curr_dist, child.Length)
+    #            if child_dist <= distance:
+    #                to_process.append((child, child_dist))
 
-        return tips_to_save
+    #    return tips_to_save
 
     def prune(self):
         """Reconstructs correct tree after nodes have been removed.

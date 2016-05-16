@@ -1,7 +1,6 @@
 Introduction
 ============
 
-
 What is LingPy?
 ---------------
 
@@ -22,7 +21,7 @@ With the help of LingPy, users can:
 
 * tokenize and analyze IPA-encoded sequences, 
 * carry out pairwise and multiple alignment analyses,
-* conduct automatic cognate judgments for multiple languages, 
+* search automatically for cognates across multiple languages, 
 * calculate lexicostatistic distances between languages, 
 * reconstruct language phylogenies using basic cluster algorithms, and
 * export the results of these analyses to various formats which can be either

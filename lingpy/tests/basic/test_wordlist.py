@@ -12,6 +12,7 @@ class TestWordlist(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.wordlist = Wordlist(test_data('KSL.qlc'))
+        self.wordlist2 = Wordlist(test_data('good_file.tsv'))
 
     def test___len__(self):
         assert len(self.wordlist) == 1400
@@ -33,8 +34,6 @@ class TestWordlist(WithTempDir):
         assert hasattr(self.wordlist, 'groups')
         assert type(self.wordlist.groups) == dict
 
-
-
     def test_coverage(self):
         self.wordlist.coverage()
         self.wordlist.coverage(stats='ratio')
@@ -50,8 +49,20 @@ class TestWordlist(WithTempDir):
 
         hand1 = self.wordlist.get_list(concept="hand", entry="ipa", flat=True)
         hand2 = self.wordlist.get_dict(row="hand", entry="ipa")
+        hand3 = self.wordlist.get_list(concept="hand", flat=True)
         assert sorted(hand1) == sorted([v[0] for v in hand2.values()])
 
+        # test for synonym lines, which are flattened
+        assert self.wordlist2.get_list(concept='hand', entry="language",
+                flat=True).count('l6') == 2
+        nonflat = self.wordlist2.get_list(concept="hand", entry="language")
+        assert nonflat[0][-1] == nonflat[1][-1]
+        assert len(self.wordlist2.get_list(col="l1", entry="concept")) == 3
+        assert len(self.wordlist2.get_list(col="l1", flat=True, entry="concept")) == 2
+
+        assert_raises(ValueError, self.wordlist2.get_list, col="l1",
+                row="hand")
+        assert_raises(ValueError, self.wordlist2.get_list)
         assert_raises(ValueError, self.wordlist.get_list, **{"row" : "Hand"})
 
     def test_get_dict(self):
@@ -120,9 +131,15 @@ class TestWordlist(WithTempDir):
                 self.wordlist.output(fmt, filename=fn,
                         cols=sorted(self.wordlist.header)[:2], rows=dict(ID=" > 10"),
                             **kw)
-
-
     def test_export(self):
         fn = text_type(self.tmp_path('test'))
         for fmt in 'txt tex html'.split():
             self.wordlist.export(fmt, filename=fn)
+
+    def test_get_wordlist(self):
+        from lingpy.basic.wordlist import get_wordlist
+        wl1 = get_wordlist(test_data('mycsvwordlist.csv'))
+        wl2 = get_wordlist(test_data('mycsvwordlistwithoutids.csv'))
+        assert wl1.height == wl2.height
+        for k in wl1:
+            assert wl1[k, 'concept'] == wl2[k, 'concept']

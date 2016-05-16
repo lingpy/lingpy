@@ -667,8 +667,9 @@ class Alignments(Wordlist):
         Function reduces alignments which contain columns that are marked to be \
                 ignored by the user.
 
-        Note
-        ----
+        Notes
+        -----
+        
         This function changes the data only internally: All alignments are
         checked as to whether they contain data that should be ignored. If this
         is the case, the alignments are then reduced, and stored in a specific
@@ -1001,10 +1002,6 @@ class Alignments(Wordlist):
         util.setdefaults(
             keywords, model=rcParams['sca'], gap_scale=1.0, ref=rcParams['ref'])
 
-        # check for deprecated "cognates"
-        if 'cognates' in keywords:
-            log.deprecated('cognates', 'ref')
-
         # switch ref
         if keywords['ref'] != rcParams['ref']:
             rcParams['ref'] = keywords['ref']
@@ -1078,10 +1075,10 @@ class Alignments(Wordlist):
 
         Parameters
         ----------
-        fileformat : {"qlc", "msa", "tre", "nwk", "dst", "taxa", "starling", "paps.nex",
+        fileformat : {"tsv", "msa", "tre", "nwk", "dst", "taxa", "starling", "paps.nex",
             "paps.csv" "html"}
             The format that is written to file. This corresponds to the file
-            extension, thus 'csv' creates a file in csv-format, 'dst' creates
+            extension, thus 'tsv' creates a file in tsv-format, 'dst' creates
             a file in Phylip-distance format, etc. Specific output is created
             for the formats "html" and "msa":
 
@@ -1106,26 +1103,38 @@ class Alignments(Wordlist):
             column will then be checked against statement passed in the
             dictionary, and if it is evaluated to c{True}, the respective row
             will be written to file.
-        cognates : str
+        ref : str
             Name of the column that contains the cognate IDs if 'starling' is
             chosen as an output format.
-
         missing : { str, int } (default=0)
             If 'paps.nex' or 'paps.csv' is chosen as fileformat, this character
             will be inserted as an indicator of missing data.
-
         tree_calc : {'neighbor', 'upgma'}
             If no tree has been calculated and 'tre' or 'nwk' is chosen as
             output format, the method that is used to calculate the tree.
-
         threshold : float (default=0.6)
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
-
         style : str (default="id")
             If "msa" is chosen as output format, this will write the alignments
             for each msa-file in a specific format in which the first column
             contains a direct reference to the word via its ID in the wordlist.
+        ignore : { list, "all" }
+            Modifies the output format in "tsv" output and allows to ignore
+            certain blocks in extended "tsv", like "msa", "taxa", "json", etc.,
+            which should be passed as a list. If you choose "all" as a plain
+            string and not a list, this will ignore all additional blocks and
+            output only plain "tsv".
+        prettify : bool (default=True)
+            Inserts comment characters between concepts in the "tsv" file
+            output format, which makes it easier to see blocks of words
+            denoting the same concept. Switching this off will output the file
+            in plain "tsv".
+
+        See also
+        --------
+        ~lingpy.basic.wordlist.Wordlist.output
+        ~lingpy.compare.lexstat.LexStat.output
 
         """
         kw = dict(

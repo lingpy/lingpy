@@ -142,7 +142,7 @@ Other entry-types can be added::
       ['h', 'a', 'r', 'i']]]
     
 The wordlist.rc file
-----------------------
+--------------------
 
 The structure of word lists is defined by the configuration file `wordlist.rc`_. This file is
 automatically loaded when initializing a Wordlist instance::
@@ -151,21 +151,30 @@ automatically loaded when initializing a Wordlist instance::
 
 It can, however, also be passed by the user::
 
-    >>> wl = Wordlist(data,conf="path_to_file")
+    >>> wl = Wordlist(data, conf="path_to_file")
 
-The file is a simple tab-delimited csv-file and has the following structure::
+All rc-files (which are used for different wordlist-like object in LingPy)
+are currently located at `lingpy/data/rc/` and have
+a simple tab-separated structure of four three columns:
 
-    cogid	int	                cognateid,cogid,cognateset
-    entry	str	                counterpart,word,entry,words
-    taxon	str	                language,doculect,dialect,taxon,languages
-    gloss	str	                gloss,concept
-    iso	        str	                iso,isocode
-    tokens	lambda x:x.split(' ')	tokens,tokenized_counterpart,ipatokens
-    ipa         str                     ipa
+1. basic namespace (alphanumeric, lower case)
+2. class of all entries in that namespace
+3. alias for the namespace (alphanumeric, all lower case, comma-separated)
 
-According to this structure, the first column indicates the name which is internally used to address
-the given datatype. The second column indicates the program-internal datatype. The third row
-indicates aliases that can be used to address the datatype when using it in calculations.
+As an example, consider the following minimal rc-file for a
+wordlist object::
+
+   ipa     str    ipa,orthography,transcription
+   tokens  lambda x: x.split(" ")  tokens,segments
+   cogid   int     cognate_set_id,cognates,cogid
+
+This rc-file, which you can call by passing the path of your file as an
+argument when loading a wordlist, will treat all entries in columns named
+"ipa" or "orthography" or "transcription" in your data as strings, it will
+further define "ipa" as the basic name for those columns and use this name when
+you output the file. It will split all entries in the column "tokens" (or
+"segments") along spaces and store them as a list, and it will convert all
+"cogid" entries to integers.
 
 .. _harry_potter.csv: examples/harry_potter.csv
 .. _wordlist.rc: examples/wordlist.rc

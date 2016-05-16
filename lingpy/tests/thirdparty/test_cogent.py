@@ -124,13 +124,19 @@ class PhyloNodeTests(TestCase):
                 PhyloNode(Length=7, Name='b'),
                 PhyloNode(Length=3, Name='c')])
         node.scaleBranchLengths()
-        node.tipsWithinDistance(0.5)
         node.append(PhyloNode(Length=7, Name='d'))
-        node.tipToTipDistances()
         node.rootAtMidpoint()
-        node.balanced()
         node.unrooted()
         if not PY3:
             node.compareByPartitions(PhyloNode(Name='x'))
         node.getDistances()
-        node.tipToTipDistances()
+        node.unrootedDeepcopy()
+        node.bifurcating()
+        node.balanced()
+        node.sameTopology(node)
+        node.getEdgeNames('a', 'b', False, False)
+        node.getEdgeNames('d', 'b', False, False, outgroup_name='c')
+        node.getEdgeNames('d', 'b', True, True, outgroup_name='c')
+        node._getDistances(endpoints=["d", "b"])
+
+        

@@ -10,7 +10,6 @@ Classes
 -------
 
 .. autosummary::
-   :toctree:
 
    ~EvalPSA
    ~EvalMSA

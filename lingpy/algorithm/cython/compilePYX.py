@@ -1,3 +1,6 @@
+"""
+Script handles compilation of Cython files to C and also to C-Extension modules.
+"""
 import os
 from sys import argv
 
@@ -17,7 +20,7 @@ def pyx2py(infile, debug=False):
         'dict',
         'double',
         ]
-    newlines = []
+    newlines = ['from __future__ import unicode_literals\n']
     for line in data:
         old_line = line
         if 'cdef extern from' in line:

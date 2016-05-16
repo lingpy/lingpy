@@ -277,20 +277,25 @@ def pap2nex(
     """
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
     out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
-    out += "MATRIX\n\n{3}\n;\n\nEND;"
+    out += "MATRIX\n\n{3}\n;\n\nEND;\n"
+    out += "[PAPS-REFERENCE]\n{4}"
 
     # get longest taxon
     maxTax = max([len(taxon) for taxon in taxa])
+    paps_ref = ""
 
     # check whether paps are dict or list
-    try:
-        paps.keys()
-        new_paps = []
-        for key in sorted(paps):
-            new_paps.append(paps[key])
-    except AttributeError:
+    if hasattr(paps, 'keys'):
+        new_paps = [paps[k] for k in sorted(paps)]
+        reference = [k for k in sorted(paps)]
+    else:
         new_paps = paps
-
+        reference = [k for k in range(1, len(paps)+1)]
+    
+    # create reference
+    ref_string = ''
+    for i, ref in enumerate(reference):
+        ref_string += '[{0} :: {1}]\n'.format(i, ref)
     # create the matrix
     matrix = ""
 
@@ -305,11 +310,12 @@ def pap2nex(
             len(taxa),
             len(paps),
             missing,
-            matrix
+            matrix,
+            ref_string
         )
     util.write_text_file(
         filename + '.nex',
-        out.format(len(taxa), len(paps), missing, matrix))
+        out.format(len(taxa), len(paps), missing, matrix, ref_string))
     return
 
 
@@ -322,8 +328,9 @@ def pap2csv(
     Write paps created by the Wordlist class to a csv-file.
     """
 
-    out = "ID\t" + '\t'.join(taxa) + '\n'
-    for key in sorted(paps, key=lambda x: int(re.sub(r'[^0-9]+', '', str(x)))):
+    out = "ID\t" + '\t'.join(taxa) + '\n'   
+    
+    for key in sorted(paps):
         out += '{0}\t{1}\n'.format(
             key,
             '\t'.join(str(i) for i in paps[key])
