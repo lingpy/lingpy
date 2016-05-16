@@ -6,6 +6,7 @@ from lingpy.compare._phylogeny.utils import get_acs, check_stats, tstats
 from lingpy.compare.phylogeny import PhyBo
 from lingpy.tests.util import WithTempDir
 from lingpy.tests.util import test_data
+import os
 
 from mock import MagicMock, patch
 import numpy as np
@@ -89,4 +90,5 @@ class TestUtils(WithTempDir):
         get_acs(phy, phy.best_model)
         tstats(phy, phy.best_model, return_dists=True)
 
-        check_stats([phy.best_model], phy, filename=self.tmp, pprint=False)
+        check_stats([phy.best_model], phy, filename=os.path.join(self.tmp,
+            'test'), pprint=False)

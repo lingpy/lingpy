@@ -5,7 +5,7 @@ Utility functions for borrowing detection with the PhyBo class.
 from __future__ import unicode_literals, division, print_function
 
 from lingpy import log
-from lingpy.util import write_text_file
+from lingpy.util import write_text_file, as_string
 
 try:
     import scipy.stats as sps
@@ -204,4 +204,4 @@ def check_stats(models, wordlist, filename='results.txt', pprint=False):
     for a, b, c in results:
         txt += '{0}\t{1:.2f}\t{2:.2f}\n'.format(a, b, c)
     as_string(txt, pprint)
-    write_text_file(filename, txt)
+    if filename: write_text_file(filename, txt)
