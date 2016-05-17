@@ -71,12 +71,16 @@ if sys.version_info < (3, 4):
     requires.append('pathlib')
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.4"
+thisversion = "2.5"
 
 setup(
     name=pkgname,
     version=thisversion,
-    packages=find_packages(pkg_location),
+    packages=find_packages(pkg_location, 
+        exclude=[
+            "lingpy._plugins", "_plugins", "*._plugins", "_plugins.*", '*._plugins.*', "build", "private", "lingpy.egg-info",
+            "dist", "lib"]
+        ),
     package_dir=pkg_dir,
     install_requires=requires,
     tests_require=['nose', 'coverage', 'mock'],
