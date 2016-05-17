@@ -89,5 +89,5 @@ What's Next?
    
    tutorial/index
    docu/index
-   reference/modules
+   reference
    download

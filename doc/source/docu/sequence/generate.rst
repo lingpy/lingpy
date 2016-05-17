@@ -5,7 +5,6 @@ Classes
 -------
 
 .. autosummary::
-   :toctree:
 
    ~lingpy.sequence.generate.MCBasic
    ~lingpy.sequence.generate.MCPhon

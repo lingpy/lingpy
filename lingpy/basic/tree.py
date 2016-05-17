@@ -148,6 +148,19 @@ class Tree(PhyloNode):
             raise ValueError("[!] The distance you defined is not available.")
 
     def getDistanceToRoot(self, node):
+        """
+        Return the distance from the given node to the root.
+        
+        Parameters
+        ----------
+        node : str
+            The name of a given node in the tree.
+
+        Returns
+        -------
+        distance : int
+            The distance of the given node to the root of the tree.
+        """
 
         subtree = self.getNodeMatchingName(node)
         parent = ''
@@ -159,27 +172,27 @@ class Tree(PhyloNode):
 
         return counter
 
-    def getTransitionMatrix(self):
-        """
-        Return a matrix with two columns for each node in the tree.
+    #def getTransitionMatrix(self):
+    #    """
+    #    Return a matrix with two columns for each node in the tree.
 
-        """
-        matrix = []
-        for name, node in self.getNodesDict().items():
-            if node.Parent:
-                matrix += [[name, node.Parent.Name]]
+    #    """
+    #    matrix = []
+    #    for name, node in self.getNodesDict().items():
+    #        if node.Parent:
+    #            matrix += [[name, node.Parent.Name]]
 
-        return matrix
+    #    return matrix
 
-    def createTransitionMatrix(self, states, tmat):
-        max_state = max(states)
+    #def createTransitionMatrix(self, states, tmat):
+    #    max_state = max(states)
 
-        matrix = []
-        counter = 0
-        for i in range(self._edge_len):
-            if tmat[i][0] in self.taxa:
-                matrix += [states[counter]]
-                counter += 1
-            else:
-                matrix += [[random.randint(0, max_state), random.randint(0, max_state)]]
-        return matrix
+    #    matrix = []
+    #    counter = 0
+    #    for i in range(self._edge_len):
+    #        if tmat[i][0] in self.taxa:
+    #            matrix += [states[counter]]
+    #            counter += 1
+    #        else:
+    #            matrix += [[random.randint(0, max_state), random.randint(0, max_state)]]
+    #    return matrix

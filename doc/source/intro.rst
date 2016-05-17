@@ -67,7 +67,7 @@ What's next?
    examples
    tutorial/index
    docu/index
-   reference/modules
+   reference
    download
 
 .. _README: https://github.com/lingpy/lingpy/blob/master/README.md

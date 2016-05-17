@@ -211,5 +211,5 @@ What's Next?
    examples
    tutorial/index
    docu/index
-   reference/modules
+   reference
    download
