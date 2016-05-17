@@ -17,5 +17,5 @@ Classes
 
 .. autosummary::
 
-   ~lingpy.align.Pairwise
-   ~lingpy.align.PSA
+   ~lingpy.align.pairwise.Pairwise
+   ~lingpy.align.sca.PSA
