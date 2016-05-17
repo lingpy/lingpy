@@ -15,7 +15,7 @@ Classes
 
 .. autosummary::
 
-   ~lingpy.align.Multiple
-   ~lingpy.align.MSA
-   ~lingpy.align.Alignments
+   ~lingpy.align.multiple.Multiple
+   ~lingpy.align.sca.MSA
+   ~lingpy.align.sca.Alignments
 

@@ -28,6 +28,14 @@ lingpy.tests.meaning.test_glosses module
     :undoc-members:
     :show-inheritance:
 
+lingpy.tests.meaning.test_init module
+-------------------------------------
+
+.. automodule:: lingpy.tests.meaning.test_init
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

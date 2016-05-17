@@ -24,3 +24,7 @@ recursive-include lingpy matrix
 include lingpy/data/swadesh/*.txt
 include lingpy/data/swadesh/*.qlc
 include lingpy/data/ipa/sampa.csv
+recursive-include doc *
+prune */_plugins/*
+prune */_plugins
+

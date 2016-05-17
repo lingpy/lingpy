@@ -85,11 +85,6 @@ What's Next?
 .. toctree::
    :maxdepth: 1
    
-   ../../reference/modules
+   ../reference
    ../download
-
-.. toctree::
-   :hidden:
-
-   ../../reference/modules
 

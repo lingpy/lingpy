@@ -4,6 +4,14 @@ lingpy.tests.compare package
 Submodules
 ----------
 
+lingpy.tests.compare.test__phylogeny module
+-------------------------------------------
+
+.. automodule:: lingpy.tests.compare.test__phylogeny
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy.tests.compare.test_lexstat module
 ----------------------------------------
 

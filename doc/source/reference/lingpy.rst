@@ -1,5 +1,5 @@
-Reference
-=========
+lingpy package
+==============
 
 Subpackages
 -----------
@@ -14,7 +14,6 @@ Subpackages
     lingpy.data
     lingpy.evaluate
     lingpy.meaning
-    lingpy.model
     lingpy.read
     lingpy.sequence
     lingpy.tests

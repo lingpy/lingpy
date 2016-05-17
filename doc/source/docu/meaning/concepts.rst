@@ -18,4 +18,4 @@ Classes
 
 .. autosummary::
 
-   ~BasVoc
+   ~lingpy.meaning.basvoc.BasVoc
