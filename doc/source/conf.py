@@ -81,8 +81,7 @@ today = str(datetime.datetime.today()).split(' ')[0]
 rst_prolog = """
 .. |authors| replace:: {authors}
 .. |contributors| replace:: {collaborators}
-.. |quoteas| replace:: List, Johann-Mattis and Forkel, Robert ({year}): **LingPy.  A Python library for historical linguistics**. Version {version}. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy.  With collaborations by {collaborators}. Jena: Max Planck Institute for the Science of Human History.
-
+.. |quoteas| replace:: List, Johann-Mattis and Forkel, Robert ({year}): **LingPy.  A Python library for historical linguistics**. Version {version}.  URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy.  With contributions by {collaborators}. Jena: Max Planck Institute for the Science of Human History.  
 """.format(
         year=str(datetime.datetime.today()).split('-')[0],
         version=lingpy.__version__,
