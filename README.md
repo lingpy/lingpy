@@ -22,7 +22,17 @@ using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
 
 ## Quick Installation
 
-If you want to regularly install LingPy on your system, open a terminal and type in the following:
+For our latest stable version, you can simply use pip or easy_install for installation:
+```bash
+$ pip install lingpy
+```
+or 
+```bash
+$ easy_install lingpy
+```
+Depending on which easy_install or pip version you use, either the Python2 or the Python3 version of LingPy will be installed.
+
+If you want to install LingPy the current GitHub version on your system, open a terminal and type in the following:
 ```bash
 $ git clone https://github.com/lingpy/lingpy/
 $ cd lingpy
@@ -34,7 +44,7 @@ In order to use the library, start an interactive python session and import Ling
 >>> from lingpy import *
 ```
 
-To install LingPy to hack on it, fork the repository, open a terminal and type:
+To install LingPy to hack on it, fork the repository on GitHub, open a terminal and type:
 ```bash
 $ git clone https://github.com/<your-github-user>/lingpy/
 $ cd lingpy
@@ -43,6 +53,4 @@ $ python setup.py develop
 This will install LingPy in ["develpment mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
 i.e. you will be able edit the sources in the cloned repository and import the altered code just as the regular python package.
 
-## Trouble Shooting
 
-We're currently working on a new release of LingPy which will be pushed to PyPi and also be installable via PIP, etc. The current LingPy on Github is rather stable and much more advanced than older versions, also supporting cross-platforms and both Python versions. If you run into any problems with installing LingPy for the moment, please make sure that you followed our quick installation instructions above and did **not** use any of the outdated releases. We might publish an official intermediate release in order to make sure that the well-known installation errors when installing LingPy in older versions via PIP do not occur, but for the moment, please download the current state of LingPy from github and manually install.

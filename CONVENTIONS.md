@@ -32,7 +32,6 @@ import scipy as sp
 import cogent as cg
 import networkx as nx
 import matplotlip.pyplot as plt
-import regex as re  # this is useful, since it is then equivalent with the re-module
 import mpl_toolkist.basemap as bmp
 ```
 
@@ -49,7 +48,6 @@ Please make sure to use no wildcard imports in your code! Wildcard imports are u
 quick-and-dirty scripting, but not in general-purpose libraries. They make it more difficult 
 to trace errors, and can also dramatically increase namespaces. If we load a specific module, 
 we should always know what we want from this module (be it internal or external).
-
 
 ## Tests
 
@@ -114,6 +112,12 @@ from lingpy import log
         print('...')
 ```
 
+Even better, however, is to not use the print-function at all, but to use the as_string function provided by lingpy.util instead. This function allows for two arguments, the text which should be printed and the pprint-argument which will print text when set to **True** and when the log-level is <= logging.INFO and ignore it otherwise:
+```python
+from lingpy.util import as_string
+
+as_string('mytext', pprint=True)
+```
 
 ## Dependencies
 
@@ -132,13 +136,15 @@ such as PyCogent (http://pycogent.org/) of which we included some parts in the t
 ### Indispensable Libraries
 
 * NumPy: http://numpy.org/
+* Networkx: http://networkx.github.com
 
 ### Recommended Libraries
 
 * SciPy: http://scipy.org/
-* Networkx: http://networkx.github.com/
 * Matplotlib: http://matplotlib.org/
 
 ### Specific Libraries
 
 * Basemap: https://github.com/matplotlib/basemap/
+* Igraph: http://igraph.org
+* Scikit-Learn: http://scikit-learn.org/stable/
