@@ -1358,7 +1358,7 @@ def _get_brackets(brackets):
 
 def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
-        split_entries=True, splitters='/,;'):
+        split_entries=True, splitters='/,;', preparse=None):
     """
     Function exhaustively checks how well a sequence is understood by \
             LingPy.
@@ -1385,14 +1385,20 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
         into separate entries.
     splitter : str
         The characters which force the automatic splitting of an entry.
+    prepares : list
+        List of tuples, giving simple replacement patterns (source and target),
+        which are applied before every processing starts.
     """
     rules = rules or {} 
+    preparse = preparse or []
     
     # replace white space if not indicated otherwise
     if segmentized:
         segment_list = [sequence.split(' ') if not isinstance(sequence, (list,
             tuple)) else sequence]
     else:
+        for s, t in preparse:
+            sequence = sequence.replace(s, t)
         segment_list = []
         # first, parse for brackets
         if ignore_brackets:

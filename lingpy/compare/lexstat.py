@@ -248,7 +248,10 @@ class LexStat(Wordlist):
             "langid" : "langid",
             "duplicates" : "duplicates",
             "tokenize" : ipa2tokens,
-            "get_prostring" : prosodic_string
+            "get_prostring" : prosodic_string,
+            "row" : "concept",
+            "col" : "doculect",
+            "conf" : None
         }
         kw.update(keywords)
 
@@ -272,7 +275,8 @@ class LexStat(Wordlist):
         self._stamp = "# Created using the LexStat class of {0}\n".format(util.PROG)
 
         # initialize the wordlist
-        Wordlist.__init__(self, filename)
+        Wordlist.__init__(self, filename, row=kw['row'], col=kw['col'], 
+                conf=kw['conf'])
         assert self._segments in self.header or self._transcription in self.header
 
         # create tokens if they are missing
@@ -321,7 +325,7 @@ class LexStat(Wordlist):
                 self._classes, self._segments, lambda x: ''.join(tokens2class(x, kw["model"])))
         # create IDs for the languages
         if self._langid not in self.header:
-            transform = dict(zip(self.taxa, [str(i + 1) for i in range(self.width)]))
+            transform = dict(zip(self.cols, [str(i + 1) for i in range(self.width)]))
             self.add_entries(self._langid, self._col_name, lambda x: transform[x])
         # get the numbers for all strings
         if self._numbers not in self.header:
@@ -350,7 +354,7 @@ class LexStat(Wordlist):
                 if hasattr(self, '_transform') else 'VT_'
         if self._duplicates not in self.header:
             duplicates = {}
-            for taxon in self.taxa:
+            for taxon in self.cols:
                 words = set()
                 for idx in self.get_list(col=taxon, flat=True):
                     word = self[idx, self._transcription]
@@ -362,7 +366,7 @@ class LexStat(Wordlist):
         if not hasattr(self, 'freqs'):
             self.chars = set()
             self.freqs = {}
-            for taxon in self.taxa:
+            for taxon in self.cols:
                 self.freqs[taxon] = Counter()
                 for word in self.get_list(col=taxon, entry=self._numbers, flat=True):
                     self.freqs[taxon].update(word)
@@ -401,7 +405,7 @@ class LexStat(Wordlist):
         if not hasattr(self, "pairs"):
             self.pairs = {}
             self._same_vals = defaultdict(list)
-            for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.taxa)):
+            for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.cols)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
                 dictB = self.get_dict(col=taxonB)
@@ -486,7 +490,7 @@ class LexStat(Wordlist):
         list (Swadesh list).
         """
         self.subsets = {}
-        for tA, tB in util.multicombinations2(self.taxa):
+        for tA, tB in util.multicombinations2(self.cols):
             self.subsets[tA, tB] = [
                 pair for pair in self.pairs[tA, tB] if self[pair, ref][0] in sublist]
 
@@ -522,7 +526,7 @@ class LexStat(Wordlist):
 
         tasks = self.width ** 2 / 2 
         with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
-            for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
+            for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
                 progress.update()
                 log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
@@ -594,8 +598,8 @@ class LexStat(Wordlist):
                 [(i, j) for i in range(kw['rands']) for j in range(kw['rands'])],
                 kw['runs'])
 
-            with util.ProgressBar('SEQUENCE GENERATION', len(self.taxa)) as progress:
-                for i, taxon in enumerate(self.taxa):
+            with util.ProgressBar('SEQUENCE GENERATION', len(self.cols)) as progress:
+                for i, taxon in enumerate(self.cols):
                     progress.update()
                     log.info("Analyzing taxon {0}.".format(taxon))
 
@@ -630,7 +634,7 @@ class LexStat(Wordlist):
                              zip(cls, [self._transform[pr] for pr in pros[taxon][-1]])])
 
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
+                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
                     progress.update()
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
@@ -668,7 +672,7 @@ class LexStat(Wordlist):
         else:
             tasks = self.width ** 2 / 2
             with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
-                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
+                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
                     progress.update()
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
@@ -874,7 +878,7 @@ class LexStat(Wordlist):
         matrix = [[c for c in line] for line in self.bscorer.matrix]
         char_dict = self.bscorer.chars2int
 
-        for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.taxa)):
+        for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
             for charA, charB in product(
                 list(self.freqs[tA]) + [charstring(i + 1)],
                 list(self.freqs[tB]) + [charstring(j + 1)]
@@ -1403,7 +1407,7 @@ class LexStat(Wordlist):
             function = lambda x, y: edit_dist(
                 self[x, self._segments], self[y, self._segments], normalized=edit_dist_normalized)
 
-        for taxA, taxB in util.combinations2(self.taxa):
+        for taxA, taxB in util.combinations2(self.cols):
             distances = []
             for pA, pB in sample(self.pairs[taxA, taxB]):
                 try:
