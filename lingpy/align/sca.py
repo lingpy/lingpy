@@ -738,12 +738,12 @@ class Alignments(Wordlist):
             # the alignemnts
             for key in self:
                 # get the cognate IDs
-                cogids = self[key, rcParams['ref']]
+                cogids = self[key, ref]
                 # get the alignment
                 tmp[key] = []
                 for i, cogid in enumerate(cogids):
-                    if cogid in self.msa[rcParams['ref']]:
-                        msa = self.msa[rcParams['ref']][cogid]
+                    if cogid in self.msa[ref]:
+                        msa = self.msa[ref][cogid]
                         idx = msa['ID'].index(key)
                         tmp[key] += msa['alignment'][idx]
                     else:

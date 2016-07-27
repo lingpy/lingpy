@@ -5,6 +5,7 @@
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.16093.svg)](http://dx.doi.org/10.5281/zenodo.16093)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)
 [![Documentation](https://readthedocs.org/projects/lingpy/badge/?version=latest)](http://lingpy.readthedocs.org/en/latest/?badge=latest)
+[![Downloads](https://img.shields.io/pypi/dm/lingpy.svg)](https://pypi.python.org/pypi/lingpy)
 
 
 

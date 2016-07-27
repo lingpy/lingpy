@@ -6,6 +6,8 @@ from __future__ import print_function, division, unicode_literals
 
 import re
 from six import text_type
+import unicodedata
+from collections import defaultdict
 
 from lingpy import log
 from lingpy.util import setdefaults
@@ -1184,7 +1186,6 @@ def pid(almA, almB, mode=2):
     elif mode == 5:
         return idn_pos / len(almA)
 
-
 def check_tokens(tokens, **keywords):
     """
     Function checks whether tokens are given in a consistent input format.
@@ -1193,7 +1194,7 @@ def check_tokens(tokens, **keywords):
     errors = []
 
     for i, token in enumerate(tokens):
-        # check for conversion within the rcParams['art']iculation-model
+        # check for conversion within the articulation-model
         try:
             rcParams['art'].converter[token]
         except KeyError:
@@ -1209,7 +1210,6 @@ def check_tokens(tokens, **keywords):
                     errors.append((i, token))
 
     return errors
-
 
 def get_all_ngrams(sequence, sort=False):
     """
@@ -1345,3 +1345,86 @@ def pgrams(sequence, **keywords):
     else:
         seq = _seq_as_list(sequence)
     return list(zip(seq, prosodic_string(seq, **keywords)))
+
+def _get_brackets(brackets):
+
+    out = defaultdict(str)
+    for b in brackets:
+        out[b] = unicodedata.lookup(unicodedata.name(b).replace('LEFT', 'RIGHT'))
+        if b == out[b]:
+            log.warn('lingpy.sequence.sound_classes.get_brackets' + \
+                    'Item «{0}» does not have a counterpart!'.format(b))
+    return out
+
+def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
+        segmentized=False, rules=None, ignore_brackets=True, brackets=None,
+        split_entries=True, splitters='/,;'):
+    """
+    Function exhaustively checks how well a sequence is understood by \
+            LingPy.
+
+    Parameters
+    ----------
+    semi_diacritics : str
+        Indicate characters which can occur both as "diacritics" (second part
+        in a sound) or alone.
+    merge_vowels : bool (default=True)
+        Indicate whether consecutive vowels should be merged.
+    segmentized : False
+        Indicate whether the input string is already segmentized or not. If set
+        to True, items in brackets can no longer be ignored.
+    rules : dict
+        Replacement rules to be applied to a segmentized string.
+    ignore_brackets : bool
+        If set to True, ignore all content within a given bracket.
+    brackets : dict
+        A dictionary with opening brackets as key and closing brackets as
+        values. Defaults to a pre-defined set of frequently occurring brackets.
+    split_entries : bool (default=True)
+        Indicate whether multiple entries (with a comma etc.) should be split
+        into separate entries.
+    splitter : str
+        The characters which force the automatic splitting of an entry.
+    """
+    rules = rules or {} 
+    
+    # replace white space if not indicated otherwise
+    if segmentized:
+        segment_list = [sequence.split(' ') if not isinstance(sequence, (list,
+            tuple)) else sequence]
+    else:
+        segment_list = []
+        # first, parse for brackets
+        if ignore_brackets:
+            brackets = brackets or _get_brackets("([{『（₍⁽«")
+            stack = []
+            tmp_sequence = list(sequence)
+            new_sequence = ''
+            while tmp_sequence:
+                itm = tmp_sequence.pop(0)
+                if itm in brackets:
+                    stack += [brackets[itm]]
+                if not stack:
+                    new_sequence += itm
+                if itm in stack:
+                    stack.pop(stack.index(itm))
+        else:
+            new_sequence = sequence
+
+        # splitting needs to be done afterwards
+        if split_entries:
+            new_sequences = re.split(r'\s*['+splitters+r']\s*', new_sequence)
+        else:
+            new_sequences = [new_sequence]
+
+        for new_sequence in new_sequences:
+            segments = ipa2tokens(re.sub(r'\s+', '_', new_sequence.strip()), 
+                    semi_diacritics=semi_diacritics,
+                    merge_vowels=merge_vowels)
+            segment_list += [segments]
+    out = []
+    for segments in segment_list:
+        segments = [rules[s] if s in rules else s for s in segments]
+        out += [' '.join(segments)]
+    return out
+

@@ -128,6 +128,50 @@ class LexStat(Wordlist):
         **False**.
     errors : str
         The name of the error log.
+    segments : str (default="tokens")
+        The name of the column in your data which contains the segmented
+        transcriptions, or in which the segmented transcriptions should be
+        placed. 
+    transcription : str (default="ipa")
+        The name of the column in your data which contains the unsegmented
+        transcriptions.
+    classes : str (default="classes")
+        The name of the column in the data which contains the sound class
+        representation of the transcriptions, or in which this information
+        shall be placed after automatic conversion.
+    numbers : str (default="numbers")
+        The language-specific triples consisting of language id (numeric),
+        sound class string (one character only), and prosodic string (one
+        character only). Usually, numbers are automatically created from
+        the columns "classes", "prostrings", and "langid", but you can also
+        provide them in your data.
+    langid : str (default="langid")
+        Name of the column that contains a numerical language identifier,
+        needed to produce the language-specific character triples ("numbers").
+        Unless specific explicitly, this is automatically created.
+    prostrings : str (default="prostrings")
+        Name of the column containing prosodic strings (see :evobib:`List2014d`
+        for more details) of the segmented transcriptions, containing one
+        character per prosodic string.  Prostrings add a contextual component
+        to phonetic sequences. They are automatically created, but can likewise
+        be submitted from the initial data.
+    weights : str (default="weights")
+        The name of the column which stores the individual gap-weights for each
+        sequence. Gap weights are positive floats for each segment in a string,
+        which modify the gap opening penalty during alignment. 
+    tokenize : function (default=:py:class:`~lingpy.sequence.sound_classes.ipa2tokens`)
+        The function which should be used to tokenize the entries in the column
+        storing the transcriptions in case no segmentation is provided by the
+        user.
+    get_prostring : function (default=:py:class:`~lingpy.sequence.sound_classes.prosodic_string`)
+        The function which should be used to create prosodic strings from the
+        segmented transcription data. If you want to completely ignore prosodic
+        strings in LexStat calculations, you could just pass the following
+        function::
+            
+            >>> lex = LexStat('inputfile.tsv', get_prostring=lambda x: ["x" for
+                y in x])
+
 
     Attributes
     ----------
@@ -203,7 +247,8 @@ class LexStat(Wordlist):
             "sonars" : "sonars",
             "langid" : "langid",
             "duplicates" : "duplicates",
-            "tokenize" : ipa2tokens
+            "tokenize" : ipa2tokens,
+            "get_prostring" : prosodic_string
         }
         kw.update(keywords)
 
@@ -269,7 +314,7 @@ class LexStat(Wordlist):
                 lambda x: [int(i) for i in tokens2class(
                     x, rcParams['art'], stress=rcParams['stress'])])
         if self._prostrings not in self.header:
-            self.add_entries(self._prostrings, self._sonars, lambda x: prosodic_string(x))
+            self.add_entries(self._prostrings, self._sonars, lambda x: kw['get_prostring'](x))
         # get sound class strings
         if self._classes not in self.header:
             self.add_entries(
