@@ -7,7 +7,8 @@ from nose.tools import assert_raises
 from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
-        get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse
+        get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse,\
+        clean_string, _get_brackets
 from lingpy import rc, csv2list
 from six import text_type
 
@@ -208,3 +209,23 @@ def test_onoparse():
     assert isinstance(out1, text_type)
     assert out3[0] == ('-', '#')
     assert out2 == 'VCvcC>$'
+
+def test_clean_string():
+
+    seq1 = 'this (is an error)'
+    seq2 = 'feature/vector'
+    seq3 = 'ta:tata'
+    seq4 = 'what (the) hack [this is]'
+    seq5 = 't a t'
+
+    _get_brackets('A')
+
+    assert clean_string(seq1)[0] == 'th i s'
+    assert clean_string(seq2)[1] == 'v e c t o r'
+    assert clean_string(seq3)[0] == 't a: t a t a'
+    assert clean_string(seq4)[0] == 'wh a t _ h a c k'
+    assert clean_string(seq5, segmentized=True)[0] == 't a t'
+    assert clean_string('a(a', ignore_brackets=False)[0] == 'a ( a'
+    assert clean_string('a/a', split_entries=False)[0] == 'a / a'
+
+    

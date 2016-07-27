@@ -8,12 +8,10 @@ from lingpy import log
 try:
     from sklearn import cluster
 except ImportError:
-    log.missing_module('sklearn')
     cluster = False
 try:
     import igraph
 except ImportError:
-    log.missing_module('igraph')
     igraph = False
 
 import numpy as np
@@ -60,6 +58,9 @@ def dbscan(
     
     Requires the scikitlearn package, downloadable from http://scikit-learn.org/.
     """
+    if not cluster:
+        raise ValueError("The package sklearn is needed to run this analysis.")
+
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
 
@@ -121,7 +122,8 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
 
     """
     if not cluster:
-        raise ValueError("The package scikitlearn is needed to run this analysis.")
+        raise ValueError("The package sklearn is needed to run this analysis.")
+
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
     # turn distances to similarities
