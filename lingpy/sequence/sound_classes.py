@@ -739,6 +739,8 @@ def prosodic_string(string, _output=True, **keywords):
     * ``X``: first vowel in a word
     * ``Y``: non-final vowel in a word
     * ``Z``: vowel occuring in the last position of a word
+    * ``T``: tone
+    * ``_``: word break
 
     Examples
     --------

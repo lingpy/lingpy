@@ -724,11 +724,11 @@ class Alignments(Wordlist):
             missing = [idx for idx in self if idx not in tmp]
             for m in missing:
                 if self._segments in self.header:
-                    tmp[m] = self[m, self._segments]
+                    tmp[m] = ' '.join(self[m, self._segments])
                 elif self._transcription in self.header:
-                    tmp[m] = ipa2tokens(self[m, self._transcription])
+                    tmp[m] = ' '.join(ipa2tokens(self[m, self._transcription]))
                 elif self._alignment in self.header:
-                    tmp[m] = self[m, self._alignment]
+                    tmp[m] = ' '.join(self[m, self._alignment])
                 else:
                     raise ValueError(
                         "There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) " +
@@ -922,6 +922,7 @@ class Alignments(Wordlist):
                 m._sonority_consensus
             self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
                 m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
+            self._meta['msa'][kw['ref']][key]['parameters'] = params
 
         self._msa2col(ref=kw['ref'], alignment=kw['alignment'])
 
