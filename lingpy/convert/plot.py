@@ -922,32 +922,32 @@ def plot_heatmap(
 
     """
     defaults = dict(
+        bottom=0.01,  # rcParams['phybo_ylimb']
         cmap=mpl.cm.jet,
-        textsize=5,
-        steps=20,
-        xrotation=90,
         colorbar=True,
-        matrix=False,
         colorbar_label="Shared Cognates",
-        figsize=(10, 5),
         colorbar_shrink=0.75,
         colorbar_textsize=10,
-        left=0.01,  # rcParams['phybo_xlimr'],
-        right=0.95,  # rcParams['phybo_xliml'],
-        top=0.95,  # rcParams['phybo_ylimt'],
-        bottom=0.01,  # rcParams['phybo_ylimb']
-        tree='',
-        normalization="jaccard",
-        labels={},  # taxon labels passed for the taxa,
-        show_tree=True,
-        tree_left=0.1,
-        tree_bottom=0.1,
-        tree_width=0.2,
+        figsize=(10, 5),
         height=0.8,
-        width=0.8,
+        labels={},  # taxon labels passed for the taxa,
+        left=0.01,  # rcParams['phybo_xlimr'],
+        matrix=False,
+        normalization="jaccard",
+        right=0.95,  # rcParams['phybo_xliml'],
         scale=0.075,
+        show_tree=True,
+        steps=20,
+        textsize=5,
+        top=0.95,  # rcParams['phybo_ylimt'],
+        tree='',
+        tree_bottom=0.1,
+        tree_left=0.1,
+        tree_width=0.2,
         vmax=1.0,
-        vmin=0.0
+        vmin=0.0,
+        width=0.8,
+        xrotation=90
     )
     for k in defaults:
         if k not in keywords:
@@ -999,7 +999,10 @@ def plot_heatmap(
         taxa = d['ivl'][::-1]
         ax1.set_xticks([])
         ax1.set_yticks([])
-
+        ax1.spines['bottom'].set_color('#ffffff')
+        ax1.spines['top'].set_color('#ffffff')
+        ax1.spines['left'].set_color('#ffffff')
+        ax1.spines['right'].set_color('#ffffff')
         left = keywords['left'] + keywords['scale'] * keywords['width']
 
     else:
@@ -1160,10 +1163,7 @@ def plot_heatmap(
     ax2.set_xticks([])
     ax2.set_yticks([])
 
-    ax1.spines['bottom'].set_color('#ffffff')
-    ax1.spines['top'].set_color('#ffffff')
-    ax1.spines['left'].set_color('#ffffff')
-    ax1.spines['right'].set_color('#ffffff')
+
 
     plt.xticks(
         idxs,

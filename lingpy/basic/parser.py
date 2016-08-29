@@ -147,7 +147,7 @@ class QLCParser(object):
             if len(v) != len(self.header):
                 check_errors += 'Row {0} in your data contains {1} fields (expected {2})\n'.format(k, len(v), len(self.header))
         if check_errors:
-            raise ValueError(check_errors)
+            raise ValueError(check_errors+'\n'+', '.join(sorted(self.header)))
 
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
