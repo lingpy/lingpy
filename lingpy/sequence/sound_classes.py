@@ -1385,7 +1385,7 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
     split_entries : bool (default=True)
         Indicate whether multiple entries (with a comma etc.) should be split
         into separate entries.
-    splitter : str
+    splitters : str
         The characters which force the automatic splitting of an entry.
     prepares : list
         List of tuples, giving simple replacement patterns (source and target),
