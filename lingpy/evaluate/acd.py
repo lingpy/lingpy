@@ -36,7 +36,7 @@ def _format_results(results, p, r, f):
     Print out the results of an analysis.
     """
 
-    return """*************************')
+    return """*************************
 * {0:7}-Scores        *
 * --------------------- *
 * Precision:     {1:.4f} *
