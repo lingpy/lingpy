@@ -473,7 +473,7 @@ def coverage(wordlist):
     return {taxon: len(wordlist.get_dict(col=taxon)) for taxon in wordlist.taxa}
 
 
-def wl2multistate(wordlist, ref):
+def wl2multistate(wordlist, ref, missing):
     """
     Helper function converts a wordlist to multistate format (compatible with PAUP).
     """
@@ -488,7 +488,7 @@ def wl2multistate(wordlist, ref):
     # iterate over all cognate sets and assign the chars
     matrix = []
     for c in wordlist.concepts:
-        taxon_to_cognate_set = wordlist.get_dict(concept=c, entry='cogid')
+        taxon_to_cognate_set = wordlist.get_dict(concept=c, entry=ref)
 
         distinct_states = set()
         for taxon in wordlist.taxa:
@@ -505,9 +505,11 @@ def wl2multistate(wordlist, ref):
         line = []
         for taxon in wordlist.taxa:
             states = set(taxon_to_cognate_set.get(taxon, ['-']))
-            assert states  # exclude the case len(taxon_to_cognate_set[taxon]) == 0
+            #assert states  # exclude the case len(taxon_to_cognate_set[taxon]) == 0
             if len(states) == 1:
                 line.append(char_map[states.pop()])
+            elif not states:
+                line.append(missing)
             else:
                 line.append('({0})'.format(
                     "".join([char_map[x] for x in sorted(states)])))

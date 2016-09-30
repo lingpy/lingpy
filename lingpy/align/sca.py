@@ -566,8 +566,6 @@ class Alignments(Wordlist):
             _interactive=True,
             ref="cogid",
             **keywords):
-        # keywords, "strings" locates, where the reference for the alignments
-        # is to be found
         kw = {"segments": "tokens", "alignment": "alignment", "transcription":
                 "ipa", "ref": "cogid"}
         kw.update(keywords)

@@ -754,7 +754,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             if not keywords['filename'].endswith('.multistate.nex'):
                 keywords['filename'] += '.multistate.nex'
 
-            matrix = wl2multistate(self, keywords['ref'])
+            matrix = wl2multistate(self, keywords['ref'], keywords['missing'])
             return multistate2nex(self.taxa, matrix, keywords['filename'])
 
         if fileformat == 'separated':
@@ -1006,7 +1006,7 @@ def get_wordlist(path, **keywords):
     kw.update(keywords)
     data = util.read_csv_file(path, kw['delimiter'], kw['quotechar'],
             normalize="NFC")
-    header = data[0]
+    header = [h.lower() for h in data[0]]
     data = data[1:]
     D = {}
     if header[0] == 'ID':
@@ -1019,4 +1019,4 @@ def get_wordlist(path, **keywords):
         for row in data:
             D[idx] = row
             idx += 1
-    return Wordlist(D)
+    return Wordlist(D, row=kw['row'].lower(), col=kw['col'].lower())
