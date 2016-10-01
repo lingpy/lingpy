@@ -87,7 +87,7 @@ class TestOps(WithTempDir):
     def test_wl2multistate(self):
         from lingpy.basic.ops import wl2multistate
 
-        res = wl2multistate(self.wordlist, 'cogid')
+        res = wl2multistate(self.wordlist, 'cogid', '?')
         # the result must be a matrix.
         self.assertIsInstance(res, list)
         self.assertEquals(len(set(len(row) for row in res)), 1)
