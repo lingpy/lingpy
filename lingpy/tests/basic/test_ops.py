@@ -12,6 +12,7 @@ class TestOps(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.wordlist = Wordlist(test_data('KSL.qlc'))
+        self.wordlist2 = Wordlist(test_data('KSL4.qlc'))
 
     def test_wl2dict(self):
         from lingpy.basic.ops import wl2dict
@@ -87,7 +88,7 @@ class TestOps(WithTempDir):
     def test_wl2multistate(self):
         from lingpy.basic.ops import wl2multistate
 
-        res = wl2multistate(self.wordlist, 'cogid', '?')
+        res = wl2multistate(self.wordlist2, 'cogid', '?')
         # the result must be a matrix.
         self.assertIsInstance(res, list)
         self.assertEquals(len(set(len(row) for row in res)), 1)
