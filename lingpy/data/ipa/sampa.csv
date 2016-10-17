@@ -194,7 +194,10 @@ dz\	\u02A5
 ts	\u02A6
 tS	\u02A7
 tz\	\u02A8
+tc\	\u02A8
+c\	ɕ
 fN	\u02A9
+i_z	ɿ
 ls	\u02AA
 lz	\u02AB
 ww[?]	\u02AC
@@ -206,13 +209,18 @@ t_S	ʧ
 d_Z	ʤ   
 d_z	ʣ
 t_s	ʦ
+ts`	t͡ʂ
 ,	\u0323
+n\	ȵ
 #	more specific characters (PAD-data)
 l_R	ɭ
 *	\u0361
 # specific character ';' for multiple entries (added by JML)
 ;	;
-
+H`	ʯ
+A`	ᴀ
+E`	ᴇ
+N=	ŋ̍
 # pad character for line-breaks @JML
 >	‿
 <	‿
@@ -224,3 +232,12 @@ l_R	ɭ
 l_G	ɫ
 =	\u0329
 S_w	ʃ
+¹	¹
+²	²
+³	³
+⁴	⁴
+⁵	⁵
+⁰	⁰
+¯	¯
+ɨ	ɨ
+ø	ø
