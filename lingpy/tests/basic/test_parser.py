@@ -1,3 +1,4 @@
+from __future__ import unicode_literals, division
 import os
 from unittest import TestCase
 from operator import itemgetter
@@ -88,4 +89,3 @@ class TestParser(TestCase):
         assert 'ti' in self.parser.entries
         self.parser.add_entries('tg', defaultdict(int), lambda i: i + 1, override=True)
         self.parser.add_entries('tg', 'doculect,concept', lambda v, id_: 'abc', override=True)
-

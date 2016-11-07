@@ -38,12 +38,15 @@ class Graph(MagicMock):
         return [(MagicMock(), dict(label='a', graphics=defaultdict(lambda: 2)))]
 
 
-@patch('lingpy.compare._phylogeny.convex_hull.p', new=Plt())
 def test_convex_hull():
-    
-    hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)]).transpose()
-    ch1 = convex_hull(hp, graphic=False)
-    ch2 = convex_hull(hp, graphic=True)
+    try:
+        import pylab
+    except ImportError:
+        return
+    with patch('lingpy.compare._phylogeny.convex_hull.p', new=Plt()):
+        hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)]).transpose()
+        ch1 = convex_hull(hp, graphic=False)
+        ch2 = convex_hull(hp, graphic=True)
 
 
 def test_settings():
@@ -62,20 +65,28 @@ def test_seg_intersect():
     assert not l12
     assert l13
     
-@patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt())
 def test_get_convex_hull():
+    try:
+        import matplotlib.patches
+    except ImportError:
+        return
 
-    hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)])
-    gch1 = getConvexHull(hp, polygon=False)
-    gch2 = getConvexHull(hp, polygon=True)
+    with patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt()):
+        hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)])
+        gch1 = getConvexHull(hp, polygon=False)
+        gch2 = getConvexHull(hp, polygon=True)
 
 
-@patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt())
 @patch('lingpy.compare._phylogeny.polygon.nx', new=Nx())
 def test_get_polygon_from_nodes():
+    try:
+        import matplotlib.patches
+    except ImportError:
+        return
 
-    hp = np.array([(-10,-10), (2,1), (3,1), (2,10), (5,6), (5,5), (8,10), (10,1)])
-    getPolygonFromNodes(hp)
+    with patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt()):
+        hp = np.array([(-10,-10), (2,1), (3,1), (2,10), (5,6), (5,5), (8,10), (10,1)])
+        getPolygonFromNodes(hp)
 
 
 class TestUtils(WithTempDir):
@@ -83,12 +94,17 @@ class TestUtils(WithTempDir):
         WithTempDir.setUp(self)
         self.ifile = test_data('phybo.qlc')
     
-    @patch('lingpy.compare._phylogeny.utils.sps', new=SPS())
     def test_utils(self):
-        phy = PhyBo(self.ifile, output_dir=self.tmp)
-        phy.analyze()
-        get_acs(phy, phy.best_model)
-        tstats(phy, phy.best_model, return_dists=True)
+        try:
+            import scipy.stats
+        except ImportError:
+            return
 
-        check_stats([phy.best_model], phy, filename=os.path.join(self.tmp,
-            'test'), pprint=False)
+        with patch('lingpy.compare._phylogeny.utils.sps', new=SPS()):
+            phy = PhyBo(self.ifile, output_dir=self.tmp)
+            phy.analyze()
+            get_acs(phy, phy.best_model)
+            tstats(phy, phy.best_model, return_dists=True)
+
+            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp,
+                'test'), pprint=False)
