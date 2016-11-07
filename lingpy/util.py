@@ -207,7 +207,7 @@ def read_csv_file(path, delimiter=",", quotechar='"',
         with open(_str_path(path), 'rb') as fp:
             reader = csv.reader(fp, delimiter=bytes(delimiter),
                     quotechar=bytes(quotechar))
-            return [row for row in reader]
+            return [[c.decode('utf8') for c in row] for row in reader]
 
 
 
