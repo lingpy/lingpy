@@ -66,7 +66,3 @@ def test_as_string():
 
     out = util.as_string('text', pprint=False)
     assert out == 'text' 
-
-def test_read_csv_file():
-
-    lines1 = util.read_csv_file(test_data('mycsvwordlist.csv'))

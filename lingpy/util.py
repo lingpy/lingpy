@@ -4,15 +4,13 @@ import io
 import unicodedata
 from math import ceil
 import logging
-import os
 from tempfile import NamedTemporaryFile
 from functools import partial
 import itertools
 import types
 
 from six import text_type
-from clldutils.path import Path
-from clldutils import dsv
+from clldutils.path import Path, remove, path_component
 from clldutils import clilib
 
 import lingpy
@@ -65,19 +63,19 @@ confirm = partial(clilib.confirm, default=False)
 class TemporaryPath(object):
     def __init__(self, suffix=''):
         fp = NamedTemporaryFile(suffix=suffix)
-        self.name = fp.name
+        self.name = Path(fp.name)
         fp.close()
 
     def __enter__(self):
-        return self.name
+        return self.name.as_posix()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if os.path.exists(self.name):
-            os.remove(self.name)
+        if self.name.exists():
+            remove(self.name)
 
 
 def lingpy_path(*comps):
-    return os.path.join(os.path.dirname(lingpy.__file__), *comps)
+    return Path(lingpy.__file__).parent.joinpath(*comps).as_posix()
 
 data_path = partial(lingpy_path, 'data')
 
@@ -97,12 +95,10 @@ def _str_path(path, mkdir=False):
     path : text_type
         The path as text_type.
     """
-    res = text_type(path) if isinstance(path, Path) else path
-    if mkdir:
-        dirname = os.path.dirname(res)
-        if dirname and not os.path.exists(dirname):
-            os.makedirs(dirname)
-    return res
+    res = Path(path_component(path))
+    if mkdir and res.parent and not res.parent.exists():
+        res.parent.mkdir(parents=True)
+    return res.as_posix()
 
 
 def write_text_file(path, content, normalize=None, log=True):
@@ -146,23 +142,6 @@ class TextFile(object):
         self.fp.close()
         if self.log:
             file_written(_str_path(self.path))
-
-
-def read_csv_file(path, delimiter=",", quotechar='"'):
-    """
-    Load a normal CSV file.
-
-    Parameters
-    ----------
-    path : str
-        The path to your CSV file.
-    delimiter : str
-        The delimiter in the CSV file.
-    quotechar : str
-        The quote character in your data.
-
-    """
-    return list(dsv.reader(path, delimiter=delimiter, quotechar=quotechar))
 
 
 def read_text_file(path, normalize=None, lines=False):

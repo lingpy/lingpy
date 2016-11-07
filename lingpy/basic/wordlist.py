@@ -9,6 +9,7 @@ import numpy as np
 from collections import defaultdict
 
 from six import text_type as str
+from clldutils import dsv
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
@@ -999,7 +1000,7 @@ def get_wordlist(path, delimiter=",", quotechar='"', **keywords):
     """
     kw = dict(conf="", col="doculect", row="concept")
     kw.update(keywords)
-    data = util.read_csv_file(path, delimiter=delimiter, quotechar=quotechar)
+    data = list(dsv.reader(path, delimiter=delimiter, quotechar=quotechar))
     header = [h.lower() for h in data[0]]
     data = data[1:]
     D = {}
