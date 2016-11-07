@@ -342,7 +342,7 @@ def pap2csv(
     return
 
 
-def multistate2nex(taxa, matrix, filename=''):
+def multistate2nex(taxa, matrix, filename='', missing="?"):
     """
     Convert the data in a given wordlist to NEXUS-format for multistate analyses in PAUP.
     
@@ -364,7 +364,7 @@ def multistate2nex(taxa, matrix, filename=''):
 
 BEGIN DATA;
 DIMENSIONS ntax={ntax} NCHAR={nchar};
-FORMAT RESPECTCASE DATATYPE=STANDARD symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP0123456789" GAP=? MISSING=- interleave=yes;
+FORMAT RESPECTCASE DATATYPE=STANDARD symbols="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP0123456789" GAP=? MISSING={missing} interleave=yes;
 OPTIONS MSTAXA = POLYMORPH;
 
 MATRIX
@@ -390,7 +390,8 @@ END;
             nexus.format(
                 ntax=len(taxa),
                 nchar=len(matrix[0]),
-                matrix=matrix_text
+                matrix=matrix_text,
+                missing=missing
             )
         )
     else:

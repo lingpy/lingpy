@@ -566,8 +566,6 @@ class Alignments(Wordlist):
             _interactive=True,
             ref="cogid",
             **keywords):
-        # keywords, "strings" locates, where the reference for the alignments
-        # is to be found
         kw = {"segments": "tokens", "alignment": "alignment", "transcription":
                 "ipa", "ref": "cogid"}
         kw.update(keywords)
@@ -753,7 +751,7 @@ class Alignments(Wordlist):
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(alignment, tmp, lambda x: x)
+        self.add_entries(alignment, tmp, lambda x: x, overwrite=True)
 
     def align(self, **keywords):
         """

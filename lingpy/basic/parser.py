@@ -147,7 +147,7 @@ class QLCParser(object):
             if len(v) != len(self.header):
                 check_errors += 'Row {0} in your data contains {1} fields (expected {2})\n'.format(k, len(v), len(self.header))
         if check_errors:
-            raise ValueError(check_errors)
+            raise ValueError(check_errors+'\n'+', '.join(sorted(self.header)))
 
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
@@ -262,9 +262,17 @@ class QLCParser(object):
                         idx[0])) 
         raise KeyError("No entry with the specified key {0} could be found".format(
             idx))
-
-
-        #raise KeyError("[ERROR] The key {0} does not exist!".format(idx))
+    def __setitem__(self, key, item):
+        """
+        Modify a specific cell in a specific column of a wordlist.
+        """
+        if not isinstance(idx, tuple) and len(idx) != 2:
+            try:
+                self._data[idx[0]][self.header[self._alias[idx[1]]]] = item
+            except KeyError:
+                    raise KeyError("No line with ID {0} specified could be found.".format(
+                        idx[0]))
+        raise ValueError("__setitem__ requires two values as key.")
 
     def __len__(self):
         """
