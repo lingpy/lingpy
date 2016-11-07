@@ -4,9 +4,10 @@ import sys
 from contextlib import contextmanager
 
 from six import StringIO
+from clldutils.testing import WithTempDir
 
 from lingpy.cli import main
-from lingpy.tests.util import test_data, WithTempDir
+from lingpy.tests.util import test_data
 
 
 @contextmanager

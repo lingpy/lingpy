@@ -5,12 +5,12 @@ from __future__ import unicode_literals
 from itertools import product
 
 from six import text_type
+from clldutils.testing import WithTempDir
 
 from lingpy import Alignments, MSA, PSA, LexStat
 import lingpy as lp
-from lingpy.tests.util import test_data, WithTempDir
-from lingpy.util import write_text_file, read_config_file
-from lingpy.thirdparty.cogent.tree import TreeNode
+from lingpy.tests.util import test_data
+from lingpy.util import write_text_file
 
 
 class TestPSA(WithTempDir):
@@ -33,6 +33,7 @@ class TestPSA(WithTempDir):
         psa.output(fileformat="psa", filename=fname, scores=True)
         psa.output(fileformat="psq", filename=fname)
 
+
 class TestMSA(WithTempDir):
     def test_output(self):
         msa = MSA(test_data('harry.msa'))
@@ -43,6 +44,7 @@ class TestMSA(WithTempDir):
         for fmt in 'msa psa msq html tex'.split():
             for s, u in product([True, False], [True, False]):
                 msa.output(fileformat=fmt, filename=fname, sorted_seqs=s, unique_seqs=u)
+
 
 class TestAlignments(WithTempDir):
     def setUp(self):
@@ -127,4 +129,3 @@ def test_get_consensus():
     assert cons3[:2] == cons[:2]
     assert cons4[0] == 'h'
     assert cons5[0] == 'h'
-

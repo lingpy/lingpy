@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 
-from lingpy.tests.util import WithTempDir
+from clldutils.testing import WithTempDir
 
 from lingpy import log
 
@@ -13,11 +13,11 @@ class LogTest(WithTempDir):
         WithTempDir.tearDown(self)
 
     def test_new_config(self):
-        l = log.get_logger(config_dir=self.tmp, test=True)
+        l = log.get_logger(config_dir=self.tmp.as_posix(), test=True)
         self.assertTrue(hasattr(l, 'info'))
 
     def test_default_config(self):
-        l = log.get_logger(config_dir=self.tmp, force_default_config=True)
+        l = log.get_logger(config_dir=self.tmp.as_posix(), force_default_config=True)
         self.assertTrue(hasattr(l, 'info'))
 
     def test_convenience(self):

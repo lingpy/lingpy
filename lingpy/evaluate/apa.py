@@ -7,10 +7,11 @@ from collections import namedtuple, defaultdict
 from itertools import combinations
 
 import numpy as np
+from clldutils.misc import cached_property
 
 from lingpy.algorithm import misc
 from lingpy import log
-from lingpy.util import write_text_file, cached_property, setdefaults
+from lingpy.util import write_text_file, setdefaults
 
 
 class Eval(object):

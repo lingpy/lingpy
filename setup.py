@@ -5,14 +5,13 @@ Setup-Script for LingPy
 import distribute_setup
 distribute_setup.use_setuptools()
 
-from setuptools import setup, find_packages,Extension
+from setuptools import setup, find_packages, Extension
 import sys
-import os
 import os.path
 
 # check for specific features
 with_c = False
-for i,arg in enumerate(sys.argv):
+for i, arg in enumerate(sys.argv):
     if arg.lower() == '--with-c':
         del sys.argv[i]
         with_c = True
@@ -22,7 +21,7 @@ extra = {}
 
 # setup package name etc as a default
 pkgname = 'lingpy'
-pkg_dir = {'':'.'}
+pkg_dir = {'': '.'}
 pkg_location = '.'
 
 if sys.version_info >= (3,):
@@ -31,30 +30,30 @@ if sys.version_info >= (3,):
 # set up extension modules
 if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
     if with_c:
-        extension_path = ['lingpy','algorithm','cython']
+        extension_path = ['lingpy', 'algorithm', 'cython']
         extension_prefix = os.path.join(*extension_path)
         extension_modules = [
             Extension(
                 os.path.join('.'.join(extension_path + ['calign'])),
-                [os.path.join(extension_prefix,'calign.c')]
-                ),
+                [os.path.join(extension_prefix, 'calign.c')]
+            ),
             Extension(
-                 os.path.join('.'.join(extension_path + ['malign'])),
-                [os.path.join(extension_prefix,'malign.c')]
-                ),
+                os.path.join('.'.join(extension_path + ['malign'])),
+                [os.path.join(extension_prefix, 'malign.c')]
+            ),
             Extension(
                 os.path.join('.'.join(extension_path + ['talign'])),
-                [os.path.join(extension_prefix,'talign.c')]
-                ),
+                [os.path.join(extension_prefix, 'talign.c')]
+            ),
             Extension(
                 os.path.join('.'.join(extension_path + ['cluster'])),
-                [os.path.join(extension_prefix,'cluster.c')]
-                ),
+                [os.path.join(extension_prefix, 'cluster.c')]
+            ),
             Extension(
                 os.path.join('.'.join(extension_path + ['misc'])),
-                [os.path.join(extension_prefix,'misc.c')]
-                ),
-            ]
+                [os.path.join(extension_prefix, 'misc.c')]
+            ),
+        ]
     else:
         extension_modules = []
 else:
@@ -64,11 +63,9 @@ requires = [
     'networkx',
     'numpy',
     'six',
-    'appdirs'
-    ]
-    
-if sys.version_info < (3, 4):
-    requires.append('pathlib')
+    'appdirs',
+    'clldutils>=1.5.1',
+]
 
 # make global name of this version for convenience of modifying it
 thisversion = "2.5"

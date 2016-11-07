@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from lingpy.algorithm.extra import *
 from mock import MagicMock, patch
-from collections import namedtuple
+
 
 class components():
     def __init__(self, nodes):

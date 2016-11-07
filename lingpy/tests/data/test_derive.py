@@ -1,7 +1,7 @@
 # *-* coding: utf-8 *-*
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from lingpy.tests.util import WithTempDir
+from clldutils.testing import WithTempDir
 from lingpy import cache
 
 
@@ -35,7 +35,7 @@ w : w, ɰ, ʋ, ʍ
     def test_compile_model(self):
         from lingpy.data.derive import compile_model
 
-        compile_model('_test', self.tmp)
+        compile_model('_test', self.tmp.as_posix())
         sound_classes = cache.load('_test.converter')
         self.assertEqual(sound_classes['b'], 'b')
         self.assertTrue(self.tmp_path('_test', 'matrix').exists())

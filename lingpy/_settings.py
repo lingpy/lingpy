@@ -9,6 +9,5 @@ from datetime import datetime, date
 rcParams = dict(
     filename='lingpy-' + str(date.today()),
     timestamp=datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M'),
-    answer_yes=['y', 'Y', 'j', 'J', 'yes'],
     basic_orthography='fuzzy',
 )

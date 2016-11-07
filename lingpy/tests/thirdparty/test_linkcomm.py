@@ -1,6 +1,6 @@
 from lingpy.thirdparty.linkcomm import link_clustering
-from nose.tools import assert_raises
-from lingpy.tests.util import test_data, WithTempDir, get_log
+from clldutils.testing import WithTempDir
+
 
 def test_swap():
 

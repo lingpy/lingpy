@@ -1,3 +1,4 @@
 numpy
 appdirs
 networkx
+clldutils>=1.5.1

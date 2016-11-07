@@ -1,4 +1,6 @@
-from lingpy.tests.util import test_data, WithTempDir
+from clldutils.testing import WithTempDir
+
+from lingpy.tests.util import test_data
 
 
 class TestWorkflow(WithTempDir):

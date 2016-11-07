@@ -7,14 +7,12 @@ configuration files in the user's config dir.
 .. seealso:: https://pypi.python.org/pypi/appdirs/
 """
 from __future__ import unicode_literals, print_function, absolute_import, division
-import os
 import io
 
-from pathlib import Path
 from appdirs import user_config_dir
-from six import text_type, PY3
+from six import PY3
 from six.moves.configparser import RawConfigParser
-
+from clldutils.path import Path
 
 DIR = Path(user_config_dir('lingpy'))
 
@@ -28,7 +26,7 @@ class Config(RawConfigParser):
         """
         self.name = name
         self.default = default
-        config_dir = kw.pop('config_dir', None) or text_type(DIR)
+        config_dir = Path(kw.pop('config_dir', None) or DIR)
         RawConfigParser.__init__(self, kw, allow_no_value=True)
         if self.default:
             if PY3:
@@ -37,18 +35,18 @@ class Config(RawConfigParser):
                 fp = io.BytesIO(self.default.encode('utf8'))
             self.readfp(fp)
 
-        cfg_path = os.path.join(config_dir, name + '.ini')
-        if os.path.exists(cfg_path):
-            assert os.path.isfile(cfg_path)
-            self.read(cfg_path)
+        cfg_path = config_dir.joinpath(name + '.ini')
+        if cfg_path.exists():
+            assert cfg_path.is_file()
+            self.read(cfg_path.as_posix())
         else:
-            if not os.path.exists(config_dir):
+            if not config_dir.exists():
                 try:
-                    os.mkdir(config_dir)
+                    config_dir.mkdir()
                 except OSError:  # pragma: no cover
                     # this happens when run on travis-ci, by a system user.
                     pass
-            if os.path.exists(config_dir):
-                with open(cfg_path, 'w') as fp:
+            if config_dir.exists():
+                with open(cfg_path.as_posix(), 'w') as fp:
                     self.write(fp)
-        self.path = Path(cfg_path)
+        self.path = cfg_path

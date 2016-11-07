@@ -1,7 +1,8 @@
 from __future__ import print_function, division, unicode_literals
 from lingpy.compare.partial import Partial
+from clldutils.testing import WithTempDir
 from nose.tools import assert_raises
-from lingpy.tests.util import test_data, WithTempDir
+from lingpy.tests.util import test_data
 from six import text_type
 import lingpy.algorithm.extra
 

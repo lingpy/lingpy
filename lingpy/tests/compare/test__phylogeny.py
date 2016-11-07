@@ -1,10 +1,11 @@
+from clldutils.testing import WithTempDir
+
 import lingpy
-from lingpy.compare._phylogeny.convex_hull import area_of_triangle, convex_hull
+from lingpy.compare._phylogeny.convex_hull import convex_hull
 from lingpy.compare._phylogeny._settings import *
 from lingpy.compare._phylogeny.polygon import seg_intersect, getConvexHull, getPolygonFromNodes
 from lingpy.compare._phylogeny.utils import get_acs, check_stats, tstats
 from lingpy.compare.phylogeny import PhyBo
-from lingpy.tests.util import WithTempDir
 from lingpy.tests.util import test_data
 import os
 
