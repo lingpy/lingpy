@@ -480,7 +480,8 @@ class Wordlist(QLCParserWithRowsAndCols):
             ref='cogid',
             entry='concept',
             missing=0,
-            modify_ref=False):
+            modify_ref=False
+            ):
         """
         Function returns a list of present-absent-patterns of a given word list.
 

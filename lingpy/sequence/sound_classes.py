@@ -1280,7 +1280,10 @@ def sampa2uni(seq):
     result = ''
     tokens = reXS.findall(seq)
     for tok, err in tokens:
-        assert not err and tokens
+        try:
+            assert not err and tokens
+        except AssertionError:
+            raise AssertionError('{0} + {1}'.format(err, tok))
         result += xs[tok]
 
     return result
@@ -1357,6 +1360,9 @@ def _get_brackets(brackets):
             log.warn('lingpy.sequence.sound_classes.get_brackets' + \
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
+
+def strip_chars(chars, sequence):
+    return ''.join([s for s in sequence if s not in chars])
 
 def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,

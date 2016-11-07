@@ -216,7 +216,7 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     comps = G.community_infomap(edge_weights=None,
             vertex_weights=None)
     D = {}
-    for i,comp in enumerate(comps.subgraphs()):
+    for i, comp in enumerate(comps.subgraphs()):
         vertices = [v['name'] for v in comp.vs]
         for vertex in vertices:
             D[vertex] = i+1

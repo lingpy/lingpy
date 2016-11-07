@@ -8,7 +8,7 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
         get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse,\
-        clean_string, _get_brackets
+        clean_string, _get_brackets, strip_chars
 from lingpy import rc, csv2list
 from six import text_type
 
@@ -228,4 +228,6 @@ def test_clean_string():
     assert clean_string('a(a', ignore_brackets=False)[0] == 'a ( a'
     assert clean_string('a/a', split_entries=False)[0] == 'a / a'
 
-    
+
+def test_strip_chars():
+    assert strip_chars('[]', 'b[l]a') == 'bla'

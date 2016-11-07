@@ -22,8 +22,7 @@ from lingpy.convert import html
 from lingpy.convert.strings import msa2str
 from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, class2tokens, prosodic_string, prosodic_weights,
-    tokens2morphemes,
-)
+    tokens2morphemes)
 from lingpy.align.multiple import Multiple
 from lingpy.align.pairwise import Pairwise
 from lingpy.algorithm import misc
