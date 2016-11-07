@@ -14,7 +14,7 @@ try:
     import matplotlib as mpl
 except:
     log.missing_module('matplotlib')
-    plt = False
+    plt, mpl = False, False
 
 try:
     import scipy.cluster.hierarchy as sch

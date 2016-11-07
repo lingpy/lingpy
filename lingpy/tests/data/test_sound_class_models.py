@@ -1,9 +1,11 @@
 # *-* coding utf-8 *-*
-from lingpy import *
+from __future__ import unicode_literals
 from collections import defaultdict
 
-class Tests():
+from lingpy import *
 
+
+class Tests(object):
     # get all segments
     models = ['sca', 'dolgo', 'art', 'color', 'asjp']
     _model = dict([(model, Model(model)) for model in models])
@@ -22,5 +24,5 @@ class Tests():
         for model in failures:
             error_message += model+'\n'
             error_message += ' // '.join(['"'+x+'"' for x in failures[model]])+'\n\n'
-        raise ValueError(error_message)
-
+        print(error_message)
+        raise ValueError()
