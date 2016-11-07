@@ -366,7 +366,6 @@ class QLCParser(object):
                 res = function(s, *args, **kwargs)
             except:
                 print(s, key)
-                raise
                 raise ValueError('Could not convert item ID: {0}.'.format(key))
             if override:
                 self._data[key][self._header[lentry]] = res
