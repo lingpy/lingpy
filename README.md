@@ -50,7 +50,7 @@ $ git clone https://github.com/<your-github-user>/lingpy/
 $ cd lingpy
 $ python setup.py develop
 ```
-This will install LingPy in ["develpment mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
+This will install LingPy in ["development mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
 i.e. you will be able edit the sources in the cloned repository and import the altered code just as the regular python package.
 
 
