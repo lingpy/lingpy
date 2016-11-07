@@ -262,7 +262,8 @@ class QLCParser(object):
                         idx[0])) 
         raise KeyError("No entry with the specified key {0} could be found".format(
             idx))
-    def __setitem__(self, key, item):
+
+    def __setitem__(self, idx, item):
         """
         Modify a specific cell in a specific column of a wordlist.
         """
@@ -364,7 +365,9 @@ class QLCParser(object):
             try:
                 res = function(s, *args, **kwargs)
             except:
-                raise ValueError('Could not convert item "{0}" (ID: {1}).'.format(s, key))
+                print(s, key)
+                raise
+                raise ValueError('Could not convert item ID: {0}.'.format(key))
             if override:
                 self._data[key][self._header[lentry]] = res
             else:
