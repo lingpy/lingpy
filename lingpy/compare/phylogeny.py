@@ -3570,18 +3570,13 @@ class PhyBo(Wordlist):
         plt.legend(
             loc=conf['legend_location'],
             numpoints=1,
-            prop={
-                'size': conf['legend_size'],
-                'weight': 'bold'
-            }
-        )
+            prop={'size': conf['legend_size'], 'weight': 'bold'})
 
         plt.subplots_adjust(
             left=keywords['left'],
             right=keywords['right'],
             top=keywords['top'],
-            bottom=keywords['bottom']
-        )
+            bottom=keywords['bottom'])
 
         plt.savefig(filename + '.' + fileformat)
         plt.clf()
@@ -3593,15 +3588,9 @@ class PhyBo(Wordlist):
         cogA,
         cogB,
         labels={1: '1', 2: '2', 3: '3', 4: '4'},
-        tcolor={
-            1: 'white',
-            2: 'black',
-            3: '0.5',
-            4: '0.1'
-        },
+        tcolor={1: 'white', 2: 'black', 3: '0.5', 4: '0.1'},
         filename='pdf',
         fileformat='pdf',
-        threshold=1,
         usetex=True
     ):
         """
@@ -3613,36 +3602,22 @@ class PhyBo(Wordlist):
         geographic space.
 
         """
-        # usetex
         mpl.rc('text', usetex=True)
-
-        # redefine taxa and tree for convenience
         taxa = self.taxa
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
         if 'coords' in self._meta:
             coords = self.coords
-
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
-        # load the rc-file XXX add internal loading later
         conf = self._config()
 
-        # get the paps
         these_taxa = {}
         for taxon in taxa:
-
             # get the dictionary and the entry
-            try:
-                cogs = self.get_dict(col=taxon, entry='pap')[concept]
-            except:
-                cogs = []
+            cogs = self.get_dict(col=taxon, entry='pap').get(concept, [])
 
             # check for identical cogs and assign them to the 4 categories
             if cogA in cogs and cogB in cogs:
@@ -3693,34 +3668,23 @@ class PhyBo(Wordlist):
             # get the color of the given taxon
             # taxon_color = colors[groups[taxon]]
 
-            if these_taxa[taxon] == 4:
-                marker = '*'
-            else:
-                marker = 's'
+            marker = '*' if these_taxa[taxon] == 4 else 's'
 
-            # check for legend
             if labels[these_taxa[taxon]] in legend_check:
-                # check for forth marker
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     marker,
                     markersize=conf['markersize'],
-                    color=tcolor[these_taxa[taxon]],
-                    # zorder = 50,
-                )
+                    color=tcolor[these_taxa[taxon]])
             else:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     marker,
                     markersize=conf['markersize'],
                     color=tcolor[these_taxa[taxon]],
-                    # zorder = 52,
-                    label=labels[these_taxa[taxon]]
-                )
+                    label=labels[these_taxa[taxon]])
                 legend_check.append(labels[these_taxa[taxon]])
 
             # add number to celltext
@@ -3729,28 +3693,20 @@ class PhyBo(Wordlist):
             else:
                 cell_text.append([str(i + 1), taxon])
 
-            # plot the text
-            if tcolor[these_taxa[taxon]] == 'black':
-                textcolor = 'white'
-            else:
-                textcolor = 'black'
-
             plt.text(
                 x,
                 y,
                 str(i + 1),
                 size=str(int(conf['markersize'] / 2)),
                 label=taxon,
-                color=textcolor,
+                color='white' if tcolor[these_taxa[taxon]] == 'black' else 'black',
                 horizontalalignment='center',
-                verticalalignment='center',
-            )
+                verticalalignment='center')
 
         this_table = plt.table(
             cellText=cell_text,
             colWidths=conf['table.column.width'],
-            loc=conf['table.location'],
-        )
+            loc=conf['table.location'])
 
         # adjust the table
         for line in this_table._cells:
@@ -3764,26 +3720,16 @@ class PhyBo(Wordlist):
             this_table._cells[line].set_color(conf['table.cell.color'])
 
         this_table.set_zorder(100)
-
         plt.legend(
             loc=conf['legend.location'],
             numpoints=1,
-            prop={
-                'size': conf['legend.size'],
-                'weight': 'bold'
-            }
-        )
+            prop={'size': conf['legend.size'], 'weight': 'bold'})
 
         plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
         plt.savefig(filename + '.' + fileformat)
         plt.clf()
 
-    def plot_GLS(
-        self,
-        glm,
-        **keywords
-    ):
+    def plot_GLS(self, glm, **keywords):
         """
         Plot the inferred scenarios for a given model.
         """
@@ -3807,16 +3753,10 @@ class PhyBo(Wordlist):
                 x = d['graphics']['x']
                 y = d['graphics']['y']
                 f = d['graphics']['fill']
-                try:
-                    r = d['graphics']['angle']
-                    s = d['graphics']['s']
-                except:
-                    r = None
-                    s = None
-
+                r = d['graphics'].get('angle')
+                s = d['graphics'].get('s')
                 o = d['origin']
                 l = d['label']
-
                 nodes.append((x, y, f, o, l, r, s))
 
             edges = []
@@ -3825,7 +3765,6 @@ class PhyBo(Wordlist):
                 xB = g.node[b]['graphics']['x']
                 yA = g.node[a]['graphics']['y']
                 yB = g.node[b]['graphics']['y']
-
                 edges += [(xA, xB, yA, yB)]
 
             # mpl.rc('text',usetex=keywords['usetex'])
@@ -3838,22 +3777,9 @@ class PhyBo(Wordlist):
             plt.axis('equal')
 
             for xA, xB, yA, yB in edges:
-                plt.plot(
-                    [xA, xB],
-                    [yA, yB],
-                    '-',
-                    color='black',
-                    linewidth=5
-                )
-                plt.plot(
-                    [xA, xB],
-                    [yA, yB],
-                    '-',
-                    color='0.2',
-                    linewidth=4
-                )
+                plt.plot([xA, xB], [yA, yB], '-', color='black', linewidth=5)
+                plt.plot([xA, xB], [yA, yB], '-', color='0.2', linewidth=4)
             for x, y, f, o, l, r, s in nodes:
-
                 if f == '#000000':
                     f = '#a3a3a3'
                     c = '#a3a3a3'
@@ -3908,12 +3834,7 @@ class PhyBo(Wordlist):
             )
             plt.clf()
 
-    def get_stats(
-        self,
-        glm,
-        subset='',
-        filename=''
-    ):
+    def get_stats(self, glm, subset='', filename=''):
         """
         Calculate basic statistics for a given gain-loss model.
         """
@@ -3922,7 +3843,6 @@ class PhyBo(Wordlist):
         else:
             gains = []
             for cog in self.cogs:
-
                 # get the respective subset-item first
                 item = self[[c[0] for c in self.etd[cog] if c != 0][0], subset[0]]
 
@@ -3931,7 +3851,6 @@ class PhyBo(Wordlist):
                     gains += [self.gls[glm][cog][1]]
 
         noo = sum(gains) / len(gains)
-
         ppc = sum([1 for g in gains if g > 1]) / len(gains)
 
         log.info('Number of Origins: {0:.2f}'.format(noo))
@@ -3944,18 +3863,12 @@ class PhyBo(Wordlist):
             'Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,
                                                                                      ppc))
 
-    def plot_concept_evolution(
-        self,
-        glm,
-        concept='',
-        fileformat='png',
-        **keywords
-    ):
+    def plot_concept_evolution(self, glm, concept='', fileformat='png', **keywords):
         """
         Plot the evolution of specific concepts along the reference tree.
         """
-        # make defaults
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             figsize=(15, 15),
             left=0.05,
             top=0.95,
@@ -3971,12 +3884,7 @@ class PhyBo(Wordlist):
             usetex=False,
             latex_preamble=False,
             textsize=8,
-            subset=[]
-        )
-
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            subset=[])
 
         # check for the correct item
         if not concept:
@@ -4003,22 +3911,17 @@ class PhyBo(Wordlist):
             if keywords['latex_preamble']:
                 mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
-            # make a graph
             graph = nx.Graph()
 
             # get all paps that are no singletons
             paps = sorted(set([p for p in self.get_list(
-                row=concept,
-                flat=True,
-                entry='pap'
-            ) if p not in self.singletons]))
+                row=concept, flat=True, entry='pap') if p not in self.singletons]))
 
             if len(paps) <= 0:
                 log.warn(
                     "No entries for concept {0} could be found, skipping the plot.".format(
                         concept))
             else:
-
                 # get the number of paps in order to get the right colors
                 cfunc = np.array(np.linspace(10, 256, len(paps)), dtype='int')
                 colors = dict([(paps[i], mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
@@ -4057,14 +3960,7 @@ class PhyBo(Wordlist):
                 legendEntriesB = []
                 legendTextB = []
                 p = mpl.patches.Wedge(
-                    (0, 0),
-                    1,
-                    0,
-                    360,
-                    facecolor='0.5',
-                    linewidth=2,
-                    edgecolor='black',
-                )
+                    (0, 0), 1, 0, 360, facecolor='0.5', linewidth=2, edgecolor='black')
                 legendEntriesB += [p]
                 legendTextB += ['Loss Event']
                 p, = plt.plot(0, 0, '--', color='black', linewidth=2)
@@ -4076,20 +3972,11 @@ class PhyBo(Wordlist):
 
                 # iterate over the paps and append states to the graph
                 for pap in paps:
-
                     # get the graph with the model
                     gls = self.gls[glm][pap][0]
-                    g = gls2gml(
-                        gls,
-                        self.tgraph,
-                        self.tree,
-                        filename=''
-                    )
+                    g = gls2gml(gls, self.tgraph, self.tree, filename='')
 
-                    # iterate over the graph
                     for n, d in g.nodes(data=True):
-
-                        # add the node if necessary
                         if n not in graph:
                             graph.add_node(n)
 
@@ -4097,7 +3984,6 @@ class PhyBo(Wordlist):
                         if 'pap' not in graph.node[n]:
                             graph.node[n]['pap'] = {}
 
-                        # add data
                         graph.node[n]['pap'][pap] = d['state']
 
                 # create the figure
@@ -4123,8 +4009,7 @@ class PhyBo(Wordlist):
                         [yA, yB],
                         '-',
                         color='black',
-                        linewidth=keywords['edgewidth']
-                    )
+                        linewidth=keywords['edgewidth'])
 
                 # now iterate over the nodes
                 for n, d in graph.nodes(data=True):
@@ -4141,118 +4026,57 @@ class PhyBo(Wordlist):
                     yvals += [y]
 
                     # plot the default marker
-                    plt.plot(
-                        x,
-                        y,
-                        'o',
-                        markersize=5,
-                        color='black',
-                        zorder=50
-                    )
+                    plt.plot(x, y, 'o', markersize=5, color='black', zorder=50)
                     # check for origins in cpaps
+                    wedge_args = (
+                        (x, y), keywords['radius'] + keywords['outer_radius'], 0, 360)
                     if 'O' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='white',
                             zorder=57 + z,
                             linewidth=2.5,
-                            linestyle='dashed',
-                        )
-                        figsp.add_artist(w)
+                            linestyle='dashed')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif 'o' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='white',
                             zorder=56 + z,
                             linewidth=2.5,
-                            linestyle='solid',
-                        )
-                        figsp.add_artist(w)
-
+                            linestyle='solid')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     if 'L' in cpaps.values() and 'O' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='0.5',
                             zorder=58 + z,
                             linewidth=2.5,
                             edgecolor='black',
-                            linestyle='dashed'
-                        )
-                        figsp.add_artist(w)
-
+                            linestyle='dashed')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif "L" in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='0.5',
                             zorder=59 + z,
                             linewidth=2.5,
-                            edgecolor='black',
-                        )
-                        figsp.add_artist(w)
+                            edgecolor='black')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
 
-                    # plot all wedges
                     for pap in cpaps:
-
                         theta1, theta2 = wedges[pap]
                         color = colors[pap]
+                        wedge_args = ((x, y), keywords['radius'], theta1, theta2)
+                        wedge_kw = dict(
+                            facecolor=color, zorder=61 + z, linewidth=2, edgecolor='black'
+                        )
 
                         # check for characteristics of this pap
                         if cpaps[pap] == 'L':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                alpha=0.25,
-                                linewidth=2,
-                                edgecolor='black',
-                                linestyle='dotted'
-                            )
-                            figsp.add_artist(w)
-
+                            wedge_kw.update(alpha=0.25, linestyle='dotted')
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
                         elif cpaps[pap] == 'o':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                linewidth=2,
-                                edgecolor='black'
-                            )
-                            figsp.add_artist(w)
-
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
                         elif cpaps[pap] == 'O':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                linewidth=2,
-                                edgecolor='black',
-                                linestyle='dashed'
-                            )
-                            figsp.add_artist(w)
+                            wedge_kw.update(linestyle='dashed')
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
 
                     # add number for node
                     if n in self.taxa:
@@ -4287,22 +4111,14 @@ class PhyBo(Wordlist):
                     left=keywords['left'],
                     right=keywords['right'],
                     top=keywords['top'],
-                    bottom=keywords['bottom']
-                )
-
-                plt.savefig(
-                    self._output_path(
-                        'items',
-                        '{0}-{1}'.format(self.dataset, glm),
-                        concept.replace('/', '_') + '.' + fileformat
-                    )
-                )
+                    bottom=keywords['bottom'])
+                plt.savefig(self._output_path(
+                    'items',
+                    '{0}-{1}'.format(self.dataset, glm),
+                    concept.replace('/', '_') + '.' + fileformat))
                 plt.close()
 
-        # return the graph
         return
-
-        # add an alias for backwards compatibility
 
 
 TreBor = PhyBo
