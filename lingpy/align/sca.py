@@ -1017,9 +1017,9 @@ class Alignments(Wordlist):
 
         # go on with the analysis
         cons_dict = {}
-        with util.ProgressBar('CONSENSUS', len(self.etd[ref])) as progress:
+        with util.pb(desc='CONSENSUS', total=len(self.etd[ref])) as progress:
             for cog in self.etd[ref]:
-                progress.update()
+                progress.update(1)
 
                 if cog in self.msa[ref]:
                     log.debug("Analyzing cognate set number '{0}'...".format(cog))
