@@ -2196,19 +2196,13 @@ class PhyBo(Wordlist):
             entries = entries.split(',')
 
         # get the graph locally for convenience
-        if not msn:
-            graph = self.graph[glm]
-        else:
-            graph = self.geograph[glm]
+        graph = self.geograph[glm] if msn else self.graph[glm]
 
-        # get the edge
-        try:
-            edge = graph.edge[nodeA][nodeB]
-        except:
+        if not graph.has_edge(nodeA, nodeB):
             log.info(warning)
             return
 
-        # check the edge
+        edge = graph.edge[nodeA][nodeB]
         if not msn:
             if edge['label'] == 'horizontal':
                 cogs = edge['cogs'].split(',')
@@ -2217,10 +2211,6 @@ class PhyBo(Wordlist):
                 return
         else:
             cogs = edge['cogs'].split(',')
-
-        # define list for output
-        outA = {}
-        outB = {}
 
         # check whether nodes are in list or not
         if nodeA in self.taxa:
@@ -2232,73 +2222,30 @@ class PhyBo(Wordlist):
         else:
             nodesB = self.tree.getNodeMatchingName(nodeB).getTipNames()
 
-        # assemble the data
-        outA = {}
-        for node in nodesA:
-            tmp = dict(
-                zip(
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                        entry='pap'
-                    ),
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                    )
-                )
-            )
-            for cog in cogs:
-                vals = [node]
-                for entry in entries:
-                    try:
-                        vals += [self[tmp[cog], entry]]
-                    except:
-                        pass
-                if len(vals) > 1:
-                    try:
-                        outA[cog] += [tuple(vals)]
-                    except:
-                        outA[cog] = [tuple(vals)]
+        def assemble_output(nodes):
+            out = defaultdict(list)
+            for node in nodes:
+                tmp = dict(zip(
+                    self.get_list(col=node, flat=True, entry='pap'),
+                    self.get_list(col=node, flat=True)))
+                for cog in cogs:
+                    vals = [node]
+                    for entry in entries:
+                        try:
+                            vals += [self[tmp[cog], entry]]
+                        except:
+                            pass
+                    if len(vals) > 1:
+                        out[cog].append(tuple(vals))
+            return out
 
-        # assemble the data
-        outB = {}
-        for node in nodesB:
-            tmp = dict(
-                zip(
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                        entry='pap'
-                    ),
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                    )
-                )
-            )
-            for cog in cogs:
-                vals = [node]
-                for entry in entries:
-                    try:
-                        vals += [self[tmp[cog], entry]]
-                    except:
-                        pass
-                if len(vals) > 1:
-                    try:
-                        outB[cog] += [tuple(vals)]
-                    except:
-                        outB[cog] = [tuple(vals)]
+        outA = assemble_output(nodesA)
+        outB = assemble_output(nodesB)
 
-        # assemble the output
         output = []
         for cog in cogs:
             try:
-                output += [
-                    (
-                        self.pap2con[cog], outA[cog], outB[cog]
-                    )
-                ]
+                output += [(self.pap2con[cog], outA[cog], outB[cog])]
             except:
                 self.log.error(
                     "Error encountered in cognate {0}.".format(self.pap2con[cog]))
@@ -2349,40 +2296,31 @@ class PhyBo(Wordlist):
             Select or unselect output plot for the MSN.
 
         """
-
-        # set defaults
-        defaults = {
-            "colorbar": None,  # mpl.cm.jet,
-            'threshold': 1,
-            'fileformat': rcParams['phybo_fileformat'],
-            'usetex': False,
-            'only': [],
-            'colormap': None,  # mpl.cm.jet
-            'proto': False,
-            'xticksize': 6,
-            'method': 'mr',  # majority rule
-            'gpl': 1,
-            "push_gains": True,
-            "missing_data": 0,
-            "aligned_output": False,
-            "homoplasy": 0.05,
-            'evaluation': 'mwu'
-        }
-
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        util.setdefaults(
+            keywords,
+            colorbar=None,  # mpl.cm.jet,
+            threshold=1,
+            fileformat=rcParams['phybo_fileformat'],
+            usetex=False,
+            only=[],
+            colormap=None,  # mpl.cm.jet
+            proto=False,
+            xticksize=6,
+            method='mr',  # majority rule
+            gpl=1,
+            push_gains=True,
+            missing_data=0,
+            aligned_output=False,
+            homoplasy=0.05,
+            evaluation='mwu')
 
         # define a default set of runs
         if runs in ['default', 'weighted']:
-            runs = [
-                ('weighted', (3, 1)),
-                ('weighted', (5, 2)),
-                ('weighted', (2, 1)),
-                ('weighted', (3, 2)),
-                ('weighted', (1, 1)),
-            ]
-
+            runs = [('weighted', (3, 1)),
+                    ('weighted', (5, 2)),
+                    ('weighted', (2, 1)),
+                    ('weighted', (3, 2)),
+                    ('weighted', (1, 1))]
         elif runs in ['topdown', 'top-down']:
             runs = [('topdown', 2),
                     ('topdown', 3),
@@ -2392,65 +2330,36 @@ class PhyBo(Wordlist):
                     ('topdown', 7),
                     ('topdown', 8),
                     ('topdown', 9),
-                    ('topdown', 10),
-                    ]
-
+                    ('topdown', 10)]
         elif runs == 'restriction':
-
             runs = [('restriction', 2),
                     ('restriction', 3),
                     ('restriction', 4),
                     ('restriction', 5),
-                    ('restriction', 6),
-                    ]
+                    ('restriction', 6)]
 
-        # carry out the various analyses
         for mode, params in runs:
+            log.info(
+                "Analysing dataset with mode {0} and params {1}...".format(mode, params))
+            kw = dict(
+                mode=mode,
+                output_gml=output_gml,
+                tar=tar,
+                output_plot=output_plot,
+                missing_data=keywords["missing_data"])
             if mode == 'weighted':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and ratio {0[0]}:{0[1]}...".format(params)
-                )
-
-                self.get_GLS(
-                    mode=mode,
-                    ratio=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
+                kw.update(
                     gpl=keywords['gpl'],
                     push_gains=keywords['push_gains'],
-                    missing_data=keywords["missing_data"],
-                )
+                    ratio=params)
             elif mode == 'restriction':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and restriction {0}...".format(params)
-                )
-
-                self.get_GLS(
-                    mode=mode,
-                    restriction=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
+                kw.update(
                     gpl=keywords['gpl'],
                     push_gains=keywords['push_gains'],
-                    missing_data=keywords["missing_data"]
-                )
+                    restriction=params)
             elif mode == 'topdown':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and restriction {0}...".format(params)
-                )
-                self.get_GLS(
-                    mode=mode,
-                    restriction=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
-                    missing_data=keywords["missing_data"]
-                )
+                kw.update(restriction=params)
+            self.get_GLS(**kw)
 
         # calculate the different distributions
         # start by calculating the contemporary distributions
@@ -2470,11 +2379,7 @@ class PhyBo(Wordlist):
         zp_vsd = []
         for m in modes:
             vsd = sp.stats.mstats.kruskalwallis(  # sp.stats.mannwhitneyu(
-                self.dists['contemporary'],
-                self.dists[m],
-                # use_continuity = False
-            )
-
+                self.dists['contemporary'], self.dists[m])
             zp_vsd.append((vsd[0], vsd[1]))
 
         # determine the best model
@@ -2505,10 +2410,7 @@ class PhyBo(Wordlist):
             if 'mixed' not in modes:
                 modes += ['mixed']
                 vsd = sp.stats.mstats.kruskalwallis(  # sp.stats.mannwhitneyu(
-                    self.dists['contemporary'],
-                    self.dists['mixed'],
-                    # use_continuity = False
-                )
+                    self.dists['contemporary'], self.dists['mixed'])
                 zp_vsd.append((vsd[0], vsd[1]))
 
         # write results to file
@@ -2527,7 +2429,6 @@ class PhyBo(Wordlist):
 
         # plot the stats if this is defined in the settings
         if plot_dists:
-
             log.info("Plotting distributions.")
             # specify latex
             mpl.rc('text', usetex=keywords['usetex'])
@@ -2542,10 +2443,8 @@ class PhyBo(Wordlist):
             ano = [self.stats[m]['ano'] for m in modes]
 
             # create a sorter for the distributions
-            sorter = [s[0] for s in sorted(
-                zip(range(len(modes)), ano),
-                key=lambda x: x[1]
-            )]
+            sorter = [
+                s[0] for s in sorted(zip(range(len(modes)), ano), key=lambda x: x[1])]
 
             # sort the stuff
             dists_vsd = [dists_vsd[i] for i in sorter]
@@ -2556,9 +2455,8 @@ class PhyBo(Wordlist):
             zp_vsd = [zp_vsd[i] for i in sorter]
 
             # format the zp-values
+            p_vsd = []
             if keywords['usetex']:
-
-                p_vsd = []
                 for i, (z, p) in enumerate(zp_vsd):
                     if p < 0.001:
                         p_vsd.append('p$<${0:.2f}'.format(p))
@@ -2569,9 +2467,7 @@ class PhyBo(Wordlist):
                         mode_strings[i] = r'\textbf{' + modes[i] + '}'
                     else:
                         p_vsd.append('p$=${0:.2f}'.format(p))
-
             else:
-                p_vsd = []
                 for z, p in zp_vsd:
                     if p < 0.001:
                         p_vsd.append('p<{0:.2f}'.format(p))
@@ -2580,32 +2476,21 @@ class PhyBo(Wordlist):
                     else:
                         p_vsd.append('p={0:.2f}'.format(p))
 
-            # create the figure
             fig = plt.figure()
-
-            # create the axis
             ax = fig.add_subplot(111)
-
-            # add the boxplots
             b = ax.boxplot([dist_vsd] + dists_vsd)
             plt.setp(b['medians'], color='black')
             plt.setp(b['whiskers'], color='black')
             plt.setp(b['boxes'], color='black')
-
-            # adjust the yticks
             for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(18)
 
-            # add the xticks
             plt.xticks(
                 range(1, len(modes) + 2),
                 [''] + ['{0}\n{1}'.format(m, p) for m, p in zip(mode_strings, p_vsd)],
                 size=keywords['xticksize'],
                 rotation=45,
-                # rotation_mode='anchor',
-                ha='center',
-                # va = 'center'
-            )
+                ha='center')
 
             ax.yaxis.grid(
                 True,
@@ -2613,27 +2498,19 @@ class PhyBo(Wordlist):
                 which='major',
                 color='lightgrey',
                 alpha=0.5,
-                zorder=1
-            )
+                zorder=1)
 
             plt.subplots_adjust(bottom=0.2)
-
-            # save the figure
             plt.savefig(self._output_path('vsd.' + keywords['fileformat']))
             plt.clf()
-
             log.info("Plotted the distributions.")
 
-        # carry out further analyses if this is specified
         if full_analysis:
-
             self.get_MLN(
                 self.best_model,
                 threshold=keywords['threshold'],
-                method=keywords['method']
-            )
+                method=keywords['method'])
 
-            # check whether plots are chosen
             if plot_mln:
                 self.plot_MLN(
                     self.best_model,
@@ -2654,10 +2531,7 @@ class PhyBo(Wordlist):
                     colormap=keywords['colormap']
                 )
 
-            self.get_PDC(
-                self.best_model,
-                **keywords
-            )
+            self.get_PDC(self.best_model, **keywords)
 
     def plot_MLN(
         self,
@@ -2696,9 +2570,7 @@ class PhyBo(Wordlist):
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
