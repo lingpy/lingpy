@@ -102,10 +102,10 @@ class TestUtils(WithTempDir):
             return
 
         with patch('lingpy.compare._phylogeny.utils.sps', new=SPS()):
-            phy = PhyBo(self.ifile, output_dir=self.tmp)
+            phy = PhyBo(self.ifile, output_dir=self.tmp.as_posix())
             phy.analyze()
             get_acs(phy, phy.best_model)
             tstats(phy, phy.best_model, return_dists=True)
 
-            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp,
+            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp.as_posix(),
                 'test'), pprint=False)
