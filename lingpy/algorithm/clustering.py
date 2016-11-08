@@ -3,7 +3,6 @@ Module provides general clustering functions for LingPy.
 """
 from __future__ import unicode_literals, print_function, division
 from collections import defaultdict
-from itertools import combinations
 
 from six import text_type
 import numpy as np
@@ -23,6 +22,7 @@ from lingpy.thirdparty import linkcomm as lc
 from lingpy.thirdparty import cogent as cg
 from lingpy import log
 from lingpy import util
+
 
 def flat_upgma(threshold, matrix, taxa=None, revert=False):
     """
@@ -85,6 +85,7 @@ def flat_upgma(threshold, matrix, taxa=None, revert=False):
 
     """
     return cluster.flat_upgma(threshold, matrix, taxa or [], revert)
+
 
 def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
     """
@@ -152,8 +153,7 @@ def flat_cluster(method, threshold, matrix, taxa=None, revert=False):
         for i, line in enumerate(matrix):
             for j, cell in enumerate(line):
                 if i < j:
-                    matrix[i][j] = cell ** 2
-                    matrix[j][i] = matrix[i][j]
+                    matrix[j][i] = matrix[i][j] = cell ** 2
         method = 'upgma'
 
     return cluster.flat_cluster(method, threshold, matrix, taxa or [], revert)
@@ -266,6 +266,7 @@ def neighbor(matrix, taxa, distances=True):
 
     return cluster.neighbor(matrix, taxa, distances)
 
+
 def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
     """
     Create fuzzy cluster of a given distance matrix.
@@ -353,13 +354,11 @@ def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
             method, threshold, new_matrix, [t for t in taxa if t != taxon])
 
         for clr in clusters:
-            for i, tA in enumerate(clusters[clr]):
-                for j, tB in enumerate(clusters[clr]):
-                    if i < j:
-                        try:
-                            g.edge[tA][tB]['weight'] += 1
-                        except:
-                            g.add_edge(tA, tB, weight=1)
+            for tA, tB in util.combinations2(clusters[clr]):
+                if not g.has_edge(tA, tB):
+                    g.add_edge(tA, tB, weight=1)
+                else:
+                    g.edge[tA][tB]['weight'] += 1
     out = {i + 1: c for i, c in enumerate(nx.find_cliques(g))}
 
     if revert:
@@ -457,18 +456,17 @@ def matrix2groups(threshold, matrix, taxa, cluster_method="upgma"):
             out[taxa[i]] = n
     return out
 
+
 def _get_wad(matrix, threshold, use_log=False):
     """
     Get weighted average degree.
     """
-    if use_log:
-        log_f = lambda x: -np.log(1 - x)
-    else:
-        log_f = lambda x: x
+    def log_f(x):
+        return -np.log(1 - x) if use_log else x
 
     degreeDict = defaultdict(list)
 
-    for i, j in combinations(range(len(matrix)), 2):
+    for i, j in util.combinations2(range(len(matrix))):
         score = matrix[i][j]
         if score < threshold:
             deg = log_f(score)
@@ -482,6 +480,7 @@ def _get_wad(matrix, threshold, use_log=False):
 
     if degreeDict:
         return deg_sum / len(degreeDict)
+
 
 def find_threshold(matrix, thresholds=[i * 0.05 for i in range(1, 19)][::-1], logs=True):
     """
@@ -637,9 +636,9 @@ def link_clustering(
     """
     # check for matrix type
     if matrix_type == 'distances':
-        evaluate = lambda x: True if x < threshold else False
+        evaluate = lambda x: x < threshold
     elif matrix_type == 'similarities':
-        evaluate = lambda x: True if x > threshold else False
+        evaluate = lambda x: x > threshold
     elif matrix_type == 'weights':
         evaluate = lambda x: False
     else:
@@ -650,7 +649,7 @@ def link_clustering(
     adjacency = dict([(t, set()) for t in taxa])
     weights = {}
 
-    for i, j in combinations(range(len(taxa)), 2):
+    for i, j in util.combinations2(range(len(taxa))):
         taxA, taxB = taxa[i], taxa[j]
         if evaluate(matrix[i][j]):
             edges.add((taxA, taxB))
@@ -662,8 +661,8 @@ def link_clustering(
                 adjacency[taxA].add(taxB)
                 adjacency[taxB].add(taxA)
                 edges.add((taxB, taxA))
-                weights[taxA, taxB] = -np.log2((1 - matrix[i][j])**2)
-                weights[taxB, taxA] = -np.log2((1 - matrix[i][j])**2)
+                weights[taxA, taxB] = -np.log2((1 - matrix[i][j]) ** 2)
+                weights[taxB, taxA] = -np.log2((1 - matrix[i][j]) ** 2)
     weights = weights or None
 
     if edges:
@@ -700,21 +699,20 @@ def link_clustering(
         clr2nodes[idx] = sorted(set(clr2nodes[idx]))
 
     # delete all clusters that appear as subsets of larger clusters
-    delis = []
-    for keyA in sorted(clr2nodes):
-        for keyB in sorted(clr2nodes):
-            if keyA != keyB:
-                valsA = set(clr2nodes[keyA])
-                valsB = set(clr2nodes[keyB])
+    delis = set()
+    for keyA, keyB in util.product2(sorted(clr2nodes)):
+        if keyA != keyB:
+            valsA = set(clr2nodes[keyA])
+            valsB = set(clr2nodes[keyB])
 
-                if valsA != valsB:
-                    if valsA.issubset(valsB):
-                        delis += [keyA]
-                    elif valsB.issubset(valsA):
-                        delis += [keyB]
-                elif valsA == valsB:
-                    delis += [keyB]
-    for k in set(delis):
+            if valsA != valsB:
+                if valsA.issubset(valsB):
+                    delis.add(keyA)
+                elif valsB.issubset(valsA):
+                    delis.add(keyB)
+            elif valsA == valsB:
+                delis.add(keyB)
+    for k in delis:
         del clr2nodes[k]
 
     # renumber the data
@@ -756,22 +754,23 @@ def link_clustering(
                 reverse=True)
             new_cluster[t] = weighted[0]
         if revert:
-            return dict([(taxa.index(t), c) for t, c in new_cluster.items()])
+            return {taxa.index(t): c for t, c in new_cluster.items()}
 
-        out = dict([(c, []) for c in set(new_cluster.values())])
+        out = {c: [] for c in set(new_cluster.values())}
         for t, c in new_cluster.items():
-            out[c] += [t]
+            out[c].append(t)
         return out
 
     if not revert:
         return out
 
-    cluster = dict([(t, []) for t in taxa])
+    cluster = {t: [] for t in taxa}
     for idx in out:
         for t in out[idx]:
-            cluster[t] += [idx]
+            cluster[t].append(idx)
 
     return cluster
+
 
 # the following lines of code are devoted to mcl clustering algorithm
 
@@ -811,11 +810,9 @@ def _interprete_matrix(matrix):
 
     # make a converter for length
     out = [0 for i in range(len(matrix))]
-    idx = 1
-    for clr in clusters:
+    for idx, clr in enumerate(clusters):
         for i in clr:
-            out[i] = idx
-        idx += 1
+            out[i] = idx + 1
 
     if sum(out) == 0:
         return list(range(len(out)))
@@ -915,13 +912,13 @@ def mcl(
     if matrix_type == 'distances':
         evaluate = lambda x: True if x < threshold else False
         if logs == True:
-            logs = lambda x: -np.log2((1 - x)**2)
+            logs = lambda x: -np.log2((1 - x) ** 2)
         elif logs == False:
             logs = lambda x: x
     elif matrix_type == 'similarities':
         evaluate = lambda x: True if x > threshold else False
         if logs == True:
-            logs = lambda x: -np.log(x**2)
+            logs = lambda x: -np.log(x ** 2)
         else:
             logs = lambda x: x
     else:
@@ -929,7 +926,7 @@ def mcl(
 
     # check for threshold
     if threshold:
-        for i, j in combinations(range(len(imatrix)), 2):
+        for i, j in util.combinations2(range(len(imatrix))):
             score = imatrix[i][j]
             evaluation = logs(score) if evaluate(score) else 0
             imatrix[i][j] = evaluation
@@ -995,10 +992,9 @@ def partition_density(matrix, t):
     # compute cutoff for matrix at t
     m = np.zeros((len(matrix), len(matrix)))
 
-    for i, j in combinations(range(len(matrix)), 2):
+    for i, j in util.combinations2(range(len(matrix))):
         if matrix[i][j] < t:
-            m[i][j] = 1
-            m[j][i] = 1
+            m[j][i] = m[i][j] = 1
 
     # get the total number of links
     T = sum(m.flatten()) / 2
@@ -1008,7 +1004,7 @@ def partition_density(matrix, t):
     idx = 1
     parts = [0 for i in range(len(m))]
 
-    for i, j in combinations(range(len(m)), 2):
+    for i, j in util.combinations2(range(len(m))):
         if m[i][j] == 1:
             if parts[i] == parts[j] and parts[i] != 0:
                 pass
@@ -1058,7 +1054,7 @@ def partition_density(matrix, t):
 
         # get edges
         edges = 0
-        for i, j in combinations(range(len(nodes)), 2):
+        for i, j in util.combinations2(range(len(nodes))):
             if m[nodes[i]][nodes[j]] == 1:
                 edges += 1
 

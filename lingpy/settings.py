@@ -65,7 +65,7 @@ alignments = dict(
         'Y': 3.0,  # vowel in non-final syllable
         'Z': 0.7,  # vowel in final syllable
         'T': 1.0,  # Tone
-        '_': 0.0   # break character
+        '_': 0.0  # break character
     },
     align_notransform={
         # new values for alternative prostrings
@@ -79,7 +79,7 @@ alignments = dict(
         'Y': 1,  # vowel in non-final syllable
         'Z': 1,  # vowel in final syllable
         'T': 1,  # Tone
-        '_': 1   # break character
+        '_': 1  # break character
     },
     align_stamp="""# MSA
 # dataset    : {0}
@@ -160,7 +160,7 @@ def rc(rval=None, **keywords):
         "asjp", this means that sequences will be treated as sequences in ASJP
         code, otherwise, they will be treated as sequences written in basic
         IPA.
-    
+
     Notes
     -----
     This function is the standard way to communicate with the *rcParams*
@@ -181,7 +181,7 @@ def rc(rval=None, **keywords):
     Switch from IPA transcriptions to ASJP transcriptions:
 
     >>> rc(schema="asjp")
-    
+
     You can check which "basic orthography" is currently loaded:
 
     >>> rc(basic_orthography)

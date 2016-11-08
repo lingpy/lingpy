@@ -2,8 +2,6 @@
 Adapting specific cluster algorithms from scikit-learn to LingPy.
 """
 from collections import defaultdict
-from lingpy import log
-
 
 try:
     from sklearn import cluster
@@ -15,6 +13,7 @@ except ImportError:
     igraph = False
 
 import numpy as np
+
 
 def dbscan(
         threshold,
@@ -42,7 +41,7 @@ def dbscan(
     min_samples : int (default=1)
         The minimal samples parameter of the DBCSCAN method from the SKLEARN
         package.
-    
+
     Returns
     -------
     clusters : dict
@@ -55,7 +54,7 @@ def dbscan(
     distances between points as input. We list it only for completeness here,
     but urge to be careful when using the code and checking properly our
     implementation in the source code.
-    
+
     Requires the scikitlearn package, downloadable from http://scikit-learn.org/.
     """
     if not cluster:
@@ -66,7 +65,7 @@ def dbscan(
 
     core_samples, labels = cluster.dbscan(
         matrix, eps=threshold, min_samples=min_samples, metric='precomputed')
-    
+
     # change to our internal cluster style
     idx = max(labels) + 1
     if idx == 0:
@@ -85,10 +84,11 @@ def dbscan(
         clr[labels[i]] += [t]
     return clr
 
+
 def affinity_propagation(threshold, matrix, taxa, revert=False):
     """
     Compute affinity propagation from the matrix.
-    
+
     Parameters
     ----------
     threshold : float
@@ -109,7 +109,7 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
     clusters : dict
         Either a dictionary of taxon identifiers and labels, or a dictionary of
         labels and taxon names.
-    
+
     Notes
     -----
 
@@ -135,8 +135,8 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
         for j in range(i + 1, len(matrix)):
             score = matrix[i][j]
             if score < threshold:
-                matrix[i][j] = - np.log2(1 - score ** 2)  
-                matrix[j][i] = matrix[i][j]  
+                matrix[i][j] = - np.log2(1 - score ** 2)
+                matrix[j][i] = matrix[i][j]
             else:
                 matrix[i][j] = - score ** 5
                 matrix[j][i] = - score ** 5
@@ -161,6 +161,7 @@ def affinity_propagation(threshold, matrix, taxa, revert=False):
     for i, t in enumerate(taxa):
         clr[labels[i]] += [t]
     return clr
+
 
 def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     """
@@ -204,27 +205,27 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     for i in range(len(matrix)):
         G.add_vertex(i)
         vertex_weights += [0]
-    
+
     # variable stores edge weights, if they are not there, the network is
     # already separated by the threshold
-    for i,row in enumerate(matrix):
-        for j,cell in enumerate(row):
+    for i, row in enumerate(matrix):
+        for j, cell in enumerate(row):
             if i < j:
                 if cell <= threshold:
                     G.add_edge(i, j)
-     
+
     comps = G.community_infomap(edge_weights=None,
-            vertex_weights=None)
+                                vertex_weights=None)
     D = {}
     for i, comp in enumerate(comps.subgraphs()):
         vertices = [v['name'] for v in comp.vs]
         for vertex in vertices:
-            D[vertex] = i+1
+            D[vertex] = i + 1
 
     if revert:
         return D
 
     clr = defaultdict(list)
-    for i,t in enumerate(taxa):
+    for i, t in enumerate(taxa):
         clr[D[i]] += [t]
     return clr
