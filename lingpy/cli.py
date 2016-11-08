@@ -6,6 +6,7 @@ import argparse
 from six import text_type as str
 from six import with_metaclass
 
+
 class CommandMeta(type):
     """
     A metaclass which keeps track of subclasses, if they have all-lowercase names.
@@ -102,6 +103,7 @@ def add_method_option(p, default, choices, spec=''):
         "The %s method you want to use." % spec,
         choices=choices)
 
+
 def add_format_option(p, default, choices):
     add_option(p, 'format', default, "Output format.", choices=choices)
 
@@ -129,6 +131,7 @@ class wordlist(Command):
     """
     Load a wordlist and carry out simple checks.
     """
+
     @classmethod
     def subparser(cls, p):
         add_shared_args(p)
@@ -213,6 +216,7 @@ class alignments(Command):
     """
     Carry out alignment analysis of a wordlist file with readily detected cognates.
     """
+
     @classmethod
     def subparser(cls, p):
         add_shared_args(p)
@@ -369,6 +373,7 @@ class pairwise(Command):
     * define user input using psa-formats in lingpy
     * define user output (stdout, file)
     """
+
     @classmethod
     def subparser(cls, p):
         add_shared_args(p)
@@ -387,9 +392,9 @@ class pairwise(Command):
             try:
                 return '\t'.join(x) + '\n' + '\t'.join(y) + '\n{0:.2f}'.format(z)
             except TypeError:
-                out1 = ''.join(x[0])+'\t|\t'+'\t'.join(x[1])+'\t|\t'+''.join(x[2])
-                out2 = ''.join(y[0])+'\t|\t'+'\t'.join(y[1])+'\t|\t'+''.join(y[2])
-                return out1+'\n'+out2+'\n'+'{0:.2f}'.format(z)
+                out1 = ''.join(x[0]) + '\t|\t' + '\t'.join(x[1]) + '\t|\t' + ''.join(x[2])
+                out2 = ''.join(y[0]) + '\t|\t' + '\t'.join(y[1]) + '\t|\t' + ''.join(y[2])
+                return out1 + '\n' + out2 + '\n' + '{0:.2f}'.format(z)
 
         if args.strings:
             if args.method == 'basic':
@@ -434,6 +439,7 @@ class multiple(Command):
     -----
 
     """
+
     @classmethod
     def subparser(cls, p):
         add_shared_args(p)
@@ -529,6 +535,7 @@ class help(Command):
     """
     Show help for commands.
     """
+
     @classmethod
     def subparser(self, parser):
         parser.add_argument(

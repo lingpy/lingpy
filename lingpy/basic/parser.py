@@ -23,6 +23,7 @@ class QLCParser(object):
     Basic class for the handling of text files in QLC format.
 
     """
+
     @staticmethod
     def unpickle(filename):
         obj = cache.load(filename)
@@ -56,7 +57,7 @@ class QLCParser(object):
             input_data.update(filename._meta.items())
             input_data[0] = [a for a, b in sorted(
                 filename.header.items(),
-                key=lambda x:x[1],
+                key=lambda x: x[1],
                 reverse=False)]
             internal_import = True
             self.filename = rcParams['filename']
@@ -135,9 +136,10 @@ class QLCParser(object):
         check_errors = ''
         for k, v in self._data.items():
             if len(v) != len(self.header):
-                check_errors += 'Row {0} in your data contains {1} fields (expected {2})\n'.format(k, len(v), len(self.header))
+                check_errors += 'Row {0} in your data contains {1} fields (expected {2})\n'.format(
+                    k, len(v), len(self.header))
         if check_errors:
-            raise ValueError(check_errors+'\n'+', '.join(sorted(self.header)))
+            raise ValueError(check_errors + '\n' + ', '.join(sorted(self.header)))
 
         # iterate over self._data and change the values according to the
         # functions (only needed when reading from file)
@@ -147,13 +149,13 @@ class QLCParser(object):
                 check = []
                 for head, i in heads:
                     if i not in check:
-                        logstring = 'Problem with row {0} in col {1}, expected' +\
-                            ' «{4}» as datatype but received «{3}» ' +\
-                            ' (ROW: {2}, entry {5}).'
+                        logstring = 'Problem with row {0} in col {1}, expected' + \
+                                    ' «{4}» as datatype but received «{3}» ' + \
+                                    ' (ROW: {2}, entry {5}).'
                         try:
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
-                        except KeyError: 
+                        except KeyError:
                             log.warn(
                                 logstring.format(
                                     key,
@@ -249,7 +251,7 @@ class QLCParser(object):
                     return
                 else:
                     raise KeyError("No line with ID {0} specified could be found.".format(
-                        idx[0])) 
+                        idx[0]))
         raise KeyError("No entry with the specified key {0} could be found".format(
             idx))
 
@@ -261,8 +263,8 @@ class QLCParser(object):
             try:
                 self._data[idx[0]][self.header[self._alias[idx[1]]]] = item
             except KeyError:
-                    raise KeyError("No line with ID {0} specified could be found.".format(
-                        idx[0]))
+                raise KeyError("No line with ID {0} specified could be found.".format(
+                    idx[0]))
         raise ValueError("__setitem__ requires two values as key.")
 
     def __len__(self):
@@ -416,6 +418,7 @@ class QLCParser(object):
             idx = self._header[source]
             for key in self:
                 _apply(key, self[key][idx], **keywords)
+
 
 class QLCParserWithRowsAndCols(QLCParser):
     def __init__(self, filename, row, col, conf):

@@ -15,7 +15,6 @@ from clldutils import clilib
 import lingpy
 from lingpy.log import get_level, file_written
 
-
 PROG = 'LingPy-{0}'.format(lingpy.__version__)
 
 pb = partial(tqdm, leave=False)
@@ -41,14 +40,17 @@ def multicombinations2(iterable):
     return itertools.combinations_with_replacement(iterable, 2)
 
 
+product2 = partial(itertools.product, repeat=2)
+
+
 def join(sep, *args, **kw):
     """
     Convenience shortcut. Strings to be joined do not have to be passed as list or tuple.
-    
+
     Notes
     -----
     An implicit conversion of objects to strings is performed as well.
-    
+
     """
     if len(args) == 1 and isinstance(args[0], (list, tuple, types.GeneratorType)):
         args = args[0]
@@ -78,19 +80,20 @@ class TemporaryPath(object):
 def lingpy_path(*comps):
     return Path(lingpy.__file__).parent.joinpath(*comps).as_posix()
 
+
 data_path = partial(lingpy_path, 'data')
 
 
 def _str_path(path, mkdir=False):
     """Get a file-system path as text_type, suitable for passing into io.open.
-    
+
     Parameters
     ----------
     path : {text_type, Path}
         A fs path either as Path instance or as text_type.
     mkdir : bool (default=False)
         If True, create the directories within the path.
-    
+
     Returns
     -------
     path : text_type
@@ -104,7 +107,7 @@ def _str_path(path, mkdir=False):
 
 def write_text_file(path, content, normalize=None, log=True):
     """Write a text file encoded in utf-8.
-    
+
     Parameters
     ----------
     path : str
@@ -158,17 +161,18 @@ def read_text_file(path, normalize=None, lines=False):
     lines : bool (default=False)
         Flag signalling whether to return a list of lines (without
         the line-separation character).
-    
+
     Returns
     -------
     file_content : { list, str }
         File content as unicode object or list of lines as unicode objects.
-    
+
     Notes
     -----
     The whole file is read into memory.
-    
+
     """
+
     def _normalize(chunk):
         return unicodedata.normalize(normalize, chunk) if normalize else chunk
 
@@ -195,7 +199,7 @@ def read_config_file(path, **kw):
 
 def setdefaults(d, **kw):
     """Shortcut for a common idiom, setting multiple default values at once.
-    
+
     Parameters
     ----------
     d : dict
