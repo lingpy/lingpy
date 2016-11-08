@@ -7,7 +7,7 @@ results of these operations.
 from __future__ import unicode_literals, print_function, absolute_import, division
 import pickle
 
-from pathlib import Path
+from clldutils.path import Path
 from appdirs import user_cache_dir
 
 
@@ -15,9 +15,7 @@ DIR = Path(user_cache_dir('lingpy'))
 
 
 def path(filename):
-    if not isinstance(filename, Path):
-        filename = Path(filename)
-    return DIR.joinpath(filename.name + '.pkl')
+    return DIR.joinpath(Path(filename).name + '.pkl')
 
 
 def load(filename):

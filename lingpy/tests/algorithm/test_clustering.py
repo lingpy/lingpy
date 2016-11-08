@@ -2,10 +2,9 @@ from __future__ import unicode_literals
 import os
 
 from six import text_type
-from mock import patch
 from nose.tools import assert_raises
+from clldutils.testing import WithTempDir
 
-from lingpy.tests.util import WithTempDir
 
 class Tests(WithTempDir):
 

@@ -1,7 +1,9 @@
 # coding: utf8
 from __future__ import unicode_literals
 
-from lingpy.tests.util import WithTempDir, test_data
+from clldutils.testing import WithTempDir
+
+from lingpy.tests.util import test_data
 
 
 class Tests(WithTempDir):

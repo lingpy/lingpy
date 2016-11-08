@@ -1,8 +1,8 @@
+from clldutils.testing import WithTempDir
 from lingpy.tests.util import test_data
 from lingpy.read.csv import *
 from lingpy.meaning.glosses import parse_gloss, compare_conceptlists,\
         compare_concepts
-from lingpy.tests.util import WithTempDir
 from six import text_type
 
 class Tests(WithTempDir):

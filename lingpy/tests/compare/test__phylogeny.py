@@ -1,10 +1,11 @@
+from clldutils.testing import WithTempDir
+
 import lingpy
-from lingpy.compare._phylogeny.convex_hull import area_of_triangle, convex_hull
+from lingpy.compare._phylogeny.convex_hull import convex_hull
 from lingpy.compare._phylogeny._settings import *
 from lingpy.compare._phylogeny.polygon import seg_intersect, getConvexHull, getPolygonFromNodes
 from lingpy.compare._phylogeny.utils import get_acs, check_stats, tstats
 from lingpy.compare.phylogeny import PhyBo
-from lingpy.tests.util import WithTempDir
 from lingpy.tests.util import test_data
 import os
 
@@ -101,10 +102,10 @@ class TestUtils(WithTempDir):
             return
 
         with patch('lingpy.compare._phylogeny.utils.sps', new=SPS()):
-            phy = PhyBo(self.ifile, output_dir=self.tmp)
+            phy = PhyBo(self.ifile, output_dir=self.tmp.as_posix())
             phy.analyze()
             get_acs(phy, phy.best_model)
             tstats(phy, phy.best_model, return_dists=True)
 
-            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp,
+            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp.as_posix(),
                 'test'), pprint=False)

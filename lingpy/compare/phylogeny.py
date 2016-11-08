@@ -9,6 +9,7 @@ import itertools
 from six import text_type
 
 import numpy as np
+from clldutils import jsonlib
 
 from lingpy.compare._phylogeny.utils import get_acs
 from lingpy.compare._phylogeny._settings import rcParams
@@ -501,13 +502,10 @@ class PhyBo(Wordlist):
         :param comps: path components relative to the output directory.
         :return: the path.
         """
-        subdir = os.path.basename(self.dataset) + '_phybo'
-        path = os.path.join(self._output_dir, subdir, *comps)
-        if kw.get('mkdir', True):
-            dirname = os.path.dirname(path)
-            if not os.path.exists(dirname):
-                os.makedirs(dirname)
-        return path
+        return util._str_path(
+            os.path.join(
+                self._output_dir, os.path.basename(self.dataset) + '_phybo', *comps),
+            mkdir=kw.get('mkdir', True))
 
     def _write_file(self, name, content, log=True):
         """Write a file to the dataset-specific output directory.
@@ -522,7 +520,7 @@ class PhyBo(Wordlist):
         if 'conf' in self._meta:
             return self._meta['conf']
         try:
-            return util.jsonload(self.dataset + '.json')
+            return jsonlib.load(self.dataset + '.json')
         except:
             return {}
 

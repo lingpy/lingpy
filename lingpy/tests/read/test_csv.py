@@ -10,7 +10,6 @@ __date__="2013-11-23"
 
 from lingpy.read.csv import read_asjp
 from lingpy.compare.lexstat import LexStat
-from lingpy.tests.util import test_data
 from ..util import *
 
 def test_read_asjp():
@@ -122,4 +121,3 @@ def test_csv2multidict():
 
     assert md['We']['is'] == 'are'
     assert sum([int(md[x]['head']) for x in md]) == 8
-

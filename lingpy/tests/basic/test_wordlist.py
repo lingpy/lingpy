@@ -3,9 +3,10 @@ Test wordlist module.
 """
 from six import text_type
 from nose.tools import assert_raises
+from clldutils.testing import WithTempDir
 
 from lingpy import Wordlist
-from lingpy.tests.util import test_data, WithTempDir
+from lingpy.tests.util import test_data
 
 
 class TestWordlist(WithTempDir):

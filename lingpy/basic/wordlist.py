@@ -9,12 +9,13 @@ import numpy as np
 from collections import defaultdict
 
 from six import text_type as str
+from clldutils import dsv
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
 from lingpy.basic.parser import QLCParserWithRowsAndCols
 from lingpy.basic.ops import (
-    wl2dst, wl2dict, renumber, clean_taxnames, calculate_data, wl2qlc, tsv2triple,
+    wl2dst, wl2dict, renumber, calculate_data, wl2qlc, tsv2triple,
     wl2multistate, coverage,
 )
 from lingpy.algorithm import clustering as cluster
@@ -966,7 +967,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             return sum([a / self.height for a in cov.values()]) / self.width
 
 
-def get_wordlist(path, **keywords):
+def get_wordlist(path, delimiter=",", quotechar='"', **keywords):
     """
     Load a wordlist from a normal CSV file.
 
@@ -997,16 +998,9 @@ def get_wordlist(path, **keywords):
     identifiers, which are required by LingPy will be automatically created.
 
     """
-    kw = dict(
-            delimiter = str(","),
-            quotechar = str('"'),
-            conf = "",
-            col = "doculect",
-            row = "concept",
-            )
+    kw = dict(conf="", col="doculect", row="concept")
     kw.update(keywords)
-    data = util.read_csv_file(path, kw['delimiter'], kw['quotechar'],
-            normalize="NFC")
+    data = list(dsv.reader(path, delimiter=delimiter, quotechar=quotechar))
     header = [h.lower() for h in data[0]]
     data = data[1:]
     D = {}
@@ -1016,8 +1010,6 @@ def get_wordlist(path, **keywords):
             D[row[0]] = row[1:]
     else:
         D[0] = header
-        idx = 1
-        for row in data:
-            D[idx] = row
-            idx += 1
+        for idx, row in enumerate(data):
+            D[idx + 1] = row
     return Wordlist(D, row=kw['row'].lower(), col=kw['col'].lower())

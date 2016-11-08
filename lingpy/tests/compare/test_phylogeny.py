@@ -5,10 +5,10 @@ from __future__ import unicode_literals
 import os
 from collections import defaultdict
 
+from clldutils.testing import WithTempDir
 from mock import MagicMock, patch
 import lingpy
 from lingpy.compare.phylogeny import PhyBo
-from lingpy.tests.util import WithTempDir
 from lingpy.tests.util import test_data
 
 
@@ -16,12 +16,14 @@ class Plt(MagicMock):
     def plot(self, *args, **kw):
         return [MagicMock()]
 
+
 class Nx(MagicMock):
     def Graph(self, *args, **kw):
         return MagicMock(nodes=lambda **kw: [(MagicMock(), MagicMock())])
 
     def generate_gml(self, *args):
         yield ''
+
 
 class Graph(MagicMock):
     def nodes(self, **kw):
@@ -44,10 +46,10 @@ class TestPhyBo(WithTempDir):
             os.path.dirname(lingpy.__file__), 'tests', 'test_data', 'phybo.qlc')
 
     def test_get_GLS(self):
-        phy = PhyBo(self.inputfile, output_dir=self.tmp)
-        phy2 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp,
+        phy = PhyBo(self.inputfile, output_dir=self.tmp.as_posix())
+        phy2 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix(),
                 tree=test_data('phylogeny.tre'))
-        phy3 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp)
+        phy3 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix())
         
         # test default scenario
         phy.get_GLS()
@@ -80,7 +82,7 @@ class TestPhyBo(WithTempDir):
     @patch('lingpy.compare.phylogeny.plt', new=Plt())
     @patch('lingpy.compare.phylogeny.sp', new=Sp())
     def test_plot(self):
-        phy = PhyBo(self.inputfile, output_dir=self.tmp)
+        phy = PhyBo(self.inputfile, output_dir=self.tmp.as_posix())
         phy.get_GLS()
         glm = list(phy.stats.keys())[0]
         phy.plot_GLS(glm)

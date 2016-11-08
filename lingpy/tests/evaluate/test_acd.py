@@ -1,8 +1,10 @@
 # coding: utf8
 from __future__ import unicode_literals
 
+from clldutils.testing import WithTempDir
+
 from lingpy import LexStat
-from lingpy.tests.util import test_data, WithTempDir
+from lingpy.tests.util import test_data
 from lingpy.compare.partial import Partial
 
 

@@ -83,23 +83,15 @@ class QLCParser(object):
         self._alias, self._class, self._class_string, self._alias2 = {}, {}, {}, {}
         for name, cls, alias in tmp:
             # make sure the name itself is there
-            self._alias[name.lower()] = name
-            self._alias[name.upper()] = name
-
-            self._class[name.lower()] = eval(cls)
-            self._class[name.upper()] = eval(cls)
-
-            self._class_string[name.lower()] = cls
-            self._class_string[name.upper()] = cls
+            self._alias[name.lower()] = self._alias[name.upper()] = name
+            self._class[name.lower()] = self._class[name.upper()] = eval(cls)
+            self._class_string[name.lower()] = self._class_string[name.upper()] = cls
 
             # add the aliases
             for a in alias.split(','):
-                self._alias[a.lower()] = name
-                self._alias[a.upper()] = name
-                self._class[a.lower()] = eval(cls)
-                self._class[a.upper()] = eval(cls)
-                self._class_string[a.lower()] = cls
-                self._class_string[a.upper()] = cls
+                self._alias[a.lower()] = self._alias[a.upper()] = name
+                self._class[a.lower()] = self._class[a.upper()] = eval(cls)
+                self._class_string[a.lower()] = self._class_string[a.upper()] = cls
 
             self._alias2[name] = sorted(set(alias.split(','))) + [name]
 
@@ -118,19 +110,17 @@ class QLCParser(object):
         # why this was important XXX
         self._alias[''] = ''
 
-        # the header stores the indices of the data in the original data
-        # dictionary
+        # the header stores the indices of the data in the original data dictionary
         self.header = dict(
             zip([self._alias[x] for x in input_data[0]], range(len(input_data[0]))))
 
         # now create a specific header which has all aliases
-        self._header = dict([(k, v) for k, v in self.header.items()])
+        self._header = {k: v for k, v in self.header.items()}
 
         # assign all aliases to the header
         for alias in self._alias:
             try:
-                idx = self._header[self._alias[alias]]
-                self._header[alias] = idx
+                self._header[alias] = self._header[self._alias[alias]]
             except:
                 pass
 

@@ -1,13 +1,15 @@
 from __future__ import print_function, division, unicode_literals
 import os
-from pathlib import Path
 
+from clldutils.path import Path
+from clldutils.testing import WithTempDir
+from clldutils import jsonlib
 from mock import patch, Mock
 from nose.tools import assert_raises
 from lingpy import LexStat, rc
 from lingpy.compare.lexstat import char_from_charstring, get_score_dict
-from lingpy.util import jsonload
-from lingpy.tests.util import test_data, WithTempDir, get_log
+from lingpy.tests.util import test_data, get_log
+
 
 def test_char_from_charstring():
     assert char_from_charstring('a.b.c') == "b"
@@ -72,7 +74,7 @@ class TestLexStat(WithTempDir):
         self.maxDiff = None
 
         for name in 'bscorer rscorer pairs'.split():
-            obj = jsonload(test_data('KSL.%s.json' % name))
+            obj = jsonlib.load(test_data('KSL.%s.json' % name))
             if name != 'pairs':
                 self.assertEquals(getattr(self.lex, name).matrix, obj)
             else:
@@ -135,7 +137,7 @@ class TestLexStat(WithTempDir):
     def test_get_subset(self):
         self.lex.get_subset([])
         self.assertEquals([v for v in self.lex.subsets.values() if v], [])
-        pairs = jsonload(test_data('KSL.pairs.json'))
+        pairs = jsonlib.load(test_data('KSL.pairs.json'))
         self.assertEquals(
             sorted('---'.join(k) for k in self.lex.subsets.keys()),
             sorted(pairs.keys()))

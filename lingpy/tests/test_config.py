@@ -2,13 +2,13 @@ from __future__ import unicode_literals
 import os
 from io import open
 
-from lingpy.tests.util import WithTempDir
+from clldutils.testing import WithTempDir
 
 
 class ConfigTest(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
-        self.cfg = os.path.join(self.tmp, '.config')
+        self.cfg = os.path.join(self.tmp.as_posix(), '.config')
 
     def _make_one(self, **kw):
         from lingpy.config import Config

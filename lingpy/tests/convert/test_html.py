@@ -1,6 +1,7 @@
+from clldutils.testing import WithTempDir
+
 from lingpy.convert.html import *
 from lingpy import *
-from lingpy.tests.util import WithTempDir
 from lingpy.tests.util import test_data
 from six import text_type
 

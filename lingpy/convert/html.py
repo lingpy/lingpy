@@ -5,12 +5,11 @@ Basic functions for HTML-plots.
 from __future__ import unicode_literals, print_function, division
 import os
 import colorsys
-import webbrowser
 import json
 import re
 from functools import partial
 
-from six import text_type
+from six import string_types
 
 from lingpy.settings import rcParams
 from lingpy.read.qlc import read_msa
@@ -373,7 +372,7 @@ def msa2html(
 
     # treat the msa-object as a file and try to load the file if this is the
     # case
-    if isinstance(msa, text_type):
+    if isinstance(msa, string_types):
         msa = read_msa(msa, **keywords)
     else:
         raise ValueError('[!] No filename specified.')
