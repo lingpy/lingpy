@@ -1637,15 +1637,12 @@ class PhyBo(Wordlist):
         Compute the ancestral character states (ACS) for all internal nodes.
 
         """
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             proto=False,
             force=False,
             filename=self._output_path('acs-' + glm),
-            fileformat='csv'
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            fileformat='csv')
 
         if glm not in self.acs:
             self.get_AVSD(glm, **keywords)
@@ -1657,12 +1654,7 @@ class PhyBo(Wordlist):
                 for c, m, p in sorted(self.acs[glm][key], key=lambda x: x[1]):
                     f.write('{0}\t{1}\t{2}\t{3}\n'.format(key, c, m, p))
 
-    def get_MLN(
-        self,
-        glm,
-        threshold=1,
-        method='mr'
-    ):
+    def get_MLN(self, glm, threshold=1, method='mr'):
         """
         Compute an Minimal Lateral Network for a given model.
 
@@ -1682,11 +1674,6 @@ class PhyBo(Wordlist):
               selecting those which have the highest betweenness centrality
 
         """
-
-        # if not colormap:
-        #    colormap = mpl.cm.jet
-
-        # create the primary graph
         gPrm = nx.Graph()
 
         # make alias for tree and taxa for convenience
@@ -1701,9 +1688,6 @@ class PhyBo(Wordlist):
 
         # create dictionary for inferred lateral events
         ile = {}
-
-        # create mst graph
-        gMST = nx.Graph()
 
         # create out graph
         gOut = nx.Graph()
@@ -1729,157 +1713,70 @@ class PhyBo(Wordlist):
             data['graphics']['width'] = 10.0
             data['graphics']['fill'] = '#000000'
             data['label'] = 'vertical'
-
-            gPrm.add_edge(
-                gTpl.node[nodeA]['label'],
-                gTpl.node[nodeB]['label'],
-                **data
-            )
+            gPrm.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
 
         # start to assign the edge weights
         for cog, (gls, noo) in scenarios.items():
-
-            # get the origins
-            oris = [x[0] for x in gls if x[1] == 1]
-
-            # connect origins by edges
-            for i, oriA in enumerate(oris):
-                for j, oriB in enumerate(oris):
-                    if i < j:
-                        try:
-                            gPrm.edge[oriA][oriB]['weight'] += 1
-                        except:
-                            gPrm.add_edge(
-                                oriA,
-                                oriB,
-                                weight=1
-                            )
+            # connect the origins with edges
+            for oriA, oriB in util.combinations2(x[0] for x in gls if x[1] == 1):
+                if not gPrm.has_edge(oriA, oriB):
+                    gPrm.add_edge(oriA, oriB, weight=1)
+                else:
+                    gPrm.edge[oriA][oriB]['weight'] += 1
 
         log.info("Calculated primary graph.")
         log.info("Inferring lateral edges...")
 
-        # create MST graph
         gMST = nx.Graph()
 
         for cog, (gls, noo) in util.pb(
-            scenarios.items(), desc='MLN-RECONSTRUCTION', total=len(scenarios)):
+                scenarios.items(), desc='MLN-RECONSTRUCTION', total=len(scenarios)):
             ile[cog] = []
-
-            # get the origins
             oris = [x[0] for x in gls if x[1] == 1]
-
-            # create a graph of weights
             gWeights = nx.Graph()
 
             # calculate majority-rule edges
             if method in ['majority_rule', 'mr']:
                 # iterate over nodes
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            w = gPrm.edge[nodeA][nodeB]['weight']
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    gWeights.add_edge(
+                        nodeA, nodeB, weight=gPrm.edge[nodeA][nodeB]['weight'])
             elif method in ['tree_distance', 'td']:
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = len(
-                                    self.tree.getConnectingEdges(
-                                        nodeA,
-                                        nodeB
-                                    )
-                                )
-                            except ValueError:
-                                if 'root' in (nodeA, nodeB):
-                                    w = len(
-                                        self.tree.getConnectingEdges(
-                                            nodeB,
-                                            nodeA
-                                        )
-                                    )
-                                else:
-                                    wA = len(
-                                        self.tree.getConnectingEdges(
-                                            'root',
-                                            nodeA
-                                        )
-                                    )
-                                    wB = len(
-                                        self.tree.getConnectingEdges(
-                                            'root',
-                                            nodeB
-                                        )
-                                    )
-                                    w = wA + wB
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    try:
+                        w = len(self.tree.getConnectingEdges(nodeA, nodeB))
+                    except ValueError:
+                        if 'root' in (nodeA, nodeB):
+                            w = len(self.tree.getConnectingEdges(nodeB, nodeA))
+                        else:
+                            w = len(self.tree.getConnectingEdges('root', nodeA)) +\
+                                len(self.tree.getConnectingEdges('root', nodeB))
+                    gWeights.add_edge(nodeA, nodeB, weight=w)
             elif method in ['betweenness_centrality', 'bc']:
                 bc = nx.edge_betweenness_centrality(
-                    gPrm, normalized=True,
-                    weight='weight'
-                )
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = bc[nodeA, nodeB]
-                            except KeyError:
-                                w = bc[nodeB, nodeA]
-                            # be careful with zero division
-                            # if w == 0:
-                            #    w = 0.1
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=int(100 * (1 - w))  # int(1000 / w)
-                            )
+                    gPrm, normalized=True, weight='weight')
+                for nodeA, nodeB in util.combinations2(oris):
+                    try:
+                        w = bc[nodeA, nodeB]
+                    except KeyError:
+                        w = bc[nodeB, nodeA]
+                    gWeights.add_edge(nodeA, nodeB, weight=int(100 * (1 - w)))
             elif method in ['central_node', 'cn']:
                 # get the weighted degrees for the primary graph
                 degrees = gPrm.degree(weight='weight')
-
-                # get the maximum degree
-                max_deg = sorted(
-                    degrees,
-                    key=lambda x: degrees[x],
-                    reverse=True
-                )[0]
+                max_deg = sorted(degrees, key=lambda x: degrees[x], reverse=True)[0]
 
                 # add all nodes as simple
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            if max_deg in [nodeA, nodeB]:
-                                w = 0
-                            else:
-                                w = 10
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    gWeights.add_edge(
+                        nodeA, nodeB, weight=0 if max_deg in [nodeA, nodeB] else 10)
 
             # if the graph is not empty
             if gWeights:
-
-                # check for identical weights and change them according to
-                # tree-distance
-                tmp_weights = {}
+                # check for identical weights and change them according to tree-distance
+                tmp_weights = defaultdict(list)
                 for a, b, d in gWeights.edges(data=True):
-                    try:
-                        tmp_weights[int(d['weight'])] += [(a, b)]
-                    except:
-                        tmp_weights[int(d['weight'])] = [(a, b)]
+                    tmp_weights[int(d['weight'])].append((a, b))
 
                 if method in ['mr', 'majority_rule']:
                     # check for identical weights and calculate the tree distance
@@ -1901,24 +1798,18 @@ class PhyBo(Wordlist):
                                 except:
                                     if 'root' in (a, b):
                                         branch_distance = len(
-                                            self.tree.getConnectingEdges(b, a)
-                                        )
+                                            self.tree.getConnectingEdges(b, a))
                                         branches += [(a, b, branch_distance)]
                                     else:
-                                        bdA = len(
-                                            self.tree.getConnectingEdges('root', a)
-                                        )
-                                        bdB = len(
-                                            self.tree.getConnectingEdges('root', b)
-                                        )
+                                        bdA = len(self.tree.getConnectingEdges('root', a))
+                                        bdB = len(self.tree.getConnectingEdges('root', b))
                                         branches += [(a, b, bdA + bdB)]
 
                             # now change the weights according to the order
                             scaler = 1 / len(branches)
                             minus = 1 - scaler
-                            branches = sorted(branches,
-                                              key=lambda x: (x[2], x[1], x[0]),
-                                              reverse=True)
+                            branches = sorted(
+                                branches, key=lambda x: (x[2], x[1], x[0]), reverse=True)
                             for a, b, d in branches:
                                 gWeights.edge[a][b]['weight'] += minus
                                 minus -= scaler
@@ -1934,16 +1825,11 @@ class PhyBo(Wordlist):
 
                 # assign the MST-weights to gMST
                 for nodeA, nodeB in mst.edges():
-                    try:
+                    if gMST.has_edge(nodeA, nodeB):
                         gMST.edge[nodeA][nodeB]['weight'] += 1
                         gMST.edge[nodeA][nodeB]['cogs'] += [cog]
-                    except:
-                        gMST.add_edge(
-                            nodeA,
-                            nodeB,
-                            weight=1,
-                            cogs=[cog]
-                        )
+                    else:
+                        gMST.add_edge(nodeA, nodeB, weight=1, cogs=[cog])
                     ile[cog] += [(nodeA, nodeB)]
 
         # load data for nodes into new graph
@@ -1970,37 +1856,18 @@ class PhyBo(Wordlist):
                 del data['graphics']['Line']
             except:
                 pass
-            gOut.add_edge(
-                gTpl.node[nodeA]['label'],
-                gTpl.node[nodeB]['label'],
-                **data
-            )
+            gOut.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
 
         # assign new edge weights
         for nodeA, nodeB, data in gMST.edges(data=True):
             w = data['weight']
-
-            # get the color for the weight
-            # color = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
-
             data['graphics'] = {}
-            # data['graphics']['fill'] = color
-            # data['graphics']['width'] = w * scale
             data['cogs'] = ','.join([text_type(i) for i in data['cogs']])
             data['label'] = 'horizontal'
 
-            # check for threshold
             if w >= threshold:
-                try:
-                    gOut.edge[nodeA][nodeB]
-                except:
-                    # add the data to the out-graph
-                    gOut.add_edge(
-                        nodeA,
-                        nodeB,
-                        **data
-                    )
-        # transfer node data
+                if not gOut.has_edge(nodeA, nodeB):
+                    gOut.add_edge(nodeA, nodeB, **data)
 
         log.info("Writing graph to file...")
         self._write_file('mln-' + glm + '.gml', nx.generate_gml(gOut))
@@ -2037,16 +1904,11 @@ class PhyBo(Wordlist):
             dgr.append(len(horizontals))
             wdgr.append(sum([gOut[taxon][g]['weight'] for g in horizontals]))
 
-        sorted_nodes = sorted(
-            zip(nodes, dgr, wdgr),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        sorted_nodes = sorted(zip(nodes, dgr, wdgr), key=lambda x: x[1], reverse=True)
         lines = []
         for n, d, w in sorted_nodes:
-            lines.append(
-                '{0}\t{1}\t{2}\t{3}'.format(
-                    n, text_type(tree.getNodeMatchingName(n)), d, w))
+            lines.append(util.tabjoin((
+                n, text_type(tree.getNodeMatchingName(n)), d, w)))
         self._write_file('taxa-' + glm + '.stats', lines)
 
         log.info("Wrote node degree distributions to file.")
@@ -2055,21 +1917,14 @@ class PhyBo(Wordlist):
         edges = [g for g in gOut.edges(data=True) if 'weight' in g[2]]
 
         lines = []
-        for nA, nB, d in sorted(
-            edges,
-            key=lambda x: x[2]['weight'],
-            reverse=True
-        ):
-            lines.append(
-                '{0}\t{1}\t{2}\t{3}\t{4}\t{5}'.format(
-                    nA,
-                    nB,
-                    d['weight'],
-                    d['cogs'],
-                    tree.getNodeMatchingName(nA),
-                    tree.getNodeMatchingName(nB)
-                )
-            )
+        for nA, nB, d in sorted(edges, key=lambda x: x[2]['weight'], reverse=True):
+            lines.append(util.tabjoin((
+                nA,
+                nB,
+                d['weight'],
+                d['cogs'],
+                tree.getNodeMatchingName(nA),
+                tree.getNodeMatchingName(nB))))
         self._write_file('edge-' + glm + '.stats', lines)
         log.info("Wrote edge-weight distributions to file.")
 
@@ -2083,11 +1938,9 @@ class PhyBo(Wordlist):
                         tmp = [x for x in self.etd[cog] if x != 0]
                         idx = [x[0] for x in tmp][0]
                         concept = self[idx, 'concept']
-
                         proto = cog
 
-                        # get the index of the current entry in its dictionary
-                        # representation
+                        # get the index of the current entry in dictionary representation
                         idx = self.get_dict(col=taxon, entry='pap')[concept]
                         idx = idx.index(cog)
 
@@ -2104,50 +1957,31 @@ class PhyBo(Wordlist):
         log.info("Wrote list of edges per taxa to file.")
         return
 
-    def get_PDC(
-        self,
-        glm,
-        **keywords
-    ):
+    def get_PDC(self, glm, **keywords):
         """
         Calculate Patchily Distributed Cognates.
         """
-        defaults = dict(
-            aligned_output=True,
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
+        util.setdefaults(keywords, aligned_output=True)
         patchy = {}
         paps = []
 
         for key, (gls, noo) in self.gls[glm].items():
-
             # get the origins
             oris = sorted(
                 [x[0] for x in gls if x[1] == 1],
-                key=lambda x: len(
-                    self.tree.getNodeMatchingName(x).getTipNames()
-                )
-            )
+                key=lambda x: len(self.tree.getNodeMatchingName(x).getTipNames()))
 
             # get the tip-taxa for each origin
             tips = []
-
             losses = [a for a, b in zip(self.taxa, self.paps[key]) if b == 0]
 
             tipsofar = []
             for i, ori in enumerate(oris):
                 new_tips = [
                     i + 1,
-                    [t for t in
-                     self.tree.getNodeMatchingName(
-                         ori
-                     ).getTipNames() if t not in losses and t not in tipsofar]
-                ]
+                    [t for t in self.tree.getNodeMatchingName(ori).getTipNames()
+                     if t not in losses and t not in tipsofar]]
                 tipsofar += new_tips[1]
-
                 tips += [tuple(new_tips)]
 
             # now, all set of origins with their tips are there, we store them
@@ -2174,11 +2008,7 @@ class PhyBo(Wordlist):
         # create a dictionary as updater for the wordlist
         updater = {}
         for key in self:
-
-            # get the taxon first
             taxon = self[key][taxIdx]
-
-            # get the pap
             pap = self[key][papIdx]
 
             try:
@@ -2187,12 +2017,7 @@ class PhyBo(Wordlist):
                 updater[key] = '{0}:{1}'.format(pap, 0)
 
         # update the wordlist
-        self.add_entries(
-            'patchy',
-            updater,
-            lambda x: x,
-            override=True
-        )
+        self.add_entries('patchy', updater, util.identity, override=True)
 
         # write data to file
         # self.output('csv',filename=self.dataset+'_phybo/wl-'+glm)
@@ -2206,7 +2031,7 @@ class PhyBo(Wordlist):
                 f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\tPROTO\n')
             else:
                 f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\n')
-            concepts = {}
+            concepts = defaultdict(list)
             for a, b in sorted(paps, key=lambda x: x[1], reverse=True):
                 a1, a2 = a.split(':')
                 a3 = self._id2gl[int(a2)]
@@ -2216,10 +2041,7 @@ class PhyBo(Wordlist):
 
                 # append three vals: number of origins, number of words, and the
                 # number of origins per number of words
-                try:
-                    concepts[a3] += [(b, len(l), b / len(l))]
-                except:
-                    concepts[a3] = [(b, len(l), b / len(l))]
+                concepts[a3].append((b, len(l), b / len(l)))
 
                 # check for proto
                 if 'proto' in self.entries:
@@ -2227,9 +2049,8 @@ class PhyBo(Wordlist):
                     f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\t{6}\n'.format(
                         a1, a2, a3, b, len(l), b / float(len(l)), proto))
                 else:
-                    f.write(
-                        '{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1, a2, a3, b, len(l),
-                                                                    float(b) / len(l)))
+                    f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(
+                        a1, a2, a3, b, len(l), float(b) / len(l)))
         log.info("Wrote stats on paps to file.")
 
         # write stats on concepts
@@ -2266,7 +2087,7 @@ class PhyBo(Wordlist):
         with util.TextFile(self._output_path('cognates-' + glm + '.stats')) as f:
             f.write('CONCEPT\tCOGNATES\tPATCHIES\tREFLEXES\tPCR\n')
 
-            concepts = {}
+            concepts = defaultdict(list)
             for pap in self.etd:
                 gloss = self.pap2con[pap]
                 idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
@@ -2275,10 +2096,7 @@ class PhyBo(Wordlist):
                 reflexes = len(patchies)
                 patchies = len(set(patchies))
                 cogs = len(set(cogs))
-                try:
-                    concepts[gloss] += [(cogs, patchies, reflexes)]
-                except:
-                    concepts[gloss] = [(cogs, patchies, reflexes)]
+                concepts[gloss].append((cogs, patchies, reflexes))
 
             for key, value in concepts.items():
                 concepts[key] = (
@@ -2287,8 +2105,8 @@ class PhyBo(Wordlist):
                     sum([v[2] for v in value])
                 )
 
-            for k, (c, p, r) in sorted(concepts.items(), key=lambda x: x[1][2],
-                                       reverse=True):
+            for k, (c, p, r) in sorted(
+                    concepts.items(), key=lambda x: x[1][2], reverse=True):
                 f.write(
                     '{0}\t{1}\t{2}\t{3}\t{4:.2f}\n'.format(k, c, p, r, (p - c + 1) / r))
             # write mean
@@ -2308,40 +2126,24 @@ class PhyBo(Wordlist):
             reflexes=sum([x[2] for x in concepts.values()]) / self.height,
             origins=sum([x[0] for x in cstats.values()]) / self.height,
             # reflexes = sum([x[1] for x in cstats.values()]) / self.height,
-            patchy_per_reflex=sum([x[2] for x in cstats.values()]) / self.height
-        )
+            patchy_per_reflex=sum([x[2] for x in cstats.values()]) / self.height)
 
         # write results to alm-file
         # get all patchy cognates
-        tmp = {}
+        tmp = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
         for key in self:
             patchy = self[key, 'patchy']
             if not patchy.endswith('0'):
-
                 concept = self[key, 'concept']
                 taxon = self[key, 'doculect']
                 pap = self[key, 'pap']
 
                 # XXX change this later for more flexibility XXX
-
-                if 'ipa' in self.header:
-                    word = self[key, 'ipa']
-                else:
-                    word = self[key, 'counterpart']
+                word = self[key, 'ipa'] if 'ipa' in self.header \
+                    else self[key, 'counterpart']
                 if not word:
-                    raise NameError(
-                        "[ERROR] Neither 'ipa' nor 'counterpart' is defined."
-                    )
-
-                if concept not in tmp:
-                    tmp[concept] = {}
-                if pap not in tmp[concept]:
-                    tmp[concept][pap] = {}
-
-                try:
-                    tmp[concept][pap][patchy] += [(taxon, word)]
-                except:
-                    tmp[concept][pap][patchy] = [(taxon, word)]
+                    raise NameError("[ERROR] Neither 'ipa' nor 'counterpart' is defined.")
+                tmp[concept][pap][patchy].append((taxon, word))
 
         if keywords["aligned_output"]:
             # write stuff to alm-file
@@ -2378,28 +2180,17 @@ class PhyBo(Wordlist):
                         for i, word in enumerate(words):
                             string = '{0:' + text_type(
                                 formatter) + '}\t{1}\t|\t{2}\t|\t[{3}]\n'
-                            f.write(
-                                string.format(langs[i], patchies[i], '\t'.join(alms[i]),
-                                              word))
+                            f.write(string.format(
+                                langs[i], patchies[i], '\t'.join(alms[i]), word))
                         f.write('\n')
                     f.write('\n')
 
-    def get_edge(
-        self,
-        glm,
-        nodeA,
-        nodeB,
-        entries='',
-        msn=False
-    ):
+    def get_edge(self, glm, nodeA, nodeB, entries='', msn=False):
         """
         Return the edge data for a given gain-loss model.
         """
         # define a warning message
-        warning = "No edge between {0} and {1} could be found".format(
-            nodeA,
-            nodeB
-        )
+        warning = "No edge between {0} and {1} could be found".format(nodeA, nodeB)
         # check for entryB
         if isinstance(entries, text_type):
             entries = entries.split(',')
