@@ -92,6 +92,13 @@ setup(
         "computational linguistics",
         "dialectology"
     ],
+    classifiers=[
+        'Natural Language :: English',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+    ],
     url="http://lingpy.org",
     description="Python library for automatic tasks in historical linguistics",
     license="gpl-3.0",
