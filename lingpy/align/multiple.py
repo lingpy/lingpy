@@ -19,7 +19,7 @@ from lingpy.sequence.sound_classes import (
 )
 from lingpy.settings import rcParams
 from lingpy import log
-from lingpy.util import setdefaults, identity, dotjoin, as_string 
+from lingpy.util import setdefaults, identity, dotjoin, as_string
 
 
 class Multiple(object):
@@ -37,6 +37,7 @@ class Multiple(object):
     specified that manage how the items get tokenized.
 
     """
+
     def __init__(self, seqs, **keywords):
         self.log = log.get_logger()
         # store input sequences, check whether tokens or strings are passed
@@ -171,7 +172,7 @@ class Multiple(object):
                 return self._classes[int(number) - 1]
 
     def _set_model(
-            self, model=None, classes=True, sonar=True, sonars=False, scoredict={}):
+        self, model=None, classes=True, sonar=True, sonars=False, scoredict={}):
         """
         Method defines a specific class model for the calculation.
 
@@ -267,7 +268,7 @@ class Multiple(object):
 
         self.scoredict = {}
         for (i, seqA), (j, seqB) in combinations_with_replacement(
-                enumerate(self._numbers), 2):
+            enumerate(self._numbers), 2):
             if i < j:
                 for (numA, numB) in product(seqA, seqB):
                     self.scoredict[numA, numB] = scorer(
@@ -289,13 +290,13 @@ class Multiple(object):
             self.scorer = self.library
 
     def _get_pairwise_alignments(
-            self,
-            mode='global',
-            gop=-2,
-            scale=0.5,
-            factor=0.3,
-            restricted_chars='T_',
-            **keywords):
+        self,
+        mode='global',
+        gop=-2,
+        scale=0.5,
+        factor=0.3,
+        restricted_chars='T_',
+        **keywords):
         """
         Function calculates all pairwise alignments from the data.
         """
@@ -379,7 +380,7 @@ class Multiple(object):
             # scores for c-c and v-v matches to 0, the other scores get their
             # original penalty defined by the old scorer
             for (i, numA), (j, numB) in combinations_with_replacement(
-                    enumerate(self._numbers), 2):
+                enumerate(self._numbers), 2):
                 if i < j:
                     for k, l in product(numA, numB):
                         # see the comment above for the add-on in this
@@ -411,7 +412,8 @@ class Multiple(object):
                     # average of matrix score and the similarity score of the
                     # alignment of both sequences
                     score = self.scorer[m, n]
-                    sim = self._alignments[i][j][2] / float(len(self._alignments[i][j][0]))
+                    sim = self._alignments[i][j][2] / float(
+                        len(self._alignments[i][j][0]))
                     self.library[m, n] += (sim + score) / 2.0
                     self.library[n, m] = self.library[m, n]
 
@@ -468,17 +470,17 @@ class Multiple(object):
             self.tree_matrix, [''.join(str(c)) for c in self._classes], False))
 
     def _align_profile(
-            self,
-            almsA,
-            almsB,
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=0.5,
-            return_similarity=False,
-            iterate=False,
-            restricted_chars="T_"):
+        self,
+        almsA,
+        almsB,
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=0.5,
+        return_similarity=False,
+        iterate=False,
+        restricted_chars="T_"):
         profileA = misc.transpose(almsA)
         profileB = misc.transpose(almsB)
 
@@ -567,15 +569,15 @@ class Multiple(object):
         return profileA + profileB
 
     def _talign_profile(
-            self,
-            almsA,
-            almsB,
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            gap_weight=0.5,
-            return_similarity=False,
-            iterate=False):
+        self,
+        almsA,
+        almsB,
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        gap_weight=0.5,
+        return_similarity=False,
+        iterate=False):
         """
         Align profiles for tokens, not sound classes.
         """
@@ -613,13 +615,13 @@ class Multiple(object):
         return profileA + profileB
 
     def _merge_alignments(
-            self,
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=0.5,
-            restricted_chars='T_'):
+        self,
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=0.5,
+        restricted_chars='T_'):
         # create the lists which will store the current stages of the
         # alignment process
         seq_ord = [[i] for i in range(self.height)]
@@ -1040,15 +1042,15 @@ class Multiple(object):
         return out_alm
 
     def _iter(
-            self,
-            idx_list,
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0.0,
-            gap_weight=0.5,
-            check='final',
-            restricted_chars='T_'):
+        self,
+        idx_list,
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0.0,
+        gap_weight=0.5,
+        check='final',
+        restricted_chars='T_'):
         """
         Split an MSA into two parts and realign them.
         """
@@ -1152,14 +1154,14 @@ class Multiple(object):
         return score / lenM
 
     def iterate_orphans(
-            self,
-            check='final',
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=1.0,
-            restricted_chars='T_'):
+        self,
+        check='final',
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=1.0,
+        restricted_chars='T_'):
         """
         Iterate over the most divergent sequences in the sample.
 
@@ -1234,15 +1236,15 @@ class Multiple(object):
             restricted_chars=restricted_chars)
 
     def iterate_clusters(
-            self,
-            threshold,
-            check='final',
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=1,
-            restricted_chars='T_'):
+        self,
+        threshold,
+        check='final',
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=1,
+        restricted_chars='T_'):
         """
         Iterative refinement based on a flat cluster analysis of the data.
 
@@ -1319,14 +1321,14 @@ class Multiple(object):
             restricted_chars=restricted_chars)
 
     def iterate_similar_gap_sites(
-            self,
-            check='final',
-            mode='global',
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=1,
-            restricted_chars='T_'):
+        self,
+        check='final',
+        mode='global',
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=1,
+        restricted_chars='T_'):
         """
         Iterative refinement based on the *Similar Gap Sites* heuristic.
 
@@ -1396,14 +1398,14 @@ class Multiple(object):
             gap_weight=gap_weight)
 
     def iterate_all_sequences(
-            self,
-            check="final",
-            mode="global",
-            gop=-3,
-            scale=0.5,
-            factor=0,
-            gap_weight=1,
-            restricted_chars="T_"):
+        self,
+        check="final",
+        mode="global",
+        gop=-3,
+        scale=0.5,
+        factor=0,
+        gap_weight=1,
+        restricted_chars="T_"):
         """
         Iterative refinement based on a complete realignment of all sequences.
 
@@ -1502,7 +1504,7 @@ class Multiple(object):
                 self.scorer,
                 gap_weight=gap_weight)
             for i in range(len(self._alm_matrix[0]))
-        ]
+            ]
 
     def get_local_peaks(self, threshold=2, gap_weight=0.0):
         """
@@ -1836,11 +1838,11 @@ class Multiple(object):
         msaAB = int((msaA + msaB) * 0.5 * 1000000)
         self.log.debug('', extra=dict(
             lines=[[self._get(x, '_classes') for x in line] for line in matA] + \
-                    [msaA] + \
-                    [[self._get(x, '_classes') for x in line] for line in matA] +\
-                    [msaB] +
-                    [msaAB, msa]
-            ))
+                  [msaA] + \
+                  [[self._get(x, '_classes') for x in line] for line in matA] + \
+                  [msaB] +
+                  [msaAB, msa]
+        ))
 
         # return True if the newly calculated sop-score is greater than the previous one
         return msaAB > msa
@@ -1920,7 +1922,7 @@ class Multiple(object):
 
 
 def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False,
-        pprint=False):
+               pprint=False):
     """
     A short-cut method for multiple alignment analyses.
 
@@ -1960,6 +1962,6 @@ def mult_align(seqs, gop=-1, scale=0.5, tree_calc='upgma', scoredict=False,
         tree_calc=tree_calc,
         scale=scale,
         scoredict=scoredict or {})
-    
+
     as_string(m, pprint=pprint)
     return m.alm_matrix

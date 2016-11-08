@@ -3,9 +3,10 @@
 Module provides classes and functions for pairwise alignment analyses.
 """
 from __future__ import division, print_function, unicode_literals
+from itertools import product
 
 from six import text_type
-from lingpy.util import setdefaults, multicombinations2, as_string 
+from lingpy.util import setdefaults, multicombinations2, as_string
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, prosodic_string, tokens2class, prosodic_weights, class2tokens,
@@ -233,12 +234,18 @@ class Pairwise(object):
         # print the alignments, if this is chosen
         as_string(self, pprint=keywords['pprint'])
 
+
 def _get_scorer(seqA, seqB):
-    scorer = {}
-    for a in seqA:
-        for b in seqB:
-            scorer[a, b] = 1.0 if a == b else -1.0
-    return scorer
+    return {(a, b): 1.0 if a == b else -1.0 for a, b in product(seqA, seqB)}
+
+
+def _as_lists(seqA, seqB):
+    # check whether the sequences are lists
+    if isinstance(seqA, (text_type, tuple)):
+        return list(seqA), list(seqB)
+    if not isinstance(seqA, list):
+        raise ValueError("Input should be tuple, list, or string.")
+    return seqA, seqB
 
 
 # the following functions provide solutions for convenience
@@ -287,23 +294,15 @@ def pw_align(
          3.0)
 
     """
-
-    # check whether the sequences are lists
-    if isinstance(seqA, (text_type, tuple)):
-        seqA = list(seqA)
-        seqB = list(seqB)
-    elif not isinstance(seqA, list):
-        raise ValueError("Input should be tuple, list, or string.")
-
+    seqA, seqB = _as_lists(seqA, seqB)
     distance = 1 if distance else 0
 
     if not scorer and distance == 0:
         scorer = _get_scorer(seqA, seqB)
     elif not scorer and distance == 1:
         scorer = {}
-        for (i, a), (j, b) in multicombinations2(enumerate(sorted(set(seqA + seqB)))):
-            scorer[a, b] = 1.0 if a == b else -1.0
-            scorer[b, a] = 1.0 if a == b else -1.0
+        for a, b in multicombinations2(sorted(set(seqA + seqB))):
+            scorer[b, a] = scorer[a, b] = 1.0 if a == b else -1.0
 
     # start alignment
     return talign.align_pair(seqA, seqB, gop, scale, scorer, mode, distance)
@@ -384,13 +383,7 @@ def nw_align(seqA, seqB, scorer=False, gap=-1):
     a - a - (sim=0)
 
     """
-    # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
-        seqA = list(seqA)
-        seqB = list(seqB)
-    elif not isinstance(seqA, list):
-        raise ValueError("Input should be tuple, list, or string.")
-
+    seqA, seqB = _as_lists(seqA, seqB)
     return malign.nw_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
@@ -432,13 +425,7 @@ def edit_dist(seqA, seqB, normalized=False, restriction=''):
     3
 
     """
-    # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
-        seqA = list(seqA)
-        seqB = list(seqB)
-    elif not isinstance(seqA, list):
-        raise ValueError("Input should be tuple, list, or string.")
-
+    seqA, seqB = _as_lists(seqA, seqB)
     if restriction in ['cv', 'consonant-vowel']:
         resA = prosodic_string(seqA, 'cv')
         resB = prosodic_string(seqB, 'cv')
@@ -485,14 +472,7 @@ def sw_align(seqA, seqB, scorer=False, gap=-1):
      (['c', 'a', 't'], ['f', 'a', 't'], []),
      3.0)
     """
-
-    # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
-        seqA = list(seqA)
-        seqB = list(seqB)
-    elif not isinstance(seqA, list):
-        raise ValueError("Input should be tuple, list, or string.")
-
+    seqA, seqB = _as_lists(seqA, seqB)
     return malign.sw_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
@@ -535,14 +515,7 @@ def we_align(seqA, seqB, scorer=False, gap=-1):
      (['c', 'a', 't'], ['c', 'a', 't'], 3.0)]
 
     """
-
-    # check whether the sequences are tuples
-    if isinstance(seqA, (text_type, tuple)):
-        seqA = list(seqA)
-        seqB = list(seqB)
-    elif not isinstance(seqA, list):
-        raise ValueError("Input should be tuple, list, or string.")
-
+    seqA, seqB = _as_lists(seqA, seqB)
     return malign.we_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
 
 
@@ -592,8 +565,5 @@ def turchin(seqA, seqB, model='dolgo', **keywords):
     if classB[0] in model.vowels:
         classB[0] = 'H'
 
-    if ''.join([k for k in classA if k not in model.vowels])[:2] == \
-            ''.join([k for k in classB if k not in model.vowels])[:2]:
-        return 0
-    else:
-        return 1
+    return int(''.join([k for k in classA if k not in model.vowels])[:2] !=
+               ''.join([k for k in classB if k not in model.vowels])[:2])
