@@ -2580,7 +2580,8 @@ class PhyBo(Wordlist):
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             figsize="optimal",  # rcParams['phybo_figsize'],
             figure_width=10,
             figure_scale=1,
@@ -2617,11 +2618,7 @@ class PhyBo(Wordlist):
             textsize=rcParams['phybo_textsize'],
             vsd_scale=rcParams['phybo_vsd_scale'],
             latex_preamble=rcParams['phybo_latex_preamble'],
-            alpha_threshold=0.2
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            alpha_threshold=0.2)
 
         # get max and min values for coordinates
         xvals, yvals = [], []
@@ -2635,52 +2632,30 @@ class PhyBo(Wordlist):
             h = maxY + abs(minY)
             keywords['figsize'] = (
                 keywords['figure_width'] + keywords['figure_scale'],
-                h / (w / (keywords['figure_width'])
-                     )
-            )
+                h / (w / (keywords['figure_width'])))
 
         if keywords['latex_preamble']:
             mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
         colormap = keywords['colormap']
         filename = keywords['filename']
-
-        # define labels
-        labels = {}
-        for taxon in self.taxa:
-            if taxon not in keywords['labels']:
-                labels[taxon] = taxon
-            else:
-                labels[taxon] = keywords['labels'][taxon]
-
-        # create a dictionary for all nodes
+        labels = {taxon: keywords['labels'].get(taxon, taxon) for taxon in self.taxa}
         node_dict = {}
 
-        # iterate over contemporary taxa first
         for taxon in self.taxa:
-            # get all cognates that are not singletongs
             cogs = [x for x in
                     self.get_list(col=taxon, flat=True, entry='pap') if x in self.cogs]
-
             # count the number of paps
             node_dict[taxon] = len(cogs) * keywords['vsd_scale']
 
-        # iterate over internal nodes now
         for a, b in [(x, y) for x, y in self.tree.getNodesDict().items() if
                      x not in self.taxa]:
-
-            if a != 'root':
-                node = a
-
-            else:
-                node = 'root'
-
+            node = a if a != 'root' else 'root'
             if node in self.acs[glm]:
                 node_dict[a] = len(self.acs[glm][node]) * keywords['vsd_scale']
             else:
                 node_dict[a] = 1 * keywords['vsd_scale']
 
-        # get the graph
         graph = self.graph[glm]
 
         # store in internal and external nodes
@@ -2688,10 +2663,8 @@ class PhyBo(Wordlist):
         enodes = []
 
         # get colormap for edgeweights
-        edge_weights = []
-        for nodeA, nodeB, data in graph.edges(data=True):
-            if data['label'] == 'horizontal':
-                edge_weights.append(data['weight'])
+        edge_weights = [d['weight'] for _, _, d in
+                        graph.edges(data=True) if d['label'] == 'horizontal']
 
         # add max weight to edge_weights
         if keywords['maxweight']:
@@ -2700,7 +2673,6 @@ class PhyBo(Wordlist):
         # determine a colorfunction
         cfunc = np.array(np.linspace(10, 256, len(set(edge_weights))), dtype='int')
 
-        # sort the weights
         weights = sorted(set(edge_weights))
 
         # get the scale for the weights (needed for the line-width)
@@ -2721,50 +2693,28 @@ class PhyBo(Wordlist):
         # get the nodes
         for n, d in graph.nodes(data=True):
             g = d['graphics']
-            x = g['x']
-            y = g['y']
-            h = g['h']
-            w = g['w']
-            s = g['s']
-
-            # get the nodesize
+            ns = keywords['nodesize']
             if keywords['nodestyle'] == 'vsd':
-                try:
-                    ns = node_dict[n]
-                except:
-                    ns = keywords['nodesize']
-            else:
-                ns = keywords['nodesize']
+                ns = node_dict.get(n, ns)
 
             if d['label'] not in self.taxa:
-                inodes += [(x, y, ns)]
+                inodes += [(g['x'], g['y'], ns)]
             else:
-                if 'angle' in d['graphics']:
-                    r = d['graphics']['angle']
-                else:
-                    r = 0
-
-                enodes += [(x, y, d['label'], r, s, ns)]
+                enodes += [(g['x'], g['y'], d['label'], g.get('angle', 0), g['s'], ns)]
 
         # store vertical and lateral edges
-        vedges = []
-        ledges = []
-        weights = []
+        vedges, ledges, weights = [], [], []
 
-        # get the edges
         for a, b, d in graph.edges(data=True):
-
             xA = graph.node[a]['graphics']['x']
             yA = graph.node[a]['graphics']['y']
             xB = graph.node[b]['graphics']['x']
             yB = graph.node[b]['graphics']['y']
 
             if d['label'] == 'vertical':
-
                 vedges += [(xA, xB, yA, yB)]
             else:
                 g = d['graphics']
-                f = g['fill']
                 w = g['width']
                 a = alpha
                 if d['weight'] < threshold:
@@ -2773,29 +2723,18 @@ class PhyBo(Wordlist):
                     else:
                         w = 0.0
 
-                ledges += [(xA, xB, yA, yB, f, w, a)]
-
+                ledges += [(xA, xB, yA, yB, g['fill'], w, a)]
                 weights.append(d['weight'])
 
-        if not weights:
-            weights = [0]
-
-        # usetex
+        weights = weights or [0]
         mpl.rc('text', usetex=usetex)
 
-        # create the figure
-        fig = plt.figure(
-            facecolor='white',
-            figsize=keywords['figsize']
-        )
+        fig = plt.figure(facecolor='white', figsize=keywords['figsize'])
         figsp = fig.add_subplot(111)
 
-        # create the axis
         plt.axes(frameon=False)
         plt.xticks([0], [''])
         plt.yticks([0], [''])
-
-        # set equal axis
         plt.axis('equal')
 
         # draw the horizontal edges
@@ -2806,8 +2745,7 @@ class PhyBo(Wordlist):
                 '-',
                 color=f,
                 linewidth=float(w) / keywords['hedgescale'],
-                alpha=a
-            )
+                alpha=a)
 
         # draw the vertical edges
         for xA, xB, yA, yB in vedges:
@@ -2816,64 +2754,39 @@ class PhyBo(Wordlist):
                 [yA, yB],
                 '-',
                 color=keywords['vedgecolor'],
-                linewidth=keywords['vedgelinewidth'],
-            )
+                linewidth=keywords['vedgelinewidth'])
             if keywords['vedgestyle'] == 'double':
                 plt.plot(
                     [xA, xB],
                     [yA, yB],
                     '-',
                     color='1.0',
-                    linewidth=keywords['vedgeinnerline'],
-                )
+                    linewidth=keywords['vedgeinnerline'])
         # store x,y values for ylim,xlim drawing
-        xvals = []
-        yvals = []
+        xvals, yvals = [], []
 
-        # draw the nodes
         for x, y, s in inodes:
             xvals += [x]
             yvals += [y]
 
-            plt.plot(
-                x,
-                y,
-                'o',
-                markersize=s,  # keywords['nodesize'],
-                color=keywords['nodecolor'],
-            )
+            plt.plot(x, y, 'o', markersize=s, color=keywords['nodecolor'])
             if keywords['nodestyle'] == 'double':
-                plt.plot(
-                    x,
-                    y,
-                    'o',
-                    markersize=s,  # keywords['nodesize']-4,
-                    color='white'
-                )
+                plt.plot(x, y, 'o', markersize=s, color='white')
 
         for x, y, t, r, ha, s in enodes:
-
             xvals += [x]
             yvals += [y]
 
-            # plot the marker
             plt.plot(
                 x,
                 y,
                 'o',
                 markersize=s,  # keywords['nodesize'],
                 color=keywords['nodecolor'],
-                zorder=200
-            )
+                zorder=200)
 
             if keywords['nodestyle'] == 'double':
-                plt.plot(
-                    x,
-                    y,
-                    'o',
-                    markersize=s,  # keywords['nodesize']-4,
-                    color='white'
-                )
+                plt.plot(x, y, 'o', markersize=s, color='white')
 
             # this is a workaround to get the text away from the node
             if ha == 'left':
@@ -2892,29 +2805,15 @@ class PhyBo(Wordlist):
                 color='black',
                 rotation=r,
                 rotation_mode='anchor',
-                zorder=1
-            )
+                zorder=1)
 
-        # add a colorbar
-        cax = figsp.imshow(
-            [[1, 2], [1, 2]],
-            cmap=colormap,
-            visible=False
-        )
         cbar = fig.colorbar(
-            cax,
-            ticks=[
-                1,
-                1.25,
-                1.5,
-                1.75,
-                2
-            ],
+            figsp.imshow([[1, 2], [1, 2]], cmap=colormap, visible=False),
+            ticks=[1, 1.25, 1.5, 1.75, 2],
             orientation=keywords['cbar_orientation'],
             shrink=keywords['cbar_shrink'],
             fraction=keywords['cbar_fraction'],
-            pad=keywords['cbar_pad']
-        )
+            pad=keywords['cbar_pad'])
 
         # check for maxweights-keyword
         if keywords['maxweight']:
@@ -2922,15 +2821,12 @@ class PhyBo(Wordlist):
 
         cbar.set_clim(1.0)
         cbar.set_label('Inferred Links')
-        cbar.ax.set_yticklabels(
-            [
-                text_type(min(weights)),
-                '',
-                text_type(int(max(weights) / 2)),
-                '',
-                text_type(max(weights))
-            ]
-        )
+        cbar.ax.set_yticklabels([
+            text_type(min(weights)),
+            '',
+            text_type(int(max(weights) / 2)),
+            '',
+            text_type(max(weights))])
 
         if keywords['xliml'] and keywords['xlimr']:
             xliml = keywords['xliml']
@@ -2997,20 +2893,14 @@ class PhyBo(Wordlist):
             Specify the taxon labels that should be included in the plot.
 
         """
-        # add azim and the other params
-        kw = dict(
-            azim=220,
-            elev=22
-        )
+        kw = dict(azim=220, elev=22)
         kw.update(keywords)
 
         # check for correct glm
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -3021,11 +2911,9 @@ class PhyBo(Wordlist):
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
-        # check for filename
         if not filename:
             filename = self.dataset
 
-        # if not colormap
         if not colormap:
             colormap = mpl.cm.jet
 
@@ -3052,10 +2940,8 @@ class PhyBo(Wordlist):
         enodes = []
 
         # get colormap for edgeweights
-        edge_weights = []
-        for nodeA, nodeB, data in graph.edges(data=True):
-            if data['label'] == 'horizontal':
-                edge_weights.append(data['weight'])
+        edge_weights = [d['weight'] for _, _, d in
+                        graph.edges(data=True) if d['label'] == 'horizontal']
 
         # determine a colorfunction
         cfunc = np.array(np.linspace(10, 256, len(set(edge_weights))), dtype='int')
@@ -3078,32 +2964,22 @@ class PhyBo(Wordlist):
         # get the nodes
         for n, d in graph.nodes(data=True):
             g = d['graphics']
-            x = g['x']
-            y = g['y']
-            z = g['z']
-            s = g['s']
-            zorder = g['zorder']
-
             if d['label'] not in self.taxa:
-                inodes += [(x, y, -z, zorder)]
+                inodes += [(g['x'], g['y'], -g['z'], g['zorder'])]
             else:
-                if 'angle' in d['graphics']:
-                    r = d['graphics']['angle']
-                else:
-                    r = 0
-
                 if usetex:
-                    enodes += [(
-                        x,
-                        y,
-                        -z,
-                        r'\textbf{' + tfunc(d['label']).replace('_', r'\_') + r'}',
-                        r,
-                        s,
-                        zorder
-                    )]
+                    label = r'\textbf{' + tfunc(d['label']).replace('_', r'\_') + r'}'
                 else:
-                    enodes += [(x, y, -z, tfunc(d['label']), r, s, zorder)]
+                    label = tfunc(d['label'])
+                enodes.append((
+                    g['x'],
+                    g['y'],
+                    -g['z'],
+                    label,
+                    d['graphics'].get('angle', 0),
+                    g['s'],
+                    g['zorder']
+                ))
 
         # store vertical and lateral edges
         vedges = []
@@ -3112,7 +2988,6 @@ class PhyBo(Wordlist):
 
         # get the edges
         for a, b, d in graph.edges(data=True):
-
             xA = graph.node[a]['graphics']['x']
             yA = graph.node[a]['graphics']['y']
             zA = graph.node[a]['graphics']['z']
@@ -3127,7 +3002,6 @@ class PhyBo(Wordlist):
                 vedges += [(xA, xB, yA, yB, -zA, -zB, zorder)]
             else:
                 g = d['graphics']
-                f = g['fill']
                 w = g['width']
                 a = alpha
                 if d['weight'] < threshold:
@@ -3136,23 +3010,16 @@ class PhyBo(Wordlist):
                     else:
                         w = 0.0
 
-                ledges += [(xA, xB, yA, yB, -zA, -zB, zorder, f, w, a)]
-
+                ledges += [(xA, xB, yA, yB, -zA, -zB, zorder, g['fill'], w, a)]
                 weights.append(d['weight'])
 
-        # usetex
         mpl.rc('text', usetex=usetex)
-
-        # create the figure
-        fig = plt.figure(
-            facecolor='white',
-            figsize=(keywords['width'], keywords['height'])
-        )
+        fig = plt.figure(facecolor='white', figsize=(keywords['width'], keywords['height']))
         figsp = fig.add_subplot(111, projection='3d')
 
         # draw the horizontal edges
-        for xA, xB, yA, yB, zA, zB, zorder, f, w, a in sorted(ledges,
-                                                              key=lambda x: x[-2]):
+        for xA, xB, yA, yB, zA, zB, zorder, f, w, a in sorted(
+                ledges, key=lambda x: x[-2]):
             figsp.plot(
                 [xA, xB],
                 [yA, yB],
@@ -3174,14 +3041,6 @@ class PhyBo(Wordlist):
                 alpha=0.75,
                 zorder=zorder  # 100 * abs(xA-xB) + 100 * abs(yA-yB)
             )
-            # figsp.plot(
-            #        [xA,xB],
-            #        [yA,yB],
-            #        [zA,zB],
-            #        color='1.0',
-            #        linewidth=1,
-            #        #zorder = 100 * abs(xA-xB) + 100 * abs(yA-yB)
-            #        )
         # store x,y values for ylim,xlim drawing
         xvals = []
         yvals = []
@@ -3192,19 +3051,9 @@ class PhyBo(Wordlist):
             xvals += [x]
             yvals += [y]
             zvals += [z]
+            figsp.scatter(x, y, z, marker='o', s=20, c='black', zorder=zorder)
 
-            figsp.scatter(
-                x,
-                y,
-                z,
-                marker='o',
-                s=20,
-                c='black',
-                zorder=zorder  # 100 * x + 100 * y
-            )
-
-        # draw the leaves
-        # store x and y-maxima for ylim, xlim drawing
+        # draw the leaves, store x and y-maxima for ylim, xlim drawing
         for x, y, z, t, r, ha, zorder in enodes:
             xvals += [x]
             yvals += [y]
@@ -3233,20 +3082,11 @@ class PhyBo(Wordlist):
         figsp.set_ylim(min(yvals), max(yvals))
         figsp.set_xlim(min(xvals), max(xvals))
         figsp.set_zlim(min(zvals), max(zvals))
-
         figsp.set_axis_off()
-
         plt.savefig(filename + '.' + fileformat, bbbox_inches='tight')
         plt.clf()
 
-    def get_MSN(
-        self,
-        glm='',
-        fileformat='pdf',
-        external_edges=False,
-        deep_nodes=False,
-        **keywords
-    ):
+    def get_MSN(self, glm='', external_edges=False, deep_nodes=False, **keywords):
         """
         Plot the Minimal Spatial Network.
 
@@ -3269,14 +3109,11 @@ class PhyBo(Wordlist):
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # redefine taxa and tree for convenience
         taxa, tree = self.taxa, self.tree
 
-        # get the graph
         graph = self.graph[glm]
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
@@ -3284,14 +3121,9 @@ class PhyBo(Wordlist):
         if 'coords' in self._meta:
             coords = self._meta['coords']
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
-        # calculate all resulting edges, using convex hull as
-        # approximation
+        # calculate all resulting edges, using convex hull as approximation
         geoGraph = nx.Graph()
         for node, data in graph.nodes(data=True):
             geoGraph.add_node(node, **data)
@@ -3304,7 +3136,6 @@ class PhyBo(Wordlist):
 
             # first check, whether edge is horizontal
             if d['label'] == 'horizontal':
-
                 # if both labels occur in taxa, it is simple
                 if lA in taxa and lB in taxa:
                     try:
@@ -3315,40 +3146,28 @@ class PhyBo(Wordlist):
                 elif not external_edges:
                     # if only one in taxa, we need the convex hull for that node
                     if lA in taxa or lB in taxa:
-
                         # check which node is in taxa
                         if lA in taxa:
                             this_label = lA
                             other_nodes = tree.getNodeMatchingName(lB).getTipNames()
-                            other_label = lB
                         elif lB in taxa:
                             this_label = lB
                             other_nodes = tree.getNodeMatchingName(lA).getTipNames()
-                            other_label = lA
 
-                        # first, get all the cogs
-                        cogs = d['cogs'].split(',')
-
-                        # iterate over all cogs now
-                        for cog in cogs:
-
+                        for cog in d['cogs'].split(','):
                             # check whether the nodes have the respective cognate
                             # and take only those that have it
                             new_other_nodes = []
                             for other_node in other_nodes:
                                 paps = self.get_list(
-                                    col=other_node,
-                                    entry='pap',
-                                    flat=True
-                                )
+                                    col=other_node, entry='pap', flat=True)
                                 if cog in paps and other_node != this_label:
                                     new_other_nodes += [other_node]
 
                             # get the convex points of others
                             these_coords = [
-                                (round(coords[t][0], 5), round(coords[t][1], 5)) for t
-                                in
-                                new_other_nodes]
+                                (round(coords[t][0], 5), round(coords[t][1], 5))
+                                for t in new_other_nodes]
                             hulls = getConvexHull(these_coords, polygon=False)
 
                             # get the hull with the minimal euclidean distance
@@ -3357,52 +3176,32 @@ class PhyBo(Wordlist):
                                 distances.append(np.linalg.norm(
                                     np.array(hull) - np.array(coords[this_label])))
                             this_hull = hulls[distances.index(min(distances))]
-                            other_label = new_other_nodes[
-                                these_coords.index(
-                                    (
-                                        round(this_hull[0], 5),
-                                        round(this_hull[1], 5)
-                                    )
-                                )
-                            ]
+                            other_label = new_other_nodes[these_coords.index(
+                                (round(this_hull[0], 5), round(this_hull[1], 5)))]
 
                             # append the edge to the graph
                             try:
                                 geoGraph.edge[this_label][other_label]['weight'] += 1
-                                geoGraph.edge[this_label][other_label][
-                                    'cogs'] += ',' + cog
+                                geoGraph.edge[this_label][other_label]['cogs'] \
+                                    += ',' + cog
                             except:
                                 geoGraph.add_edge(this_label, other_label, weight=1,
                                                   cogs=cog)
 
                     elif deep_nodes:
-                        # get the taxa of a and b
                         taxA = tree.getNodeMatchingName(lA).getTipNames()
                         taxB = tree.getNodeMatchingName(lB).getTipNames()
 
-                        # get the cogs
-                        cogs = d['cogs'].split(',')
-
-                        # iterate over the cogs
-                        for cog in cogs:
+                        for cog in d['cogs'].split(','):
                             newtaxA = []
                             newtaxB = []
 
-                            # get the lists
                             for t in taxA:
-                                paps = self.get_list(
-                                    col=t,
-                                    entry='pap',
-                                    flat=False
-                                )
+                                paps = self.get_list(col=t, entry='pap', flat=False)
                                 if cog in paps:
                                     newtaxA += [t]
                             for t in taxB:
-                                paps = self.get_list(
-                                    col=t,
-                                    entry='pap',
-                                    flat=False
-                                )
+                                paps = self.get_list(col=t, entry='pap', flat=False)
                                 if cog in paps:
                                     newtaxB += [t]
 
@@ -3416,14 +3215,12 @@ class PhyBo(Wordlist):
                             hullsA = getConvexHull(coordsA, polygon=False)
                             hullsB = getConvexHull(coordsB, polygon=False)
 
-                            # get the closest points
                             distances = []
                             hulls = []
-                            for i, hullA in enumerate(hullsA):
-                                for j, hullB in enumerate(hullsB):
-                                    distances.append(np.linalg.norm(
-                                        np.array(hullA) - np.array(hullB)))
-                                    hulls.append((hullA, hullB))
+                            for hullA, hullB in itertools.product(hullsA, hullsB):
+                                distances.append(np.linalg.norm(
+                                    np.array(hullA) - np.array(hullB)))
+                                hulls.append((hullA, hullB))
                             minHulls = hulls[distances.index(min(distances))]
 
                             labelA = newtaxA[coordsA.index(
@@ -3445,41 +3242,28 @@ class PhyBo(Wordlist):
 
             dgr, wdgr = [], []
             for taxon in nodes:
-                horizontals = [g for g in geoGraph[taxon] if
-                               'weight' in geoGraph[taxon][g]]
-
+                horizontals = [
+                    g for g in geoGraph[taxon] if 'weight' in geoGraph[taxon][g]]
                 dgr.append(len(horizontals))
                 wdgr.append(sum([geoGraph[taxon][g]['weight'] for g in horizontals]))
 
-            sorted_nodes = sorted(
-                zip(nodes, dgr, wdgr),
-                key=lambda x: x[1],
-                reverse=True
-            )
+            sorted_nodes = sorted(zip(nodes, dgr, wdgr), key=lambda x: x[1], reverse=True)
             for n, d, w in sorted_nodes:
-                f.write(
-                    '{0}\t{1}\t{2}\t{3}\n'.format(
-                        n, text_type(tree.getNodeMatchingName(n)), d, w))
+                f.write('{0}\t{1}\t{2}\t{3}\n'.format(
+                    n, text_type(tree.getNodeMatchingName(n)), d, w))
 
         # write edge distributions
         with util.TextFile(self._output_path('edge-msn-' + glm + '.stats')) as f:
             edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
 
-            for nA, nB, d in sorted(
-                edges,
-                key=lambda x: x[2]['weight'],
-                reverse=True
-            ):
-                f.write(
-                    '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
-                        nA,
-                        nB,
-                        d['weight'],
-                        d['cogs'],
-                        tree.getNodeMatchingName(nA),
-                        tree.getNodeMatchingName(nB)
-                    )
-                )
+            for nA, nB, d in sorted(edges, key=lambda x: x[2]['weight'], reverse=True):
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
+                    nA,
+                    nB,
+                    d['weight'],
+                    d['cogs'],
+                    tree.getNodeMatchingName(nA),
+                    tree.getNodeMatchingName(nB)))
 
         try:
             self.geograph[glm] = geoGraph
@@ -3502,8 +3286,8 @@ class PhyBo(Wordlist):
         """
         Plot a minimal spatial network.
         """
-        # set defaults
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             latex_preamble=[],
             figsize=(10, 10),
             colormap=mpl.cm.jet,
@@ -3547,8 +3331,7 @@ class PhyBo(Wordlist):
             table_text_size=10,
             alpha=0.75,
             cmap_min=30,
-            markersize=20
-        )
+            markersize=20)
 
         # load the rc-file XXX add internal loading later
         conf = self._config()
@@ -3558,18 +3341,7 @@ class PhyBo(Wordlist):
             except:
                 raise ValueError('[!] Configuration is not specified!')
 
-        # overwrite configuration from keywords
-        for k in keywords:
-            conf[k] = keywords[k]
-
-        # overwrite keywords with defaults
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
-
-        # check for only
-        if not only:
-            only = self.taxa
+        only = only or self.taxa
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -3583,10 +3355,7 @@ class PhyBo(Wordlist):
         if keywords['latex_preamble']:
             mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
-        # usetex
         mpl.rc('text', usetex=usetex)
-
-        # define stuff for convenience
         filename = keywords['filename']
         colormap = keywords['colormap']
 
@@ -3594,50 +3363,27 @@ class PhyBo(Wordlist):
         if 'groups' in self._meta:
             groups = self._meta['groups']
         else:
-            groups = dict([(k, v) for k, v in csv2list(self.dataset, 'groups')])
+            groups = {k: v for k, v in csv2list(self.dataset, 'groups')}
 
-        # update configuration
-        for k in keywords:
-            if k not in conf:
-                conf[k] = keywords[k]
+        conf.update(keywords)
 
         # set the graph variable
         geoGraph = self.geograph[glm]
 
         # get the weights for the lines
-        weights = []
-        for a, b, d in geoGraph.edges(data=True):
-            weights += [d['weight']]
+        weights = [d['weight'] for a, b, d in geoGraph.edges(data=True)]
         max_weight = max(weights)
         sorted_weights = sorted(set(weights))
 
-        # get a color-function
-        color_dict = np.array(
-            np.linspace(
-                0,
-                256,
-                len(set(weights))
-            ),
-            dtype='int'
-        )
-
-        # get a line-function
-        line_dict = np.linspace(
-            0.5,
-            conf['linewidth'],
-            len(set(weights))
-        )
+        color_dict = np.array(np.linspace(0, 256, len(set(weights))), dtype='int')
+        line_dict = np.linspace(0.5, conf['linewidth'], len(set(weights)))
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
         if 'coords' in self._meta:
             coords = self._meta['coords']
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
         # determine the maxima of the coordinates
         latitudes = [i[0] for i in coords.values()]
@@ -3646,7 +3392,6 @@ class PhyBo(Wordlist):
         min_lat, max_lat = min(latitudes), max(latitudes)
         min_lon, max_lon = min(longitudes), max(longitudes)
 
-        # start to initialize the basemap
         fig = plt.figure(figsize=keywords['figsize'])
         figsp = fig.add_subplot(111)
 
@@ -3668,7 +3413,6 @@ class PhyBo(Wordlist):
 
         # plot the lines
         for a, b, d in sorted(geoGraph.edges(data=True), key=lambda x: x[2]['weight']):
-
             if a in coords and b in coords and a in only or b in only:
                 w = d['weight']
 
@@ -3699,8 +3443,7 @@ class PhyBo(Wordlist):
                     color=color,
                     alpha=alpha,
                     linewidth=linewidth,
-                    zorder=w + 50
-                )
+                    zorder=w + 50)
 
         # plot the points for the languages
         cell_text = []
@@ -3716,11 +3459,7 @@ class PhyBo(Wordlist):
         else:
             gfunc = lambda x: x
 
-        # check for defaults
-        defaults = {
-            "markersize": 10,
-            "table_cell_height": 0.025,
-        }
+        defaults = {"markersize": 10, "table_cell_height": 0.025}
         for k in defaults:
             if k not in conf:
                 conf[k] = defaults[k]
@@ -3731,9 +3470,6 @@ class PhyBo(Wordlist):
             # retrieve x and y from the map
             x, y = m(lat, lng)
 
-            # get the color of the given taxon
-            # taxon_color = colors[groups[taxon]]
-
             # get colors from conf
             this_group = groups[taxon]
             taxon_color = conf['groups_colors'][this_group]
@@ -3742,20 +3478,15 @@ class PhyBo(Wordlist):
             except:
                 taxon_marker = 'o'
 
-            # check for legend
-
             if gfunc(groups[taxon]) in legend_check:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     taxon_marker,
                     markersize=conf['markersize'],
                     color=taxon_color,
-                    zorder=max_weight + 52,
-                )
+                    zorder=max_weight + 52)
             else:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
@@ -3763,8 +3494,7 @@ class PhyBo(Wordlist):
                     markersize=conf['markersize'],
                     color=taxon_color,
                     zorder=max_weight + 52,
-                    label=gfunc(groups[taxon])
-                )
+                    label=gfunc(groups[taxon]))
                 legend_check.append(gfunc(groups[taxon]))
 
             # add number to celltext
@@ -3791,24 +3521,13 @@ class PhyBo(Wordlist):
                 horizontalalignment='center',
                 fontweight="bold",
                 verticalalignment='center',
-                zorder=max_weight + 55
-            )
+                zorder=max_weight + 55)
 
         # add a colorbar
-        cax = figsp.imshow(
-            [[1, 2], [1, 2]],
-            visible=False,
-            cmap=colormap
-        )
+        cax = figsp.imshow([[1, 2], [1, 2]], visible=False, cmap=colormap)
         cbar = fig.colorbar(
             cax,
-            ticks=[
-                1,
-                1.25,
-                1.5,
-                1.75,
-                2
-            ],
+            ticks=[1, 1.25, 1.5, 1.75, 2],
             orientation=keywords['cbar_orientation'],
             shrink=keywords['cbar_shrink'],
             fraction=keywords['cbar_fraction'],
