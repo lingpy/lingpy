@@ -2,7 +2,6 @@
 from __future__ import print_function, division, unicode_literals
 import random
 from itertools import product
-
 from collections import Counter, defaultdict
 from copy import copy
 
@@ -524,10 +523,9 @@ class LexStat(Wordlist):
                     cluster_method=kw['cluster_method'],
                     ref=kw['ref'])
 
-        tasks = self.width ** 2 / 2 
-        with util.ProgressBar('CORRESPONDENCE CALCULATION', tasks) as progress:
+        with util.pb(desc='CORRESPONDENCE CALCULATION', total=self.width ** 2 / 2) as pb:
             for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
-                progress.update()
+                pb.update(1)
                 log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
 
                 corrdist[tA, tB] = defaultdict(float)
@@ -598,9 +596,9 @@ class LexStat(Wordlist):
                 [(i, j) for i in range(kw['rands']) for j in range(kw['rands'])],
                 kw['runs'])
 
-            with util.ProgressBar('SEQUENCE GENERATION', len(self.cols)) as progress:
+            with util.pb(desc='SEQUENCE GENERATION', total=len(self.cols)) as progress:
                 for i, taxon in enumerate(self.cols):
-                    progress.update()
+                    progress.update(1)
                     log.info("Analyzing taxon {0}.".format(taxon))
 
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
@@ -633,9 +631,9 @@ class LexStat(Wordlist):
                             ['{0}.{1}'.format(c, p) for c, p in
                              zip(cls, [self._transform[pr] for pr in pros[taxon][-1]])])
 
-            with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
+            with util.pb(desc='RANDOM CORRESPONDENCE CALCULATION', total=tasks) as progress:
                 for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
-                    progress.update()
+                    progress.update(1)
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
                     )
@@ -671,9 +669,9 @@ class LexStat(Wordlist):
         # use shuffle approach otherwise
         else:
             tasks = self.width ** 2 / 2
-            with util.ProgressBar('RANDOM CORRESPONDENCE CALCULATION', tasks) as progress:
+            with util.pb(desc='RANDOM CORRESPONDENCE CALCULATION', total=tasks) as progress:
                 for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
-                    progress.update()
+                    progress.update(1)
                     log.info(
                         "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
                     )
@@ -1323,10 +1321,11 @@ class LexStat(Wordlist):
                     pprint=False,
                     gop=gop)
 
-                with util.ProgressBar('THRESHOLD DETERMINATION',
-                        len(self.pairs)-len(self.cols)) as progress:
+                with util.pb(
+                        desc='THRESHOLD DETERMINATION',
+                        total=len(self.pairs)-len(self.cols)) as progress:
                     for l1, l2 in self.pairs:
-                        progress.update()
+                        progress.update(1)
                         if l1 != l2:
                             pairs = self.pairs[l1, l2]
                             for p1, p2 in pairs:
@@ -1337,9 +1336,9 @@ class LexStat(Wordlist):
                 threshold = sum(thresholds) / len(thresholds) * 0.5
                 self._meta['guessed_threshold'] = threshold
 
-        with util.ProgressBar('SEQUENCE CLUSTERING', len(self.rows)) as progress:
+        with util.pb(desc='SEQUENCE CLUSTERING', total=len(self.rows)) as progress:
             for concept, indices, matrix in matrices:
-                progress.update()
+                progress.update(1)
 
                 # check for keyword to guess the threshold
                 if kw['guess_threshold'] and kw['gt_mode'] == 'item':

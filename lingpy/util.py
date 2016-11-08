@@ -1,13 +1,12 @@
 from __future__ import division, unicode_literals
-import sys
 import io
 import unicodedata
-from math import ceil
 import logging
 from tempfile import NamedTemporaryFile
 from functools import partial
 import itertools
 import types
+from tqdm import tqdm
 
 from six import text_type
 from clldutils.path import Path, remove, path_component
@@ -18,6 +17,8 @@ from lingpy.log import get_level, file_written
 
 
 PROG = 'LingPy-{0}'.format(lingpy.__version__)
+
+pb = partial(tqdm, leave=False)
 
 
 def charstring(id_, char='X', cls='-'):
@@ -190,52 +191,6 @@ def read_config_file(path, **kw):
     kw['lines'] = True
     lines = [line.strip() for line in read_text_file(path, **kw)]
     return [line for line in lines if line and not line.startswith('#')]
-
-
-class ProgressBar(object):
-    """A progress bar using console output.
-    
-    Notes
-    -----
-    Usage example::
-
-        >>> with ProgressBar('here is the title', 50) as pb:
-        >>>     for i in range(50):
-        >>>         # do stuff
-        >>>         pb.update()
-
-    """
-    def __init__(self, title, task_count, cols=100):
-        self.log = get_level() <= logging.INFO
-        self.title = title
-        self.cols = cols
-        self.step = cols if not task_count else self.cols / task_count
-        # number of columns we have already written:
-        self.written = 0
-        # number of tasks
-        self.count = 0
-
-    def __enter__(self):
-        if self.log:
-            sys.stdout.write(
-                '|' + ' {0} '.format(self.title).center(self.cols, '-') + '|\r|')
-        return self
-
-    def __exit__(self, type, value, traceback):
-        if self.log:
-            sys.stdout.write('|\n')
-
-    def update(self):
-        self.count += 1
-        # compute how many of the columns should have been written by now:
-        percentage = int(ceil(self.count * self.step))
-        if percentage > self.written:
-            # and write what's missing:
-            to_write = '+' * (percentage - self.written)
-            if self.log and self.written < self.cols:
-                sys.stdout.write(to_write)
-                sys.stdout.flush()
-            self.written += len(to_write)
 
 
 def setdefaults(d, **kw):

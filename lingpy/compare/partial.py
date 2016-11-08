@@ -5,8 +5,7 @@ Module provides a class for partial cognate detection, expanding the LexStat cla
 """
 from __future__ import print_function, division, unicode_literals
 from collections import defaultdict
-from itertools import combinations_with_replacement, product, combinations
-from collections import OrderedDict
+from itertools import combinations
 
 import numpy as np
 import networkx as nx
@@ -14,7 +13,7 @@ import networkx as nx
 import lingpy
 from lingpy.algorithm import clustering, extra
 from lingpy.compare.lexstat import LexStat
-from lingpy.util import combinations2
+from lingpy.util import combinations2, pb
 try:
     from lingpy.algorithm.cython import calign
 except ImportError:
@@ -416,10 +415,9 @@ class Partial(LexStat):
         k = 0
         C = defaultdict(list) # stores the pcogids
         G = {} # stores the graphs
-        with lingpy.util.ProgressBar('PARTIAL SEQUENCE CLUSTERING',
-                len(self.rows)) as progress:
+        with pb(desc='PARTIAL SEQUENCE CLUSTERING', total=len(self.rows)) as progress:
             for concept, trace, matrix in matrices:
-                progress.update()
+                progress.update(1)
                 lingpy.log.info('Analyzing concept {0}...'.format(concept))
                 if external_function:
                     c = external_function(threshold, matrix,

@@ -65,6 +65,7 @@ requires = [
     'six',
     'appdirs',
     'clldutils>=1.5.1',
+    'tqdm',
 ]
 
 # make global name of this version for convenience of modifying it
