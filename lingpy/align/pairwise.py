@@ -5,7 +5,7 @@ Module provides classes and functions for pairwise alignment analyses.
 from __future__ import division, print_function, unicode_literals
 from itertools import product
 
-from six import text_type
+from six import text_type, string_types
 from lingpy.util import setdefaults, multicombinations2, as_string
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
@@ -548,12 +548,10 @@ def turchin(seqA, seqB, model='dolgo', **keywords):
     """
     if text_type(model) == model:
         model = rcParams[model]
-    elif hasattr(model, 'info'):
-        pass
-    else:
+    elif not hasattr(model, 'info'):
         raise ValueError("[!] No valid model instance selected.")
 
-    if isinstance(seqA, (text_type, str)):
+    if isinstance(seqA, string_types):
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
 
