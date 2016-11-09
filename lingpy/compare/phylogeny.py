@@ -5,6 +5,7 @@ Phylogeny-based detection of borrowings in lexicostatistical wordlists.
 from __future__ import print_function, division, unicode_literals
 import os
 import itertools
+from collections import defaultdict
 
 from six import text_type
 import numpy as np
@@ -41,13 +42,11 @@ except ImportError:
     sp = None
     log.missing_module('scipy')
 
-from ._phylogeny.polygon import getConvexHull
-
-# lingpy imports
-from ..thirdparty import cogent as cg
-from ..convert.graph import gls2gml, radial_layout
-from ..basic import Wordlist
-from ..read.csv import csv2dict, csv2list
+from lingpy.compare._phylogeny.polygon import getConvexHull
+from lingpy.thirdparty import cogent as cg
+from lingpy.convert.graph import gls2gml, radial_layout
+from lingpy.basic import Wordlist
+from lingpy.read.csv import csv2dict, csv2list
 
 
 def get_gls(
@@ -116,35 +115,18 @@ def get_gls(
     # get subtree for taxa with positive paps
     tree = tree.lowestCommonAncestor([t for t in taxa if statesD[t] == 1])
 
-    # get the tips for the current subtree
     tips = tree.getTipNames()
-
-    # get the root name
     root = tree.Name
-
-    # get the nodes
     nodes = tree.getNodeNames()
-
-    # get the distance from each taxon to the root
-    distances = {}
+    distances = defaultdict(list)
     for node in [n for n in nodes if n != root]:
-
-        # get distance to root
-        d = len(tree.getConnectingEdges(root, node))
-
-        # append to dictionary
-        try:
-            distances[d] += [node]
-        except:
-            distances[d] = [node]
+        distances[len(tree.getConnectingEdges(root, node))].append(node)
     distances[0] = [root]
 
     # assign the scenarios, each scenario consists of the state of the node in
     # the tree and a dictionary with the previous events, where the node-name
     # is the key and the event (1,0,-1) is the value
-    scenarios = {}
-    for taxon in tips:
-        scenarios[taxon] = [(statesD[taxon], {})]
+    scenarios = {taxon: [(statesD[taxon], {})] for taxon in tips}
 
     # return simple scenario if the group is single origin
     if [statesD[tip] for tip in tips].count(1) == len(tips):
@@ -154,28 +136,17 @@ def get_gls(
     for i in sorted(distances, reverse=True):
         log.debug("Calculating Layer {0}...".format(i))
 
-        # iterate over all nodes in the layer
         for node in distances[i]:
-
-            # get the tree node
             tree_node = tree.getNodeMatchingName(node)
 
-            # check whether node is tip
             if not tree_node.isTip():
-
-                # get the nodes' children
                 names = [n.Name for n in tree_node.Children]
-                children = [scenarios[n] for n in names]
                 log.debug("... current node {0} ({1})".format(node, names))
-
-                # get all possible combinations
-                combinations = itertools.product(*children)
 
                 # define new nodes list (to be appended to new node
                 new_nodes = []
-
-                for combination in combinations:
-
+                for combination in itertools.product(
+                        *[scenarios[n.Name] for n in tree_node.Children]):
                     # get stories
                     states = [node[0] for node in combination]
                     stories = [node[1] for node in combination]
@@ -185,37 +156,27 @@ def get_gls(
                     s0 = states.count(0)
                     sM = states.count(-1)
 
-                    # get the length of the states
                     sL = len(states)
 
-                    # get new stories
                     new_stories = {}
                     for story in stories:
                         new_stories.update(story)
 
-                    # combine states if they evaluate to 1
                     if s1 + sM == sL:
-
-                        # append the new combined stuff to the dictionary
-                        new_nodes += [(1, new_stories)]
+                        # combine states if they evaluate to 1
+                        new_nodes.append((1, new_stories))
                         log.debug("...... 1 nodes: %s" % (new_nodes[-1],))
-
-                    # combine states if they evaluate to 0
                     elif s0 + sM == sL:
-
+                        # combine states if they evaluate to 0
                         # append the new combined stuff to the dictionary
-                        new_nodes += [(0, new_stories)]
+                        new_nodes.append((0, new_stories))
                         log.debug("...... 0 nodes: %s" % (new_nodes[-1],))
-
-                    # if the both evaluate to -1, also combine them
                     elif sM == sL:
-                        new_nodes += [(-1, new_stories)]
-
-                    # append both scenarios if there's both 1 and 0
+                        # if the both evaluate to -1, also combine them
+                        new_nodes.append((-1, new_stories))
                     else:
-
-                        # assuming origin, each node that has a 0, needs an extra
-                        # origin
+                        # append both scenarios if there's both 1 and 0
+                        # assuming origin, each node that has a 0, needs an extra origin
                         new_storiesA = new_stories.copy()
                         new_storiesB = new_stories.copy()
 
@@ -233,72 +194,46 @@ def get_gls(
 
                 # evaluate the scenarios for consistency reasons,
                 good_nodes = []
-                minGains, minLoss = {}, {}
+                minGains, minLoss = defaultdict(list), defaultdict(list)
                 for j, (state, scenario) in enumerate(new_nodes):
-
-                    # avoid to append scenarios with more than allowed gains
-                    # per lineage
+                    # avoid to append scenarios with more than allowed gains per lineage
                     if not (state == 1 and list(scenario.values()).count(1) > gpl):
-
                         # check scenarios having a loss in order to retrieve
                         # the scenario with the minimal weight, since once a
                         # loss is determined, the gains can be freely chosen
+                        gains = list(scenario.values()).count(1)
+                        losses = list(scenario.values()).count(0)
+                        w = gains * weights[0] + losses * weights[1]
                         if state == 0:
-                            gains = list(scenario.values()).count(1)
-                            losses = list(scenario.values()).count(0)
-                            w = gains * weights[0] + losses * weights[1]
-                            try:
-                                minGains[w] += [j]
-                            except KeyError:
-                                minGains[w] = [j]
-
+                            minGains[w].append(j)
                         # do the same for scenarios having a gain, if multiple
                         # loss-models are encountered
                         elif state == 1:
-                            gains = list(scenario.values()).count(1)
-                            losses = list(scenario.values()).count(0)
-                            w = gains * weights[0] + losses * weights[1]
-                            try:
-                                minLoss[w] += [j]
-                            except:
-                                minLoss[w] = [j]
+                            minLoss[w].append(j)
 
                 # append lowest weights in gains to the list
                 if minGains:
-                    good_nodes += [new_nodes[idx] for idx in
-                                   minGains[min(minGains)]]
+                    good_nodes.extend([new_nodes[idx] for idx in minGains[min(minGains)]])
                 if minLoss:
-                    good_nodes += [new_nodes[idx] for idx in
-                                   minLoss[min(minLoss)]]
+                    good_nodes.extend([new_nodes[idx] for idx in minLoss[min(minLoss)]])
 
                 scenarios[tree_node.Name] = good_nodes
 
     # select the best of all scenarios by comparing all weights
-    w = len(taxa) * weights[0]
-
-    winners = {}
+    winners = defaultdict(list)
     for s in scenarios[root]:
         if s[0] == 1:
             s[1][root] = s[0]
 
         # count the weights
         events = list(s[1].values())
-        gains = events.count(1)
-        losses = events.count(0)
-
-        w = gains * weights[0] + losses * weights[1]
-
-        try:
-            winners[w] += [list(s[1].items())]
-        except:
-            winners[w] = [list(s[1].items())]
+        winners[events.count(1) * weights[0] + events.count(0) * weights[1]].append(
+            list(s[1].items()))
 
     # select the scenario with the hightest number of gains, if push-gains
     # option is set to true
-    log.debug(
-        '%s' % (
-            [x for x in tree.getNodeMatchingName(root).getTipNames()
-             if x not in states1],))
+    log.debug('%s' % (
+        [x for x in tree.getNodeMatchingName(root).getTipNames() if x not in states1],))
 
     return sorted(
         winners[min(winners)],
@@ -347,15 +282,14 @@ class PhyBo(Wordlist):
         **keywords
     ):
         # TODO check for keywords, allow to load trees, etc.
-        defaults = {
-            'degree': 100,
-            'singletons': True,
-            'missing': -1,
-            'change': lambda x: x ** 1.5,
-            'start': 0
-        }
-        for k in defaults:
-            keywords.setdefault(k, defaults[k])
+        util.setdefaults(
+            keywords,
+            degree=100,
+            singletons=True,
+            missing=-1,
+            change=lambda x: x ** 1.5,
+            start=0
+        )
 
         # check for cognates
         if 'cognates' in keywords:
@@ -366,8 +300,8 @@ class PhyBo(Wordlist):
         self._dataset_dir = os.path.dirname(os.path.abspath(dataset))
         self._output_dir = output_dir or self._dataset_dir
         dataset_name = os.path.basename(dataset)
-        self.dataset = dataset_name[:-4] if dataset_name[-4:] in ['.qlc',
-                                                                  '.csv'] else dataset_name
+        self.dataset = dataset_name[:-4] \
+            if dataset_name[-4:] in ['.qlc', '.csv'] else dataset_name
         self._pap_string = paps
 
         # open csv-file of the data and store it as a word list attribute
@@ -382,34 +316,17 @@ class PhyBo(Wordlist):
 
         # check for glossid
         if 'glid' not in self.entries:
-            self._gl2id = dict(
-                zip(
-                    self.rows,
-                    [i + 1 for i in range(len(self.rows))]
-                )
-            )
-            self._id2gl = dict([(b, a) for a, b in self._gl2id.items()])
-
-            f = lambda x: self._gl2id[x]
-
-            self.add_entries(
-                'glid',
-                'concept',
-                f
-            )
+            self._gl2id = dict(zip(self.rows, [i + 1 for i in range(len(self.rows))]))
+            self._id2gl = {b: a for a, b in self._gl2id.items()}
+            self.add_entries('glid', 'concept', lambda x: self._gl2id[x])
         else:
-            self._id2gl = dict([(int(self[k, 'glid']), self[k, 'concept']) for k in self])
-            self._gl2id = dict([(self[k, 'concept'], int(self[k, 'glid'])) for k in self])
+            self._id2gl = {int(self[k, 'glid']): self[k, 'concept'] for k in self}
+            self._gl2id = {self[k, 'concept']: int(self[k, 'glid']) for k in self}
 
         # check for paps as attribute in the wordlist
         if paps not in self.entries:
-            # define the function for conversion
-            f = lambda x, y: "{0}:{1}".format(x[y[0]], x[y[1]])
             self.add_entries(
-                paps,
-                ref + ',glid',
-                f
-            )
+                paps, ref + ',glid', lambda x, y: "{0}:{1}".format(x[y[0]], x[y[1]]))
             log.info("Created entry PAP.")
 
         # get the paps and the etymological dictionary
@@ -432,7 +349,6 @@ class PhyBo(Wordlist):
 
             # only calculate singletons if the option is chosen
             for key in self.paps:
-
                 # get the names of the concepts
                 concept_list = [k for k in tmp[key] if k != 0]
                 concept = concept_list[0][0]
@@ -458,14 +374,9 @@ class PhyBo(Wordlist):
                     self.tree = cg.LoadTree(dataset + '.tre')
                 except:
                     # create it otherwise
-                    self.calculate(
-                        'tree',
-                        ref=ref,
-                        tree_calc=tree_calc,
-                    )
+                    self.calculate('tree', ref=ref, tree_calc=tree_calc)
                     log.info("Tree-file was not found, creating it now...")
                     # XXX TODO
-
         # if it is explicitly defined, try to load that file
         else:  # not hasattr(self,'tree'):
             self._meta['tree'] = cg.LoadTree(tree)
@@ -523,22 +434,7 @@ class PhyBo(Wordlist):
         except:
             return {}
 
-    def _get_GLS_top_down(
-        self,
-        pap,
-        mode=1,
-        missing_data=0
-    ):
-        """
-        Infer gain-loss scenario using the method by Dagan & Martin (2007).
-
-        """
-        # check for mode
-        try:
-            mode = int(mode)
-        except:
-            raise ValueError("[i] Mode should be an integer.")
-
+    def _existing_taxa_and_paps(self, pap, missing_data):
         # get the list of nodes that are not missing
         taxa, paps = [], []
         for i, taxon in enumerate(self.taxa):
@@ -546,6 +442,20 @@ class PhyBo(Wordlist):
                 pap[i] = missing_data
             taxa += [taxon]
             paps += [pap[i]]
+        return taxa, paps
+
+    def _get_GLS_top_down(self, pap, mode=1, missing_data=0):
+        """
+        Infer gain-loss scenario using the method by Dagan & Martin (2007).
+
+        """
+        # check for mode
+        try:
+            mode = int(mode)
+        except (ValueError, TypeError):
+            raise ValueError("[i] Mode should be an integer.")
+
+        taxa, paps = self._existing_taxa_and_paps(pap, missing_data)
 
         # get list of taxa where pap is 1
         presents = [self.taxa[i] for i in range(len(self.taxa)) if pap[i] in (1, -1)]
@@ -568,37 +478,25 @@ class PhyBo(Wordlist):
         # make the queue
         queue = [[tree, 1]]
         while queue:
-
             # get tree and counter from queue
             tmp_tree, counter = queue.pop(0)
 
             # break if counter exceeds the mode
             if counter >= mode:
-                t = tmp_tree.lowestCommonAncestor([p for p in presents if p in
-                                                   tmp_tree.getTipNames()])
-                if hasattr(t, 'Name'):
-                    scenario += [(t.Name, 1)]
-                else:
-                    scenario += [(tmp_tree.Name, 0)]
+                t = tmp_tree.lowestCommonAncestor(
+                    [p for p in presents if p in tmp_tree.getTipNames()])
+                scenario.append((t.Name, 1) if hasattr(t, 'Name') else (tmp_tree.Name, 0))
             else:
                 # store common names and children nodes
                 commons = []
-
-                # get tip names for checking
                 tmp_names = tmp_tree.getTipNames()
 
                 # store results for separate children
                 tmp_results = []
 
-                # now, we iterate over all children and append them to the
-                # queue
-                children = tmp_tree.Children
-                for child in children:
-
-                    # get lowest common ancestor
+                for child in tmp_tree.Children:
                     subtree = child.lowestCommonAncestor(
-                        [p for p in presents if p in child.getTipNames()]
-                    )
+                        [p for p in presents if p in child.getTipNames()])
 
                     # check for tip names in subtrees
                     if hasattr(subtree, "Children"):
@@ -609,10 +507,7 @@ class PhyBo(Wordlist):
                         else:
                             subnames = []
 
-                    # append subnames to commons
-                    commons += subnames
-
-                    # append data to our tmp_results
+                    commons.extend(subnames)
                     tmp_results += [child]
 
                 # evaluate the results
@@ -648,40 +543,22 @@ class PhyBo(Wordlist):
 
         # TODO fill the scenario with gaps
         output = []
-        d = {}
-        for i, taxon in enumerate(taxa):
-            if paps[i] >= 1:
-                d[taxon] = 1
-            else:
-                d[taxon] = 0
+        d = {taxon: 1 if paps[i] >= 1 else 0 for i, taxon in enumerate(taxa)}
 
         for s in scenario:
-
-            # append scenario to output
             output += [s]
-
-            # get the subtree
             subtree = tree.getNodeMatchingName(s[0])
 
-            # check whether subtree is leave
-            if not subtree.Children:
-                pass
-            else:
+            if subtree.Children:
                 # order the internal nodes according to the number of their leaves
                 ordered_nodes = sorted(
-                    subtree.nontips() + [subtree], key=lambda x: len(x.tips())
-                )
+                    subtree.nontips() + [subtree], key=lambda x: len(x.tips()))
 
                 # start bottom-up
                 for node in ordered_nodes:
-
-                    # get the children
                     children = node.Children
-
-                    # store the states
                     states = []
 
-                    # iterate over the children
                     for child in children:
                         state = d[child.Name]
                         states += [state]
@@ -733,14 +610,7 @@ class PhyBo(Wordlist):
         """
         # make a dictionary that stores the scenario
         d = {}
-
-        # get the list of nodes that are not missing
-        taxa, paps = [], []
-        for i, taxon in enumerate(self.taxa):
-            if pap[i] == -1:
-                pap[i] = missing_data
-            taxa += [taxon]
-            paps += [pap[i]]
+        taxa, paps = self._existing_taxa_and_paps(pap, missing_data)
 
         # get the subtree containing all taxa that have positive paps
         tree = self.tree.lowestCommonAncestor(
@@ -796,9 +666,7 @@ class PhyBo(Wordlist):
             return [(tree.Name, 1)]
 
         # order the internal nodes according to the number of their leaves
-        ordered_nodes = sorted(
-            tree.nontips() + [tree], key=lambda x: len(x.tips())
-        )
+        ordered_nodes = sorted(tree.nontips() + [tree], key=lambda x: len(x.tips()))
 
         search_space = 0
         log.debug('The Pap to be analysed: %s' % ', '.join(dbpaps))
@@ -811,7 +679,6 @@ class PhyBo(Wordlist):
             # possible scenarios, i.e. we need to store the crossproduct of all
             # scenarios
 
-            # get the names of the children of the nodes
             names = [x.Name for x in node.Children]
 
             # get the nodes with their states from the dictionary
@@ -908,29 +775,17 @@ class PhyBo(Wordlist):
                     if mode == 'w':
                         weight = gl.count(1) * r[0] + gl.count(0) * r[1]
                     else:
-                        if RST < 0:
-                            weight = gl.count(0)
-                        else:
-                            weight = gl.count(1)
+                        weight = gl.count(0 if RST < 0 else 1)
 
                     log.debug("... state,weight: %s %s" % (gl, weight))
 
                     if weight <= rst:
-                        if mode == 'w':
-                            newNodes.append((0, new_stories, maxGain, maxLoss - 1))
-                        else:
-                            # if gl.count(0) <= maxLoss:
-                            newNodes.append((0, new_stories, maxGain, maxLoss - 1))
+                        newNodes.append((0, new_stories, maxGain, maxLoss - 1))
 
                 # if states are both missing
                 elif states_m == states_len:
                     log.debug("... all states are missing")
-
-                    if mode == 'w':
-                        newNodes.append((-1, new_stories, maxGain, maxLoss - 1))
-                    else:
-                        # if gl.count(0) <= maxLoss:
-                        newNodes.append((-1, new_stories, maxGain, maxLoss - 1))
+                    newNodes.append((-1, new_stories, maxGain, maxLoss - 1))
 
                 # if the states are not identical, we check for both scenarios
                 else:
@@ -977,10 +832,7 @@ class PhyBo(Wordlist):
                     # character to be gained twice along a branch, i.e. by an
                     # ancestor, then get lost, and than be gained anew
                     gains_per_lineage = sum([1 for k in tmpB if k[1] == 1])
-                    if gains_per_lineage >= gpl:  # in [k[1] for k in tmpB]:
-                        noB = True
-                    else:
-                        noB = False
+                    noB = gains_per_lineage >= gpl
 
                     if weightA <= rst:
                         newNodes += [newNodeA]
@@ -1018,7 +870,6 @@ class PhyBo(Wordlist):
         tracer = []
 
         for i, line in enumerate(gls_list):
-
             # calculate gains and losses
             gains = sum([1 for x in line if x[1] == 1])
             losses = sum([1 for x in line if x[1] == 0])
@@ -1029,10 +880,8 @@ class PhyBo(Wordlist):
             else:
                 score = gains + losses
 
-            # append it to the tracer
             tracer.append(score)
 
-        # get the minimum score
         minScore = min(tracer)
 
         if mode == 'w':
@@ -1040,12 +889,8 @@ class PhyBo(Wordlist):
             # gains inferred, thereby pushing gains to the root, similar to
             # Mirkin's (2003) suggestion
             best_gls = [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore]
-            best_gls = sorted(
-                best_gls,
-                key=lambda x: sum([i[1] for i in x]),
-                reverse=push_gains
-            )
-            return best_gls[0]
+            return sorted(
+                best_gls, key=lambda x: sum([i[1] for i in x]), reverse=push_gains)[0]
 
             # push gains down to the root as suggested by Mirkin 2003
         minimal_gains = [gls_list[i] for i in range(len(tracer)) if tracer[i] == minScore]
@@ -1056,27 +901,94 @@ class PhyBo(Wordlist):
             gains = sum([1 for x in line if x[1] == 1])
             if gains <= minGains:
                 minGains = gains
-        minimal_gains = [line for line in minimal_gains if sum(
-            [1 for x in line if x[1] == 1]
-        ) == minGains]
+        minimal_gains = [line for line in minimal_gains
+                         if sum([1 for x in line if x[1] == 1]) == minGains]
 
         best_scenario = 0
         old_length_of_tips = len(self.taxa) + 1
 
         for i, line in enumerate(minimal_gains):
-
             # calculate number of tips for the gains of a given scenario
             new_length_of_tips = 0
             for taxon, state in line:
                 if state == 1:
                     new_length_of_tips += len(
-                        self.tree.getNodeMatchingName(taxon).getTipNames()
-                    )
+                        self.tree.getNodeMatchingName(taxon).getTipNames())
             if new_length_of_tips < old_length_of_tips:
                 old_length_of_tips = new_length_of_tips
                 best_scenario = i
 
         return minimal_gains[best_scenario]
+
+    def _plot(self, glm, output_plot, tar, fileformat='png'):
+        # store the graph
+        for cog in self.cogs:
+            gls = self.gls[glm][cog][0]
+            g = gls2gml(
+                gls,
+                self.tgraph,
+                self.tree,
+                filename=self._output_path(
+                    'gml', '{0}-{1}'.format(self.dataset, glm), cog))
+
+            if output_plot:
+                nodes = []
+                for n, d in g.nodes(data=True):
+                    nodes.append((
+                        d['graphics']['x'],
+                        d['graphics']['y'],
+                        d['graphics']['fill'],
+                        d['origin'],
+                        d['label']))
+
+                edges = []
+                for a, b, d in g.edges(data=True):
+                    edges.append((
+                        g.node[a]['graphics']['x'],
+                        g.node[b]['graphics']['x'],
+                        g.node[a]['graphics']['y'],
+                        g.node[b]['graphics']['y']))
+
+                # mpl.rc('text',usetex=keywords['usetex'])
+                fig = plt.figure()
+                fig.add_subplot(111)
+                plt.axes(frameon=False)
+                plt.xticks([])
+                plt.yticks([])
+                plt.axis('equal')
+
+                for xA, xB, yA, yB in edges:
+                    plt.plot([xA, xB], [yA, yB], '-', color='black', linewidth=5)
+                    plt.plot([xA, xB], [yA, yB], '-', color='0.2', linewidth=4)
+                for x, y, f, o, l in nodes:
+                    if l.startswith('edge') or l.startswith('root'):
+                        plt.plot(x, y, 'o', markersize=20 if o == 1 else 10, color=f)
+                    else:
+                        plt.text(
+                            x,
+                            y,
+                            l,
+                            horizontalalignment='center',
+                            verticalalignment='center',
+                            size=8,
+                            fontweight='bold',
+                            color='#ffffff' if f == '#000000' else '#000000',
+                            backgroundcolor=f)
+
+                # plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
+                plt.savefig(self._output_path(
+                    'gml',
+                    '{0}-{1}-figures'.format(self.dataset, glm),
+                    cog + '.' + fileformat))
+                plt.clf()
+
+        # if tar is chosen, put it into a tarfile
+        if tar:
+            os.system(
+                'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
+                    self.dataset, glm))
+            os.system('rm {0}_phybo/gml/{0}-{1}/*.gml'.format(self.dataset, glm))
+            os.system('rmdir {0}_phybo/gml/{0}-{1}'.format(self.dataset, glm))
 
     def get_GLS(
         self,
@@ -1172,16 +1084,12 @@ class PhyBo(Wordlist):
         elif mode == 'topdown':
             glm = 't-{0}'.format(restriction)
 
-        # set defaults
-        defaults = {
-            "force": False,
-            "gpl": 1,
-            "push_gains": True,
-            "missing_data": 0
-        }
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        util.setdefaults(
+            keywords,
+            force=False,
+            gpl=1,
+            push_gains=True,
+            missing_data=0)
 
         # check for previous analyses
         if glm in self.gls and not keywords['force']:
@@ -1200,8 +1108,7 @@ class PhyBo(Wordlist):
         # attribute stores all gls for each cog
         self.gls[glm] = {}
 
-        # make a temporary hash in order to decrease the number of calls to the
-        # algorithm
+        # make a temporary hash in order to decrease the number of calls to the algorithm
         cogDict = {}
 
         skip, nonskip = 0, 0
@@ -1261,99 +1168,7 @@ class PhyBo(Wordlist):
         # write the results to file
         # if output of gls is chosen, load the gml-graph
         if output_gml:
-            # store the graph
-            for cog in self.cogs:
-                gls = self.gls[glm][cog][0]
-                g = gls2gml(
-                    gls,
-                    self.tgraph,
-                    self.tree,
-                    filename=self._output_path('gml', '{0}-{1}'.format(self.dataset, glm),
-                                               cog))
-
-                # if plot of gml is chose
-                if output_plot:
-                    nodes = []
-
-                    for n, d in g.nodes(data=True):
-                        x = d['graphics']['x']
-                        y = d['graphics']['y']
-                        f = d['graphics']['fill']
-                        o = d['origin']
-                        l = d['label']
-
-                        nodes.append((x, y, f, o, l))
-
-                    edges = []
-                    for a, b, d in g.edges(data=True):
-                        xA = g.node[a]['graphics']['x']
-                        xB = g.node[b]['graphics']['x']
-                        yA = g.node[a]['graphics']['y']
-                        yB = g.node[b]['graphics']['y']
-
-                        edges += [(xA, xB, yA, yB)]
-
-                    # mpl.rc('text',usetex=keywords['usetex'])
-                    fig = plt.figure()
-                    fig.add_subplot(111)
-                    plt.axes(frameon=False)
-                    plt.xticks([])
-                    plt.yticks([])
-
-                    plt.axis('equal')
-
-                    for xA, xB, yA, yB in edges:
-                        plt.plot(
-                            [xA, xB],
-                            [yA, yB],
-                            '-',
-                            color='black',
-                            linewidth=5
-                        )
-                        plt.plot(
-                            [xA, xB],
-                            [yA, yB],
-                            '-',
-                            color='0.2',
-                            linewidth=4
-                        )
-                    for x, y, f, o, l in nodes:
-                        if f == '#000000':
-                            c = '#ffffff'
-                        else:
-                            c = '#000000'
-                        if o == 1:
-                            size = 20
-                        else:
-                            size = 10
-                        if l.startswith('edge') or l.startswith('root'):
-                            plt.plot(x, y, 'o', markersize=size, color=f)
-                        else:
-                            plt.text(
-                                x,
-                                y,
-                                l,
-                                horizontalalignment='center',
-                                verticalalignment='center',
-                                size=8, fontweight='bold', color=c, backgroundcolor=f)
-
-                    # plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
-                    plt.savefig(
-                        self._output_path(
-                            'gml', '{0}-{1}-figures'.format(self.dataset, glm), cog,
-                            '.png'))
-                    plt.clf()
-
-            # if tar is chosen, put it into a tarfile
-            if tar:
-                os.system(
-                    'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
-                        self.dataset,
-                        glm
-                    )
-                )
-                os.system('rm {0}_phybo/gml/{0}-{1}/*.gml'.format(self.dataset, glm))
-                os.system('rmdir {0}_phybo/gml/{0}-{1}'.format(self.dataset, glm))
+            self._plot(glm, output_plot, tar)
 
         # store some statistics as attributes
         self.stats[glm]['ano'] = sum(
@@ -1366,21 +1181,19 @@ class PhyBo(Wordlist):
         # store statistics and gain-loss-scenarios in textfiles
         log.info("Writing GLS data to file... ")
 
-        lines = ['PAP\tGainLossScenario\tNumberOfOrigins']
+        lines = [['PAP', 'GainLossScenario', 'NumberOfOrigins']]
         for cog in sorted(self.gls[glm]):
             gls, noo = self.gls[glm][cog]
-            lines.append(
-                "{0}\t".format(cog) + ','.join(
-                    ["{0}:{1}".format(a, b) for a, b in gls]
-                ) + '\t' + text_type(noo)
-            )
+            lines.append([
+                "{0}".format(cog),
+                ','.join(["{0}:{1}".format(a, b) for a, b in gls]),
+                text_type(noo)])
         self._write_file(
-            os.path.join('gls', '{0}-{1}.gls'.format(self.dataset, glm)), lines)
+            os.path.join('gls', '{0}-{1}.gls'.format(self.dataset, glm)),
+            [util.tabjoin(line) for line in lines])
 
-        # print out average number of origins
         log.info("Average Number of Origins: {0:.2f}".format(self.stats[glm]['ano']))
 
-        # write statistics to stats file
         lines = [
             'Number of PAPs (total): {0}'.format(len(self.paps)),
             'Number of PAPs (non-singletons): {0}'.format(len(self.gls[glm])),
@@ -1397,9 +1210,7 @@ class PhyBo(Wordlist):
             os.path.join('stats', '{0}-{1}'.format(self.dataset, glm)), lines)
         return
 
-    def get_CVSD(
-        self,
-    ):
+    def get_CVSD(self):
         """
         Calculate the Contemporary Vocabulary Size Distribution (CVSD).
 
@@ -1424,33 +1235,19 @@ class PhyBo(Wordlist):
         # ->self.dists['contemporary'] = [x for x,y in zip(forms,meanings)] # XXX
         dists = []
         for t in self.taxa:
-            paps = sorted(set([p for p in self.get_list(
-                taxa=t,
-                entry=self._pap_string,
-                flat=True
-            ) if p not in self.singletons]))
+            paps = sorted(set(p for p in self.get_list(
+                taxa=t, entry=self._pap_string, flat=True) if p not in self.singletons))
             forms = len(paps)
             dists += [forms]  # / concepts]
         self.dists['contemporary'] = dists
         log.info("Calculated the distributions for contemporary taxa.")
         return
 
-    def get_AVSD(
-        self,
-        glm,
-        **keywords
-    ):
+    def get_AVSD(self, glm, **keywords):
         """
         Function retrieves all pap s for ancestor languages in a given tree.
         """
-        # get keywords and defaults
-        defaults = {
-            'proto': False,
-            'force': False,
-        }
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        util.setdefaults(keywords, proto=False, force=False)
 
         # check for already calculated glm
         # check for previous analyses
@@ -1461,13 +1258,9 @@ class PhyBo(Wordlist):
             log.info("For recalculation, set 'force' to True.")
             return
 
-        # get acs with help of utils
         acs, dst = get_acs(self, glm, **keywords)
-
-        # append stuff to dist
         self.dists[glm] = dst
 
-        # append stuff to acs
         self.acs[glm] = {}
         if keywords['proto']:
             paps = [self[k, self._pap_string] for k in self]
@@ -1595,25 +1388,18 @@ class PhyBo(Wordlist):
         log.info("Calculated the distributions for ancestral taxa.")
         return
 
-    def plot_ACS(
-        self,
-        glm,
-        **keywords
-    ):
+    def plot_ACS(self, glm, **keywords):
         """
         Plot a tree in which the node size correlates with the size of the ancestral node.
         """
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             scaler=0.1,
             degree=180,
             change=lambda x: 2.5 * x,
             figsize=(10, 5),
             colormap=mpl.cm.jet,
-            colors=True
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            colors=True)
 
         # check for the model
         if glm not in self.acs:
@@ -1639,36 +1425,24 @@ class PhyBo(Wordlist):
         # iterate over internal nodes now
         for a, b in [(x, y) for x, y in self.tree.getNodesDict().items() if
                      x not in self.taxa]:
-
-            if a != 'root':
-                node = a
-                # node = str(b).replace(')','').replace('(','').replace(',','-')
-            else:
-                node = 'root'
-
+            node = a if a != 'root' else 'root'
             node_dict[a] = dict(nodesize=len(self.acs[glm][node]) * keywords['scaler'])
             tmp[a] = len(self.acs[glm][node])
             vsizes += [len(self.acs[glm][node])]
 
-        # define a color-function
         if keywords['colors']:
             vsizes = sorted(set(vsizes))
             cfunc = np.array(np.linspace(10, 256, 245), dtype='int')
             for node in node_dict:
                 node_dict[node]['nodecolor'] = mpl.colors.rgb2hex(
-                    keywords['colormap'](
-                        cfunc[int(tmp[node] * 244 / max(vsizes))]
-                    )
-                )
+                    keywords['colormap'](cfunc[int(tmp[node] * 244 / max(vsizes))]))
 
-        # add the stuff to keywords
         keywords['node_dict'] = node_dict
 
         # check for filename in keywords
         if 'filename' not in keywords:
             keywords['filename'] = self._output_path(glm + '_acs')
 
-        # plot the tree
         plot_tree(self.tree, no_labels=True, **keywords)
 
     def get_IVSD(
@@ -1685,10 +1459,7 @@ class PhyBo(Wordlist):
         Calculate VSD on the basis of each item.
 
         """
-        kw = dict(
-            fileformat='png',
-            homoplasy=0.05,
-        )
+        kw = dict(fileformat='png', homoplasy=0.05)
         kw.update(keywords)
 
         # assign concept dict
@@ -1702,8 +1473,7 @@ class PhyBo(Wordlist):
         nodes = ['root'] + sorted(
             [node.Name for node in self.tree.nontips()],
             key=lambda x: len(self.tree.getNodeMatchingName(x).tips()),
-            reverse=True
-        )
+            reverse=True)
 
         # make dictionary that stores the best models for each cognate set
         best_models = {}
@@ -1714,7 +1484,6 @@ class PhyBo(Wordlist):
 
         # iterate over concepts
         for concept in concepts:
-
             # get paps
             tmp = self.get_dict(row=concept, entry=self._pap_string)
 
@@ -1728,18 +1497,13 @@ class PhyBo(Wordlist):
 
             # calculate ancestral dists, get all paps first
             pap_set = [i for i in set(
-                self.get_list(
-                    row=concept,
-                    entry=self._pap_string,
-                    flat=True
-                )
+                self.get_list(row=concept, entry=self._pap_string, flat=True)
             ) if i not in self.singletons]
 
             # get the models
             if leading_model:
                 models = [leading_model] + sorted(
-                    [k for k in self.gls.keys() if k != leading_model]
-                )
+                    [k for k in self.gls.keys() if k != leading_model])
             else:
                 models = sorted(list(self.gls.keys()))
 
@@ -1749,11 +1513,9 @@ class PhyBo(Wordlist):
             # get the scenarios
             avsd_list = []
             for idx, glm in enumerate(models):
-
                 tmp_list = []
                 queue = ['root']
                 while queue:
-
                     # get the parent
                     parent = queue.pop(0)
 
@@ -1761,12 +1523,8 @@ class PhyBo(Wordlist):
                     parent_paps = [p[0] for p in self.acs[glm][parent]]
 
                     # count number of paps
-                    forms = [f for f in pap_set if
-                             f in parent_paps]  # self.acs[glm][parent]]
-                    tmp_list += [len(forms)]
-
-                    children = self.tree.getNodeMatchingName(parent).Children
-                    for child in children:
+                    tmp_list += [len([f for f in pap_set if f in parent_paps])]
+                    for child in self.tree.getNodeMatchingName(parent).Children:
                         if child not in self.taxa:
                             queue += [child.Name]
 
@@ -1784,11 +1542,7 @@ class PhyBo(Wordlist):
                     zp_vsd.append((0, 0.0))
                 else:
                     if evaluation in ['mwu', 'mannwhitneyu']:
-                        vsd = sp.stats.mstats.kruskalwallis(  # mannwhitneyu(
-                            cvsd,
-                            avsd,
-                            # use_continuity=False
-                        )
+                        vsd = sp.stats.mstats.kruskalwallis(cvsd, avsd)
                         zp_vsd.append((vsd[0], vsd[1]))
                     elif evaluation in ['average']:
                         # check for best median and best average
@@ -1847,108 +1601,7 @@ class PhyBo(Wordlist):
         # write the results to file
         # if output of gls is chosen, load the gml-graph
         if output_gml:
-            # store the graph
-            for cog in self.cogs:
-                gls = self.gls["mixed"][cog][0]
-                g = gls2gml(
-                    gls,
-                    self.tgraph,
-                    self.tree,
-                    filename=self._output_path(
-                        'gml',
-                        '{0}-{1}'.format(
-                            self.dataset,
-                            "mixed"
-                        ),
-                        cog
-                    ),
-                )
-
-                # if plot of gml is chose
-                if output_plot:
-                    nodes = []
-
-                    for n, d in g.nodes(data=True):
-                        x = d['graphics']['x']
-                        y = d['graphics']['y']
-                        f = d['graphics']['fill']
-                        o = d['origin']
-                        l = d['label']
-
-                        nodes.append((x, y, f, o, l))
-
-                    edges = []
-                    for a, b, d in g.edges(data=True):
-                        xA = g.node[a]['graphics']['x']
-                        xB = g.node[b]['graphics']['x']
-                        yA = g.node[a]['graphics']['y']
-                        yB = g.node[b]['graphics']['y']
-
-                        edges += [(xA, xB, yA, yB)]
-
-                    # mpl.rc('text',usetex=keywords['usetex'])
-                    fig = plt.figure()
-                    fig.add_subplot(111)
-                    plt.axes(frameon=False)
-                    plt.xticks([])
-                    plt.yticks([])
-
-                    plt.axis('equal')
-
-                    for xA, xB, yA, yB in edges:
-                        plt.plot(
-                            [xA, xB],
-                            [yA, yB],
-                            '-',
-                            color='black',
-                            linewidth=5
-                        )
-                        plt.plot(
-                            [xA, xB],
-                            [yA, yB],
-                            '-',
-                            color='0.2',
-                            linewidth=4
-                        )
-                    for x, y, f, o, l in nodes:
-                        if f == '#000000':
-                            c = '#ffffff'
-                        else:
-                            c = '#000000'
-                        if o == 1:
-                            size = 20
-                        else:
-                            size = 10
-                        if l.startswith('edge') or l.startswith('root'):
-                            plt.plot(x, y, 'o', markersize=size, color=f)
-                        else:
-                            plt.text(
-                                x,
-                                y,
-                                l,
-                                horizontalalignment='center',
-                                verticalalignment='center',
-                                size=8, fontweight='bold', color=c, backgroundcolor=f)
-
-                    # plt.subplots_adjust(left=0.02,right=0.98,top=0.98,bottom=0.02)
-                    plt.savefig(
-                        self._output_path(
-                            'gml',
-                            '{0}-{1}-figures'.format(self.dataset, 'mixed'),
-                            cog + '.' + kw['fileformat']))
-                    plt.clf()
-
-            # if tar is chosen, put it into a tarfile
-            if tar:
-                # FIXME: the code below is not portable to windows systems!
-                os.system(
-                    'cd {0}_phybo/gml/ ; tar -pczf {0}-{1}.tar.gz {0}-{1}; cd ..; cd ..'.format(
-                        self.dataset,
-                        "mixed"
-                    )
-                )
-                os.system('rm {0}_phybo/gml/{0}-{1}/*.gml'.format(self.dataset, "mixed"))
-                os.system('rmdir {0}_phybo/gml/{0}-{1}'.format(self.dataset, "mixed"))
+            self._plot('mixed', output_plot, tar, fileformat=kw['fileformat'])
 
         # store some statistics as attributes
         self.stats['mixed'] = {}
@@ -1979,24 +1632,17 @@ class PhyBo(Wordlist):
                 )
         return
 
-    def get_ACS(
-        self,
-        glm,
-        **keywords
-    ):
+    def get_ACS(self, glm, **keywords):
         """
         Compute the ancestral character states (ACS) for all internal nodes.
 
         """
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             proto=False,
             force=False,
             filename=self._output_path('acs-' + glm),
-            fileformat='csv'
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            fileformat='csv')
 
         if glm not in self.acs:
             self.get_AVSD(glm, **keywords)
@@ -2008,12 +1654,7 @@ class PhyBo(Wordlist):
                 for c, m, p in sorted(self.acs[glm][key], key=lambda x: x[1]):
                     f.write('{0}\t{1}\t{2}\t{3}\n'.format(key, c, m, p))
 
-    def get_MLN(
-        self,
-        glm,
-        threshold=1,
-        method='mr'
-    ):
+    def get_MLN(self, glm, threshold=1, method='mr'):
         """
         Compute an Minimal Lateral Network for a given model.
 
@@ -2033,11 +1674,6 @@ class PhyBo(Wordlist):
               selecting those which have the highest betweenness centrality
 
         """
-
-        # if not colormap:
-        #    colormap = mpl.cm.jet
-
-        # create the primary graph
         gPrm = nx.Graph()
 
         # make alias for tree and taxa for convenience
@@ -2052,9 +1688,6 @@ class PhyBo(Wordlist):
 
         # create dictionary for inferred lateral events
         ile = {}
-
-        # create mst graph
-        gMST = nx.Graph()
 
         # create out graph
         gOut = nx.Graph()
@@ -2080,157 +1713,70 @@ class PhyBo(Wordlist):
             data['graphics']['width'] = 10.0
             data['graphics']['fill'] = '#000000'
             data['label'] = 'vertical'
-
-            gPrm.add_edge(
-                gTpl.node[nodeA]['label'],
-                gTpl.node[nodeB]['label'],
-                **data
-            )
+            gPrm.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
 
         # start to assign the edge weights
         for cog, (gls, noo) in scenarios.items():
-
-            # get the origins
-            oris = [x[0] for x in gls if x[1] == 1]
-
-            # connect origins by edges
-            for i, oriA in enumerate(oris):
-                for j, oriB in enumerate(oris):
-                    if i < j:
-                        try:
-                            gPrm.edge[oriA][oriB]['weight'] += 1
-                        except:
-                            gPrm.add_edge(
-                                oriA,
-                                oriB,
-                                weight=1
-                            )
+            # connect the origins with edges
+            for oriA, oriB in util.combinations2(x[0] for x in gls if x[1] == 1):
+                if not gPrm.has_edge(oriA, oriB):
+                    gPrm.add_edge(oriA, oriB, weight=1)
+                else:
+                    gPrm.edge[oriA][oriB]['weight'] += 1
 
         log.info("Calculated primary graph.")
         log.info("Inferring lateral edges...")
 
-        # create MST graph
         gMST = nx.Graph()
 
         for cog, (gls, noo) in util.pb(
                 scenarios.items(), desc='MLN-RECONSTRUCTION', total=len(scenarios)):
             ile[cog] = []
-
-            # get the origins
             oris = [x[0] for x in gls if x[1] == 1]
-
-            # create a graph of weights
             gWeights = nx.Graph()
 
             # calculate majority-rule edges
             if method in ['majority_rule', 'mr']:
                 # iterate over nodes
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            w = gPrm.edge[nodeA][nodeB]['weight']
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    gWeights.add_edge(
+                        nodeA, nodeB, weight=gPrm.edge[nodeA][nodeB]['weight'])
             elif method in ['tree_distance', 'td']:
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = len(
-                                    self.tree.getConnectingEdges(
-                                        nodeA,
-                                        nodeB
-                                    )
-                                )
-                            except ValueError:
-                                if 'root' in (nodeA, nodeB):
-                                    w = len(
-                                        self.tree.getConnectingEdges(
-                                            nodeB,
-                                            nodeA
-                                        )
-                                    )
-                                else:
-                                    wA = len(
-                                        self.tree.getConnectingEdges(
-                                            'root',
-                                            nodeA
-                                        )
-                                    )
-                                    wB = len(
-                                        self.tree.getConnectingEdges(
-                                            'root',
-                                            nodeB
-                                        )
-                                    )
-                                    w = wA + wB
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    try:
+                        w = len(self.tree.getConnectingEdges(nodeA, nodeB))
+                    except ValueError:
+                        if 'root' in (nodeA, nodeB):
+                            w = len(self.tree.getConnectingEdges(nodeB, nodeA))
+                        else:
+                            w = len(self.tree.getConnectingEdges('root', nodeA)) +\
+                                len(self.tree.getConnectingEdges('root', nodeB))
+                    gWeights.add_edge(nodeA, nodeB, weight=w)
             elif method in ['betweenness_centrality', 'bc']:
                 bc = nx.edge_betweenness_centrality(
-                    gPrm, normalized=True,
-                    weight='weight'
-                )
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            try:
-                                w = bc[nodeA, nodeB]
-                            except KeyError:
-                                w = bc[nodeB, nodeA]
-                            # be careful with zero division
-                            # if w == 0:
-                            #    w = 0.1
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=int(100 * (1 - w))  # int(1000 / w)
-                            )
+                    gPrm, normalized=True, weight='weight')
+                for nodeA, nodeB in util.combinations2(oris):
+                    try:
+                        w = bc[nodeA, nodeB]
+                    except KeyError:
+                        w = bc[nodeB, nodeA]
+                    gWeights.add_edge(nodeA, nodeB, weight=int(100 * (1 - w)))
             elif method in ['central_node', 'cn']:
                 # get the weighted degrees for the primary graph
                 degrees = gPrm.degree(weight='weight')
-
-                # get the maximum degree
-                max_deg = sorted(
-                    degrees,
-                    key=lambda x: degrees[x],
-                    reverse=True
-                )[0]
+                max_deg = sorted(degrees, key=lambda x: degrees[x], reverse=True)[0]
 
                 # add all nodes as simple
-                for i, nodeA in enumerate(oris):
-                    for j, nodeB in enumerate(oris):
-                        if i < j:
-                            if max_deg in [nodeA, nodeB]:
-                                w = 0
-                            else:
-                                w = 10
-
-                            gWeights.add_edge(
-                                nodeA,
-                                nodeB,
-                                weight=w
-                            )
+                for nodeA, nodeB in util.combinations2(oris):
+                    gWeights.add_edge(
+                        nodeA, nodeB, weight=0 if max_deg in [nodeA, nodeB] else 10)
 
             # if the graph is not empty
             if gWeights:
-
-                # check for identical weights and change them according to
-                # tree-distance
-                tmp_weights = {}
+                # check for identical weights and change them according to tree-distance
+                tmp_weights = defaultdict(list)
                 for a, b, d in gWeights.edges(data=True):
-                    try:
-                        tmp_weights[int(d['weight'])] += [(a, b)]
-                    except:
-                        tmp_weights[int(d['weight'])] = [(a, b)]
+                    tmp_weights[int(d['weight'])].append((a, b))
 
                 if method in ['mr', 'majority_rule']:
                     # check for identical weights and calculate the tree distance
@@ -2252,24 +1798,18 @@ class PhyBo(Wordlist):
                                 except:
                                     if 'root' in (a, b):
                                         branch_distance = len(
-                                            self.tree.getConnectingEdges(b, a)
-                                        )
+                                            self.tree.getConnectingEdges(b, a))
                                         branches += [(a, b, branch_distance)]
                                     else:
-                                        bdA = len(
-                                            self.tree.getConnectingEdges('root', a)
-                                        )
-                                        bdB = len(
-                                            self.tree.getConnectingEdges('root', b)
-                                        )
+                                        bdA = len(self.tree.getConnectingEdges('root', a))
+                                        bdB = len(self.tree.getConnectingEdges('root', b))
                                         branches += [(a, b, bdA + bdB)]
 
                             # now change the weights according to the order
                             scaler = 1 / len(branches)
                             minus = 1 - scaler
-                            branches = sorted(branches,
-                                              key=lambda x: (x[2], x[1], x[0]),
-                                              reverse=True)
+                            branches = sorted(
+                                branches, key=lambda x: (x[2], x[1], x[0]), reverse=True)
                             for a, b, d in branches:
                                 gWeights.edge[a][b]['weight'] += minus
                                 minus -= scaler
@@ -2285,16 +1825,11 @@ class PhyBo(Wordlist):
 
                 # assign the MST-weights to gMST
                 for nodeA, nodeB in mst.edges():
-                    try:
+                    if gMST.has_edge(nodeA, nodeB):
                         gMST.edge[nodeA][nodeB]['weight'] += 1
                         gMST.edge[nodeA][nodeB]['cogs'] += [cog]
-                    except:
-                        gMST.add_edge(
-                            nodeA,
-                            nodeB,
-                            weight=1,
-                            cogs=[cog]
-                        )
+                    else:
+                        gMST.add_edge(nodeA, nodeB, weight=1, cogs=[cog])
                     ile[cog] += [(nodeA, nodeB)]
 
         # load data for nodes into new graph
@@ -2321,37 +1856,18 @@ class PhyBo(Wordlist):
                 del data['graphics']['Line']
             except:
                 pass
-            gOut.add_edge(
-                gTpl.node[nodeA]['label'],
-                gTpl.node[nodeB]['label'],
-                **data
-            )
+            gOut.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
 
         # assign new edge weights
         for nodeA, nodeB, data in gMST.edges(data=True):
             w = data['weight']
-
-            # get the color for the weight
-            # color = mpl.colors.rgb2hex(colormap(cfunc[weights.index(w)]))
-
             data['graphics'] = {}
-            # data['graphics']['fill'] = color
-            # data['graphics']['width'] = w * scale
             data['cogs'] = ','.join([text_type(i) for i in data['cogs']])
             data['label'] = 'horizontal'
 
-            # check for threshold
             if w >= threshold:
-                try:
-                    gOut.edge[nodeA][nodeB]
-                except:
-                    # add the data to the out-graph
-                    gOut.add_edge(
-                        nodeA,
-                        nodeB,
-                        **data
-                    )
-        # transfer node data
+                if not gOut.has_edge(nodeA, nodeB):
+                    gOut.add_edge(nodeA, nodeB, **data)
 
         log.info("Writing graph to file...")
         self._write_file('mln-' + glm + '.gml', nx.generate_gml(gOut))
@@ -2388,16 +1904,11 @@ class PhyBo(Wordlist):
             dgr.append(len(horizontals))
             wdgr.append(sum([gOut[taxon][g]['weight'] for g in horizontals]))
 
-        sorted_nodes = sorted(
-            zip(nodes, dgr, wdgr),
-            key=lambda x: x[1],
-            reverse=True
-        )
+        sorted_nodes = sorted(zip(nodes, dgr, wdgr), key=lambda x: x[1], reverse=True)
         lines = []
         for n, d, w in sorted_nodes:
-            lines.append(
-                '{0}\t{1}\t{2}\t{3}'.format(
-                    n, text_type(tree.getNodeMatchingName(n)), d, w))
+            lines.append(util.tabjoin((
+                n, text_type(tree.getNodeMatchingName(n)), d, w)))
         self._write_file('taxa-' + glm + '.stats', lines)
 
         log.info("Wrote node degree distributions to file.")
@@ -2406,21 +1917,14 @@ class PhyBo(Wordlist):
         edges = [g for g in gOut.edges(data=True) if 'weight' in g[2]]
 
         lines = []
-        for nA, nB, d in sorted(
-            edges,
-            key=lambda x: x[2]['weight'],
-            reverse=True
-        ):
-            lines.append(
-                '{0}\t{1}\t{2}\t{3}\t{4}\t{5}'.format(
-                    nA,
-                    nB,
-                    d['weight'],
-                    d['cogs'],
-                    tree.getNodeMatchingName(nA),
-                    tree.getNodeMatchingName(nB)
-                )
-            )
+        for nA, nB, d in sorted(edges, key=lambda x: x[2]['weight'], reverse=True):
+            lines.append(util.tabjoin((
+                nA,
+                nB,
+                d['weight'],
+                d['cogs'],
+                tree.getNodeMatchingName(nA),
+                tree.getNodeMatchingName(nB))))
         self._write_file('edge-' + glm + '.stats', lines)
         log.info("Wrote edge-weight distributions to file.")
 
@@ -2434,11 +1938,9 @@ class PhyBo(Wordlist):
                         tmp = [x for x in self.etd[cog] if x != 0]
                         idx = [x[0] for x in tmp][0]
                         concept = self[idx, 'concept']
-
                         proto = cog
 
-                        # get the index of the current entry in its dictionary
-                        # representation
+                        # get the index of the current entry in dictionary representation
                         idx = self.get_dict(col=taxon, entry='pap')[concept]
                         idx = idx.index(cog)
 
@@ -2455,50 +1957,31 @@ class PhyBo(Wordlist):
         log.info("Wrote list of edges per taxa to file.")
         return
 
-    def get_PDC(
-        self,
-        glm,
-        **keywords
-    ):
+    def get_PDC(self, glm, **keywords):
         """
         Calculate Patchily Distributed Cognates.
         """
-        defaults = dict(
-            aligned_output=True,
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
-
+        util.setdefaults(keywords, aligned_output=True)
         patchy = {}
         paps = []
 
         for key, (gls, noo) in self.gls[glm].items():
-
             # get the origins
             oris = sorted(
                 [x[0] for x in gls if x[1] == 1],
-                key=lambda x: len(
-                    self.tree.getNodeMatchingName(x).getTipNames()
-                )
-            )
+                key=lambda x: len(self.tree.getNodeMatchingName(x).getTipNames()))
 
             # get the tip-taxa for each origin
             tips = []
-
             losses = [a for a, b in zip(self.taxa, self.paps[key]) if b == 0]
 
             tipsofar = []
             for i, ori in enumerate(oris):
                 new_tips = [
                     i + 1,
-                    [t for t in
-                     self.tree.getNodeMatchingName(
-                         ori
-                     ).getTipNames() if t not in losses and t not in tipsofar]
-                ]
+                    [t for t in self.tree.getNodeMatchingName(ori).getTipNames()
+                     if t not in losses and t not in tipsofar]]
                 tipsofar += new_tips[1]
-
                 tips += [tuple(new_tips)]
 
             # now, all set of origins with their tips are there, we store them
@@ -2525,11 +2008,7 @@ class PhyBo(Wordlist):
         # create a dictionary as updater for the wordlist
         updater = {}
         for key in self:
-
-            # get the taxon first
             taxon = self[key][taxIdx]
-
-            # get the pap
             pap = self[key][papIdx]
 
             try:
@@ -2538,12 +2017,7 @@ class PhyBo(Wordlist):
                 updater[key] = '{0}:{1}'.format(pap, 0)
 
         # update the wordlist
-        self.add_entries(
-            'patchy',
-            updater,
-            lambda x: x,
-            override=True
-        )
+        self.add_entries('patchy', updater, util.identity, override=True)
 
         # write data to file
         # self.output('csv',filename=self.dataset+'_phybo/wl-'+glm)
@@ -2557,7 +2031,7 @@ class PhyBo(Wordlist):
                 f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\tPROTO\n')
             else:
                 f.write('COGID\tGLID\tCONCEPT\tORIGINS\tREFLEXES\tORIG/REFL\n')
-            concepts = {}
+            concepts = defaultdict(list)
             for a, b in sorted(paps, key=lambda x: x[1], reverse=True):
                 a1, a2 = a.split(':')
                 a3 = self._id2gl[int(a2)]
@@ -2567,10 +2041,7 @@ class PhyBo(Wordlist):
 
                 # append three vals: number of origins, number of words, and the
                 # number of origins per number of words
-                try:
-                    concepts[a3] += [(b, len(l), b / len(l))]
-                except:
-                    concepts[a3] = [(b, len(l), b / len(l))]
+                concepts[a3].append((b, len(l), b / len(l)))
 
                 # check for proto
                 if 'proto' in self.entries:
@@ -2578,9 +2049,8 @@ class PhyBo(Wordlist):
                     f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\t{6}\n'.format(
                         a1, a2, a3, b, len(l), b / float(len(l)), proto))
                 else:
-                    f.write(
-                        '{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(a1, a2, a3, b, len(l),
-                                                                    float(b) / len(l)))
+                    f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5:.2f}\n'.format(
+                        a1, a2, a3, b, len(l), float(b) / len(l)))
         log.info("Wrote stats on paps to file.")
 
         # write stats on concepts
@@ -2617,7 +2087,7 @@ class PhyBo(Wordlist):
         with util.TextFile(self._output_path('cognates-' + glm + '.stats')) as f:
             f.write('CONCEPT\tCOGNATES\tPATCHIES\tREFLEXES\tPCR\n')
 
-            concepts = {}
+            concepts = defaultdict(list)
             for pap in self.etd:
                 gloss = self.pap2con[pap]
                 idxs = [idx[0] for idx in self.etd[pap] if idx != 0]
@@ -2626,10 +2096,7 @@ class PhyBo(Wordlist):
                 reflexes = len(patchies)
                 patchies = len(set(patchies))
                 cogs = len(set(cogs))
-                try:
-                    concepts[gloss] += [(cogs, patchies, reflexes)]
-                except:
-                    concepts[gloss] = [(cogs, patchies, reflexes)]
+                concepts[gloss].append((cogs, patchies, reflexes))
 
             for key, value in concepts.items():
                 concepts[key] = (
@@ -2638,8 +2105,8 @@ class PhyBo(Wordlist):
                     sum([v[2] for v in value])
                 )
 
-            for k, (c, p, r) in sorted(concepts.items(), key=lambda x: x[1][2],
-                                       reverse=True):
+            for k, (c, p, r) in sorted(
+                    concepts.items(), key=lambda x: x[1][2], reverse=True):
                 f.write(
                     '{0}\t{1}\t{2}\t{3}\t{4:.2f}\n'.format(k, c, p, r, (p - c + 1) / r))
             # write mean
@@ -2659,40 +2126,24 @@ class PhyBo(Wordlist):
             reflexes=sum([x[2] for x in concepts.values()]) / self.height,
             origins=sum([x[0] for x in cstats.values()]) / self.height,
             # reflexes = sum([x[1] for x in cstats.values()]) / self.height,
-            patchy_per_reflex=sum([x[2] for x in cstats.values()]) / self.height
-        )
+            patchy_per_reflex=sum([x[2] for x in cstats.values()]) / self.height)
 
         # write results to alm-file
         # get all patchy cognates
-        tmp = {}
+        tmp = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
         for key in self:
             patchy = self[key, 'patchy']
             if not patchy.endswith('0'):
-
                 concept = self[key, 'concept']
                 taxon = self[key, 'doculect']
                 pap = self[key, 'pap']
 
                 # XXX change this later for more flexibility XXX
-
-                if 'ipa' in self.header:
-                    word = self[key, 'ipa']
-                else:
-                    word = self[key, 'counterpart']
+                word = self[key, 'ipa'] if 'ipa' in self.header \
+                    else self[key, 'counterpart']
                 if not word:
-                    raise NameError(
-                        "[ERROR] Neither 'ipa' nor 'counterpart' is defined."
-                    )
-
-                if concept not in tmp:
-                    tmp[concept] = {}
-                if pap not in tmp[concept]:
-                    tmp[concept][pap] = {}
-
-                try:
-                    tmp[concept][pap][patchy] += [(taxon, word)]
-                except:
-                    tmp[concept][pap][patchy] = [(taxon, word)]
+                    raise NameError("[ERROR] Neither 'ipa' nor 'counterpart' is defined.")
+                tmp[concept][pap][patchy].append((taxon, word))
 
         if keywords["aligned_output"]:
             # write stuff to alm-file
@@ -2729,46 +2180,29 @@ class PhyBo(Wordlist):
                         for i, word in enumerate(words):
                             string = '{0:' + text_type(
                                 formatter) + '}\t{1}\t|\t{2}\t|\t[{3}]\n'
-                            f.write(
-                                string.format(langs[i], patchies[i], '\t'.join(alms[i]),
-                                              word))
+                            f.write(string.format(
+                                langs[i], patchies[i], '\t'.join(alms[i]), word))
                         f.write('\n')
                     f.write('\n')
 
-    def get_edge(
-        self,
-        glm,
-        nodeA,
-        nodeB,
-        entries='',
-        msn=False
-    ):
+    def get_edge(self, glm, nodeA, nodeB, entries='', msn=False):
         """
         Return the edge data for a given gain-loss model.
         """
         # define a warning message
-        warning = "No edge between {0} and {1} could be found".format(
-            nodeA,
-            nodeB
-        )
+        warning = "No edge between {0} and {1} could be found".format(nodeA, nodeB)
         # check for entryB
         if isinstance(entries, text_type):
             entries = entries.split(',')
 
         # get the graph locally for convenience
-        if not msn:
-            graph = self.graph[glm]
-        else:
-            graph = self.geograph[glm]
+        graph = self.geograph[glm] if msn else self.graph[glm]
 
-        # get the edge
-        try:
-            edge = graph.edge[nodeA][nodeB]
-        except:
+        if not graph.has_edge(nodeA, nodeB):
             log.info(warning)
             return
 
-        # check the edge
+        edge = graph.edge[nodeA][nodeB]
         if not msn:
             if edge['label'] == 'horizontal':
                 cogs = edge['cogs'].split(',')
@@ -2777,10 +2211,6 @@ class PhyBo(Wordlist):
                 return
         else:
             cogs = edge['cogs'].split(',')
-
-        # define list for output
-        outA = {}
-        outB = {}
 
         # check whether nodes are in list or not
         if nodeA in self.taxa:
@@ -2792,73 +2222,30 @@ class PhyBo(Wordlist):
         else:
             nodesB = self.tree.getNodeMatchingName(nodeB).getTipNames()
 
-        # assemble the data
-        outA = {}
-        for node in nodesA:
-            tmp = dict(
-                zip(
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                        entry='pap'
-                    ),
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                    )
-                )
-            )
-            for cog in cogs:
-                vals = [node]
-                for entry in entries:
-                    try:
-                        vals += [self[tmp[cog], entry]]
-                    except:
-                        pass
-                if len(vals) > 1:
-                    try:
-                        outA[cog] += [tuple(vals)]
-                    except:
-                        outA[cog] = [tuple(vals)]
+        def assemble_output(nodes):
+            out = defaultdict(list)
+            for node in nodes:
+                tmp = dict(zip(
+                    self.get_list(col=node, flat=True, entry='pap'),
+                    self.get_list(col=node, flat=True)))
+                for cog in cogs:
+                    vals = [node]
+                    for entry in entries:
+                        try:
+                            vals += [self[tmp[cog], entry]]
+                        except:
+                            pass
+                    if len(vals) > 1:
+                        out[cog].append(tuple(vals))
+            return out
 
-        # assemble the data
-        outB = {}
-        for node in nodesB:
-            tmp = dict(
-                zip(
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                        entry='pap'
-                    ),
-                    self.get_list(
-                        col=node,
-                        flat=True,
-                    )
-                )
-            )
-            for cog in cogs:
-                vals = [node]
-                for entry in entries:
-                    try:
-                        vals += [self[tmp[cog], entry]]
-                    except:
-                        pass
-                if len(vals) > 1:
-                    try:
-                        outB[cog] += [tuple(vals)]
-                    except:
-                        outB[cog] = [tuple(vals)]
+        outA = assemble_output(nodesA)
+        outB = assemble_output(nodesB)
 
-        # assemble the output
         output = []
         for cog in cogs:
             try:
-                output += [
-                    (
-                        self.pap2con[cog], outA[cog], outB[cog]
-                    )
-                ]
+                output += [(self.pap2con[cog], outA[cog], outB[cog])]
             except:
                 self.log.error(
                     "Error encountered in cognate {0}.".format(self.pap2con[cog]))
@@ -2909,40 +2296,31 @@ class PhyBo(Wordlist):
             Select or unselect output plot for the MSN.
 
         """
-
-        # set defaults
-        defaults = {
-            "colorbar": None,  # mpl.cm.jet,
-            'threshold': 1,
-            'fileformat': rcParams['phybo_fileformat'],
-            'usetex': False,
-            'only': [],
-            'colormap': None,  # mpl.cm.jet
-            'proto': False,
-            'xticksize': 6,
-            'method': 'mr',  # majority rule
-            'gpl': 1,
-            "push_gains": True,
-            "missing_data": 0,
-            "aligned_output": False,
-            "homoplasy": 0.05,
-            'evaluation': 'mwu'
-        }
-
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
+        util.setdefaults(
+            keywords,
+            colorbar=None,  # mpl.cm.jet,
+            threshold=1,
+            fileformat=rcParams['phybo_fileformat'],
+            usetex=False,
+            only=[],
+            colormap=None,  # mpl.cm.jet
+            proto=False,
+            xticksize=6,
+            method='mr',  # majority rule
+            gpl=1,
+            push_gains=True,
+            missing_data=0,
+            aligned_output=False,
+            homoplasy=0.05,
+            evaluation='mwu')
 
         # define a default set of runs
         if runs in ['default', 'weighted']:
-            runs = [
-                ('weighted', (3, 1)),
-                ('weighted', (5, 2)),
-                ('weighted', (2, 1)),
-                ('weighted', (3, 2)),
-                ('weighted', (1, 1)),
-            ]
-
+            runs = [('weighted', (3, 1)),
+                    ('weighted', (5, 2)),
+                    ('weighted', (2, 1)),
+                    ('weighted', (3, 2)),
+                    ('weighted', (1, 1))]
         elif runs in ['topdown', 'top-down']:
             runs = [('topdown', 2),
                     ('topdown', 3),
@@ -2952,65 +2330,36 @@ class PhyBo(Wordlist):
                     ('topdown', 7),
                     ('topdown', 8),
                     ('topdown', 9),
-                    ('topdown', 10),
-                    ]
-
+                    ('topdown', 10)]
         elif runs == 'restriction':
-
             runs = [('restriction', 2),
                     ('restriction', 3),
                     ('restriction', 4),
                     ('restriction', 5),
-                    ('restriction', 6),
-                    ]
+                    ('restriction', 6)]
 
-        # carry out the various analyses
         for mode, params in runs:
+            log.info(
+                "Analysing dataset with mode {0} and params {1}...".format(mode, params))
+            kw = dict(
+                mode=mode,
+                output_gml=output_gml,
+                tar=tar,
+                output_plot=output_plot,
+                missing_data=keywords["missing_data"])
             if mode == 'weighted':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and ratio {0[0]}:{0[1]}...".format(params)
-                )
-
-                self.get_GLS(
-                    mode=mode,
-                    ratio=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
+                kw.update(
                     gpl=keywords['gpl'],
                     push_gains=keywords['push_gains'],
-                    missing_data=keywords["missing_data"],
-                )
+                    ratio=params)
             elif mode == 'restriction':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and restriction {0}...".format(params)
-                )
-
-                self.get_GLS(
-                    mode=mode,
-                    restriction=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
+                kw.update(
                     gpl=keywords['gpl'],
                     push_gains=keywords['push_gains'],
-                    missing_data=keywords["missing_data"]
-                )
+                    restriction=params)
             elif mode == 'topdown':
-                log.info(
-                    "Analysing dataset with mode {0} ".format(mode) +
-                    "and restriction {0}...".format(params)
-                )
-                self.get_GLS(
-                    mode=mode,
-                    restriction=params,
-                    output_gml=output_gml,
-                    tar=tar,
-                    output_plot=output_plot,
-                    missing_data=keywords["missing_data"]
-                )
+                kw.update(restriction=params)
+            self.get_GLS(**kw)
 
         # calculate the different distributions
         # start by calculating the contemporary distributions
@@ -3030,11 +2379,7 @@ class PhyBo(Wordlist):
         zp_vsd = []
         for m in modes:
             vsd = sp.stats.mstats.kruskalwallis(  # sp.stats.mannwhitneyu(
-                self.dists['contemporary'],
-                self.dists[m],
-                # use_continuity = False
-            )
-
+                self.dists['contemporary'], self.dists[m])
             zp_vsd.append((vsd[0], vsd[1]))
 
         # determine the best model
@@ -3065,10 +2410,7 @@ class PhyBo(Wordlist):
             if 'mixed' not in modes:
                 modes += ['mixed']
                 vsd = sp.stats.mstats.kruskalwallis(  # sp.stats.mannwhitneyu(
-                    self.dists['contemporary'],
-                    self.dists['mixed'],
-                    # use_continuity = False
-                )
+                    self.dists['contemporary'], self.dists['mixed'])
                 zp_vsd.append((vsd[0], vsd[1]))
 
         # write results to file
@@ -3087,7 +2429,6 @@ class PhyBo(Wordlist):
 
         # plot the stats if this is defined in the settings
         if plot_dists:
-
             log.info("Plotting distributions.")
             # specify latex
             mpl.rc('text', usetex=keywords['usetex'])
@@ -3102,10 +2443,8 @@ class PhyBo(Wordlist):
             ano = [self.stats[m]['ano'] for m in modes]
 
             # create a sorter for the distributions
-            sorter = [s[0] for s in sorted(
-                zip(range(len(modes)), ano),
-                key=lambda x: x[1]
-            )]
+            sorter = [
+                s[0] for s in sorted(zip(range(len(modes)), ano), key=lambda x: x[1])]
 
             # sort the stuff
             dists_vsd = [dists_vsd[i] for i in sorter]
@@ -3116,9 +2455,8 @@ class PhyBo(Wordlist):
             zp_vsd = [zp_vsd[i] for i in sorter]
 
             # format the zp-values
+            p_vsd = []
             if keywords['usetex']:
-
-                p_vsd = []
                 for i, (z, p) in enumerate(zp_vsd):
                     if p < 0.001:
                         p_vsd.append('p$<${0:.2f}'.format(p))
@@ -3129,9 +2467,7 @@ class PhyBo(Wordlist):
                         mode_strings[i] = r'\textbf{' + modes[i] + '}'
                     else:
                         p_vsd.append('p$=${0:.2f}'.format(p))
-
             else:
-                p_vsd = []
                 for z, p in zp_vsd:
                     if p < 0.001:
                         p_vsd.append('p<{0:.2f}'.format(p))
@@ -3140,32 +2476,21 @@ class PhyBo(Wordlist):
                     else:
                         p_vsd.append('p={0:.2f}'.format(p))
 
-            # create the figure
             fig = plt.figure()
-
-            # create the axis
             ax = fig.add_subplot(111)
-
-            # add the boxplots
             b = ax.boxplot([dist_vsd] + dists_vsd)
             plt.setp(b['medians'], color='black')
             plt.setp(b['whiskers'], color='black')
             plt.setp(b['boxes'], color='black')
-
-            # adjust the yticks
             for tick in ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(18)
 
-            # add the xticks
             plt.xticks(
                 range(1, len(modes) + 2),
                 [''] + ['{0}\n{1}'.format(m, p) for m, p in zip(mode_strings, p_vsd)],
                 size=keywords['xticksize'],
                 rotation=45,
-                # rotation_mode='anchor',
-                ha='center',
-                # va = 'center'
-            )
+                ha='center')
 
             ax.yaxis.grid(
                 True,
@@ -3173,27 +2498,19 @@ class PhyBo(Wordlist):
                 which='major',
                 color='lightgrey',
                 alpha=0.5,
-                zorder=1
-            )
+                zorder=1)
 
             plt.subplots_adjust(bottom=0.2)
-
-            # save the figure
             plt.savefig(self._output_path('vsd.' + keywords['fileformat']))
             plt.clf()
-
             log.info("Plotted the distributions.")
 
-        # carry out further analyses if this is specified
         if full_analysis:
-
             self.get_MLN(
                 self.best_model,
                 threshold=keywords['threshold'],
-                method=keywords['method']
-            )
+                method=keywords['method'])
 
-            # check whether plots are chosen
             if plot_mln:
                 self.plot_MLN(
                     self.best_model,
@@ -3214,10 +2531,7 @@ class PhyBo(Wordlist):
                     colormap=keywords['colormap']
                 )
 
-            self.get_PDC(
-                self.best_model,
-                **keywords
-            )
+            self.get_PDC(self.best_model, **keywords)
 
     def plot_MLN(
         self,
@@ -3256,9 +2570,7 @@ class PhyBo(Wordlist):
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -3268,7 +2580,8 @@ class PhyBo(Wordlist):
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             figsize="optimal",  # rcParams['phybo_figsize'],
             figure_width=10,
             figure_scale=1,
@@ -3305,11 +2618,7 @@ class PhyBo(Wordlist):
             textsize=rcParams['phybo_textsize'],
             vsd_scale=rcParams['phybo_vsd_scale'],
             latex_preamble=rcParams['phybo_latex_preamble'],
-            alpha_threshold=0.2
-        )
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            alpha_threshold=0.2)
 
         # get max and min values for coordinates
         xvals, yvals = [], []
@@ -3323,52 +2632,30 @@ class PhyBo(Wordlist):
             h = maxY + abs(minY)
             keywords['figsize'] = (
                 keywords['figure_width'] + keywords['figure_scale'],
-                h / (w / (keywords['figure_width'])
-                     )
-            )
+                h / (w / (keywords['figure_width'])))
 
         if keywords['latex_preamble']:
             mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
         colormap = keywords['colormap']
         filename = keywords['filename']
-
-        # define labels
-        labels = {}
-        for taxon in self.taxa:
-            if taxon not in keywords['labels']:
-                labels[taxon] = taxon
-            else:
-                labels[taxon] = keywords['labels'][taxon]
-
-        # create a dictionary for all nodes
+        labels = {taxon: keywords['labels'].get(taxon, taxon) for taxon in self.taxa}
         node_dict = {}
 
-        # iterate over contemporary taxa first
         for taxon in self.taxa:
-            # get all cognates that are not singletongs
             cogs = [x for x in
                     self.get_list(col=taxon, flat=True, entry='pap') if x in self.cogs]
-
             # count the number of paps
             node_dict[taxon] = len(cogs) * keywords['vsd_scale']
 
-        # iterate over internal nodes now
         for a, b in [(x, y) for x, y in self.tree.getNodesDict().items() if
                      x not in self.taxa]:
-
-            if a != 'root':
-                node = a
-
-            else:
-                node = 'root'
-
+            node = a if a != 'root' else 'root'
             if node in self.acs[glm]:
                 node_dict[a] = len(self.acs[glm][node]) * keywords['vsd_scale']
             else:
                 node_dict[a] = 1 * keywords['vsd_scale']
 
-        # get the graph
         graph = self.graph[glm]
 
         # store in internal and external nodes
@@ -3376,10 +2663,8 @@ class PhyBo(Wordlist):
         enodes = []
 
         # get colormap for edgeweights
-        edge_weights = []
-        for nodeA, nodeB, data in graph.edges(data=True):
-            if data['label'] == 'horizontal':
-                edge_weights.append(data['weight'])
+        edge_weights = [d['weight'] for _, _, d in
+                        graph.edges(data=True) if d['label'] == 'horizontal']
 
         # add max weight to edge_weights
         if keywords['maxweight']:
@@ -3388,7 +2673,6 @@ class PhyBo(Wordlist):
         # determine a colorfunction
         cfunc = np.array(np.linspace(10, 256, len(set(edge_weights))), dtype='int')
 
-        # sort the weights
         weights = sorted(set(edge_weights))
 
         # get the scale for the weights (needed for the line-width)
@@ -3409,50 +2693,28 @@ class PhyBo(Wordlist):
         # get the nodes
         for n, d in graph.nodes(data=True):
             g = d['graphics']
-            x = g['x']
-            y = g['y']
-            h = g['h']
-            w = g['w']
-            s = g['s']
-
-            # get the nodesize
+            ns = keywords['nodesize']
             if keywords['nodestyle'] == 'vsd':
-                try:
-                    ns = node_dict[n]
-                except:
-                    ns = keywords['nodesize']
-            else:
-                ns = keywords['nodesize']
+                ns = node_dict.get(n, ns)
 
             if d['label'] not in self.taxa:
-                inodes += [(x, y, ns)]
+                inodes += [(g['x'], g['y'], ns)]
             else:
-                if 'angle' in d['graphics']:
-                    r = d['graphics']['angle']
-                else:
-                    r = 0
-
-                enodes += [(x, y, d['label'], r, s, ns)]
+                enodes += [(g['x'], g['y'], d['label'], g.get('angle', 0), g['s'], ns)]
 
         # store vertical and lateral edges
-        vedges = []
-        ledges = []
-        weights = []
+        vedges, ledges, weights = [], [], []
 
-        # get the edges
         for a, b, d in graph.edges(data=True):
-
             xA = graph.node[a]['graphics']['x']
             yA = graph.node[a]['graphics']['y']
             xB = graph.node[b]['graphics']['x']
             yB = graph.node[b]['graphics']['y']
 
             if d['label'] == 'vertical':
-
                 vedges += [(xA, xB, yA, yB)]
             else:
                 g = d['graphics']
-                f = g['fill']
                 w = g['width']
                 a = alpha
                 if d['weight'] < threshold:
@@ -3461,29 +2723,18 @@ class PhyBo(Wordlist):
                     else:
                         w = 0.0
 
-                ledges += [(xA, xB, yA, yB, f, w, a)]
-
+                ledges += [(xA, xB, yA, yB, g['fill'], w, a)]
                 weights.append(d['weight'])
 
-        if not weights:
-            weights = [0]
-
-        # usetex
+        weights = weights or [0]
         mpl.rc('text', usetex=usetex)
 
-        # create the figure
-        fig = plt.figure(
-            facecolor='white',
-            figsize=keywords['figsize']
-        )
+        fig = plt.figure(facecolor='white', figsize=keywords['figsize'])
         figsp = fig.add_subplot(111)
 
-        # create the axis
         plt.axes(frameon=False)
         plt.xticks([0], [''])
         plt.yticks([0], [''])
-
-        # set equal axis
         plt.axis('equal')
 
         # draw the horizontal edges
@@ -3494,8 +2745,7 @@ class PhyBo(Wordlist):
                 '-',
                 color=f,
                 linewidth=float(w) / keywords['hedgescale'],
-                alpha=a
-            )
+                alpha=a)
 
         # draw the vertical edges
         for xA, xB, yA, yB in vedges:
@@ -3504,64 +2754,39 @@ class PhyBo(Wordlist):
                 [yA, yB],
                 '-',
                 color=keywords['vedgecolor'],
-                linewidth=keywords['vedgelinewidth'],
-            )
+                linewidth=keywords['vedgelinewidth'])
             if keywords['vedgestyle'] == 'double':
                 plt.plot(
                     [xA, xB],
                     [yA, yB],
                     '-',
                     color='1.0',
-                    linewidth=keywords['vedgeinnerline'],
-                )
+                    linewidth=keywords['vedgeinnerline'])
         # store x,y values for ylim,xlim drawing
-        xvals = []
-        yvals = []
+        xvals, yvals = [], []
 
-        # draw the nodes
         for x, y, s in inodes:
             xvals += [x]
             yvals += [y]
 
-            plt.plot(
-                x,
-                y,
-                'o',
-                markersize=s,  # keywords['nodesize'],
-                color=keywords['nodecolor'],
-            )
+            plt.plot(x, y, 'o', markersize=s, color=keywords['nodecolor'])
             if keywords['nodestyle'] == 'double':
-                plt.plot(
-                    x,
-                    y,
-                    'o',
-                    markersize=s,  # keywords['nodesize']-4,
-                    color='white'
-                )
+                plt.plot(x, y, 'o', markersize=s, color='white')
 
         for x, y, t, r, ha, s in enodes:
-
             xvals += [x]
             yvals += [y]
 
-            # plot the marker
             plt.plot(
                 x,
                 y,
                 'o',
                 markersize=s,  # keywords['nodesize'],
                 color=keywords['nodecolor'],
-                zorder=200
-            )
+                zorder=200)
 
             if keywords['nodestyle'] == 'double':
-                plt.plot(
-                    x,
-                    y,
-                    'o',
-                    markersize=s,  # keywords['nodesize']-4,
-                    color='white'
-                )
+                plt.plot(x, y, 'o', markersize=s, color='white')
 
             # this is a workaround to get the text away from the node
             if ha == 'left':
@@ -3580,29 +2805,15 @@ class PhyBo(Wordlist):
                 color='black',
                 rotation=r,
                 rotation_mode='anchor',
-                zorder=1
-            )
+                zorder=1)
 
-        # add a colorbar
-        cax = figsp.imshow(
-            [[1, 2], [1, 2]],
-            cmap=colormap,
-            visible=False
-        )
         cbar = fig.colorbar(
-            cax,
-            ticks=[
-                1,
-                1.25,
-                1.5,
-                1.75,
-                2
-            ],
+            figsp.imshow([[1, 2], [1, 2]], cmap=colormap, visible=False),
+            ticks=[1, 1.25, 1.5, 1.75, 2],
             orientation=keywords['cbar_orientation'],
             shrink=keywords['cbar_shrink'],
             fraction=keywords['cbar_fraction'],
-            pad=keywords['cbar_pad']
-        )
+            pad=keywords['cbar_pad'])
 
         # check for maxweights-keyword
         if keywords['maxweight']:
@@ -3610,15 +2821,12 @@ class PhyBo(Wordlist):
 
         cbar.set_clim(1.0)
         cbar.set_label('Inferred Links')
-        cbar.ax.set_yticklabels(
-            [
-                text_type(min(weights)),
-                '',
-                text_type(int(max(weights) / 2)),
-                '',
-                text_type(max(weights))
-            ]
-        )
+        cbar.ax.set_yticklabels([
+            text_type(min(weights)),
+            '',
+            text_type(int(max(weights) / 2)),
+            '',
+            text_type(max(weights))])
 
         if keywords['xliml'] and keywords['xlimr']:
             xliml = keywords['xliml']
@@ -3685,20 +2893,14 @@ class PhyBo(Wordlist):
             Specify the taxon labels that should be included in the plot.
 
         """
-        # add azim and the other params
-        kw = dict(
-            azim=220,
-            elev=22
-        )
+        kw = dict(azim=220, elev=22)
         kw.update(keywords)
 
         # check for correct glm
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -3709,11 +2911,9 @@ class PhyBo(Wordlist):
         elif not usetex and backend != 'TkAgg':
             plt.switch_backend('TkAgg')
 
-        # check for filename
         if not filename:
             filename = self.dataset
 
-        # if not colormap
         if not colormap:
             colormap = mpl.cm.jet
 
@@ -3740,10 +2940,8 @@ class PhyBo(Wordlist):
         enodes = []
 
         # get colormap for edgeweights
-        edge_weights = []
-        for nodeA, nodeB, data in graph.edges(data=True):
-            if data['label'] == 'horizontal':
-                edge_weights.append(data['weight'])
+        edge_weights = [d['weight'] for _, _, d in
+                        graph.edges(data=True) if d['label'] == 'horizontal']
 
         # determine a colorfunction
         cfunc = np.array(np.linspace(10, 256, len(set(edge_weights))), dtype='int')
@@ -3766,32 +2964,22 @@ class PhyBo(Wordlist):
         # get the nodes
         for n, d in graph.nodes(data=True):
             g = d['graphics']
-            x = g['x']
-            y = g['y']
-            z = g['z']
-            s = g['s']
-            zorder = g['zorder']
-
             if d['label'] not in self.taxa:
-                inodes += [(x, y, -z, zorder)]
+                inodes += [(g['x'], g['y'], -g['z'], g['zorder'])]
             else:
-                if 'angle' in d['graphics']:
-                    r = d['graphics']['angle']
-                else:
-                    r = 0
-
                 if usetex:
-                    enodes += [(
-                        x,
-                        y,
-                        -z,
-                        r'\textbf{' + tfunc(d['label']).replace('_', r'\_') + r'}',
-                        r,
-                        s,
-                        zorder
-                    )]
+                    label = r'\textbf{' + tfunc(d['label']).replace('_', r'\_') + r'}'
                 else:
-                    enodes += [(x, y, -z, tfunc(d['label']), r, s, zorder)]
+                    label = tfunc(d['label'])
+                enodes.append((
+                    g['x'],
+                    g['y'],
+                    -g['z'],
+                    label,
+                    d['graphics'].get('angle', 0),
+                    g['s'],
+                    g['zorder']
+                ))
 
         # store vertical and lateral edges
         vedges = []
@@ -3800,7 +2988,6 @@ class PhyBo(Wordlist):
 
         # get the edges
         for a, b, d in graph.edges(data=True):
-
             xA = graph.node[a]['graphics']['x']
             yA = graph.node[a]['graphics']['y']
             zA = graph.node[a]['graphics']['z']
@@ -3815,7 +3002,6 @@ class PhyBo(Wordlist):
                 vedges += [(xA, xB, yA, yB, -zA, -zB, zorder)]
             else:
                 g = d['graphics']
-                f = g['fill']
                 w = g['width']
                 a = alpha
                 if d['weight'] < threshold:
@@ -3824,23 +3010,16 @@ class PhyBo(Wordlist):
                     else:
                         w = 0.0
 
-                ledges += [(xA, xB, yA, yB, -zA, -zB, zorder, f, w, a)]
-
+                ledges += [(xA, xB, yA, yB, -zA, -zB, zorder, g['fill'], w, a)]
                 weights.append(d['weight'])
 
-        # usetex
         mpl.rc('text', usetex=usetex)
-
-        # create the figure
-        fig = plt.figure(
-            facecolor='white',
-            figsize=(keywords['width'], keywords['height'])
-        )
+        fig = plt.figure(facecolor='white', figsize=(keywords['width'], keywords['height']))
         figsp = fig.add_subplot(111, projection='3d')
 
         # draw the horizontal edges
-        for xA, xB, yA, yB, zA, zB, zorder, f, w, a in sorted(ledges,
-                                                              key=lambda x: x[-2]):
+        for xA, xB, yA, yB, zA, zB, zorder, f, w, a in sorted(
+                ledges, key=lambda x: x[-2]):
             figsp.plot(
                 [xA, xB],
                 [yA, yB],
@@ -3862,14 +3041,6 @@ class PhyBo(Wordlist):
                 alpha=0.75,
                 zorder=zorder  # 100 * abs(xA-xB) + 100 * abs(yA-yB)
             )
-            # figsp.plot(
-            #        [xA,xB],
-            #        [yA,yB],
-            #        [zA,zB],
-            #        color='1.0',
-            #        linewidth=1,
-            #        #zorder = 100 * abs(xA-xB) + 100 * abs(yA-yB)
-            #        )
         # store x,y values for ylim,xlim drawing
         xvals = []
         yvals = []
@@ -3880,19 +3051,9 @@ class PhyBo(Wordlist):
             xvals += [x]
             yvals += [y]
             zvals += [z]
+            figsp.scatter(x, y, z, marker='o', s=20, c='black', zorder=zorder)
 
-            figsp.scatter(
-                x,
-                y,
-                z,
-                marker='o',
-                s=20,
-                c='black',
-                zorder=zorder  # 100 * x + 100 * y
-            )
-
-        # draw the leaves
-        # store x and y-maxima for ylim, xlim drawing
+        # draw the leaves, store x and y-maxima for ylim, xlim drawing
         for x, y, z, t, r, ha, zorder in enodes:
             xvals += [x]
             yvals += [y]
@@ -3921,20 +3082,11 @@ class PhyBo(Wordlist):
         figsp.set_ylim(min(yvals), max(yvals))
         figsp.set_xlim(min(xvals), max(xvals))
         figsp.set_zlim(min(zvals), max(zvals))
-
         figsp.set_axis_off()
-
         plt.savefig(filename + '.' + fileformat, bbbox_inches='tight')
         plt.clf()
 
-    def get_MSN(
-        self,
-        glm='',
-        fileformat='pdf',
-        external_edges=False,
-        deep_nodes=False,
-        **keywords
-    ):
+    def get_MSN(self, glm='', external_edges=False, deep_nodes=False, **keywords):
         """
         Plot the Minimal Spatial Network.
 
@@ -3957,14 +3109,11 @@ class PhyBo(Wordlist):
         if not glm and hasattr(self, 'best_model'):
             glm = self.best_model
         elif not glm:
-            raise ValueError(
-                "[i] You should select an appropriate model first."
-            )
+            raise ValueError("[i] You should select an appropriate model first.")
 
         # redefine taxa and tree for convenience
         taxa, tree = self.taxa, self.tree
 
-        # get the graph
         graph = self.graph[glm]
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
@@ -3972,14 +3121,9 @@ class PhyBo(Wordlist):
         if 'coords' in self._meta:
             coords = self._meta['coords']
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
-        # calculate all resulting edges, using convex hull as
-        # approximation
+        # calculate all resulting edges, using convex hull as approximation
         geoGraph = nx.Graph()
         for node, data in graph.nodes(data=True):
             geoGraph.add_node(node, **data)
@@ -3992,7 +3136,6 @@ class PhyBo(Wordlist):
 
             # first check, whether edge is horizontal
             if d['label'] == 'horizontal':
-
                 # if both labels occur in taxa, it is simple
                 if lA in taxa and lB in taxa:
                     try:
@@ -4003,40 +3146,28 @@ class PhyBo(Wordlist):
                 elif not external_edges:
                     # if only one in taxa, we need the convex hull for that node
                     if lA in taxa or lB in taxa:
-
                         # check which node is in taxa
                         if lA in taxa:
                             this_label = lA
                             other_nodes = tree.getNodeMatchingName(lB).getTipNames()
-                            other_label = lB
                         elif lB in taxa:
                             this_label = lB
                             other_nodes = tree.getNodeMatchingName(lA).getTipNames()
-                            other_label = lA
 
-                        # first, get all the cogs
-                        cogs = d['cogs'].split(',')
-
-                        # iterate over all cogs now
-                        for cog in cogs:
-
+                        for cog in d['cogs'].split(','):
                             # check whether the nodes have the respective cognate
                             # and take only those that have it
                             new_other_nodes = []
                             for other_node in other_nodes:
                                 paps = self.get_list(
-                                    col=other_node,
-                                    entry='pap',
-                                    flat=True
-                                )
+                                    col=other_node, entry='pap', flat=True)
                                 if cog in paps and other_node != this_label:
                                     new_other_nodes += [other_node]
 
                             # get the convex points of others
                             these_coords = [
-                                (round(coords[t][0], 5), round(coords[t][1], 5)) for t
-                                in
-                                new_other_nodes]
+                                (round(coords[t][0], 5), round(coords[t][1], 5))
+                                for t in new_other_nodes]
                             hulls = getConvexHull(these_coords, polygon=False)
 
                             # get the hull with the minimal euclidean distance
@@ -4045,52 +3176,32 @@ class PhyBo(Wordlist):
                                 distances.append(np.linalg.norm(
                                     np.array(hull) - np.array(coords[this_label])))
                             this_hull = hulls[distances.index(min(distances))]
-                            other_label = new_other_nodes[
-                                these_coords.index(
-                                    (
-                                        round(this_hull[0], 5),
-                                        round(this_hull[1], 5)
-                                    )
-                                )
-                            ]
+                            other_label = new_other_nodes[these_coords.index(
+                                (round(this_hull[0], 5), round(this_hull[1], 5)))]
 
                             # append the edge to the graph
                             try:
                                 geoGraph.edge[this_label][other_label]['weight'] += 1
-                                geoGraph.edge[this_label][other_label][
-                                    'cogs'] += ',' + cog
+                                geoGraph.edge[this_label][other_label]['cogs'] \
+                                    += ',' + cog
                             except:
                                 geoGraph.add_edge(this_label, other_label, weight=1,
                                                   cogs=cog)
 
                     elif deep_nodes:
-                        # get the taxa of a and b
                         taxA = tree.getNodeMatchingName(lA).getTipNames()
                         taxB = tree.getNodeMatchingName(lB).getTipNames()
 
-                        # get the cogs
-                        cogs = d['cogs'].split(',')
-
-                        # iterate over the cogs
-                        for cog in cogs:
+                        for cog in d['cogs'].split(','):
                             newtaxA = []
                             newtaxB = []
 
-                            # get the lists
                             for t in taxA:
-                                paps = self.get_list(
-                                    col=t,
-                                    entry='pap',
-                                    flat=False
-                                )
+                                paps = self.get_list(col=t, entry='pap', flat=False)
                                 if cog in paps:
                                     newtaxA += [t]
                             for t in taxB:
-                                paps = self.get_list(
-                                    col=t,
-                                    entry='pap',
-                                    flat=False
-                                )
+                                paps = self.get_list(col=t, entry='pap', flat=False)
                                 if cog in paps:
                                     newtaxB += [t]
 
@@ -4104,14 +3215,12 @@ class PhyBo(Wordlist):
                             hullsA = getConvexHull(coordsA, polygon=False)
                             hullsB = getConvexHull(coordsB, polygon=False)
 
-                            # get the closest points
                             distances = []
                             hulls = []
-                            for i, hullA in enumerate(hullsA):
-                                for j, hullB in enumerate(hullsB):
-                                    distances.append(np.linalg.norm(
-                                        np.array(hullA) - np.array(hullB)))
-                                    hulls.append((hullA, hullB))
+                            for hullA, hullB in itertools.product(hullsA, hullsB):
+                                distances.append(np.linalg.norm(
+                                    np.array(hullA) - np.array(hullB)))
+                                hulls.append((hullA, hullB))
                             minHulls = hulls[distances.index(min(distances))]
 
                             labelA = newtaxA[coordsA.index(
@@ -4133,41 +3242,28 @@ class PhyBo(Wordlist):
 
             dgr, wdgr = [], []
             for taxon in nodes:
-                horizontals = [g for g in geoGraph[taxon] if
-                               'weight' in geoGraph[taxon][g]]
-
+                horizontals = [
+                    g for g in geoGraph[taxon] if 'weight' in geoGraph[taxon][g]]
                 dgr.append(len(horizontals))
                 wdgr.append(sum([geoGraph[taxon][g]['weight'] for g in horizontals]))
 
-            sorted_nodes = sorted(
-                zip(nodes, dgr, wdgr),
-                key=lambda x: x[1],
-                reverse=True
-            )
+            sorted_nodes = sorted(zip(nodes, dgr, wdgr), key=lambda x: x[1], reverse=True)
             for n, d, w in sorted_nodes:
-                f.write(
-                    '{0}\t{1}\t{2}\t{3}\n'.format(
-                        n, text_type(tree.getNodeMatchingName(n)), d, w))
+                f.write('{0}\t{1}\t{2}\t{3}\n'.format(
+                    n, text_type(tree.getNodeMatchingName(n)), d, w))
 
         # write edge distributions
         with util.TextFile(self._output_path('edge-msn-' + glm + '.stats')) as f:
             edges = [g for g in geoGraph.edges(data=True) if 'weight' in g[2]]
 
-            for nA, nB, d in sorted(
-                edges,
-                key=lambda x: x[2]['weight'],
-                reverse=True
-            ):
-                f.write(
-                    '{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
-                        nA,
-                        nB,
-                        d['weight'],
-                        d['cogs'],
-                        tree.getNodeMatchingName(nA),
-                        tree.getNodeMatchingName(nB)
-                    )
-                )
+            for nA, nB, d in sorted(edges, key=lambda x: x[2]['weight'], reverse=True):
+                f.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format(
+                    nA,
+                    nB,
+                    d['weight'],
+                    d['cogs'],
+                    tree.getNodeMatchingName(nA),
+                    tree.getNodeMatchingName(nB)))
 
         try:
             self.geograph[glm] = geoGraph
@@ -4190,8 +3286,8 @@ class PhyBo(Wordlist):
         """
         Plot a minimal spatial network.
         """
-        # set defaults
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             latex_preamble=[],
             figsize=(10, 10),
             colormap=mpl.cm.jet,
@@ -4235,8 +3331,7 @@ class PhyBo(Wordlist):
             table_text_size=10,
             alpha=0.75,
             cmap_min=30,
-            markersize=20
-        )
+            markersize=20)
 
         # load the rc-file XXX add internal loading later
         conf = self._config()
@@ -4246,18 +3341,7 @@ class PhyBo(Wordlist):
             except:
                 raise ValueError('[!] Configuration is not specified!')
 
-        # overwrite configuration from keywords
-        for k in keywords:
-            conf[k] = keywords[k]
-
-        # overwrite keywords with defaults
-        for key in defaults:
-            if key not in keywords:
-                keywords[key] = defaults[key]
-
-        # check for only
-        if not only:
-            only = self.taxa
+        only = only or self.taxa
 
         # switch backend, depending on whether tex is used or not
         backend = mpl.get_backend()
@@ -4271,10 +3355,7 @@ class PhyBo(Wordlist):
         if keywords['latex_preamble']:
             mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
-        # usetex
         mpl.rc('text', usetex=usetex)
-
-        # define stuff for convenience
         filename = keywords['filename']
         colormap = keywords['colormap']
 
@@ -4282,50 +3363,27 @@ class PhyBo(Wordlist):
         if 'groups' in self._meta:
             groups = self._meta['groups']
         else:
-            groups = dict([(k, v) for k, v in csv2list(self.dataset, 'groups')])
+            groups = {k: v for k, v in csv2list(self.dataset, 'groups')}
 
-        # update configuration
-        for k in keywords:
-            if k not in conf:
-                conf[k] = keywords[k]
+        conf.update(keywords)
 
         # set the graph variable
         geoGraph = self.geograph[glm]
 
         # get the weights for the lines
-        weights = []
-        for a, b, d in geoGraph.edges(data=True):
-            weights += [d['weight']]
+        weights = [d['weight'] for a, b, d in geoGraph.edges(data=True)]
         max_weight = max(weights)
         sorted_weights = sorted(set(weights))
 
-        # get a color-function
-        color_dict = np.array(
-            np.linspace(
-                0,
-                256,
-                len(set(weights))
-            ),
-            dtype='int'
-        )
-
-        # get a line-function
-        line_dict = np.linspace(
-            0.5,
-            conf['linewidth'],
-            len(set(weights))
-        )
+        color_dict = np.array(np.linspace(0, 256, len(set(weights))), dtype='int')
+        line_dict = np.linspace(0.5, conf['linewidth'], len(set(weights)))
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
         if 'coords' in self._meta:
             coords = self._meta['coords']
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
         # determine the maxima of the coordinates
         latitudes = [i[0] for i in coords.values()]
@@ -4334,7 +3392,6 @@ class PhyBo(Wordlist):
         min_lat, max_lat = min(latitudes), max(latitudes)
         min_lon, max_lon = min(longitudes), max(longitudes)
 
-        # start to initialize the basemap
         fig = plt.figure(figsize=keywords['figsize'])
         figsp = fig.add_subplot(111)
 
@@ -4356,7 +3413,6 @@ class PhyBo(Wordlist):
 
         # plot the lines
         for a, b, d in sorted(geoGraph.edges(data=True), key=lambda x: x[2]['weight']):
-
             if a in coords and b in coords and a in only or b in only:
                 w = d['weight']
 
@@ -4387,8 +3443,7 @@ class PhyBo(Wordlist):
                     color=color,
                     alpha=alpha,
                     linewidth=linewidth,
-                    zorder=w + 50
-                )
+                    zorder=w + 50)
 
         # plot the points for the languages
         cell_text = []
@@ -4404,23 +3459,16 @@ class PhyBo(Wordlist):
         else:
             gfunc = lambda x: x
 
-        # check for defaults
-        defaults = {
-            "markersize": 10,
-            "table_cell_height": 0.025,
-        }
+        defaults = {"markersize": 10, "table_cell_height": 0.025}
         for k in defaults:
             if k not in conf:
                 conf[k] = defaults[k]
 
         for i, (taxon, (lng, lat)) in enumerate(
-                sorted(coords.items(), key=lambda x: x[0])):
+            sorted(coords.items(), key=lambda x: x[0])):
 
             # retrieve x and y from the map
             x, y = m(lat, lng)
-
-            # get the color of the given taxon
-            # taxon_color = colors[groups[taxon]]
 
             # get colors from conf
             this_group = groups[taxon]
@@ -4430,20 +3478,15 @@ class PhyBo(Wordlist):
             except:
                 taxon_marker = 'o'
 
-            # check for legend
-
             if gfunc(groups[taxon]) in legend_check:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     taxon_marker,
                     markersize=conf['markersize'],
                     color=taxon_color,
-                    zorder=max_weight + 52,
-                )
+                    zorder=max_weight + 52)
             else:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
@@ -4451,8 +3494,7 @@ class PhyBo(Wordlist):
                     markersize=conf['markersize'],
                     color=taxon_color,
                     zorder=max_weight + 52,
-                    label=gfunc(groups[taxon])
-                )
+                    label=gfunc(groups[taxon]))
                 legend_check.append(gfunc(groups[taxon]))
 
             # add number to celltext
@@ -4479,24 +3521,13 @@ class PhyBo(Wordlist):
                 horizontalalignment='center',
                 fontweight="bold",
                 verticalalignment='center',
-                zorder=max_weight + 55
-            )
+                zorder=max_weight + 55)
 
         # add a colorbar
-        cax = figsp.imshow(
-            [[1, 2], [1, 2]],
-            visible=False,
-            cmap=colormap
-        )
+        cax = figsp.imshow([[1, 2], [1, 2]], visible=False, cmap=colormap)
         cbar = fig.colorbar(
             cax,
-            ticks=[
-                1,
-                1.25,
-                1.5,
-                1.75,
-                2
-            ],
+            ticks=[1, 1.25, 1.5, 1.75, 2],
             orientation=keywords['cbar_orientation'],
             shrink=keywords['cbar_shrink'],
             fraction=keywords['cbar_fraction'],
@@ -4539,18 +3570,13 @@ class PhyBo(Wordlist):
         plt.legend(
             loc=conf['legend_location'],
             numpoints=1,
-            prop={
-                'size': conf['legend_size'],
-                'weight': 'bold'
-            }
-        )
+            prop={'size': conf['legend_size'], 'weight': 'bold'})
 
         plt.subplots_adjust(
             left=keywords['left'],
             right=keywords['right'],
             top=keywords['top'],
-            bottom=keywords['bottom']
-        )
+            bottom=keywords['bottom'])
 
         plt.savefig(filename + '.' + fileformat)
         plt.clf()
@@ -4562,15 +3588,9 @@ class PhyBo(Wordlist):
         cogA,
         cogB,
         labels={1: '1', 2: '2', 3: '3', 4: '4'},
-        tcolor={
-            1: 'white',
-            2: 'black',
-            3: '0.5',
-            4: '0.1'
-        },
+        tcolor={1: 'white', 2: 'black', 3: '0.5', 4: '0.1'},
         filename='pdf',
         fileformat='pdf',
-        threshold=1,
         usetex=True
     ):
         """
@@ -4582,36 +3602,22 @@ class PhyBo(Wordlist):
         geographic space.
 
         """
-        # usetex
         mpl.rc('text', usetex=True)
-
-        # redefine taxa and tree for convenience
         taxa = self.taxa
 
         # XXX check for coordinates of the taxa, otherwise load them from file and
         # add them to the wordlist XXX add later, we first load it from file
         if 'coords' in self._meta:
             coords = self.coords
-
         else:
-            coords = csv2dict(
-                self.dataset,
-                'coords',
-                dtype=[str, float, float]
-            )
+            coords = csv2dict(self.dataset, 'coords', dtype=[str, float, float])
 
-        # load the rc-file XXX add internal loading later
         conf = self._config()
 
-        # get the paps
         these_taxa = {}
         for taxon in taxa:
-
             # get the dictionary and the entry
-            try:
-                cogs = self.get_dict(col=taxon, entry='pap')[concept]
-            except:
-                cogs = []
+            cogs = self.get_dict(col=taxon, entry='pap').get(concept, [])
 
             # check for identical cogs and assign them to the 4 categories
             if cogA in cogs and cogB in cogs:
@@ -4654,7 +3660,7 @@ class PhyBo(Wordlist):
         cell_text = []
         legend_check = []
         for i, (taxon, (lng, lat)) in enumerate(
-                sorted(coords.items(), key=lambda x: x[0])):
+            sorted(coords.items(), key=lambda x: x[0])):
 
             # retrieve x and y from the map
             x, y = m(lat, lng)
@@ -4662,34 +3668,23 @@ class PhyBo(Wordlist):
             # get the color of the given taxon
             # taxon_color = colors[groups[taxon]]
 
-            if these_taxa[taxon] == 4:
-                marker = '*'
-            else:
-                marker = 's'
+            marker = '*' if these_taxa[taxon] == 4 else 's'
 
-            # check for legend
             if labels[these_taxa[taxon]] in legend_check:
-                # check for forth marker
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     marker,
                     markersize=conf['markersize'],
-                    color=tcolor[these_taxa[taxon]],
-                    # zorder = 50,
-                )
+                    color=tcolor[these_taxa[taxon]])
             else:
-                # plot the marker
                 plt.plot(
                     x,
                     y,
                     marker,
                     markersize=conf['markersize'],
                     color=tcolor[these_taxa[taxon]],
-                    # zorder = 52,
-                    label=labels[these_taxa[taxon]]
-                )
+                    label=labels[these_taxa[taxon]])
                 legend_check.append(labels[these_taxa[taxon]])
 
             # add number to celltext
@@ -4698,28 +3693,20 @@ class PhyBo(Wordlist):
             else:
                 cell_text.append([str(i + 1), taxon])
 
-            # plot the text
-            if tcolor[these_taxa[taxon]] == 'black':
-                textcolor = 'white'
-            else:
-                textcolor = 'black'
-
             plt.text(
                 x,
                 y,
                 str(i + 1),
                 size=str(int(conf['markersize'] / 2)),
                 label=taxon,
-                color=textcolor,
+                color='white' if tcolor[these_taxa[taxon]] == 'black' else 'black',
                 horizontalalignment='center',
-                verticalalignment='center',
-            )
+                verticalalignment='center')
 
         this_table = plt.table(
             cellText=cell_text,
             colWidths=conf['table.column.width'],
-            loc=conf['table.location'],
-        )
+            loc=conf['table.location'])
 
         # adjust the table
         for line in this_table._cells:
@@ -4733,26 +3720,16 @@ class PhyBo(Wordlist):
             this_table._cells[line].set_color(conf['table.cell.color'])
 
         this_table.set_zorder(100)
-
         plt.legend(
             loc=conf['legend.location'],
             numpoints=1,
-            prop={
-                'size': conf['legend.size'],
-                'weight': 'bold'
-            }
-        )
+            prop={'size': conf['legend.size'], 'weight': 'bold'})
 
         plt.subplots_adjust(left=0.05, right=0.95, top=0.95, bottom=0.05)
-
         plt.savefig(filename + '.' + fileformat)
         plt.clf()
 
-    def plot_GLS(
-        self,
-        glm,
-        **keywords
-    ):
+    def plot_GLS(self, glm, **keywords):
         """
         Plot the inferred scenarios for a given model.
         """
@@ -4776,16 +3753,10 @@ class PhyBo(Wordlist):
                 x = d['graphics']['x']
                 y = d['graphics']['y']
                 f = d['graphics']['fill']
-                try:
-                    r = d['graphics']['angle']
-                    s = d['graphics']['s']
-                except:
-                    r = None
-                    s = None
-
+                r = d['graphics'].get('angle')
+                s = d['graphics'].get('s')
                 o = d['origin']
                 l = d['label']
-
                 nodes.append((x, y, f, o, l, r, s))
 
             edges = []
@@ -4794,7 +3765,6 @@ class PhyBo(Wordlist):
                 xB = g.node[b]['graphics']['x']
                 yA = g.node[a]['graphics']['y']
                 yB = g.node[b]['graphics']['y']
-
                 edges += [(xA, xB, yA, yB)]
 
             # mpl.rc('text',usetex=keywords['usetex'])
@@ -4807,22 +3777,9 @@ class PhyBo(Wordlist):
             plt.axis('equal')
 
             for xA, xB, yA, yB in edges:
-                plt.plot(
-                    [xA, xB],
-                    [yA, yB],
-                    '-',
-                    color='black',
-                    linewidth=5
-                )
-                plt.plot(
-                    [xA, xB],
-                    [yA, yB],
-                    '-',
-                    color='0.2',
-                    linewidth=4
-                )
+                plt.plot([xA, xB], [yA, yB], '-', color='black', linewidth=5)
+                plt.plot([xA, xB], [yA, yB], '-', color='0.2', linewidth=4)
             for x, y, f, o, l, r, s in nodes:
-
                 if f == '#000000':
                     f = '#a3a3a3'
                     c = '#a3a3a3'
@@ -4877,12 +3834,7 @@ class PhyBo(Wordlist):
             )
             plt.clf()
 
-    def get_stats(
-        self,
-        glm,
-        subset='',
-        filename=''
-    ):
+    def get_stats(self, glm, subset='', filename=''):
         """
         Calculate basic statistics for a given gain-loss model.
         """
@@ -4891,7 +3843,6 @@ class PhyBo(Wordlist):
         else:
             gains = []
             for cog in self.cogs:
-
                 # get the respective subset-item first
                 item = self[[c[0] for c in self.etd[cog] if c != 0][0], subset[0]]
 
@@ -4900,7 +3851,6 @@ class PhyBo(Wordlist):
                     gains += [self.gls[glm][cog][1]]
 
         noo = sum(gains) / len(gains)
-
         ppc = sum([1 for g in gains if g > 1]) / len(gains)
 
         log.info('Number of Origins: {0:.2f}'.format(noo))
@@ -4913,18 +3863,12 @@ class PhyBo(Wordlist):
             'Number of origins: {0:.2f}\nPercentage of patchy cogs {1:.2f}\n'.format(noo,
                                                                                      ppc))
 
-    def plot_concept_evolution(
-        self,
-        glm,
-        concept='',
-        fileformat='png',
-        **keywords
-    ):
+    def plot_concept_evolution(self, glm, concept='', fileformat='png', **keywords):
         """
         Plot the evolution of specific concepts along the reference tree.
         """
-        # make defaults
-        defaults = dict(
+        util.setdefaults(
+            keywords,
             figsize=(15, 15),
             left=0.05,
             top=0.95,
@@ -4940,12 +3884,7 @@ class PhyBo(Wordlist):
             usetex=False,
             latex_preamble=False,
             textsize=8,
-            subset=[]
-        )
-
-        for k in defaults:
-            if k not in keywords:
-                keywords[k] = defaults[k]
+            subset=[])
 
         # check for the correct item
         if not concept:
@@ -4972,22 +3911,17 @@ class PhyBo(Wordlist):
             if keywords['latex_preamble']:
                 mpl.rcParams['pgf.preamble'] = keywords['latex_preamble']
 
-            # make a graph
             graph = nx.Graph()
 
             # get all paps that are no singletons
             paps = sorted(set([p for p in self.get_list(
-                row=concept,
-                flat=True,
-                entry='pap'
-            ) if p not in self.singletons]))
+                row=concept, flat=True, entry='pap') if p not in self.singletons]))
 
             if len(paps) <= 0:
                 log.warn(
                     "No entries for concept {0} could be found, skipping the plot.".format(
                         concept))
             else:
-
                 # get the number of paps in order to get the right colors
                 cfunc = np.array(np.linspace(10, 256, len(paps)), dtype='int')
                 colors = dict([(paps[i], mpl.colors.rgb2hex(colormap(cfunc[i]))) for i in
@@ -5026,14 +3960,7 @@ class PhyBo(Wordlist):
                 legendEntriesB = []
                 legendTextB = []
                 p = mpl.patches.Wedge(
-                    (0, 0),
-                    1,
-                    0,
-                    360,
-                    facecolor='0.5',
-                    linewidth=2,
-                    edgecolor='black',
-                )
+                    (0, 0), 1, 0, 360, facecolor='0.5', linewidth=2, edgecolor='black')
                 legendEntriesB += [p]
                 legendTextB += ['Loss Event']
                 p, = plt.plot(0, 0, '--', color='black', linewidth=2)
@@ -5045,20 +3972,11 @@ class PhyBo(Wordlist):
 
                 # iterate over the paps and append states to the graph
                 for pap in paps:
-
                     # get the graph with the model
                     gls = self.gls[glm][pap][0]
-                    g = gls2gml(
-                        gls,
-                        self.tgraph,
-                        self.tree,
-                        filename=''
-                    )
+                    g = gls2gml(gls, self.tgraph, self.tree, filename='')
 
-                    # iterate over the graph
                     for n, d in g.nodes(data=True):
-
-                        # add the node if necessary
                         if n not in graph:
                             graph.add_node(n)
 
@@ -5066,7 +3984,6 @@ class PhyBo(Wordlist):
                         if 'pap' not in graph.node[n]:
                             graph.node[n]['pap'] = {}
 
-                        # add data
                         graph.node[n]['pap'][pap] = d['state']
 
                 # create the figure
@@ -5092,8 +4009,7 @@ class PhyBo(Wordlist):
                         [yA, yB],
                         '-',
                         color='black',
-                        linewidth=keywords['edgewidth']
-                    )
+                        linewidth=keywords['edgewidth'])
 
                 # now iterate over the nodes
                 for n, d in graph.nodes(data=True):
@@ -5110,118 +4026,57 @@ class PhyBo(Wordlist):
                     yvals += [y]
 
                     # plot the default marker
-                    plt.plot(
-                        x,
-                        y,
-                        'o',
-                        markersize=5,
-                        color='black',
-                        zorder=50
-                    )
+                    plt.plot(x, y, 'o', markersize=5, color='black', zorder=50)
                     # check for origins in cpaps
+                    wedge_args = (
+                        (x, y), keywords['radius'] + keywords['outer_radius'], 0, 360)
                     if 'O' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='white',
                             zorder=57 + z,
                             linewidth=2.5,
-                            linestyle='dashed',
-                        )
-                        figsp.add_artist(w)
+                            linestyle='dashed')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif 'o' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='white',
                             zorder=56 + z,
                             linewidth=2.5,
-                            linestyle='solid',
-                        )
-                        figsp.add_artist(w)
-
+                            linestyle='solid')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     if 'L' in cpaps.values() and 'O' in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='0.5',
                             zorder=58 + z,
                             linewidth=2.5,
                             edgecolor='black',
-                            linestyle='dashed'
-                        )
-                        figsp.add_artist(w)
-
+                            linestyle='dashed')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif "L" in cpaps.values():
-                        w = mpl.patches.Wedge(
-                            (x, y),
-                            keywords['radius'] + keywords['outer_radius'],
-                            0,
-                            360,
+                        kw = dict(
                             facecolor='0.5',
                             zorder=59 + z,
                             linewidth=2.5,
-                            edgecolor='black',
-                        )
-                        figsp.add_artist(w)
+                            edgecolor='black')
+                        figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
 
-                    # plot all wedges
                     for pap in cpaps:
-
                         theta1, theta2 = wedges[pap]
                         color = colors[pap]
+                        wedge_args = ((x, y), keywords['radius'], theta1, theta2)
+                        wedge_kw = dict(
+                            facecolor=color, zorder=61 + z, linewidth=2, edgecolor='black'
+                        )
 
                         # check for characteristics of this pap
                         if cpaps[pap] == 'L':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                alpha=0.25,
-                                linewidth=2,
-                                edgecolor='black',
-                                linestyle='dotted'
-                            )
-                            figsp.add_artist(w)
-
+                            wedge_kw.update(alpha=0.25, linestyle='dotted')
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
                         elif cpaps[pap] == 'o':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                linewidth=2,
-                                edgecolor='black'
-                            )
-                            figsp.add_artist(w)
-
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
                         elif cpaps[pap] == 'O':
-
-                            w = mpl.patches.Wedge(
-                                (x, y),
-                                keywords['radius'],
-                                theta1,
-                                theta2,
-                                facecolor=color,
-                                zorder=61 + z,
-                                linewidth=2,
-                                edgecolor='black',
-                                linestyle='dashed'
-                            )
-                            figsp.add_artist(w)
+                            wedge_kw.update(linestyle='dashed')
+                            figsp.add_artist(mpl.patches.Wedge(*wedge_args, **wedge_kw))
 
                     # add number for node
                     if n in self.taxa:
@@ -5256,22 +4111,14 @@ class PhyBo(Wordlist):
                     left=keywords['left'],
                     right=keywords['right'],
                     top=keywords['top'],
-                    bottom=keywords['bottom']
-                )
-
-                plt.savefig(
-                    self._output_path(
-                        'items',
-                        '{0}-{1}'.format(self.dataset, glm),
-                        concept.replace('/', '_') + '.' + fileformat
-                    )
-                )
+                    bottom=keywords['bottom'])
+                plt.savefig(self._output_path(
+                    'items',
+                    '{0}-{1}'.format(self.dataset, glm),
+                    concept.replace('/', '_') + '.' + fileformat))
                 plt.close()
 
-        # return the graph
         return
-
-    # add an alias for backwards compatibility
 
 
 TreBor = PhyBo
