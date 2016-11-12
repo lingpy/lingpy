@@ -122,3 +122,29 @@ def missing_module(name, logger=None):
     logger.warn(
         "Module '{0}' could not be loaded. Some methods may not work properly.".format(
             name))
+
+
+class Logging(object):
+    """
+    A context manager to execute a block of code at a specific logging level.
+    """
+    def __init__(self, level=logging.DEBUG, logger=None):
+        self.level = level
+        self.logger = logger or get_logger()
+        self.linpy_logger_level = self.logger.getEffectiveLevel()
+        root = logging.getLogger()
+        self.root_logger_level = root.getEffectiveLevel()
+        self.root_handler_level = root.handlers[0].level
+
+    def __enter__(self):
+        self.logger.setLevel(self.level)
+        root = logging.getLogger()
+        root.setLevel(self.level)
+        root.handlers[0].setLevel(self.level)
+        return self.logger
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.logger.setLevel(self.linpy_logger_level)
+        root = logging.getLogger()
+        root.setLevel(self.root_logger_level)
+        root.handlers[0].setLevel(self.root_handler_level)
