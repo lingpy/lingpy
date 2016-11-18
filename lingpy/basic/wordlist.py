@@ -590,6 +590,37 @@ class Wordlist(QLCParserWithRowsAndCols):
         """
         renumber(self, source, target, override=override)
 
+    def list(self, *values):
+        """Function generates a list of the specified values.
+        
+        Parameters
+        ----------
+        value : str
+            A value as defined in the header of the wordlist.
+
+        Returns
+        -------
+        list : list
+            A generator object that generates list containing the key of each
+            row in the wordlist and the corresponding cells, as specified in
+            the headers.
+
+        Note
+        ----
+        Use this function to quickly iterate over specified fields in the
+        wordlist. For example, when trying to access all pairs of language
+        names and concepts, you may write::
+
+            >>> for k, language, concept in wl.list('language', 'concept'):
+                    print(k, language, concept)
+
+        Note that this function returns the key of the given row as a first
+        value. So if you do not specify anything, the output will just be the
+        key.
+        """
+        for k in self:
+            yield [k] + [self[k][self.header[v]] for v in values]
+
     def _output(self, fileformat, **keywords):
         """
         Internal function that eases its modification by daughter classes.
