@@ -146,7 +146,7 @@ class TestLexStat(WithTempDir):
         self.lex.get_scorer(**self.get_scorer_kw)
         self.lex.get_random_distances()
         self.lex.get_distances()
-        self.lex.get_distances(method='turchin')
+        self.lex.get_distances(method='edit-dist')
         self.lex.get_distances(aggregate=False)
 
     def test_get_frequencies(self):
