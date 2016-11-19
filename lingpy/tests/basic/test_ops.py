@@ -16,6 +16,11 @@ class TestOps(WithTempDir):
         self.wordlist = Wordlist(test_data('KSL.qlc'))
         self.wordlist2 = Wordlist(test_data('KSL4.qlc'))
 
+    def test_iter_rows(self):
+        from lingpy.basic.ops import iter_rows
+        assert len(list(
+            iter_rows(self.wordlist, 'concept', 'doculect'))[0]) == 3
+
     def test_wl2dict(self):
         from lingpy.basic.ops import wl2dict
 

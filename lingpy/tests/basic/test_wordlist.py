@@ -18,9 +18,6 @@ class TestWordlist(WithTempDir):
     def test___len__(self):
         assert len(self.wordlist) == 1400
 
-    def test_list(self):
-        assert len(list(self.wordlist.list('concept', 'ipa'))[0]) == 3
-
     def test_calculate(self):
         self.wordlist.calculate('dst')
 

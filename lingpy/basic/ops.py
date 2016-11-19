@@ -1,7 +1,8 @@
 """
 Module provides basic operations on Wordlist-Objects.
 """
-from __future__ import unicode_literals, print_function, absolute_import, division
+from __future__ import (
+        unicode_literals, print_function, absolute_import, division)
 
 import json
 from string import ascii_letters, digits
@@ -17,10 +18,12 @@ from lingpy import util
 from lingpy import log
 
 
-def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts',
+def get_score(
+        wl, ref, mode, taxA, taxB, concepts_attr='concepts',
         ignore_missing=False):
     if mode in ['shared', 'jaccard']:
-        listA, listB = [wl.get_list(col=tax, entry=ref) for tax in [taxA, taxB]]
+        listA, listB = [
+                wl.get_list(col=tax, entry=ref) for tax in [taxA, taxB]]
         shared = [x for x in listA if x in listB]
 
         if mode == 'jaccard':
@@ -44,7 +47,8 @@ def get_score(wl, ref, mode, taxA, taxB, concepts_attr='concepts',
         return 1 - shared / (wl.height - missing)
     except ZeroDivisionError:
         log.get_logger().exception(
-            "Zero-division error encountered in '{0}' and '{1}'.".format(taxA, taxB))
+            "Zero-division error encountered in '{0}' and '{1}'.".format(
+                taxA, taxB))
         return 1.0
 
 
@@ -65,22 +69,59 @@ def wl2dst(
 
     distances = [[0 for i in range(wl.width)] for j in range(wl.width)]
 
-    for (i, taxA), (j, taxB) in product(enumerate(getattr(wl, taxa)), repeat=2):
+    for (i, taxA), (j, taxB) in product(
+            enumerate(getattr(wl, taxa)), repeat=2):
         if i < j:
-            score = get_score(wl, ref, mode, taxA, taxB,
-                    concepts_attr=concepts, ignore_missing=ignore_missing)
+            score = get_score(
+                    wl, ref, mode, taxA, taxB, concepts_attr=concepts,
+                    ignore_missing=ignore_missing)
             distances[i][j] = score
             if not refB:
                 distances[j][i] = score
         elif i == j:
             if mode == 'shared':
-                distances[i][j] = len(wl.get_list(col=taxA, flat=True))
+                distances[i][j] = len(
+                        wl.get_list(col=taxA, flat=True))
         elif i > j and refB:
             distances[i][j] = get_score(
                 wl, refB, mode, taxA, taxB, concepts_attr=concepts,
                 ignore_missing=ignore_missing)
 
     return distances
+
+
+def iter_rows(wordlist, *values):
+    """Function generates a list of the specified values in a wordlist.
+
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        A wordlist object or one of the daughter classes of wordlists.
+    value : str
+        A value as defined in the header of the wordlist.
+
+    Returns
+    -------
+    list : list
+        A generator object that generates list containing the key of each
+        row in the wordlist and the corresponding cells, as specified in
+        the headers.
+
+    Note
+    ----
+    Use this function to quickly iterate over specified fields in the
+    wordlist. For example, when trying to access all pairs of language
+    names and concepts, you may write::
+
+        >>> for k, language, concept in iter_rows(wl, 'language', 'concept'):
+                print(k, language, concept)
+
+    Note that this function returns the key of the given row as a first
+    value. So if you do not specify anything, the output will just be the
+    key.
+    """
+    for k in wordlist:
+        yield [k] + [wordlist[k][wordlist.header[v]] for v in values]
 
 
 def wl2dict(
@@ -128,9 +169,9 @@ def wl2dict(
                     for entry, format_string in entries:
                         if type(entry) in (list, tuple):
                             entry = ' '.join(entry)
-                        tmp_list.append(format_string.format(wordlist[key, entry]))
+                        tmp_list.append(format_string.format(
+                            wordlist[key, entry]))
                     tmp += [tmp_list]
-
     return out
 
 
@@ -139,7 +180,8 @@ def renumber(wordlist, source, target='', override=False):
     Create numerical identifiers from string identifiers.
     """
     # iterate over wordlist and get all source ids
-    sources = sorted(set([text_type(wordlist[k, source]) for k in wordlist]))
+    sources = sorted(set([
+        text_type(wordlist[k, source]) for k in wordlist]))
 
     # convert to numbers
     targets = list(range(1, len(sources) + 1))
@@ -170,8 +212,7 @@ def clean_taxnames(
         f=lambda x: ''.join([t for t in x if t not in '()[]{},;:'])
         .replace('-', '_').replace(' ', '_')):
     """
-    Function cleans taxon names in order to make sure they can be used in Newick files.
-
+    Function cleans taxon names for use in Newick files.
     """
     # clean the names for all taxa in a wordlist
     current_taxa = eval('wordlist.' + column)
@@ -183,8 +224,11 @@ def clean_taxnames(
     if column == wordlist._col_name:
         wordlist.cols = [old2new[t] for t in current_taxa]
 
-    wordlist.add_entries('_doculect', 'doculect', lambda x: old2new[x], override=True)
-    wordlist.add_entries('doculect', '_doculect', lambda x: new2old[x], override=True)
+    wordlist.add_entries(
+            '_doculect', 'doculect', lambda x: old2new[x], override=True)
+    wordlist.add_entries(
+            'doculect', '_doculect', lambda x: new2old[x], override=True)
+
 
 def calculate_data(
         wordlist,
@@ -222,7 +266,8 @@ def calculate_data(
 
     # calculate distances
     if data in ['distances', 'dst']:
-        wordlist._meta['distances'] = wl2dst(wordlist, taxa, concepts, ref, **keywords)
+        wordlist._meta['distances'] = wl2dst(
+                wordlist, taxa, concepts, ref, **keywords)
     elif data in ['diversity', 'div']:
         etd = wordlist.get_etymdict(ref=ref)
         wordlist._meta['diversity'] = \
@@ -233,11 +278,14 @@ def calculate_data(
                 wl2dst(wordlist, taxa, concepts, ref, **keywords)
         distances = wordlist._meta['distances']
         if 'tree' in wordlist._meta and not keywords['force']:
-            logger.warn("Reference tree has already been calculated, force overwrite by "
-                        "setting 'force' to 'True'.")
+            logger.warn(
+                    "Reference tree has already been calculated, "
+                    "force overwrite by "
+                    "setting 'force' to 'True'.")
             return
         wordlist._meta['tree'] = clustering.matrix2tree(
-            distances, these_taxa, keywords['tree_calc'], keywords['distances'])
+            distances, these_taxa, keywords['tree_calc'],
+            keywords['distances'])
 
     elif data in ['groups', 'cluster']:
         if 'distances' not in wordlist._meta:
@@ -245,11 +293,14 @@ def calculate_data(
         else:
             distances = wordlist._meta['distances']
         if 'groups' in wordlist._meta and not keywords['force']:
-            logger.warn("Distance matrix has already been calculated, force overwrite by "
-                        "setting 'force' to 'True'.")
+            logger.warn(
+                    "Distance matrix has already been calculated, "
+                    "force overwrite by "
+                    "setting 'force' to 'True'.")
             return
         wordlist._meta['groups'] = clustering.matrix2groups(
-            keywords['threshold'], distances, these_taxa, keywords['cluster_method'])
+            keywords['threshold'], distances, these_taxa,
+            keywords['cluster_method'])
     log.info("Successfully calculated {0}.".format(data))
 
 
@@ -334,7 +385,8 @@ def wl2qlc(
             out += "\n# MSA reference: {0}\n".format(ref)
             for k, v in msapairs[ref].items():
                 if 'consensus' in v:
-                    out += '#\n<msa id="{0}" ref="{1}" consensus="{2}">\n'.format(
+                    out += '#\n<msa '
+                    out += 'id="{0}" ref="{1}" consensus="{2}">\n'.format(
                         k, ref, ' '.join(v['consensus']))
                 else:
                     out += '#\n<msa id="{0}" ref="{1}">\n'.format(k, ref)
@@ -366,7 +418,8 @@ def wl2qlc(
         idxB = header.index(idxB)
         idx = idxA
         formatter = None
-        sorted_data = sorted(data.keys(), key=lambda x: (data[x][idxA], data[x][idxB]))
+        sorted_data = sorted(data.keys(), key=lambda x: (
+            data[x][idxA], data[x][idxB]))
     else:
         idx = False
         formatter = ''
@@ -406,6 +459,7 @@ def wl2qlc(
         normalize="NFC")
     return
 
+
 def tsv2triple(wordlist, outfile=None):
     """
     Function converts a wordlist to a triple data structure.
@@ -436,7 +490,7 @@ def tsv2triple(wordlist, outfile=None):
 
 def triple2tsv(triples_or_fname, output="table"):
     """
-    Function reads in a triple file and converts it to a tabular data structure.
+    Function reads a triple file and converts it to a tabular data structure.
     """
     D = defaultdict(dict)
     idxs = set()
@@ -456,7 +510,8 @@ def triple2tsv(triples_or_fname, output="table"):
 
     idxs = sorted(idxs)
     cols = sorted(cols)
-    table = [[idx] + [D.get(idx, {}).get(col, '') for col in cols] for idx in idxs]
+    table = [[idx] + [
+        D.get(idx, {}).get(col, '') for col in cols] for idx in idxs]
 
     if output not in ['wordlist', 'dict']:
         return [["ID"] + cols] + table
@@ -470,12 +525,13 @@ def coverage(wordlist):
     """
     Determine the average coverage of a wordlist.
     """
-    return {taxon: len(wordlist.get_dict(col=taxon)) for taxon in wordlist.taxa}
+    return {taxon: len(
+        wordlist.get_dict(col=taxon)) for taxon in wordlist.taxa}
 
 
 def wl2multistate(wordlist, ref, missing):
     """
-    Helper function converts a wordlist to multistate format (compatible with PAUP).
+    Function converts a wordlist to multistate format (compatible with PAUP).
     """
 
     # convert the data to a multistate matrix
@@ -496,7 +552,8 @@ def wl2multistate(wordlist, ref, missing):
 
         # make converter
         if len(distinct_states) > len(chars):  # pragma: no cover
-            # FIXME: This shouldn't just be a warning, because we will get a KeyError
+            # FIXME: This shouldn't just be a warning, because we
+            # will get a KeyError
             # down below, since zip just returns a list of length len(chars)!
             log.warn('more distinct states than available characters!')
         char_map = dict(zip(sorted(distinct_states), chars))
@@ -505,7 +562,7 @@ def wl2multistate(wordlist, ref, missing):
         line = []
         for taxon in wordlist.taxa:
             states = set(taxon_to_cognate_set.get(taxon, ['-']))
-            #assert states  # exclude the case len(taxon_to_cognate_set[taxon]) == 0
+            # exclude the case len(taxon_to_cognate_set[taxon]) == 0
             if len(states) == 1:
                 line.append(char_map[states.pop()])
             elif not states:
