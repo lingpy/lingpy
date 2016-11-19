@@ -14,7 +14,8 @@ from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens,
 )
 from lingpy.sequence.generate import MCPhon
-from lingpy.basic import Wordlist
+from lingpy.basic.wordlist import Wordlist
+from lingpy.basic.ops import iter_rows
 from lingpy.align.pairwise import turchin, edit_dist
 from lingpy.convert.strings import scorer2str
 from lingpy.algorithm import clustering
@@ -1544,8 +1545,7 @@ class LexStat(Wordlist):
         if ftype == 'sounds':
             _F = defaultdict(Counter)
             F = Counter()
-            for k in self:
-                tokens = self[k, ref]
+            for k, tokens in iter_rows(self, ref):
                 if tokens:
                     _F[self[k][self._colIdx]].update(tokens)
                     F.update(tokens)
@@ -1553,14 +1553,15 @@ class LexStat(Wordlist):
 
         if ftype == 'wordlength':
             _W = defaultdict(lambda: [0, 0])
-            for k in self:
-                _W[self[k][self._colIdx]][0] += len(self[k, ref])
+            for k, tokens in iter_rows(self, ref):
+                _W[self[k][self._colIdx]][0] += len(tokens)
                 _W[self[k][self._colIdx]][1] += 1
             _W = {a: b[0] / b[1] for a, b in _W.items()}
             return sum(_W.values()) / self.width if aggregated else _W
 
         if ftype == 'diversity':
-            return (len(self.get_etymdict(ref)) - self.height) / (len(self) - self.height)
+            return (len(self.get_etymdict(ref)) - self.height) /\
+                    (len(self) - self.height)
 
     def output(self, fileformat, **keywords):
         """
@@ -1568,9 +1569,10 @@ class LexStat(Wordlist):
 
         Parameters
         ----------
-        fileformat : {'tsv', 'tre','nwk','dst', 'taxa','starling', 'paps.nex', 'paps.csv'}
+        fileformat : {'tsv', 'tre','nwk','dst', 'taxa','starling', \
+                'paps.nex', 'paps.csv'}
             The format that is written to file. This corresponds to the file
-            extension, thus 'tsv' creates a file in tsv-format, 'dst' creates
+            extension, thus 'tsv' creates a file in tsv-format, 'dst' creates 
             a file in Phylip-distance format, etc.
         filename : str
             Specify the name of the output file (defaults to a filename that
@@ -1626,6 +1628,7 @@ class LexStat(Wordlist):
 
         if fileformat == 'scorer':
             util.write_text_file(
-                kw['filename'] + '.scorer', scorer2str(kw.get('scorer', self.rscorer)))
+                kw['filename'] + '.scorer', scorer2str(
+                    kw.get('scorer', self.rscorer)))
         else:
             self._output(fileformat, **kw)
