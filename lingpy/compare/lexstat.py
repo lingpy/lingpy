@@ -7,7 +7,6 @@ from copy import copy
 
 from six import text_type
 from six import string_types
-from clldutils.misc import cached_property
 import numpy as np
 
 from lingpy.settings import rcParams
