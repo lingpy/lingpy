@@ -177,6 +177,7 @@ def test_syllabify():
     seq2 = "jabloko"
     seq3 = "jabəlko"
     seq4 = "j a b u - k o"
+    seq5 = "ma⁵io"
 
     assert_raises(ValueError, syllabify, seq1, output="test")
 
@@ -184,6 +185,7 @@ def test_syllabify():
     assert syllabify(seq2, output="breakpoints")[0] == (0,2)
     assert syllabify(seq3, output="nested")[1] == list("bəl")
     assert syllabify(seq4, output="nested")[1] == list("bu-")
+    assert ''.join(syllabify(seq5, sep="+")).split('+')[-1] == 'io'
 
 def test_tokens2morphemes():
 
