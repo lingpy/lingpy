@@ -314,11 +314,15 @@ def syllabify(seq, output="flat", **keywords):
             # can be expanded to general "vowel needs to follow"-rule
             elif p1 != 7 and p2 != 7 and i == 2:
                 new_syl = False
+
             # don't break if we are in the end of the word
             elif i == len(profile) - 3 and p3 != 7:
                 new_syl = False
             else:
                 new_syl = True
+        # break always if there's a tone
+        if p1 == 8:
+            new_syl = True
 
         # get the char before, after
         if new_syl:

@@ -590,6 +590,7 @@ class Wordlist(QLCParserWithRowsAndCols):
         """
         renumber(self, source, target, override=override)
 
+
     def _output(self, fileformat, **keywords):
         """
         Internal function that eases its modification by daughter classes.

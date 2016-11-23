@@ -14,7 +14,8 @@ from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens,
 )
 from lingpy.sequence.generate import MCPhon
-from lingpy.basic import Wordlist
+from lingpy.basic.wordlist import Wordlist
+from lingpy.basic.ops import iter_rows
 from lingpy.align.pairwise import turchin, edit_dist
 from lingpy.convert.strings import scorer2str
 from lingpy.algorithm import clustering
@@ -25,6 +26,7 @@ from lingpy.algorithm import misc
 from lingpy import util
 from lingpy.util import charstring
 from lingpy import log
+
 
 def _check_tokens(key_and_tokens):
     """Generator for error reports on token strings.
@@ -60,10 +62,15 @@ def char_from_charstring(cstring):
 def get_score_dict(chars, model):
     matrix = [[0.0 for i in chars] for j in chars]
     for (i, charA), (j, charB) in util.multicombinations2(enumerate(chars)):
-        matrix[i][j] = model(char_from_charstring(charA), char_from_charstring(charB))
+        matrix[i][j] = model(
+                char_from_charstring(charA), char_from_charstring(charB))
         if i < j:
             matrix[j][i] = matrix[i][j]
     return misc.ScoreDict(chars, matrix)
+
+
+def _lexstat(x, y):
+    return x if x != '-' else charstring(y)
 
 
 class LexStat(Wordlist):
@@ -78,8 +85,8 @@ class LexStat(Wordlist):
         The sound-class model that shall be used for the analysis. Defaults to
         the SCA sound-class model.
     merge_vowels : bool (default=True)
-        Indicate whether consecutive vowels should be merged into single tokens or kept
-        apart as separate tokens.
+        Indicate whether consecutive vowels should be merged into single
+        tokens or kept apart as separate tokens.
     transform : dict
         A dictionary that indicates how prosodic strings should be simplified
         (or generally transformed), using a simple key-value structure with the
@@ -103,20 +110,20 @@ class LexStat(Wordlist):
         identical with the ones you define in your transform dictionary.
     vowels : str (default="VT_")
         For scoring function creation using the
-        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you have the
-        possibility to use reduced scores for the matching of tones and vowels
-        by modifying the "vscale" parameter, which is set to 0.5 as a default.
-        In order to make sure that vowels and tones are properly detected, make
-        sure your prosodic string representation of vowels matches the one in
-        this keyword. Thus, if you change the prosodic strings using the
-        "transform" keyword, you also need to change the vowel string, to make
-        sure that "vscale" works as wanted in the
+        :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
+        have the possibility to use reduced scores for the matching of tones
+        and vowels by modifying the "vscale" parameter, which is set to 0.5 as
+        a default.  In order to make sure that vowels and tones are properly
+        detected, make sure your prosodic string representation of vowels
+        matches the one in this keyword. Thus, if you change the prosodic
+        strings using the "transform" keyword, you also need to change the
+        vowel string, to make sure that "vscale" works as wanted in the
         :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function.
     check : bool (default=False)
         If set to **True**, the input file will first be checked for errors
         before the calculation is carried out. Errors will be written to the
-        file **errors**, defaulting to ``errors.log``. See also ``apply_checks``
-    apply_checks : bool (default=False)
+        file **errors**, defaulting to ``errors.log``. See also
+        ``apply_checks`` apply_checks : bool (default=False)
         If set to **True**, any errors identified by `check` will be handled
         silently.
     no_bscorer: bool (default=False)
@@ -130,7 +137,7 @@ class LexStat(Wordlist):
     segments : str (default="tokens")
         The name of the column in your data which contains the segmented
         transcriptions, or in which the segmented transcriptions should be
-        placed. 
+        placed.
     transcription : str (default="ipa")
         The name of the column in your data which contains the unsegmented
         transcriptions.
@@ -157,17 +164,19 @@ class LexStat(Wordlist):
     weights : str (default="weights")
         The name of the column which stores the individual gap-weights for each
         sequence. Gap weights are positive floats for each segment in a string,
-        which modify the gap opening penalty during alignment. 
-    tokenize : function (default=:py:class:`~lingpy.sequence.sound_classes.ipa2tokens`)
+        which modify the gap opening penalty during alignment.
+    tokenize : function \
+            (default=:py:class:`~lingpy.sequence.sound_classes.ipa2tokens`)
         The function which should be used to tokenize the entries in the column
         storing the transcriptions in case no segmentation is provided by the
         user.
-    get_prostring : function (default=:py:class:`~lingpy.sequence.sound_classes.prosodic_string`)
+    get_prostring : function \
+            (default=:py:class:`~lingpy.sequence.sound_classes.prosodic_string`)
         The function which should be used to create prosodic strings from the
         segmented transcription data. If you want to completely ignore prosodic
         strings in LexStat calculations, you could just pass the following
         function::
-            
+
             >>> lex = LexStat('inputfile.tsv', get_prostring=lambda x: ["x" for
                 y in x])
 
@@ -175,8 +184,8 @@ class LexStat(Wordlist):
     Attributes
     ----------
     pairs : dict
-        A dictionary with tuples of language names as key and indices as value, \
-        pointing to unique combinations of words with the same meaning in all \
+        A dictionary with tuples of language names as key and indices as value,
+        pointing to unique combinations of words with the same meaning in all
         language pairs.
     model : :py:class:`~lingpy.data.model.Model`
         The sound class model instance which serves to convert the phonetic
@@ -202,21 +211,21 @@ class LexStat(Wordlist):
         class value.
     scorer : dict
         A collection of :py:class:`~lingpy.algorithm.cython.misc.ScoreDict`
-        objects, which are used to score the strings. LexStat distinguishes two
-        different scoring functions:
+        objects, which are used to score the strings. LexStat distinguishes
+        two different scoring functions:
 
         * rscorer: A "raw" scorer that is not language-specific and consists
           only of sound class values and prosodic string values. This scorer is
           traditionally used to carry out the first alignment in order to
-          calculate the language-specific scorer. It is directly accessible as an
-          attribute of the LexStat class
+          calculate the language-specific scorer. It is directly accessible as
+          an attribute of the LexStat class
           (:py:class:`~lingpy.compare.lexstat.lexstat.rscorer`). The characters
           which constitute the values in this scorer are accessible via the
           "rchars" attribue of each lexstat class.
         * bscorer: The language-specific scorer. This scorer is made of unique
           language-specific characters. These are accessible via the "chars"
           attribute of each LexStat class. As the "rscorer", the "bscorer" can
-          also be accessed directly as an attribute of the LexStat class 
+          also be accessed directly as an attribute of the LexStat class
           (:py:class:`~lingpy.compare.lexstat.lexstat.bscorer`).
 
     Notes
@@ -237,20 +246,20 @@ class LexStat(Wordlist):
             "no_bscorer": False,
             "errors": "errors.log",
             "expand_nasals": False,
-            "segments" : "tokens",
-            "numbers" : "numbers",
-            "classes" : "classes",
-            "transcription" : "ipa",
-            "prostrings" : "prostrings",
-            "weights" : "weights",
-            "sonars" : "sonars",
-            "langid" : "langid",
-            "duplicates" : "duplicates",
-            "tokenize" : ipa2tokens,
-            "get_prostring" : prosodic_string,
-            "row" : "concept",
-            "col" : "doculect",
-            "conf" : None
+            "segments": "tokens",
+            "numbers": "numbers",
+            "classes": "classes",
+            "transcription": "ipa",
+            "prostrings": "prostrings",
+            "weights": "weights",
+            "sonars": "sonars",
+            "langid": "langid",
+            "duplicates": "duplicates",
+            "tokenize": ipa2tokens,
+            "get_prostring": prosodic_string,
+            "row": "concept",
+            "col": "doculect",
+            "conf": None
         }
         kw.update(keywords)
 
@@ -271,27 +280,32 @@ class LexStat(Wordlist):
             self.model = kw['model']
 
         # set the lexstat stamp
-        self._stamp = "# Created using the LexStat class of {0}\n".format(util.PROG)
+        self._stamp = "# Created using the LexStat class of {0}\n".format(
+                util.PROG)
 
         # initialize the wordlist
-        Wordlist.__init__(self, filename, row=kw['row'], col=kw['col'], 
+        Wordlist.__init__(
+                self, filename, row=kw['row'], col=kw['col'],
                 conf=kw['conf'])
-        assert self._segments in self.header or self._transcription in self.header
+        assert self._segments in self.header or \
+            self._transcription in self.header
 
         # create tokens if they are missing
         if self._segments not in self.header:
             self.add_entries(
-                self._segments, self._transcription, kw['tokenize'], 
-                merge_vowels=kw['merge_vowels'],    
+                self._segments, self._transcription, kw['tokenize'],
+                merge_vowels=kw['merge_vowels'],
                 expand_nasals=kw['expand_nasals'])
 
         # add a debug procedure for tokens
         if kw["check"]:
-            errors = list(_check_tokens((key, self[key, self._segments]) for key in self))
+            errors = list(_check_tokens(
+                (key, self[key, self._segments]) for key in self))
             if errors:
                 lines = ["ID\tTokens\tError-Type"]
                 for key, msg, line in errors:
-                    lines.append("{0}\t<{1}>\t{2}".format(key, msg, ' '.join(line)))
+                    lines.append("{0}\t<{1}>\t{2}".format(
+                        key, msg, ' '.join(line)))
                 util.write_text_file(kw['errors'], lines)
 
                 if kw["apply_checks"] or util.confirm(
@@ -301,7 +315,8 @@ class LexStat(Wordlist):
                         filename=self.filename + '_cleaned',
                         subset=True,
                         rows={"ID": "not in " + str([i[0] for i in errors])})
-                    # load the data in a new LexStat instance and copy the __dict__
+                    # load the data in a new LexStat instance
+                    # and copy the __dict__
                     lexstat = LexStat(self.filename + '_cleaned.tsv', **kw)
                     lexstat._meta['errors'] = [i[0] for i in errors]
                     self.__dict__ = copy(lexstat.__dict__)
@@ -317,15 +332,20 @@ class LexStat(Wordlist):
                 lambda x: [int(i) for i in tokens2class(
                     x, rcParams['art'], stress=rcParams['stress'])])
         if self._prostrings not in self.header:
-            self.add_entries(self._prostrings, self._sonars, lambda x: kw['get_prostring'](x))
+            self.add_entries(
+                    self._prostrings, self._sonars,
+                    lambda x: kw['get_prostring'](x))
         # get sound class strings
         if self._classes not in self.header:
             self.add_entries(
-                self._classes, self._segments, lambda x: ''.join(tokens2class(x, kw["model"])))
+                self._classes, self._segments,
+                lambda x: ''.join(tokens2class(x, kw["model"])))
         # create IDs for the languages
         if self._langid not in self.header:
-            transform = dict(zip(self.cols, [str(i + 1) for i in range(self.width)]))
-            self.add_entries(self._langid, self._col_name, lambda x: transform[x])
+            transform = dict(zip(
+                self.cols, [str(i + 1) for i in range(self.width)]))
+            self.add_entries(
+                    self._langid, self._col_name, lambda x: transform[x])
         # get the numbers for all strings
         if self._numbers not in self.header:
             # change the discriminative potential of the sound-class string
@@ -339,11 +359,14 @@ class LexStat(Wordlist):
                               for a, b in zip(x[y[1]], x[y[2]])])
         # check for weights
         if self._weights not in self.header:
-            self.add_entries(self._weights, self._prostrings, lambda x: prosodic_weights(x))
+            self.add_entries(
+                    self._weights, self._prostrings,
+                    lambda x: prosodic_weights(x))
         # check for duplicates
-        # first, check for item 'words' in data, if this is not given, create it
+        # first, check for item 'words' in data, if not given, create it
         if self._transcription not in self.header:
-            self.add_entries(self._transcription, self._segments, lambda x: ''.join(x))
+            self.add_entries(
+                    self._transcription, self._segments, lambda x: ''.join(x))
         # add information regarding vowels in the data based on the
         # transformation, which is important for the calculation of the
         # v-scale in lexstat.get_scorer
@@ -367,22 +390,26 @@ class LexStat(Wordlist):
             self.freqs = {}
             for taxon in self.cols:
                 self.freqs[taxon] = Counter()
-                for word in self.get_list(col=taxon, entry=self._numbers, flat=True):
+                for word in self.get_list(
+                        col=taxon, entry=self._numbers, flat=True):
                     self.freqs[taxon].update(word)
                 self.chars = self.chars.union(self.freqs[taxon].keys())
 
-            self.rchars = sorted(set(char.split('.', 1)[1] for char in self.chars))
+            self.rchars = sorted(
+                    set(char.split('.', 1)[1] for char in self.chars))
             self.chars = sorted(self.chars) \
                 + [charstring(i + 1) for i in range(self.width)]
             if not self.chars:
-                raise ValueError("Your input data does not contain any entries!")
+                raise ValueError("Your input data contains no entries!")
             self.bad_chars = [char for char in self.chars if char[2] == '0']
             if len(self.bad_chars) / len(self.chars) > \
                     rcParams['lexstat_bad_chars_limit']:
                 raise ValueError(
-                    "{0:.0f}% of the unique characters in your word list are not "
-                    "recognized by {1}. You should re-load with check=True!".format(
-                        100 * len(self.bad_chars) / len(self.chars), util.PROG))
+                    "{0:.0f}% of the unique characters in your word "
+                    "list are not "
+                    "recognized by {1}. You should set check=True!".format(
+                        100 * len(self.bad_chars) / len(self.chars),
+                        util.PROG))
 
         if not hasattr(self, "scorer"):
             self._meta['scorer'] = {}
@@ -404,7 +431,8 @@ class LexStat(Wordlist):
         if not hasattr(self, "pairs"):
             self.pairs = {}
             self._same_vals = defaultdict(list)
-            for (i, taxonA), (j, taxonB) in util.multicombinations2(enumerate(self.cols)):
+            for (i, taxonA), (j, taxonB) in util.multicombinations2(
+                    enumerate(self.cols)):
                 self.pairs[taxonA, taxonB] = []
                 dictA = self.get_dict(col=taxonA)
                 dictB = self.get_dict(col=taxonB)
@@ -433,12 +461,12 @@ class LexStat(Wordlist):
     def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
-        
+
         Notes
         -----
-        In contrast to the basic wordlist and parser classes, the LexStat 
+        In contrast to the basic wordlist and parser classes, the LexStat
         wordlist further allows to access item pairs by passing a tuple
-        consisting of two pairs of an index with its corresponding column name. 
+        consisting of two pairs of an index with its corresponding column name.
 
         Examples
         --------
@@ -449,7 +477,7 @@ class LexStat(Wordlist):
 
         Instantiate a LexStat object::
             >>> lex = LexStat(test_data('KSL.qlc'))
-        
+
         Retrieve the IPA column for line 1 and line2 in the data:
 
             >>> lex[(1,'ipa'), (2, 'ipa')]
@@ -465,9 +493,106 @@ class LexStat(Wordlist):
             try:
                 return self._data[idx[0]][self._header[self._alias[idx[1]]]]
             except KeyError:
-                return 
+                return
             except TypeError:
                 raise KeyError("The key {0} could not be found.".format(idx))
+
+    def _distance_method(self, method, **kw):
+        """Helper method defines how words are aligned to retrieve distance \
+                scores"""
+        def lexstat_align(x, y):
+            return calign.align_pair(
+                    self[x, self._numbers], self[y, self._numbers],
+                    [self.cscorer[charstring(self[y, 'langid']), n] for n in
+                        self[x, self._numbers]],
+                    [self.cscorer[charstring(self[x, 'langid']), n] for n in
+                        self[y, self._numbers]], self[x, self._prostrings],
+                    self[y, self._prostrings], 1,
+                    kw['scale'], kw['factor'], self.cscorer,
+                    kw['mode'], kw['restricted_chars'], 1)[2]
+
+        def sca_align(x, y):
+            return calign.align_pair(
+                [n.split('.', 1)[1] for n in self[x, self._numbers]],
+                [n.split('.', 1)[1] for n in self[y, self._numbers]],
+                self[x, self._weights], self[y, self._weights],
+                self[x, self._prostrings], self[y, self._prostrings],
+                kw['gop'], kw['scale'], kw['factor'], self.rscorer,
+                kw['mode'], kw['restricted_chars'],
+                1)[2]
+
+        def edit_align(x, y):
+            entry = kw.get('entry', self._segments)
+            return edit_dist(
+                self[x, entry], self[y, entry], True, kw['restriction'])
+
+        def turchin_align(x, y):
+            return turchin(
+                self[x, self._segments], self[y, self._segments])
+
+        def custom_align(x, y):
+            return talign.align_pair(
+                self[x, 'user_tokens'],
+                self[y, 'user_tokens'],
+                kw['gop'],
+                kw['scale'],
+                kw['external_scorer'],
+                'overlap',
+                True)[2]
+
+        return dict(zip(
+            ('lexstat', 'sca', 'edit-dist', 'turchin', 'custom'),
+            (
+                lexstat_align, sca_align, edit_align, turchin_align,
+                custom_align)))[method]
+
+    def _align_method(self, method, **kw):
+        """Helper method for alignment operations"""
+        def base_align(x, y):
+            return self.align_pairs(
+                x, y, method=method, distance=True,
+                return_distance=kw['return_distance'],
+                pprint=False, mode=kw['mode'], scale=kw['scale'],
+                factor=kw['factor'], gop=kw['gop'])
+
+        def edit_align(x, y):
+            return edit_dist(
+                self[x, self._segments],
+                self[y, self._segments], normalized=kw['normalized'])
+
+        return dict(zip(
+            ('lexstat', 'sca', 'edit-dist'),
+            (base_align, base_align, edit_align)))[method]
+
+    def _cluster_method(self, method, **kw):
+        """Helper method for flat clustering in cognate detection."""
+        def linkage(x, y):
+            return clustering.flat_cluster(method, y, x, revert=True)
+
+        def mcl(x, y):
+            return clustering.mcl(
+                    y, x, list(range(len(x))),
+                    max_steps=kw['max_steps'], inflation=kw['inflation'],
+                    expansion=kw['expansion'],
+                    add_self_loops=kw['add_self_loops'], logs=kw['mcl_logs'],
+                    revert=True)
+
+        def infomap(x, y):
+            return extra.infomap_clustering(
+                    y, x, list(range(len(x))), revert=True)
+
+        def lc(x, y):
+            return clustering.link_clustering(
+                    y, x, list(range(len(x))), revert=True, fuzzy=False,
+                    matrix_type=kw['matrix_type'],
+                    link_threshold=kw['link_threshold'])
+
+        return dict(zip(
+            (
+                'single', 'upgma', 'complete', 'ward', 'mcl', 'infomap',
+                'link_clustering'),
+            (
+                linkage, linkage, linkage, linkage, mcl, infomap, lc)))[method]
 
     def get_subset(self, sublist, ref='concept'):
         """
@@ -491,7 +616,8 @@ class LexStat(Wordlist):
         self.subsets = {}
         for tA, tB in util.multicombinations2(self.cols):
             self.subsets[tA, tB] = [
-                pair for pair in self.pairs[tA, tB] if self[pair, ref][0] in sublist]
+                pair for pair in self.pairs[tA, tB] if self[
+                    pair, ref][0] in sublist]
 
     def _get_corrdist(self, **keywords):
         """
@@ -504,7 +630,8 @@ class LexStat(Wordlist):
             modes=rcParams['lexstat_modes'],
             preprocessing=False,
             preprocessing_method=rcParams['lexstat_preprocessing_method'],
-            preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
+            preprocessing_threshold=rcParams[
+                'lexstat_preprocessing_threshold'],
             ref='scaid',
             restricted_chars=rcParams['restricted_chars'],
             threshold=rcParams['lexstat_scoring_threshold'],
@@ -523,27 +650,34 @@ class LexStat(Wordlist):
                     cluster_method=kw['cluster_method'],
                     ref=kw['ref'])
 
-        with util.pb(desc='CORRESPONDENCE CALCULATION', total=self.width ** 2 / 2) as pb:
-            for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
+        with util.pb(
+                desc='CORRESPONDENCE CALCULATION',
+                total=self.width ** 2 / 2) as pb:
+            for (i, tA), (j, tB) in util.multicombinations2(
+                    enumerate(self.cols)):
                 pb.update(1)
-                log.info("Calculating alignments for pair {0} / {1}.".format(tA, tB))
+                log.info("Calculating alignments for pair {0} / {1}.".format(
+                    tA, tB))
 
                 corrdist[tA, tB] = defaultdict(float)
                 for mode, gop, scale in kw['modes']:
                     pairs = self.pairs[tA, tB]
                     if kw['subset']:
-                        pairs = [pair for pair in pairs if pair in self.subsets[tA, tB]]
-                    
+                        pairs = [
+                                pair for pair in pairs if pair in
+                                self.subsets[tA, tB]]
+
                     # threshold and preprocessing, make sure threshold is
                     # different from pre-processing threshold when
                     # preprocessing is set to false
                     if kw['preprocessing']:
                         pairs = [pair for pair in pairs
-                                 if self[pair, kw['ref']][0] == self[pair, kw['ref']][1]]
+                                 if self[pair, kw['ref']][0] == self[
+                                     pair, kw['ref']][1]]
                         threshold = 10.0
                     else:
                         threshold = kw['threshold']
-                        
+
                     corrs, self._included[tA, tB] = calign.corrdist(
                         threshold,
                         [self[pair, self._numbers] for pair in pairs],
@@ -593,17 +727,18 @@ class LexStat(Wordlist):
 
             # get a random distribution for all pairs
             sample = random.sample(
-                [(i, j) for i in range(kw['rands']) for j in range(kw['rands'])],
-                kw['runs'])
+                [(i, j) for i in range(kw['rands']) for j in
+                    range(kw['rands'])], kw['runs'])
 
-            with util.pb(desc='SEQUENCE GENERATION', total=len(self.cols)) as progress:
+            with util.pb(
+                    desc='SEQUENCE GENERATION',
+                    total=len(self.cols)) as progress:
                 for i, taxon in enumerate(self.cols):
                     progress.update(1)
                     log.info("Analyzing taxon {0}.".format(taxon))
-
                     tokens = self.get_list(col=taxon, entry="tokens", flat=True)
-                    prostrings = self.get_list(col=taxon,
-                            entry=self._prostrings, flat=True)
+                    prostrings = self.get_list(
+                            col=taxon, entry=self._prostrings, flat=True)
                     m = MCPhon(tokens, True, prostrings)
                     words = []
                     j, k = 0, 0
@@ -617,32 +752,41 @@ class LexStat(Wordlist):
                             j += 1
                             words += [s]
                     if len(words) < kw['rands']:
-                        log.warn("Could not generate enough distinct words for"\
-                                +" the random distribution. Will expand automatically")
+                        log.warn(
+                                "Could not generate enough distinct words for"
+                                " the random distribution. "
+                                "Will expand automatically")
                         while len(words) < kw['rands']:
-                            words += [words[random.randint(0,len(words)-1)]]
-                            
+                            words += [words[random.randint(0, len(words)-1)]]
+
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
                         cls = tokens2class(w.split(' '), self.model)
                         pros[taxon].append(prosodic_string(w.split(' ')))
                         weights[taxon].append(prosodic_weights(pros[taxon][-1]))
-                        seqs[taxon].append(
-                            ['{0}.{1}'.format(c, p) for c, p in
-                             zip(cls, [self._transform[pr] for pr in pros[taxon][-1]])])
+                        seqs[taxon].append([
+                            '{0}.{1}'.format(c, p) for c, p in zip(
+                                 cls,
+                                 [self._transform[pr] for pr in pros[taxon][-1]]
+                                 )])
 
-            with util.pb(desc='RANDOM CORRESPONDENCE CALCULATION', total=tasks) as progress:
-                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
+            with util.pb(
+                    desc='RANDOM CORRESPONDENCE CALCULATION',
+                    total=tasks) as progress:
+                for (i, tA), (j, tB) in util.multicombinations2(
+                        enumerate(self.cols)):
                     progress.update(1)
                     log.info(
-                        "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
+                        "Calculating random alignments"
+                        " for pair {0}/{1}.".format(tA, tB)
                     )
                     corrdist[tA, tB] = defaultdict(float)
                     for mode, gop, scale in kw['modes']:
                         corrs, included = calign.corrdist(
                             10.0,
                             [(seqs[tA][x], seqs[tB][y]) for x, y in sample],
-                            [(weights[tA][x], weights[tB][y]) for x, y in sample],
+                            [(weights[tA][x], weights[tB][y]) for x, y in
+                                sample],
                             [(pros[tA][x], pros[tB][y]) for x, y in sample],
                             gop,
                             scale,
@@ -669,30 +813,45 @@ class LexStat(Wordlist):
         # use shuffle approach otherwise
         else:
             tasks = self.width ** 2 / 2
-            with util.pb(desc='RANDOM CORRESPONDENCE CALCULATION', total=tasks) as progress:
-                for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
+            with util.pb(
+                    desc='RANDOM CORRESPONDENCE CALCULATION',
+                    total=tasks) as progress:
+                for (i, tA), (j, tB) in util.multicombinations2(
+                        enumerate(self.cols)):
                     progress.update(1)
                     log.info(
-                        "Calculating random alignments for pair {0} / {1}.".format(tA, tB)
+                        "Calculating random alignments"
+                        "for pair {0}/{1}.".format(tA, tB)
                     )
                     corrdist[tA, tB] = defaultdict(float)
 
                     # get the number pairs etc.
-                    numbers = [self[pair, self._numbers] for pair in self.pairs[tA, tB]]
-                    gops = [self[pair, self._weights] for pair in self.pairs[tA, tB]]
-                    prostrings = [self[pair, self._prostrings] for pair in self.pairs[tA, tB]]
-
-                    sample = [(x, y)
-                              for x in range(len(numbers)) for y in range(len(numbers))]
+                    numbers = [
+                            self[pair, self._numbers] for pair in
+                            self.pairs[tA, tB]]
+                    gops = [
+                            self[pair, self._weights] for pair in
+                            self.pairs[tA, tB]]
+                    prostrings = [
+                            self[pair, self._prostrings] for pair in
+                            self.pairs[tA, tB]]
+                    sample = [
+                            (x, y)
+                            for x in range(len(numbers)) for y in
+                            range(len(numbers))]
                     if len(sample) > kw['runs']:
                         sample = random.sample(sample, kw['runs'])
 
                     for mode, gop, scale in kw['modes']:
                         corrs, included = calign.corrdist(
                             10.0,
-                            [(numbers[s[0]][0], numbers[s[1]][1]) for s in sample],
+                            [(
+                                numbers[s[0]][0],
+                                numbers[s[1]][1]) for s in sample],
                             [(gops[s[0]][0], gops[s[1]][1]) for s in sample],
-                            [(prostrings[s[0]][0], prostrings[s[1]][1]) for s in sample],
+                            [(
+                                prostrings[s[0]][0],
+                                prostrings[s[1]][1]) for s in sample],
                             gop,
                             scale,
                             kw['factor'],
@@ -735,8 +894,8 @@ class LexStat(Wordlist):
             Choose the number of random runs that shall be made in order to
             derive the random distribution.
         threshold : float (default=0.7)
-            The threshold which used to select those words that are compared in
-            order to derive the attested distribution.
+            The threshold which used to select those words that are compared
+            in order to derive the attested distribution.
         modes : list (default = [("global",-2,0.5),("local",-1,0.5)])
             The modes which are used in order to derive the distributions from
             pairwise alignments.
@@ -794,7 +953,8 @@ class LexStat(Wordlist):
             limit=rcParams['lexstat_limit'],
             cluster_method=rcParams['lexstat_cluster_method'],
             gop=rcParams['align_gop'],
-            preprocessing_threshold=rcParams['lexstat_preprocessing_threshold'],
+            preprocessing_threshold=rcParams[
+                'lexstat_preprocessing_threshold'],
             preprocessing_method=rcParams['lexstat_preprocessing_method'],
             subset=False,
             defaults=False,
@@ -813,7 +973,8 @@ class LexStat(Wordlist):
             scoring_threshold=kw['threshold'],
             preprocessing_threshold=kw['preprocessing_threshold'],
             modestring=':'.join(
-                '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in kw['modes']),
+                '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in
+                kw['modes']),
             factor=kw['factor'],
             restricted_chars=kw['restricted_chars'],
             method=kw['method'],
@@ -842,8 +1003,8 @@ class LexStat(Wordlist):
         # check for existing attributes
         if hasattr(self, 'cscorer') and not kw['force']:
             log.warn(
-                "An identical scoring function has already been calculated, force "
-                "recalculation by setting 'force' to 'True'.")
+                "An identical scoring function has already been calculated, "
+                "force recalculation by setting 'force' to 'True'.")
             return
 
         # check for attribute
@@ -851,8 +1012,9 @@ class LexStat(Wordlist):
             if 'cscorer' in self.params:
                 if self.params['cscorer'] == params:
                     log.warn(
-                        "An identical scoring function has already been calculated, force"
-                        " recalculation by setting 'force' to 'True'.")
+                        "An identical scoring function has already been "
+                        "calculated, force recalculation by setting 'force'"
+                        " to 'True'.")
                     return
             else:
                 log.warn(
@@ -881,9 +1043,10 @@ class LexStat(Wordlist):
                 list(self.freqs[tA]) + [charstring(i + 1)],
                 list(self.freqs[tB]) + [charstring(j + 1)]
             ):
-                exp = self._randist.get((tA, tB), {}).get((charA, charB), False)
-                att = self._corrdist.get((tA, tB), {}).get((charA, charB), False)
-
+                exp = self._randist.get(
+                        (tA, tB), {}).get((charA, charB), False)
+                att = self._corrdist.get(
+                        (tA, tB), {}).get((charA, charB), False)
                 # in the following we follow the former lexstat protocol
                 if att <= 1 and i != j:
                     att = False
@@ -908,14 +1071,14 @@ class LexStat(Wordlist):
                     / sum(kw['ratio'])
 
                 try:
-                    idxA = char_dict[charA]
-                    idxB = char_dict[charB]
+                    iA = char_dict[charA]
+                    iB = char_dict[charB]
 
                     # use the vowel scale
                     if charA[4] in self.vowels and charB[4] in self.vowels:
-                        matrix[idxA][idxB] = matrix[idxB][idxA] = kw['vscale'] * rscore
+                        matrix[iA][iB] = matrix[iB][iA] = kw['vscale'] * rscore
                     else:
-                        matrix[idxA][idxB] = matrix[idxB][idxA] = rscore
+                        matrix[iA][iB] = matrix[iB][iA] = rscore
                 except:
                     pass
 
@@ -986,7 +1149,9 @@ class LexStat(Wordlist):
                         if kw['pprint']:
                             print('')
                 else:
-                    self.align_pairs((idxA, concept), (idxB, concept), concept=None, **kw)
+                    self.align_pairs(
+                            (idxA, concept),
+                            (idxB, concept), concept=None, **kw)
             return
 
         # assign the distance value
@@ -999,8 +1164,10 @@ class LexStat(Wordlist):
         if kw['method'] == 'lexstat':
             scorer = self.cscorer
             gop = 1.0
-            weightsA = [self.cscorer[charstring(lA), n] for n in self[idxA, self._numbers]]
-            weightsB = [self.cscorer[charstring(lB), n] for n in self[idxB, self._numbers]]
+            weightsA = [self.cscorer[charstring(lA), n] for n in self[
+                idxA, self._numbers]]
+            weightsB = [self.cscorer[charstring(lB), n] for n in self[
+                idxB, self._numbers]]
         else:
             gop = kw['gop']
             weightsA = self[idxA, self._weights]
@@ -1024,14 +1191,15 @@ class LexStat(Wordlist):
 
         # get a string of scores
         if kw['method'] == 'lexstat':
-            fun = lambda x, y: x if x != '-' else charstring(y)
+            fun = _lexstat
             scoreA = [fun(a, lA) for a in almA]
             scoreB = [fun(b, lB) for b in almB]
         else:
             scoreA = almA
             scoreB = almB
 
-        scores = ['{0:.2f}'.format(scorer[a, b]) for a, b in zip(scoreA, scoreB)]
+        scores = ['{0:.2f}'.format(
+            scorer[a, b]) for a, b in zip(scoreA, scoreB)]
 
         if kw['return_raw']:
             return almA, almB, d
@@ -1076,66 +1244,10 @@ class LexStat(Wordlist):
             external_scorer=False,  # external scoring function
         )
         kw.update(keywords)
-
-        # check for method
-        if method == 'lexstat':
-            # check for scorer
-            if not hasattr(self, 'cscorer'):
-                log.warn("No correspondence-scorer has been specified.")
-                return
-
-            # define the function with help of lambda
-            function = lambda idxA, idxB: calign.align_pair(
-                self[idxA, self._numbers],
-                self[idxB, self._numbers],
-                [self.cscorer[charstring(self[idxB, 'langid']), n]
-                 for n in self[idxA, self._numbers]],
-                [self.cscorer[charstring(self[idxA, 'langid']), n]
-                 for n in self[idxB, self._numbers]],
-                self[idxA, self._prostrings],
-                self[idxB, self._prostrings],
-                1,
-                scale,
-                factor,
-                self.cscorer,
-                mode,
-                restricted_chars,
-                1)[2]
-        elif method == 'sca':
-            # define the function with help of lambda
-            function = lambda idxA, idxB: calign.align_pair(
-                [n.split('.', 1)[1] for n in self[idxA, self._numbers]],
-                [n.split('.', 1)[1] for n in self[idxB, self._numbers]],
-                self[idxA, self._weights],
-                self[idxB, self._weights],
-                self[idxA, self._prostrings],
-                self[idxB, self._prostrings],
-                gop,
-                scale,
-                factor,
-                self.rscorer,
-                mode,
-                restricted_chars,
-                1)[2]
-        elif method == 'edit-dist':
-            entry = kw.get('entry', self._segments)
-            function = lambda idxA, idxB: edit_dist(
-                self[idxA, entry], self[idxB, entry], True, restriction)
-        elif method == 'turchin':
-            function = lambda idxA, idxB: turchin(
-                self[idxA, self._segments], self[idxB, self._segments])
-        elif method == 'custom':
-            function = lambda idxA, idxB: talign.align_pair(
-                self[idxA, 'user_tokens'],
-                self[idxB, 'user_tokens'],
-                gop,
-                scale,
-                keywords['external_scorer'],
-                'overlap',
-                True)[2]
-        else:  # pragma: no cover
-            raise ValueError(method)
-
+        function = self._distance_method(
+                method, scale=scale, factor=factor,
+                restricted_chars=restricted_chars, mode=mode, gop=gop,
+                restriction=restriction, external_scorer=kw['external_scorer'])
         concepts = [concept] if concept else sorted(self.rows)
         for c in concepts:
             log.info("Analyzing words for concept <{0}>.".format(c))
@@ -1151,11 +1263,8 @@ class LexStat(Wordlist):
                             ''.join(self[idxA, self._segments]),
                             ''.join(self[idxB, self._segments])))
                     d = 100
-
                 matrix += [d]
-
             matrix = misc.squareform(matrix)
-
             if not concept:
                 yield c, indices, matrix
             else:
@@ -1244,44 +1353,16 @@ class LexStat(Wordlist):
             method, cluster_method, threshold)
         self._stamp += '# Cluster: ' + self.params['cluster']
 
-        if method not in ['lexstat', 'sca', 'turchin', 'edit-dist', 'custom',
-                'infomap', 'lcl', 'link_clustering', 'lc']:
+        if method not in [
+                'lexstat', 'sca', 'turchin', 'edit-dist', 'custom',
+                'infomap', 'link_clustering']:
             raise ValueError("[!] The method you selected is not available.")
 
         # set up clustering algorithm, first the simple basics
         if external_function:
             fclust = external_function
-        elif cluster_method in ['upgma', 'single', 'complete', 'ward']:
-            fclust = lambda x, y: clustering.flat_cluster(
-                cluster_method, y, x, revert=True)
-        elif cluster_method == 'mcl':
-            fclust = lambda x, y: clustering.mcl(
-                    y,
-                    x,
-                    list(range(len(x))),
-                    max_steps=kw['max_steps'],
-                    inflation=kw['inflation'],
-                    expansion=kw['expansion'],
-                    add_self_loops=kw['add_self_loops'],
-                    logs=kw['mcl_logs'],
-                    revert=True
-                    )
-        elif cluster_method == 'infomap':
-            fclust = lambda x, y: extra.infomap_clustering(
-                    y,
-                    x,
-                    list(range(len(x))),
-                    revert=True
-                    )
-        elif cluster_method in ['lcl', 'link_clustering', 'lc']:
-            fclust = lambda x, y: clustering.link_clustering(
-                    y,
-                    x,
-                    list(range(len(x))),
-                    revert=True,
-                    fuzzy=False,
-                    matrix_type=kw['matrix_type'],
-                    link_threshold=kw['link_threshold'])
+        else:
+            fclust = self._cluster_method(cluster_method, **kw)
 
         # make a dictionary that stores the clusters for later update
         clr = {}
@@ -1304,23 +1385,17 @@ class LexStat(Wordlist):
             if kw['gt_mode'] == 'average':
                 matrices = list(matrices)
                 for c, i, m in matrices:
-                    thresholds.append(clustering.best_threshold(m, kw['gt_trange']))
+                    thresholds.append(
+                            clustering.best_threshold(m, kw['gt_trange']))
 
-            # new method for threshold estimation based on calculating approximate
-            # random distributions of similarities for each sequence
+            # new method for threshold estimation based on calculating
+            # approximate random distributions of similarities for each
+            # sequence
             elif kw['gt_mode'] == 'nulld':
-                align = lambda x, y: self.align_pairs(
-                    x,
-                    y,
-                    method=method,
-                    restricted_chars=restricted_chars,
-                    mode=mode,
-                    scale=scale,
-                    factor=factor,
-                    return_distance=True,
-                    pprint=False,
-                    gop=gop)
-
+                align = self._align_method(
+                        method, restricted_chars=restricted_chars, mode=mode,
+                        scale=scale, factor=factor, gop=gop,
+                        return_distance=True)
                 with util.pb(
                         desc='THRESHOLD DETERMINATION',
                         total=len(self.pairs)-len(self.cols)) as progress:
@@ -1329,14 +1404,17 @@ class LexStat(Wordlist):
                         if l1 != l2:
                             pairs = self.pairs[l1, l2]
                             for p1, p2 in pairs:
-                                dx = [align(p1, pairs[random.randint(0, len(pairs) - 1)][1])
+                                dx = [align(p1, pairs[random.randint(
+                                    0, len(pairs) - 1)][1])
                                       for i in range(len(pairs) // 20 or 5)]
                                 thresholds.extend(dx)
             if thresholds:
                 threshold = sum(thresholds) / len(thresholds) * 0.5
                 self._meta['guessed_threshold'] = threshold
 
-        with util.pb(desc='SEQUENCE CLUSTERING', total=len(self.rows)) as progress:
+        with util.pb(
+                desc='SEQUENCE CLUSTERING',
+                total=len(self.rows)) as progress:
             for concept, indices, matrix in matrices:
                 progress.update(1)
 
@@ -1352,16 +1430,11 @@ class LexStat(Wordlist):
                 c = fclust(matrix, t)
 
                 # specific clustering for fuzzy methods, currently not yet
-                # supported
-                # if cluster_method in ['fuzzy']:  # ['link_communities','lc','lcl']:
-                #    clusters = [[d + k for d in c[i]] for i in range(len(matrix))]
-                #    tests = []
-                #    for clrx in clusters:
-                #        for x in clrx:
-                #            tests += [x]
-                #    k = max(tests)
-                #    for idxA, idxB in zip(indices, clusters):
-                #        clr[idxA] = idxB
+                # supported if cluster_method in ['fuzzy']:  #
+                # ['link_communities','lc','lcl']: clusters = [[d + k for d in
+                # c[i]] for i in range(len(matrix))] tests = [] for clrx in
+                # clusters: for x in clrx: tests += [x] k = max(tests) for
+                # idxA, idxB in zip(indices, clusters): clr[idxA] = idxB
                 # else:
                 if 1:
                     # extract the clusters
@@ -1375,36 +1448,34 @@ class LexStat(Wordlist):
                         clr[idxA] = idxB
 
         if not ref:
-            ref = method + 'id' if method in ['turchin', 'lexstat', 'sca', 'custom'] \
-                else 'editid'
-        self.add_entries(ref, clr, util.identity, override=kw.get('override', False))
+            ref = method + 'id' if method in [
+                    'turchin', 'lexstat', 'sca', 'custom'] else 'editid'
+        self.add_entries(
+                ref, clr, util.identity, override=kw.get('override', False))
 
         # assign thresholds to parameters
         self._current_threshold = threshold
 
     def _get_distances(
-            self, method, mode, scale, factor, gop, sample, edit_dist_normalized):
+            self, method, mode, scale, factor, gop, sample,
+            edit_dist_normalized):
         """
-        :param sample: Callable returning an iterator of pairs sampled from the list of \
-        pairs passed as sole argument.
-        :param edit_dist_normalized: Whether edit_dist should be normalized.
-        :return: generator of lists of distances for sampled pairs per taxa pair.
+        Parameters
+        ----------
+        sample : callable
+            Callable returning an iterator of pairs sampled from the list of
+            pairs passed as sole argument.
+        edit_dist_normalized : bool
+            Whether edit_dist should be normalized.
+
+        Returns
+        -------
+        Generator of lists of distances for sampled pairs per taxa pair.
         """
-        if method in ['sca', 'lexstat']:
-            function = lambda x, y: self.align_pairs(
-                x,
-                y,
-                method=method,
-                distance=True,
-                return_distance=True,
-                pprint=False,
-                mode=mode,
-                scale=scale,
-                factor=factor,
-                gop=gop)
-        else:
-            function = lambda x, y: edit_dist(
-                self[x, self._segments], self[y, self._segments], normalized=edit_dist_normalized)
+        function = self._align_method(
+                method, distance=True,
+                return_distance=True, pprint=False, mode=mode, scale=scale,
+                factor=factor, gop=gop, normalized=edit_dist_normalized)
 
         for taxA, taxB in util.combinations2(self.cols):
             distances = []
@@ -1521,11 +1592,11 @@ class LexStat(Wordlist):
         ----------
         ftype: str (default='sounds')
             The type of frequency which shall be calculated. Select between
-            "sounds" (type-token frequencies of sounds), and "wordlength" (average
-            word length per taxon or in aggregated form), or "diversity" for the diversity
-            index (requires that you have carried out cognate judgments, and
-            make sure to set the "ref" keyword to the column in which your
-            cognates are).
+            "sounds" (type-token frequencies of sounds), and "wordlength"
+            (average word length per taxon or in aggregated form), or
+            "diversity" for the diversity index (requires that you have carried
+            out cognate judgments, and make sure to set the "ref" keyword to
+            the column in which your cognates are).
         ref : str (default="tokens")
             The reference column, with the column for "tokens" as a default.
             Make sure to modify this keyword in case you want to check for the
@@ -1544,8 +1615,7 @@ class LexStat(Wordlist):
         if ftype == 'sounds':
             _F = defaultdict(Counter)
             F = Counter()
-            for k in self:
-                tokens = self[k, ref]
+            for k, tokens in iter_rows(self, ref):
                 if tokens:
                     _F[self[k][self._colIdx]].update(tokens)
                     F.update(tokens)
@@ -1553,14 +1623,15 @@ class LexStat(Wordlist):
 
         if ftype == 'wordlength':
             _W = defaultdict(lambda: [0, 0])
-            for k in self:
-                _W[self[k][self._colIdx]][0] += len(self[k, ref])
+            for k, tokens in iter_rows(self, ref):
+                _W[self[k][self._colIdx]][0] += len(tokens)
                 _W[self[k][self._colIdx]][1] += 1
             _W = {a: b[0] / b[1] for a, b in _W.items()}
             return sum(_W.values()) / self.width if aggregated else _W
 
         if ftype == 'diversity':
-            return (len(self.get_etymdict(ref)) - self.height) / (len(self) - self.height)
+            return (len(self.get_etymdict(ref)) - self.height) /\
+                    (len(self) - self.height)
 
     def output(self, fileformat, **keywords):
         """
@@ -1568,7 +1639,8 @@ class LexStat(Wordlist):
 
         Parameters
         ----------
-        fileformat : {'tsv', 'tre','nwk','dst', 'taxa','starling', 'paps.nex', 'paps.csv'}
+        fileformat : {'tsv', 'tre','nwk','dst', 'taxa','starling', \
+                'paps.nex', 'paps.csv'}
             The format that is written to file. This corresponds to the file
             extension, thus 'tsv' creates a file in tsv-format, 'dst' creates
             a file in Phylip-distance format, etc.
@@ -1610,7 +1682,7 @@ class LexStat(Wordlist):
             Inserts comment characters between concepts in the "tsv" file
             output format, which makes it easier to see blocks of words
             denoting the same concept. Switching this off will output the file
-            in plain "tsv". 
+            in plain "tsv".
 
 
         See also
@@ -1626,6 +1698,7 @@ class LexStat(Wordlist):
 
         if fileformat == 'scorer':
             util.write_text_file(
-                kw['filename'] + '.scorer', scorer2str(kw.get('scorer', self.rscorer)))
+                kw['filename'] + '.scorer', scorer2str(
+                    kw.get('scorer', self.rscorer)))
         else:
             self._output(fileformat, **kw)
