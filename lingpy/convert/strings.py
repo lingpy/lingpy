@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import re
 
 from lingpy import util
+from lingpy.convert.html import template_path
 
 
 def scorer2str(scorer):
@@ -253,8 +254,9 @@ def pap2nex(
     taxa,
     paps,
     missing=0,
-    filename=''
-):
+    filename='',
+    datatype='STANDARD'
+    ):
     """
     Function converts a list of paps into nexus file format.
 
@@ -276,7 +278,7 @@ def pap2nex(
 
     """
     out = '#NEXUS\n\nBEGIN DATA;\nDIMENSIONS ntax={0} NCHAR={1};\n'
-    out += "FORMAT DATATYPE=STANDARD GAP=- MISSING={2} interleave=yes;\n"
+    out += "FORMAT DATATYPE={5} GAP=- MISSING={2} interleave=yes;\n"
     out += "MATRIX\n\n{3}\n;\n\nEND;\n"
     out += "[PAPS-REFERENCE]\n{4}"
 
@@ -311,11 +313,12 @@ def pap2nex(
             len(paps),
             missing,
             matrix,
-            ref_string
+            ref_string,
+            datatype
         )
     util.write_text_file(
         filename + '.nex',
-        out.format(len(taxa), len(paps), missing, matrix, ref_string))
+        out.format(len(taxa), len(paps), missing, matrix, ref_string, datatype))
     return
 
 
@@ -397,3 +400,80 @@ END;
     else:
         raise ValueError("[!] A wrong filename was specified!")
     return
+
+
+def write_nexus(
+        taxa, matrix, custom=None, custom_name='lingpy', missing="?", gap="-",
+        template="mrbayes.nex", filename="mrbayes.nex", dtype="RESTRICTION",
+        symbols="10",
+        commands=None, commands_name="mrbayes"):
+    """Write a nexus file for phylogenetic analyses.
+
+    Parameters
+    ----------
+    taxa : list
+        The taxonomic units in your data. They should be valid taxon names,
+        only consisting of alphanumeric characters and an underscore, usually
+        also not exceeding a length of 15 characters.
+    matrix : list
+        The matrix with the values for each taxon in one separate row. Usually,
+        the matrix contains binary values which can be passed as strings or
+        integers (1 and 0), but missing values are also possible. Given
+        biological common restrictions, each character can only be one ASCII
+        symbol.
+    custom : list {default=None)
+        This information allows to add custom information to the nexus file,
+        like, for example, the structure of the characters, their original concept, or their type, and it will be
+        written into a custom block in the nexus file. The name of the custom
+        block can be specified with help of the `custom_name` keyword. The
+        content is a list of strings which will be written line by line into
+        the custom block.
+    custom_name : str (default="lingpy")
+        The name of the custom block which will be written to the file.
+    missing : str (default="?")
+        The symbol for missing characters.
+    gap : str (default="-")
+        The symbol for gaps (not relevant for linguistic analyses).
+    template : str (default="mrbayes.nex")
+        The name of the template file. This file is located in the template/
+        folder of the LingPy package, but a custom file can be specified by
+        providing the path.
+    dtype : str (default="RESTRICTION")
+        The datatype, which is usually "STANDARD" or "RESTRICTION" in
+        linguistic analyses, with "RESTRICTION" pointing to pure birth-death
+        models.
+    symbols : str (default="10")
+        The symbols used for the characters.
+    commands : list (default=None)
+        If specified, will write an additional block containing commands for
+        phylogenetic software. The commands are passed as a list, containing
+        strings. The name of the block is given by the keywords commands_name.
+    commands_name : str (default="mrbayes")
+        Determines how the block will be called to which the commands will be
+        written.
+
+    """ 
+    tpath = util.Path(template_path(template))
+    if tpath.exists:
+        _template = util.read_text_file(tpath.as_posix())
+    else:
+        util.read_text_file(template)
+    _commands = 'BEGIN {0};\n{1}\n\n'.format(
+            commands_name, '\n'.join(commands)) if commands else ''
+    _custom = 'BEGIN {0};\n{1}\n\n'.format(
+            custom_name, '\n'.join(custom)) if custom else ''
+    
+    _matrix = ""
+    mtl = max([len(t) for t in taxa])+1
+    for i, (t, m) in enumerate(zip(taxa, matrix)):
+        _matrix += str(t + mtl * ' ')[:mtl]+' '
+        _matrix += ''.join(
+                ['({0})'.format(c) if len(c) > 1 else str(c) for c in m])+'\n'
+    
+    text = _template.format(
+            matrix=_matrix, ntax=len(taxa), nchar=len(matrix[0]), gap=gap,
+            missing=missing, dtype=dtype, commands=_commands, custom=_custom,
+            symbols=symbols)
+    util.write_text_file(filename, text)
+
+
