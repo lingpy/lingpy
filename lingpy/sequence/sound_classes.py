@@ -1478,13 +1478,13 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     Returns
     -------
     profile : generator
-        A list of tuples (three items), indicating the segment, its frequency,
+        A generator of tuples (three items), indicating the segment, its frequency,
         the conversion to sound classes in the Dolgopolsky sound-class model,
         and the unicode-codepoints.
 
     """
     def codepoint(s):
-        return ' '.join(['U+'+hex(ord(x))[2:].rjust(4, '0') for x in s])
+        return ' '.join(['U+'+('000'+hex(ord(x))[2:])[-4:] for x in s])
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
