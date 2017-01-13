@@ -1479,7 +1479,8 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     -------
     profile : generator
         A list of tuples (three items), indicating the segment, its frequency,
-        and the conversion to sound classes.
+        the conversion to sound classes in the Dolgopolsky sound-class model,
+        and the unicode-codepoints.
 
     """
     def codepoint(s):
