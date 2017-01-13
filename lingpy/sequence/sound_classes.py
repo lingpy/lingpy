@@ -1370,7 +1370,7 @@ def strip_chars(chars, sequence):
 
 def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
-        split_entries=True, splitters='/,;', preparse=None):
+        split_entries=True, splitters='/,;~', preparse=None):
     """
     Function exhaustively checks how well a sequence is understood by \
             LingPy.
@@ -1455,7 +1455,7 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
     return out
 
 def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
-        brackets=None, splitters='/,;'):
+        brackets=None, splitters='/,;~'):
     """
     Create an initial Orthography Profile using Lingpy's clean_string procedure.
 
@@ -1506,7 +1506,7 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
                 profile[segment] += 1
                 nulls.add(segment)
 
-    for s, f in profile.items():
+    for s, f in sorted(profile.items(), key=lambda x: x[1], reverse=True):
         sclass = token2class(s, 'dolgo')
         if s in bad_words:
             yield s, f, '<???>', codepoint(s)
