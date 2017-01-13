@@ -289,6 +289,8 @@ class ortho_profile(Command):
         add_option(p, 'cldf', False, 'Load CLDF instad of standard lingpy format.')
         
     def __call__(self, args):
+        if not args.output_file:
+            args.output_file = 'orthography.prf'
         if args.cldf:
             wl = lingpy.basic.wordlist.get_wordlist(args.input_file, row='Parameter_id',
                 col='Language_name')
@@ -296,10 +298,11 @@ class ortho_profile(Command):
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
             column = 'ipa'
-        print('GRAPHEMES\tFREQUENCY\tDOLGOPOLSKY\tUNICODE')
+        out = ['GRAPHEMES\tFREQUENCY\tLINGPY\tUNICODE']
         words = [wl[idx, column] for idx in wl]
         for a, b, c, d in lingpy.sequence.sound_classes.ortho_profile(words):
-            print('{0}\t{1}\t{2}\t{3}'.format(a, b, c, d))
+            out += ['{0}\t{1}\t{2}\t{3}'.format(a, b, c, d)]
+        lingpy.util.write_text_file(args.output_file, out) 
 
 class lexstat(Command):
     @classmethod

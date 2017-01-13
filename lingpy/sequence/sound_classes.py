@@ -1510,10 +1510,10 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
         sclass = token2class(s, 'dolgo')
         if s in bad_words:
             yield s, f, '<???>', codepoint(s)
-        if sclass == '0' and s not in nulls:
+        elif sclass == '0' and s not in nulls:
             yield s, f, '<?>', codepoint(s)
         elif s in nulls:
             yield s, f, 'NULL', codepoint(s)
         else:
-            yield s, f, sclass, codepoint(s)
+            yield s, f, s, codepoint(s)
 
