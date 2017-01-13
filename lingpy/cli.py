@@ -293,7 +293,8 @@ class ortho_profile(Command):
         if not args.output_file:
             args.output_file = 'orthography.prf'
         if args.cldf:
-            wl = lingpy.basic.wordlist.get_wordlist(args.input_file, row='Parameter_id',
+            wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
+                    row='Parameter_name',
                 col='Language_name')
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
