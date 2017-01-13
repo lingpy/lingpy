@@ -8,7 +8,7 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
         get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse,\
-        clean_string, _get_brackets, strip_chars
+        clean_string, _get_brackets, strip_chars, ortho_profile
 from lingpy import rc, csv2list
 from six import text_type
 
@@ -233,3 +233,16 @@ def test_clean_string():
 
 def test_strip_chars():
     assert strip_chars('[]', 'b[l]a') == 'bla'
+
+def test_ortho_profile():
+    words = ["-nepiʔap", "j-ãpi", "-nepî-àp", "jaõpi", "nə̤jbə́", "nambi",
+            "nambi", "nãbi-bé", "-nepi-bé", "nami", "i-nambi", "-népí-áp",
+            "apitep", "opiɾisap", "aʔpiʧeep", "o-apitep", "ai-hape",
+            "apsiɾipʔa", "apitep", "jãʃuka", "i-nakɨɾa peʔ", "ʃapetə",
+            "mõkiɾa", "õkɨɾa", "ɡwɨɾa", "ɡwɨɾa", "wɨɾãhi", "wɨɾa", "ɲũkɨɾa",
+            "ĩ́dɨt", "ĩ́dĩ́ĩt", "ĩ́jɨɨt", "osĩ", "wásə̃", "kaɾaʔ/ɨput", "weita",
+            "kɨjamʔiɾi", "piɾe", "ĩja ʔɨp", "maʃajã", "iti", "uʃíʃí",
+            "papɨdnã", "caʔa", "kɨta", "icía", "ijá ʔaʔ", "wíta-ʔa", "witá-ʔa"]
+    profile = ortho_profile(words)
+    assert ('b', 7, 'P') in profile
+

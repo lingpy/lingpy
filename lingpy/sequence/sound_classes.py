@@ -1454,3 +1454,62 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
         out += [' '.join(segments)]
     return out
 
+def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
+        brackets=None, splitters='/,;'):
+    """
+    Create an initial Orthography Profile using Lingpy's clean_string procedure.
+
+    Parameters
+    ----------
+    words : list
+        A list of words (strings) from which you want to derive an initial
+        orthography profile.
+    semi_diacritics : str
+        Indicate characters which can occur both as "diacritics" (second part
+        in a sound) or alone.
+    merge_vowels : bool (default=True)
+        Indicate whether consecutive vowels should be merged.
+    brackets : dict
+        A dictionary with opening brackets as key and closing brackets as
+        values. Defaults to a pre-defined set of frequently occurring brackets.
+    splitters : str
+        The characters which force the automatic splitting of an entry.
+
+    Returns
+    -------
+    profile : generator
+        A list of tuples (three items), indicating the segment, its frequency,
+        and the conversion to sound classes.
+
+    """
+    nulls = set()
+    bad_words = set()
+    brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
+    profile = defaultdict(int)
+    # split on whitespace, as this is also done by the orthoprofiles
+    for word in words:
+        cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
+                merge_vowels=merge_vowels, brackets=[],
+                split_entries=False, preparse=None, rules=None)[0]
+
+        # retain whole word if there are splitters in the word
+        if [x for x in cleaned_string if x in brackets + splitters]:
+            profile[word] += 1
+            bad_words.add(word)
+        else:
+            for segment in cleaned_string.split(' '):
+                profile[segment] += 1
+        for segment in [x for x in word if x not in cleaned_string]:
+            profile[segment] += 1
+            nulls.add(segment)
+
+    for s, f in profile.items():
+        sclass = token2class(s, 'dolgo')
+        if s in bad_words:
+            yield s, f, '<???>'
+        if sclass == '0' and s not in nulls:
+            yield s, f, '<?>'
+        elif s in nulls:
+            yield s, f, 'NULL'
+        yield s, f, sclass
+

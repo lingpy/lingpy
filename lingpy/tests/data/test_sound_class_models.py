@@ -25,4 +25,4 @@ class Tests(object):
             error_message += model+'\n'
             error_message += ' // '.join(['"'+x+'"' for x in failures[model]])+'\n\n'
         print(error_message)
-        raise ValueError()
+        raise ValueError(error_message)
