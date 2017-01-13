@@ -244,5 +244,5 @@ def test_ortho_profile():
             "kɨjamʔiɾi", "piɾe", "ĩja ʔɨp", "maʃajã", "iti", "uʃíʃí",
             "papɨdnã", "caʔa", "kɨta", "icía", "ijá ʔaʔ", "wíta-ʔa", "witá-ʔa"]
     profile = ortho_profile(words)
-    assert ('b', 7, 'P') in profile
+    assert ('b', 7, 'P', 'U+0062') in profile
 

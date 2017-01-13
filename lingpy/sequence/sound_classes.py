@@ -1482,6 +1482,8 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
         and the conversion to sound classes.
 
     """
+    def codepoint(s):
+        return ' '.join(['U+'+hex(ord(x))[2:].rjust(4, '0') for x in s])
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
@@ -1506,10 +1508,10 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     for s, f in profile.items():
         sclass = token2class(s, 'dolgo')
         if s in bad_words:
-            yield s, f, '<???>'
+            yield s, f, '<???>', codepoint(s)
         if sclass == '0' and s not in nulls:
-            yield s, f, '<?>'
+            yield s, f, '<?>', codepoint(s)
         elif s in nulls:
-            yield s, f, 'NULL'
-        yield s, f, sclass
+            yield s, f, 'NULL', codepoint(s)
+        yield s, f, sclass, codepoint(s)
 
