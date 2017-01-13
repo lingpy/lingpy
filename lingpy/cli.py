@@ -282,6 +282,24 @@ class settings(Command):
             if not args.params or k in args.params:
                 print('{0:20} : {1}'.format(k, repr(v)))
 
+class ortho_profile(Command):
+    @classmethod
+    def subparser(cls, p):
+        add_shared_args(p)
+        add_option(p, 'cldf', False, 'Load CLDF instad of standard lingpy format.')
+        
+    def __call__(self, args):
+        if args.cldf:
+            wl = lingpy.basic.wordlist.get_wordlist(args.input_file, row='Parameter_id',
+                col='Language_name')
+            column = 'value'
+        else:
+            wl = lingpy.basic.wordlist.Wordlist(args.input_file)
+            column = 'ipa'
+        print('GRAPHEMES\tFREQUENCY\tDOLGOPOLSKY\tUNICODE')
+        words = [wl[idx, column] for idx in wl]
+        for a, b, c, d in lingpy.sequence.sound_classes.ortho_profile(words):
+            print('{0}\t{1}\t{2}\t{3}'.format(a, b, c, d))
 
 class lexstat(Command):
     @classmethod

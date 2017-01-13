@@ -1492,7 +1492,7 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     # split on whitespace, as this is also done by the orthoprofiles
     for word in words:
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
-                merge_vowels=merge_vowels, brackets=[],
+                merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
                 split_entries=False, preparse=None, rules=None)[0]
 
         # retain whole word if there are splitters in the word
@@ -1502,9 +1502,9 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
         else:
             for segment in cleaned_string.split(' '):
                 profile[segment] += 1
-        for segment in [x for x in word if x not in cleaned_string]:
-            profile[segment] += 1
-            nulls.add(segment)
+            for segment in [x for x in word if x not in cleaned_string]:
+                profile[segment] += 1
+                nulls.add(segment)
 
     for s, f in profile.items():
         sclass = token2class(s, 'dolgo')
@@ -1514,5 +1514,6 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
             yield s, f, '<?>', codepoint(s)
         elif s in nulls:
             yield s, f, 'NULL', codepoint(s)
-        yield s, f, sclass, codepoint(s)
+        else:
+            yield s, f, sclass, codepoint(s)
 
