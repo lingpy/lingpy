@@ -229,10 +229,10 @@ def test_clean_string():
     assert clean_string(seq5, segmentized=True)[0] == 't a t'
     assert clean_string('a(a', ignore_brackets=False)[0] == 'a ( a'
     assert clean_string('a/a', split_entries=False)[0] == 'a / a'
-
-
-def test_strip_chars():
-    assert strip_chars('[]', 'b[l]a') == 'bla'
+    assert clean_string('aa', preparse=[('a', 'b')])[0] == 'bb'
+    assert clean_string('bb', merge_geminates=False)[0] == 'b b'
+    assert clean_string('bb', rules={"b": "cd"}, merge_geminates=False)[0] == \
+            "cd cd"
 
 def test_ortho_profile():
     words = ["-nepiʔap", "j-ãpi", "-nepî-àp", "jaõpi", "nə̤jbə́", "nambi",
@@ -240,9 +240,10 @@ def test_ortho_profile():
             "apitep", "opiɾisap", "aʔpiʧeep", "o-apitep", "ai-hape",
             "apsiɾipʔa", "apitep", "jãʃuka", "i-nakɨɾa peʔ", "ʃapetə",
             "mõkiɾa", "õkɨɾa", "ɡwɨɾa", "ɡwɨɾa", "wɨɾãhi", "wɨɾa", "ɲũkɨɾa",
-            "ĩ́dɨt", "ĩ́dĩ́ĩt", "ĩ́jɨɨt", "osĩ", "wásə̃", "kaɾaʔ/ɨput", "weita",
+            "ĩ́dɨt", "ĩ́dĩ́ĩt", "ĩ́jɨɨtU", "osĩ", "wásə̃A", "kaɾaʔ/ɨput", "weita",
             "kɨjamʔiɾi", "piɾe", "ĩja ʔɨp", "maʃajã", "iti", "uʃíʃí",
-            "papɨdnã", "caʔa", "kɨta", "icía", "ijá ʔaʔ", "wíta-ʔa", "witá-ʔa"]
+            "papɨdnã", "caʔa", "kɨta", "icía", "ijá ʔaʔ", "wíta-ʔa", "witá-ʔa",
+            "kx/kx"]
     profile = ortho_profile(words)
     assert ('b', 7, 'b', 'U+0062') in profile
 
