@@ -9,6 +9,8 @@ from six import text_type
 import unicodedata
 from collections import defaultdict
 
+from clldutils.text import split_text, strip_brackets, strip_chars
+
 from lingpy import log
 from lingpy.util import setdefaults
 from lingpy.settings import rcParams
@@ -1365,9 +1367,6 @@ def _get_brackets(brackets):
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
 
-def strip_chars(chars, sequence):
-    return ''.join([s for s in sequence if s not in chars])
-
 def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
         split_entries=True, splitters='/,;~', preparse=None):
@@ -1420,26 +1419,14 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
         for s, t in preparse:
             sequence = sequence.replace(s, t)
         segment_list = []
-        # first, parse for brackets
         if ignore_brackets:
-            brackets = brackets or _get_brackets("([{『（₍⁽«")
-            stack = []
-            tmp_sequence = list(sequence)
-            new_sequence = ''
-            while tmp_sequence:
-                itm = tmp_sequence.pop(0)
-                if itm in brackets:
-                    stack += [brackets[itm]]
-                if not stack:
-                    new_sequence += itm
-                if itm in stack:
-                    stack.pop(stack.index(itm))
+            new_sequence = strip_brackets(sequence, brackets=brackets)
         else:
             new_sequence = sequence
 
         # splitting needs to be done afterwards
         if split_entries:
-            new_sequences = re.split(r'\s*['+splitters+r']\s*', new_sequence)
+            new_sequences = split_text(new_sequence, splitters)
         else:
             new_sequences = [new_sequence]
 
