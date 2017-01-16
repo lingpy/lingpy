@@ -3,6 +3,7 @@ from __future__ import print_function, division, unicode_literals
 import lingpy
 from lingpy.util import PROG
 import argparse
+import sys
 from six import text_type as str
 from six import with_metaclass
 
@@ -285,13 +286,14 @@ class settings(Command):
 class ortho_profile(Command):
     @classmethod
     def subparser(cls, p):
-        add_shared_args(p)
+        add_option(p, 'input_file', '', "Define input file.",
+            short_opt="i")
+        add_option(p, 'output_file', 'orthography.prf', "Specify output file.",
+                short_opt="o")
         add_option(p, 'cldf', False, 'Load CLDF instad of standard lingpy format.')
         add_option(p, 'column', 'value', 'Column which contains the words.')
         
     def __call__(self, args):
-        if not args.output_file:
-            args.output_file = 'orthography.prf'
         if args.cldf:
             wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
                     row='Parameter_name',
