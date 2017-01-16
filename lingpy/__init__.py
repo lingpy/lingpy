@@ -29,7 +29,8 @@ __version__ = "2.5"
 from lingpy.settings import rc
 
 # general imports
-from lingpy.basic import Wordlist, Tree
+from lingpy.basic import Wordlist, Tree, get_wordlist
+from lingpy.basic.ops import iter_rows
 
 # import converts
 # from .convert import *

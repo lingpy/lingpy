@@ -40,6 +40,10 @@ class Tests(WithTempDir):
         self.run_cli(cmd(test_data('KSL.qlc')))
         self.run_cli(cmd(test_data('KSL3.qlc'), ' --format html --use-logodds'))
 
+    def test_ortho_profile(self):
+        tmp = self.tmp_path('ortho')
+        self.run_cli('ortho_profile -i '+test_data('KSL.qlc')+' --column ipa -o ' + tmp.as_posix())
+
     def test_multiple(self):
         # first test, align string, no output, no input
         output = self.run_cli('multiple -s woldemort waldemar walter')

@@ -3,6 +3,7 @@ from __future__ import print_function, division, unicode_literals
 import lingpy
 from lingpy.util import PROG
 import argparse
+import sys
 from six import text_type as str
 from six import with_metaclass
 
@@ -282,6 +283,28 @@ class settings(Command):
             if not args.params or k in args.params:
                 print('{0:20} : {1}'.format(k, repr(v)))
 
+class ortho_profile(Command):
+    @classmethod
+    def subparser(cls, p):
+        add_option(p, 'input_file', '', "Define input file.",
+            short_opt="i")
+        add_option(p, 'output_file', 'orthography.prf', "Specify output file.",
+                short_opt="o")
+        add_option(p, 'cldf', False, 'Load CLDF instad of standard lingpy format.')
+        add_option(p, 'column', 'value', 'Column which contains the words.')
+        
+    def __call__(self, args):
+        if args.cldf:
+            wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
+                    row='Parameter_name',
+                col='Language_name')
+        else:
+            wl = lingpy.basic.wordlist.Wordlist(args.input_file)
+        out = ['GRAPHEMES\tFREQUENCY\tIPA\tUNICODE']
+        words = [wl[idx, args.column] for idx in wl]
+        for a, b, c, d in lingpy.sequence.sound_classes.ortho_profile(words):
+            out += ['{0}\t{1}\t{2}\t{3}'.format(a, b, c, d)]
+        lingpy.util.write_text_file(args.output_file, out) 
 
 class lexstat(Command):
     @classmethod

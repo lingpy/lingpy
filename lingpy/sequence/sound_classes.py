@@ -9,6 +9,8 @@ from six import text_type
 import unicodedata
 from collections import defaultdict
 
+from clldutils.text import split_text, strip_brackets, strip_chars
+
 from lingpy import log
 from lingpy.util import setdefaults
 from lingpy.settings import rcParams
@@ -1365,12 +1367,11 @@ def _get_brackets(brackets):
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
 
-def strip_chars(chars, sequence):
-    return ''.join([s for s in sequence if s not in chars])
-
-def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
+def clean_string(
+        sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
-        split_entries=True, splitters='/,;', preparse=None):
+        split_entries=True, splitters='/,;~', preparse=None,
+        merge_geminates=True):
     """
     Function exhaustively checks how well a sequence is understood by \
             LingPy.
@@ -1420,37 +1421,91 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
         for s, t in preparse:
             sequence = sequence.replace(s, t)
         segment_list = []
-        # first, parse for brackets
         if ignore_brackets:
-            brackets = brackets or _get_brackets("([{『（₍⁽«")
-            stack = []
-            tmp_sequence = list(sequence)
-            new_sequence = ''
-            while tmp_sequence:
-                itm = tmp_sequence.pop(0)
-                if itm in brackets:
-                    stack += [brackets[itm]]
-                if not stack:
-                    new_sequence += itm
-                if itm in stack:
-                    stack.pop(stack.index(itm))
+            new_sequence = strip_brackets(sequence, brackets=brackets)
         else:
             new_sequence = sequence
 
         # splitting needs to be done afterwards
         if split_entries:
-            new_sequences = re.split(r'\s*['+splitters+r']\s*', new_sequence)
+            new_sequences = split_text(new_sequence, splitters)
         else:
             new_sequences = [new_sequence]
 
         for new_sequence in new_sequences:
-            segments = ipa2tokens(re.sub(r'\s+', '_', new_sequence.strip()), 
+            segments = ipa2tokens(
+                    re.sub(r'\s+', '_', new_sequence.strip()), 
                     semi_diacritics=semi_diacritics,
-                    merge_vowels=merge_vowels)
+                    merge_vowels=merge_vowels,
+                    merge_geminates=merge_geminates)
             segment_list += [segments]
     out = []
     for segments in segment_list:
-        segments = [rules[s] if s in rules else s for s in segments]
+        segments = [rules.get(s, s) for s in segments]
         out += [' '.join(segments)]
     return out
+
+def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
+        brackets=None, splitters='/,;~', merge_geminates=True):
+    """
+    Create an initial Orthography Profile using Lingpy's clean_string procedure.
+
+    Parameters
+    ----------
+    words : list
+        A list of words (strings) from which you want to derive an initial
+        orthography profile.
+    semi_diacritics : str
+        Indicate characters which can occur both as "diacritics" (second part
+        in a sound) or alone.
+    merge_vowels : bool (default=True)
+        Indicate whether consecutive vowels should be merged.
+    brackets : dict
+        A dictionary with opening brackets as key and closing brackets as
+        values. Defaults to a pre-defined set of frequently occurring brackets.
+    splitters : str
+        The characters which force the automatic splitting of an entry.
+
+    Returns
+    -------
+    profile : generator
+        A generator of tuples (three items), indicating the segment, its frequency,
+        the conversion to sound classes in the Dolgopolsky sound-class model,
+        and the unicode-codepoints.
+
+    """
+    def codepoint(s):
+        return ' '.join(['U+'+('000'+hex(ord(x))[2:])[-4:] for x in s])
+    nulls = set()
+    bad_words = set()
+    brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
+    profile = defaultdict(int)
+    # split on whitespace, as this is also done by the orthoprofiles
+    for word in words:
+        cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
+                merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
+                split_entries=False, preparse=None, rules=None,
+                merge_geminates=merge_geminates)[0]
+
+        # retain whole word if there are splitters in the word
+        if [x for x in cleaned_string if x in brackets + splitters]:
+            profile[word] += 1
+            bad_words.add(word)
+        else:
+            for segment in cleaned_string.split(' '):
+                profile[segment] += 1
+            for segment in [x for x in word if x not in cleaned_string]:
+                profile[segment] += 1
+                nulls.add(segment)
+
+    for s, f in sorted(profile.items(), key=lambda x: x[1], reverse=True):
+        sclass = token2class(s, 'dolgo')
+        if s in bad_words:
+            yield s, f, '<???>', codepoint(s)
+        elif sclass == '0' and s not in nulls:
+            yield s, f, '<?>', codepoint(s)
+        elif s in nulls:
+            yield s, f, 'NULL', codepoint(s)
+        else:
+            yield s, f, s, codepoint(s)
 

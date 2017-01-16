@@ -8,7 +8,7 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
         tokens2class, prosodic_string, prosodic_weights, class2tokens, pid,\
         check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams,\
         get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse,\
-        clean_string, _get_brackets, strip_chars
+        clean_string, _get_brackets, strip_chars, ortho_profile
 from lingpy import rc, csv2list
 from six import text_type
 
@@ -229,7 +229,21 @@ def test_clean_string():
     assert clean_string(seq5, segmentized=True)[0] == 't a t'
     assert clean_string('a(a', ignore_brackets=False)[0] == 'a ( a'
     assert clean_string('a/a', split_entries=False)[0] == 'a / a'
+    assert clean_string('aa', preparse=[('a', 'b')])[0] == 'bb'
+    assert clean_string('bb', merge_geminates=False)[0] == 'b b'
+    assert clean_string('bb', rules={"b": "cd"}, merge_geminates=False)[0] == \
+            "cd cd"
 
+def test_ortho_profile():
+    words = ["-nepiʔap", "j-ãpi", "-nepî-àp", "jaõpi", "nə̤jbə́", "nambi",
+            "nambi", "nãbi-bé", "-nepi-bé", "nami", "i-nambi", "-népí-áp",
+            "apitep", "opiɾisap", "aʔpiʧeep", "o-apitep", "ai-hape",
+            "apsiɾipʔa", "apitep", "jãʃuka", "i-nakɨɾa peʔ", "ʃapetə",
+            "mõkiɾa", "õkɨɾa", "ɡwɨɾa", "ɡwɨɾa", "wɨɾãhi", "wɨɾa", "ɲũkɨɾa",
+            "ĩ́dɨt", "ĩ́dĩ́ĩt", "ĩ́jɨɨtU", "osĩ", "wásə̃A", "kaɾaʔ/ɨput", "weita",
+            "kɨjamʔiɾi", "piɾe", "ĩja ʔɨp", "maʃajã", "iti", "uʃíʃí",
+            "papɨdnã", "caʔa", "kɨta", "icía", "ijá ʔaʔ", "wíta-ʔa", "witá-ʔa",
+            "kx/kx"]
+    profile = ortho_profile(words)
+    assert ('b', 7, 'b', 'U+0062') in profile
 
-def test_strip_chars():
-    assert strip_chars('[]', 'b[l]a') == 'bla'
