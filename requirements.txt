@@ -1,5 +1,5 @@
 numpy
 appdirs
 networkx
-clldutils>=1.5.1
+clldutils>=1.6
 tqdm
