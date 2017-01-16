@@ -1367,9 +1367,11 @@ def _get_brackets(brackets):
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
 
-def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
+def clean_string(
+        sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
-        split_entries=True, splitters='/,;~', preparse=None):
+        split_entries=True, splitters='/,;~', preparse=None,
+        merge_geminates=True):
     """
     Function exhaustively checks how well a sequence is understood by \
             LingPy.
@@ -1431,18 +1433,20 @@ def clean_string(sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=Fal
             new_sequences = [new_sequence]
 
         for new_sequence in new_sequences:
-            segments = ipa2tokens(re.sub(r'\s+', '_', new_sequence.strip()), 
+            segments = ipa2tokens(
+                    re.sub(r'\s+', '_', new_sequence.strip()), 
                     semi_diacritics=semi_diacritics,
-                    merge_vowels=merge_vowels)
+                    merge_vowels=merge_vowels,
+                    merge_geminates=merge_geminates)
             segment_list += [segments]
     out = []
     for segments in segment_list:
-        segments = [rules[s] if s in rules else s for s in segments]
+        segments = [rules.get(s, s) for s in segments]
         out += [' '.join(segments)]
     return out
 
 def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
-        brackets=None, splitters='/,;~'):
+        brackets=None, splitters='/,;~', merge_geminates=True):
     """
     Create an initial Orthography Profile using Lingpy's clean_string procedure.
 
@@ -1480,7 +1484,8 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     for word in words:
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
                 merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
-                split_entries=False, preparse=None, rules=None)[0]
+                split_entries=False, preparse=None, rules=None,
+                merge_geminates=merge_geminates)[0]
 
         # retain whole word if there are splitters in the word
         if [x for x in cleaned_string if x in brackets + splitters]:
