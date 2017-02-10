@@ -11,7 +11,7 @@ of the :py:class:`~lingpy.tests.util.test_data` function. We use this function t
 
   >>> from lingpy import *
   >>> from lingpy.tests.util import test_data
-  >>> lex = LexStat(test_data('KSL.qlc')
+  >>> lex = LexStat(test_data('KSL.qlc'))
 
 After we loaded the data, which is given in the general LingPy format for wordlists (see
 :doc:`lingpy.basic.wordlist` for details), we can access some of its basic statistics, which are
@@ -40,7 +40,7 @@ any strange characters and erros), this should work out of the box. However, if 
 difficulties, we recommend to make an explicit check by loading the LexStat object with the
 check-keyword set to **True**::
 
-  >>> lex = LexStat(test_data('KSL.qlc', check=True)
+  >>> lex = LexStat(test_data('KSL.qlc'), check=True)
 
 If the class is loaded normally, this means, your data is fine. But now let's start with cognate
 judgments, and let's try the LexStat algorithm (:evobib:`List2014d`), which derives individual scorers for all language
