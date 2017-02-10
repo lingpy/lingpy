@@ -287,7 +287,7 @@ def pw_align(
     --------
     Align two words using the dialign algorithm::
         >>> seqA = 'fat cat'
-        >>> setB = 'catfat'
+        >>> seqB = 'catfat'
         >>> pw_align(seqA, seqB, mode='dialign')
         (['f', 'a', 't', ' ', 'c', 'a', 't', '-', '-', '-'],
          ['-', '-', '-', '-', 'c', 'a', 't', 'f', 'a', 't'],
@@ -344,7 +344,7 @@ def nw_align(seqA, seqB, scorer=False, gap=-1):
     --------
 
     >>> seqA = 'fat cat'
-    >>> setB = 'catfat'
+    >>> seqB = 'catfat'
     >>> nw_align(seqA,seqB)
     (['f', 'a', 't', ' ', 'c', 'a', 't'], ['c', 'a', 't', '-', 'f', 'a', 't'], 1)
 
@@ -420,7 +420,7 @@ def edit_dist(seqA, seqB, normalized=False, restriction=''):
     Examples
     --------
     >>> seqA = 'fat cat'
-    >>> setB = 'catfat'
+    >>> seqB = 'catfat'
     >>> edit_dist(seqA, seqB)
     3
 
@@ -466,7 +466,7 @@ def sw_align(seqA, seqB, scorer=False, gap=-1):
     --------
 
     >>> seqA = 'fat cat'
-    >>> setB = 'catfat'
+    >>> seqB = 'catfat'
     >>> sw_align(seqA, seqB)
     (([], ['f', 'a', 't'], [' ', 'c', 'a', 't']),
      (['c', 'a', 't'], ['f', 'a', 't'], []),
@@ -509,7 +509,7 @@ def we_align(seqA, seqB, scorer=False, gap=-1):
     --------
 
     >>> seqA = 'fat cat'
-    >>> setB = 'catfat'
+    >>> seqB = 'catfat'
     >>> we_align(seqA, seqB)
     [(['f', 'a', 't'], ['f', 'a', 't'], 3.0),
      (['c', 'a', 't'], ['c', 'a', 't'], 3.0)]
