@@ -1371,7 +1371,7 @@ def clean_string(
         sequence, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         segmentized=False, rules=None, ignore_brackets=True, brackets=None,
         split_entries=True, splitters='/,;~', preparse=None,
-        merge_geminates=True):
+        merge_geminates=True, normalization_form="NFC"):
     """
     Function exhaustively checks how well a sequence is understood by \
             LingPy.
@@ -1410,6 +1410,7 @@ def clean_string(
         variants, the list will contain one for each element in a separate
         entry. If there are no splitters, the list has only size one.
     """
+    sequence = unicodedata.normalize(normalization_form, sequence)
     rules = rules or {} 
     preparse = preparse or []
     
@@ -1428,7 +1429,8 @@ def clean_string(
 
         # splitting needs to be done afterwards
         if split_entries:
-            new_sequences = split_text(new_sequence, splitters)
+            new_sequences = split_text(new_sequence, splitters,
+                    brackets='' if not ignore_brackets else brackets)
         else:
             new_sequences = [new_sequence]
 
@@ -1444,6 +1446,10 @@ def clean_string(
         segments = [rules.get(s, s) for s in segments]
         out += [' '.join(segments)]
     return out
+
+def codepoint(s):
+    "Return unicode codepoint(s) for a character set."
+    return ' '.join(['U+'+('000'+hex(ord(x))[2:])[-4:] for x in s])
 
 def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True):
@@ -1472,10 +1478,7 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
         A generator of tuples (three items), indicating the segment, its frequency,
         the conversion to sound classes in the Dolgopolsky sound-class model,
         and the unicode-codepoints.
-
     """
-    def codepoint(s):
-        return ' '.join(['U+'+('000'+hex(ord(x))[2:])[-4:] for x in s])
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
