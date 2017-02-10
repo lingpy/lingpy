@@ -80,9 +80,8 @@ class Model(object):
     >>> dolgo = rc('dolgo')
     >>> art = rc('art')
 
-    Check, how the letter ``a`` is converted in the various models:
+    Check how the letter ``a`` is converted in the various models:
 
-    >>> for m in [asjp,sca,dolgo,art]:
     >>> for m in [asjp,sca,dolgo,art]:
     ...     print('{0} > {1} ({2})'.format('a',m.converter['a'],m.name))
     ...
