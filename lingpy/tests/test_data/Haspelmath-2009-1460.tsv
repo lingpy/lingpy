@@ -665,7 +665,7 @@ NUMBER	GLOSS	WOLD_ID	URL	IDS_ID	DESCRIPTION	CONTEXT	CATEGORY	SEMANTIC_FIELD	AGE_
 636	the fish poison	8-96	http://wold.clld.org/meaning/8-96	8.96	(in Amazonia, a kind of root is apparently used as fish poison)	-	Noun	8	0.788235294118	0.205882352941	0.838235294118	19	1510877
 637	the nettle	8-97	http://wold.clld.org/meaning/8-97	8.97	-	-	Noun	8	0.836666666667	0.15	0.883333333333	30	1072992
 638	the mushroom	8-98	http://wold.clld.org/meaning/8-98	8.98	-	-	Noun	8	0.877777777778	0.266666666667	0.877777777778	46	2444
-639	to do	9-11	http://wold.clld.org/meaning/9-11	9.11	(pure action meaning)	A has climbed on a tree. B says to A: "What are you doing up there?"	Verb	9	0.897184020956	0.0278323510151	0.939423706614	42	351006
+639	to do	9-11	http://wold.clld.org/meaning/9-11	9.11	(pure action meaning)	A has climbed on a tree. B says to A: \"What are you doing up there?\"	Verb	9	0.897184020956	0.0278323510151	0.939423706614	42	351006
 640	the work	9-12	http://wold.clld.org/meaning/9-12	9.12	-	I can't go out because I have too much work.	Noun	9	0.849177330896	0.36197440585	0.912248628885	48	4228
 641	to bend	9-14	http://wold.clld.org/meaning/9-14	9.14	-	I'll bend the branches away so that you can get through.	Verb	9	0.799038461538	125	0.846153846154	60	961409
 642	to fold	9-15	http://wold.clld.org/meaning/9-15	9.15	-	She folded the piece of paper and put it in the envelope.	Verb	9	0.798490566038	0.0962264150943	0.855660377358	51	6146
@@ -1189,7 +1189,7 @@ NUMBER	GLOSS	WOLD_ID	URL	IDS_ID	DESCRIPTION	CONTEXT	CATEGORY	SEMANTIC_FIELD	AGE_
 1149	why?	17-69	http://wold.clld.org/meaning/17-69	17.69	-	-	Function word	17	0.776551724138	0.0051724137931	0.704310344828	51	5572
 1150	the voice	18-11	http://wold.clld.org/meaning/18-11	18.11	-	-	Noun	18	0.859102902375	0.265171503958	0.972295514512	44	5899
 1151	to sing	18-12	http://wold.clld.org/meaning/18-12	18.12	-	-	Verb	18	0.835408560311	0.056420233463	0.807392996109	45	5540
-1152	to shout	18-13	http://wold.clld.org/meaning/18-13	18.13	-	"Be careful", he shouted, "a lion!"	Verb	18	0.78992248062	0.104651162791	0.873062015504	52	336249
+1152	to shout	18-13	http://wold.clld.org/meaning/18-13	18.13	-	\"Be careful\", he shouted, \"a lion!\"	Verb	18	0.78992248062	0.104651162791	0.873062015504	52	336249
 1153	to whisper	18-15	http://wold.clld.org/meaning/18-15	18.15	-	-	Verb	18	0.809210526316	0.157894736842	0.763157894737	41	1107650
 1154	to mumble	18-16	http://wold.clld.org/meaning/18-16	18.16	‘to say something too quietly and not clearly enough, so that it is difficult or impossible to hear’	The little boy mumbled something about wanting to go to the toilet.	Verb	18	0.771621621622	0.0945945945946	0.837837837838	40	1258410
 1155	to whistle	18-17	http://wold.clld.org/meaning/18-17	18.17	-	-	Verb	18	0.801052631579	0.142105263158	0.826315789474	48	440386
@@ -1204,7 +1204,7 @@ NUMBER	GLOSS	WOLD_ID	URL	IDS_ID	DESCRIPTION	CONTEXT	CATEGORY	SEMANTIC_FIELD	AGE_
 1164	the language	18-24	http://wold.clld.org/meaning/18-24	18.24	-	-	Noun	18	0.842613636364	0.306818181818	0.867897727273	45	5713
 1165	the word	18-26	http://wold.clld.org/meaning/18-26	18.26	-	-	Noun	18	0.835380835381	0.2542997543	0.937346437346	44	6551
 1166	the name	18-28	http://wold.clld.org/meaning/18-28	18.28	-	What's your name?	Noun	18	0.881818181818	0.0852272727273	0.954545454545	44	5995
-1167	to ask(1)	18-31	http://wold.clld.org/meaning/18-31	18.31	‘ask a question, inquire’	"Where is your mother?", he asked.	Verb	18	0.82612244898	0.131632653061	0.889795918367	45	5717
+1167	to ask(1)	18-31	http://wold.clld.org/meaning/18-31	18.31	‘ask a question, inquire’	\"Where is your mother?\", he asked.	Verb	18	0.82612244898	0.131632653061	0.889795918367	45	5717
 1168	to answer	18-32	http://wold.clld.org/meaning/18-32	18.32	-	I asked him where his mother was, but he didn't answer.	Verb	18	0.84670846395	0.216300940439	0.761755485893	56	5610
 1169	to admit	18-33	http://wold.clld.org/meaning/18-33	18.33	-	The suspect admitted he stole the car.	Verb	18	0.816736401674	0.364016736402	0.695606694561	43	992946
 1170	to deny	18-34	http://wold.clld.org/meaning/18-34	18.34	-	She denied she was the thief.	Verb	18	0.834482758621	0.365517241379	0.806896551724	40	341655
