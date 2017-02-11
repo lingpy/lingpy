@@ -31,9 +31,9 @@ specifies all entry types in a given dataset::
     11   Woldemort   Владимир      vladimir    Russian      6
     12   Woldemort   Володимир     volodimir   Ukrainian    6
     9    Harry       Harald        haralt      German       7
-    10   Harry       Harry         hæri        English      7
-    11   Harry       Гарри         gari        Russian      7
-    12   Harry       Гаррi         hari        Ukrainian    7
+    10   Harry       Harry         hæri        English      8
+    11   Harry       Гарри         gari        Russian      8
+    12   Harry       Гаррi         hari        Ukrainian    8
 
 This format can be further extended by adding key-value pairs in the lines before the header, such
 as, for example, information regarding the author, the data, or general notes:: 
