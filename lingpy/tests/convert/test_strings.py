@@ -33,8 +33,8 @@ class Tests(TestCase):
 
         # we adjust the dataset and the seq_id since otherwise we won't have
         # similar output
-        msaC['seq_id'] = 'Woldemort (in different languages)'
-        msaC['dataset'] = 'Harry Potter Testset'
+        msaC['seq_id'] = 'test'
+        msaC['dataset'] = 'file'
 
         # when converting these different objects to string with the same body and
         # the like, they should be identical, so we check this here
