@@ -39,6 +39,12 @@ $ cd lingpy
 $ python setup.py install
 ```
 
+If the last command above returns you some error regarding user permissions (usually "Errno 13"), you can install
+LingPy in your home Python setup:
+```
+$ python setup.py install --user
+```
+
 In order to use the library, start an interactive python session and import LingPy as follows:
 ```python
 >>> from lingpy import *
