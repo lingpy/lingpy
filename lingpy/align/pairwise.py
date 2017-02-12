@@ -276,7 +276,7 @@ def pw_align(
         The gap extension scale. This scale is similar to the gap extension
         penalty, but in contrast to the traditional GEP, it "scales" the gap
         opening penalty.
-    mode : {"global", "local", "diagonal", "overlap"} (default="global")
+    mode : {"global", "local", "dialign", "overlap"} (default="global")
         Select between one of the four different alignment modes regularly
         implemented in LingPy, see :evobib:`List2012a` for details.
     distance : bool (default=False)
