@@ -28,9 +28,9 @@ class Model(object):
           :evobib:`Dolgopolsky1986'),
         * 'asjp' - the ASJP sound-class model (see
           :evobib:`Brown2008` and :evobib:`Brown2011`),
-        * 'art - the sound-class model which is used for the calculation of
+        * 'art' - the sound-class model which is used for the calculation of
           sonority profiles and prosodic strings (see :evobib:`List2012`), and
-        * '_color" - the sound-class model which is used for the coloring of
+        * '_color' - the sound-class model which is used for the coloring of
           sound-tokens when creating html-output.
     
     Notes
@@ -80,9 +80,8 @@ class Model(object):
     >>> dolgo = rc('dolgo')
     >>> art = rc('art')
 
-    Check, how the letter ``a`` is converted in the various models:
+    Check how the letter ``a`` is converted in the various models:
 
-    >>> for m in [asjp,sca,dolgo,art]:
     >>> for m in [asjp,sca,dolgo,art]:
     ...     print('{0} > {1} ({2})'.format('a',m.converter['a'],m.name))
     ...
