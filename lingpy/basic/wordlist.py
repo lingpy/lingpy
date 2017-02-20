@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from six import text_type as str
 from clldutils import dsv
+from unicodedata import normalize
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
@@ -968,7 +969,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             return sum([a / self.height for a in cov.values()]) / self.width
 
 
-def get_wordlist(path, delimiter=",", quotechar='"', **keywords):
+def get_wordlist(path, delimiter=",", quotechar='"', normalization_form="NFC", **keywords):
     """
     Load a wordlist from a normal CSV file.
 
@@ -1008,7 +1009,7 @@ def get_wordlist(path, delimiter=",", quotechar='"', **keywords):
     if header[0] == 'ID':
         D[0] = header[1:]
         for row in data:
-            D[row[0]] = row[1:]
+            D[row[0]] = [normalize(normalization_form, n) for n in row[1:]]
     else:
         D[0] = header
         for idx, row in enumerate(data):

@@ -259,13 +259,14 @@ class QLCParser(object):
         """
         Modify a specific cell in a specific column of a wordlist.
         """
-        if not isinstance(idx, tuple) and len(idx) != 2:
+        if isinstance(idx, tuple) and len(idx) == 2:
             try:
                 self._data[idx[0]][self.header[self._alias[idx[1]]]] = item
             except KeyError:
                 raise KeyError("No line with ID {0} specified could be found.".format(
                     idx[0]))
-        raise ValueError("__setitem__ requires two values as key.")
+        else:
+            raise ValueError("__setitem__ requires two values as key.")
 
     def __len__(self):
         """
@@ -357,7 +358,6 @@ class QLCParser(object):
             try:
                 res = function(s, *args, **kwargs)
             except:
-                print(s, key)
                 raise ValueError('Could not convert item ID: {0}.'.format(key))
             if override:
                 self._data[key][self._header[lentry]] = res
