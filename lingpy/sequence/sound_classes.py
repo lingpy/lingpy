@@ -656,15 +656,19 @@ def tokens2class(tstring, model, **keywords):
     class2tokens
 
     """
-    kw = dict(stress=rcParams['stress'])
+    kw = dict(stress=rcParams['stress'], clpa=False)
     kw.update(keywords)
-
+    
+    if kw['clpa']:
+        tstring_ = [x.split('/')[1] or '?' if '/' in x else x for x in tstring]
+    else:
+        tstring_ = [x for x in tstring]
     # check whether model is passed as real model or as string
     if str(model) == model:
         model = rcParams[model]
 
     out = []
-    for token in tstring:
+    for token in tstring_:
         try:
             out.append(model[token])
         except KeyError:
@@ -882,7 +886,7 @@ def prosodic_string(string, _output=True, **keywords):
             "N": "c",
             "X": "V",
             "Y": "V",
-            "Z": "V",
+            "Z": "v",
             "T": "T",
             "_": "_",
         }
