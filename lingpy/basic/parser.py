@@ -50,6 +50,7 @@ class QLCParser(object):
             # evaluation which is hopefully fixed by now
             tmp_keys = [k for k in input_data if isinstance(k, int)]
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
+                print(input_data[0], input_data[tmp_keys[0]])
                 raise ValueError("[!] Wrong input format!")  # pragma: no cover
         # check whether it's another wordlist-object
         elif hasattr(filename, '_data') and hasattr(filename, '_meta'):
