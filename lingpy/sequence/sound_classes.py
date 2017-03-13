@@ -660,7 +660,7 @@ def tokens2class(tstring, model, **keywords):
     kw.update(keywords)
     
     if kw['clpa']:
-        tstring_ = [x.split('/')[1] if '/' in x else x for x in tstring ]
+        tstring_ = [x.split('/')[1] or '?' if '/' in x else x for x in tstring]
     else:
         tstring_ = [x for x in tstring]
     # check whether model is passed as real model or as string

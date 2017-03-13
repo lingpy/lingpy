@@ -74,11 +74,13 @@ def test_token2class():
 def test_tokens2class():
 
     seq = 'tʰ ɔ x ˈth ə r A ˈI ʲ'.split(' ')
-    seq2 = 'th o X/x a'.split(' ')
+    seq2 = 'th o ?/x a'.split(' ')
+    seq3 = 'th o ?/ a'.split(' ')
 
     assert tokens2class(seq, 'dolgo') == list('TVKTVR000')
     assert tokens2class(seq2, 'cv')[2] == '0'
     assert tokens2class(seq2, 'cv', clpa=True)[2] == 'C'
+    assert tokens2class(seq3, 'cv', clpa=True)[2] == '0'
 
     assert_raises(IndexError, tokens2class, 'b  l'.split(' '), 'dolgo')
 
