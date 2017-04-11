@@ -1,0 +1,19 @@
+# KSL
+ID	DOCULECT	CONCEPT	GlossID	Orthography	IPA	Tokens	CogID
+# 
+1	Albanian	all	1	gjithë	ɟiθ	ɟ i θ	4
+3	French	all	1	tous	tut	t u t	2
+5	Hawaiian	all	1	apau	apa.u	a p a u	7
+6	Navajo	all	1	t'áá 'áƚtso	ʔayɬʦo	ʔ ay ɬ ʦ o	5
+7	Turkish	all	1	bütün	bytyn	b y t y n	3
+# 
+8	Albanian	and	2	e	e	e	-916
+9	English	and	2	and	and	a n d	915
+10	French	and	2	et	e	e	916
+50	Hawaiian	and	2	ā	aː	aː	1200
+13	Navajo	and	2	dóó	doː	d oː	918
+# 
+15	Albanian	animal	3	kafshë	kafʃ	k a f ʃ	-1018
+16	English	animal	3	animal	anəməl	a n ə m ə l	-1016
+17	French	animal	3	animal	animal	a n i m a l	-1016
+20	Navajo	animal	3	naaldeehii	naːldeːhiː	n aː l d eː h iː	1019
