@@ -42,7 +42,7 @@ class Tests(WithTempDir):
 
     def test_ortho_profile(self):
         tmp = self.tmp_path('ortho')
-        self.run_cli('ortho_profile -i '+test_data('KSL.qlc')+' --column ipa -o ' + tmp.as_posix())
+        self.run_cli('profile -i '+test_data('KSL.qlc')+' --column ipa -o ' + tmp.as_posix())
 
     def test_multiple(self):
         # first test, align string, no output, no input

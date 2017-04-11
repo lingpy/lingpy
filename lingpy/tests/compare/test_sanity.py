@@ -3,12 +3,33 @@ from __future__ import (
 
 from lingpy.tests.util import test_data
 from lingpy.basic.wordlist import Wordlist
-from lingpy.compare.sanity import mutual_coverage
+from lingpy.compare import sanity as sn
 
-def test_mutual_coverage():
-    wl = Wordlist(test_data('KSL5.qlc'))
-    mc = mutual_coverage(wl, 0)
-    assert len(mc[2][0]) == wl.width
-    mc = mutual_coverage(wl, 3)
-    assert len(mc[3][0]) == 3
-    assert not mutual_coverage(wl, 4)
+class Tests():
+    
+    def setUp(self):
+        self.wl = Wordlist(test_data('KSL5.qlc'))
+
+    def test__mutual_coverage(self):
+        assert len(
+                sn._mutual_coverage('Albanian', 'English', self.wl, 'concept')
+                ) == 2
+
+    def test__get_concepts(self):
+        assert len(
+                sn._get_concepts(self.wl, 'concept')) == 6
+
+    def test_mutual_coverage(self):
+        assert sn.mutual_coverage(
+                self.wl)['French']['Albanian'] == 3
+
+    def test_mutual_coverage_check(self):
+        assert not sn.mutual_coverage_check(self.wl, 3)
+
+    def test_mutual_coverage_subset(self):
+        a, b = sn.mutual_coverage_subset(
+                self.wl, 3, concepts='concept')
+        assert a == 3
+        assert b[0][0] == 3
+        assert b[0][1][0] == 'Albanian'
+
