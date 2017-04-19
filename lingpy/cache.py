@@ -9,9 +9,10 @@ import pickle
 
 from clldutils.path import Path
 from appdirs import user_cache_dir
+from lingpy import __version__
 
 
-DIR = Path(user_cache_dir('lingpy'))
+DIR = Path(user_cache_dir('lingpy', version=__version__))
 
 
 def path(filename):
@@ -28,3 +29,4 @@ def dump(data, filename):
         DIR.mkdir(parents=True)  # pragma: no cover
     with path(filename).open('wb') as fp:
         pickle.dump(data, fp)
+
