@@ -1071,6 +1071,9 @@ class Alignments(Wordlist):
         self.add_entries(
             consensus, ref, lambda x: cons_dict[x], override=not self._interactive)
 
+    def get_msa(self, ref):
+        return self.msa.get(ref)
+
     def output(self, fileformat, **keywords):
         """
         Write wordlist to file.

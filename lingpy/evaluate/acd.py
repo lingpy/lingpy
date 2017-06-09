@@ -9,7 +9,7 @@ from collections import defaultdict
 
 import logging
 from lingpy import log
-from lingpy.util import identity, as_string 
+from lingpy.util import identity, as_string, write_text_file
 
 def _get_bcubed_score(one, other):
     tmp = defaultdict(list)
@@ -365,8 +365,7 @@ def diff(
     loan = modify_ref if modify_ref else identity
 
     # open file
-    if tofile:
-        f = codecs.open(filename + '.diff', 'w', 'utf-8')
+    lines = []
 
     # get a formatter for language names
     lform = '{0:' + str(max([len(l) for l in wordlist.cols])) + '}'
@@ -414,10 +413,8 @@ def diff(
             fp = "no" if preP[-1] == 1.0 else "yes"
             fn = "no" if recP[-1] == 1.0 else "yes"
 
-            if tofile:
-                f.write(
-                    "Concept: {0}, False Positives: {1}, False Negatives: {2}\n".format(
-                        concept, fp, fn))
+            lines.append("Concept: {0}, False Positives: {1}, False Negatives: {2}".format(
+                concept, fp, fn))
 
             # get the words
             words = [wordlist[i, 'ipa'] for i in idxs]
@@ -427,13 +424,12 @@ def diff(
             wform = '{0:' + str(max([len(w) for w in words])) + '}'
 
             # write differences to file
-            if tofile:
-                for word, lang, cG, cT in sorted(
-                        zip(words, langs, cogsG, cogsT),
-                        key=lambda x: (x[2], x[3])):
-                    f.write('{0}\t{1}\t{2:4}\t{3:4}\n'.format(
-                        lform.format(lang), wform.format(word), cG, cT))
-                f.write('#\n')
+            for word, lang, cG, cT in sorted(
+                    zip(words, langs, cogsG, cogsT),
+                    key=lambda x: (x[2], x[3])):
+                lines.append('{0}\t{1}\t{2:4}\t{3:4}'.format(
+                    lform.format(lang), wform.format(word), cG, cT))
+            lines.append('#')
         else:
             preT += [1.0]
             recT += [1.0]
@@ -448,24 +444,28 @@ def diff(
     pp = sum(preP) / len(preP)
     pr = sum(recP) / len(recP)
     pf = 2 * (pp * pr) / (pp + pr)
-    
 
     as_string(_format_results('B-Cubed', bp, br, bf) + \
             _format_results('Pair', pp, pr, pf), 
             pprint=pprint)
 
+    lines.extend([
+        'B-Cubed Scores:',
+        'Precision: {0:.4f}'.format(bp),
+        'Recall:    {0:.4f}'.format(br),
+        'F-Score:   {0:.4f}'.format(bf),
+        '#',
+        'Pair Scores:',
+        'Precision: {0:.4f}'.format(pp),
+        'Recall:    {0:.4f}'.format(pr),
+        'F-Score:   {0:.4f}'.format(pf),
+    ])
+
     if tofile:
-        f.write('B-Cubed Scores:\n')
-        f.write('Precision: {0:.4f}\n'.format(bp))
-        f.write('Recall:    {0:.4f}\n'.format(br))
-        f.write('F-Score:   {0:.4f}\n'.format(bf))
-        f.write('#\n')
-        f.write('Pair Scores:\n')
-        f.write('Precision: {0:.4f}\n'.format(pp))
-        f.write('Recall:    {0:.4f}\n'.format(pr))
-        f.write('F-Score:   {0:.4f}\n'.format(pf))
-        f.close()
-        log.file_written(filename + '.diff')
+        write_text_file(filename + '.diff', lines)
+
+    if pprint:
+        return (bp, br, bf), (pp, pr, pf), lines
     else:
         return (bp, br, bf), (pp, pr, pf)
 
