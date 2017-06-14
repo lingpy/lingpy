@@ -698,7 +698,8 @@ class Wordlist(QLCParserWithRowsAndCols):
             if 'distances' not in self._meta:
                 self._meta['distances'] = wl2dst(self, **keywords)
 
-            out = matrix2dst(self._meta['distances'], self.taxa, stamp=keywords['stamp'])
+            out = matrix2dst(self._meta['distances'], self.taxa,
+                    stamp=keywords['stamp'], taxlen=keywords.get('taxlen', 0))
             return _write_file(keywords['filename'], out, fileformat)
 
         # output tre-format (newick)

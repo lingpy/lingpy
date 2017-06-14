@@ -911,7 +911,7 @@ class Alignments(Wordlist):
             # convert back to external format, if scoredict is set
             if kw['scoredict']:
                 for i, alm in enumerate(m.alm_matrix):
-                    tk = self[m.ID[i], 'tokens']
+                    tk = self[m.ID[i], self._segments]
                     new_tk = class2tokens(tk, alm)
                     m.alm_matrix[i] = new_tk
 
@@ -946,9 +946,6 @@ class Alignments(Wordlist):
         corrs = confidence.get_confidence(self, scorer, ref, gap_weight)
         log.info("Successfully calculated confidence values for alignments.")
         return corrs
-
-    def __len__(self):
-        return len(self.msa)
 
     def _plot(self, fileformat='html', **keywords):
         """
