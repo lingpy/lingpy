@@ -8,6 +8,8 @@ from itertools import combinations, combinations_with_replacement, product
 from collections import defaultdict
 from functools import partial
 
+from clldutils.misc import UnicodeMixin
+
 from lingpy.algorithm import calign
 from lingpy.algorithm import talign
 from lingpy.algorithm import cluster
@@ -22,7 +24,7 @@ from lingpy import log
 from lingpy.util import setdefaults, identity, dotjoin, as_string
 
 
-class Multiple(object):
+class Multiple(UnicodeMixin):
     """
     Basic class for multiple sequence alignment analyses.
 
@@ -95,7 +97,7 @@ class Multiple(object):
         # sequences present in the alignment
         return self._length
 
-    def __str__(self):
+    def __unicode__(self):
         # if alignments are present, print the alignments
         # else, return all sequences
         lines = self.alm_matrix if self.alm_matrix else self.tokens
@@ -988,6 +990,15 @@ class Multiple(object):
             kw['mode'], 0, 0.0, 0, kw['gap_weight'], kw['restricted_chars'])
 
         self._update_alignments()
+
+    def align(self, method, **kw):
+        if method == 'progressive':
+            self.prog_align(**kw)
+        elif method == 'library':
+            self.lib_align(**kw)
+        else:
+            raise ValueError(method)
+        return self
 
     def _reduce_gap_sites(self, msa, gap='X'):
         """

@@ -559,6 +559,14 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         calculate_data(self, data, taxa, concepts, ref, **keywords)
 
+    def get_tree(self, **kw):
+        self.calculate('tree', **kw)
+        return self.tree.getNewick()
+
+    def get_distances(self, **kw):
+        self.calculate('dst', **kw)
+        return self._meta['distances']
+
     def renumber(
             self,
             source,
