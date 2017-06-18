@@ -1,6 +1,6 @@
 # Basic namespaces
 cogid	int	cognateid,cogid,cognateset
-counterpart	str	entry,counterpart,orthography,forminsource
+counterpart	str	counterpart
 doculect	str	language,doculect,dialect,taxon,languages,counterpart_doculect,taxa
 concept	str	gloss,concept,concepts
 iso	str	iso,isocode
