@@ -2,7 +2,8 @@
 Conversion routines for the GML format.
 """
 from __future__ import unicode_literals, print_function, division
-from six import text_type
+
+from six import text_type, PY2
 
 from lingpy import log
 from lingpy import util
@@ -24,10 +25,15 @@ def networkx2igraph(graph):
     newgraph = ig.Graph(directed=graph.is_directed())
     nodes = {}
     for i,(node, data) in enumerate(graph.nodes(data=True)):
-        newgraph.add_vertex(i,Name=node, **dict([(a,b) for a,b in data.items()
-            if a not in ['Name','name']]))
+        data = {a.encode() if PY2 else a: b for a, b in data.items()}
+        newgraph.add_vertex(
+            i,
+            Name=node,
+            **{a: b for a, b in data.items()
+               if a not in [b'Name', b'name', 'Name', 'name']})
         nodes[node] = i
     for node1, node2, data in graph.edges(data=True):
+        data = {a.encode() if PY2 else a: b for a, b in data.items()}
         newgraph.add_edge(nodes[node1], nodes[node2], **data)
     return newgraph
 
