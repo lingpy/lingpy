@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import os
-from unittest import TestCase
+from clldutils.testing import WithTempDir
 
 
-class TestCache(TestCase):
+class TestCache(WithTempDir):
     def test_cache(self):
         from lingpy import cache
 
