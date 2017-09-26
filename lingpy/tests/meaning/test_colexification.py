@@ -22,7 +22,7 @@ class TestColexifications(WithTempDir):
         
         graph = colexification_network(Wordlist(test_data('colexification.tsv')),
                 bipartite=True)
-        assert 'arm' in graph.edge['l4.4'] and 'hand' in graph.edge['l4.4']
+        assert 'arm' in graph['l4.4'] and 'hand' in graph['l4.4']
         
         graph = colexification_network(Wordlist(test_data('colexification.tsv')),
                 output="gml", filename=text_type(self.tmp_path("test")))
@@ -52,7 +52,7 @@ class TestColexifications(WithTempDir):
     
     def test__make_graph(self):
         graph = colx._make_graph(self.cols, bipartite=True)
-        assert 'arm' in graph.edge['l4.4'] and 'hand' in graph.edge['l4.4']
+        assert 'arm' in graph['l4.4'] and 'hand' in graph['l4.4']
 
     def test_compare_colexifications(self):
 

@@ -103,9 +103,9 @@ def _make_graph(colexifications, bipartite=False):
     if not bipartite:
         for c1, c2, t, f, entry in colexifications:
             try:
-                G.edge[c1][c2]['families'] += [f]
-                G.edge[c1][c2]['doculects'] += [t]
-                G.edge[c1][c2]['words'] += [entry]
+                G[c1][c2]['families'] += [f]
+                G[c1][c2]['doculects'] += [t]
+                G[c1][c2]['words'] += [entry]
             except:
                 G.add_node(c1, ntype='concept')
                 G.add_node(c2, ntype='concept')
@@ -120,8 +120,8 @@ def _make_graph(colexifications, bipartite=False):
         for idx, (c1, c2, t, f, entry) in enumerate(colexifications):
             nindex = dotjoin(t, idx + 1)
             try:
-                G.edge[nindex][c1]['weight'] += 1
-                G.edge[nindex][c2]['weight'] += 1
+                G[nindex][c1]['weight'] += 1
+                G[nindex][c2]['weight'] += 1
             except KeyError:
                 G.add_node(nindex, ntype='word', entry=entry, doculect=t, family=f)
                 G.add_node(c1, ntype='concept')
