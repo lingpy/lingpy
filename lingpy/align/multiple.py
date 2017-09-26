@@ -469,7 +469,7 @@ class Multiple(UnicodeMixin):
 
         # create a newick-representation of the string
         self.tree = LoadTree(cluster._tree2nwk(
-            self.tree_matrix, [''.join(str(c)) for c in self._classes], False))
+            self.tree_matrix, [''.join(c) for c in self._classes], False))
 
     def _align_profile(
         self,

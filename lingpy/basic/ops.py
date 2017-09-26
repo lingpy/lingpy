@@ -24,7 +24,7 @@ def get_score(
     if mode in ['shared', 'jaccard']:
         listA, listB = [
                 wl.get_list(col=tax, entry=ref) for tax in [taxA, taxB]]
-        shared = [x for x in listA if x in listB]
+        shared = [x for x in listA if x in listB if x != 0]
 
         if mode == 'jaccard':
             return 1 - len(set(shared)) / len(set(listA + listB))

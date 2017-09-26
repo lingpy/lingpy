@@ -79,4 +79,6 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
                 best_clique = len(clique)
     return best_clique, best_cliques[best_clique]
 
-
+def synonymy(wordlist, segments='tokens', sound_classes=False):
+    words = defaultdict(list)
+    pass

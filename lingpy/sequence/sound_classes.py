@@ -1489,6 +1489,8 @@ def ortho_profile(words, semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False
     profile = defaultdict(int)
     # split on whitespace, as this is also done by the orthoprofiles
     for word in words:
+        if isinstance(word, list):
+            word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
                 merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
                 split_entries=False, preparse=None, rules=None,

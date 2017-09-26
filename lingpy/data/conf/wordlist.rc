@@ -1,7 +1,7 @@
 # Basic namespaces
 cogid	int	cognateid,cogid,cognateset
 counterpart	str	counterpart
-doculect	str	language,doculect,dialect,taxon,languages,counterpart_doculect,taxa
+doculect	str	language,doculect,dialect,taxon,taxa
 concept	str	gloss,concept,concepts
 iso	str	iso,isocode
 tokens	lambda x:x.split(" ")	tokens,tokenized_counterpart,ipatokens
@@ -52,3 +52,7 @@ cogids	lambda x:[int(s) for s in x.split(" ")]	cogids
 # new namespaces for clpa
 clpa_segments	lambda x: x.split(" ")	clpa_segments,clpa_tokens
 clpa_ids	lambda x: x.split(" ")	clpa_ids,clpa
+
+# new namespaces for cldf
+cognate_set	int	cognate_set
+cognate_sets	lambda x: [int(y) for y in x.split(" ")]	cognate_sets

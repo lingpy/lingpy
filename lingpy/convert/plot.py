@@ -947,7 +947,8 @@ def plot_heatmap(
         vmax=1.0,
         vmin=0.0,
         width=0.8,
-        xrotation=90
+        xrotation=90,
+        distances=False
     )
     for k in defaults:
         if k not in keywords:
@@ -1143,6 +1144,10 @@ def plot_heatmap(
     cmap = keywords['cmap'] 
 
     # [0.15,0.1,0.7,0.7])
+    if 'distances' in keywords:
+        for i, line in enumerate(matrix):
+            for j, cell in enumerate(matrix):
+                matrix[i][j] = 1 - matrix[i][j]
 
     im = ax2.matshow(matrix, aspect='auto', origin='lower',
                      interpolation='nearest', cmap=keywords['cmap'],

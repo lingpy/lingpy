@@ -620,6 +620,8 @@ class Wordlist(QLCParserWithRowsAndCols):
             modify_ref=False,
             meta=self._meta,
             missing=0,
+            prettify='false',
+            ignore='all',
             ref='cogid',
             rows=False,
             subset=False,  # setup a subset of the data,
@@ -829,13 +831,13 @@ class Wordlist(QLCParserWithRowsAndCols):
             The threshold that is used to carry out a flat cluster analysis if
             'groups' or 'cluster' is chosen as output format.
 
-        ignore : { list, "all" }
+        ignore : { list, "all" (default='all')}
             Modifies the output format in "tsv" output and allows to ignore
             certain blocks in extended "tsv", like "msa", "taxa", "json", etc.,
             which should be passed as a list. If you choose "all" as a plain
             string and not a list, this will ignore all additional blocks and
             output only plain "tsv".
-        prettify : bool (default=True)
+        prettify : bool (default=False)
             Inserts comment characters between concepts in the "tsv" file
             output format, which makes it easier to see blocks of words
             denoting the same concept. Switching this off will output the file
