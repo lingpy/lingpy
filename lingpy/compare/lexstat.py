@@ -28,7 +28,7 @@ from lingpy.util import charstring
 from lingpy import log
 
 
-def _check_tokens(key_and_tokens):
+def _check_tokens(key_and_tokens, clpa=False):
     """Generator for error reports on token strings.
 
     :param key_and_tokens: iterator over (key, token_string) pairs.
@@ -38,7 +38,7 @@ def _check_tokens(key_and_tokens):
             yield (key, "empty token", line)
         else:
             try:
-                sonars = tokens2class(line, rcParams['art'])
+                sonars = tokens2class(line, rcParams['art'], clpa=clpa)
                 if not sonars or sonars == ['0']:
                     yield (key, "empty sound-class string", line)
                 elif '0' in sonars:
@@ -259,7 +259,8 @@ class LexStat(Wordlist):
             "get_prostring": prosodic_string,
             "row": "concept",
             "col": "doculect",
-            "conf": None
+            "conf": None,
+            'clpa': False
         }
         kw.update(keywords)
 
@@ -273,6 +274,7 @@ class LexStat(Wordlist):
         self._langid = kw['langid']
         self._duplicates = kw['duplicates']
         self._transcription = kw['transcription']
+        self._clpa = kw['clpa']
 
         if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
@@ -330,7 +332,8 @@ class LexStat(Wordlist):
                 self._sonars,
                 self._segments,
                 lambda x: [int(i) for i in tokens2class(
-                    x, rcParams['art'], stress=rcParams['stress'])])
+                    x, rcParams['art'], stress=rcParams['stress'],
+                    clpa=self._clpa)])
         if self._prostrings not in self.header:
             self.add_entries(
                     self._prostrings, self._sonars,
@@ -339,7 +342,8 @@ class LexStat(Wordlist):
         if self._classes not in self.header:
             self.add_entries(
                 self._classes, self._segments,
-                lambda x: ''.join(tokens2class(x, kw["model"])))
+                lambda x: ''.join(tokens2class(x, kw["model"], clpa=self._clpa,
+                    stress=rcParams['stress'])))
         # create IDs for the languages
         if self._langid not in self.header:
             transform = dict(zip(
@@ -761,7 +765,8 @@ class LexStat(Wordlist):
 
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
-                        cls = tokens2class(w.split(' '), self.model)
+                        cls = tokens2class(w.split(' '), self.model,
+                                clpa=self._clpa)
                         pros[taxon].append(prosodic_string(w.split(' ')))
                         weights[taxon].append(prosodic_weights(pros[taxon][-1]))
                         seqs[taxon].append([

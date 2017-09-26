@@ -568,7 +568,7 @@ class Alignments(Wordlist):
         ref="cogid",
         **keywords):
         kw = {"segments": "tokens", "alignment": "alignment", "transcription":
-            "ipa", "ref": "cogid"}
+                "ipa", "ref": "cogid", "fuzzy": False}
         kw.update(keywords)
 
         # initialize the wordlist
@@ -585,9 +585,10 @@ class Alignments(Wordlist):
 
         # check whether fuzzy (partial) alignment or normal alignment is
         # carried out, if a new namespace is used, we assume it to be plain
-        self._mode = 'fuzzy' if ref in self._class_string and self._class_string[ref] \
+        self._mode = 'fuzzy' if (
+                kw['fuzzy'] or ref in self._class_string and self._class_string[ref] \
                                                               not in ['str',
-                                                                      'int'] else 'plain'
+                                                                      'int']) else 'plain'
         # store loan-status
         self._modify_ref = modify_ref
 
@@ -605,10 +606,23 @@ class Alignments(Wordlist):
         self.etd = {}
         self.add_alignments(ref=self._ref, modify_ref=modify_ref)
 
-    def add_alignments(self, ref=False, modify_ref=False):
+    def add_alignments(self, ref=False, modify_ref=False, fuzzy=False):
         """
         Function adds a new set of alignments to the data.
+
+        Parameters
+        ----------
+        ref: str (default=False)
+            Use this to set the name of the column which contains the cognate
+            sets.
+        fuzzy: bool (default=False)
+            If set to true, force the algorithm to treat the cognate sets as
+            fuzzy cognate sets, i.e., as multiple cognate sets which are in
+            order assigned to a word (proper "partial cognates").
         """
+        if fuzzy:
+            self._mode = 'fuzzy'
+        
         ref = ref or self._ref
         # check for cognate-id or alignment-id in header
         try:
@@ -651,6 +665,7 @@ class Alignments(Wordlist):
                             # split the string into morphemes
                             # FIXME add keywords for morpheme segmentation
                             morphemes = tokens2morphemes(this_string)
+
                             # get the position of the morpheme
                             midx = self[seq][self.header[ref]].index(key)
                             this_string = morphemes[midx]
@@ -911,7 +926,7 @@ class Alignments(Wordlist):
             # convert back to external format, if scoredict is set
             if kw['scoredict']:
                 for i, alm in enumerate(m.alm_matrix):
-                    tk = self[m.ID[i], 'tokens']
+                    tk = self[m.ID[i], self._segments]
                     new_tk = class2tokens(tk, alm)
                     m.alm_matrix[i] = new_tk
 
@@ -947,9 +962,6 @@ class Alignments(Wordlist):
         log.info("Successfully calculated confidence values for alignments.")
         return corrs
 
-    def __len__(self):
-        return len(self.msa)
-
     def _plot(self, fileformat='html', **keywords):
         """
         Make an HTML plot of the aligned data.
@@ -981,6 +993,7 @@ class Alignments(Wordlist):
         consensus='consensus',
         counterpart='ipa',
         weights=[],
+        return_data=False,
         **keywords):
         """
         Calculate a consensus string of all MSAs in the wordlist.
@@ -999,6 +1012,9 @@ class Alignments(Wordlist):
         model : ~lingpy.data.model.Model
             A sound class model according to which the IPA strings shall be
             converted to sound-class strings.
+        return_data : c{bool} (default=False)
+            Return the data instead of adding it in a column to the wordlist
+            object.
 
         """
         util.setdefaults(
@@ -1061,15 +1077,29 @@ class Alignments(Wordlist):
                     self.msa[ref][cog]["consensus"] = cons
                 # if there's no msa for a given cognate set, this set is a singleton
                 else:
-                    cons = self[
-                        [k[0] for k in self.etd[ref][cog] if k != 0][0], counterpart]
+                    if self._mode != 'fuzzy':
+                        cons = self[
+                            [k[0] for k in self.etd[ref][cog] if k != 0][0], counterpart]
+                    else:
+                        _idx = [k[0] for k in self.etd[ref][cog] if k][0]
+                        print(_idx, counterpart, self[_idx, counterpart])
+                        cons = tokens2morphemes(self[_idx, counterpart]
+                            )[self[_idx, ref].index(cog)]
 
                 # add consensus to dictionary
                 cons_dict[cog] = cons
+        
+        if return_data:
+            return cons_dict
 
         # add the entries
-        self.add_entries(
-            consensus, ref, lambda x: cons_dict[x], override=not self._interactive)
+        if self._mode != 'fuzzy':
+            self.add_entries(
+                consensus, ref, lambda x: cons_dict[x], override=not self._interactive)
+        else:
+            self.add_entries(
+                    consensus, ref, lambda x: ' + '.join(
+                        [' '.join(cons_dict[y]) for y in x]))
 
     def get_msa(self, ref):
         return self.msa.get(ref)

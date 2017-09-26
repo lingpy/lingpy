@@ -300,15 +300,21 @@ class profile(Command):
         if args.cldf:
             wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
                     row='Parameter_name',
-                col='Language_name')
+                col='Language_ID')
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
         out = ['Grapheme\tFREQUENCY\tIPA\tUNICODE']
+        if args.column.lower() not in wl.header:
+            raise ValueError("Wrong column header specified!")
+        
+        # convert to lower case to make sure it's working
+        column = args.column.lower()
+
         if not args.language:
-            words = [wl[idx, args.column] for idx in wl]
+            words = [wl[idx, column] for idx in wl]
         else:
             words = [word for word in
-                    wl.get_list(col=args.language, entry=args.column, flat=True)]
+                    wl.get_list(col=args.language, entry=column, flat=True)]
         for a, b, c, d in lingpy.sequence.sound_classes.ortho_profile(words):
             out += ['{0}\t{1}\t{2}\t{3}'.format(a, b, c, d)]
         lingpy.util.write_text_file(args.output_file, out) 

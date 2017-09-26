@@ -55,6 +55,12 @@ class Tests(WithTempDir):
                 self.tmp_path('test_acd'), pprint=False, tofile=True)
         assert d2[0] != 1
 
+    def test_random_cognates(self):
+        from lingpy.evaluate.acd import random_cognates
+        random_cognates(self.lex, ref='randomid')
+        assert 'randomid' in self.lex.header
+        
+
 def test_npoint_ap():
     from lingpy.evaluate.acd import npoint_ap
     scores = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
@@ -77,3 +83,6 @@ def test_npoint_ap():
     assert np5 == np1
     assert np6 == 1.0
     assert round(np7, 2) == 0.35 
+
+
+

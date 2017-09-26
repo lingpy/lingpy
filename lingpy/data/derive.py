@@ -71,7 +71,7 @@ def _fop(graph, start, end, path=[]):
     if start not in graph.node:
         return []
     paths = []
-    for node in graph.edge[start].keys():
+    for node in graph[start].keys():
         if node not in path:
             newpaths = _fop(graph, node, end, path)
             for newpath in newpaths:

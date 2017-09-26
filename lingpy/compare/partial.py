@@ -466,7 +466,7 @@ class Partial(LexStat):
                                 else:
                                             remove_edges += [n1]
                     for node in remove_edges:
-                        for edge in sorted(_g.edge[node]):
+                        for edge in sorted(_g[node]):
                             _g.remove_edge(node, edge)
 
                     for i,coms in enumerate(nx.connected_components(_g)):

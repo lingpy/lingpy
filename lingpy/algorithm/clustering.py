@@ -358,7 +358,7 @@ def fuzzy(threshold, matrix, taxa, method='upgma', revert=False):
                 if not g.has_edge(tA, tB):
                     g.add_edge(tA, tB, weight=1)
                 else:
-                    g.edge[tA][tB]['weight'] += 1
+                    g[tA][tB]['weight'] += 1
     out = {i + 1: c for i, c in enumerate(nx.find_cliques(g))}
 
     if revert:

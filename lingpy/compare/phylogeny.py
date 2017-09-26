@@ -1722,7 +1722,7 @@ class PhyBo(Wordlist):
                 if not gPrm.has_edge(oriA, oriB):
                     gPrm.add_edge(oriA, oriB, weight=1)
                 else:
-                    gPrm.edge[oriA][oriB]['weight'] += 1
+                    gPrm[oriA][oriB]['weight'] += 1
 
         log.info("Calculated primary graph.")
         log.info("Inferring lateral edges...")
@@ -1740,7 +1740,7 @@ class PhyBo(Wordlist):
                 # iterate over nodes
                 for nodeA, nodeB in util.combinations2(oris):
                     gWeights.add_edge(
-                        nodeA, nodeB, weight=gPrm.edge[nodeA][nodeB]['weight'])
+                        nodeA, nodeB, weight=gPrm[nodeA][nodeB]['weight'])
             elif method in ['tree_distance', 'td']:
                 for nodeA, nodeB in util.combinations2(oris):
                     try:
@@ -1811,14 +1811,14 @@ class PhyBo(Wordlist):
                             branches = sorted(
                                 branches, key=lambda x: (x[2], x[1], x[0]), reverse=True)
                             for a, b, d in branches:
-                                gWeights.edge[a][b]['weight'] += minus
+                                gWeights[a][b]['weight'] += minus
                                 minus -= scaler
 
                     # change maximum weights to distance weights
                     for a, b, d in sorted(gWeights.edges(data=True),
                                           key=lambda x: x[2]['weight']):
                         w = d['weight']
-                        gWeights.edge[a][b]['weight'] = int(1000 / w) ** 2
+                        gWeights[a][b]['weight'] = int(1000 / w) ** 2
 
                 # calculate the MST
                 mst = nx.minimum_spanning_tree(gWeights, weight='weight')
@@ -1826,8 +1826,8 @@ class PhyBo(Wordlist):
                 # assign the MST-weights to gMST
                 for nodeA, nodeB in mst.edges():
                     if gMST.has_edge(nodeA, nodeB):
-                        gMST.edge[nodeA][nodeB]['weight'] += 1
-                        gMST.edge[nodeA][nodeB]['cogs'] += [cog]
+                        gMST[nodeA][nodeB]['weight'] += 1
+                        gMST[nodeA][nodeB]['cogs'] += [cog]
                     else:
                         gMST.add_edge(nodeA, nodeB, weight=1, cogs=[cog])
                     ile[cog] += [(nodeA, nodeB)]
@@ -2202,7 +2202,7 @@ class PhyBo(Wordlist):
             log.info(warning)
             return
 
-        edge = graph.edge[nodeA][nodeB]
+        edge = graph[nodeA][nodeB]
         if not msn:
             if edge['label'] == 'horizontal':
                 cogs = edge['cogs'].split(',')
@@ -3139,8 +3139,8 @@ class PhyBo(Wordlist):
                 # if both labels occur in taxa, it is simple
                 if lA in taxa and lB in taxa:
                     try:
-                        geoGraph.edge[lA][lB]['weight'] += d['weight']
-                        geoGraph.edge[lA][lB]['cogs'] += ',' + d['cogs']
+                        geoGraph[lA][lB]['weight'] += d['weight']
+                        geoGraph[lA][lB]['cogs'] += ',' + d['cogs']
                     except:
                         geoGraph.add_edge(lA, lB, weight=d['weight'], cogs=d['cogs'])
                 elif not external_edges:
@@ -3181,8 +3181,8 @@ class PhyBo(Wordlist):
 
                             # append the edge to the graph
                             try:
-                                geoGraph.edge[this_label][other_label]['weight'] += 1
-                                geoGraph.edge[this_label][other_label]['cogs'] \
+                                geoGraph[this_label][other_label]['weight'] += 1
+                                geoGraph[this_label][other_label]['cogs'] \
                                     += ',' + cog
                             except:
                                 geoGraph.add_edge(this_label, other_label, weight=1,
@@ -3230,8 +3230,8 @@ class PhyBo(Wordlist):
 
                             # append the edge to the graph
                             try:
-                                geoGraph.edge[labelA][labelB]['weight'] += 1
-                                geoGraph.edge[labelA][labelB]['cogs'] += ',' + cog
+                                geoGraph[labelA][labelB]['weight'] += 1
+                                geoGraph[labelA][labelB]['cogs'] += ',' + cog
                             except:
                                 geoGraph.add_edge(labelA, labelB, weight=1, cogs=cog)
 

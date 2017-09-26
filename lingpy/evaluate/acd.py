@@ -10,6 +10,7 @@ from collections import defaultdict
 import logging
 from lingpy import log
 from lingpy.util import identity, as_string, write_text_file
+from lingpy.algorithm.cluster_util import generate_random_cluster
 
 def _get_bcubed_score(one, other):
     tmp = defaultdict(list)
@@ -21,6 +22,7 @@ def _get_bcubed_score(one, other):
             bcp += tmp[x].count(y) / len(tmp[x])
     return bcp / len(other)
 
+
 def _get_cogs(ref, concept, modify_ref, wordlist):
     idxs = wordlist.get_list(row=concept, flat=True)
     bidx = [i + 1 for i in range(len(idxs))]
@@ -30,6 +32,7 @@ def _get_cogs(ref, concept, modify_ref, wordlist):
         if modify_ref(a) not in tmp:
             tmp[(a)] = b
     return [tmp[modify_ref(i)] for i in cogs]
+
 
 def _format_results(results, p, r, f):
     """
@@ -44,6 +47,7 @@ def _format_results(results, p, r, f):
 * F-Scores:      {3:.4f} *
 *************************'""".format(
         results, p, r, f)
+
 
 def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 
         per_concept=False):
@@ -139,6 +143,7 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
 
     return BCP, BCR, FSC
 
+
 def partial_bcubes(wordlist, gold, test, pprint=True):
     """
     Compute B-Cubed scores for test and reference datasets for partial cognate\
@@ -214,6 +219,7 @@ def partial_bcubes(wordlist, gold, test, pprint=True):
     as_string(_format_results('B-Cubed', bcp, bcr, bcf), 
             pprint=pprint)
     return bcp, bcr, bcf
+
 
 def pairs(lex, gold='cogid', test='lexstatid', modify_ref=False, pprint=True,
         _return_string=False):
@@ -469,6 +475,7 @@ def diff(
     else:
         return (bp, br, bf), (pp, pr, pf)
 
+
 def npoint_ap(scores, cognates, reverse=False):
     """
     Calculate the n-point average precision.
@@ -515,3 +522,16 @@ def npoint_ap(scores, cognates, reverse=False):
         log.warn("Encountered Zero Division in npoint_ap, your data seems to contain no cognates.")
         return 0
 
+
+def random_cognates(wordlist, ref='randomid'):
+    """Populate a wordlist with random cognates for each entry."""
+    
+    clrd, current = {}, 1
+    for c in wordlist.rows:
+        idxs = wordlist.get_list(row=c, flat=True)
+        clrs = generate_random_cluster(len(idxs))
+        for idx, clr in zip(idxs, clrs):
+            clrd[idx] = clr + current 
+        current += max(clrs)
+
+    wordlist.add_entries(ref, clrd, lambda x: x)
