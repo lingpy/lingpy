@@ -17,7 +17,7 @@ from lingpy.settings import rcParams
 from lingpy.basic.parser import QLCParserWithRowsAndCols
 from lingpy.basic.ops import (
     wl2dst, wl2dict, renumber, calculate_data, wl2qlc, tsv2triple,
-    wl2multistate, coverage,
+    wl2multistate, coverage, iter_rows
 )
 from lingpy.algorithm import clustering as cluster
 from lingpy import util
@@ -535,6 +535,46 @@ class Wordlist(QLCParserWithRowsAndCols):
                         paps[key].append(1)
 
         return paps
+
+    def iter_rows(self, *entries):
+        """Iterate over the columns in a wordlist.
+        
+        Parameters
+        ----------
+        entries : list
+            The name of the columns which shall be iterated.
+
+        Returns
+        -------
+        iterator : iterator
+            An iterator yielding lists in which the first entry is the ID of
+            the wordlist row and the following entries are the content of the
+            columns as specified.
+
+        Examples
+        --------
+        Load a wordlist from LingPy's test data::
+
+            >>> from lingpy.tests.util import test_data
+            >>> from lingpy import Wordlist
+            >>> wl = Wordlist(test_data("KSL.qlc"))
+            >>> list(wl.iter_rows('ipa'))[:10]
+            [[1, 'ɟiθ'],
+             [2, 'ɔl'],
+             [3, 'tut'],
+             [4, 'al'],
+             [5, 'apa.u'],
+             [6, 'ʔayɬʦo'],
+             [7, 'bytyn'],
+             [8, 'e'],
+             [9, 'and'],
+             [10, 'e']]
+
+        So as you can see, the function returns the key of the wordlist as well
+        as the specified entry.
+            
+        """
+        return iter_rows(self, *entries)
 
     def calculate(
             self,

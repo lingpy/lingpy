@@ -29,7 +29,8 @@ __version__ = "2.5"
 from lingpy.settings import rc
 
 # general imports
-from lingpy.basic import Wordlist, Tree, get_wordlist
+from lingpy.basic.wordlist import Wordlist, get_wordlist
+from lingpy.basic.tree import Tree
 from lingpy.basic.ops import iter_rows
 
 # import converts
@@ -44,10 +45,10 @@ from lingpy.align import Pairwise, Multiple, SCA, MSA, PSA, Alignments, edit_dis
 from lingpy.data import Model
 
 # import reading routine
-from lingpy.read import csv2list, csv2dict, star2qlc
+from lingpy.read.csv import csv2list, csv2dict
 
 # import sequence routines
-from lingpy.sequence import ipa2tokens, tokens2class, prosodic_string, \
+from lingpy.sequence.sound_classes import ipa2tokens, tokens2class, prosodic_string, \
         prosodic_weights, class2tokens, pid, sampa2uni, strip_chars
 
 # import lexstat
