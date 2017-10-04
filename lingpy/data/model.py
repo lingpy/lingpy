@@ -6,7 +6,7 @@ import os
 import re
 
 from lingpy.data.derive import compile_model, compile_dvt
-from lingpy.read import read_scorer
+from lingpy.read.phylip import read_scorer
 from lingpy import cache
 from lingpy import compat
 from lingpy import util

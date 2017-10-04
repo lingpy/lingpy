@@ -288,36 +288,58 @@ class profile(Command):
     def subparser(cls, p):
         add_option(p, 'input_file', '', "Define input file.",
             short_opt="i")
-        add_option(p, 'output_file', 'orthography.tsv', "Specify output file.",
+        add_option(p, 'output_file', 'stdout', "Specify output file.",
                 short_opt="o")
         add_option(p, 'cldf', False, 'Load CLDF instad of standard lingpy format.')
         add_option(p, 'column', 'value', 'Column which contains the words.')
         add_option(
                 p, 'language', None, 'Create profile for a specific language.',
                 short_opt='l')
+        add_option(
+                p, 'context', False, 'Create profile with context.', 
+                short_opt='c')
+        add_option(p, 'clts', False, 'Check for CLTS compliance.')
+        add_option(p, 'count', False, 'Count the number of lines.')
         
     def __call__(self, args):
         if args.cldf:
             wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
-                    row='Parameter_name',
-                col='Language_ID')
+                    row='Parameter_name', col='Language_ID')
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
-        out = ['Grapheme\tFREQUENCY\tIPA\tUNICODE']
+
+        if args.context:
+            out = ['Grapheme\tIPA\tEXAMPLES\tLANGUAGES\tFREQUENCY\tCODEPOINTS']
+            function = lingpy.sequence.profile.context_profile
+        else:
+            out = ['Grapheme\tIPA\tFREQUENCY\tCODEPOINTS']
+            function = lingpy.sequence.profile.simple_profile
         if args.column.lower() not in wl.header:
             raise ValueError("Wrong column header specified!")
         
         # convert to lower case to make sure it's working
         column = args.column.lower()
 
-        if not args.language:
-            words = [wl[idx, column] for idx in wl]
+        if args.language:
+            D = {0: [h for h in sorted(wl.header, key=lambda x: wl.header[x])]}
+            for idx in wl.get_list(col=argslanguage, flat=True):
+                D[idx] = wl[idx]
+            wl = lingpy.basic.wordlist.Wordlist(D)
+        if args.context:
+            for line in lingpy.sequence.profile.context_profile(wl, ref=args.column,
+                    with_clts=args.clts):
+                out += ['\t'.join(line)]
         else:
-            words = [word for word in
-                    wl.get_list(col=args.language, entry=column, flat=True)]
-        for a, b, c, d in lingpy.sequence.sound_classes.ortho_profile(words):
-            out += ['{0}\t{1}\t{2}\t{3}'.format(a, b, c, d)]
-        lingpy.util.write_text_file(args.output_file, out) 
+            for line in lingpy.sequence.profile.simple_profile(wl, ref=args.column):
+                out += ['\t'.join(line)]
+        if args.output_file == 'stdout':
+            for i, line in enumerate(out):
+                if args.count:
+                    print(str(i)+'\t'+line)
+                else:
+                    print(line)
+        else:
+            lingpy.util.write_text_file(args.output_file, out) 
 
 class lexstat(Command):
     @classmethod
