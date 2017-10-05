@@ -20,7 +20,7 @@ except ImportError:
 
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
-        bad_word="<???>", bad_sound="<?>"):
+        bad_word="<???>", bad_sound="<?>", with_clts=False, unknown_sound="!{0}"):
     """
     Create an initial Orthography Profile using Lingpy's clean_string procedure.
 
@@ -41,6 +41,9 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         values. Defaults to a pre-defined set of frequently occurring brackets.
     splitters : str
         The characters which force the automatic splitting of an entry.
+    with_clts : bool (default=False)
+        If set to True, check for compliance of characters with the CLTS
+        standard (http://github.com/lingpy/clts).
     bad_word : str (default="«???»")
         Indicate how words that could not be parsed should be handled. Note
         that both "bad_word" and "bad_sound" are format-strings, so you can add
@@ -49,7 +52,10 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         Indicate how sounds that could not be converted to a sound class be
         handled. Note that both "bad_word" and "bad_sound" are format-strings,
         so you can add formatting information here.
-
+    unknown_sound : str (default="!{0}")
+        If with_clts is set to True, use this string to indicate that sounds
+        are classified as "unknown sound" in the CLTS framework.    
+    
     Returns
     -------
     profile : generator
@@ -57,6 +63,11 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         the conversion to sound classes in the Dolgopolsky sound-class model,
         and the unicode-codepoints.
     """
+    if with_clts and not clts:
+        raise ValueError("The package pyclts is needed to run this analysis.")
+    elif with_clts:
+        bipa = clts.CLTS('bipa')
+
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
@@ -89,6 +100,12 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
             ipa = bad_sound.format(s)
         elif s in nulls:
             ipa = 'NULL'
+        elif with_clts:
+            sound = bipa[s]
+            if sound.type == 'unknownsound':
+                ipa = unknown_sound.format(s)
+            else:
+                ipa = text_type(sound)
         else:
             ipa = s
         yield s, ipa, text_type(f), codepoint(s)
