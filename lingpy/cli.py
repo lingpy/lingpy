@@ -304,15 +304,18 @@ class profile(Command):
     def __call__(self, args):
         if args.cldf:
             wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
-                    row='Parameter_name', col='Language_ID')
+                    row='Parameter_ID', col='Language_ID')
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
 
+        # check for count in string
+        count = 'NO\t' if args.count else ''
+
         if args.context:
-            out = ['Grapheme\tIPA\tEXAMPLES\tLANGUAGES\tFREQUENCY\tCODEPOINTS']
+            out = [count+'Grapheme\tIPA\tEXAMPLES\tLANGUAGES\tFREQUENCY\tCODEPOINTS']
             function = lingpy.sequence.profile.context_profile
         else:
-            out = ['Grapheme\tIPA\tFREQUENCY\tCODEPOINTS']
+            out = [count+'Grapheme\tIPA\tFREQUENCY\tCODEPOINTS']
             function = lingpy.sequence.profile.simple_profile
         if args.column.lower() not in wl.header:
             raise ValueError("Wrong column header specified!")
@@ -322,7 +325,7 @@ class profile(Command):
 
         if args.language:
             D = {0: [h for h in sorted(wl.header, key=lambda x: wl.header[x])]}
-            for idx in wl.get_list(col=argslanguage, flat=True):
+            for idx in wl.get_list(col=args.language, flat=True):
                 D[idx] = wl[idx]
             wl = lingpy.basic.wordlist.Wordlist(D)
         if args.context:
@@ -330,12 +333,14 @@ class profile(Command):
                     with_clts=args.clts):
                 out += ['\t'.join(line)]
         else:
-            for line in lingpy.sequence.profile.simple_profile(wl, ref=args.column):
+            for line in lingpy.sequence.profile.simple_profile(wl,
+                    ref=args.column, with_clts=args.clts):
                 out += ['\t'.join(line)]
         if args.output_file == 'stdout':
-            for i, line in enumerate(out):
+            print(out[0])
+            for i, line in enumerate(out[1:]):
                 if args.count:
-                    print(str(i)+'\t'+line)
+                    print(str(i+1)+'\t'+line)
                 else:
                     print(line)
         else:
