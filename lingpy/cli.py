@@ -346,6 +346,8 @@ class profile(Command):
         else:
             lingpy.util.write_text_file(args.output_file, out) 
 
+        return len(out)-1
+
 class lexstat(Command):
     @classmethod
     def subparser(cls, p):

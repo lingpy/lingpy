@@ -113,3 +113,10 @@ class Tests(WithTempDir):
                                   test_data('KSL.qlc'),
                                   '--output-file', self.tmp_path('lexstat').as_posix())
         assert cogs == 1080
+
+    def test_profile(self):
+        prf = main('profile', '-i', test_data('KSL.qlc'), '--column', 'ipa')
+        assert prf == 105
+        prf = main('profile', '-i', test_data('KSL.qlc'), '--column', 'ipa',
+                '--language', 'German', '--count')
+        assert prf == 37
