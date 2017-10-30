@@ -59,14 +59,12 @@ if 'install' in sys.argv or 'bdist_egg' in sys.argv or 'develop' in sys.argv:
 else:
     extension_modules = []
 
-requires = [
-    'networkx',
-    'numpy',
-    'six',
-    'appdirs',
-    'clldutils>=1.5.1',
-    'tqdm',
-]
+# load requirements
+if os.path.isfile('requirements.txt'):
+    with open('requirements.txt', 'r') as handle:
+        requires = [_.strip() for _ in handle.readlines() if len(_.strip())]
+else:
+    requires = []
 
 # make global name of this version for convenience of modifying it
 thisversion = "2.5"

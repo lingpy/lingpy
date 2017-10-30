@@ -1,5 +1,9 @@
 numpy
 appdirs
-networkx
+networkx>=2.0
+matplotlib>=1.3.0
 clldutils>=1.6
 tqdm
+six
+pycldf
+segments
