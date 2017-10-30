@@ -3,6 +3,8 @@ Basic functions for the conversion of Python-internal data into strings.
 """
 from __future__ import unicode_literals
 import re
+from collections import defaultdict
+from clldutils.misc import slug
 
 from lingpy import util
 from lingpy.convert.html import template_path
@@ -403,24 +405,16 @@ END;
 
 
 def write_nexus(
-        taxa, matrix, custom=None, custom_name='lingpy', missing="?", gap="-",
-        template="mrbayes.nex", filename="mrbayes.nex", dtype="RESTRICTION",
-        symbols="10",
-        commands=None, commands_name="mrbayes"):
+        wordlist, ref="cogid", custom=None,
+        custom_name='lingpy', missing="?", gap="-", template="mrbayes.nex",
+        filename="mrbayes.nex", dtype="RESTRICTION", symbols="10",
+        commands=None, commands_name="mrbayes", beast=False):
     """Write a nexus file for phylogenetic analyses.
 
     Parameters
     ----------
-    taxa : list
-        The taxonomic units in your data. They should be valid taxon names,
-        only consisting of alphanumeric characters and an underscore, usually
-        also not exceeding a length of 15 characters.
-    matrix : list
-        The matrix with the values for each taxon in one separate row. Usually,
-        the matrix contains binary values which can be passed as strings or
-        integers (1 and 0), but missing values are also possible. Given
-        biological common restrictions, each character can only be one ASCII
-        symbol.
+    ref: str (default="cogid")
+        Column in which you store the cognate sets in your data.
     custom : list {default=None)
         This information allows to add custom information to the nexus file,
         like, for example, the structure of the characters, their original concept, or their type, and it will be
@@ -462,18 +456,50 @@ def write_nexus(
             commands_name, '\n'.join(commands)) if commands else ''
     _custom = 'BEGIN {0};\n{1}\n\n'.format(
             custom_name, '\n'.join(custom)) if custom else ''
-    
+
+    # retrieve the matrix
+    matrix = [[] for x in range(wordlist.width)]
+    etd = wordlist.get_etymdict(ref=ref)
+    concepts = sorted([(cogid, wordlist[[
+        x[0] for x in vals if x][0]][wordlist._rowIdx]) for (cogid, vals) in
+        etd.items()],
+        key=lambda x: x[1])
+    missing_ = {t: [concept for (cogid, concept) in concepts if concept not in wordlist.get_list(
+                col=t, entry=wordlist._row_name, flat=True)] for t in
+                wordlist.cols}
+    for i, t in enumerate(wordlist.cols):
+        previous = ''
+        for cogid, concept in concepts:
+            if previous != concept: 
+                previous = concept
+                if beast: matrix[i] += ['0']
+            matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
+                    missing_[t] else [missing]
+                
+    # character indices
+    chars = defaultdict(list)
+    for i, (cogid, concept) in enumerate(concepts):
+        chars[concept] += [i]
+    _chars, visited = "", []
+    for cogid, concept in concepts:
+        if concept not in visited:
+            visited += [concept]
+            _chars += '{0} = {1}-{2}; [{3}]\n'.format(
+                    slug(concept), chars[concept][0], 
+                    chars[concept][-1], concept)
+    _chars += ""
+
     _matrix = ""
-    mtl = max([len(t) for t in taxa])+1
-    for i, (t, m) in enumerate(zip(taxa, matrix)):
+    mtl = max([len(t) for t in wordlist.cols])+1
+    for i, (t, m) in enumerate(zip(wordlist.cols, matrix)):
         _matrix += str(t + mtl * ' ')[:mtl]+' '
         _matrix += ''.join(
                 ['({0})'.format(c) if len(c) > 1 else str(c) for c in m])+'\n'
     
     text = _template.format(
-            matrix=_matrix, ntax=len(taxa), nchar=len(matrix[0]), gap=gap,
+            matrix=_matrix, ntax=wordlist.width, nchar=len(matrix[0]), gap=gap,
             missing=missing, dtype=dtype, commands=_commands, custom=_custom,
-            symbols=symbols)
+            symbols=symbols, chars=_chars)
     util.write_text_file(filename, text)
 
 

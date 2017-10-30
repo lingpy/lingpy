@@ -185,7 +185,7 @@ def read_text_file(path, normalize=None, lines=False):
 
 def as_string(obj, pprint=False):
     obj = text_type(obj)
-    if get_level() <= logging.INFO and pprint:
+    if get_level() <= logging.ERROR and pprint:
         print(obj)
     return obj
 
