@@ -53,12 +53,23 @@ def generate_all_clusters(numbers):
             yield clr
 
 
-def generate_random_cluster(numbers):
+def generate_random_cluster(numbers, bias=False):
     """Generate a random cluster for a number of elements."""
     out = []
     maxelm = 0
+    if bias == 'lumper':
+        selector = lambda x, y, z: z * 2 + (abs(x-y)+1) * [x]
+    elif bias == 'splitter':
+        selector = lambda x, y, z: ((x-y)+1) * [x]
+
     for i in range(numbers):
-        nextelm = random.randint(0,maxelm)
+        if bias:
+            select_from = []
+            for i in range(maxelm+1):
+                select_from += selector(i, maxelm, [o for o in out])
+            nextelm = random.choice(select_from)
+        else:
+            nextelm = random.randint(0, maxelm)
         if nextelm == maxelm:
             maxelm += 1
         out += [nextelm]

@@ -12,15 +12,9 @@ from clldutils.text import split_text, strip_brackets, strip_chars
 
 from lingpy.sequence.sound_classes import codepoint, clean_string, token2class
 
-try:
-    from pyclts import clts
-except ImportError:
-    clts = False
-
-
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
-        bad_word="<???>", bad_sound="<?>", with_clts=False, unknown_sound="!{0}"):
+        bad_word="<???>", bad_sound="<?>", clts=None, unknown_sound="!{0}"):
     """
     Create an initial Orthography Profile using Lingpy's clean_string procedure.
 
@@ -41,9 +35,11 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         values. Defaults to a pre-defined set of frequently occurring brackets.
     splitters : str
         The characters which force the automatic splitting of an entry.
-    with_clts : bool (default=False)
-        If set to True, check for compliance of characters with the CLTS
-        standard (http://github.com/lingpy/clts).
+    clts : dict (default=None)
+        A dictionary(like) object that converts a given source sound into a
+        potential target sound, using the get()-method of the dictionary.
+        Normally, we think of a CLTS instance here (that is: a cross-linguistic
+        transcription system as defined in the pyclts package).
     bad_word : str (default="«???»")
         Indicate how words that could not be parsed should be handled. Note
         that both "bad_word" and "bad_sound" are format-strings, so you can add
@@ -63,11 +59,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         the conversion to sound classes in the Dolgopolsky sound-class model,
         and the unicode-codepoints.
     """
-    if with_clts and not clts:
-        raise ValueError("The package pyclts is needed to run this analysis.")
-    elif with_clts:
-        bipa = clts.CLTS('bipa')
-
+    clts = clts or {}
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
@@ -100,10 +92,10 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
             ipa = bad_sound.format(s)
         elif s in nulls:
             ipa = 'NULL'
-        elif with_clts:
-            sound = bipa[s]
-            if sound.type == 'unknownsound':
-                ipa = unknown_sound.format(s)
+        elif clts:
+            sound = clts.get(s, False)
+            if not sound:
+                ipa = '!'+s
             else:
                 ipa = text_type(sound)
         else:
@@ -112,8 +104,8 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
 
 def context_profile(wordlist, ref='ipa', col="doculect",
         semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False, brackets=None,
-        splitters='/,;~', merge_geminates=True, with_clts=False,
-        bad_words="<???>", bad_sound="<?>", unknown_sound="!{0}", examples=2):
+        splitters='/,;~', merge_geminates=True, clts=False,
+        bad_word="<???>", bad_sound="<?>", unknown_sound="!{0}", examples=2):
     """
     Create an advanced Orthography Profile with context and doculect information.
 
@@ -137,9 +129,11 @@ def context_profile(wordlist, ref='ipa', col="doculect",
         values. Defaults to a pre-defined set of frequently occurring brackets.
     splitters : str
         The characters which force the automatic splitting of an entry.
-    with_clts : bool (default=False)
-        If set to True, check for compliance of characters with the CLTS
-        standard (http://github.com/lingpy/clts).
+    clts : dict (default=None)
+        A dictionary(like) object that converts a given source sound into a
+        potential target sound, using the get()-method of the dictionary.
+        Normally, we think of a CLTS instance here (that is: a cross-linguistic
+        transcription system as defined in the pyclts package).
     bad_word : str (default="«???»")
         Indicate how words that could not be parsed should be handled. Note
         that both "bad_word" and "bad_sound" are format-strings, so you can add
@@ -161,11 +155,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
         the conversion to sound classes in the Dolgopolsky sound-class model,
         and the unicode-codepoints.
     """
-    if with_clts and not clts:
-        raise ValueError("The package pyclts is needed to run this analysis.")
-    elif with_clts:
-        bipa = clts.CLTS('bipa')
-
+    clts_ = clts or {}
     nulls = set()
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
@@ -207,10 +197,10 @@ def context_profile(wordlist, ref='ipa', col="doculect",
             ipa = bad_sound.format(s)
         elif s in nulls:
             ipa = 'NULL'
-        elif with_clts:
-            sound = bipa[s.strip('^$')]
-            if sound.type == 'unknownsound':
-                ipa = unknown_sound.format(s.strip('^$'))
+        elif clts_:
+            sound = clts_.get(s.strip('^$'), False)
+            if not sound:
+                ipa = '!'+s.strip('^$')
             else:
                 ipa = text_type(sound)
         else:

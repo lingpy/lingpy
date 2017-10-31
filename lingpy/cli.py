@@ -319,6 +319,14 @@ class profile(Command):
             function = lingpy.sequence.profile.simple_profile
         if args.column.lower() not in wl.header:
             raise ValueError("Wrong column header specified!")
+        if args.clts:
+            try:
+                from pyclts.clts import CLTS
+                clts = CLTS()
+            except ImportError:
+                raise ImportError("Module pyclts is not installed on your system")
+        else:
+            clts = False
         
         # convert to lower case to make sure it's working
         column = args.column.lower()
@@ -330,11 +338,11 @@ class profile(Command):
             wl = lingpy.basic.wordlist.Wordlist(D)
         if args.context:
             for line in lingpy.sequence.profile.context_profile(wl, ref=args.column,
-                    with_clts=args.clts):
+                    clts=clts):
                 out += ['\t'.join(line)]
         else:
             for line in lingpy.sequence.profile.simple_profile(wl,
-                    ref=args.column, with_clts=args.clts):
+                    ref=args.column, clts=clts):
                 out += ['\t'.join(line)]
         if args.output_file == 'stdout':
             print(out[0])

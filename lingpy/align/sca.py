@@ -586,9 +586,9 @@ class Alignments(Wordlist):
         # check whether fuzzy (partial) alignment or normal alignment is
         # carried out, if a new namespace is used, we assume it to be plain
         self._mode = 'fuzzy' if (
-                kw['fuzzy'] or ref in self._class_string and self._class_string[ref] \
+                kw['fuzzy'] or (ref in self._class_string and self._class_string[ref] \
                                                               not in ['str',
-                                                                      'int']) else 'plain'
+                                                                      'int'])) else 'plain'
         # store loan-status
         self._modify_ref = modify_ref
 
