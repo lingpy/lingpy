@@ -403,19 +403,32 @@ END;
 
 def write_nexus(
         wordlist,
+        mode='mrbeast',
+        filename="mrbayes.nex",
         ref="cogid",
+        missing="?", gap="-",
         custom=None,
         custom_name='lingpy',
-        mode='mrbeast',
-        missing="?", gap="-",
-        filename="mrbayes.nex",
         commands=None, commands_name="mrbayes"):
     """Write a nexus file for phylogenetic analyses.
 
     Parameters
     ----------
+    wordlist : lingpy.basic.wordlist.Wordlist
+        A Wordlist object containing cognate IDs.
+    mode : str (default="mrbayes")
+        The name of the output nexus style. Valid values are 'mrbayes' and
+        'beast'.
+    filename : str (default=None)
+        Name of the file to which the nexus file will be written.
+        If set to c{None}, then this function will not write the nexus ontent
+        to a file, but simply return the content as a string.
     ref: str (default="cogid")
         Column in which you store the cognate sets in your data.
+    gap : str (default="-")
+        The symbol for gaps (not relevant for linguistic analyses).
+    missing : str (default="?")
+        The symbol for missing characters.
     custom : list {default=None)
         This information allows to add custom information to the nexus file, like, for
         example, the structure of the characters, their original concept, or their
@@ -425,13 +438,6 @@ def write_nexus(
         block.
     custom_name : str (default="lingpy")
         The name of the custom block which will be written to the file.
-    missing : str (default="?")
-        The symbol for missing characters.
-    gap : str (default="-")
-        The symbol for gaps (not relevant for linguistic analyses).
-    mode : str (default="mrbayes")
-        The name of the output nexus style. Valid values are 'mrbayes' and
-        'beast'.
     commands : list (default=None)
         If specified, will write an additional block containing commands for
         phylogenetic software. The commands are passed as a list, containing
@@ -439,6 +445,12 @@ def write_nexus(
     commands_name : str (default="mrbayes")
         Determines how the block will be called to which the commands will be
         written.
+
+    Returns
+    -------
+    nexus : str
+        A string containing nexus file output
+
     """
     # check for valid mode
     if mode not in ('beast', 'beastwords', 'mrbayes'):
@@ -512,5 +524,7 @@ def write_nexus(
         commands=_commands, custom=_custom,
         symbols=symbols, chars=_chars
     )
-    util.write_text_file(filename, text)
+
+    if filename:
+        util.write_text_file(filename, text)
     return text
