@@ -405,10 +405,14 @@ END;
 
 
 def write_nexus(
-        wordlist, ref="cogid", custom=None,
-        custom_name='lingpy', missing="?", gap="-", template="mrbayes.nex",
-        filename="mrbayes.nex", dtype="RESTRICTION", symbols="10",
-        commands=None, commands_name="mrbayes", beast=False):
+        wordlist,
+        ref="cogid",
+        custom=None,
+        custom_name='lingpy',
+        mode='mrbeast',
+        missing="?", gap="-",
+        filename="mrbayes.nex",
+        commands=None, commands_name="mrbayes"):
     """Write a nexus file for phylogenetic analyses.
 
     Parameters
@@ -428,16 +432,9 @@ def write_nexus(
         The symbol for missing characters.
     gap : str (default="-")
         The symbol for gaps (not relevant for linguistic analyses).
-    template : str (default="mrbayes.nex")
-        The name of the template file. This file is located in the template/
-        folder of the LingPy package, but a custom file can be specified by
-        providing the path.
-    dtype : str (default="RESTRICTION")
-        The datatype, which is usually "STANDARD" or "RESTRICTION" in
-        linguistic analyses, with "RESTRICTION" pointing to pure birth-death
-        models.
-    symbols : str (default="10")
-        The symbols used for the characters.
+    mode : str (default="mrbayes")
+        The name of the output nexus style. Valid values are 'mrbayes' and
+        'beast'.
     commands : list (default=None)
         If specified, will write an additional block containing commands for
         phylogenetic software. The commands are passed as a list, containing
@@ -447,6 +444,12 @@ def write_nexus(
         written.
 
     """ 
+        
+    # template = "%s.nex" % mode
+    # if not os.path.isfile(template):
+    #     raise IOError("Unknown mode: %s" % mode)
+        
+        
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())

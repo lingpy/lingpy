@@ -5,7 +5,8 @@ from __future__ import division, unicode_literals
 from unittest import TestCase
 
 import lingpy
-from lingpy.convert.strings import scorer2str, msa2str, matrix2dst, pap2nex, pap2csv
+from lingpy.basic.wordlist import Wordlist
+from lingpy.convert.strings import scorer2str, msa2str, matrix2dst, pap2nex, pap2csv, write_nexus
 from lingpy.util import read_text_file
 from lingpy.tests.util import test_data
 
@@ -131,3 +132,21 @@ END;"""
         paps = {1: [1, 0], 2: [1, 1]}
         taxa = ['a', 'b']
         assert csv == pap2csv(taxa, paps)
+
+
+class TestWriteNexus(TestCase):
+    """Tests for `write_nexus`"""
+    def setUp(self):
+        self.wordlist = Wordlist(test_data('GER.tsv'))
+    
+    def test_mrbayes(self):
+        nex = write_nexus(self.wordlist, mode='mrbayes')
+        print(nex)
+        
+        
+    def test_beast(self):
+        pass
+        
+    def test_beastwords(self):
+        pass
+
