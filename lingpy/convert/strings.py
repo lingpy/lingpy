@@ -256,7 +256,7 @@ def pap2nex(
     missing=0,
     filename='',
     datatype='STANDARD'
-    ):
+):
     """
     Function converts a list of paps into nexus file format.
 
@@ -291,7 +291,7 @@ def pap2nex(
         reference = [k for k in sorted(paps)]
     else:
         new_paps = paps
-        reference = [k for k in range(1, len(paps)+1)]
+        reference = [k for k in range(1, len(paps) + 1)]
 
     # create reference
     ref_string = ''
@@ -417,12 +417,12 @@ def write_nexus(
     ref: str (default="cogid")
         Column in which you store the cognate sets in your data.
     custom : list {default=None)
-        This information allows to add custom information to the nexus file,
-        like, for example, the structure of the characters, their original concept, or their type, and it will be
-        written into a custom block in the nexus file. The name of the custom
-        block can be specified with help of the `custom_name` keyword. The
-        content is a list of strings which will be written line by line into
-        the custom block.
+        This information allows to add custom information to the nexus file, like, for
+        example, the structure of the characters, their original concept, or their
+        type, and it will be written into a custom block in the nexus file. The name of
+        the custom block can be specified with help of the `custom_name` keyword. The
+        content is a list of strings which will be written line by line into the custom
+        block.
     custom_name : str (default="lingpy")
         The name of the custom block which will be written to the file.
     missing : str (default="?")
