@@ -214,13 +214,13 @@ def matrix2dst(
     comment : str (default = '#')
         The comment character to be used when adding additional information in
         the "stamp".
-    
+
     Returns
     -------
     output : {str or file}
         Depending on your settings, this function returns a string in DST
         (=Phylip) format, or a file containing the string.
-        
+
     """
     if not taxa:
         taxa = ['t_{0}'.format(i + 1) for i in range(len(matrix))]
@@ -269,10 +269,10 @@ def pap2nex(
         number of taxa and the second dimension being identical to the number
         of paps. If a dictionary is passed, each key represents a given pap.
         The following two structures will thus be treated identically::
-            
+
           >>> paps = [[1,0],[1,0],[1,0]] # two languages, three paps
           >>> paps = {1:[1,0], 2:[1,0], 3:[1,0]} # two languages, three paps
-    
+
     missing : {str, int} (default=0)
         Indicate how missing characters are represented in the original data.
 
@@ -293,7 +293,7 @@ def pap2nex(
     else:
         new_paps = paps
         reference = [k for k in range(1, len(paps)+1)]
-    
+
     # create reference
     ref_string = ''
     for i, ref in enumerate(reference):
@@ -331,8 +331,8 @@ def pap2csv(
     Write paps created by the Wordlist class to a csv-file.
     """
 
-    out = "ID\t" + '\t'.join(taxa) + '\n'   
-    
+    out = "ID\t" + '\t'.join(taxa) + '\n'
+
     for key in sorted(paps):
         out += '{0}\t{1}\n'.format(
             key,
@@ -348,7 +348,7 @@ def pap2csv(
 def multistate2nex(taxa, matrix, filename='', missing="?"):
     """
     Convert the data in a given wordlist to NEXUS-format for multistate analyses in PAUP.
-    
+
     Parameters
     ----------
     taxa : list
@@ -441,13 +441,13 @@ def write_nexus(
         Determines how the block will be called to which the commands will be
         written.
 
-    """ 
-        
+    """
+
     # template = "%s.nex" % mode
     # if not os.path.isfile(template):
     #     raise IOError("Unknown mode: %s" % mode)
-        
-        
+
+
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())
@@ -471,12 +471,12 @@ def write_nexus(
     for i, t in enumerate(wordlist.cols):
         previous = ''
         for cogid, concept in concepts:
-            if previous != concept: 
+            if previous != concept:
                 previous = concept
                 if beast: matrix[i] += ['0']
             matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
                     missing_[t] else [missing]
-                
+
     # character indices
     chars = defaultdict(list)
     for i, (cogid, concept) in enumerate(concepts):
@@ -493,10 +493,10 @@ def write_nexus(
     _matrix = ""
     mtl = max([len(t) for t in wordlist.cols])+1
     for i, (t, m) in enumerate(zip(wordlist.cols, matrix)):
-        _matrix += str(t + mtl * ' ')[:mtl]+' '
+        _matrix += str(t + mtl * ' ')[:mtl] + ' '
         _matrix += ''.join(
                 ['({0})'.format(c) if len(c) > 1 else str(c) for c in m])+'\n'
-    
+
     text = _template.format(
             matrix=_matrix, ntax=wordlist.width, nchar=len(matrix[0]), gap=gap,
             missing=missing, dtype=dtype, commands=_commands, custom=_custom,
