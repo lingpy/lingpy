@@ -2,7 +2,6 @@
 Basic functions for the conversion of Python-internal data into strings.
 """
 from __future__ import unicode_literals
-import re
 from collections import defaultdict
 from clldutils.misc import slug
 
