@@ -284,7 +284,6 @@ def pap2nex(
 
     # get longest taxon
     maxTax = max([len(taxon) for taxon in taxa])
-    paps_ref = ""
 
     # check whether paps are dict or list
     if hasattr(paps, 'keys'):
