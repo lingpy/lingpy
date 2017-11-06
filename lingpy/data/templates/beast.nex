@@ -1,0 +1,13 @@
+#NEXUS
+
+BEGIN DATA;
+    DIMENSIONS NTAX={ntax} NCHAR={nchar};
+    FORMAT DATATYPE={dtype} SYMBOLS={symbols} GAP={gap} MISSING={missing};
+    CHARSTATELABELS
+{chars}
+;
+MATRIX
+{matrix}
+;
+END;
+{commands}{custom}
