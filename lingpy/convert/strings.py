@@ -137,10 +137,9 @@ def msa2str(msa, wordlist=False, comment="#",
         consensus = False
 
     if wordlist:
-        meta += '0\t' + 'COLUMNID'.ljust(formatter, '.') + '\t' + '\t'.join([str(i + 1)
-                                                                             for i in
-                                                                             range(
-                                                                                 alm_len)])
+        meta += '0\t' + 'COLUMNID'.ljust(formatter, '.') + '\t' + '\t'.join([
+            str(i + 1) for i in range(alm_len)
+        ])
         meta += '\n#\n'
 
     if local:
