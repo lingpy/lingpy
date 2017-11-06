@@ -19,7 +19,7 @@ def test_simple_profile():
 def test_context_profile():
     wl = Wordlist(test_data('KSL6.qlc'))
     prf = list(context_profile(wl))
-    assert prf[0][-2] == '4' # first line of profile
+    assert prf[2][-2] == '4' # first line of profile
     prf = list(context_profile(wl, clts={'a': 'A'}))
-    assert prf[0][1] == 'A'
+    assert prf[2][1] == 'A'
 
