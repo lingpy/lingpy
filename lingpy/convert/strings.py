@@ -3,6 +3,7 @@ Basic functions for the conversion of Python-internal data into strings.
 """
 from __future__ import unicode_literals
 import unicodedata
+from collections import defaultdict
 from lingpy import util
 from lingpy.convert.html import template_path
 
@@ -541,10 +542,19 @@ def write_nexus(
         previous = concept
 
     if mode in ('BEAST', 'BEASTWORDS'):
-        charblock = []
+        charblock, charsets = [], defaultdict(list)
         for i, char in enumerate(chars, 1):
-            charblock.append("\t\t%d %s" % (i, nexus_slug(char)))
+            charsets[char.rsplit("_", 1)[0]].append(i)
+            charblock.append("\t%d %s" % (i, nexus_slug(char)))
         charblock = ",\n".join(charblock)
+        # charsets block for beastwords
+        if mode == 'BEASTWORDS':
+            charsets = ["\t\tcharset %s = %d-%d;" % (
+                nexus_slug(c), min(m), max(m)) for (c, m) in charsets.items()
+            ]
+            _commands += "\n\n" if len(_commands) else ''
+            _commands += block.format('ASSUMPTIONS', "\n".join(charsets))
+
     else:  # MrBayes
         charblock, visited = "", []
         for char in set(chars):

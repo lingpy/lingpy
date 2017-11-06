@@ -218,5 +218,8 @@ class TestWriteNexus(TestCase):
         self.assertRegex(nex, r"Swedish\s+0100100010")
         self.assertRegex(nex, r"Icelandic\s+010001XXXX")
         self.assertRegex(nex, r"Norwegian\s+0100010001")
-        
-        assert False, "Handle charsets block"
+
+        # assumptions block
+        self.assertRegex(nex, r"charset I = 1\-2;")
+        self.assertRegex(nex, r"charset all = 3\-6;")
+        self.assertRegex(nex, r"charset ash = 7\-10;")
