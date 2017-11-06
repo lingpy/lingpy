@@ -439,23 +439,26 @@ def write_nexus(
     commands_name : str (default="mrbayes")
         Determines how the block will be called to which the commands will be
         written.
-
     """
+    # check for valid mode
+    if mode not in ('beast', 'beastwords', 'mrbayes'):
+        raise ValueError("Unknown output mode %s" % mode)
 
-    # template = "%s.nex" % mode
-    # if not os.path.isfile(template):
-    #     raise IOError("Unknown mode: %s" % mode)
-
-
+    # check for valid template
+    template = '%s.nex' % mode
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())
-    else:
-        util.read_text_file(template)
-    _commands = 'BEGIN {0};\n{1}\n\n'.format(
-            commands_name, '\n'.join(commands)) if commands else ''
-    _custom = 'BEGIN {0};\n{1}\n\n'.format(
-            custom_name, '\n'.join(custom)) if custom else ''
+    else:  # pragma: no cover
+        raise IOError("Unknown template %s" % template)
+
+    # check that `ref` is a valid column
+    if ref not in wordlist._alias:
+        raise KeyError("Unknown _ref_ column in wordlist '%s'" % ref)
+
+    # commands
+    _commands = 'BEGIN {0};\n{1}\n\n'.format(commands_name, '\n'.join(commands)) if commands else ''
+    _custom = 'BEGIN {0};\n{1}\n\n'.format(custom_name, '\n'.join(custom)) if custom else ''
 
     # retrieve the matrix
     matrix = [[] for x in range(wordlist.width)]
@@ -472,7 +475,7 @@ def write_nexus(
         for cogid, concept in concepts:
             if previous != concept:
                 previous = concept
-                if beast: matrix[i] += ['0']
+                # if beast: matrix[i] += ['0']
             matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
                     missing_[t] else [missing]
 
@@ -485,21 +488,29 @@ def write_nexus(
         if concept not in visited:
             visited += [concept]
             _chars += '{0} = {1}-{2}; [{3}]\n'.format(
-                    slug(concept), chars[concept][0], 
-                    chars[concept][-1], concept)
+                slug(concept), chars[concept][0], chars[concept][-1], concept
+            )
     _chars += ""
 
     _matrix = ""
-    mtl = max([len(t) for t in wordlist.cols])+1
+    mtl = max([len(t) for t in wordlist.cols]) + 1
     for i, (t, m) in enumerate(zip(wordlist.cols, matrix)):
         _matrix += str(t + mtl * ' ')[:mtl] + ' '
-        _matrix += ''.join(
-                ['({0})'.format(c) if len(c) > 1 else str(c) for c in m])+'\n'
+        _matrix += ''.join([
+            '({0})'.format(c) if len(c) > 1 else str(c) for c in m
+        ]) + '\n'
+
+    # TODO: symbols could be more than "01" but we this function doesn't handle
+    # multistate data so we just specify them here.
+    symbols = '01'
 
     text = _template.format(
-            matrix=_matrix, ntax=wordlist.width, nchar=len(matrix[0]), gap=gap,
-            missing=missing, dtype=dtype, commands=_commands, custom=_custom,
-            symbols=symbols, chars=_chars)
+        matrix=_matrix,
+        ntax=wordlist.width,
+        nchar=len(matrix[0]),
+        gap=gap, missing=missing,
+        commands=_commands, custom=_custom,
+        symbols=symbols, chars=_chars
+    )
     util.write_text_file(filename, text)
-
-
+    return text

@@ -139,6 +139,14 @@ class TestWriteNexus(TestCase):
     def setUp(self):
         self.wordlist = Wordlist(test_data('GER.tsv'))
     
+    def test_error_on_unknown_mode(self):
+        with self.assertRaises(ValueError):
+            write_nexus(self.wordlist, mode='xx')
+
+    def test_error_on_unknown_ref(self):
+        with self.assertRaises(KeyError):
+            write_nexus(self.wordlist, mode='mrbayes', ref='magic')
+    
     def test_mrbayes(self):
         nex = write_nexus(self.wordlist, mode='mrbayes')
         print(nex)
