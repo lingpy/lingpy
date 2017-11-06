@@ -4,6 +4,7 @@ Test conversions involving strings.
 from __future__ import division, unicode_literals
 from unittest import TestCase
 
+import re
 import lingpy
 from lingpy.basic.wordlist import Wordlist
 from lingpy.convert.strings import scorer2str, msa2str, matrix2dst, pap2nex, pap2csv, write_nexus
@@ -148,13 +149,74 @@ class TestWriteNexus(TestCase):
             write_nexus(self.wordlist, mode='mrbayes', ref='magic')
     
     def test_mrbayes(self):
-        nex = write_nexus(self.wordlist, mode='mrbayes')
-        print(nex)
+        # Use missing="X" parameter to avoid \? in the assertRegex calls below
+        nex = write_nexus(self.wordlist, mode='MRBAYES', missing="X")
+        self.assertIn("NTAX=5 NCHAR=7", nex)
+        # mrbayes should have datatype=restriction
+        self.assertIn("DATATYPE=RESTRICTION", nex)
         
+        # check charblock:
+        self.assertRegex(nex, r"I = 0\-0; \[I\]")
+        self.assertRegex(nex, r"all = 1\-3; \[all\]")
+        self.assertRegex(nex, r"ash = 4\-6; \[ash\]")
+        
+        # check data:
+        self.assertRegex(nex, r"German\s+1100100")
+        self.assertRegex(nex, r"English\s+1100XXX")
+        self.assertRegex(nex, r"Swedish\s+1010010")
+        self.assertRegex(nex, r"Icelandic\s+1001XXX")
+        self.assertRegex(nex, r"Norwegian\s+1001001")
         
     def test_beast(self):
-        pass
+        # Use missing="X" parameter to avoid \? in the assertRegex calls below
+        nex = write_nexus(self.wordlist, mode='BEAST', missing="X")
+        # added one character for ascertainment
+        self.assertIn("NTAX=5 NCHAR=8", nex)
+        # mrbayes should have datatype=standard
+        self.assertIn("DATATYPE=STANDARD", nex)
+        
+        # check charblock:
+        self.assertRegex(nex, r"1 _ascertainment,")
+        self.assertRegex(nex, r"2 I,")
+        self.assertRegex(nex, r"3 all,")
+        self.assertRegex(nex, r"4 all,")
+        self.assertRegex(nex, r"5 all,")
+        self.assertRegex(nex, r"6 ash,")
+        self.assertRegex(nex, r"7 ash,")
+        self.assertRegex(nex, r"8 ash")
+        
+        # check data:
+        self.assertRegex(nex, r"German\s+01100100")
+        self.assertRegex(nex, r"English\s+01100XXX")
+        self.assertRegex(nex, r"Swedish\s+01010010")
+        self.assertRegex(nex, r"Icelandic\s+01001XXX")
+        self.assertRegex(nex, r"Norwegian\s+01001001")
         
     def test_beastwords(self):
-        pass
-
+        # Use missing="X" parameter to avoid \? in the assertRegex calls below
+        nex = write_nexus(self.wordlist, mode='BEASTWORDS', missing="X")
+        # added three characters for ascertainment
+        self.assertIn("NTAX=5 NCHAR=10", nex)
+        # mrbayes should have datatype=standard
+        self.assertIn("DATATYPE=STANDARD", nex)
+        
+        # check charblock:
+        self.assertRegex(nex, r"1 I_ascertainment,")
+        self.assertRegex(nex, r"2 I,")
+        self.assertRegex(nex, r"3 all_ascertainment,")
+        self.assertRegex(nex, r"4 all,")
+        self.assertRegex(nex, r"5 all,")
+        self.assertRegex(nex, r"6 all,")
+        self.assertRegex(nex, r"7 ash_ascertainment,")
+        self.assertRegex(nex, r"8 ash,")
+        self.assertRegex(nex, r"9 ash,")
+        self.assertRegex(nex, r"10 ash")
+        
+        # check data:
+        self.assertRegex(nex, r"German\s+0101000100")
+        self.assertRegex(nex, r"English\s+010100XXXX")
+        self.assertRegex(nex, r"Swedish\s+0100100010")
+        self.assertRegex(nex, r"Icelandic\s+010001XXXX")
+        self.assertRegex(nex, r"Norwegian\s+0100010001")
+        
+        assert False, "Handle charsets block"
