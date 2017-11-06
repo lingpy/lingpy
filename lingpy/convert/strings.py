@@ -2,9 +2,7 @@
 Basic functions for the conversion of Python-internal data into strings.
 """
 from __future__ import unicode_literals
-from collections import defaultdict
-from clldutils.misc import slug
-
+import unicodedata
 from lingpy import util
 from lingpy.convert.html import template_path
 
@@ -401,6 +399,29 @@ END;
     return
 
 
+def nexus_slug(s):
+    """
+    Converts a string to a nexus "safe" representation (i.e. removes
+    many unicode characters and removes some punctuation characters).
+
+    Parameters
+    ----------
+    s : str
+        A string to convert to a nexus safe format.
+
+    Returns
+    -------
+    s : str
+        A string containing a nexus safe label.
+
+    """
+    s = unicodedata.normalize('NFKD', s)
+    s = "".join([c for c in s if not unicodedata.combining(c)])
+    for r in "();?’'.\",:[]/":
+        s = s.replace(r, "")
+    return s
+
+
 def write_nexus(
         wordlist,
         mode='mrbeast',
@@ -417,8 +438,11 @@ def write_nexus(
     wordlist : lingpy.basic.wordlist.Wordlist
         A Wordlist object containing cognate IDs.
     mode : str (default="mrbayes")
-        The name of the output nexus style. Valid values are 'mrbayes' and
-        'beast'.
+        The name of the output nexus style. Valid values are:
+            * 'MRBAYES': a MrBayes formatted nexus file
+            * 'BEAST': a BEAST formatted nexus file
+            * 'BEASTWORDS': a BEAST-formatted nexus for word-partitioned
+               analyses.
     filename : str (default=None)
         Name of the file to which the nexus file will be written.
         If set to c{None}, then this function will not write the nexus ontent
@@ -450,14 +474,16 @@ def write_nexus(
     -------
     nexus : str
         A string containing nexus file output
-
     """
+    block = "\n\nBEGIN {0};\n{1}\nEND;\n"  # template for nexus blocks
+
     # check for valid mode
-    if mode not in ('beast', 'beastwords', 'mrbayes'):
+    mode = mode.upper()
+    if mode not in ('BEAST', 'BEASTWORDS', 'MRBAYES'):
         raise ValueError("Unknown output mode %s" % mode)
 
     # check for valid template
-    template = '%s.nex' % mode
+    template = '%s.nex' % ('mrbayes' if mode == 'MRBAYES' else 'beast')
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())
@@ -469,8 +495,8 @@ def write_nexus(
         raise KeyError("Unknown _ref_ column in wordlist '%s'" % ref)
 
     # commands
-    _commands = 'BEGIN {0};\n{1}\n\n'.format(commands_name, '\n'.join(commands)) if commands else ''
-    _custom = 'BEGIN {0};\n{1}\n\n'.format(custom_name, '\n'.join(custom)) if custom else ''
+    _commands = block.format(commands_name, '\n'.join(commands)) if commands else ''
+    _custom = block.format(custom_name, '\n'.join(custom)) if custom else ''
 
     # retrieve the matrix
     matrix = [[] for x in range(wordlist.width)]
@@ -479,38 +505,65 @@ def write_nexus(
         x[0] for x in vals if x][0]][wordlist._rowIdx]) for (cogid, vals) in
         etd.items()],
         key=lambda x: x[1])
+    # and missing data..
     missing_ = {t: [concept for (cogid, concept) in concepts if concept not in wordlist.get_list(
                 col=t, entry=wordlist._row_name, flat=True)] for t in
                 wordlist.cols}
+
+    # add ascertainment character for mode=BEAST
+    if mode == 'BEAST':
+        matrix = [['0'] for m in matrix]
+
     for i, t in enumerate(wordlist.cols):
         previous = ''
         for cogid, concept in concepts:
             if previous != concept:
                 previous = concept
-                # if beast: matrix[i] += ['0']
+                # add ascertainment character for mode=BEASTWORDS. Note that if
+                # a given word:language is missing, then its ascertainment
+                # character is the `missing` character.
+                if mode == "BEASTWORDS":
+                    matrix[i] += ['0'] if concept not in missing_[t] else [missing]
             matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
-                    missing_[t] else [missing]
+                missing_[t] else [missing]
 
-    # character indices
-    chars = defaultdict(list)
+    # create charblock
+    chars, previous = [], ''
     for i, (cogid, concept) in enumerate(concepts):
-        chars[concept] += [i]
-    _chars, visited = "", []
-    for cogid, concept in concepts:
-        if concept not in visited:
-            visited += [concept]
-            _chars += '{0} = {1}-{2}; [{3}]\n'.format(
-                slug(concept), chars[concept][0], chars[concept][-1], concept
-            )
-    _chars += ""
+        # add label for ascertainment character in BEAST mode
+        if i == 0 and mode == 'BEAST':
+            chars.append("_ascertainment")
+        # add label for per-word ascertainment characters in BEASTWORDS
+        if mode == 'BEASTWORDS' and previous != concept:
+            chars.append("%s_ascertainment" % concept)
+        # finally add label.
+        chars.append(concept)
+        previous = concept
+
+    if mode in ('BEAST', 'BEASTWORDS'):
+        charblock = []
+        for i, char in enumerate(chars, 1):
+            charblock.append("\t\t%d %s" % (i, nexus_slug(char)))
+        charblock = ",\n".join(charblock)
+    else:  # MrBayes
+        charblock, visited = "", []
+        for char in set(chars):
+            pos = sorted([i for (i, c) in enumerate(chars) if c == char])
+            if char not in visited:
+                visited += [char]
+                charblock += '\t{0} = {1}-{2}; [{3}]\n'.format(
+                    nexus_slug(char), pos[0], pos[-1], char
+                )
+        charblock = charblock.rstrip()  # remove trailing
 
     _matrix = ""
-    mtl = max([len(t) for t in wordlist.cols]) + 1
-    for i, (t, m) in enumerate(zip(wordlist.cols, matrix)):
-        _matrix += str(t + mtl * ' ')[:mtl] + ' '
+    maxtaxlen = max([len(nexus_slug(t)) for t in wordlist.cols]) + 1
+    for i, (taxon, m) in enumerate(zip(wordlist.cols, matrix)):
+        _matrix += str(nexus_slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
         _matrix += ''.join([
             '({0})'.format(c) if len(c) > 1 else str(c) for c in m
         ]) + '\n'
+    _matrix = _matrix.rstrip()  # remove trailing
 
     # TODO: symbols could be more than "01" but we this function doesn't handle
     # multistate data so we just specify them here.
@@ -521,10 +574,11 @@ def write_nexus(
         ntax=wordlist.width,
         nchar=len(matrix[0]),
         gap=gap, missing=missing,
+        dtype='RESTRICTION' if mode == 'MRBAYES' else 'STANDARD',
         commands=_commands, custom=_custom,
-        symbols=symbols, chars=_chars
+        symbols=symbols, chars=charblock
     )
-
+    text = text.replace("\t", " " * 4)  # normalise tab-stops
     if filename:
         util.write_text_file(filename, text)
     return text
