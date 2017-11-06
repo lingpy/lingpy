@@ -1,3 +1,4 @@
+# *-* coding: utf-8 *-*
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
@@ -418,7 +419,7 @@ def nexus_slug(s):
     """
     s = unicodedata.normalize('NFKD', s)
     s = "".join([c for c in s if not unicodedata.combining(c)])
-    for r in "();?’'.\",:[]/":
+    for r in "();?'.\",:[]/":
         s = s.replace(r, "")
     return s
 
