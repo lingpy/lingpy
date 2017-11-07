@@ -5,6 +5,7 @@ Basic functions for the conversion of Python-internal data into strings.
 from __future__ import unicode_literals
 import unicodedata
 from collections import defaultdict
+from clldutils.misc import slug as _slug
 from lingpy import util
 from lingpy.convert.html import template_path
 
@@ -401,7 +402,7 @@ END;
     return
 
 
-def nexus_slug(s):
+def slug(s):
     """
     Converts a string to a nexus "safe" representation (i.e. removes
     many unicode characters and removes some punctuation characters).
@@ -415,13 +416,8 @@ def nexus_slug(s):
     -------
     s : str
         A string containing a nexus safe label.
-
     """
-    s = unicodedata.normalize('NFKD', s)
-    s = "".join([c for c in s if not unicodedata.combining(c)])
-    for r in "();?'.\",:[]/":
-        s = s.replace(r, "")
-    return s
+    return _slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")
 
 
 def write_nexus(
@@ -539,19 +535,19 @@ def write_nexus(
         if mode == 'BEASTWORDS' and previous != concept:
             chars.append("%s_ascertainment" % concept)
         # finally add label.
-        chars.append(concept)
+        chars.append(slug(concept))
         previous = concept
 
     if mode in ('BEAST', 'BEASTWORDS'):
         charblock, charsets = [], defaultdict(list)
         for i, char in enumerate(chars, 1):
             charsets[char.rsplit("_", 1)[0]].append(i)
-            charblock.append("\t%d %s" % (i, nexus_slug(char)))
+            charblock.append("\t%d %s" % (i, char))
         charblock = ",\n".join(charblock)
         # charsets block for beastwords
         if mode == 'BEASTWORDS':
             charsets = ["\t\tcharset %s = %d-%d;" % (
-                nexus_slug(c), min(m), max(m)) for (c, m) in charsets.items()
+                c, min(m), max(m)) for (c, m) in charsets.items()
             ]
             _commands += "\n\n" if len(_commands) else ''
             _commands += block.format('ASSUMPTIONS', "\n".join(charsets))
@@ -563,14 +559,14 @@ def write_nexus(
             if char not in visited:
                 visited += [char]
                 charblock += '\t{0} = {1}-{2}; [{3}]\n'.format(
-                    nexus_slug(char), pos[0], pos[-1], char
+                    slug(char), pos[0], pos[-1], char
                 )
         charblock = charblock.rstrip()  # remove trailing
 
     _matrix = ""
-    maxtaxlen = max([len(nexus_slug(t)) for t in wordlist.cols]) + 1
+    maxtaxlen = max([len(slug(t)) for t in wordlist.cols]) + 1
     for i, (taxon, m) in enumerate(zip(wordlist.cols, matrix)):
-        _matrix += str(nexus_slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
+        _matrix += str(slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
         _matrix += ''.join([
             '({0})'.format(c) if len(c) > 1 else str(c) for c in m
         ]) + '\n'
