@@ -492,7 +492,7 @@ def write_nexus(
     # add ascertainment character for mode=BEAST
     if mode == 'BEAST':
         matrix = [['0'] for m in matrix]
-
+    # fill matrix
     for i, t in enumerate(wordlist.cols):
         previous = ''
         for cogid, concept in concepts:
@@ -506,44 +506,39 @@ def write_nexus(
             matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
                 missing_[t] else [missing]
 
-    # create charblock
-    chars, previous = [], ''
-    for i, (cogid, concept) in enumerate(concepts):
+    # parse characters into `charsets` (a dict of word=>siteindex positions),
+    # and `chars` (a list of characters).
+    charsets, chars, previous = defaultdict(list), [], ''
+    for i, (cogid, concept) in enumerate(concepts, 1):
+        char = util.nexus_slug(concept)
         # add label for ascertainment character in BEAST mode
-        if i == 0 and mode == 'BEAST':
+        if i == 1 and mode == 'BEAST':
             chars.append("_ascertainment")
         # add label for per-word ascertainment characters in BEASTWORDS
         if mode == 'BEASTWORDS' and previous != concept:
-            chars.append("%s_ascertainment" % concept)
+            chars.append("%s_ascertainment" % char)
+            charsets[char].append(len(chars))
         # finally add label.
-        chars.append(util.nexus_slug(concept))
+        chars.append(char)
+        charsets[char].append(len(chars))
         previous = concept
-
+    
+    # create character labels block if needed
     if mode in ('BEAST', 'BEASTWORDS'):
-        charblock, charsets = [], defaultdict(list)
-        for i, char in enumerate(chars, 1):
-            charsets[char.rsplit("_", 1)[0]].append(i)
-            charblock.append("\t%d %s" % (i, char))
-        charblock = ",\n".join(charblock)
-        # charsets block for beastwords
-        if mode == 'BEASTWORDS':
-            charsets = ["\t\tcharset %s = %d-%d;" % (
-                c, min(m), max(m)) for (c, m) in charsets.items()
-            ]
-            _commands += "\n\n" if len(_commands) else ''
-            _commands += block.format('ASSUMPTIONS', "\n".join(charsets))
-
-    else:  # MrBayes
-        charblock, visited = "", []
-        for char in set(chars):
-            pos = sorted([i for (i, c) in enumerate(chars) if c == char])
-            if char not in visited:
-                visited += [char]
-                charblock += '\t{0} = {1}-{2}; [{3}]\n'.format(
-                    util.nexus_slug(char), pos[0], pos[-1], char
-                )
-        charblock = charblock.rstrip()  # remove trailing
-
+        charblock = ",\n".join(["\t%d %s" % o for o in enumerate(chars, 1)])
+    else:
+        charblock = ""
+    
+    # create charsets block
+    if mode in ('BEASTWORDS', 'MRBAYES'):
+        charsets = ["\tcharset %s = %d-%d;" % (
+            c, min(m), max(m)) for (c, m) in charsets.items()
+        ]
+        _commands += "\n\n" if len(_commands) else ''
+        blockname = 'ASSUMPTIONS' if mode == 'BEASTWORDS' else 'MRBAYES'
+        _commands += block.format(blockname, "\n".join(charsets))
+    
+    # convert state matrix to string.
     _matrix = ""
     maxtaxlen = max([len(util.nexus_slug(t)) for t in wordlist.cols]) + 1
     for i, (taxon, m) in enumerate(zip(wordlist.cols, matrix)):

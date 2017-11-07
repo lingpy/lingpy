@@ -165,9 +165,9 @@ class TestWriteNexus(TestCase):
         self.assertIn("DATATYPE=RESTRICTION", nex)
         
         # check charblock:
-        self.assertRegexWorkaround(nex, r"I = 0\-0; \[I\]")
-        self.assertRegexWorkaround(nex, r"all = 1\-3; \[all\]")
-        self.assertRegexWorkaround(nex, r"ash = 4\-6; \[ash\]")
+        self.assertRegexWorkaround(nex, r"charset I = 1\-1;")
+        self.assertRegexWorkaround(nex, r"charset all = 2\-4;")
+        self.assertRegexWorkaround(nex, r"charset ash = 5\-7;")
         
         # check data:
         self.assertRegexWorkaround(nex, r"German\s+1100100")
