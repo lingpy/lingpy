@@ -5,7 +5,6 @@ Basic functions for the conversion of Python-internal data into strings.
 from __future__ import unicode_literals
 import unicodedata
 from collections import defaultdict
-from clldutils.misc import slug as _slug
 from lingpy import util
 from lingpy.convert.html import template_path
 
@@ -402,24 +401,6 @@ END;
     return
 
 
-def slug(s):
-    """
-    Converts a string to a nexus "safe" representation (i.e. removes
-    many unicode characters and removes some punctuation characters).
-
-    Parameters
-    ----------
-    s : str
-        A string to convert to a nexus safe format.
-
-    Returns
-    -------
-    s : str
-        A string containing a nexus safe label.
-    """
-    return _slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")
-
-
 def write_nexus(
         wordlist,
         mode='mrbeast',
@@ -535,7 +516,7 @@ def write_nexus(
         if mode == 'BEASTWORDS' and previous != concept:
             chars.append("%s_ascertainment" % concept)
         # finally add label.
-        chars.append(slug(concept))
+        chars.append(util.nexus_slug(concept))
         previous = concept
 
     if mode in ('BEAST', 'BEASTWORDS'):
@@ -559,14 +540,14 @@ def write_nexus(
             if char not in visited:
                 visited += [char]
                 charblock += '\t{0} = {1}-{2}; [{3}]\n'.format(
-                    slug(char), pos[0], pos[-1], char
+                    util.nexus_slug(char), pos[0], pos[-1], char
                 )
         charblock = charblock.rstrip()  # remove trailing
 
     _matrix = ""
-    maxtaxlen = max([len(slug(t)) for t in wordlist.cols]) + 1
+    maxtaxlen = max([len(util.nexus_slug(t)) for t in wordlist.cols]) + 1
     for i, (taxon, m) in enumerate(zip(wordlist.cols, matrix)):
-        _matrix += str(slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
+        _matrix += str(util.nexus_slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
         _matrix += ''.join([
             '({0})'.format(c) if len(c) > 1 else str(c) for c in m
         ]) + '\n'
