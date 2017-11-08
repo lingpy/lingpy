@@ -1,16 +1,19 @@
-ID	DOCULECT	CONCEPT	GLOSSID	IPA	TOKENS	COGID	ALIGNMENT	PROSTRING
-295	German	I	42	ɪx	ɪ x	65	- ɪ x	XN
-296	English	I	42	aɪ	aɪ	65	- aɪ -	X
-298	Swedish	I	42	jaːg	j aː g	65	j aː g	AXN
-299	Icelandic	I	42	jɛɣ	j ɛ ɣ	65	j ɛ ɣ	AXN
-301	Norwegian	I	42	jæj	j æ j	65	j æ j	AXN
-1	German	all	1	al	a l	1	a l - -	XN
-2	English	all	1	ɔːl	ɔː l	1	ɔː l - -	XN
-3	Danish	all	1	æˀl	æˀ l	1	æˀ l - -	XN
-4	Swedish	all	1	alː	a lː	1	a lː - -	XN
-5	Icelandic	all	1	at͡lir	a t͡l i r	1	a t͡l i r	XBYN
-6	Dutch	all	1	ɑlə	ɑ l ə	1	ɑ l ə -	XBZ
-7	Norwegian	all	1	ɑlə	ɑ l ə	1	ɑ l ə -	XBZ
-8	German	ashes	2	aʃə	a ʃ ə	2	a ʃ - ə	XBZ
-9	English	ashes	2	æʃ	æ ʃ	2	æ ʃ - -	XN
-10	Danish	ashes	2	asg	a s g	2	a s g -	XLN
+ID	DOCULECT	CONCEPT	GLOSSID	COGID
+# 1 cognate set all languages = 1
+1	German	I	1	1
+2	English	I	1	1
+3	Swedish	I	1	1
+4	Icelandic	I	1	1
+5	Norwegian	I		1
+
+# 3 cognate sets 2=(G,E), 3=(S), 4=(I,N)
+6	German	all	2	2
+7	English	all	2	2
+8	Swedish	all	2	3
+9	Icelandic	all	2	4
+10	Norwegian	all	2	4
+
+# missing ? = (E, I), 3 cognate sets, all singletons
+11	German	ash	3	5
+12	Swedish	ash	3	6
+13	Norwegian	ash	3	7
