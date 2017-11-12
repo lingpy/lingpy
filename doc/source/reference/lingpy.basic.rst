@@ -1,43 +1,43 @@
-lingpy.basic package
-====================
+lingpy\.basic package
+=====================
 
 Submodules
 ----------
 
-lingpy.basic.ops module
------------------------
+lingpy\.basic\.ops module
+-------------------------
 
 .. automodule:: lingpy.basic.ops
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.basic.parser module
---------------------------
+lingpy\.basic\.parser module
+----------------------------
 
 .. automodule:: lingpy.basic.parser
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.basic.tree module
-------------------------
+lingpy\.basic\.tree module
+--------------------------
 
 .. automodule:: lingpy.basic.tree
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.basic.wordlist module
-----------------------------
+lingpy\.basic\.wordlist module
+------------------------------
 
 .. automodule:: lingpy.basic.wordlist
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.basic.workflow module
-----------------------------
+lingpy\.basic\.workflow module
+------------------------------
 
 .. automodule:: lingpy.basic.workflow
     :members:

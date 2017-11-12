@@ -1,5 +1,5 @@
-lingpy.data package
-===================
+lingpy\.data package
+====================
 
 Subpackages
 -----------
@@ -11,16 +11,16 @@ Subpackages
 Submodules
 ----------
 
-lingpy.data.derive module
--------------------------
+lingpy\.data\.derive module
+---------------------------
 
 .. automodule:: lingpy.data.derive
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.data.model module
-------------------------
+lingpy\.data\.model module
+--------------------------
 
 .. automodule:: lingpy.data.model
     :members:

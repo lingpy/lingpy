@@ -1,11 +1,11 @@
-lingpy.data.ipa package
-=======================
+lingpy\.data\.ipa package
+=========================
 
 Submodules
 ----------
 
-lingpy.data.ipa.sampa module
-----------------------------
+lingpy\.data\.ipa\.sampa module
+-------------------------------
 
 .. automodule:: lingpy.data.ipa.sampa
     :members:

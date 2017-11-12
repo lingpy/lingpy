@@ -1213,13 +1213,18 @@ def check_tokens(tokens, **keywords):
             try:
                 rcParams['art'].converter[token[0]]
             except KeyError:
-                if token[0] in keywords['stress']:
+                if len(token) == 1:
+                    errors.append((i, token))
+                elif token[0] in keywords['stress']:
                     try:
                         rcParams['art'].converter[token[1]]
                     except KeyError:
                         errors.append((i, token))
                 else:
-                    errors.append((i, token))
+                    try:
+                        rcParams['art'].converter[token[1]]
+                    except KeyError:
+                        errors.append((i, token))
 
     return errors
 

@@ -1,5 +1,5 @@
-lingpy.algorithm package
-========================
+lingpy\.algorithm package
+=========================
 
 Subpackages
 -----------
@@ -11,16 +11,24 @@ Subpackages
 Submodules
 ----------
 
-lingpy.algorithm.clustering module
-----------------------------------
+lingpy\.algorithm\.cluster\_util module
+---------------------------------------
+
+.. automodule:: lingpy.algorithm.cluster_util
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy\.algorithm\.clustering module
+------------------------------------
 
 .. automodule:: lingpy.algorithm.clustering
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.algorithm.extra module
------------------------------
+lingpy\.algorithm\.extra module
+-------------------------------
 
 .. automodule:: lingpy.algorithm.extra
     :members:

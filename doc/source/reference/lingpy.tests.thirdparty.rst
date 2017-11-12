@@ -1,19 +1,19 @@
-lingpy.tests.thirdparty package
-===============================
+lingpy\.tests\.thirdparty package
+=================================
 
 Submodules
 ----------
 
-lingpy.tests.thirdparty.test_cogent module
-------------------------------------------
+lingpy\.tests\.thirdparty\.test\_cogent module
+----------------------------------------------
 
 .. automodule:: lingpy.tests.thirdparty.test_cogent
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.thirdparty.test_linkcomm module
---------------------------------------------
+lingpy\.tests\.thirdparty\.test\_linkcomm module
+------------------------------------------------
 
 .. automodule:: lingpy.tests.thirdparty.test_linkcomm
     :members:

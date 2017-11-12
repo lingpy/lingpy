@@ -1,19 +1,19 @@
-lingpy.tests.data package
-=========================
+lingpy\.tests\.data package
+===========================
 
 Submodules
 ----------
 
-lingpy.tests.data.test_derive module
-------------------------------------
+lingpy\.tests\.data\.test\_derive module
+----------------------------------------
 
 .. automodule:: lingpy.tests.data.test_derive
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.data.test_sound_class_models module
-------------------------------------------------
+lingpy\.tests\.data\.test\_sound\_class\_models module
+------------------------------------------------------
 
 .. automodule:: lingpy.tests.data.test_sound_class_models
     :members:

@@ -1,11 +1,11 @@
-lingpy.thirdparty.linkcomm package
-==================================
+lingpy\.thirdparty\.linkcomm package
+====================================
 
 Submodules
 ----------
 
-lingpy.thirdparty.linkcomm.link_clustering module
--------------------------------------------------
+lingpy\.thirdparty\.linkcomm\.link\_clustering module
+-----------------------------------------------------
 
 .. automodule:: lingpy.thirdparty.linkcomm.link_clustering
     :members:

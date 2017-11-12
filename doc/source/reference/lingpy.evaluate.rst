@@ -1,27 +1,27 @@
-lingpy.evaluate package
-=======================
+lingpy\.evaluate package
+========================
 
 Submodules
 ----------
 
-lingpy.evaluate.acd module
---------------------------
+lingpy\.evaluate\.acd module
+----------------------------
 
 .. automodule:: lingpy.evaluate.acd
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.evaluate.alr module
---------------------------
+lingpy\.evaluate\.alr module
+----------------------------
 
 .. automodule:: lingpy.evaluate.alr
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.evaluate.apa module
---------------------------
+lingpy\.evaluate\.apa module
+----------------------------
 
 .. automodule:: lingpy.evaluate.apa
     :members:
