@@ -9,10 +9,11 @@
 
 
 
-Authors: [Johann-Mattis List](https://github.com/linguist) ([CRLAO, Paris](http://crlao.ehess.fr/)) and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
+Authors: [Johann-Mattis List](https://github.com/linguist) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)) and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
 
-Collaborators: Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), Simon Greenhill ([Australian National University, Canberra](https://researchers.anu.edu.au/researchers/greenhill-s).
-
+Collaborators: 
+Simon Greenhill ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), and Tiago Tresoldi ([UFRGS](http://www.ufrgs.br/english/home))
+ 
 LingPy is a Python Library for Historical Linguistics. It is being developed for Python 2.7 and Python 3.x 
 using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
 

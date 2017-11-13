@@ -25,6 +25,13 @@ Dataset Handling
    
    basic/wordlist
 
+Data Export
+^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+   
+   basic/strings
+
 Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^
 .. toctree::

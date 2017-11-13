@@ -67,7 +67,7 @@ master_doc = 'index'
 project = 'LingPy'
 copyright = ''
 authors = 'Johann-Mattis List and Robert Forkel' 
-collaborators = 'Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Simon Greenhill'
+collaborators = 'Simon Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel, and Tiago Tresoldi'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
