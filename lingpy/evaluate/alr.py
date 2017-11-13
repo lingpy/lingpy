@@ -1,3 +1,4 @@
+# *-* coding: utf-8 *-*
 """
 Module provides methods for the evaluation of automatic linguistic reconstruction analyses.
 """
