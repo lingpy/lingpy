@@ -42,7 +42,7 @@ class TestLexStat(WithTempDir):
         self.assertIn('lexstat', repr(ls))
         self._make_one(ls)
         self._make_one({0: ['ID', 'doculect', 'concept', 'tokens'],
-                        1: ['1', 'deu', 'hand', 'hant']})
+                        1: ['1', 'deu', 'hand', ['h', 'a', 'n', 't']]})
         self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect',
                                                         'concept'],
                                                     1: ['1', 'deu', 'hand']})

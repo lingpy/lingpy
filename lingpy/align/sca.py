@@ -21,8 +21,8 @@ from lingpy.basic.wordlist import Wordlist
 from lingpy.convert import html
 from lingpy.convert.strings import msa2str
 from lingpy.sequence.sound_classes import (
-    ipa2tokens, tokens2class, class2tokens, prosodic_string, prosodic_weights,
-    tokens2morphemes)
+    ipa2tokens, token2class, tokens2class, class2tokens, prosodic_string,
+    prosodic_weights, tokens2morphemes)
 from lingpy.align.multiple import Multiple
 from lingpy.align.pairwise import Pairwise
 from lingpy.algorithm import misc
@@ -141,13 +141,16 @@ class MSA(Multiple):
         This function is only useful when an ``msa``-file with already
         conducted alignment analyses was loaded.
         """
-        util.setdefaults(keywords, model=rcParams['sca'], stress=rcParams['stress'])
+        util.setdefaults(keywords, model=rcParams['sca'],
+                stress=rcParams['stress'], diacritics=rcParams['diacritics'],
+                cldf=False)
         self.classes = []
         self.model = keywords['model']
 
         # redefine the sequences of the Multiple class
         class_strings = [
-            tokens2class(seq.split(' '), self.model, stress=keywords['stress'])
+            tokens2class(seq.split(' '), self.model, stress=keywords['stress'],
+                diacritics=keywords['diacritics'], cldf=keywords['cldf'])
             for seq in self.seqs]
 
         # define the scoring dictionaries according to the methods
@@ -1018,7 +1021,9 @@ class Alignments(Wordlist):
 
         """
         util.setdefaults(
-            keywords, model=rcParams['sca'], gap_scale=1.0, ref=rcParams['ref'])
+            keywords, model=rcParams['sca'], gap_scale=1.0,
+            ref=rcParams['ref'], stress=rcParams['stress'],
+            diacritics=rcParams['diacritics'], cldf=False)
 
         # switch ref
         if keywords['ref'] != rcParams['ref']:
@@ -1058,7 +1063,10 @@ class Alignments(Wordlist):
                         for alm in self.msa[ref][cog]['alignment']:
                             cls = [c for c in tokens2class(
                                 alm,
-                                keywords['model']
+                                keywords['model'], 
+                                stress=keywords['stress'],
+                                cldf=keywords['cldf'],
+                                diacritics=keywords['diacritics']
                             ) if c != '0']
                             cls = class2tokens(cls, alm)
                             _classes.append(cls)
@@ -1325,6 +1333,9 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
     util.setdefaults(
         keywords,
         model=rcParams['sca'],
+        stress=rcParams['stress'],
+        cldf=False,
+        diacritics=rcParams['diacritics'],
         gap_scale=1.0,
         mode='majority',
         gap_score=-10,
@@ -1333,6 +1344,10 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
 
     # transform the matrix
     matrix = misc.transpose(getattr(msa, 'alm_matrix', msa))
+    
+    # custom function for tokens2class
+    tk2k = lambda x: token2class(x, keywords['model'], cldf=keywords['cldf'],
+            diacritics=keywords['diacritics'], stress=keywords['stress']) 
 
     # check for local peaks
     if keywords['local']:
@@ -1345,9 +1360,8 @@ def get_consensus(msa, gaps=False, taxa=False, classes=False, **keywords):
                     if charA not in rcParams['gap_symbol'] \
                             and charB not in rcParams['gap_symbol']:
                         sim.append(keywords['model'](
-                            tokens2class([charA], keywords['model'])[0],
-                            tokens2class([charB], keywords['model'])[0]
-                        ))
+                            tk2k(charA),
+                            tk2k(charB)))
                     else:
                         sim.append(0.0)
                 peaks.append(sum(sim) / len(sim))

@@ -79,8 +79,8 @@ def test_tokens2class():
 
     assert tokens2class(seq, 'dolgo') == list('TVKTVR000')
     assert tokens2class(seq2, 'cv')[2] == '0'
-    assert tokens2class(seq2, 'cv', clpa=True)[2] == 'C'
-    assert tokens2class(seq3, 'cv', clpa=True)[2] == '0'
+    assert tokens2class(seq2, 'cv', cldf=True)[2] == 'C'
+    assert tokens2class(seq3, 'cv', cldf=True)[2] == '0'
 
     assert_raises(IndexError, tokens2class, 'b  l'.split(' '), 'dolgo')
 

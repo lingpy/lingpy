@@ -30,6 +30,29 @@ def mean_edit_distance(
         The name of the column containing the gold-standard solutions.
     test = "consensus"
         The name of the column containing the test solutions.
+        
+    stress : str (default=rcParams['stress'])
+        A string containing the stress symbols used in the sound-class
+        conversion. Defaults to the stress as defined in
+        ~lingpy.settings.rcParams.
+
+    diacritics : str (default=rcParams['diacritics'])
+        A string containing diacritic symbols used in the sound-class
+        conversion. Defaults to the diacritic symbolds defined in
+        ~lingpy.settings.rcParams.
+
+    cldf : bool (default=False)
+        If set to True, this will allow for a specific treatment of phonetic
+        symbols which cannot be completely resolved (e.g., laryngeal h₂ in
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the specifications for writing
+        transcriptions in segmented strings, as employed by the `CLTS
+        <http://calc.digling.org/clts/>`_ initiative), in cases of insecurity
+        of pronunciation, users can adopt a ```source/target``` style, where
+        the source is the symbol used, e.g., in a reconstruction system, and
+        the target is a proposed phonetic interpretation. This practice is also
+        accepted by the `EDICTOR <http://edictor.digling.org>`_ tool.
+
     
     Returns
     -------
@@ -44,7 +67,10 @@ def mean_edit_distance(
     setdefaults(
         keywords,
         merge_vowels=rcParams['merge_vowels'],
-        model=rcParams['model'])
+        model=rcParams['model'],
+        stress=rcParams['stress'],
+        diacritics=rcParams['diacritics'],
+        cldf=False)
 
     distances = []
 
@@ -65,8 +91,13 @@ def mean_edit_distance(
             consensus = ipa2tokens(consensus, **keywords)
 
             if classes:
-                proto = tokens2class(proto, **keywords)
-                consensus = tokens2class(consensus, **keywords)
+                proto = tokens2class(proto, keywords['model'], stress=keywords['stress'],
+                        diacritics=keywords['diacritics'],
+                        cldf=keywords['cldf'])
+                consensus = tokens2class(consensus, keywords['model'],
+                        stress=keywords['stress'],
+                        diacritics=keywords['diacritics'],
+                        cldf=keywords['cldf'])
 
         distances.append(edit_dist(proto, consensus, normalized=False))
 

@@ -13,6 +13,7 @@ Sequence Modelling
    
    sequence/sound_classes
    sequence/generate
+   sequence/profile
    data/model
    data/data
    data/derive
