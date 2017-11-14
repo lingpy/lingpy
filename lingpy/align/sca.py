@@ -641,7 +641,7 @@ class Alignments(Wordlist):
             self._meta['msa'][ref] = {}
         if not self._meta['msa'][ref]:
             for key, value in self.etd[ref].items():
-                if key > 0:
+                if key not in [0, '', '0']:
                     tmp = [x for x in value if x != 0]
                     seqids = []
                     for t in tmp:
@@ -897,7 +897,7 @@ class Alignments(Wordlist):
         ])
 
         for key, value in sorted(self.msa[kw['ref']].items(), key=lambda x: x[0]):
-            if key > 0:
+            if key not in [0, '0', '']:
                 log.debug("Analyzing cognate set number {0}.".format(key))
 
                 # check for scorer keyword
