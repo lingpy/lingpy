@@ -67,7 +67,7 @@ else:
     requires = []
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.5"
+thisversion = "2.6"
 
 setup(
     name=pkgname,
@@ -97,6 +97,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.6'
     ],
     url="http://lingpy.org",
     description="Python library for automatic tasks in historical linguistics",
@@ -118,6 +119,9 @@ setup(
             'tests/test_data/*.msq',
             'tests/test_data/*.msa',
             'tests/test_data/*.tsv',
+            'tests/test_data/*.nex',
+            'tests/test_data/*.psa', 
+            'tests/test_data/*.psq',
             'data/conceptlists/*.tsv',
             'data/conf/*.rc',
             'data/models/*/converter',
@@ -134,6 +138,7 @@ setup(
             'data/templates/*.js',
             'data/templates/*.css',
             'data/templates/*.tex',
+            'data/templates/*.nex',
             'data/swadesh/swadesh.qlc',
         ]
     },

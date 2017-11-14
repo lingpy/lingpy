@@ -641,45 +641,46 @@ class Alignments(Wordlist):
             self._meta['msa'][ref] = {}
         if not self._meta['msa'][ref]:
             for key, value in self.etd[ref].items():
-                tmp = [x for x in value if x != 0]
-                seqids = []
-                for t in tmp:
-                    seqids += t
-                if len(seqids) > 1:
-                    # set up the dictionary
-                    d = {'ID': [], 'taxa': [], 'seqs': [], 'alignment': []}
-                    d['dataset'] = os.path.split(os.path.splitext(self.filename)[0])[1]
-                    if 'concept' in self.header:
-                        concept = self[seqids[0], 'concept']
-                        d['seq_id'] = '{0} ("{1}")'.format(key, concept)
-                    else:
-                        d['seq_id'] = '{0}'.format(key)
-
-                    # set up the data
-                    for seq in seqids:
-                        if self._alignment in self.header:
-                            this_string = self[seq][self.header[self._alignment]]
+                if key > 0:
+                    tmp = [x for x in value if x != 0]
+                    seqids = []
+                    for t in tmp:
+                        seqids += t
+                    if len(seqids) > 1:
+                        # set up the dictionary
+                        d = {'ID': [], 'taxa': [], 'seqs': [], 'alignment': []}
+                        d['dataset'] = os.path.split(os.path.splitext(self.filename)[0])[1]
+                        if 'concept' in self.header:
+                            concept = self[seqids[0], 'concept']
+                            d['seq_id'] = '{0} ("{1}")'.format(key, concept)
                         else:
-                            this_string = self[seq][stridx]
-                        if isinstance(this_string, text_type):
-                            this_string = this_string.split(' ')
-                        # check for partial cognates
-                        if self._mode == 'fuzzy':
-                            # split the string into morphemes
-                            # FIXME add keywords for morpheme segmentation
-                            morphemes = tokens2morphemes(this_string)
+                            d['seq_id'] = '{0}'.format(key)
 
-                            # get the position of the morpheme
-                            midx = self[seq][self.header[ref]].index(key)
-                            this_string = morphemes[midx]
+                        # set up the data
+                        for seq in seqids:
+                            if self._alignment in self.header:
+                                this_string = self[seq][self.header[self._alignment]]
+                            else:
+                                this_string = self[seq][stridx]
+                            if isinstance(this_string, text_type):
+                                this_string = this_string.split(' ')
+                            # check for partial cognates
+                            if self._mode == 'fuzzy':
+                                # split the string into morphemes
+                                # FIXME add keywords for morpheme segmentation
+                                morphemes = tokens2morphemes(this_string)
 
-                        d['ID'].append(seq)
-                        d['taxa'].append(self[seq, 'taxa'])
-                        d['seqs'].append(this_string)
-                        d['alignment'].append(this_string)
+                                # get the position of the morpheme
+                                midx = self[seq][self.header[ref]].index(key)
+                                this_string = morphemes[midx]
 
-                    d['alignment'] = normalize_alignment(d['alignment'])
-                    self._meta['msa'][ref][key] = d
+                            d['ID'].append(seq)
+                            d['taxa'].append(self[seq, 'taxa'])
+                            d['seqs'].append(this_string)
+                            d['alignment'].append(this_string)
+
+                        d['alignment'] = normalize_alignment(d['alignment'])
+                        self._meta['msa'][ref][key] = d
 
     def reduce_alignments(self, alignment=False, ref=False):
         """
@@ -896,52 +897,54 @@ class Alignments(Wordlist):
         ])
 
         for key, value in sorted(self.msa[kw['ref']].items(), key=lambda x: x[0]):
-            log.debug("Analyzing cognate set number {0}.".format(key))
+            if key > 0:
+                log.debug("Analyzing cognate set number {0}.".format(key))
 
-            # check for scorer keyword
-            if not kw['scoredict']:
-                m = SCA(value, **kw)
-            else:
-                # get the tokens
-                numbers = [self[idx, 'numbers'] for idx in value['ID']]
-                if kw['sonar']:
-                    sonars = [self[idx, 'sonars'] for idx in value['ID']]
+                # check for scorer keyword
+                if not kw['scoredict']:
+                    m = SCA(value, **kw)
                 else:
-                    sonars = False
-                value['seqs'] = numbers
-                m = SCA(value, **kw)
-                kw['sonars'] = sonars
-                kw['classes'] = False
+                    # get the tokens
+                    numbers = [self[idx, 'numbers'] for idx in value['ID']]
+                    if kw['sonar']:
+                        sonars = [self[idx, 'sonars'] for idx in value['ID']]
+                    else:
+                        sonars = False
+                    value['seqs'] = numbers
+                    m = SCA(value, **kw)
+                    kw['sonars'] = sonars
+                    kw['classes'] = False
 
-            if kw['method'] == 'progressive':
-                m.prog_align(**kw)
-            elif kw['method'] == 'library':
-                m.lib_align(**kw)
 
-            if kw['iteration']:
-                m.iterate_similar_gap_sites()
-                m.iterate_clusters(0.5)
-                m.iterate_orphans()
+                if kw['method'] == 'progressive':
+                    m.prog_align(**kw)
+                elif kw['method'] == 'library':
+                    m.lib_align(**kw)
 
-            if kw['swap_check']:
-                m.swap_check()
+                if kw['iteration']:
+                    m.iterate_similar_gap_sites()
+                    m.iterate_clusters(0.5)
+                    m.iterate_orphans()
 
-            # convert back to external format, if scoredict is set
-            if kw['scoredict']:
-                for i, alm in enumerate(m.alm_matrix):
-                    tk = self[m.ID[i], self._segments]
-                    new_tk = class2tokens(tk, alm)
-                    m.alm_matrix[i] = new_tk
+                if kw['swap_check']:
+                    m.swap_check()
 
-            if hasattr(m, 'swaps'):
-                self._meta['msa'][kw['ref']][key]['swaps'] = m.swaps
+                # convert back to external format, if scoredict is set
+                if kw['scoredict']:
+                    for i, alm in enumerate(m.alm_matrix):
+                        tk = self[m.ID[i], self._segments]
+                        new_tk = class2tokens(tk, alm)
+                        m.alm_matrix[i] = new_tk
 
-            self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
-            self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = \
-                m._sonority_consensus
-            self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
-                m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
-            self._meta['msa'][kw['ref']][key]['parameters'] = params
+                if hasattr(m, 'swaps'):
+                    self._meta['msa'][kw['ref']][key]['swaps'] = m.swaps
+
+                self._meta['msa'][kw['ref']][key]['alignment'] = m.alm_matrix
+                self._meta['msa'][kw['ref']][key]['_sonority_consensus'] = \
+                    m._sonority_consensus
+                self._meta['msa'][kw['ref']][key]['stamp'] = rcParams['align_stamp'].format(
+                    m.dataset, m.seq_id, __version__, rcParams['timestamp'], params)
+                self._meta['msa'][kw['ref']][key]['parameters'] = params
 
         self._msa2col(ref=kw['ref'], alignment=kw['alignment'])
 
