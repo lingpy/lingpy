@@ -11,6 +11,7 @@ from tqdm import tqdm
 from six import text_type
 from clldutils.path import Path, remove, path_component
 from clldutils import clilib
+from clldutils.misc import slug
 
 import lingpy
 from lingpy.log import get_level, file_written
@@ -213,3 +214,21 @@ def setdefaults(d, **kw):
 
 def identity(x):
     return x
+
+
+def nexus_slug(s):
+    """
+    Converts a string to a nexus "safe" representation (i.e. removes
+    many unicode characters and removes some punctuation characters).
+
+    Parameters
+    ----------
+    s : str
+        A string to convert to a nexus safe format.
+
+    Returns
+    -------
+    s : str
+        A string containing a nexus safe label.
+    """
+    return slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")
