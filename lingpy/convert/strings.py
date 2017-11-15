@@ -403,7 +403,7 @@ END;
 
 def write_nexus(
         wordlist,
-        mode='mrbeast',
+        mode='mrbayes',
         filename="mrbayes.nex",
         ref="cogid",
         missing="?", gap="-",

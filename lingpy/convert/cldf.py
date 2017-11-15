@@ -6,10 +6,12 @@ from __future__ import unicode_literals
 import unicodedata
 from collections import defaultdict
 from clldutils.path import Path, read_text
+from clldutils.csvw.metadata import TableGroup
 from clldutils.dsv import reader, Dialect
 from clldutils.misc import slug
 
 from lingpy import util
+from lingpy.basic.wordlist import Wordlist
 from lingpy.convert.html import template_path
 
 try:
@@ -118,7 +120,7 @@ def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
     ds = CLDF_Wordlist.in_dir(path)
     # add sources if they are available
     ds.add_sources(
-            read_text(sources_path) if source_path else '')
+            read_text(source_path) if source_path else '')
     # add components
     ds.add_component('LanguageTable')
     ds.add_component('ParameterTable', 'Concepticon_ID')
