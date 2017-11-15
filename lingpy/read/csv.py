@@ -67,7 +67,7 @@ def csv2list(
     idx = 0 if header else -1
 
     for i, line in enumerate(infile):
-        if line and not line.startswith(comment) and idx != i:
+        if line and (not line.startswith(comment) if comment else True) and idx != i:
             if strip_lines:
                 cells = [c.strip() for c in line.strip().split(sep)]
             else:
