@@ -1,5 +1,5 @@
 Converting Data to Strings (:py:mod:`~lingpy.convert.strings`)
-===================================================
+==============================================================
 
 The strings module provides some general and some specific functions which allow to convert data
 into strings which can then be imported by other software tools. You can import it by typing::

@@ -36,14 +36,6 @@ lingpy\.tests\.basic\.test\_wordlist module
     :undoc-members:
     :show-inheritance:
 
-lingpy\.tests\.basic\.test\_workflow module
--------------------------------------------
-
-.. automodule:: lingpy.tests.basic.test_workflow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

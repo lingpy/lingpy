@@ -30,7 +30,8 @@ Data Export
 .. toctree::
    :maxdepth: 1
    
-   basic/strings
+   convert/strings
+   convert/cldf
 
 Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^

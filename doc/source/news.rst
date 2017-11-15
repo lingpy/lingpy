@@ -81,7 +81,10 @@ provides standardized formats for wordlists and cognate judgments. The `pycldf
 into CLDF format. LingPy now also provides support to read CLDF-files and convert them into
 ~lingpy.basic.wordlist.Wordlist objects::
 
-   >>> [...]
+   >>> wl = Wordlist(test_data('KSL.qlc'))
+   >>> from lingpy.convert.cldf import to_cldf, from_cldf
+   >>> to_cldf(wl)
+   >>> wl = from_cldf('cldf/Wordlist-metadata.json')
 
 
 Adding Nexus Output

@@ -36,14 +36,6 @@ lingpy\.basic\.wordlist module
     :undoc-members:
     :show-inheritance:
 
-lingpy\.basic\.workflow module
-------------------------------
-
-.. automodule:: lingpy.basic.workflow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

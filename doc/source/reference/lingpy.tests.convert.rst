@@ -4,6 +4,14 @@ lingpy\.tests\.convert package
 Submodules
 ----------
 
+lingpy\.tests\.convert\.test\_cldf module
+-----------------------------------------
+
+.. automodule:: lingpy.tests.convert.test_cldf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy\.tests\.convert\.test\_graph module
 ------------------------------------------
 

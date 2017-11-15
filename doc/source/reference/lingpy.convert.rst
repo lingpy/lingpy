@@ -4,6 +4,14 @@ lingpy\.convert package
 Submodules
 ----------
 
+lingpy\.convert\.cldf module
+----------------------------
+
+.. automodule:: lingpy.convert.cldf
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lingpy\.convert\.graph module
 -----------------------------
 
