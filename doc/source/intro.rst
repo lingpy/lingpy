@@ -51,15 +51,15 @@ If you are using LingPy, please cite the library as follows:
   .. image:: https://img.shields.io/badge/PyPi_Package-2.4-brightgreen.svg
      :target: https://badge.fury.io/py/lingpy/
   
-  .. image:: https://img.shields.io/badge/BibTex-List2016e-deb887.svg
-     :target: http://bibliography.lingpy.org/evobib/raw.php?key=List2016e
+  .. image:: https://img.shields.io/badge/BibTex-List2018i-deb887.svg
+     :target: http://bibliography.lingpy.org/evobib/raw.php?key=List2017i
   
   .. image:: https://img.shields.io/badge/GitHub-lingpy-000000.svg
      :target: https://github.com/lingpy/lingpy
 
 
 What's next?
--------------------------
+------------
 
 .. toctree::
    :maxdepth: 1

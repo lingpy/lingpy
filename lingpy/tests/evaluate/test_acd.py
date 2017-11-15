@@ -1,6 +1,7 @@
 # coding: utf8
 from __future__ import unicode_literals
 
+from nose.tools import assert_raises
 from clldutils.testing import WithTempDir
 
 from lingpy import LexStat
@@ -59,6 +60,14 @@ class Tests(WithTempDir):
         from lingpy.evaluate.acd import random_cognates
         random_cognates(self.lex, ref='randomid')
         assert 'randomid' in self.lex.header
+
+    def test_extreme_cognates(self):
+        from lingpy.evaluate.acd import extreme_cognates
+        extreme_cognates(self.lex, ref="lumperid", bias='lumper')
+        assert self.lex[1, 'lumperid'] == self.lex[2, 'lumperid']
+        extreme_cognates(self.lex, ref='splitterid', bias='splitter')
+        assert self.lex[1, 'splitterid'] != self.lex[2, 'splitterid']
+        assert_raises(ValueError, extreme_cognates, self.lex, bias='')
         
 
 def test_npoint_ap():

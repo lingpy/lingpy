@@ -489,7 +489,24 @@ def npoint_ap(scores, cognates, reverse=False):
 
 
 def random_cognates(wordlist, ref='randomid', bias=False):
-    """Populate a wordlist with random cognates for each entry."""
+    """
+    Populate a wordlist with random cognates for each entry.
+    
+    Parameters
+    ----------
+    ref : str (default="randomid")
+        Cognate set identifier for the newly created random cognate sets.
+    bias : str (default=False)
+        When set to "lumper" this will tend to create less cognate sets and
+        larger clusters, when set to "splitter" it will tend to create smaller
+        clusters.
+
+    Note
+    ----
+    When using this method for evaluation, you should be careful to
+    overestimate the results. The function which creates the random clusters is
+    based on simple functions for randomization and thus probably 
+    """
     
     clrd, current = {}, 1
     for c in wordlist.rows:
@@ -500,3 +517,29 @@ def random_cognates(wordlist, ref='randomid', bias=False):
         current += max(clrs)
 
     wordlist.add_entries(ref, clrd, lambda x: x)
+
+def extreme_cognates(wordlist, ref="extremeid", bias="lumper"):
+    """Return extreme cognates, either lump all words together or split them.
+
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        A ~lingpy.basic.wordlist.Wordlist object.
+    ref : str (default="extremeid")
+        The name of the table in your wordlist to which the new IDs should be
+        written.
+    bias : str (default="lumper")
+        If set to "lumper", all words with a certain meaning will be given the
+        same cognate set ID, if set to "splitter", all will be given a separate
+        ID.
+
+    """
+    if bias not in ['lumper', 'splitter']:
+        raise ValueError("You must select between 'lumper' or 'splitter'.")
+    if bias == "lumper":
+        concepts = {c: i+1 for i, c in enumerate(wordlist.rows)}
+        wordlist.add_entries(ref, 'concept', lambda x: concepts[x])
+    elif bias == 'splitter':
+        idxs = {idx: idx for idx in wordlist}
+        wordlist.add_entries(ref, idxs, lambda x: x)
+

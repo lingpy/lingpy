@@ -10,6 +10,7 @@ Tutorial
    formats
    lingpy.basic.wordlist
    datastructures
+   lingpy-edictor
 
 
 What's Next?
