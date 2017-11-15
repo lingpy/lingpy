@@ -5,9 +5,9 @@ Basic functions for the conversion of Python-internal data into strings.
 from __future__ import unicode_literals
 import unicodedata
 from collections import defaultdict
+
 from lingpy import util
 from lingpy.convert.html import template_path
-
 
 def scorer2str(scorer):
     """

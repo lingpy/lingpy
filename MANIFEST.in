@@ -1,5 +1,6 @@
 include distribute_setup.py 
 recursive-include lingpy *.msa
+recursive-include lingpy *.json
 recursive-include lingpy *.msq
 recursive-include lingpy *.csv
 recursive-include lingpy *.rc

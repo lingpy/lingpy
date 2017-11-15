@@ -16,3 +16,5 @@ Functions
    pairs
    diff
    npoint_ap
+   random_cognates
+   extreme_cognates
