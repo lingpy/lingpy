@@ -2,6 +2,7 @@
 Basic module for the handling of language trees.
 """
 from __future__ import unicode_literals, division, print_function
+import os
 import random
 
 from lingpy.thirdparty.cogent import LoadTree, PhyloNode
@@ -101,7 +102,7 @@ class Tree(PhyloNode):
         # lingpy-specific aspects of cogent's trees and allows us to include
         # them in our documentation
         if type(tree) == str:
-            if tree[-4:] not in ['.nwk', '.txt']:
+            if not os.path.isfile(tree):
                 tmp = LoadTree(treestring=tree)
             else:
                 tmp = LoadTree(tree)
