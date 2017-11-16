@@ -1,6 +1,10 @@
 from unittest import TestCase
 
-from lingpy.basic.tree import Tree, random_tree
+from lingpy.basic.tree import Tree, random_tree, _star_tree
+from lingpy.tests.util import test_data
+
+def test_star_tree():
+    assert _star_tree(list('abc')) == '(a,b,c);'
 
 
 def test_random_tree():
@@ -33,3 +37,9 @@ class TestTree(TestCase):
         assert treeA.get_distance(treeB, 'rf') == 1.0
         assert treeA.get_distance(treeB, 'symmetric') == 2
         assert treeA.get_distance(treeB, 'grf') == 1.0
+
+    def test_get_distance_unknown(self):
+        """test failure with unknown distance"""
+        with self.assertRaises(ValueError):
+            Tree('(a,b)').get_distance(Tree('(a,b)'), 'xxx')
+    
