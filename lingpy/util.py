@@ -177,7 +177,7 @@ def read_text_file(path, normalize=None, lines=False):
     def _normalize(chunk):
         return unicodedata.normalize(normalize, chunk) if normalize else chunk
 
-    with io.open(_str_path(path), 'r', encoding='utf8') as fp:
+    with io.open(_str_path(path), 'r', encoding='utf-8-sig') as fp:
         if lines:
             return [_normalize(line.strip('\r\n')) for line in fp]
         else:
