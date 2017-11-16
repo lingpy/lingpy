@@ -135,8 +135,6 @@ class Tree(PhyloNode):
             * "branch": the distance in terms of branch lengths
             * "symmetric": the symmetric difference between all partitions of
                 the trees
-
-
         """
         if distance == 'grf':
             return TreeDist.grf(str(self), str(other), distance='grf')
@@ -163,7 +161,6 @@ class Tree(PhyloNode):
         distance : int
             The distance of the given node to the root of the tree.
         """
-
         subtree = self.getNodeMatchingName(node)
         parent = ''
         counter = 0
@@ -171,7 +168,6 @@ class Tree(PhyloNode):
             parent = subtree.Parent.Name
             subtree = self.getNodeMatchingName(parent)
             counter += 1
-
         return counter
 
     #def getTransitionMatrix(self):
