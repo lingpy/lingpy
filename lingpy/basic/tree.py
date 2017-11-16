@@ -132,14 +132,11 @@ class Tree(PhyloNode):
 
             * "grf": the generalized Robinson-Foulds Distance
             * "rf": the Robinson-Foulds Distance
-            * "branch": the distance in terms of branch lengths
             * "symmetric": the symmetric difference between all partitions of
                 the trees
         """
         if distance == 'grf':
             return TreeDist.grf(str(self), str(other), distance='grf')
-        elif distance in ['branch', 'branch_length', 'branchlength']:
-            return self.distance(other)
         elif distance == 'rf':
             return TreeDist.grf(str(self), str(other), distance='rf')
         elif distance == 'symmetric':
