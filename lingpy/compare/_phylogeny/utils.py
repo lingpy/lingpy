@@ -163,24 +163,15 @@ def get_acs(wordlist, glm, homoplasy=0, **keywords):
             child_name = child.Name
             queue += [child_name]
             acs[child_name] = []
-
             for char in gls:
-
                 positives = [x[0] for x in gls[char][0] if x[1] == 1]
                 negatives = [x[0] for x in gls[char][0] if x[1] == 0]
-
                 if child_name in positives:
-                    try:
-                        acs[child_name] += [char]
-                    except KeyError:
-                        acs[child_name] = [char]
+                    acs[child_name] += [char]
                 elif child_name in negatives:
                     pass
                 elif char in acs[parent]:
-                    try:
-                        acs[child_name] += [char]
-                    except KeyError:
-                        acs[child_name] = [char]
+                    acs[child_name] += [char]
 
     dist = []
     for t in acs:
