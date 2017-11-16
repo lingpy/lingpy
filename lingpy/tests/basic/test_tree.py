@@ -43,3 +43,7 @@ class TestTree(TestCase):
         with self.assertRaises(ValueError):
             Tree('(a,b)').get_distance(Tree('(a,b)'), 'xxx')
     
+    def test_init_from_file(self):
+        tree = Tree(test_data('phybo.tre'))
+        print(dir(tree))
+        assert False
