@@ -115,7 +115,8 @@ setup(
     ext_modules=extension_modules,
     extras_require={
         "borrowing": ["matplotlib", "scipy"],
-        "cldf": ["pycldf"]
+        "cldf": ["pycldf"],
+        "cluster": ["python-igraph", "scikit-learn"]
     },
     include_package_data=True,
     exclude_package_data={}, 
