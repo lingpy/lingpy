@@ -32,4 +32,7 @@ class Tests():
         assert a == 3
         assert b[0][0] == 3
         assert b[0][1][0] == 'Albanian'
-
+    
+    def test_synonymy(self):
+        syns = sn.synonymy(self.wl)
+        assert max(syns.values()) == 1

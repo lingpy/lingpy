@@ -24,6 +24,8 @@ Dataset Handling
    :maxdepth: 1
    
    basic/wordlist
+   compare/sanity
+
 
 Data Export
 ^^^^^^^^^^^

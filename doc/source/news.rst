@@ -39,6 +39,33 @@ You can now also easily access the header of a wordlist in its current order::
 This is specifically convenient if you construct a Wordlist by creating a dictionary inside a Python
 script.
 
+Sanity Checks of Linguistic Data
+--------------------------------
+
+We introduce a new module, called ~lingpy.compare.sanity. In this module, we provide a couple of new
+functions which you can use to check the consistency of your data. One specific focus, given that
+LingPy is focused on sequence comparison, is the *coverage* of words in a wordlist. Coverage is
+hereby understood as the minimal number of words shared per meaning slot in each language pair.
+Interestingly, you will notice, when testing certain datasets, that mutual coverage can at times be
+extremely low. As a rule of thumb, if your data's mutual coverage is below 100 for moderately
+divergent language samples, you should not run an analysis using the "lexstat" algorithm of the
+~lingpy.compare.lexstat.LexStat class, but instead turn to the "sca" method provided by the same
+class. Mutual coverage can be computed in a straightforward manner::
+
+  >>> from lingpy.compare.sanity import mutual_coverage_check
+  >>> wl = Wordlist(test_data('KSL.qlc'))
+  >>> for i in range(wl.height, 1, -1):
+          if mutual_coverage_check(wl, i):
+              print('mutual coverage is {0}'.format(i))
+              break
+      200
+
+We highly recommend all users which deal with spotty and patchy data to have a closer look at the
+coverage functions offered in the ~lingpy.compare.sanity module. You may also want to check out the
+~lingpy.compare.sanity.synonymy function which computes the number of synonyms in your dataset. Here
+again, we recommend to pay specific attention to not exceed a value of maximally three words per
+concept and language.
+
 Alignments and Cognate Sets
 ---------------------------
 
@@ -75,7 +102,7 @@ not perform much better than 73% in these cases, it does not mean that it is per
 Adding Support to Read CLDF
 ---------------------------
 
-The cross-linguistic data formats (`CLDF <http://cldf.clld.org>`_) initiative (:bib:`Forkel2017a`)
+The cross-linguistic data formats (`CLDF <http://cldf.clld.org>`_) initiative (:evobib:`Forkel2017a`)
 provides standardized formats for wordlists and cognate judgments. The `pycldf
 <http://github.com/cldf/pycldf>`_ package provides support to convert LingPy-formatted data sets
 into CLDF format. LingPy now also provides support to read CLDF-files and convert them into

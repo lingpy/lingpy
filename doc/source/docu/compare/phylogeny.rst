@@ -26,7 +26,6 @@ Borrowing Detection (:py:mod:`~lingpy.compare.phylogeny`)
    .. rubric:: Inherited Methods
    .. autosummary::
 
-
       ~lingpy.basic.parser.QLCParser.pickle
       ~lingpy.basic.parser.QLCParserWithRowsAndCols.get_entries
       ~lingpy.basic.wordlist.Wordlist.add_entries
