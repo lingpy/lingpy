@@ -109,7 +109,8 @@ class Tree(PhyloNode):
         else:
             if type(tree) == list:
                 tmp = LoadTree(treestring=random_tree(tree, **keywords))
-            else:
+            else:  # pragma: no cover
+                # last ditch attempt to try load
                 tmp = LoadTree(tree)
 
         for key, val in tmp.__dict__.items():

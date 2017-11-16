@@ -45,5 +45,9 @@ class TestTree(TestCase):
     
     def test_init_from_file(self):
         tree = Tree(test_data('phybo.tre'))
-        print(dir(tree))
-        assert False
+        assert len(tree.taxa) == 40, "should have a taxa attribute and 40 tips"
+
+    def test_init_from_list(self):
+        tree = Tree(['Simon', 'Mattis', 'Robert'])
+        assert len(tree.taxa) == 3, "should have a taxa attribute and 3 tips"
+        
