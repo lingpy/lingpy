@@ -120,7 +120,7 @@ class Tree(PhyloNode):
 
     def get_distance(self, other, distance='grf', debug=False):
         """
-        Function returns the Robinson Fould distance between the two trees.
+        Function returns the Robinson-Foulds distance between the two trees.
 
         Parameters
         ----------
@@ -130,8 +130,8 @@ class Tree(PhyloNode):
         distance : { "grf", "rf", "branch", "symmetric"} (default="grf")
             The distance which shall be calculated. Select between:
 
-            * "grf": the generalized Robinson Fould Distance
-            * "rf": the Robinson Fould Distance
+            * "grf": the generalized Robinson-Foulds Distance
+            * "rf": the Robinson-Foulds Distance
             * "branch": the distance in terms of branch lengths
             * "symmetric": the symmetric difference between all partitions of
                 the trees

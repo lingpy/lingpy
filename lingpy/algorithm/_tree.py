@@ -17,7 +17,7 @@ class _TreeDist(object):
     @staticmethod
     def grf(treeA, treeB, distance='grf'):
         """
-        Computes the generalized Robinson fould distance between two trees.
+        Computes the generalized Robinson-Foulds distance between two trees.
         """
 
         # prepare the trees [probably not necessary @lingulist]
