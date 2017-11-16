@@ -90,12 +90,19 @@ Evaluation
    evaluate/alr
    evaluate/apa
 
-What's Next?
-------------
+Reference
+^^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
    
    ../reference
+
+Download
+^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
    ../download
 
