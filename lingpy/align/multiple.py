@@ -185,7 +185,8 @@ class Multiple(UnicodeMixin):
         """
         # check whether model is a string
         if not hasattr(model, 'name'):
-            model = rcParams[model]
+            model = rcParams[model] if model else rcParams['model']
+        
 
         # check for keyword classes
         if not classes:
@@ -226,25 +227,14 @@ class Multiple(UnicodeMixin):
         else:
             self.int2ext = {i: [i] for i in range(len(keys))}
 
-        # -> # create external to internal in order to allow for a quick switching
-        # -> # of the vals
-        # -> self.ext2int = {}
-        # -> for k,vals in self.int2ext.items():
-        # ->     for v in vals:
-        # ->         self.ext2int[v] = k
-
         # store sonars if they are passed as a list
         if sonar and sonars:  # == list:
             self._sonars = [sonars[key] for key in keys]
-            # -> self._sonars = [0 for i in range(len(sonar))]
-            # -> for i in range(len(self._sonars)):
-            # ->     self._sonars[self.ext2int[i]] = sonar[i]
             self._prostrings = list([prosodic_string(s) for s in self._sonars])
         # create sonars if the argument is true
         elif sonar:
             self._sonars = list(
                 map(lambda x: [int(t) for t in tokens2class(
-                    # XXX change this part
                     x, rcParams['art'], stress=rcParams['stress'])],
                     [self.tokens[key] for key in keys]))
             if log.get_level() <= logging.DEBUG:
