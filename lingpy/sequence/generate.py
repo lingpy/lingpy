@@ -6,6 +6,7 @@ import random
 
 import numpy as np
 
+from lingpy.util import setdefaults
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import ipa2tokens, prosodic_string, tokens2class
 
@@ -86,7 +87,8 @@ class MCPhon(MCBasic):
         class_model=rcParams['model'],
         **keywords
     ):
-
+        setdefaults(keywords, stress=rcParams['stress'],
+                diacritics=rcParams['diacritics'], cldf=False)
         self.model = class_model
         self.words = words
         self.tokens = []
@@ -108,10 +110,15 @@ class MCPhon(MCBasic):
                 p = prostrings[i]
             else:
                 p = prosodic_string(
-                    tokens2class(tk, model=rcParams['art'], **keywords), **keywords)
+                    tokens2class(tk, rcParams['art'],
+                        cldf=keywords['cldf'],
+                        diacritics=keywords['diacritics'],
+                        stress=keywords['stress']), **keywords)
             # create classes
             if classes:
-                c = tokens2class(tk, model=class_model)
+                c = tokens2class(tk, class_model, cldf=keywords['cldf'],
+                        diacritics=keywords['diacritics'],
+                        stress=keywords['stress'])
                 bigrams = list(zip(p, c))
                 self.classes += [c]
             else:
@@ -153,15 +160,21 @@ class MCPhon(MCBasic):
             return ' '.join([i[1] for i in out])
 
     def evaluate_string(self, string, tokens=False, **keywords):
+        setdefaults(keywords, stress=rcParams['stress'],
+                diacritics=rcParams['diacritics'], cldf=False)
         if not tokens:
             tokens = ipa2tokens(string)
         score = 1
         dist = self.dist['#']
 
         prostring = prosodic_string(
-            tokens2class(tokens, model=rcParams['art'], **keywords), **keywords)
+            tokens2class(tokens, rcParams['art'], cldf=keywords['cldf'],
+                        diacritics=keywords['diacritics'],
+                        stress=keywords['stress']))
         if self.classes:
-            c = tokens2class(tokens, model=self.model)
+            c = tokens2class(tokens, self.model, cldf=keywords['cldf'],
+                        diacritics=keywords['diacritics'],
+                        stress=keywords['stress'])
             teststring = list(zip(prostring, c))
         else:
             teststring = list(zip(prostring, tokens))

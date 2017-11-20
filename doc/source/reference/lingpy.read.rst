@@ -1,35 +1,35 @@
-lingpy.read package
-===================
+lingpy\.read package
+====================
 
 Submodules
 ----------
 
-lingpy.read.csv module
-----------------------
+lingpy\.read\.csv module
+------------------------
 
 .. automodule:: lingpy.read.csv
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.read.phylip module
--------------------------
+lingpy\.read\.phylip module
+---------------------------
 
 .. automodule:: lingpy.read.phylip
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.read.qlc module
-----------------------
+lingpy\.read\.qlc module
+------------------------
 
 .. automodule:: lingpy.read.qlc
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.read.starling module
----------------------------
+lingpy\.read\.starling module
+-----------------------------
 
 .. automodule:: lingpy.read.starling
     :members:

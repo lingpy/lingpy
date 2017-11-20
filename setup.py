@@ -67,15 +67,15 @@ else:
     requires = []
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.5"
+thisversion = "2.6"
 
 setup(
     name=pkgname,
     version=thisversion,
     packages=find_packages(pkg_location, 
-        exclude=[
-            "lingpy._plugins", "_plugins", "*._plugins", "_plugins.*", '*._plugins.*', "build", "private", "lingpy.egg-info",
-            "dist", "lib"]
+        exclude=[ "lingpy._plugins", "_plugins", "*._plugins", "_plugins.*",
+            '*._plugins.*', "build", "private", "lingpy.egg-info", "dist",
+            "lib"]
         ),
     package_dir=pkg_dir,
     install_requires=requires,
@@ -114,7 +114,9 @@ setup(
     platforms=["unix", "linux", "windows"],
     ext_modules=extension_modules,
     extras_require={
-        "borrowing": ["matplotlib", "networkx", "scipy"]
+        "borrowing": ["matplotlib", "scipy"],
+        "cldf": ["pycldf"],
+        "cluster": ["python-igraph", "scikit-learn"]
     },
     include_package_data=True,
     exclude_package_data={}, 
@@ -128,6 +130,11 @@ setup(
             'tests/test_data/*.msq',
             'tests/test_data/*.msa',
             'tests/test_data/*.tsv',
+            'tests/test_data/*.nex',
+            'tests/test_data/*.psa', 
+            'tests/test_data/*.psq',
+            'tests/test_data/cldf/*.csv',
+            'tests/test_data/cldf/*.json',
             'data/conceptlists/*.tsv',
             'data/conf/*.rc',
             'data/models/*/converter',
@@ -144,6 +151,7 @@ setup(
             'data/templates/*.js',
             'data/templates/*.css',
             'data/templates/*.tex',
+            'data/templates/*.nex',
             'data/swadesh/swadesh.qlc',
         ]
     },

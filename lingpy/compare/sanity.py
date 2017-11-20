@@ -26,6 +26,39 @@ def _get_concepts(wordlist, concepts):
         wordlist.cols}
 
 def mutual_coverage(wordlist, concepts='concept'):
+    """Compute mutual coverage for all language pairs in your data.
+    
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        Your Wordlist object (or a descendant class).
+    concepts : str (default="concept")
+        The column which stores your concepts.
+
+    Returns
+    -------
+    coverage : dict
+        A dictionary of dictionaries whose value is the number of items two
+        languages share.
+
+    Examples
+    --------
+    
+    Compute coverage for the KSL.qlc dataset::
+      
+      >>> from lingpy.compare.sanity import mutual_coverage
+      >>> from lingpy import *
+      >>> from lingpy.tests.util import test_data
+      >>> wl = Wordlist(test_data('KSL.qlc'))
+      >>> cov = mutual_coverage(wl)
+      >>> cov['English']['German']
+      200
+
+    See also
+    --------
+    mutual_coverage_check
+    mutual_coverage_subset
+    """
     coverage = defaultdict(dict)
     concepts = _get_concepts(wordlist, concepts)
     for t1, t2 in combinations(wordlist.cols, r=2):
@@ -35,12 +68,40 @@ def mutual_coverage(wordlist, concepts='concept'):
 
 def mutual_coverage_check(wordlist, threshold, concepts='concept'):
     """Check whether a given mutual coverage is fulfilled by the dataset.
-
+    
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        Your Wordlist object (or a descendant class).
+    concepts : str (default="concept")
+        The column which stores your concepts.
+    threshold : int
+        The threshold which should be checked.
+    
     Returns
     -------
         c: bool
             True, if coverage is fulfilled for all language pairs, False if
             otherwise.
+
+    Examples
+    --------
+    Compute minimal mutual coverage for the KSL dataset::
+
+      >>> from lingpy.compare.sanity import mutual_coverage
+      >>> from lingpy import *
+      >>> from lingpy.tests.util import test_data
+      >>> wl = Wordlist(test_data('KSL.qlc'))
+      >>> for i in range(wl.height, 1, -1):
+              if mutual_coverage_check(wl, i):
+                  print('mutual coverage is {0}'.format(i))
+                  break
+          200
+
+    See also
+    --------
+    mutual_coverage
+    mutual_coverage_subset
     """
     mc = mutual_coverage(wordlist, concepts)
     for coverage in mc.values():
@@ -51,11 +112,40 @@ def mutual_coverage_check(wordlist, threshold, concepts='concept'):
 def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
     """Compute maximal mutual coverage for all language in a wordlist.
     
-    Note
-    ----
-    Returns all languages in a sample for which coverage is minimally as
-    defined in the threshold. Coverage means the number of concepts for which
-    there is a translation in both language A and language B.
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        Your Wordlist object (or a descendant class).
+    concepts : str (default="concept")
+        The column which stores your concepts.
+    threshold : int
+        The threshold which should be checked.  
+
+    Returns
+    -------
+    coverage : tuple
+        A tuple consisting of the number of languages for which the coverage
+        could be found as well as a list of all pairings in which this coverage
+        is possible. The list itself contains the mutual coverage inside each
+        pair and the list of languages.
+
+    Examples
+    --------
+    Compute all sets of languages with coverage at 200 for the KSL dataset::
+
+      >>> from lingpy.compare.sanity import mutual_coverage_subset
+      >>> from lingpy import *
+      >>> from lingpy.tests.util import test_data
+      >>> wl = Wordlist(test_data('KSL.qlc'))
+      >>> number_of_languages, pairs = mutual_coverage_subset(wl, 200)
+      >>> for number_of_items, languages in pairs:
+              print(number_of_items, ','.join(languages))
+          200 Albanian,English,French,German,Hawaiian,Navajo,Turkish
+
+    See also
+    --------
+    mutual_coverage
+    mutual_coverage_check
     """
     coverage = mutual_coverage(wordlist, concepts)
 
@@ -79,6 +169,44 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
                 best_clique = len(clique)
     return best_clique, best_cliques[best_clique]
 
-def synonymy(wordlist, segments='tokens', sound_classes=False):
-    words = defaultdict(list)
-    pass
+def synonymy(wordlist, concepts='concept', languages='doculect'):
+    """Check the number of synonyms per language and concept.
+    
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        Your Wordlist object (or a descendant class).
+    concepts : str (default="concept")
+        The column which stores your concepts.
+    languages : str (default="doculect")
+        The column which stores your language names. 
+    
+    Returns
+    -------
+    synonyms : dict
+        A dictionary with language and concept as key and the number of
+        synonyms as value.
+
+    Examples
+    --------
+    Calculate synonymy in KSL.qlc dataset::
+
+      >>> from lingpy.compare.sanity import synonymy      
+      >>> from lingpy import *
+      >>> from lingpy.tests.util import test_data
+      >>> wl = Wordlist(test_data('KSL.qlc'))
+      >>> syns = synonymy(wl)
+      >>> for a, b in syns.items():
+              if b > 1:
+                  print(a[0], a[1], b)
+
+    There is no case where synonymy exceeds 1 word per concept per language,
+    since :evobib:`Kessler2001` was paying particular attention to avoid
+    synonyms.
+    """
+    synonyms = defaultdict(int)
+    for idx, language, concept in wordlist.iter_rows(languages, concepts):
+        synonyms[language, concept] += 1
+
+    return synonyms
+    

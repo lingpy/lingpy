@@ -13,6 +13,7 @@ Sequence Modelling
    
    sequence/sound_classes
    sequence/generate
+   sequence/profile
    data/model
    data/data
    data/derive
@@ -23,6 +24,16 @@ Dataset Handling
    :maxdepth: 1
    
    basic/wordlist
+   compare/sanity
+
+
+Data Export
+^^^^^^^^^^^
+.. toctree::
+   :maxdepth: 1
+   
+   convert/strings
+   convert/cldf
 
 Sequence Comparison
 ^^^^^^^^^^^^^^^^^^^
@@ -79,12 +90,19 @@ Evaluation
    evaluate/alr
    evaluate/apa
 
-What's Next?
-------------
+Reference
+^^^^^^^^^
 
 .. toctree::
    :maxdepth: 1
    
    ../reference
+
+Download
+^^^^^^^^
+
+.. toctree::
+   :maxdepth: 1
+
    ../download
 

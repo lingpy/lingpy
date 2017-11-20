@@ -10,6 +10,7 @@ Tutorial
    formats
    lingpy.basic.wordlist
    datastructures
+   lingpy-edictor
 
 
 What's Next?
@@ -19,7 +20,7 @@ What's Next?
    :maxdepth: 1
     
    ../docu/index
-   ../reference/modules
+   ../reference
    ../download
 
 

@@ -1,27 +1,27 @@
-lingpy.tests.align package
-==========================
+lingpy\.tests\.align package
+============================
 
 Submodules
 ----------
 
-lingpy.tests.align.test_multiple module
----------------------------------------
+lingpy\.tests\.align\.test\_multiple module
+-------------------------------------------
 
 .. automodule:: lingpy.tests.align.test_multiple
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.align.test_pairwise module
----------------------------------------
+lingpy\.tests\.align\.test\_pairwise module
+-------------------------------------------
 
 .. automodule:: lingpy.tests.align.test_pairwise
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.align.test_sca module
-----------------------------------
+lingpy\.tests\.align\.test\_sca module
+--------------------------------------
 
 .. automodule:: lingpy.tests.align.test_sca
     :members:

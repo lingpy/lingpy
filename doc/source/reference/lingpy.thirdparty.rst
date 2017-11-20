@@ -1,5 +1,5 @@
-lingpy.thirdparty package
-=========================
+lingpy\.thirdparty package
+==========================
 
 Subpackages
 -----------

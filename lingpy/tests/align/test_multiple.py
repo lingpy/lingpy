@@ -25,6 +25,11 @@ class Tests(TestCase):
     def test_prog_align(self):
         self.msa.prog_align()
         assert self.msa.alm_matrix[0] == list('wal-demar-')
+        self.msa.prog_align(sonars=[
+                [1, 2, 3, 4, 1, 2, 3, 4],
+                [1, 2, 3, 4, 5, 1, 2, 3, 4],
+                [1, 1, 1, 1, 1, 1, 1, 1]])
+        assert self.msa.alm_matrix[0] == list('wal-demar-')
 
     def test_lib_align(self):
         self.msa.lib_align()

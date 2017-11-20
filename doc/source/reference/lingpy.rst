@@ -1,5 +1,5 @@
-lingpy package
-==============
+LingPy Reference
+================
 
 Subpackages
 -----------
@@ -22,56 +22,56 @@ Subpackages
 Submodules
 ----------
 
-lingpy.cache module
--------------------
+lingpy\.cache module
+--------------------
 
 .. automodule:: lingpy.cache
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.cli module
------------------
+lingpy\.cli module
+------------------
 
 .. automodule:: lingpy.cli
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.compat module
---------------------
+lingpy\.compat module
+---------------------
 
 .. automodule:: lingpy.compat
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.config module
---------------------
+lingpy\.config module
+---------------------
 
 .. automodule:: lingpy.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.log module
------------------
+lingpy\.log module
+------------------
 
 .. automodule:: lingpy.log
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.settings module
-----------------------
+lingpy\.settings module
+-----------------------
 
 .. automodule:: lingpy.settings
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.util module
-------------------
+lingpy\.util module
+-------------------
 
 .. automodule:: lingpy.util
     :members:

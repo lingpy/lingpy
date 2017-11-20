@@ -1,37 +1,53 @@
-lingpy.compare package
-======================
+lingpy\.compare package
+=======================
 
 Submodules
 ----------
 
-lingpy.compare.lexstat module
------------------------------
+lingpy\.compare\.lexstat module
+-------------------------------
 
 .. automodule:: lingpy.compare.lexstat
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.compare.partial module
------------------------------
+lingpy\.compare\.partial module
+-------------------------------
 
 .. automodule:: lingpy.compare.partial
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.compare.phylogeny module
--------------------------------
+lingpy\.compare\.phylogeny module
+---------------------------------
 
 .. automodule:: lingpy.compare.phylogeny
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.compare.strings module
------------------------------
+lingpy\.compare\.sanity module
+------------------------------
+
+.. automodule:: lingpy.compare.sanity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy\.compare\.strings module
+-------------------------------
 
 .. automodule:: lingpy.compare.strings
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lingpy\.compare\.util module
+----------------------------
+
+.. automodule:: lingpy.compare.util
     :members:
     :undoc-members:
     :show-inheritance:

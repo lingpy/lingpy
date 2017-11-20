@@ -1,5 +1,5 @@
 Partial Cognate Detection (:py:class:`~lingpy.compare.partial.Partial`)
-======================================================================
+=======================================================================
 
 
 .. autoclass:: lingpy.compare.partial.Partial

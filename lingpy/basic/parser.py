@@ -54,7 +54,8 @@ class QLCParser(object):
                 raise ValueError("[!] Wrong input format!")  # pragma: no cover
         # check whether it's another wordlist-object
         elif hasattr(filename, '_data') and hasattr(filename, '_meta'):
-            input_data = dict(filename._data.items())
+            input_data = dict([(key, [v for v in value]) for key, value in \
+                    filename._data.items()])
             input_data.update(filename._meta.items())
             input_data[0] = [a for a, b in sorted(
                 filename.header.items(),
@@ -118,6 +119,9 @@ class QLCParser(object):
 
         # now create a specific header which has all aliases
         self._header = {k: v for k, v in self.header.items()}
+
+        # add a sorted header for reference
+        self.columns = sorted(self.header, key=lambda x: self.header[x])
 
         # assign all aliases to the header
         for alias in self._alias:

@@ -8,4 +8,3 @@ linguistic datatypes (spreadsheets, wordlists) in a consistent way.
 # flake8: noqa
 from lingpy.basic.wordlist import Wordlist, get_wordlist
 from lingpy.basic.tree import Tree
-from lingpy.basic.workflow import Workflow

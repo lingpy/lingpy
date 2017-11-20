@@ -1,35 +1,35 @@
-lingpy.tests.meaning package
-============================
+lingpy\.tests\.meaning package
+==============================
 
 Submodules
 ----------
 
-lingpy.tests.meaning.test_basvoc module
----------------------------------------
+lingpy\.tests\.meaning\.test\_basvoc module
+-------------------------------------------
 
 .. automodule:: lingpy.tests.meaning.test_basvoc
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.meaning.test_colexification module
------------------------------------------------
+lingpy\.tests\.meaning\.test\_colexification module
+---------------------------------------------------
 
 .. automodule:: lingpy.tests.meaning.test_colexification
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.meaning.test_glosses module
-----------------------------------------
+lingpy\.tests\.meaning\.test\_glosses module
+--------------------------------------------
 
 .. automodule:: lingpy.tests.meaning.test_glosses
     :members:
     :undoc-members:
     :show-inheritance:
 
-lingpy.tests.meaning.test_init module
--------------------------------------
+lingpy\.tests\.meaning\.test\_init module
+-----------------------------------------
 
 .. automodule:: lingpy.tests.meaning.test_init
     :members:

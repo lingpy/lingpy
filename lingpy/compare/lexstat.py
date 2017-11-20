@@ -12,6 +12,7 @@ import numpy as np
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens,
+    check_tokens
 )
 from lingpy.sequence.generate import MCPhon
 from lingpy.basic.wordlist import Wordlist
@@ -28,7 +29,7 @@ from lingpy.util import charstring
 from lingpy import log
 
 
-def _check_tokens(key_and_tokens, clpa=False):
+def _check_tokens(key_and_tokens, cldf=False, diacritics=None, stress=None):
     """Generator for error reports on token strings.
 
     :param key_and_tokens: iterator over (key, token_string) pairs.
@@ -37,15 +38,22 @@ def _check_tokens(key_and_tokens, clpa=False):
         if "" in line:
             yield (key, "empty token", line)
         else:
-            try:
-                sonars = tokens2class(line, rcParams['art'], clpa=clpa)
-                if not sonars or sonars == ['0']:
+            for idx, char in check_tokens(line, cldf=cldf, diacritics=diacritics,
+                    stress=stress):
+                if not char:
                     yield (key, "empty sound-class string", line)
-                elif '0' in sonars:
-                    yield (key, "bad character in tokens at «{0}»".format(
-                        line[sonars.index('0')]), line)
-            except ValueError or IndexError:
-                yield (key, "sound-class conversion failed", line)
+                yield (key, 'bad character in tokens at «{0}»'.format(
+                    line[idx]), line)
+            #try:
+            #    sonars = tokens2class(line, rcParams['art'], cldf=cldf,
+            #            diacritics=diacritics, )
+            #    if not sonars or sonars == ['0']:
+            #        yield (key, "empty sound-class string", line)
+            #    elif '0' in sonars:
+            #        yield (key, "bad character in tokens at «{0}»".format(
+            #            line[sonars.index('0')]), line)
+            #except ValueError or IndexError:
+            #    yield (key, "sound-class conversion failed", line)
 
 
 def char_from_charstring(cstring):
@@ -260,7 +268,7 @@ class LexStat(Wordlist):
             "row": "concept",
             "col": "doculect",
             "conf": None,
-            'clpa': False
+            'cldf': False
         }
         kw.update(keywords)
 
@@ -274,7 +282,7 @@ class LexStat(Wordlist):
         self._langid = kw['langid']
         self._duplicates = kw['duplicates']
         self._transcription = kw['transcription']
-        self._clpa = kw['clpa']
+        self._cldf = kw['cldf']
 
         if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
@@ -333,7 +341,7 @@ class LexStat(Wordlist):
                 self._segments,
                 lambda x: [int(i) for i in tokens2class(
                     x, rcParams['art'], stress=rcParams['stress'],
-                    clpa=self._clpa)])
+                    cldf=self._cldf)])
         if self._prostrings not in self.header:
             self.add_entries(
                     self._prostrings, self._sonars,
@@ -342,7 +350,7 @@ class LexStat(Wordlist):
         if self._classes not in self.header:
             self.add_entries(
                 self._classes, self._segments,
-                lambda x: ''.join(tokens2class(x, kw["model"], clpa=self._clpa,
+                lambda x: ''.join(tokens2class(x, kw["model"], cldf=self._cldf,
                     stress=rcParams['stress'])))
         # create IDs for the languages
         if self._langid not in self.header:
@@ -766,7 +774,7 @@ class LexStat(Wordlist):
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
                         cls = tokens2class(w.split(' '), self.model,
-                                clpa=self._clpa)
+                                cldf=self._cldf)
                         pros[taxon].append(prosodic_string(w.split(' ')))
                         weights[taxon].append(prosodic_weights(pros[taxon][-1]))
                         seqs[taxon].append([
