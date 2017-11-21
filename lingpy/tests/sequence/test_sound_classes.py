@@ -84,6 +84,8 @@ def test_tokens2class():
 
     assert_raises(IndexError, tokens2class, 'b  l'.split(' '), 'dolgo')
     assert_raises(ValueError, tokens2class, ['A'], 'dolgo')
+    assert_raises(ValueError, tokens2class, 'bla', 'sca')
+
 
 def test_prosodic_string():
 

@@ -766,7 +766,6 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         out.append(token2class(token, model, stress=stress,
             diacritics=diacritics, cldf=cldf))
     if out.count('0') == len(out):
-        print(out, tokens)
         raise ValueError("[!] your sequence contains only unknown characters")
     return out
 
