@@ -21,7 +21,18 @@ class Tests(WithTempDir):
     def test_check_taxa(self):
         from lingpy.algorithm.clustering import check_taxon_names
         assert_raises(ValueError, check_taxon_names, ['Eng:lish'])
+
+    def test_upgma(self):
+        from lingpy.algorithm.clustering import upgma
+        tree = upgma(self.matrix, self.taxa, distances=True)
+        assert 'English' in tree
+        assert_raises(ValueError, upgma, [[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
         
+    def test_neighbor(self):
+        from lingpy.algorithm.clustering import neighbor
+        tree = neighbor(self.matrix, self.taxa, distances=True)
+        assert 'English' in tree
+        assert_raises(ValueError, neighbor, [[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
 
     def test_fuzzy(self):
         from lingpy.algorithm.clustering import fuzzy
