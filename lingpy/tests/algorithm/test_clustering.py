@@ -17,6 +17,11 @@ class Tests(WithTempDir):
                 [0.8, 0.7, 0.8, 0.0, 0.3],
                 [0.2, 0.6, 0.8, 0.3, 0.0]]
         self.taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    def test_check_taxa(self):
+        from lingpy.algorithm.clustering import check_taxon_names
+        assert_raises(ValueError, check_taxon_names, ['Eng:lish'])
+        
 
     def test_fuzzy(self):
         from lingpy.algorithm.clustering import fuzzy
