@@ -70,11 +70,14 @@ class Tests(WithTempDir):
         best_threshold(self.matrix, trange=(0.0, 1.0, 0.05))
 
     def test_find_threshold(self):
-
         from lingpy.algorithm.clustering import find_threshold
         find_threshold(self.matrix)
         find_threshold(self.matrix, logs=False)
         assert find_threshold([[0,1],[1,0]]) is None
+
+    def test_check_taxon_names(self):
+        from lingpy.algorithm.clustering import check_taxon_names
+        assert_raises(ValueError, check_taxon_names, ['k,k'])
 
     def test_flat_cluster(self):
         from lingpy.algorithm.clustering import flat_cluster
