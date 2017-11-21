@@ -109,11 +109,15 @@ class MCPhon(MCBasic):
             if prostrings:
                 p = prostrings[i]
             else:
+                print(w, tk)
+                tt = tokens2class(tk, rcParams['art'])
+                print(tt)
                 p = prosodic_string(
-                    tokens2class(tk, rcParams['art'],
+                        tk, 
+                        rcParams['art'],
                         cldf=keywords['cldf'],
                         diacritics=keywords['diacritics'],
-                        stress=keywords['stress']), **keywords)
+                        stress=keywords['stress'])
             # create classes
             if classes:
                 c = tokens2class(tk, class_model, cldf=keywords['cldf'],
@@ -167,10 +171,9 @@ class MCPhon(MCBasic):
         score = 1
         dist = self.dist['#']
 
-        prostring = prosodic_string(
-            tokens2class(tokens, rcParams['art'], cldf=keywords['cldf'],
+        prostring = prosodic_string(tokens, rcParams['art'], cldf=keywords['cldf'],
                         diacritics=keywords['diacritics'],
-                        stress=keywords['stress']))
+                        stress=keywords['stress'])
         if self.classes:
             c = tokens2class(tokens, self.model, cldf=keywords['cldf'],
                         diacritics=keywords['diacritics'],

@@ -618,14 +618,14 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
     cldf : bool (default=False)
         If set to True, this will allow for a specific treatment of phonetic
         symbols which cannot be completely resolved (e.g., laryngeal h₂ in
-        Indo-European). Following the `CLDF <http://cldf.clld.org>`_ specifications (in particular the
-        specifications for writing transcriptions in segmented strings, as
-        employed by the `CLTS <http://calc.digling.org/clts/>`_ initiative), in
-        cases of insecurity of pronunciation, users can adopt a
-        ```source/target``` style, where the source is the symbol used, e.g.,
-        in a reconstruction system, and the target is a proposed phonetic
-        interpretation. This practice is also accepted by the `EDICTOR
-        <http://edictor.digling.org>`_ tool.
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the specifications for writing
+        transcriptions in segmented strings, as employed by the `CLTS
+        <http://calc.digling.org/clts/>`_ initiative), in cases of insecurity
+        of pronunciation, users can adopt a ```source/target``` style, where
+        the source is the symbol used, e.g., in a reconstruction system, and
+        the target is a proposed phonetic interpretation. This practice is also
+        accepted by the `EDICTOR <http://edictor.digling.org>`_ tool.
 
     Returns
     -------
@@ -722,7 +722,6 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         interpretation. This practice is also accepted by the `EDICTOR
         <http://edictor.digling.org>`_ tool.
         
-
     Returns
     -------
 
@@ -730,6 +729,15 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         A sound-class representation of the tokenized IPA string in form of a
         list. If sound classes cannot be resolved, the respective string will
         be rendered as "0" (zero).
+
+    Notes
+    -----
+    The function ~lingpy.sequence.sound_classes.token2class returns a "0"
+    (zero) if the sound is not recognized by LingPy's sound class models. While
+    an unknown sound in a longer sequence is no problem for alignment
+    algorithms, we have some unwanted and often even unforeseeable behavior,
+    if the sequence is completely unknown. For this reason, this function
+    raises a ValueError, if a resulting sequence only contains unknown sounds. 
 
     Examples
     --------
@@ -757,7 +765,9 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
     for token in tokens:
         out.append(token2class(token, model, stress=stress,
             diacritics=diacritics, cldf=cldf))
-
+    if out.count('0') == len(out):
+        print(out, tokens)
+        raise ValueError("[!] your sequence contains only unknown characters")
     return out
 
 
@@ -843,7 +853,7 @@ def prosodic_string(string, _output=True, **keywords):
         return ''
 
     # check for the right string
-    if not isinstance(string[0], int):
+    if not all(isinstance(x, int) for x in string):
         # get the sonority profile
         sstring = [9] + \
                   [int(t) for t in tokens2class(string, rcParams['art'],
