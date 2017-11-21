@@ -1,4 +1,5 @@
 *.egg
+doc/*
 *.egg-info
 *.o
 *.pyc

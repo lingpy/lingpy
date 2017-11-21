@@ -80,7 +80,7 @@ setup(
     package_dir=pkg_dir,
     install_requires=requires,
     tests_require=['nose', 'coverage', 'mock'],
-    author="Johann-Mattis List and Robert Forkel",
+    author="Johann-Mattis List and Simon Greenhill and Robert Forkel",
     author_email="info@lingpy.org",
     entry_points={
         'console_scripts' : ['lingpy=lingpy.cli:main'],

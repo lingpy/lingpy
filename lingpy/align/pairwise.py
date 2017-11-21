@@ -342,45 +342,46 @@ def nw_align(seqA, seqB, scorer=False, gap=-1):
 
     Examples
     --------
-
-    >>> seqA = 'fat cat'
-    >>> seqB = 'catfat'
-    >>> nw_align(seqA,seqB)
-    (['f', 'a', 't', ' ', 'c', 'a', 't'], ['c', 'a', 't', '-', 'f', 'a', 't'], 1)
+    Align two sequences::
+    
+        >>> seqA = 'fat cat'
+        >>> seqB = 'catfat'
+        >>> nw_align(seqA, seqB)
+        (['f', 'a', 't', ' ', 'c', 'a', 't'], ['c', 'a', 't', '-', 'f', 'a', 't'], 1)
 
     Use your own scorer (make sure all characters are covered, or you use a
     default dict). We start with a scorer that is "normal", with identical symbols getting
-    identical scores:
+    identical scores::
 
-    >>> scorer = { ('a','a'): 1, ('a','b'):-1, ('b','a'):-1, ('b', 'b'): 1}
-    >>> seqA, seqB = 'abab', 'baba'
-    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
-    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
-    a b a b -
-    - b a b a (sim=1)
+        >>> scorer = { ('a','a'): 1, ('a','b'):-1, ('b','a'):-1, ('b', 'b'): 1}
+        >>> seqA, seqB = 'abab', 'baba'
+        >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+        >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+        a b a b -
+        - b a b a (sim=1)
 
     Nothing unexpected so far, you could reach the same result without the
     scorer. But now let's make a scorer that favors mismatches for our little
-    two-letter alphabet.
+    two-letter alphabet::
 
-    >>> scorer = { ('a','b'): 1, ('a','a'):-1, ('b','b'):-1, ('b', 'a'): 1}
-    >>> seqA, seqB = 'abab', 'baba'
-    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
-    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
-    a b a b
-    b a b a (sim=4)
+        >>> scorer = { ('a','b'): 1, ('a','a'):-1, ('b','b'):-1, ('b', 'a'): 1}
+        >>> seqA, seqB = 'abab', 'baba'
+        >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+        >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+        a b a b
+        b a b a (sim=4)
 
     Now, let's analyse two strings which are completely different, but where we
     use the scorer to define mappings between the segments. We simply do this
     by using lower case letters in one and upper case letters in the other
-    case, which will, of course, be treated as different symbols in Python:
+    case, which will, of course, be treated as different symbols in Python::
 
-    >>> scorer = { ('A','a'): 1, ('A','b'):-1, ('B','a'):-1, ('B', 'B'): 1}
-    >>> seqA, seqB = 'ABAB', 'aa'
-    >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
-    >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
-    A B A B
-    a - a - (sim=0)
+        >>> scorer = { ('A','a'): 1, ('A','b'):-1, ('B','a'):-1, ('B', 'B'): 1}
+        >>> seqA, seqB = 'ABAB', 'aa'
+        >>> almA, almB, sim = nw_align(seqA, seqB, scorer=scorer)
+        >>> print(' '.join(almA)+'\n'+' '.join(almB), "(sim={0})".format(sim))
+        A B A B
+        a - a - (sim=0)
 
     """
     seqA, seqB = _as_lists(seqA, seqB)
@@ -419,10 +420,11 @@ def edit_dist(seqA, seqB, normalized=False, restriction=''):
 
     Examples
     --------
-    >>> seqA = 'fat cat'
-    >>> seqB = 'catfat'
-    >>> edit_dist(seqA, seqB)
-    3
+    Align two sequences::
+        >>> seqA = 'fat cat'
+        >>> seqB = 'catfat'
+        >>> edit_dist(seqA, seqB)
+        3
 
     """
     seqA, seqB = _as_lists(seqA, seqB)
@@ -464,13 +466,13 @@ def sw_align(seqA, seqB, scorer=False, gap=-1):
 
     Examples
     --------
-
-    >>> seqA = 'fat cat'
-    >>> seqB = 'catfat'
-    >>> sw_align(seqA, seqB)
-    (([], ['f', 'a', 't'], [' ', 'c', 'a', 't']),
-     (['c', 'a', 't'], ['f', 'a', 't'], []),
-     3.0)
+    Align two sequences::
+        >>> seqA = 'fat cat'
+        >>> seqB = 'catfat'
+        >>> sw_align(seqA, seqB)
+        (([], ['f', 'a', 't'], [' ', 'c', 'a', 't']),
+         (['c', 'a', 't'], ['f', 'a', 't'], []),
+         3.0)
     """
     seqA, seqB = _as_lists(seqA, seqB)
     return malign.sw_align(seqA, seqB, scorer or _get_scorer(seqA, seqB), gap)
@@ -507,12 +509,12 @@ def we_align(seqA, seqB, scorer=False, gap=-1):
 
     Examples
     --------
-
-    >>> seqA = 'fat cat'
-    >>> seqB = 'catfat'
-    >>> we_align(seqA, seqB)
-    [(['f', 'a', 't'], ['f', 'a', 't'], 3.0),
-     (['c', 'a', 't'], ['c', 'a', 't'], 3.0)]
+    Align two sequences::
+        >>> seqA = 'fat cat'
+        >>> seqB = 'catfat'
+        >>> we_align(seqA, seqB)
+        [(['f', 'a', 't'], ['f', 'a', 't'], 3.0),
+         (['c', 'a', 't'], ['c', 'a', 't'], 3.0)]
 
     """
     seqA, seqB = _as_lists(seqA, seqB)
