@@ -1,4 +1,4 @@
-# *-* coding: utf-8 *-* 
+# *-* coding: utf-8 *-*
 from __future__ import print_function
 from __future__ import division
 from __future__ import unicode_literals
@@ -23,34 +23,34 @@ def test_ipa2tokens():
     assert len(ipa2tokens(seq)) != len(list(seq))
 
     seq = 'ʰto͡i'
-    
+
     assert len(ipa2tokens(seq)) == 2
 
     seq = 'th o x t a'
-    
+
     assert len(ipa2tokens(seq)) == len(seq.split(' '))
 
     seq = '# b l a #'
-    
+
     assert len(ipa2tokens(seq)) == len(seq.split(' '))-2
 
     # now check with all possible data we have so far, but only on cases where
     # tokenization doesn't require the merge_vowels = False flag
     tokens = csv2list(test_data('test_tokenization.tsv'))
-    
+
     for a,b in tokens:
-        
+
         tks = ' '.join(ipa2tokens(a))
 
         # we check for two variants, since we don't know whether vowels are
         # merged or not in the test data
         assert tks == b
 
-    # now test on smaller set with unmerged vowels 
+    # now test on smaller set with unmerged vowels
     tokens = csv2list(test_data('test_tokenization_mv.tsv'))
-    
+
     for a,b in tokens:
-        
+
         tks = ' '.join(ipa2tokens(a, merge_vowels=False, merge_geminates=False))
 
         # we check for two variants, since we don't know whether vowels are
@@ -70,6 +70,7 @@ def test_token2class():
     assert token2class(seq[0], rc('dolgo')) == 'T'
     assert token2class(seq[3], 'dolgo') == 'T'
     assert token2class(seq[-1], 'dolgo') == '0'
+    assert token2class('', 'dolgo') == '0'
 
 def test_tokens2class():
 
@@ -82,7 +83,6 @@ def test_tokens2class():
     assert tokens2class(seq2, 'cv', cldf=True)[2] == 'C'
     assert tokens2class(seq3, 'cv', cldf=True)[2] == '0'
 
-    assert_raises(IndexError, tokens2class, 'b  l'.split(' '), 'dolgo')
     assert_raises(ValueError, tokens2class, ['A'], 'dolgo')
     assert_raises(ValueError, tokens2class, 'bla', 'sca')
 
@@ -92,7 +92,7 @@ def test_prosodic_string():
     seq = 'tʰ ɔ x t ə r'.split(' ')
 
     assert prosodic_string(seq) == 'AXMBYN'
-    
+
     seq = 'th o x ¹ t e'.split(' ')
 
     assert prosodic_string(seq) == 'AXLTBZ'
@@ -143,7 +143,7 @@ def test_check_tokens():
     assert check_tokens('th o x T e r'.split(' '))[0] == (3,'T')
 
 def test_get_all_ngrams():
-    
+
     f = get_all_ngrams('ab')
     assert f == ['ab', 'a', 'b']
 
@@ -154,7 +154,7 @@ def test_sampa2uni():
     assert sampa == seq #or sampa2 == seq
 
 def test_bigrams():
-    
+
     f = bigrams('ab')
     assert f[0] == ('#','a') and f[-1] == ('b','$')
 
@@ -168,19 +168,19 @@ def test_fourgrams():
     assert f[-1] == ('b','$','$','$')
 
 def test_get_n_ngrams():
-    
+
     f = get_n_ngrams('ma',5)
 
     assert f[0] == ('m','a','$','$','$')
 
 def test_pgrams():
-    
+
     f = pgrams('ab')
     assert f[0] == ('a','X')
     assert f[-1] == ('b','N')
 
 def test_syllabify():
-    
+
     seq1 = "t i a o ¹ b u ² d a o"
     seq2 = "jabloko"
     seq3 = "jabəlko"
@@ -215,7 +215,7 @@ def test_onoparse():
     out1 = ono_parse(seq1, output='pprint')
     out2 = ono_parse(seq2, output='prostring')
     out3 = ono_parse(seq1)
-   
+
     assert isinstance(out1, text_type)
     assert out3[0] == ('-', '#')
     assert out2 == 'VCvcC>$'

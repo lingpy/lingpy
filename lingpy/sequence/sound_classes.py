@@ -20,18 +20,18 @@ from lingpy.data.ipa.sampa import reXS, xs
 def ipa2tokens(istring, **keywords):
     """
     Tokenize IPA-encoded strings.
-    
+
     Parameters
     ----------
 
     seq : str
         The input sequence that shall be tokenized.
-    
+
     diacritics : {str, None} (default=None)
         A string containing all diacritics which shall be considered in the
         respective analysis. When set to *None*, the default diacritic string
         will be used.
-    
+
     vowels : {str, None} (default=None)
         A string containing all vowel symbols which shall be considered in the
         respective analysis. When set to *None*, the default vowel string will
@@ -51,7 +51,7 @@ def ipa2tokens(istring, **keywords):
         starts right after them. These can be used to indicate that two
         consecutive vowels should not be treated as diphtongs or for diacritics
         that are put before the following letter.
-    
+
     merge_vowels : bool (default=False)
         Indicate, whether vowels should be merged into diphtongs
         (default=True), or whether each vowel symbol should be considered
@@ -84,7 +84,7 @@ def ipa2tokens(istring, **keywords):
     >>> myseq = 't͡sɔyɡə'
     >>> ipa2tokens(myseq)
     ['t͡s', 'ɔy', 'ɡ', 'ə']
-    
+
     See also
     --------
     tokens2class
@@ -239,7 +239,7 @@ def ipa2tokens(istring, **keywords):
 def syllabify(seq, output="flat", **keywords):
     """
     Carry out a simple syllabification of a sequence, using sonority as a proxy.
-    
+
     Parameters
     ----------
     output: {"flat", "breakpoints", "nested"} (default="flat")
@@ -247,10 +247,10 @@ def syllabify(seq, output="flat", **keywords):
         * "flat": A syllable separator is introduced to mark the syllable boundaries
         * "breakpoins": A tuple consisting of indices that slice the original sequence into syllables is returned.
         * "nested": A nested list reflecting the syllable structure is returned.
-          
+
     sep : str (default="◦")
         Select your preferred syllable separator.
-    
+
     Notes
     -----
 
@@ -400,7 +400,7 @@ def tokens2morphemes(tokens, **keywords):
         Select your morpheme separator.
     word_sep: str (default="_")
         Select your word separator.
-    
+
     Returns
     -------
     morphemes : list
@@ -444,7 +444,7 @@ def tokens2morphemes(tokens, **keywords):
 def _split_syllables(syllables, tokens):
     """
     Split the output of the syllabify method into subsets.
-    
+
     Notes
     -----
     This is a simple helper function to deal with syllabified content.
@@ -486,7 +486,7 @@ def _pprint_ono(ono):
 def ono_parse(word, output='', **keywords):
     """
     Carry out a rough onset-nucleus-offset parse of a word in IPA.
-    
+
     Notes
     -----
     Method is an approximation and not supposed to do without flaws. It is,
@@ -645,7 +645,7 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
     # check basic parameters
     stress = rcParams['stress'] or stress
     diacritics = rcParams['diacritics'] or diacritics
-    
+
     # change token if cldf is selected
     if cldf:
         token = token.split('/')[1] or '?' if '/' in token else token
@@ -653,12 +653,14 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
     # check whether model is passed as real model or as string
     if str(model) == model:
         model = rcParams[model]
-    
+
     try:
         return model[token]
     except KeyError:
         try:
             return model[token[0]]
+        except IndexError:
+            return '0'
         except KeyError:
             # check for stressed syllables
             if len(token) > 0:
@@ -721,7 +723,7 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         in a reconstruction system, and the target is a proposed phonetic
         interpretation. This practice is also accepted by the `EDICTOR
         <http://edictor.digling.org>`_ tool.
-        
+
     Returns
     -------
 
@@ -737,7 +739,7 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
     an unknown sound in a longer sequence is no problem for alignment
     algorithms, we have some unwanted and often even unforeseeable behavior,
     if the sequence is completely unknown. For this reason, this function
-    raises a ValueError, if a resulting sequence only contains unknown sounds. 
+    raises a ValueError, if a resulting sequence only contains unknown sounds.
 
     Examples
     --------
@@ -809,19 +811,19 @@ def prosodic_string(string, _output=True, **keywords):
 
     See also:
     ---------
-    
+
     prosodic weights
 
     Notes
     -----
-    
+
     A prosodic string is a sequence of specific characters which indicating
     their resprective prosodic context (see :evobib:`List2012` or
     :evobib:`List2012a` for a detailed description).
     In contrast to the previous model, the current implementation allows for a
     more fine-graded distinction between different prosodic segments. The
     current scheme distinguishes 9 prosodic positions:
-    
+
     * ``A``: sequence-initial consonant
     * ``B``: syllable-initial, non-sequence initial consonant in a context of
       ascending sonority
@@ -999,7 +1001,7 @@ def prosodic_string(string, _output=True, **keywords):
 def prosodic_weights(prostring, _transform={}):
     """
     Calculate prosodic weights for each position of a sequence.
-    
+
     Parameters
     ----------
 
@@ -1028,7 +1030,7 @@ def prosodic_weights(prostring, _transform={}):
     >>> prostring = '#vC>'
     >>> prosodic_weights(prostring)
     [2.0, 1.3, 1.5, 0.7]
-    
+
     See also
     --------
     prosodic_string
@@ -1116,11 +1118,11 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
 
     gap_char : string (default="-")
         The character which indicates gaps in the output string.
-    
+
     local : bool (default=False)
         If set to *True* a local alignment with prefix and suffix can be
         converted.
-    
+
     Returns
     -------
     alignment : list
@@ -1131,7 +1133,7 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
     --------
     ipa2tokens
     tokens2class
-    
+
     Examples
     --------
     >>> from lingpy import *
@@ -1180,13 +1182,13 @@ def pid(almA, almB, mode=2):
         Indicate which of the four possible PID scores described in :evobib:`Raghava2006`
         should be calculated, the fifth possibility is added for linguistic
         purposes:
-        
+
         1. identical positions / (aligned positions + internal gap positions),
-        
+
         2. identical positions / aligned positions,
-        
+
         3. identical positions / shortest sequence, or
-        
+
         4. identical positions / shortest sequence (including internal gap
            pos.)
 
@@ -1201,7 +1203,7 @@ def pid(almA, almB, mode=2):
 
     Notes
     -----
-    
+
     The PID score is a common measure for the diversity of a given alignment.
     The implementation employed by LingPy follows the description of
     :evobib:`Raghava2006` where four different variants of PID scores are
@@ -1492,9 +1494,9 @@ def clean_string(
         entry. If there are no splitters, the list has only size one.
     """
     sequence = unicodedata.normalize(normalization_form, sequence)
-    rules = rules or {} 
+    rules = rules or {}
     preparse = preparse or []
-    
+
     # replace white space if not indicated otherwise
     if segmentized:
         segment_list = [sequence.split(' ') if not isinstance(sequence, (list,
@@ -1517,7 +1519,7 @@ def clean_string(
 
         for new_sequence in new_sequences:
             segments = ipa2tokens(
-                    re.sub(r'\s+', '_', new_sequence.strip()), 
+                    re.sub(r'\s+', '_', new_sequence.strip()),
                     semi_diacritics=semi_diacritics,
                     merge_vowels=merge_vowels,
                     merge_geminates=merge_geminates)
