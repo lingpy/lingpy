@@ -2,17 +2,17 @@
 
 [![Build Status](https://travis-ci.org/lingpy/lingpy.svg?branch=master)](https://travis-ci.org/lingpy/lingpy)
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.16093.svg)](http://dx.doi.org/10.5281/zenodo.16093)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.597082.svg)](https://doi.org/10.5281/zenodo.597082)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)
 [![Documentation](https://readthedocs.org/projects/lingpy/badge/?version=latest)](http://lingpy.readthedocs.org/en/latest/?badge=latest)
 [![Downloads](https://img.shields.io/pypi/dm/lingpy.svg)](https://pypi.python.org/pypi/lingpy)
 
 
 
-Authors: [Johann-Mattis List](https://github.com/linguist) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)) and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
+Authors: [Johann-Mattis List](https://github.com/linguist) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), [Simon Greenhill](https://github.com/simongreenhill) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
 
 Collaborators: 
-Simon Greenhill ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), and Tiago Tresoldi ([UFRGS](http://www.ufrgs.br/english/home))
+Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), and Tiago Tresoldi ([UFRGS](http://www.ufrgs.br/english/home))
  
 LingPy is a Python Library for Historical Linguistics. It is being developed for Python 2.7 and Python 3.x 
 using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
