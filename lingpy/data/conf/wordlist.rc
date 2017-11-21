@@ -7,8 +7,8 @@ iso	str	iso,isocode
 tokens	lambda x:x.split(" ")	tokens,tokenized_counterpart,ipatokens
 segments	lambda x:x.split(" ")	segments
 
-alignment	lambda x:x.split(" ")	alignment
-alignments	lambda x:x.split(" ")	alignments
+alignment	str	alignment
+#alignments	lambda x:x.split(" ")	alignments
 ipa	str	word,ipa,words
 ortho_parse	lambda x:x.split(" ")[1:-1]	orthography_tokens,tokenized_counterpart,op_tokens
 
