@@ -368,7 +368,7 @@ class Partial(LexStat):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')
