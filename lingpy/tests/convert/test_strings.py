@@ -3,6 +3,8 @@ Test conversions involving strings.
 """
 from __future__ import division, unicode_literals
 from unittest import TestCase
+from six import text_type
+from clldutils.testing import WithTempDir
 
 import sys
 import lingpy
@@ -135,9 +137,10 @@ END;"""
         assert csv == pap2csv(taxa, paps)
 
 
-class TestWriteNexus(TestCase):
+class TestWriteNexus(WithTempDir):
     """Tests for `write_nexus`"""
     def setUp(self):
+        WithTempDir.setUp(self)
         self.wordlist = Wordlist(test_data('GER.tsv'))
     
     def assertRegexWorkaround(self, a, b):
@@ -159,7 +162,8 @@ class TestWriteNexus(TestCase):
     
     def test_mrbayes(self):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
-        nex = write_nexus(self.wordlist, mode='MRBAYES', missing="X")
+        nex = write_nexus(self.wordlist, mode='MRBAYES', missing="X",
+                filename=text_type(self.tmp_path('test')))
         self.assertIn("NTAX=5 NCHAR=7", nex)
         # mrbayes should have datatype=restriction
         self.assertIn("DATATYPE=RESTRICTION", nex)
@@ -178,7 +182,9 @@ class TestWriteNexus(TestCase):
         
     def test_beast(self):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
-        nex = write_nexus(self.wordlist, mode='BEAST', missing="X")
+        nex = write_nexus(self.wordlist, mode='BEAST', missing="X",
+                filename=text_type(self.tmp_path('test'))
+                )
         # added one character for ascertainment
         self.assertIn("NTAX=5 NCHAR=8", nex)
         # mrbayes should have datatype=standard
@@ -203,7 +209,9 @@ class TestWriteNexus(TestCase):
         
     def test_beastwords(self):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
-        nex = write_nexus(self.wordlist, mode='BEASTWORDS', missing="X")
+        nex = write_nexus(self.wordlist, mode='BEASTWORDS', missing="X",
+                filename=text_type(self.tmp_path('test'))
+                )
         # added three characters for ascertainment
         self.assertIn("NTAX=5 NCHAR=10", nex)
         # mrbayes should have datatype=standard
