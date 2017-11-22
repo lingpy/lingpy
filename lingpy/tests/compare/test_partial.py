@@ -1,5 +1,6 @@
+# *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
-from lingpy.compare.partial import Partial
+from lingpy.compare.partial import Partial, _get_slices
 from clldutils.testing import WithTempDir
 from nose.tools import assert_raises
 from lingpy.tests.util import test_data
@@ -14,6 +15,13 @@ class Tests(WithTempDir):
         self.part = Partial(test_data('partial_cognates.tsv'), segments='segments')
         self.part2 = Partial(test_data('partial_cognates-scored.tsv'),
                 segments='segments')
+
+    def test__get_slices(self):
+        a = _get_slices(list('ba²te²'))
+        b = _get_slices(list('ba²te²'), split_on_tones=False)
+        assert a[0][1] == 3
+        assert b[0][1] == 6
+
 
     def test_get_partial_matrices(self):
 

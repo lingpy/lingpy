@@ -206,7 +206,9 @@ def test_tokens2morphemes():
     assert len(tokens2morphemes(seq2)) == 3
     assert len(tokens2morphemes(seq3)) == 2
     assert len(tokens2morphemes(seq4, sep='murks')) == 2
+    assert len(tokens2morphemes(seq1, split_on_tones=False)) == 1
     assert_raises(ValueError, tokens2morphemes, "t i a o")
+    assert_raises(ValueError, tokens2morphemes, list("b++t"))
 
 def test_onoparse():
 
