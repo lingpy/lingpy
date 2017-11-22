@@ -44,17 +44,6 @@ def _check_tokens(key_and_tokens, cldf=False, diacritics=None, stress=None):
                     yield (key, "empty sound-class string", line)
                 yield (key, 'bad character in tokens at «{0}»'.format(
                     line[idx]), line)
-            #try:
-            #    sonars = tokens2class(line, rcParams['art'], cldf=cldf,
-            #            diacritics=diacritics, )
-            #    if not sonars or sonars == ['0']:
-            #        yield (key, "empty sound-class string", line)
-            #    elif '0' in sonars:
-            #        yield (key, "bad character in tokens at «{0}»".format(
-            #            line[sonars.index('0')]), line)
-            #except ValueError or IndexError:
-            #    yield (key, "sound-class conversion failed", line)
-
 
 def char_from_charstring(cstring):
     comps = cstring.split('.')
@@ -212,7 +201,7 @@ class LexStat(Wordlist):
     rchars : list
         A list containing all unique character types across languages. In
         contrast to the chars-attribute, the "rchars" (raw chars) do not
-        contain the language identifier, thus they only consist of two values,
+        contain the languahttp://tsv.lingpy.org/triples/get_data.py?history=true&remote_dbase=sinotibetan.sqlite3&limit=ge identifier, thus they only consist of two values,
         separated by a dot, namely, the sound class symbol, and the prosodic
         class value.
     scorer : dict
@@ -308,7 +297,8 @@ class LexStat(Wordlist):
         # add a debug procedure for tokens
         if kw["check"]:
             errors = list(_check_tokens(
-                (key, self[key, self._segments]) for key in self))
+                [(key, self[key, self._segments]) for key in self], 
+                cldf=kw['cldf']))
             if errors:
                 lines = ["ID\tTokens\tError-Type"]
                 for key, msg, line in errors:

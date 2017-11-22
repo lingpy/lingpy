@@ -540,6 +540,10 @@ class Alignments(Wordlist):
         loans, but you want to suppress this behaviour, just set this
         keyword to "abs", and all cognate IDs will be converted to their
         absolute value.
+    split_on_tones : bool (default=True)
+        If set to True, this means that in the case of fuzzy alignment mode,
+        the algorithm will attempt to split words into morphemes by tones if no
+        explicit morpheme markers can be found.
 
     Attributes
     ----------
@@ -568,6 +572,7 @@ class Alignments(Wordlist):
         conf='',
         modify_ref=False,
         _interactive=True,
+        split_on_tones=True,
         ref="cogid",
         **keywords):
         kw = {"segments": "tokens", "alignment": "alignment", "transcription":
@@ -607,9 +612,11 @@ class Alignments(Wordlist):
                 raise ValueError("No valid source for segments could be found.")
 
         self.etd = {}
-        self.add_alignments(ref=self._ref, modify_ref=modify_ref)
+        self.add_alignments(ref=self._ref, modify_ref=modify_ref,
+                split_on_tones=split_on_tones)
 
-    def add_alignments(self, ref=False, modify_ref=False, fuzzy=False):
+    def add_alignments(self, ref=False, modify_ref=False, fuzzy=False,
+            split_on_tones=True):
         """
         Function adds a new set of alignments to the data.
 
@@ -668,8 +675,9 @@ class Alignments(Wordlist):
                             if self._mode == 'fuzzy':
                                 # split the string into morphemes
                                 # FIXME add keywords for morpheme segmentation
-                                morphemes = tokens2morphemes(this_string)
-
+                                morphemes = tokens2morphemes(this_string,
+                                        tones='' if not split_on_tones else 'T'
+                                        )
                                 # get the position of the morpheme
                                 midx = self[seq][self.header[ref]].index(key)
                                 this_string = morphemes[midx]

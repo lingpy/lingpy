@@ -391,8 +391,14 @@ def _get_breakpoints(seq, sep):
 
 def tokens2morphemes(tokens, **keywords):
     """
+    Split a string into morphemes if it contains separators.
+
+    Notes
+    -----
     Function splits a list of tokens into subsequent lists of morphemes if the list
-    contains morpheme separators.
+    contains morpheme separators. If no separators are found, but tonemarkers,
+    it will still split the string according to the tones. If you want to avoid
+    this behavior, set the keyword **split_on_tones** to False.
 
     Parameters
     ----------
@@ -415,9 +421,11 @@ def tokens2morphemes(tokens, **keywords):
         "word_sep": rcParams['word_separator'],
         "word_seps": rcParams['word_separators'],
         "seps": rcParams['morpheme_separators'],
+        "split_on_tones": True,
         "tone": "T"
     }
     kw.update(keywords)
+    if not kw['split_on_tones']: kw['tone'] = ''
 
     # check for other hints than the clean separators in the data
     new_tokens = [t for t in tokens]
@@ -437,6 +445,9 @@ def tokens2morphemes(tokens, **keywords):
             out[-1] += [token]
         else:
             out += [[]]
+    # check for bad examples
+    if ['' for x in out if not x]:
+        raise ValueError("[!] Your data contains empty morpheme segments.")
 
     return out
 
