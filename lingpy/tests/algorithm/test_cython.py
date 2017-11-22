@@ -110,7 +110,9 @@ class Tests():
         assert _talign.swap_score_profile(
                 ['a', '+'], ['X', 'X'], self.scorer, 0, 0
                 ) == 0.0
-
+        assert _talign.swap_score_profile(
+                ['a', '+'], ['a', 'X'], self.scorer, 0, 0
+                ) != 0.0
 
 
     def test__malign(self):
@@ -154,6 +156,24 @@ class Tests():
                 self.n, self.scale, self.factor, self.scorer)
         assert round(sim, 2) == 4.9
 
+        almB, almA, sim = _calign.globalign(self.seqB, self.seqA, self.gopB,
+                self.gopA, self.proB, self.proA, self.n,
+                self.m, self.scale, self.factor, self.scorer)
+        assert round(sim, 2) == 3.1
+        almB, almA, sim = _calign.semi_globalign(self.seqB, self.seqA, self.gopB,
+                self.gopA, self.proB, self.proA, self.n,
+                self.m, self.scale, self.factor, self.scorer)
+        assert round(sim, 2) == 4.9
+        almB, almA, sim = _calign.localign(self.seqB, self.seqA, self.gopB,
+                self.gopA, self.proB, self.proA, self.n,
+                self.m, self.scale, self.factor, self.scorer)
+        assert round(sim, 2) == 4.9
+        almB, almA, sim = _calign.dialign(self.seqB, self.seqA,
+                self.proB, self.proA, self.n,
+                self.m, self.scale, self.factor, self.scorer)
+        assert round(sim, 2) == 4.9
+
+
         almA, almB, sim = _calign.secondary_globalign(self.seqA2, self.seqB2, self.gopA2,
                 self.gopB2, self.proA2, self.proB2, len(self.seqA2),
                 len(self.seqB2), self.scale, self.factor, self.scorer, '1')
@@ -169,6 +189,23 @@ class Tests():
         almA, almB, sim = _calign.secondary_dialign(self.seqA2, self.seqB2,
                 self.proA2, self.proB2, len(self.seqA2),
                 len(self.seqB2), self.scale, self.factor, self.scorer, '1')
+        assert round(sim, 2) == 6.2
+
+        almB, almA, sim = _calign.secondary_globalign(self.seqB2, self.seqA2, self.gopB2,
+                self.gopA2, self.proB2, self.proA2, len(self.seqB2),
+                len(self.seqA2), self.scale, self.factor, self.scorer, '1')
+        assert round(sim, 2) == 4.4
+        almB, almA, sim = _calign.secondary_semi_globalign(self.seqB2, self.seqA2, self.gopB2,
+                self.gopA2, self.proB2, self.proA2, len(self.seqB2),
+                len(self.seqA2), self.scale, self.factor, self.scorer, '1')
+        assert round(sim, 2) == 5.2
+        almB, almA, sim = _calign.secondary_localign(self.seqB2, self.seqA2, self.gopB2,
+                self.gopA2, self.proB2, self.proA2, len(self.seqB2),
+                len(self.seqA2), self.scale, self.factor, self.scorer, '1')
+        assert round(sim, 2) == 6.2
+        almB, almA, sim = _calign.secondary_dialign(self.seqB2, self.seqA2,
+                self.proB2, self.proA2, len(self.seqB2),
+                len(self.seqA2), self.scale, self.factor, self.scorer, '1')
         assert round(sim, 2) == 6.2
 
         for mode in ['global', 'overlap', 'local', 'dialign']:
@@ -188,6 +225,10 @@ class Tests():
                     [self.proA2, self.proB2], self.gop, self.scale, self.factor,
                         self.scorer, '1', mode)
             assert alignments[0][-1] < 1 
+            alignments = _calign.align_pairs([[self.seqA, self.seqB]],
+                    [[self.weightA, self.weightB]], 
+                    [[self.proA, self.proB]], self.gop, self.scale, self.factor,
+                        self.scorer, mode, '1', 2)
             alignments = _calign.align_pairs([[self.seqA, self.seqB]],
                     [[self.weightA, self.weightB]], 
                     [[self.proA, self.proB]], self.gop, self.scale, self.factor,
@@ -213,12 +254,18 @@ class Tests():
         assert _calign.score_profile(
                 ['a', 'a'], ['a', 'a'], self.scorer, 0
                 ) == 1
-
+        assert _calign.score_profile(
+                ['X', 'a'], ['X', 'a'], self.scorer, 0
+                ) == 1
+        assert _calign.score_profile(
+                ['X', 'a'], ['a', 'X'], self.scorer, 0
+                ) == 1
         assert _calign.swap_score_profile(
                 ['a', '+'], ['X', 'X'], self.scorer, 0
                 ) < 0
-
-
+        assert _calign.swap_score_profile(
+                ['a', '+'], ['a', 'X'], self.scorer, 0
+                ) < 0
 
 
     def test_corrdist(self):
