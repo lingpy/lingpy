@@ -116,7 +116,7 @@ class LexStat(Wordlist):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-    vowels : str (default="VT_")
+    vowels : str (default="VT\_")
         For scoring function creation using the
         :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
         have the possibility to use reduced scores for the matching of tones
@@ -173,13 +173,11 @@ class LexStat(Wordlist):
         The name of the column which stores the individual gap-weights for each
         sequence. Gap weights are positive floats for each segment in a string,
         which modify the gap opening penalty during alignment.
-    tokenize : function \
-            (default=:py:class:`~lingpy.sequence.sound_classes.ipa2tokens`)
+    tokenize : function (default=ipa2tokens)
         The function which should be used to tokenize the entries in the column
         storing the transcriptions in case no segmentation is provided by the
         user.
-    get_prostring : function \
-            (default=:py:class:`~lingpy.sequence.sound_classes.prosodic_string`)
+    get_prostring : function (default=prosodic_string)
         The function which should be used to create prosodic strings from the
         segmented transcription data. If you want to completely ignore prosodic
         strings in LexStat calculations, you could just pass the following
@@ -1117,7 +1115,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         distance : bool (default=True)
@@ -1316,7 +1314,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')
@@ -1509,7 +1507,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T_'):
+            restricted_chars='T\_'):
         """
         Method calculates randoms scores for unrelated words in a dataset.
 
@@ -1527,7 +1525,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
 
@@ -1557,7 +1555,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T_',
+            restricted_chars='T\_',
             aggregate=True):
         """
         Method calculates different distance estimates for language pairs.
@@ -1576,7 +1574,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         aggregate : bool (default=True)

@@ -4,9 +4,7 @@
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.597082.svg)](https://doi.org/10.5281/zenodo.597082)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)
-[![Documentation](https://readthedocs.org/projects/lingpy/badge/?version=latest)](http://lingpy.readthedocs.org/en/latest/?badge=latest)
-[![Downloads](https://img.shields.io/pypi/dm/lingpy.svg)](https://pypi.python.org/pypi/lingpy)
-
+[![Documentation](https://bade.fury.io/py/lingpy.png)](https://lingpy.github.io)
 
 
 Authors: [Johann-Mattis List](https://github.com/linguist) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), [Simon Greenhill](https://github.com/simongreenhill) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
