@@ -63,11 +63,27 @@ class Tests():
                 self.n, self.scale, self.scorer)
         assert round(sim, 2) == 4.0
         
+        almA, almB, sim = _talign.globalign(self.seqB, self.seqA, self.n,
+                self.m, self.gop, self.scale, self.scorer)
+        assert round(sim, 2) == 2.5
+        almA, almB, sim = _talign.semi_globalign(self.seqB, self.seqA, self.n,
+                self.m, self.gop, self.scale, self.scorer)
+        assert round(sim, 2) == 4.0
+        almA, almB, sim = _talign.localign(self.seqB, self.seqA, self.n,
+                self.m, self.gop, self.scale, self.scorer)
+        assert round(sim, 2) == 4.0
+        almA, almB, sim = _talign.dialign(self.seqB, self.seqA, self.n,
+                self.m, self.scale, self.scorer)
+        assert round(sim, 2) == 4.0
+        
         for mode in ['global', 'overlap', 'local', 'dialign']:
             almA, almB, sim = _talign.align_pair(self.seqA, self.seqB, 
                     self.gop, self.scale, self.scorer, mode, distance=1)
             assert sim < 1
-            
+            almA, almB, sim, dist = _talign.align_pair(self.seqA, self.seqB, 
+                    self.gop, self.scale, self.scorer, mode, distance=2)
+            assert dist < 1
+
             alignments = _talign.align_pairwise([self.seqA, self.seqB],
                     self.gop, self.scale, self.scorer, mode)
             assert alignments[0][-1] < 1
@@ -85,10 +101,17 @@ class Tests():
         assert _talign.score_profile(
                 ['a', 'a'], ['a', 'a'], self.scorer, self.gop, 0
                 ) == 1
-
+        assert _talign.score_profile(
+                ['a', 'X'], ['a', 'X'], self.scorer, self.gop, 0
+                ) != 1
+        assert _talign.score_profile(
+                ['X', 'a'], ['a', 'X'], self.scorer, self.gop, 0
+                ) != 1
         assert _talign.swap_score_profile(
                 ['a', '+'], ['X', 'X'], self.scorer, 0, 0
                 ) == 0.0
+
+
 
     def test__malign(self):
 
