@@ -445,6 +445,9 @@ def tokens2morphemes(tokens, **keywords):
             out[-1] += [token]
         else:
             out += [[]]
+    # check for bad examples
+    if ['' for x in out if not x]:
+        raise ValueError("[!] Your data contains empty morpheme segments.")
 
     return out
 
