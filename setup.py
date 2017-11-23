@@ -8,6 +8,7 @@ distribute_setup.use_setuptools()
 from setuptools import setup, find_packages, Extension
 import sys
 import os.path
+import codecs
 
 # check for specific features
 with_c = False
@@ -66,11 +67,19 @@ if os.path.isfile('requirements.txt'):
 else:
     requires = []
 
+if os.path.isfile('README.md'):
+    with codecs.open('README.md', 'r', 'utf-8') as handle:
+        long_description=handle.read()
+else:
+    long_description = ''
+
 # make global name of this version for convenience of modifying it
-thisversion = "2.6"
+thisversion = "2.6.1"
 
 setup(
     name=pkgname,
+    description="Python library for quantitative tasks in historical linguistics",
+    long_description=long_description,
     version=thisversion,
     packages=find_packages(pkg_location, 
         exclude=[ "lingpy._plugins", "_plugins", "*._plugins", "_plugins.*",
@@ -89,11 +98,11 @@ setup(
         "historical linguistics",
         "sequence alignment",
         "computational linguistics",
-        "dialectology"
+        "dialectology",
+        "cognate detection",
     ],
     classifiers=[
         'Natural Language :: English',
-        'Development Status :: 5 - Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Operating System :: OS Independent',
@@ -109,7 +118,6 @@ setup(
         'Topic :: Text Processing :: Linguistic',
     ],
     url="http://lingpy.org",
-    description="Python library for automatic tasks in historical linguistics",
     license="gpl-3.0",
     platforms=["unix", "linux", "windows"],
     ext_modules=extension_modules,
