@@ -179,12 +179,30 @@ class TestWriteNexus(WithTempDir):
         self.assertRegexWorkaround(nex, r"Swedish\s+1010010")
         self.assertRegexWorkaround(nex, r"Icelandic\s+1001XXX")
         self.assertRegexWorkaround(nex, r"Norwegian\s+1001001")
+      
+    def test_splitstree(self):
+        # Use missing="X" parameter to avoid \? in the assertRegex calls below
+        nex = write_nexus(self.wordlist, mode='SPLITSTREE', missing="X",
+                filename=text_type(self.tmp_path('test')))
+        self.assertIn("NTAX=5 NCHAR=7", nex)
+        # splitstree should have datatype=standard
+        self.assertIn("DATATYPE=STANDARD", nex)
+        # NO charblock
+        assert 'charset' not in nex
+        assert 'ASSUMPTIONS' not in nex
+        # NO symbols
+        assert 'SYMBOLS' not in nex
+        # check data:
+        self.assertRegexWorkaround(nex, r"German\s+1100100")
+        self.assertRegexWorkaround(nex, r"English\s+1100XXX")
+        self.assertRegexWorkaround(nex, r"Swedish\s+1010010")
+        self.assertRegexWorkaround(nex, r"Icelandic\s+1001XXX")
+        self.assertRegexWorkaround(nex, r"Norwegian\s+1001001")
         
     def test_beast(self):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
         nex = write_nexus(self.wordlist, mode='BEAST', missing="X",
-                filename=text_type(self.tmp_path('test'))
-                )
+                filename=text_type(self.tmp_path('test')))
         # added one character for ascertainment
         self.assertIn("NTAX=5 NCHAR=8", nex)
         # mrbayes should have datatype=standard
@@ -210,8 +228,7 @@ class TestWriteNexus(WithTempDir):
     def test_beastwords(self):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
         nex = write_nexus(self.wordlist, mode='BEASTWORDS', missing="X",
-                filename=text_type(self.tmp_path('test'))
-                )
+                filename=text_type(self.tmp_path('test')))
         # added three characters for ascertainment
         self.assertIn("NTAX=5 NCHAR=10", nex)
         # mrbayes should have datatype=standard
