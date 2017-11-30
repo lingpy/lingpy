@@ -6,11 +6,13 @@ doc/*
 *.so
 *.swp
 *~
+/.cache/
 .coverage
 .eggs
 .gitignore
 .idea
 .tox
+/.venv/
 /build
 /dist
 /doc/build

@@ -22,9 +22,7 @@ before_install:
 # Install packages
 install:
 - conda install --yes python=$TRAVIS_PYTHON_VERSION numpy scipy matplotlib nose
-- pip install mock
-- pip install coverage
-- pip install coveralls
+- pip install mock coverage coveralls
 - python setup.py install
  
 # Run test
