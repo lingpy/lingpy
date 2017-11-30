@@ -31,7 +31,7 @@ def csv2list(
         list specifying the data for each line should be provided.
     comment : string (default="#")
         Comment character in the begin of a line forces this line to be
-        ignored.
+        ignored (set to None  if you want to parse all lines of your file).
     sep : string (default = "\t")
         Specify the separator for the CSV-file.
     strip_lines : bool (default=True)
@@ -67,7 +67,7 @@ def csv2list(
     idx = 0 if header else -1
 
     for i, line in enumerate(infile):
-        if line and (not line.startswith(comment) if comment else True) and idx != i:
+        if line and (not comment or not line.startswith(comment)) and idx != i:
             if strip_lines:
                 cells = [c.strip() for c in line.strip().split(sep)]
             else:
