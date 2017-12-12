@@ -5,6 +5,16 @@ LingPy development follows the model and workflow described as the
 In order to keep the code transparent even for multiple contributors, we have set up a list 
 of [coding conventions](https://github.com/lingpy/lingpy/blob/master/CONVENTIONS.md).
 
+## Acknoledgment policy
+
+With each new major release of LingPy the main editors (List and Forkel) decide about the new
+editorial board for the next major release. Contributors who have helped a lot
+in a recent release circle may thus become members of the editorial board for a
+given release. All people who contribute to LingPy and who contributed in the
+past but not listed in the editorical board will be mentioned as contributors.
+With this policy, we hope to encourage people to provide longlasting support
+and to engage beyond a certain project and time frame.
+
 
 ## Getting started
 

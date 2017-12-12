@@ -419,6 +419,7 @@ def write_nexus(
     mode : str (default="mrbayes")
         The name of the output nexus style. Valid values are:
             * 'MRBAYES': a MrBayes formatted nexus file
+            * 'SPLITSTREE': a SPLITSTREE formatted nexus file
             * 'BEAST': a BEAST formatted nexus file
             * 'BEASTWORDS': a BEAST-formatted nexus for word-partitioned
                analyses.
@@ -454,15 +455,22 @@ def write_nexus(
     nexus : str
         A string containing nexus file output
     """
+    templates = {
+        'BEAST': 'beast.nex',
+        'BEASTWORDS': 'beast.nex',
+        'SPLITSTREE': 'splitstree.nex',
+        'MRBAYES': 'mrbayes.nex'
+    }
+    
     block = "\n\nBEGIN {0};\n{1}\nEND;\n"  # template for nexus blocks
 
     # check for valid mode
     mode = mode.upper()
-    if mode not in ('BEAST', 'BEASTWORDS', 'MRBAYES'):
+    if mode not in ('BEAST', 'BEASTWORDS', 'MRBAYES', 'SPLITSTREE'):
         raise ValueError("Unknown output mode %s" % mode)
 
     # check for valid template
-    template = '%s.nex' % ('mrbayes' if mode == 'MRBAYES' else 'beast')
+    template = templates.get(mode)
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())
