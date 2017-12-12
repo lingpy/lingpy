@@ -93,7 +93,6 @@ setup(
     ],
     classifiers=[
         'Natural Language :: English',
-        'Development Status :: 5 - Stable',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Operating System :: OS Independent',
