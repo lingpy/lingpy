@@ -199,6 +199,9 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
     G = igraph.Graph()
+    # add vertices to the graph
+    for i in range(len(matrix)):
+        G.add_vertex(i)
 
     for i, row in enumerate(matrix):
         for j, cell in enumerate(row):
