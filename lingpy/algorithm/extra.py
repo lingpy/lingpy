@@ -191,23 +191,18 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     Notes
     -----
     Infomap clustering is a community detection method originally proposed by
-    :evobib:`Rosvall2008`.
-
-    Requires the igraph package is required, downloadable from http://igraph.org/.
+    :evobib:`Rosvall2008`. This method requires the igraph package,
+    downloadable from http://igraph.org/.
     """
     if not igraph:
         raise ValueError("The package igraph is needed to run this analysis.")
     if not taxa:
         taxa = list(range(1, len(matrix) + 1))
-
     G = igraph.Graph()
-    vertex_weights = []
+    # add vertices to the graph
     for i in range(len(matrix)):
         G.add_vertex(i)
-        vertex_weights += [0]
 
-    # variable stores edge weights, if they are not there, the network is
-    # already separated by the threshold
     for i, row in enumerate(matrix):
         for j, cell in enumerate(row):
             if i < j:
