@@ -1,4 +1,4 @@
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 from lingpy.convert.html import *
 from lingpy import *

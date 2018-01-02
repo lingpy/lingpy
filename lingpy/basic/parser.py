@@ -439,7 +439,7 @@ class QLCParserWithRowsAndCols(QLCParser):
 
         def unique_sorted(idx, key):
             return sorted(
-                set([self._data[k][idx] for k in self._data
+                set([self._data[k][idx] or '' for k in self._data
                      if k != 0 and isinstance(k, int)]),
                 key=key)
 

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import logging
 
-from clldutils.testing import WithTempDir, capture_all
+from lingpy.tests.util_testing import WithTempDir, capture_all
 
 from lingpy import log
 

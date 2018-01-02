@@ -1,5 +1,5 @@
 from six import text_type
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from lingpy.convert import tree
 from lingpy.basic.tree import Tree
 

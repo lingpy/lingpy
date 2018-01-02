@@ -201,7 +201,7 @@ class LexStat(Wordlist):
     rchars : list
         A list containing all unique character types across languages. In
         contrast to the chars-attribute, the "rchars" (raw chars) do not
-        contain the languahttp://tsv.lingpy.org/triples/get_data.py?history=true&remote_dbase=sinotibetan.sqlite3&limit=ge identifier, thus they only consist of two values,
+        contain the language identifier, thus they only consist of two values,
         separated by a dot, namely, the sound class symbol, and the prosodic
         class value.
     scorer : dict
@@ -987,7 +987,7 @@ class LexStat(Wordlist):
 
         parstring = '_'.join(
             [
-                '{ratio[0]}:{ratio[1]}'
+                '{ratio[0]}:{ratio[1]}',
                 '{vscale:.2f}',
                 '{runs}',
                 '{scoring_threshold:.2f}',
@@ -996,8 +996,8 @@ class LexStat(Wordlist):
                 '{restricted_chars}',
                 '{method}',
                 '{preprocessing}',
-                '{preprocessing_threshold}'
-                '{unexpected:.2f}'
+                '{preprocessing_threshold}',
+                '{unexpected:.2f}',
                 '{unattested:.2f}'
             ]).format(**params)
 
@@ -1260,9 +1260,11 @@ class LexStat(Wordlist):
                 except ZeroDivisionError:
                     log.warn(
                         "Encountered Zero-Division for the comparison of "
-                        "{0} and {1}".format(
+                        "{0} ({2}) and {1} ({3})".format(
                             ''.join(self[idxA, self._segments]),
-                            ''.join(self[idxB, self._segments])))
+                            ''.join(self[idxB, self._segments]),
+                            idxA, idxB
+                            ))
                     d = 100
                 matrix += [d]
             matrix = misc.squareform(matrix)

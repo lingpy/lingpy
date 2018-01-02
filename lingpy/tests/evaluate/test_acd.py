@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from nose.tools import assert_raises
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 from lingpy import LexStat
 from lingpy.tests.util import test_data

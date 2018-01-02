@@ -2,7 +2,7 @@ from __future__ import print_function, division, unicode_literals
 import os
 
 from clldutils.path import Path
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from clldutils import jsonlib
 from mock import patch, Mock
 from nose.tools import assert_raises

@@ -1,7 +1,7 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
 from lingpy.compare.partial import Partial, _get_slices
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from nose.tools import assert_raises
 from lingpy.tests.util import test_data
 from six import text_type
