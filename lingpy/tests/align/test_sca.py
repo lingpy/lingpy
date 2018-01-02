@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 from itertools import product
 
 from six import text_type
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 from lingpy import Alignments, MSA, PSA, LexStat
 import lingpy as lp

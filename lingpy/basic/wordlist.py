@@ -10,7 +10,7 @@ from collections import defaultdict
 
 from six import text_type as str
 from clldutils import dsv
-from clldutils.csvw.metadata import TableGroup
+from csvw.metadata import TableGroup
 from unicodedata import normalize
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
@@ -1068,7 +1068,9 @@ def get_wordlist(path, delimiter=",", quotechar='"', normalization_form="NFC", *
             D[idx + 1] = row
     return Wordlist(D, row=kw['row'].lower(), col=kw['col'].lower())
 
-def from_cldf(path, to=Wordlist):
+def from_cldf(path, to=Wordlist, concept='gloss', concepticon='conceptset',
+        glottocode='glottocode', language='name'
+        ):
     """
     Load data from CLDF into a LingPy Wordlist object or similar.
 
@@ -1079,7 +1081,16 @@ def from_cldf(path, to=Wordlist):
     to : ~lingpy.basic.wordlist.Wordlist
         A ~lingpy.basic.wordlist.Wordlist object or one of the descendants
         (LexStat, Alignmnent).
-
+    concept : str (default='gloss')
+        The name used for the basic gloss in the `parameters.csv` table.
+    glottocode : str (default='glottocode')
+        The default name for the column storing the Glottolog ID in the
+        `languages.csv` table.
+    language : str (default='name')
+        The default name for the language name in the `languages.csv` table.
+    concepticon : str (default='conceptset')
+        The default name for the concept set in the `paramters.csv` table.
+        
     Note
     ----
     This function does not offer absolute flexibility regarding the data you
@@ -1088,15 +1099,15 @@ def from_cldf(path, to=Wordlist):
 
     Todo
     ----
-    Add support for partial cognates.
+    Add support for partial cognates (slices).
     """
     tbg = TableGroup.from_file(path)
     forms = tbg.tabledict['forms.csv']
 
     # obtain the dictionaries to convert ids to values
-    taxa = {t['ID']: (t['Name'], t['glottocode']) for t in
+    taxa = {t['ID']: (t[language], t[glottocode]) for t in
             tbg.tabledict['languages.csv']}
-    concepts = {c['ID']: (c['Name'], c['Concepticon_ID']) for c in 
+    concepts = {c['ID']: (c[concept], c[concepticon]) for c in 
             tbg.tabledict['parameters.csv']}
 
     # create dictionary
@@ -1104,7 +1115,7 @@ def from_cldf(path, to=Wordlist):
     id2idx = {}
     for i, row in enumerate(forms):
         # check for numeric ID
-        if row['ID'].isdigit:
+        if row['ID'].isdigit():
             idx = int(row['ID'])
         else:
             idx = i+1

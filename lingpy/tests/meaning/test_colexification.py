@@ -2,7 +2,7 @@
 Tests for colexification module.
 """
 from six import text_type
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from lingpy.tests.util import test_data
 from lingpy.meaning.colexification import *
 import lingpy.meaning.colexification as colx

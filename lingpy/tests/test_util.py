@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from unittest import TestCase
 
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from lingpy.tests.util import test_data
 from lingpy import util
 

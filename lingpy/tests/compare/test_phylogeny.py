@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import os
 from collections import defaultdict
 
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from mock import MagicMock, patch
 import lingpy
 from lingpy.compare.phylogeny import PhyBo

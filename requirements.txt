@@ -1,6 +1,7 @@
 numpy
 appdirs
 networkx>=2.0
-clldutils>=1.6
+clldutils>=2.0.1
+csvw
 tqdm
 six

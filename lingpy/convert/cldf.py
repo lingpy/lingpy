@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import unicodedata
 from collections import defaultdict
 from clldutils.path import Path, read_text
-from clldutils.csvw.metadata import TableGroup
+from csvw.metadata import TableGroup
 from clldutils.dsv import reader, Dialect
 from clldutils.misc import slug
 

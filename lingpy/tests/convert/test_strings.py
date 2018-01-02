@@ -4,7 +4,7 @@ Test conversions involving strings.
 from __future__ import division, unicode_literals
 from unittest import TestCase
 from six import text_type
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 import sys
 import lingpy
