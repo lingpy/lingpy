@@ -2,7 +2,7 @@ from __future__ import print_function, division, unicode_literals
 import os
 
 from clldutils.path import Path
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from clldutils import jsonlib
 from mock import patch, Mock
 from nose.tools import assert_raises
@@ -42,7 +42,7 @@ class TestLexStat(WithTempDir):
         self.assertIn('lexstat', repr(ls))
         self._make_one(ls)
         self._make_one({0: ['ID', 'doculect', 'concept', 'tokens'],
-                        1: ['1', 'deu', 'hand', 'hant']})
+                        1: ['1', 'deu', 'hand', ['h', 'a', 'n', 't']]})
         self.assertRaises(AssertionError, LexStat, {0: ['ID', 'doculect',
                                                         'concept'],
                                                     1: ['1', 'deu', 'hand']})

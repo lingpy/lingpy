@@ -1,4 +1,4 @@
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 import lingpy
 from lingpy.compare._phylogeny.convex_hull import convex_hull

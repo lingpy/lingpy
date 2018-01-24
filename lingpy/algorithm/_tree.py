@@ -17,7 +17,7 @@ class _TreeDist(object):
     @staticmethod
     def grf(treeA, treeB, distance='grf'):
         """
-        Computes the generalized Robinson fould distance between two trees.
+        Computes the generalized Robinson-Foulds distance between two trees.
         """
 
         # prepare the trees [probably not necessary @lingulist]
@@ -69,7 +69,7 @@ class _TreeDist(object):
                     else:
                             emod = False
                             break
-                if emod == False:
+                if not emod:
                     break
             if emod:
                 e_mod += 1.0
@@ -128,6 +128,9 @@ class _TreeDist(object):
 
         if len(ind_list) > 0:
             raise ValueError("Cannot compute the bipartition!")
+
+        if not partition_list:
+            raise ValueError("Tree seems to be invalid")
 
         lang_set = frozenset(partition_list[-1])
         final_parts = {}

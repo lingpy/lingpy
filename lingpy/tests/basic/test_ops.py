@@ -3,7 +3,7 @@ Test wordlist module.
 """
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 from lingpy import Wordlist, Alignments
 from lingpy.tests.util import test_data

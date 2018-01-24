@@ -32,7 +32,10 @@ def valid_cluster(sequence):
 
     Seealso:
     --------
+    generate_all_clusters
+    generate_random_cluster
     order_cluster
+    mutate_cluster
 
     """
     visited = set()
@@ -47,18 +50,65 @@ def valid_cluster(sequence):
 
 
 def generate_all_clusters(numbers):
-    """Generate all possible clusters for a number of elements."""
+    """Generate all possible clusters for a number of elements.
+    
+    Returns
+    -------
+    clr : iterator
+        An iterator that will yield the next of all possible clusters.
+
+    Seealso
+    -------
+    valid_cluster
+    generate_random_cluster
+    order_cluster
+    mutate_cluster
+    """
+
     for clr in combinations_with_replacement(range(numbers), numbers):
         if valid_cluster(clr):
             yield clr
 
 
-def generate_random_cluster(numbers):
-    """Generate a random cluster for a number of elements."""
+def generate_random_cluster(numbers, bias=False):
+    """Generate a random cluster for a number of elements.
+    
+    Parameters
+    ----------
+    numbers : int
+        Number of separate entities which should be clustered.
+    bias : str (default=False)
+        When set to "lumper" will tend to create larger groups, when set to
+        "splitter" it will tend to produce smaller groups.
+
+    Returns
+    -------
+    cluster : list
+        A list with consecutive ordering of clusters, starting from zero.
+
+    Seealso
+    -------
+    valid_cluster
+    generate_all_clusters
+    order_cluster
+    mutate_cluster
+
+    """
     out = []
     maxelm = 0
+    if bias == 'lumper':
+        selector = lambda x, y, z: z * 2 + (abs(x-y)+1) * [x]
+    elif bias == 'splitter':
+        selector = lambda x, y, z: ((x-y)+1) * [x]
+
     for i in range(numbers):
-        nextelm = random.randint(0,maxelm)
+        if bias:
+            select_from = []
+            for i in range(maxelm+1):
+                select_from += selector(i, maxelm, [o for o in out])
+            nextelm = random.choice(select_from)
+        else:
+            nextelm = random.randint(0, maxelm)
         if nextelm == maxelm:
             maxelm += 1
         out += [nextelm]
@@ -66,7 +116,27 @@ def generate_random_cluster(numbers):
 
 
 def order_cluster(clr):
-    """Order a cluster into our numeric form."""
+    """Order a cluster into the form of a valid cluster.
+    
+    Parameters
+    ----------
+    clr : list
+        A list with clusters assigned by given each element a specific clusuter
+        ID.
+
+    Returns
+    -------
+    valid_cluster : list
+        A list in which the IDs start from zero and increase consecutively with
+        each new cluster introduced.
+
+    Seealso
+    -------
+    valid_cluster
+    generate_all_clusters
+    generate_random_cluster
+    mutate_cluster
+    """
     current = 0
     dct = {}
     out = []
@@ -80,7 +150,30 @@ def order_cluster(clr):
 
 
 def mutate_cluster(clr, chance=0.5):
-    """Mutate a cluster."""
+    """Mutate a cluster.
+    
+    Parameters
+    ----------
+    clr : cluster
+        A list with ordered clusters.
+    chance : float (default=0.5)
+        The mutation rate for each element in a cluster. If set to 0.5, this
+        means that in 50% of the cases, an element will be assigned to another
+        cluster or a new cluster.
+
+    Returns
+    -------
+    valid_cluster : list
+        A newly clustered list in consecutive order.
+    
+    Seealso
+    -------
+    valid_cluster
+    generate_all_clusters
+    generate_random_cluster
+    order_cluster
+
+    """
     out = []
     numbers = list(range(len(clr)))
     for element in clr:

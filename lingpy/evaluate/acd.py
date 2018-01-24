@@ -293,7 +293,8 @@ def diff(
         pprint=True,
         filename='',
         tofile=True,
-        transcription="ipa"):
+        transcription="ipa",
+        concepts=False):
     r"""
     Write differences in classifications on an item-basis to file.
 
@@ -340,28 +341,6 @@ def diff(
     gives detailed information regarding false positives, false negatives, and
     the words involved in these wrong decisions.
 
-    .. This function also calculates the "transformation" score. This score is
-    .. based on the calculation of steps that are needed to transform one cluster
-    .. for one set of meanings into the other. Ideally, if there are *n* different
-    .. cognate sets covering one gloss in the gold standard, the minimal length of
-    .. a mapping to convert the *m* cognate sets of the test set into the gold standard
-    .. is *n*. In this case, both gold standard and test set are identical.
-    .. However, if gold standard and test set differ, the number of mappings
-    .. necessarily exceeds *m* and *n*. Based on this, the transformation
-    .. precision is defined as :math:`\frac{m}{M}`, where *m* is the number of
-    .. distinct clusters in the test set and *M* is the length of the mapping.
-    .. Accordingly, the recall is defined as :math:`\frac{n}{M}`, where *n* is the
-    .. number of clusters in the gold standard.
-
-    .. Note that if precision is lower than 1.0, this means there are false
-    .. positive decisions in the test set. Accordingly, a recall lower than 1.0
-    .. indicates that there are false negative decisions in the test set.
-    .. The drawback of this score is that it is not sensitive regarding the
-    .. distinct number of decisions in which gold standard and test set differ, so
-    .. the recall can be very low although most of the words have been grouped
-    .. accurately. The advantage is that it can be directly interpreted in terms
-    .. of 'false positive/false negative' decisions.
-
     See also
     --------
     bcubes
@@ -372,6 +351,9 @@ def diff(
 
     # open file
     lines = []
+
+    # concepts, allow to check scores for only one concept
+    concepts = concepts or [c for c in wordlist.rows]
 
     # get a formatter for language names
     lform = '{0:' + str(max([len(l) for l in wordlist.cols])) + '}'
@@ -388,7 +370,7 @@ def diff(
             for yA, yB in combinations(tmp[x], r=2):
                 yield tuple(sorted([yA, yB]))
 
-    for concept in wordlist.rows:
+    for concept in concepts:
         idxs = wordlist.get_list(row=concept, flat=True)
         # get the basic index for all seqs
         bidx = [i + 1 for i in range(len(idxs))]
@@ -451,29 +433,12 @@ def diff(
     pr = sum(recP) / len(recP)
     pf = 2 * (pp * pr) / (pp + pr)
 
-    as_string(_format_results('B-Cubed', bp, br, bf) + \
-            _format_results('Pair', pp, pr, pf), 
+    as_string('\n'.join(lines), 
             pprint=pprint)
-
-    lines.extend([
-        'B-Cubed Scores:',
-        'Precision: {0:.4f}'.format(bp),
-        'Recall:    {0:.4f}'.format(br),
-        'F-Score:   {0:.4f}'.format(bf),
-        '#',
-        'Pair Scores:',
-        'Precision: {0:.4f}'.format(pp),
-        'Recall:    {0:.4f}'.format(pr),
-        'F-Score:   {0:.4f}'.format(pf),
-    ])
 
     if tofile:
         write_text_file(filename + '.diff', lines)
-
-    if pprint:
-        return (bp, br, bf), (pp, pr, pf), lines
-    else:
-        return (bp, br, bf), (pp, pr, pf)
+    return (bp, br, bf), (pp, pr, pf)
 
 
 def npoint_ap(scores, cognates, reverse=False):
@@ -523,15 +488,58 @@ def npoint_ap(scores, cognates, reverse=False):
         return 0
 
 
-def random_cognates(wordlist, ref='randomid'):
-    """Populate a wordlist with random cognates for each entry."""
+def random_cognates(wordlist, ref='randomid', bias=False):
+    """
+    Populate a wordlist with random cognates for each entry.
+    
+    Parameters
+    ----------
+    ref : str (default="randomid")
+        Cognate set identifier for the newly created random cognate sets.
+    bias : str (default=False)
+        When set to "lumper" this will tend to create less cognate sets and
+        larger clusters, when set to "splitter" it will tend to create smaller
+        clusters.
+
+    Note
+    ----
+    When using this method for evaluation, you should be careful to
+    overestimate the results. The function which creates the random clusters is
+    based on simple functions for randomization and thus probably 
+    """
     
     clrd, current = {}, 1
     for c in wordlist.rows:
         idxs = wordlist.get_list(row=c, flat=True)
-        clrs = generate_random_cluster(len(idxs))
+        clrs = generate_random_cluster(len(idxs), bias=bias)
         for idx, clr in zip(idxs, clrs):
             clrd[idx] = clr + current 
         current += max(clrs)
 
     wordlist.add_entries(ref, clrd, lambda x: x)
+
+def extreme_cognates(wordlist, ref="extremeid", bias="lumper"):
+    """Return extreme cognates, either lump all words together or split them.
+
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        A ~lingpy.basic.wordlist.Wordlist object.
+    ref : str (default="extremeid")
+        The name of the table in your wordlist to which the new IDs should be
+        written.
+    bias : str (default="lumper")
+        If set to "lumper", all words with a certain meaning will be given the
+        same cognate set ID, if set to "splitter", all will be given a separate
+        ID.
+
+    """
+    if bias not in ['lumper', 'splitter']:
+        raise ValueError("You must select between 'lumper' or 'splitter'.")
+    if bias == "lumper":
+        concepts = {c: i+1 for i, c in enumerate(wordlist.rows)}
+        wordlist.add_entries(ref, 'concept', lambda x: concepts[x])
+    elif bias == 'splitter':
+        idxs = {idx: idx for idx in wordlist}
+        wordlist.add_entries(ref, idxs, lambda x: x)
+

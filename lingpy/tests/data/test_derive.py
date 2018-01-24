@@ -1,7 +1,7 @@
 # *-* coding: utf-8 *-*
 from __future__ import unicode_literals, print_function, division, absolute_import
 
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from lingpy import cache
 
 

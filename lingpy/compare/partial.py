@@ -29,25 +29,21 @@ def _get_slices(tokens, **keywords):
             morpheme annotations.
     """
     kw = dict(
-            separators='_#+'+lingpy.settings.rcParams['morpheme_separator'],
-            tones=lingpy.settings.rcParams['tones']
+            sep=lingpy.settings.rcParams['morpheme_separator'],
+            word_sep=lingpy.settings.rcParams['word_separator'],
+            word_seps=lingpy.settings.rcParams['word_separators'],
+            seps=lingpy.settings.rcParams['morpheme_separators'],
+            tones='T',
+            split_on_tones=True,
             )
     kw.update(keywords)
+    morphemes = lingpy.sequence.sound_classes.tokens2morphemes(tokens,
+            **kw)
     out = []
-    start = 0
-    for i,token in enumerate(tokens):
-        if token in kw['separators']:
-            if tokens[i-1][0] in kw['tones']:
-                start = i+1
-            else:
-                out += [(start, i)]
-                start = i+1
-                
-        if token[0] in lingpy.settings.rcParams['tones']:
-            out += [(start, i+1)]
-            start = i+1
-    if start < len(tokens):
-        out += [(start, len(tokens))]
+    current = 0
+    for morpheme in morphemes:
+        out += [(current, current+len(morpheme))]
+        current = current+len(morpheme)
     return out
 
 class Partial(LexStat):
@@ -197,7 +193,12 @@ class Partial(LexStat):
             defaults=False,
             external_scorer=False,  # external scoring function
             imap_mode= False,
-            separators=lingpy.settings.rcParams['morpheme_separator']+'+_#'
+            sep=lingpy.settings.rcParams['morpheme_separator'],
+            word_sep=lingpy.settings.rcParams['word_separator'],
+            word_seps=lingpy.settings.rcParams['word_separators'],
+            seps=lingpy.settings.rcParams['morpheme_separators'],
+            tones='T',
+            split_on_tones=True
         )
         kw.update(keywords)
         
@@ -346,6 +347,7 @@ class Partial(LexStat):
             restriction='',
             ref='',
             external_function=None,
+            split_on_tones=True,
             **keywords):
         """
         Cluster the words into partial cognate sets.
@@ -368,7 +370,7 @@ class Partial(LexStat):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')
@@ -397,6 +399,10 @@ class Partial(LexStat):
                 expansion=2,
                 max_steps=1000,
                 add_self_loops=True,
+                sep=lingpy.settings.rcParams['morpheme_separator'],
+                word_sep=lingpy.settings.rcParams['word_separator'],
+                word_seps=lingpy.settings.rcParams['word_separators'],
+                seps=lingpy.settings.rcParams['morpheme_separators'],
                 mcl_logs=lambda x: -np.log2((1 - x) ** 2)
                 )
         kw.update(keywords)        
@@ -411,7 +417,8 @@ class Partial(LexStat):
 
         matrices = self._get_partial_matrices(method=method, scale=scale,
                 factor=factor, restricted_chars=restricted_chars, mode=mode,
-                gop=gop, imap_mode=kw['imap_mode'])
+                gop=gop, imap_mode=kw['imap_mode'],
+                split_on_tones=split_on_tones)
         k = 0
         C = defaultdict(list) # stores the pcogids
         G = {} # stores the graphs

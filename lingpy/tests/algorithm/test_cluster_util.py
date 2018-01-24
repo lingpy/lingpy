@@ -24,3 +24,11 @@ class Tests(TestCase):
 
         assert len(cluster_util.mutate_cluster([0, 0, 1])) == 3
 
+    def test_generate_random_clusters(self):
+
+        a = cluster_util.generate_random_cluster(3, bias=False)
+        b = cluster_util.generate_random_cluster(2, bias='lumper')
+        c = cluster_util.generate_random_cluster(4, bias='splitter')
+        
+        assert a != b != c
+

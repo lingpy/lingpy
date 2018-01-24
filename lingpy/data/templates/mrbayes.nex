@@ -1,17 +1,10 @@
 #NEXUS
 
 BEGIN DATA;
-DIMENSIONS NTAX={ntax} NCHAR={nchar};
-FORMAT DATATYPE={dtype} SYMBOLS={symbols} GAP={gap} MISSING={missing} INTERLEAVE=yes;
+    DIMENSIONS NTAX={ntax} NCHAR={nchar};
+    FORMAT DATATYPE={dtype} SYMBOLS={symbols} GAP={gap} MISSING={missing};
 MATRIX
-
 {matrix}
-
 ;
-
-{commands}
-
-{custom}
-
 END;
-
+{commands}{custom}

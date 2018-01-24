@@ -1,5 +1,10 @@
 include distribute_setup.py 
+include MANIFEST.in
+include requirements.txt
 recursive-include lingpy *.msa
+recursive-include lingpy *.alm *.psa *.bib *.psq *.dst *.taxa 
+recursive-include lingpy *.json *.gls *.tre
+recursive-include lingpy phybo-r-3 phybo-t-3 phybo-w-1-1 tokentestjs tokens.test
 recursive-include lingpy *.msq
 recursive-include lingpy *.csv
 recursive-include lingpy *.rc
@@ -9,7 +14,7 @@ recursive-include lingpy *.qlc
 recursive-include lingpy *.tex
 recursive-include lingpy *.tsv
 recursive-include lingpy *.js
-recursive-include lingpy *.c *.pyx *.md
+recursive-include lingpy *.c *.pyx *.md *.nex
 recursive-include lingpy *.html *.css
 recursive-include lingpy INFO
 recursive-include lingpy converter
@@ -21,10 +26,13 @@ recursive-include lingpy diacritics
 recursive-include lingpy tones
 recursive-include lingpy vowels
 recursive-include lingpy matrix
-include lingpy/data/swadesh/*.txt
-include lingpy/data/swadesh/*.qlc
 include lingpy/data/ipa/sampa.csv
 recursive-include doc *
 prune */_plugins/*
 prune */_plugins
-
+prune doc/*
+prune doc/Makefile
+prune doc/README.md
+prune doc/make.bat
+prune doc/.gitignore
+prune doc

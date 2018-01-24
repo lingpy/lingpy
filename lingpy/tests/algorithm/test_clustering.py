@@ -3,7 +3,7 @@ import os
 
 from six import text_type
 from nose.tools import assert_raises
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Tests(WithTempDir):
@@ -17,6 +17,22 @@ class Tests(WithTempDir):
                 [0.8, 0.7, 0.8, 0.0, 0.3],
                 [0.2, 0.6, 0.8, 0.3, 0.0]]
         self.taxa = ['German','Swedish','Icelandic','English','Dutch']
+    
+    def test_check_taxa(self):
+        from lingpy.algorithm.clustering import check_taxon_names
+        assert_raises(ValueError, check_taxon_names, ['Eng:lish'])
+
+    def test_upgma(self):
+        from lingpy.algorithm.clustering import upgma
+        tree = upgma(self.matrix, self.taxa, distances=True)
+        assert 'English' in tree
+        assert_raises(ValueError, upgma, [[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
+        
+    def test_neighbor(self):
+        from lingpy.algorithm.clustering import neighbor
+        tree = neighbor(self.matrix, self.taxa, distances=True)
+        assert 'English' in tree
+        assert_raises(ValueError, neighbor, [[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
 
     def test_fuzzy(self):
         from lingpy.algorithm.clustering import fuzzy
@@ -70,11 +86,14 @@ class Tests(WithTempDir):
         best_threshold(self.matrix, trange=(0.0, 1.0, 0.05))
 
     def test_find_threshold(self):
-
         from lingpy.algorithm.clustering import find_threshold
         find_threshold(self.matrix)
         find_threshold(self.matrix, logs=False)
         assert find_threshold([[0,1],[1,0]]) is None
+
+    def test_check_taxon_names(self):
+        from lingpy.algorithm.clustering import check_taxon_names
+        assert_raises(ValueError, check_taxon_names, ['k,k'])
 
     def test_flat_cluster(self):
         from lingpy.algorithm.clustering import flat_cluster

@@ -2,6 +2,7 @@
 Basic module for the handling of language trees.
 """
 from __future__ import unicode_literals, division, print_function
+import os
 import random
 
 from lingpy.thirdparty.cogent import LoadTree, PhyloNode
@@ -101,14 +102,15 @@ class Tree(PhyloNode):
         # lingpy-specific aspects of cogent's trees and allows us to include
         # them in our documentation
         if type(tree) == str:
-            if tree[-4:] not in ['.nwk', '.txt']:
+            if not os.path.isfile(tree):
                 tmp = LoadTree(treestring=tree)
             else:
                 tmp = LoadTree(tree)
         else:
             if type(tree) == list:
                 tmp = LoadTree(treestring=random_tree(tree, **keywords))
-            else:
+            else:  # pragma: no cover
+                # last ditch attempt to try load
                 tmp = LoadTree(tree)
 
         for key, val in tmp.__dict__.items():
@@ -118,7 +120,7 @@ class Tree(PhyloNode):
 
     def get_distance(self, other, distance='grf', debug=False):
         """
-        Function returns the Robinson Fould distance between the two trees.
+        Function returns the Robinson-Foulds distance between the two trees.
 
         Parameters
         ----------
@@ -128,18 +130,13 @@ class Tree(PhyloNode):
         distance : { "grf", "rf", "branch", "symmetric"} (default="grf")
             The distance which shall be calculated. Select between:
 
-            * "grf": the generalized Robinson Fould Distance
-            * "rf": the Robinson Fould Distance
-            * "branch": the distance in terms of branch lengths
+            * "grf": the generalized Robinson-Foulds Distance
+            * "rf": the Robinson-Foulds Distance
             * "symmetric": the symmetric difference between all partitions of
                 the trees
-
-
         """
         if distance == 'grf':
             return TreeDist.grf(str(self), str(other), distance='grf')
-        elif distance in ['branch', 'branch_length', 'branchlength']:
-            return self.distance(other)
         elif distance == 'rf':
             return TreeDist.grf(str(self), str(other), distance='rf')
         elif distance == 'symmetric':
@@ -161,7 +158,6 @@ class Tree(PhyloNode):
         distance : int
             The distance of the given node to the root of the tree.
         """
-
         subtree = self.getNodeMatchingName(node)
         parent = ''
         counter = 0
@@ -169,7 +165,6 @@ class Tree(PhyloNode):
             parent = subtree.Parent.Name
             subtree = self.getNodeMatchingName(parent)
             counter += 1
-
         return counter
 
     #def getTransitionMatrix(self):

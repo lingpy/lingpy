@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import os
 from io import open
 
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 
 class ConfigTest(WithTempDir):

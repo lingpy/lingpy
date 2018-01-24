@@ -1,12 +1,13 @@
+# *-* coding: utf-8 *-*
 """
 Basic functions for the conversion of Python-internal data into strings.
 """
 from __future__ import unicode_literals
-import re
+import unicodedata
+from collections import defaultdict
 
 from lingpy import util
 from lingpy.convert.html import template_path
-
 
 def scorer2str(scorer):
     """
@@ -136,10 +137,9 @@ def msa2str(msa, wordlist=False, comment="#",
         consensus = False
 
     if wordlist:
-        meta += '0\t' + 'COLUMNID'.ljust(formatter, '.') + '\t' + '\t'.join([str(i + 1)
-                                                                             for i in
-                                                                             range(
-                                                                                 alm_len)])
+        meta += '0\t' + 'COLUMNID'.ljust(formatter, '.') + '\t' + '\t'.join([
+            str(i + 1) for i in range(alm_len)
+        ])
         meta += '\n#\n'
 
     if local:
@@ -214,13 +214,13 @@ def matrix2dst(
     comment : str (default = '#')
         The comment character to be used when adding additional information in
         the "stamp".
-    
+
     Returns
     -------
     output : {str or file}
         Depending on your settings, this function returns a string in DST
         (=Phylip) format, or a file containing the string.
-        
+
     """
     if not taxa:
         taxa = ['t_{0}'.format(i + 1) for i in range(len(matrix))]
@@ -256,7 +256,7 @@ def pap2nex(
     missing=0,
     filename='',
     datatype='STANDARD'
-    ):
+):
     """
     Function converts a list of paps into nexus file format.
 
@@ -269,10 +269,10 @@ def pap2nex(
         number of taxa and the second dimension being identical to the number
         of paps. If a dictionary is passed, each key represents a given pap.
         The following two structures will thus be treated identically::
-            
+
           >>> paps = [[1,0],[1,0],[1,0]] # two languages, three paps
           >>> paps = {1:[1,0], 2:[1,0], 3:[1,0]} # two languages, three paps
-    
+
     missing : {str, int} (default=0)
         Indicate how missing characters are represented in the original data.
 
@@ -284,7 +284,6 @@ def pap2nex(
 
     # get longest taxon
     maxTax = max([len(taxon) for taxon in taxa])
-    paps_ref = ""
 
     # check whether paps are dict or list
     if hasattr(paps, 'keys'):
@@ -292,8 +291,8 @@ def pap2nex(
         reference = [k for k in sorted(paps)]
     else:
         new_paps = paps
-        reference = [k for k in range(1, len(paps)+1)]
-    
+        reference = [k for k in range(1, len(paps) + 1)]
+
     # create reference
     ref_string = ''
     for i, ref in enumerate(reference):
@@ -331,8 +330,8 @@ def pap2csv(
     Write paps created by the Wordlist class to a csv-file.
     """
 
-    out = "ID\t" + '\t'.join(taxa) + '\n'   
-    
+    out = "ID\t" + '\t'.join(taxa) + '\n'
+
     for key in sorted(paps):
         out += '{0}\t{1}\n'.format(
             key,
@@ -348,7 +347,7 @@ def pap2csv(
 def multistate2nex(taxa, matrix, filename='', missing="?"):
     """
     Convert the data in a given wordlist to NEXUS-format for multistate analyses in PAUP.
-    
+
     Parameters
     ----------
     taxa : list
@@ -403,47 +402,46 @@ END;
 
 
 def write_nexus(
-        taxa, matrix, custom=None, custom_name='lingpy', missing="?", gap="-",
-        template="mrbayes.nex", filename="mrbayes.nex", dtype="RESTRICTION",
-        symbols="10",
+        wordlist,
+        mode='mrbayes',
+        filename="mrbayes.nex",
+        ref="cogid",
+        missing="?", gap="-",
+        custom=None,
+        custom_name='lingpy',
         commands=None, commands_name="mrbayes"):
     """Write a nexus file for phylogenetic analyses.
 
     Parameters
     ----------
-    taxa : list
-        The taxonomic units in your data. They should be valid taxon names,
-        only consisting of alphanumeric characters and an underscore, usually
-        also not exceeding a length of 15 characters.
-    matrix : list
-        The matrix with the values for each taxon in one separate row. Usually,
-        the matrix contains binary values which can be passed as strings or
-        integers (1 and 0), but missing values are also possible. Given
-        biological common restrictions, each character can only be one ASCII
-        symbol.
-    custom : list {default=None)
-        This information allows to add custom information to the nexus file,
-        like, for example, the structure of the characters, their original concept, or their type, and it will be
-        written into a custom block in the nexus file. The name of the custom
-        block can be specified with help of the `custom_name` keyword. The
-        content is a list of strings which will be written line by line into
-        the custom block.
-    custom_name : str (default="lingpy")
-        The name of the custom block which will be written to the file.
-    missing : str (default="?")
-        The symbol for missing characters.
+    wordlist : lingpy.basic.wordlist.Wordlist
+        A Wordlist object containing cognate IDs.
+    mode : str (default="mrbayes")
+        The name of the output nexus style. Valid values are:
+            * 'MRBAYES': a MrBayes formatted nexus file
+            * 'SPLITSTREE': a SPLITSTREE formatted nexus file
+            * 'BEAST': a BEAST formatted nexus file
+            * 'BEASTWORDS': a BEAST-formatted nexus for word-partitioned
+               analyses.
+    filename : str (default=None)
+        Name of the file to which the nexus file will be written.
+        If set to c{None}, then this function will not write the nexus ontent
+        to a file, but simply return the content as a string.
+    ref: str (default="cogid")
+        Column in which you store the cognate sets in your data.
     gap : str (default="-")
         The symbol for gaps (not relevant for linguistic analyses).
-    template : str (default="mrbayes.nex")
-        The name of the template file. This file is located in the template/
-        folder of the LingPy package, but a custom file can be specified by
-        providing the path.
-    dtype : str (default="RESTRICTION")
-        The datatype, which is usually "STANDARD" or "RESTRICTION" in
-        linguistic analyses, with "RESTRICTION" pointing to pure birth-death
-        models.
-    symbols : str (default="10")
-        The symbols used for the characters.
+    missing : str (default="?")
+        The symbol for missing characters.
+    custom : list {default=None)
+        This information allows to add custom information to the nexus file, like, for
+        example, the structure of the characters, their original concept, or their
+        type, and it will be written into a custom block in the nexus file. The name of
+        the custom block can be specified with help of the `custom_name` keyword. The
+        content is a list of strings which will be written line by line into the custom
+        block.
+    custom_name : str (default="lingpy")
+        The name of the custom block which will be written to the file.
     commands : list (default=None)
         If specified, will write an additional block containing commands for
         phylogenetic software. The commands are passed as a list, containing
@@ -452,28 +450,126 @@ def write_nexus(
         Determines how the block will be called to which the commands will be
         written.
 
-    """ 
+    Returns
+    -------
+    nexus : str
+        A string containing nexus file output
+    """
+    templates = {
+        'BEAST': 'beast.nex',
+        'BEASTWORDS': 'beast.nex',
+        'SPLITSTREE': 'splitstree.nex',
+        'MRBAYES': 'mrbayes.nex'
+    }
+    
+    block = "\n\nBEGIN {0};\n{1}\nEND;\n"  # template for nexus blocks
+
+    # check for valid mode
+    mode = mode.upper()
+    if mode not in ('BEAST', 'BEASTWORDS', 'MRBAYES', 'SPLITSTREE'):
+        raise ValueError("Unknown output mode %s" % mode)
+
+    # check for valid template
+    template = templates.get(mode)
     tpath = util.Path(template_path(template))
     if tpath.exists:
         _template = util.read_text_file(tpath.as_posix())
+    else:  # pragma: no cover
+        raise IOError("Unknown template %s" % template)
+
+    # check that `ref` is a valid column
+    if ref not in wordlist._alias:
+        raise KeyError("Unknown _ref_ column in wordlist '%s'" % ref)
+
+    # commands
+    _commands = block.format(commands_name, '\n'.join(commands)) if commands else ''
+    _custom = block.format(custom_name, '\n'.join(custom)) if custom else ''
+
+    # retrieve the matrix
+    matrix = [[] for x in range(wordlist.width)]
+    etd = wordlist.get_etymdict(ref=ref)
+    concepts = sorted([(cogid, wordlist[[
+        x[0] for x in vals if x][0]][wordlist._rowIdx]) for (cogid, vals) in
+        etd.items()],
+        key=lambda x: x[1])
+    # and missing data..
+    missing_ = {t: [concept for (cogid, concept) in concepts if concept not in wordlist.get_list(
+                col=t, entry=wordlist._row_name, flat=True)] for t in
+                wordlist.cols}
+
+    # add ascertainment character for mode=BEAST
+    if mode == 'BEAST':
+        matrix = [['0'] for m in matrix]
+    # fill matrix
+    for i, t in enumerate(wordlist.cols):
+        previous = ''
+        for cogid, concept in concepts:
+            if previous != concept:
+                previous = concept
+                # add ascertainment character for mode=BEASTWORDS. Note that if
+                # a given word:language is missing, then its ascertainment
+                # character is the `missing` character.
+                if mode == "BEASTWORDS":
+                    matrix[i] += ['0'] if concept not in missing_[t] else [missing]
+            matrix[i] += ['1'] if etd[cogid][i] else ['0'] if concept not in \
+                missing_[t] else [missing]
+
+    # parse characters into `charsets` (a dict of word=>siteindex positions),
+    # and `chars` (a list of characters).
+    charsets, chars, previous = defaultdict(list), [], ''
+    for i, (cogid, concept) in enumerate(concepts, 1):
+        char = util.nexus_slug(concept)
+        # add label for ascertainment character in BEAST mode
+        if i == 1 and mode == 'BEAST':
+            chars.append("_ascertainment")
+        # add label for per-word ascertainment characters in BEASTWORDS
+        if mode == 'BEASTWORDS' and previous != concept:
+            chars.append("%s_ascertainment" % char)
+            charsets[char].append(len(chars))
+        # finally add label.
+        chars.append(char)
+        charsets[char].append(len(chars))
+        previous = concept
+    
+    # create character labels block if needed
+    if mode in ('BEAST', 'BEASTWORDS'):
+        charblock = ",\n".join(["\t%d %s" % o for o in enumerate(chars, 1)])
     else:
-        util.read_text_file(template)
-    _commands = 'BEGIN {0};\n{1}\n\n'.format(
-            commands_name, '\n'.join(commands)) if commands else ''
-    _custom = 'BEGIN {0};\n{1}\n\n'.format(
-            custom_name, '\n'.join(custom)) if custom else ''
+        charblock = ""
     
+    # create charsets block
+    if mode in ('BEASTWORDS', 'MRBAYES'):
+        charsets = ["\tcharset %s = %d-%d;" % (
+            c, min(m), max(m)) for (c, m) in charsets.items()
+        ]
+        _commands += "\n\n" if len(_commands) else ''
+        blockname = 'ASSUMPTIONS' if mode == 'BEASTWORDS' else 'MRBAYES'
+        _commands += block.format(blockname, "\n".join(charsets))
+    
+    # convert state matrix to string.
     _matrix = ""
-    mtl = max([len(t) for t in taxa])+1
-    for i, (t, m) in enumerate(zip(taxa, matrix)):
-        _matrix += str(t + mtl * ' ')[:mtl]+' '
-        _matrix += ''.join(
-                ['({0})'.format(c) if len(c) > 1 else str(c) for c in m])+'\n'
-    
+    maxtaxlen = max([len(util.nexus_slug(t)) for t in wordlist.cols]) + 1
+    for i, (taxon, m) in enumerate(zip(wordlist.cols, matrix)):
+        _matrix += str(util.nexus_slug(taxon) + maxtaxlen * ' ')[:maxtaxlen] + ' '
+        _matrix += ''.join([
+            '({0})'.format(c) if len(c) > 1 else str(c) for c in m
+        ]) + '\n'
+    _matrix = _matrix.rstrip()  # remove trailing
+
+    # TODO: symbols could be more than "01" but we this function doesn't handle
+    # multistate data so we just specify them here.
+    symbols = '01'
+
     text = _template.format(
-            matrix=_matrix, ntax=len(taxa), nchar=len(matrix[0]), gap=gap,
-            missing=missing, dtype=dtype, commands=_commands, custom=_custom,
-            symbols=symbols)
-    util.write_text_file(filename, text)
-
-
+        matrix=_matrix,
+        ntax=wordlist.width,
+        nchar=len(matrix[0]),
+        gap=gap, missing=missing,
+        dtype='RESTRICTION' if mode == 'MRBAYES' else 'STANDARD',
+        commands=_commands, custom=_custom,
+        symbols=symbols, chars=charblock
+    )
+    text = text.replace("\t", " " * 4)  # normalise tab-stops
+    if filename:
+        util.write_text_file(filename, text)
+    return text

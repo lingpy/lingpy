@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function, division
 from six import text_type
 from mock import MagicMock, patch
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 from lingpy.tests.util import test_data
 from lingpy.convert.plot import *
 from lingpy.basic.wordlist import Wordlist

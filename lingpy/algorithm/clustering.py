@@ -24,6 +24,14 @@ from lingpy import log
 from lingpy import util
 
 
+def check_taxon_names(taxa):
+    for taxon in taxa:
+        if [x for x in taxon if x in '():;,']:
+            raise ValueError(
+                "No brackets, colons, and commas allowed for doculect names"
+                )
+            
+
 def flat_upgma(threshold, matrix, taxa=None, revert=False):
     """
     Carry out a flat cluster analysis based on the UPGMA algorithm \
@@ -209,7 +217,7 @@ def upgma(matrix, taxa, distances=True):
     neighbor
 
     """
-
+    check_taxon_names(taxa)
     return cluster.upgma(matrix, taxa, distances)
 
 
@@ -263,7 +271,7 @@ def neighbor(matrix, taxa, distances=True):
     upgma
 
     """
-
+    check_taxon_names(taxa)
     return cluster.neighbor(matrix, taxa, distances)
 
 

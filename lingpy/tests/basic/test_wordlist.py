@@ -3,7 +3,7 @@ Test wordlist module.
 """
 from six import text_type
 from nose.tools import assert_raises
-from clldutils.testing import WithTempDir
+from lingpy.tests.util_testing import WithTempDir
 
 from lingpy import Wordlist
 from lingpy.tests.util import test_data
@@ -144,3 +144,4 @@ class TestWordlist(WithTempDir):
         assert wl1.height == wl2.height
         for k in wl1:
             assert wl1[k, 'concept'] == wl2[k, 'concept']
+

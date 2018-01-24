@@ -1,0 +1,19 @@
+ID	DOCULECT	CONCEPT	GLOSSID	COGID
+# 1 cognate set all languages = 1
+1	German	I	1	1
+2	English	I	1	1
+3	Swedish	I	1	1
+4	Icelandic	I	1	1
+5	Norwegian	I		1
+
+# 3 cognate sets 2=(G,E), 3=(S), 4=(I,N)
+6	German	all	2	2
+7	English	all	2	2
+8	Swedish	all	2	3
+9	Icelandic	all	2	4
+10	Norwegian	all	2	4
+
+# missing ? = (E, I), 3 cognate sets, all singletons
+11	German	ash	3	5
+12	Swedish	ash	3	6
+13	Norwegian	ash	3	7

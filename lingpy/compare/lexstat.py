@@ -12,6 +12,7 @@ import numpy as np
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, tokens2class, prosodic_string, prosodic_weights, class2tokens,
+    check_tokens
 )
 from lingpy.sequence.generate import MCPhon
 from lingpy.basic.wordlist import Wordlist
@@ -28,7 +29,7 @@ from lingpy.util import charstring
 from lingpy import log
 
 
-def _check_tokens(key_and_tokens, clpa=False):
+def _check_tokens(key_and_tokens, cldf=False, diacritics=None, stress=None):
     """Generator for error reports on token strings.
 
     :param key_and_tokens: iterator over (key, token_string) pairs.
@@ -37,16 +38,12 @@ def _check_tokens(key_and_tokens, clpa=False):
         if "" in line:
             yield (key, "empty token", line)
         else:
-            try:
-                sonars = tokens2class(line, rcParams['art'], clpa=clpa)
-                if not sonars or sonars == ['0']:
+            for idx, char in check_tokens(line, cldf=cldf, diacritics=diacritics,
+                    stress=stress):
+                if not char:
                     yield (key, "empty sound-class string", line)
-                elif '0' in sonars:
-                    yield (key, "bad character in tokens at «{0}»".format(
-                        line[sonars.index('0')]), line)
-            except ValueError or IndexError:
-                yield (key, "sound-class conversion failed", line)
-
+                yield (key, 'bad character in tokens at «{0}»'.format(
+                    line[idx]), line)
 
 def char_from_charstring(cstring):
     comps = cstring.split('.')
@@ -108,7 +105,7 @@ class LexStat(Wordlist):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-    vowels : str (default="VT_")
+    vowels : str (default="VT\_")
         For scoring function creation using the
         :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
         have the possibility to use reduced scores for the matching of tones
@@ -165,13 +162,11 @@ class LexStat(Wordlist):
         The name of the column which stores the individual gap-weights for each
         sequence. Gap weights are positive floats for each segment in a string,
         which modify the gap opening penalty during alignment.
-    tokenize : function \
-            (default=:py:class:`~lingpy.sequence.sound_classes.ipa2tokens`)
+    tokenize : function (default=ipa2tokens)
         The function which should be used to tokenize the entries in the column
         storing the transcriptions in case no segmentation is provided by the
         user.
-    get_prostring : function \
-            (default=:py:class:`~lingpy.sequence.sound_classes.prosodic_string`)
+    get_prostring : function (default=prosodic_string)
         The function which should be used to create prosodic strings from the
         segmented transcription data. If you want to completely ignore prosodic
         strings in LexStat calculations, you could just pass the following
@@ -260,7 +255,7 @@ class LexStat(Wordlist):
             "row": "concept",
             "col": "doculect",
             "conf": None,
-            'clpa': False
+            'cldf': False
         }
         kw.update(keywords)
 
@@ -274,7 +269,7 @@ class LexStat(Wordlist):
         self._langid = kw['langid']
         self._duplicates = kw['duplicates']
         self._transcription = kw['transcription']
-        self._clpa = kw['clpa']
+        self._cldf = kw['cldf']
 
         if isinstance(kw['model'], string_types):
             self.model = rcParams[kw['model']]
@@ -302,7 +297,8 @@ class LexStat(Wordlist):
         # add a debug procedure for tokens
         if kw["check"]:
             errors = list(_check_tokens(
-                (key, self[key, self._segments]) for key in self))
+                [(key, self[key, self._segments]) for key in self], 
+                cldf=kw['cldf']))
             if errors:
                 lines = ["ID\tTokens\tError-Type"]
                 for key, msg, line in errors:
@@ -333,7 +329,7 @@ class LexStat(Wordlist):
                 self._segments,
                 lambda x: [int(i) for i in tokens2class(
                     x, rcParams['art'], stress=rcParams['stress'],
-                    clpa=self._clpa)])
+                    cldf=self._cldf)])
         if self._prostrings not in self.header:
             self.add_entries(
                     self._prostrings, self._sonars,
@@ -342,7 +338,7 @@ class LexStat(Wordlist):
         if self._classes not in self.header:
             self.add_entries(
                 self._classes, self._segments,
-                lambda x: ''.join(tokens2class(x, kw["model"], clpa=self._clpa,
+                lambda x: ''.join(tokens2class(x, kw["model"], cldf=self._cldf,
                     stress=rcParams['stress'])))
         # create IDs for the languages
         if self._langid not in self.header:
@@ -766,7 +762,7 @@ class LexStat(Wordlist):
                     seqs[taxon], pros[taxon], weights[taxon] = [], [], []
                     for w in words:
                         cls = tokens2class(w.split(' '), self.model,
-                                clpa=self._clpa)
+                                cldf=self._cldf)
                         pros[taxon].append(prosodic_string(w.split(' ')))
                         weights[taxon].append(prosodic_weights(pros[taxon][-1]))
                         seqs[taxon].append([
@@ -991,7 +987,7 @@ class LexStat(Wordlist):
 
         parstring = '_'.join(
             [
-                '{ratio[0]}:{ratio[1]}'
+                '{ratio[0]}:{ratio[1]}',
                 '{vscale:.2f}',
                 '{runs}',
                 '{scoring_threshold:.2f}',
@@ -1000,8 +996,8 @@ class LexStat(Wordlist):
                 '{restricted_chars}',
                 '{method}',
                 '{preprocessing}',
-                '{preprocessing_threshold}'
-                '{unexpected:.2f}'
+                '{preprocessing_threshold}',
+                '{unexpected:.2f}',
                 '{unattested:.2f}'
             ]).format(**params)
 
@@ -1109,7 +1105,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         distance : bool (default=True)
@@ -1264,9 +1260,11 @@ class LexStat(Wordlist):
                 except ZeroDivisionError:
                     log.warn(
                         "Encountered Zero-Division for the comparison of "
-                        "{0} and {1}".format(
+                        "{0} ({2}) and {1} ({3})".format(
                             ''.join(self[idxA, self._segments]),
-                            ''.join(self[idxB, self._segments])))
+                            ''.join(self[idxB, self._segments]),
+                            idxA, idxB
+                            ))
                     d = 100
                 matrix += [d]
             matrix = misc.squareform(matrix)
@@ -1308,7 +1306,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')
@@ -1503,7 +1501,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T_'):
+            restricted_chars='T\_'):
         """
         Method calculates randoms scores for unrelated words in a dataset.
 
@@ -1521,7 +1519,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
 
@@ -1551,7 +1549,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T_',
+            restricted_chars='T\_',
             aggregate=True):
         """
         Method calculates different distance estimates for language pairs.
@@ -1570,7 +1568,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T_")
+        restricted_chars : str (default="T\_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         aggregate : bool (default=True)

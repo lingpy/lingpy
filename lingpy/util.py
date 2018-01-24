@@ -11,6 +11,7 @@ from tqdm import tqdm
 from six import text_type
 from clldutils.path import Path, remove, path_component
 from clldutils import clilib
+from clldutils.misc import slug
 
 import lingpy
 from lingpy.log import get_level, file_written
@@ -173,10 +174,12 @@ def read_text_file(path, normalize=None, lines=False):
 
     """
 
-    def _normalize(chunk):
-        return unicodedata.normalize(normalize, chunk) if normalize else chunk
+    if normalize is not None:
+        _normalize = partial(unicodedata.normalize, normalize)
+    else:
+        _normalize = identity
 
-    with io.open(_str_path(path), 'r', encoding='utf8') as fp:
+    with io.open(_str_path(path), 'r', encoding='utf-8-sig') as fp:
         if lines:
             return [_normalize(line.strip('\r\n')) for line in fp]
         else:
@@ -185,7 +188,7 @@ def read_text_file(path, normalize=None, lines=False):
 
 def as_string(obj, pprint=False):
     obj = text_type(obj)
-    if get_level() <= logging.INFO and pprint:
+    if get_level() <= logging.ERROR and pprint:
         print(obj)
     return obj
 
@@ -193,7 +196,7 @@ def as_string(obj, pprint=False):
 def read_config_file(path, **kw):
     """Read lines of a file ignoring commented lines and empty lines. """
     kw['lines'] = True
-    lines = [line.strip() for line in read_text_file(path, **kw)]
+    lines = (line.strip() for line in read_text_file(path, **kw))
     return [line for line in lines if line and not line.startswith('#')]
 
 
@@ -213,3 +216,21 @@ def setdefaults(d, **kw):
 
 def identity(x):
     return x
+
+
+def nexus_slug(s):
+    """
+    Converts a string to a nexus "safe" representation (i.e. removes
+    many unicode characters and removes some punctuation characters).
+
+    Parameters
+    ----------
+    s : str
+        A string to convert to a nexus safe format.
+
+    Returns
+    -------
+    s : str
+        A string containing a nexus safe label.
+    """
+    return slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")

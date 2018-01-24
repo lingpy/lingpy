@@ -20,18 +20,18 @@ from lingpy.data.ipa.sampa import reXS, xs
 def ipa2tokens(istring, **keywords):
     """
     Tokenize IPA-encoded strings.
-    
+
     Parameters
     ----------
 
     seq : str
         The input sequence that shall be tokenized.
-    
+
     diacritics : {str, None} (default=None)
         A string containing all diacritics which shall be considered in the
         respective analysis. When set to *None*, the default diacritic string
         will be used.
-    
+
     vowels : {str, None} (default=None)
         A string containing all vowel symbols which shall be considered in the
         respective analysis. When set to *None*, the default vowel string will
@@ -51,7 +51,7 @@ def ipa2tokens(istring, **keywords):
         starts right after them. These can be used to indicate that two
         consecutive vowels should not be treated as diphtongs or for diacritics
         that are put before the following letter.
-    
+
     merge_vowels : bool (default=False)
         Indicate, whether vowels should be merged into diphtongs
         (default=True), or whether each vowel symbol should be considered
@@ -84,7 +84,7 @@ def ipa2tokens(istring, **keywords):
     >>> myseq = 't͡sɔyɡə'
     >>> ipa2tokens(myseq)
     ['t͡s', 'ɔy', 'ɡ', 'ə']
-    
+
     See also
     --------
     tokens2class
@@ -239,7 +239,7 @@ def ipa2tokens(istring, **keywords):
 def syllabify(seq, output="flat", **keywords):
     """
     Carry out a simple syllabification of a sequence, using sonority as a proxy.
-    
+
     Parameters
     ----------
     output: {"flat", "breakpoints", "nested"} (default="flat")
@@ -247,10 +247,10 @@ def syllabify(seq, output="flat", **keywords):
         * "flat": A syllable separator is introduced to mark the syllable boundaries
         * "breakpoins": A tuple consisting of indices that slice the original sequence into syllables is returned.
         * "nested": A nested list reflecting the syllable structure is returned.
-          
+
     sep : str (default="◦")
         Select your preferred syllable separator.
-    
+
     Notes
     -----
 
@@ -277,7 +277,10 @@ def syllabify(seq, output="flat", **keywords):
     kw = {
         "sep": rcParams['morpheme_separator'],
         "gap": rcParams['gap_symbol'],
-        "model": "art"
+        "model": "art",
+        "stress": rcParams['stress'],
+        "diacritics": rcParams['diacritics'],
+        "cldf": False
     }
     kw.update(keywords)
 
@@ -296,7 +299,8 @@ def syllabify(seq, output="flat", **keywords):
         listed_seq = [s for s in listed_seq if s != kw['gap']]
 
     # get the profile for the sequence
-    profile = [0] + [int(i) for i in tokens2class(listed_seq, **kw)] + [0]
+    profile = [0] + [int(i) for i in tokens2class(listed_seq, kw['model'], cldf=kw['cldf'],
+        stress=kw['stress'], diacritics=kw['diacritics'])] + [0]
 
     new_syl = False
     breaks = []
@@ -387,8 +391,14 @@ def _get_breakpoints(seq, sep):
 
 def tokens2morphemes(tokens, **keywords):
     """
+    Split a string into morphemes if it contains separators.
+
+    Notes
+    -----
     Function splits a list of tokens into subsequent lists of morphemes if the list
-    contains morpheme separators.
+    contains morpheme separators. If no separators are found, but tonemarkers,
+    it will still split the string according to the tones. If you want to avoid
+    this behavior, set the keyword **split_on_tones** to False.
 
     Parameters
     ----------
@@ -396,7 +406,7 @@ def tokens2morphemes(tokens, **keywords):
         Select your morpheme separator.
     word_sep: str (default="_")
         Select your word separator.
-    
+
     Returns
     -------
     morphemes : list
@@ -411,9 +421,11 @@ def tokens2morphemes(tokens, **keywords):
         "word_sep": rcParams['word_separator'],
         "word_seps": rcParams['word_separators'],
         "seps": rcParams['morpheme_separators'],
+        "split_on_tones": True,
         "tone": "T"
     }
     kw.update(keywords)
+    if not kw['split_on_tones']: kw['tone'] = ''
 
     # check for other hints than the clean separators in the data
     new_tokens = [t for t in tokens]
@@ -433,6 +445,9 @@ def tokens2morphemes(tokens, **keywords):
             out[-1] += [token]
         else:
             out += [[]]
+    # check for bad examples
+    if ['' for x in out if not x]:
+        raise ValueError("[!] Your data contains empty morpheme segments.")
 
     return out
 
@@ -440,7 +455,7 @@ def tokens2morphemes(tokens, **keywords):
 def _split_syllables(syllables, tokens):
     """
     Split the output of the syllabify method into subsets.
-    
+
     Notes
     -----
     This is a simple helper function to deal with syllabified content.
@@ -482,7 +497,7 @@ def _pprint_ono(ono):
 def ono_parse(word, output='', **keywords):
     """
     Carry out a rough onset-nucleus-offset parse of a word in IPA.
-    
+
     Notes
     -----
     Method is an approximation and not supposed to do without flaws. It is,
@@ -499,11 +514,20 @@ def ono_parse(word, output='', **keywords):
 
 
     """
+    kw = {
+        "sep": rcParams['morpheme_separator'],
+        "gap": rcParams['gap_symbol'],
+        "model": "art",
+        "stress": rcParams['stress'],
+        "diacritics": rcParams['diacritics'],
+        "cldf": False
+    }
+    kw.update(keywords)
     if isinstance(word, text_type):
-        tokens = ipa2tokens(word, **keywords)
+        tokens = ipa2tokens(word, **kw)
     else:
         tokens = [x for x in word]
-    syllabified = syllabify(tokens)
+    syllabified = syllabify(tokens, **kw)
     prostring = prosodic_string(tokens, _output='CcV')
     syllables = _split_syllables(syllabified, prostring)
 
@@ -584,24 +608,58 @@ def asjp2tokens(seq, merge_vowels=True):
     return tokens.split(' ')
 
 
-def token2class(token, model, **keywords):
+def token2class(token, model, stress=None, diacritics=None, cldf=None):
     """
     Convert a single token into a sound-class.
 
     tokens : str
-        A token (IPA-string).
+        A token (phonetic segment).
 
     model : :py:class:`~lingpy.data.model.Model`
         A :py:class:`~lingpy.data.model.Model` object.
 
+    stress : str (default=rcParams['stress'])
+        A string containing the stress symbols used in the analysis. Defaults
+        to the stress as defined in ~lingpy.settings.rcParams.
+
+    diacritics : str (default=rcParams['diacritics'])
+        A string containing diacritic symbols used in the analysis. Defaults to
+        the diacritic symbolds defined in ~lingpy.settings.rcParams.
+
+    cldf : bool (default=False)
+        If set to True, this will allow for a specific treatment of phonetic
+        symbols which cannot be completely resolved (e.g., laryngeal h₂ in
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the specifications for writing
+        transcriptions in segmented strings, as employed by the `CLTS
+        <http://calc.digling.org/clts/>`_ initiative), in cases of insecurity
+        of pronunciation, users can adopt a ```source/target``` style, where
+        the source is the symbol used, e.g., in a reconstruction system, and
+        the target is a proposed phonetic interpretation. This practice is also
+        accepted by the `EDICTOR <http://edictor.digling.org>`_ tool.
+
     Returns
     -------
-    c : str
-        The corresponding sound-class value.
+
+    sound_class : str
+        A sound-class representation of the phonetic segment. If the segment
+        cannot be resolved, the respective string will be rendered as "0"
+        (zero).
+
+    See also
+    --------
+    ipa2tokens
+    class2tokens
+    token2class
 
     """
-    kw = dict(stress=rcParams['stress'])
-    kw.update(keywords)
+    # check basic parameters
+    stress = rcParams['stress'] or stress
+    diacritics = rcParams['diacritics'] or diacritics
+
+    # change token if cldf is selected
+    if cldf:
+        token = token.split('/')[1] or '?' if '/' in token else token
 
     # check whether model is passed as real model or as string
     if str(model) == model:
@@ -609,21 +667,42 @@ def token2class(token, model, **keywords):
 
     try:
         return model[token]
-    except:
+    except KeyError:
         try:
             return model[token[0]]
-        except:
-            try:
-                # check for stress
-                return model[token[1:]]
-            except:
-                try:
-                    return model[token[1]]
-                except:
+        except IndexError:
+            return '0'
+        except KeyError:
+            # check for stressed syllables
+            if len(token) > 0:
+                if token[0] in stress and len(token) > 1:
+                    try:
+                        return model[token[1:]]
+                    except KeyError:
+                        try:
+                            return model[token[1]]
+                        except KeyError:
+                            # new character for missing data and spurious items
+                            return '0'
+                elif token[0] in diacritics:
+                    if len(token) > 1:
+                        try:
+                            return model[token[1:]]
+                        except KeyError:
+                            try:
+                                return model[token[1]]
+                            except KeyError:
+                                return '0'
+                    else:
+                        return '0'
+                else:
+                    # new character for missing data and spurious items
                     return '0'
+            else:
+                return '0'
 
 
-def tokens2class(tstring, model, **keywords):
+def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
     """
     Convert tokenized IPA strings into their respective class strings.
 
@@ -636,11 +715,42 @@ def tokens2class(tstring, model, **keywords):
     model : :py:class:`~lingpy.data.model.Model`
         A :py:class:`~lingpy.data.model.Model` object.
 
+    stress : str (default=rcParams['stress'])
+        A string containing the stress symbols used in the analysis. Defaults
+        to the stress as defined in ~lingpy.settings.rcParams.
+
+    diacritics : str (default=rcParams['diacritics'])
+        A string containing diacritic symbols used in the analysis. Defaults to
+        the diacritic symbolds defined in ~lingpy.settings.rcParams.
+
+    cldf : bool (default=False)
+        If set to True, this will allow for a specific treatment of phonetic
+        symbols which cannot be completely resolved (e.g., laryngeal h₂ in
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_ specifications (in particular the
+        specifications for writing transcriptions in segmented strings, as
+        employed by the `CLTS <http://calc.digling.org/clts/>`_ initiative), in
+        cases of insecurity of pronunciation, users can adopt a
+        ```source/target``` style, where the source is the symbol used, e.g.,
+        in a reconstruction system, and the target is a proposed phonetic
+        interpretation. This practice is also accepted by the `EDICTOR
+        <http://edictor.digling.org>`_ tool.
+
     Returns
     -------
 
-    classes : string
-        A sound-class representation of the tokenized IPA string.
+    classes : list
+        A sound-class representation of the tokenized IPA string in form of a
+        list. If sound classes cannot be resolved, the respective string will
+        be rendered as "0" (zero).
+
+    Notes
+    -----
+    The function ~lingpy.sequence.sound_classes.token2class returns a "0"
+    (zero) if the sound is not recognized by LingPy's sound class models. While
+    an unknown sound in a longer sequence is no problem for alignment
+    algorithms, we have some unwanted and often even unforeseeable behavior,
+    if the sequence is completely unknown. For this reason, this function
+    raises a ValueError, if a resulting sequence only contains unknown sounds.
 
     Examples
     --------
@@ -654,56 +764,22 @@ def tokens2class(tstring, model, **keywords):
     --------
     ipa2tokens
     class2tokens
+    token2class
 
     """
-    kw = dict(stress=rcParams['stress'], clpa=False)
-    kw.update(keywords)
-    
-    if kw['clpa']:
-        tstring_ = [x.split('/')[1] or '?' if '/' in x else x for x in tstring]
-    else:
-        tstring_ = [x for x in tstring]
-    # check whether model is passed as real model or as string
-    if str(model) == model:
-        model = rcParams[model]
+    # raise value error if input is not an iterable (tuple or list)
+    if not isinstance(tokens, (tuple, list)):
+        raise ValueError("[!] Need tuple or list as input.")
+
+    stress=rcParams['stress']
+    diacritics=rcParams['diacritics']
 
     out = []
-    for token in tstring_:
-        try:
-            out.append(model[token])
-        except KeyError:
-            try:
-                out.append(model[token[0]])
-            except KeyError:
-                # check for stressed syllables
-                if len(token) > 0:
-                    if token[0] in kw['stress'] and len(token) > 1:
-                        try:
-                            out.append(model[token[1:]])
-                        except KeyError:
-                            try:
-                                out.append(model[token[1]])
-                            except KeyError:
-                                # new character for missing data and spurious items
-                                out.append('0')
-                    elif token[0] in rcParams['diacritics']:
-                        if len(token) > 1:
-                            try:
-                                out.append(model[token[1:]])
-                            except KeyError:
-                                try:
-                                    out.append(model[token[1]])
-                                except KeyError:
-                                    out.append('0')
-                        else:
-                            out.append('0')
-                    else:
-                        # new character for missing data and spurious items
-                        out.append('0')
-                else:
-                    raise ValueError(
-                        "[!] string '{0}' is erroneously coded!".format(tstring))
-
+    for token in tokens:
+        out.append(token2class(token, model, stress=stress,
+            diacritics=diacritics, cldf=cldf))
+    if out.count('0') == len(out):
+        raise ValueError("[!] your sequence contains only unknown characters")
     return out
 
 
@@ -718,6 +794,26 @@ def prosodic_string(string, _output=True, **keywords):
         A list of integers indicating the sonority of the tokens of the
         underlying sequence.
 
+    stress : str (default=rcParams['stress'])
+        A string containing the stress symbols used in the analysis. Defaults
+        to the stress as defined in ~lingpy.settings.rcParams.
+
+    diacritics : str (default=rcParams['diacritics'])
+        A string containing diacritic symbols used in the analysis. Defaults to
+        the diacritic symbolds defined in ~lingpy.settings.rcParams.
+
+    cldf : bool (default=False)
+        If set to True, this will allow for a specific treatment of phonetic
+        symbols which cannot be completely resolved (e.g., laryngeal h₂ in
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the specifications for writing
+        transcriptions in segmented strings, as employed by the `CLTS
+        <http://calc.digling.org/clts/>`_ initiative), in cases of insecurity
+        of pronunciation, users can adopt a ```source/target``` style, where
+        the source is the symbol used, e.g., in a reconstruction system, and
+        the target is a proposed phonetic interpretation. This practice is also
+        accepted by the `EDICTOR <http://edictor.digling.org>`_ tool.
+
     Returns
     -------
     prostring : string
@@ -726,19 +822,19 @@ def prosodic_string(string, _output=True, **keywords):
 
     See also:
     ---------
-    
+
     prosodic weights
 
     Notes
     -----
-    
+
     A prosodic string is a sequence of specific characters which indicating
     their resprective prosodic context (see :evobib:`List2012` or
     :evobib:`List2012a` for a detailed description).
     In contrast to the previous model, the current implementation allows for a
     more fine-graded distinction between different prosodic segments. The
     current scheme distinguishes 9 prosodic positions:
-    
+
     * ``A``: sequence-initial consonant
     * ``B``: syllable-initial, non-sequence initial consonant in a context of
       ascending sonority
@@ -758,7 +854,8 @@ def prosodic_string(string, _output=True, **keywords):
     'AXBZ'
 
     """
-    defaults = dict(stress=rcParams['stress'])
+    defaults = dict(stress=rcParams['stress'], cldf=False,
+        diacritics=rcParams['diacritics'])
     for k in defaults:
         if k not in keywords:
             keywords[k] = defaults[k]
@@ -768,10 +865,12 @@ def prosodic_string(string, _output=True, **keywords):
         return ''
 
     # check for the right string
-    if not isinstance(string[0], int):
+    if not all(isinstance(x, int) for x in string):
         # get the sonority profile
         sstring = [9] + \
-                  [int(t) for t in tokens2class(string, rcParams['art'], **keywords)] + \
+                  [int(t) for t in tokens2class(string, rcParams['art'],
+                      stress=keywords['stress'],
+                      diacritics=keywords['diacritics'], cldf=keywords['cldf'])] + \
                   [9]
     else:
         sstring = [9] + string + [9]
@@ -913,7 +1012,7 @@ def prosodic_string(string, _output=True, **keywords):
 def prosodic_weights(prostring, _transform={}):
     """
     Calculate prosodic weights for each position of a sequence.
-    
+
     Parameters
     ----------
 
@@ -942,7 +1041,7 @@ def prosodic_weights(prostring, _transform={}):
     >>> prostring = '#vC>'
     >>> prosodic_weights(prostring)
     [2.0, 1.3, 1.5, 0.7]
-    
+
     See also
     --------
     prosodic_string
@@ -1030,11 +1129,11 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
 
     gap_char : string (default="-")
         The character which indicates gaps in the output string.
-    
+
     local : bool (default=False)
         If set to *True* a local alignment with prefix and suffix can be
         converted.
-    
+
     Returns
     -------
     alignment : list
@@ -1045,7 +1144,7 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
     --------
     ipa2tokens
     tokens2class
-    
+
     Examples
     --------
     >>> from lingpy import *
@@ -1094,13 +1193,13 @@ def pid(almA, almB, mode=2):
         Indicate which of the four possible PID scores described in :evobib:`Raghava2006`
         should be calculated, the fifth possibility is added for linguistic
         purposes:
-        
+
         1. identical positions / (aligned positions + internal gap positions),
-        
+
         2. identical positions / aligned positions,
-        
+
         3. identical positions / shortest sequence, or
-        
+
         4. identical positions / shortest sequence (including internal gap
            pos.)
 
@@ -1115,7 +1214,7 @@ def pid(almA, almB, mode=2):
 
     Notes
     -----
-    
+
     The PID score is a common measure for the diversity of a given alignment.
     The implementation employed by LingPy follows the description of
     :evobib:`Raghava2006` where four different variants of PID scores are
@@ -1202,24 +1301,15 @@ def check_tokens(tokens, **keywords):
     """
     Function checks whether tokens are given in a consistent input format.
     """
-    setdefaults(keywords, stress=rcParams['stress'])
+    setdefaults(keywords, stress=rcParams['stress'],
+            diacritics=rcParams['diacritics'], cldf=False)
     errors = []
-
     for i, token in enumerate(tokens):
         # check for conversion within the articulation-model
-        try:
-            rcParams['art'].converter[token]
-        except KeyError:
-            try:
-                rcParams['art'].converter[token[0]]
-            except KeyError:
-                if token[0] in keywords['stress']:
-                    try:
-                        rcParams['art'].converter[token[1]]
-                    except KeyError:
-                        errors.append((i, token))
-                else:
-                    errors.append((i, token))
+        cls = token2class(token, rcParams['art'], stress=keywords['stress'],
+                cldf=keywords['cldf'], diacritics=keywords['diacritics'])
+        if cls == '0':
+            errors.append((i, token))
 
     return errors
 
@@ -1415,9 +1505,9 @@ def clean_string(
         entry. If there are no splitters, the list has only size one.
     """
     sequence = unicodedata.normalize(normalization_form, sequence)
-    rules = rules or {} 
+    rules = rules or {}
     preparse = preparse or []
-    
+
     # replace white space if not indicated otherwise
     if segmentized:
         segment_list = [sequence.split(' ') if not isinstance(sequence, (list,
@@ -1440,7 +1530,7 @@ def clean_string(
 
         for new_sequence in new_sequences:
             segments = ipa2tokens(
-                    re.sub(r'\s+', '_', new_sequence.strip()), 
+                    re.sub(r'\s+', '_', new_sequence.strip()),
                     semi_diacritics=semi_diacritics,
                     merge_vowels=merge_vowels,
                     merge_geminates=merge_geminates)
