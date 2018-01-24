@@ -2770,7 +2770,10 @@ def corrdist(
         # calculate distances
         simA = sum([(1.0 + factor) * scorer[seqA[i],seqA[i]] for i in range(M)])
         simB = sum([(1.0 + factor) * scorer[seqB[i],seqB[i]] for i in range(N)])
-        dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
+        if simA + simB == 0:
+            dist = 0
+        else:
+            dist = 1 - ( ( 2 * sim ) / ( simA + simB ) )
         
         if dist <= threshold:
             included += 1
