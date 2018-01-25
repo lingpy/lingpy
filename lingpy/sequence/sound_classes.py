@@ -422,7 +422,8 @@ def tokens2morphemes(tokens, **keywords):
         "word_seps": rcParams['word_separators'],
         "seps": rcParams['morpheme_separators'],
         "split_on_tones": True,
-        "tone": "T"
+        "tone": "T",
+        "cldf": False
     }
     kw.update(keywords)
     if not kw['split_on_tones']: kw['tone'] = ''
@@ -430,7 +431,7 @@ def tokens2morphemes(tokens, **keywords):
     # check for other hints than the clean separators in the data
     new_tokens = [t for t in tokens]
     if not kw['sep'] in tokens and not kw['word_sep'] in tokens:
-        class_string = tokens2class(tokens, 'cv')
+        class_string = tokens2class(tokens, 'cv', cldf=kw['cldf'])
         if kw['tone'] in class_string \
                 and '+' not in class_string and '_' not in class_string:
             new_tokens = []
