@@ -7,7 +7,7 @@ from lingpy import *
 
 class Tests(object):
     # get all segments
-    models = ['sca', 'dolgo', 'art', 'color', 'asjp']
+    models = ['sca', 'dolgo', 'art', 'color', 'asjp', 'cv']
     _model = dict([(model, Model(model)) for model in models])
     segments = set()
     for model in models:
