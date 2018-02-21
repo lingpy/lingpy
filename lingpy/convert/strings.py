@@ -491,7 +491,7 @@ def write_nexus(
     concepts = sorted([(cogid, wordlist[[
         x[0] for x in vals if x][0]][wordlist._rowIdx]) for (cogid, vals) in
         etd.items()],
-        key=lambda x: x[1])
+        key=lambda x: (x[1], x[0]))
     # and missing data..
     missing_ = {t: [concept for (cogid, concept) in concepts if concept not in wordlist.get_list(
                 col=t, entry=wordlist._row_name, flat=True)] for t in
@@ -570,6 +570,9 @@ def write_nexus(
         symbols=symbols, chars=charblock
     )
     text = text.replace("\t", " " * 4)  # normalise tab-stops
+    for i, (cogid, concept) in enumerate(concepts):
+        text += '\n[MATRIX:{0}=COGID:{1}=CONCEPT:{2}]'.format(
+                i, cogid, concept)
     if filename:
         util.write_text_file(filename, text)
     return text
