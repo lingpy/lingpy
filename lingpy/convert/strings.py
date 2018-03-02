@@ -481,10 +481,6 @@ def write_nexus(
     if ref not in wordlist._alias:
         raise KeyError("Unknown _ref_ column in wordlist '%s'" % ref)
 
-    # commands
-    _commands = block.format(commands_name, '\n'.join(commands)) if commands else ''
-    _custom = block.format(custom_name, '\n'.join(custom)) if custom else ''
-
     # retrieve the matrix
     matrix = [[] for x in range(wordlist.width)]
     etd = wordlist.get_etymdict(ref=ref)
@@ -538,13 +534,21 @@ def write_nexus(
         charblock = ""
     
     # create charsets block
+    blockname, assumptions = None, ""
     if mode in ('BEASTWORDS', 'MRBAYES'):
         charsets = ["\tcharset %s = %d-%d;" % (
             c, min(m), max(m)) for (c, m) in charsets.items()
         ]
-        _commands += "\n\n" if len(_commands) else ''
         blockname = 'ASSUMPTIONS' if mode == 'BEASTWORDS' else 'MRBAYES'
-        _commands += block.format(blockname, "\n".join(charsets))
+        assumptions = "\n".join(charsets)
+    
+    # commands
+    if commands_name.upper() == blockname and len(assumptions) and commands:
+        # merge commands specified in function call into output blockname
+        assumptions += "\n" + "\n".join("\t%s" % c for c in commands)
+    else:
+        # different commands block set in commands_name.
+        assumptions += block.format(commands_name, '\n'.join(commands)) if commands else ''
     
     # convert state matrix to string.
     _matrix = ""
@@ -566,7 +570,8 @@ def write_nexus(
         nchar=len(matrix[0]),
         gap=gap, missing=missing,
         dtype='RESTRICTION' if mode == 'MRBAYES' else 'STANDARD',
-        commands=_commands, custom=_custom,
+        commands=block.format(blockname, assumptions),
+        custom=block.format(custom_name, '\n'.join(custom)) if custom else '',
         symbols=symbols, chars=charblock
     )
     text = text.replace("\t", " " * 4)  # normalise tab-stops
