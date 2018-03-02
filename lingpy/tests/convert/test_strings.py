@@ -257,3 +257,16 @@ class TestWriteNexus(WithTempDir):
         self.assertRegexWorkaround(nex, r"charset I = 1\-2;")
         self.assertRegexWorkaround(nex, r"charset all = 3\-6;")
         self.assertRegexWorkaround(nex, r"charset ash = 7\-10;")
+
+    def test_merge_custom_statements(self):
+        # this tests for the bug in https://github.com/lingpy/lingpy/issues/340
+        import re
+        nex = write_nexus(self.wordlist, mode='mrbayes', commands=['test'])
+        if len(re.findall(r"BEGIN MRBAYES;", nex, flags=re.IGNORECASE)) == 2:
+            raise AssertionError('Duplicate mrbayes block found')
+
+        self.assertRegexWorkaround(nex, r"charset I = 1\-1;")
+        self.assertRegexWorkaround(nex, r"charset all = 2\-4;")
+        self.assertRegexWorkaround(nex, r"charset ash = 5\-7;")
+        self.assertRegexWorkaround(nex, r"test")
+        
