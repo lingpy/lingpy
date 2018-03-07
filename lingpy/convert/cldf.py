@@ -7,7 +7,7 @@ import unicodedata
 from collections import defaultdict
 from clldutils.path import Path, read_text
 from csvw.metadata import TableGroup
-from clldutils.dsv import reader, Dialect
+from csvw.dsv import reader
 from clldutils.misc import slug
 
 from lingpy import util

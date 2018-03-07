@@ -706,7 +706,7 @@ class Alignments(Wordlist):
         guarantee that the alignments with with we want to work are at the same
         place in the dictionary.
         """
-        alignments = alignment or self._alignment
+        alignment = alignment or self._alignment
         ref = ref or self._ref
 
         if alignment not in self.header:
