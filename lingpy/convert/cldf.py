@@ -20,9 +20,6 @@ try:
 except ImportError:
     cldf = False
 
-
-
-
 def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
         segments="tokens", form="ipa", note='note', form_in_source="value",
         source=None, alignment=None):

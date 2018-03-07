@@ -8,7 +8,6 @@ from lingpy.thirdparty import cogent as cg
 from lingpy.log import warn, debug
 from lingpy.util import read_text_file, setdefaults
 
-
 def reduce_alignment(alignment):
     """
     Function reduces a given alignment.
