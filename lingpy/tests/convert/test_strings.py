@@ -9,7 +9,7 @@ from lingpy.tests.util_testing import WithTempDir
 import sys
 import lingpy
 from lingpy.basic.wordlist import Wordlist
-from lingpy.convert.strings import scorer2str, msa2str, matrix2dst, pap2nex, pap2csv, write_nexus
+from lingpy.convert.strings import scorer2str, msa2str, matrix2dst, pap2nex, pap2csv, write_nexus, _is_constant
 from lingpy.util import read_text_file
 from lingpy.tests.util import test_data
 
@@ -137,6 +137,22 @@ END;"""
         assert csv == pap2csv(taxa, paps)
 
 
+class Test_is_constant(TestCase):
+    def test_all_present(self):
+        assert _is_constant([[2], [1], [4], [5], [3]])
+    
+    def test_all_absent(self):
+        assert _is_constant([0, 0, 0, 0])
+    
+    def test_not_constant(self):
+        assert not _is_constant([0, 0, 0, 0, [8]])
+        assert not _is_constant([0, 0, [8], 0, 0])
+        assert not _is_constant([[7], [6], 0, 0, 0])
+        assert not _is_constant([0, 0, [9], [10], 0])
+        assert not _is_constant([[1], [2], [8], 0, 0])
+        assert not _is_constant([[1], [2], [8], [3], 0])
+
+
 class TestWriteNexus(WithTempDir):
     """Tests for `write_nexus`"""
     def setUp(self):
@@ -257,6 +273,25 @@ class TestWriteNexus(WithTempDir):
         self.assertRegexWorkaround(nex, r"charset I = 1\-2;")
         self.assertRegexWorkaround(nex, r"charset all = 3\-6;")
         self.assertRegexWorkaround(nex, r"charset ash = 7\-10;")
+
+    def test_traitlab(self):
+        nex = write_nexus(self.wordlist, mode='traitlab', missing="X",
+                filename=text_type(self.tmp_path('test')))
+        # we should lose the FIRST character
+        self.assertIn("NTAX=5 NCHAR=6", nex)
+        # splitstree should have datatype=standard
+        self.assertIn("DATATYPE=STANDARD", nex)
+        # NO charblock
+        assert 'charset' not in nex
+        assert 'ASSUMPTIONS' not in nex
+        # NO symbols
+        assert 'SYMBOLS' not in nex
+        # check data:
+        self.assertRegexWorkaround(nex, r"German\s+100100")
+        self.assertRegexWorkaround(nex, r"English\s+100XXX")
+        self.assertRegexWorkaround(nex, r"Swedish\s+010010")
+        self.assertRegexWorkaround(nex, r"Icelandic\s+001XXX")
+        self.assertRegexWorkaround(nex, r"Norwegian\s+001001")
 
     def test_merge_custom_statements(self):
         # this tests for the bug in https://github.com/lingpy/lingpy/issues/340
