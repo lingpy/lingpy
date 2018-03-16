@@ -1068,8 +1068,8 @@ def get_wordlist(path, delimiter=",", quotechar='"', normalization_form="NFC", *
             D[idx + 1] = row
     return Wordlist(D, row=kw['row'].lower(), col=kw['col'].lower())
 
-def from_cldf(path, to=Wordlist, concept='gloss', concepticon='conceptset',
-        glottocode='glottocode', language='name'
+def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
+        glottocode='Glottocode', language='Name'
         ):
     """
     Load data from CLDF into a LingPy Wordlist object or similar.

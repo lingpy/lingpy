@@ -114,7 +114,6 @@ def get_gls(
 
     # get subtree for taxa with positive paps
     tree = tree.lowestCommonAncestor([t for t in taxa if statesD[t] == 1])
-
     tips = tree.getTipNames()
     root = tree.Name
     nodes = tree.getNodeNames()
@@ -1999,6 +1998,7 @@ class PhyBo(Wordlist):
                 word = self[key, 'ipa'] if 'ipa' in self.header \
                     else self[key, 'counterpart']
                 if not word:
+                    print(self[key, 'doculect'], key, word)
                     raise NameError("[ERROR] Neither 'ipa' nor 'counterpart' is defined.")
                 tmp[concept][pap][patchy].append((taxon, word))
 
@@ -3817,7 +3817,7 @@ class PhyBo(Wordlist):
                 legendEntriesB = []
                 legendTextB = []
                 p = mpl.patches.Wedge(
-                    (0, 0), 1, 0, 360, facecolor='0.5', linewidth=2, edgecolor='black')
+                    (0, 0), 1, 0, 360, facecolor='0.25', linewidth=2, edgecolor='black')
                 legendEntriesB += [p]
                 legendTextB += ['Loss Event']
                 p, = plt.plot(0, 0, '--', color='black', linewidth=2)
@@ -3889,14 +3889,14 @@ class PhyBo(Wordlist):
                         (x, y), keywords['radius'] + keywords['outer_radius'], 0, 360)
                     if 'O' in cpaps.values():
                         kw = dict(
-                            facecolor='white',
+                            facecolor='0.9',
                             zorder=57 + z,
                             linewidth=2.5,
                             linestyle='dashed')
                         figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif 'o' in cpaps.values():
                         kw = dict(
-                            facecolor='white',
+                            facecolor='0.75',
                             zorder=56 + z,
                             linewidth=2.5,
                             linestyle='solid')

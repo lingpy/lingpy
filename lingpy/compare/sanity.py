@@ -58,6 +58,7 @@ def mutual_coverage(wordlist, concepts='concept'):
     --------
     mutual_coverage_check
     mutual_coverage_subset
+    average_coverage
     """
     coverage = defaultdict(dict)
     concepts = _get_concepts(wordlist, concepts)
@@ -102,6 +103,7 @@ def mutual_coverage_check(wordlist, threshold, concepts='concept'):
     --------
     mutual_coverage
     mutual_coverage_subset
+    average_coverage
     """
     mc = mutual_coverage(wordlist, concepts)
     for coverage in mc.values():
@@ -146,6 +148,7 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
     --------
     mutual_coverage
     mutual_coverage_check
+    average_coverage
     """
     coverage = mutual_coverage(wordlist, concepts)
 
@@ -168,6 +171,50 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
             if len(clique) > best_clique:
                 best_clique = len(clique)
     return best_clique, best_cliques[best_clique]
+
+
+def average_coverage(wordlist, concepts='concepts'):
+    """Compute average mutual coverage for a given wordlist.
+    
+    Parameters
+    ----------
+    wordlist : ~lingpy.basic.wordlist.Wordlist
+        Your Wordlist object (or a descendant class).
+    concepts : str (default="concept")
+        The column which stores your concepts.
+
+    Returns
+    -------
+    coverage : dict
+        A dictionary of dictionaries whose value is the number of items two
+        languages share.
+
+    Examples
+    --------
+    
+    Compute coverage for the KSL.qlc dataset::
+      
+      >>> from lingpy.compare.sanity import average_coverage
+      >>> from lingpy import *
+      >>> from lingpy.tests.util import test_data
+      >>> wl = Wordlist(test_data('KSL.qlc'))
+      >>> average_coverage(wl)
+      1.0
+
+    See also
+    --------
+    mutual_coverage_check
+    mutual_coverage_subset
+    mutual_coverage
+
+    """
+    mc = mutual_coverage(wordlist)
+    score = []
+    for v in mc.values():
+        for key, val in v.items():
+            score += [val]
+    return sum(score) / len(score) / wordlist.height
+
 
 def synonymy(wordlist, concepts='concept', languages='doculect'):
     """Check the number of synonyms per language and concept.
