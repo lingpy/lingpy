@@ -1157,7 +1157,7 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
     """
     if not local:
         out = [t for t in tokens]
-        for i in enumerate(classes):
+        for i, c in enumerate(classes):
             if c in '-X':
                 out.insert(i, gap_char)
     else:
