@@ -74,7 +74,7 @@ else:
     long_description = ''
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.6.2"
+thisversion = "2.6.3"
 
 setup(
     name=pkgname,

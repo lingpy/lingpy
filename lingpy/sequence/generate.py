@@ -109,9 +109,7 @@ class MCPhon(MCBasic):
             if prostrings:
                 p = prostrings[i]
             else:
-                print(w, tk)
                 tt = tokens2class(tk, rcParams['art'])
-                print(tt)
                 p = prosodic_string(
                         tk, 
                         rcParams['art'],
