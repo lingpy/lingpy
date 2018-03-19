@@ -1057,14 +1057,11 @@ def prosodic_weights(prostring, _transform={}):
         transform = {
             '#': 1.6,
             'V': 3.0,
-            'C': 1.2,
             'c': 1.1,
             'v': 3.0,  # raise the cost for the gapping of vowels
             '<': 0.8,
             '$': 0.5,
             '>': 0.7,
-            'T': 1.0,
-            '_': 0.0,
 
             # new values for alternative prostrings
             'A': 1.6,  # initial
@@ -1086,14 +1083,11 @@ def prosodic_weights(prostring, _transform={}):
         transform = {
             '#': 2.0,
             'V': 1.5,
-            'C': 1.5,
             'c': 1.1,
             'v': 1.3,
             '<': 0.8,
             '$': 0.8,
             '>': 0.7,
-            'T': 0.0,
-            '_': 0.0,
 
             # new values for alternative prostrings
             'A': 2.0,  # initial
@@ -1157,8 +1151,8 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
     """
     if not local:
         out = [t for t in tokens]
-        for i in range(len(classes)):
-            if classes[i] in '-X':
+        for i, c in enumerate(classes):
+            if c in '-X':
                 out.insert(i, gap_char)
     else:
         # get the length of the prefix
