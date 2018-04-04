@@ -822,7 +822,7 @@ class LexStat(Wordlist):
                     progress.update(1)
                     log.info(
                         "Calculating random alignments"
-                        "for pair {0}/{1}.".format(tA, tB)
+                        " for pair {0}/{1}.".format(tA, tB)
                     )
                     corrdist[tA, tB] = defaultdict(float)
 
