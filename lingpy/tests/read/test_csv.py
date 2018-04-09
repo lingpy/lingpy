@@ -1,9 +1,6 @@
 """
 Tests for the read.csv module.
 """
-__author__ = "Johann-Mattis List"
-__date__ = "2013-11-23"
-
 from six import text_type
 
 from lingpy.compare.lexstat import LexStat
