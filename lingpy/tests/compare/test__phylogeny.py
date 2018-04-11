@@ -15,34 +15,27 @@ from lingpy.tests.util_testing import WithTempDir
 
 
 class Plt(MagicMock):
-    @staticmethod
-    def plot():
+    def plot(self, *args, **kw):
         return [MagicMock()]
 
-    @staticmethod
-    def fill():
+    def fill(self, *args, **kw):
         return [MagicMock()]
 
-    @staticmethod
-    def text():
+    def text(self, *args, **kw):
         return [MagicMock()]
 
-    @staticmethod
-    def gca():
+    def gca(self, *args, **kw):
         return MagicMock(patches=[])
 
-    @staticmethod
-    def polygon():
+    def Polygon(self, *args, **kw):
         return [MagicMock()]
 
 
 class Nx(MagicMock):
-    @staticmethod
-    def graph():
+    def Graph(self, *args, **kw):
         return MagicMock(nodes=lambda **kw: [(MagicMock(), MagicMock())])
 
-    @staticmethod
-    def generate_gml():
+    def generate_gml(self, *args):
         yield ''
 
 
@@ -51,8 +44,7 @@ class SPS(MagicMock):
 
 
 class Graph(MagicMock):
-    @staticmethod
-    def nodes():
+    def nodes(self, **kw):
         return [(MagicMock(), dict(label='a', graphics=defaultdict(lambda: 2)))]
 
 
