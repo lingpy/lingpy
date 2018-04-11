@@ -1,14 +1,16 @@
 from __future__ import print_function, division, unicode_literals
+
 import os
 
-from clldutils.path import Path
-from lingpy.tests.util_testing import WithTempDir
 from clldutils import jsonlib
+from clldutils.path import Path
 from mock import patch, Mock
 from nose.tools import assert_raises
+
 from lingpy import LexStat, rc
 from lingpy.compare.lexstat import char_from_charstring, get_score_dict
 from lingpy.tests.util import test_data, get_log
+from lingpy.tests.util_testing import WithTempDir
 
 
 def test_char_from_charstring():
@@ -16,12 +18,13 @@ def test_char_from_charstring():
     assert char_from_charstring('a.b') == "a"
     assert_raises(ValueError, char_from_charstring, "a")
 
+
 def test_get_score_dict():
     chars = ["1.A.-", "2.B.-"]
     model = rc("sca")
     sd = get_score_dict(chars, model)
-    assert sd['A','B'] == -22.5
-    
+    assert sd['A', 'B'] == -22.5
+
 
 class TestLexStat(WithTempDir):
     def setUp(self):
@@ -66,11 +69,13 @@ class TestLexStat(WithTempDir):
 
     def test_init2(self):
         freqs = self.lex.freqs['Hawaiian']
-        for char, n in {'5.W.C': 19, '5.I.V': 87, '5.Y.V': 75, '5.U.V': 87}.items():
+        seq = {'5.W.C': 19, '5.I.V': 87, '5.Y.V': 75, '5.U.V': 87}
+
+        for char, n in seq.items():
             self.assertEquals(freqs[char], n)
+
         self.assertEquals(len(self.lex.chars), 187)
         self.assertEquals(len(self.lex.rchars), 35)
-
         self.maxDiff = None
 
         for name in 'bscorer rscorer pairs'.split():
@@ -114,7 +119,8 @@ class TestLexStat(WithTempDir):
         self.lex.cluster(method="turchin", threshold=0.7)
         self.assertRaises(ValueError, self.lex.cluster, method="fuzzy")
         with patch('lingpy.basic.parser.confirm', Mock(return_value=True)):
-            self.lex.cluster(method="sca", guess_threshold=True, gt_mode='nulld')
+            self.lex.cluster(method="sca", guess_threshold=True,
+                             gt_mode='nulld')
 
         assert 'scaid' in self.lex.header \
                and 'lexstatid' in self.lex.header \
@@ -122,16 +128,18 @@ class TestLexStat(WithTempDir):
                and 'turchinid' in self.lex.header
 
     def test_align_pairs(self):
-        assert not self.lex.align_pairs('English', 'German', method='sca', pprint=False) 
+        assert not self.lex.align_pairs('English', 'German', method='sca',
+                                        pprint=False)
         assert self.lex.align_pairs(1, 2, method='sca', pprint=False)[-1] > 0.5
-    
+
     def test__get_matrices(self):
 
-        matrix = list(self.lex._get_matrices(concept="hand", method="sca"))[0]
-        assert len(matrix) == 7
-        
         matrix = list(self.lex._get_matrices(concept="hand",
-            method="turchin"))[0]
+                                             method="sca"))[0]
+        assert len(matrix) == 7
+
+        matrix = list(self.lex._get_matrices(concept="hand",
+                                             method="turchin"))[0]
         assert matrix[0][1] == 1
 
     def test_get_subset(self):
