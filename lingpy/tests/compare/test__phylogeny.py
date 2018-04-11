@@ -1,41 +1,58 @@
-from lingpy.tests.util_testing import WithTempDir
+import os
+from collections import defaultdict
+
+import numpy as np
+from mock import MagicMock, patch
 
 import lingpy
 from lingpy.compare._phylogeny.convex_hull import convex_hull
-from lingpy.compare._phylogeny._settings import *
-from lingpy.compare._phylogeny.polygon import seg_intersect, getConvexHull, getPolygonFromNodes
+from lingpy.compare._phylogeny.polygon import seg_intersect, getConvexHull, \
+    getPolygonFromNodes
 from lingpy.compare._phylogeny.utils import get_acs, check_stats, tstats
 from lingpy.compare.phylogeny import PhyBo
 from lingpy.tests.util import test_data
-import os
+from lingpy.tests.util_testing import WithTempDir
 
-from mock import MagicMock, patch
-import numpy as np
 
 class Plt(MagicMock):
-    def plot(self, *args, **kw):
+    @staticmethod
+    def plot():
         return [MagicMock()]
-    def fill(self, *args, **kw):
+
+    @staticmethod
+    def fill():
         return [MagicMock()]
-    def text(self, *args, **kw):
+
+    @staticmethod
+    def text():
         return [MagicMock()]
-    def gca(self, *args, **kw):
+
+    @staticmethod
+    def gca():
         return MagicMock(patches=[])
-    def Polygon(self, *args, **kw):
+
+    @staticmethod
+    def polygon():
         return [MagicMock()]
+
 
 class Nx(MagicMock):
-    def Graph(self, *args, **kw):
+    @staticmethod
+    def graph():
         return MagicMock(nodes=lambda **kw: [(MagicMock(), MagicMock())])
 
-    def generate_gml(self, *args):
+    @staticmethod
+    def generate_gml():
         yield ''
+
 
 class SPS(MagicMock):
     mstats = MagicMock(kruskalwallis=lambda a, b: [1, 1])
 
+
 class Graph(MagicMock):
-    def nodes(self, **kw):
+    @staticmethod
+    def nodes():
         return [(MagicMock(), dict(label='a', graphics=defaultdict(lambda: 2)))]
 
 
@@ -45,17 +62,16 @@ def test_convex_hull():
     except ImportError:
         return
     with patch('lingpy.compare._phylogeny.convex_hull.p', new=Plt()):
-        hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)]).transpose()
-        ch1 = convex_hull(hp, graphic=False)
-        ch2 = convex_hull(hp, graphic=True)
+        hp = np.array([(2, 1), (3, 1), (2, 10), (5, 6), (10, 1)]).transpose()
+        _ = convex_hull(hp, graphic=False)
+        _ = convex_hull(hp, graphic=True)
 
 
 def test_settings():
-
     assert lingpy.rc('phybo_suffix') == ' -'
 
+
 def test_seg_intersect():
-    
     line1 = np.array([[0, 0], [1, 0]])
     line2 = np.array([[4, -5], [4, 2]])
     line3 = np.array([[2, 2], [4, 3]])
@@ -65,7 +81,8 @@ def test_seg_intersect():
 
     assert not l12
     assert l13
-    
+
+
 def test_get_convex_hull():
     try:
         import matplotlib.patches
@@ -73,9 +90,9 @@ def test_get_convex_hull():
         return
 
     with patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt()):
-        hp = np.array([(2,1), (3,1), (2,10), (5,6), (10,1)])
-        gch1 = getConvexHull(hp, polygon=False)
-        gch2 = getConvexHull(hp, polygon=True)
+        hp = np.array([(2, 1), (3, 1), (2, 10), (5, 6), (10, 1)])
+        _ = getConvexHull(hp, polygon=False)
+        _ = getConvexHull(hp, polygon=True)
 
 
 @patch('lingpy.compare._phylogeny.polygon.nx', new=Nx())
@@ -86,7 +103,8 @@ def test_get_polygon_from_nodes():
         return
 
     with patch('lingpy.compare._phylogeny.polygon.mplPatches', new=Plt()):
-        hp = np.array([(-10,-10), (2,1), (3,1), (2,10), (5,6), (5,5), (8,10), (10,1)])
+        hp = np.array([(-10, -10), (2, 1), (3, 1), (2, 10), (5, 6), (5, 5),
+                       (8, 10), (10, 1)])
         getPolygonFromNodes(hp)
 
 
@@ -94,7 +112,7 @@ class TestUtils(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.ifile = test_data('phybo.qlc')
-    
+
     def test_utils(self):
         try:
             import scipy.stats
@@ -107,5 +125,6 @@ class TestUtils(WithTempDir):
             get_acs(phy, phy.best_model)
             tstats(phy, phy.best_model, return_dists=True)
 
-            check_stats([phy.best_model], phy, filename=os.path.join(self.tmp.as_posix(),
-                'test'), pprint=False)
+            check_stats([phy.best_model], phy,
+                        filename=os.path.join(self.tmp.as_posix(), 'test'),
+                        pprint=False)
