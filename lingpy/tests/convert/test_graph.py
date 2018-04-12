@@ -10,7 +10,7 @@ except ImportError:
     nonetworkx = True
 
 try:
-    import jgraph as ig
+    import igraph as ig
 
     noigraph = False
 except ImportError:
