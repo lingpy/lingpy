@@ -144,8 +144,8 @@ class Tests(TestCase):
         assert f[0] == ('#', 'a') and f[-1] == ('b', '$')
 
     def test_trigrams(self):
-        assert trigrams('ab')[0] == ('#', '#', 'a') and trigrams('ab')[-1] == (
-        'b', '$', '$')
+        assert (trigrams('ab')[0] == ('#', '#', 'a') and
+                trigrams('ab')[-1] == ('b', '$', '$'))
 
     def test_fourgrams(self):
         f = fourgrams('ab')
