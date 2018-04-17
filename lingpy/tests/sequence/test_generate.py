@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 from unittest import TestCase
 
 from lingpy.sequence.generate import MCPhon
@@ -22,7 +23,7 @@ class Tests(TestCase):
     def test_get_string(self):
         string = self.gen.get_string(new=True)
         string2 = self.gen.get_string(new=True, tokens=True)
-        
+
         assert string.replace(' ', '') not in self.words
         assert ''.join([x[1] for x in string2]) not in self.words
 

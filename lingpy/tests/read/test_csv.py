@@ -1,13 +1,13 @@
 """
 Tests for the read.csv module.
 """
+from unittest import TestCase
+
 from six import text_type
 
 from lingpy.compare.lexstat import LexStat
 from lingpy.read.csv import *
 from lingpy.tests.util import test_data
-
-from unittest import TestCase
 
 
 class Tests(TestCase):
