@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+
 import os
 from io import open
 
@@ -22,7 +23,8 @@ class ConfigTest(WithTempDir):
 
     def test_existing_config(self):
         os.mkdir(self.cfg)
-        with open(os.path.join(self.cfg, 'test.ini'), 'w', encoding='utf8') as fp:
+        with open(os.path.join(self.cfg, 'test.ini'), 'w',
+                  encoding='utf8') as fp:
             fp.write("""\
 [section]
 option = 12
