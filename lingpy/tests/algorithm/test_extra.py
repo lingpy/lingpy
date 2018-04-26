@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
 
-from unittest import TestCase
+import pytest
 
-from mock import MagicMock, patch
-
+import lingpy.algorithm.extra
 from lingpy.algorithm.extra import *
 
 
@@ -15,9 +14,7 @@ class Components:
         return [Igraph.Graph([v['name']]) for v in self.vs]
 
 
-class Igraph(MagicMock):
-    pass
-
+class Igraph:
     class Graph:
         def __init__(self, vs=[]):
             self.vs = [{'name': v} for v in vs]
@@ -32,9 +29,7 @@ class Igraph(MagicMock):
             return Components(self.vs)
 
 
-class Cluster(MagicMock):
-    pass
-
+class Cluster:
     @staticmethod
     def dbscan(*args, **kw):
         return None, [-1 for _ in range(len(args[0]))]
@@ -48,44 +43,48 @@ class Cluster(MagicMock):
             return [i for i in range(len(arg))]
 
 
-class Tests(TestCase):
-    def setUp(self):
+@pytest.fixture(name='matrix')
+def fixture_matrix():
+    return [[0.0, 0.5, 0.67, 0.8, 0.2],
+            [0.5, 0.0, 0.4, 0.7, 0.6],
+            [0.67, 0.4, 0.0, 0.8, 0.8],
+            [0.8, 0.7, 0.8, 0.0, 0.3],
+            [0.2, 0.6, 0.8, 0.3, 0.0]]
 
-        self.matrix = [[0.0, 0.5, 0.67, 0.8, 0.2],
-                       [0.5, 0.0, 0.4, 0.7, 0.6],
-                       [0.67, 0.4, 0.0, 0.8, 0.8],
-                       [0.8, 0.7, 0.8, 0.0, 0.3],
-                       [0.2, 0.6, 0.8, 0.3, 0.0]]
-        self.taxa = ['German', 'Swedish', 'Icelandic', 'English', 'Dutch']
 
-    @patch("lingpy.algorithm.extra.cluster", new=Cluster())
-    @patch("lingpy.algorithm.extra.igraph", new=Igraph())
-    def test_clustering(self):
-        if not cluster:
-            cluster1 = dbscan(0.25, self.matrix, self.taxa, revert=True)
-            cluster2 = affinity_propagation(0.5, self.matrix, self.taxa,
-                                            revert=True)
-            assert cluster1[0] != cluster1[4]
-            assert cluster2[0] != cluster2[4]
+@pytest.fixture(name='taxa')
+def fixture_taxa():
+    return ['German', 'Swedish', 'Icelandic', 'English', 'Dutch']
 
-        if not igraph:
-            cluster3 = infomap_clustering(0.4, self.matrix, self.taxa,
-                                          revert=True)
-            assert cluster3[0] != cluster3[4]
 
-    def test_dbscan(self):
-        if cluster:
-            cluster1 = dbscan(0.25, self.matrix, self.taxa, revert=True)
-            assert cluster1[0] == cluster1[4]
+def test_clustering(matrix, taxa, monkeypatch):
+    monkeypatch.setattr(lingpy.algorithm.extra, 'cluster', Cluster())
+    monkeypatch.setattr(lingpy.algorithm.extra, 'igraph', Igraph())
 
-    def test_affinity_propagation(self):
-        if cluster:
-            cluster1 = affinity_propagation(0.5, self.matrix, self.taxa,
-                                            revert=True)
-            assert cluster1[0] == cluster1[4]
+    if not cluster:
+        cluster1 = dbscan(0.25, matrix, taxa, revert=True)
+        cluster2 = affinity_propagation(0.5, matrix, taxa, revert=True)
+        assert cluster1[0] != cluster1[4]
+        assert cluster2[0] != cluster2[4]
 
-    def test_infomap_clustering(self):
-        if igraph:
-            cluster1 = infomap_clustering(0.4, self.matrix, self.taxa,
-                                          revert=True)
-            assert cluster1[0] == cluster1[4]
+    if not igraph:
+        cluster3 = infomap_clustering(0.4, matrix, taxa, revert=True)
+        assert cluster3[0] != cluster3[4]
+
+
+def test_dbscan(matrix, taxa):
+    if cluster:
+        cluster1 = dbscan(0.25, matrix, taxa, revert=True)
+        assert cluster1[0] == cluster1[4]
+
+
+def test_affinity_propagation(matrix, taxa):
+    if cluster:
+        cluster1 = affinity_propagation(0.5, matrix, taxa, revert=True)
+        assert cluster1[0] == cluster1[4]
+
+
+def test_infomap_clustering(matrix, taxa):
+    if igraph:
+        cluster1 = infomap_clustering(0.4, matrix, taxa, revert=True)
+        assert cluster1[0] == cluster1[4]
