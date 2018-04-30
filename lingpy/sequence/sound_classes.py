@@ -149,8 +149,18 @@ def ipa2tokens(istring, **keywords):
 
         # check for combiners next
         elif char in kw['combiners']:
-            out[-1] += char
-            merge = True
+            # add the combiner to the previous entry in `out`; if there
+            # is no previous characters (i.e., sequence starts with a 
+            # combiner, which is something we perhaps should not accept, see
+            # discussion on issue #365 on GitHub), append the combiner to
+            # a null phoneme glyph
+            if not out:
+                # empty list, i.e., no previous entry
+                out = ['\u2205' + char]
+                merge = False
+            else:
+                out[-1] += char
+                merge = True
 
         # check for stress
         elif char in kw['stress']:
