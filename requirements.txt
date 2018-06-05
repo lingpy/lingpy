@@ -7,3 +7,5 @@ csvw
 tqdm
 six
 mock
+pytest
+pytest-cov

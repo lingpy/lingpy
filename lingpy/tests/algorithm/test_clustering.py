@@ -2,94 +2,116 @@ from __future__ import unicode_literals
 
 import os
 
-from nose.tools import assert_raises
-from six import text_type
+import pytest
 
 from lingpy.algorithm.clustering import best_threshold, check_taxon_names, \
     find_threshold, flat_cluster, link_clustering, matrix2groups, matrix2tree, \
-    neighbor, partition_density, upgma
-from lingpy.tests.util_testing import WithTempDir
+    neighbor, partition_density, upgma, fuzzy
 
 
-class Tests(WithTempDir):
-    def setUp(self):
-        WithTempDir.setUp(self)
+@pytest.fixture(name='matrix')
+def fixture_matrix():
+    return [[0.0, 0.5, 0.67, 0.8, 0.2],
+            [0.5, 0.0, 0.4, 0.7, 0.6],
+            [0.67, 0.4, 0.0, 0.8, 0.8],
+            [0.8, 0.7, 0.8, 0.0, 0.3],
+            [0.2, 0.6, 0.8, 0.3, 0.0]]
 
-        self.matrix = [[0.0, 0.5, 0.67, 0.8, 0.2],
-                       [0.5, 0.0, 0.4, 0.7, 0.6],
-                       [0.67, 0.4, 0.0, 0.8, 0.8],
-                       [0.8, 0.7, 0.8, 0.0, 0.3],
-                       [0.2, 0.6, 0.8, 0.3, 0.0]]
-        self.taxa = ['German', 'Swedish', 'Icelandic', 'English', 'Dutch']
 
-    def test_check_taxa(self):
-        from lingpy.algorithm.clustering import check_taxon_names
-        assert_raises(ValueError, check_taxon_names, ['Eng:lish'])
+@pytest.fixture(name='taxa')
+def fixture_taxa():
+    return ['German', 'Swedish', 'Icelandic', 'English', 'Dutch']
 
-    def test_upgma(self):
-        tree = upgma(self.matrix, self.taxa, distances=True)
-        assert 'English' in tree
-        assert_raises(ValueError, upgma, [[0, 1], [1, 0]],
-                      ['Eng:lish', 'Ger)man'])
 
-    def test_neighbor(self):
-        tree = neighbor(self.matrix, self.taxa, distances=True)
-        assert 'English' in tree
-        assert_raises(ValueError, neighbor, [[0, 1], [1, 0]],
-                      ['Eng:lish', 'Ger)man'])
+def test_check_taxa(taxa):
+    with pytest.raises(ValueError):
+        check_taxon_names(['Eng:lish', 'Ch!nese', 'G3rm4n'])
 
-    def test_fuzzy(self):
-        from lingpy.algorithm.clustering import fuzzy
-        for method in 'upgma simple complete'.split():
-            for revert in [True, False]:
-                fuzzy(0.5, self.matrix, self.taxa, method=method, revert=revert)
+    try:
+        check_taxon_names(taxa)
+    except ValueError:
+        pytest.fail()
 
-    def test_matrix2tree(self):
-        newick = text_type(self.tmp_path('t'))
-        matrix2tree(self.matrix, self.taxa, filename=newick)
-        assert os.path.exists(newick + '.nwk')
-        matrix2tree(self.matrix, self.taxa, tree_calc='upgma')
-        matrix2tree(self.matrix, self.taxa, tree_calc='neighbor')
 
-        assert_raises(ValueError, matrix2tree, *[self.matrix, self.taxa],
-                      **{"tree_calc": "dummy"})
+def test_upgma(matrix, taxa):
+    tree = upgma(matrix, taxa, distances=True)
+    assert 'English' in tree
 
-    def test_matrix2groups(self):
-        for method in 'upgma mcl simple complete'.split():
-            matrix2groups(0.5, self.matrix, self.taxa, cluster_method=method)
+    with pytest.raises(ValueError):
+        _ = upgma([[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
 
-    def test_link_clustering(self):
-        similarity_matrix = [[1 - cell for cell in row] for row in self.matrix]
 
-        for val in [True, False]:
-            for val2 in [True, False]:
-                link_clustering(0.5, self.matrix, self.taxa,
-                                matrix_type="distances", revert=val, fuzzy=val2)
-                link_clustering(0.5, similarity_matrix, self.taxa,
-                                matrix_type="similarities", revert=val,
-                                fuzzy=val2)
-                link_clustering(0.5, similarity_matrix, self.taxa,
-                                matrix_type="weights", revert=val, fuzzy=val2)
+def test_neighbor(matrix, taxa):
+    tree = neighbor(matrix, taxa, distances=True)
+    assert 'English' in tree
 
-        assert_raises(ValueError, link_clustering, 0.5, self.matrix, self.taxa,
-                      matrix_type="dummy")
+    with pytest.raises(ValueError):
+        _ = neighbor([[0, 1], [1, 0]], ['Eng:lish', 'Ger)man'])
 
-    def test_partition_density(self):
-        partition_density(self.matrix, 0.5)
 
-    def test_best_threshold(self):
-        best_threshold(self.matrix, trange=(0.0, 1.0, 0.05))
+def test_fuzzy(matrix, taxa):
+    for method in 'upgma simple complete'.split():
+        for revert in [True, False]:
+            _ = fuzzy(0.5, matrix, taxa, method=method, revert=revert)
 
-    def test_find_threshold(self):
-        find_threshold(self.matrix)
-        find_threshold(self.matrix, logs=False)
-        assert find_threshold([[0, 1], [1, 0]]) is None
 
-    def test_check_taxon_names(self):
-        assert_raises(ValueError, check_taxon_names, ['k,k'])
+def test_matrix2tree(matrix, taxa, tmpdir):
+    newick = tmpdir.join('newick')
+    _ = matrix2tree(matrix, taxa, filename=newick)
+    assert os.path.exists(newick + '.nwk')
 
-    def test_flat_cluster(self):
-        for method in ['upgma', 'single', 'complete', 'ward']:
-            flat_cluster(method, 0.5, self.matrix, self.taxa, revert=True)
-            flat_cluster(method, 0.5, self.matrix, self.taxa, revert=False)
-            flat_cluster(method, 0.5, self.matrix, False, revert=False)
+    _ = matrix2tree(matrix, taxa, tree_calc='upgma')
+    _ = matrix2tree(matrix, taxa, tree_calc='neighbor')
+
+    with pytest.raises(ValueError):
+        _ = matrix2tree(matrix, taxa, tree_calc='does_not_exist')
+
+    with pytest.raises(ValueError):
+        _ = matrix2tree(*[matrix, taxa], **{"tree_calc": "dummy"})
+
+
+def test_matrix2groups(matrix, taxa):
+    for method in 'upgma mcl simple complete'.split():
+        _ = matrix2groups(0.5, matrix, taxa, cluster_method=method)
+
+
+def test_link_clustering(matrix, taxa):
+    similarity_matrix = [[1 - cell for cell in row] for row in matrix]
+
+    for r in [True, False]:
+        for f in [True, False]:
+            _ = link_clustering(0.5, matrix, taxa, matrix_type="distances",
+                                revert=r, fuzzy=f)
+            _ = link_clustering(0.5, similarity_matrix, taxa,
+                                matrix_type="similarities", revert=r, fuzzy=f)
+            _ = link_clustering(0.5, similarity_matrix, taxa,
+                                matrix_type="weights", revert=r, fuzzy=f)
+
+    with pytest.raises(ValueError):
+        _ = link_clustering(0.5, matrix, taxa, matrix_type="dummy")
+
+
+def test_partition_density(matrix):
+    _ = partition_density(matrix, 0.5)
+
+
+def test_best_threshold(matrix):
+    _ = best_threshold(matrix, trange=(0.0, 1.0, 0.05))
+
+
+def test_find_threshold(matrix):
+    _ = find_threshold(matrix)
+    _ = find_threshold(matrix, logs=False)
+    assert find_threshold([[0, 1], [1, 0]]) is None
+
+
+def test_check_taxon_names():
+    with pytest.raises(ValueError):
+        check_taxon_names(['k,k'])
+
+
+def test_flat_cluster(matrix, taxa):
+    for method in ['upgma', 'single', 'complete', 'ward']:
+        _ = flat_cluster(method, 0.5, matrix, taxa, revert=True)
+        _ = flat_cluster(method, 0.5, matrix, taxa, revert=False)
+        _ = flat_cluster(method, 0.5, matrix, False, revert=False)
