@@ -1,57 +1,89 @@
-from itertools import combinations, chain, zip_longest, product
+# *-* coding: utf-8 *-*
+"""
+This module provides various methods for generating and
+collecting n-grams from sequences.
 
-def get_ngrams(sequence, n, pad_symbol='$'):
-    sequence = iter(sequence)
-
-    if pad_symbol:
-        sequence = chain((pad_symbol,)* (n-1), sequence, (pad_symbol,) * (n-1))
-
-    history = [next(sequence) for i in range(n-1)]
-
-    for item in sequence:
-        history.append(item)
-        yield tuple(history)
-        del history[0]
-
-def all_grams(sequence, min_len=1, max_len=None, pad_symbol='$'):
-    if not max_len:
-        max_len = len(sequence)
-
-    for n in range(min_len, max_len+1):
-        for ngram in get_ngrams(sequence, n, pad_symbol):   
-            yield ngram
+"""
+# TODO: write above ngrams, pngrams, skip ngrams
 
 
-####################################################################
+# TODO: check the import in __init__.py
 
-# We define some functions for collecting substrings, here called n-grams even though they are not
-# necessarily proper ngrams. In all cases, we specify a pre- and a post- order for the amount of
-# information before and after each state to be collected.
+from itertools import chain, combinations, product
 
 _ELEMENT = "###"
-def collect_ngrams(seq, pre_order=0, post_order=0, pad_symbol=None):
+
+# TODO: remove from sound_classes.py later
+def _seq_as_tuple(sequence):
     """
-    Collect a single pre- and post- order ngram set from a sequence.
+    Internal function for automatically converting a
+    string sequence to a tuple, if needed. 
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence that shall be converted into an
+        iterable.
+        
+    Returns
+    -------
+    out: tuple
+        A tuple of the sequence.
     """
     
-    # Cache the sequence length, so we can later decided whether to
-    # include an ngram based on the state index, and cache complexive
-    # order for the ngram from the sum of the pre- and post- orders
-    # (with an additional element, the referential one).
-    len_seq = len(seq)
-    order = pre_order + post_order + 1
+    # We first check for datatype and then for a space,
+    # as the first test is faster (and evaluation is lazy).
+    if isinstance(sequence, str) and ' ' in sequence:
+        return tuple(sequence.split(' '))
+        
+    return tuple(sequence)
 
-    # Pad the sequence if requested; please note that in this case
-    # (unlike skip ngram computation, for example), the sequence
-    # length is cached *before* the paddin, so we can later
-    # easily filter ngrams by the state index without including
-    # padded elements.
-    if pad_symbol:
-        seq = chain((pad_symbol,)* pre_order, seq, (pad_symbol,) * post_order)
-        seq = list(seq)
+# This method with zip, besides returning an iterator as desired,
+# is faster than both the previous lingpy implementation and the
+# one in NLTK; as this is the core of the ngram methods, it is
+# important to have at least this as fast as possible.
+# This is intentionally not defaulting to any value for the
+# order, so that users won't confuse a given order to all
+# orders up to and including the given one.
+def get_n_ngrams(sequence, order, pad_symbol='$'):
+    """
+    Build an iterator for collecting all ngrams of a given
+    order from a sequence. The sequence can optionally be padded
+    with boundary symbols which are equal for before and and
+    after sequence boundaries.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the ngrams will be collected.
+        
+    order: int
+        The order of the ngrams to be collected.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the ngrams of the sequence,
+        returned as tuples.
+    """
+    
+    # Convert to a tuple, for faster computation, and pad the
+    # sequence if needed. The test for `pad_symbol` is a bit
+    # more expansive (None and not all False values) as we
+    # should allow False values to be padded for some situations.
+    seq = _seq_as_tuple(sequence)
+    if pad_symbol is not None:
+        seq = chain((pad_symbol,)* (order-1), seq, (pad_symbol,) * (order-1))
+        seq = tuple(seq)
 
     # We generate the collection of ngrams for counting occurences
-    # with Python itertool's `zip_longest()` function, so we can
+    # with Python `zip()` function, so we can
     # rely on internal C-code for speeding things up. What we do
     # is build a list of arguments for the function by using a
     # list comprehension over variable `order` and, then,
@@ -65,22 +97,90 @@ def collect_ngrams(seq, pre_order=0, post_order=0, pad_symbol=None):
     #    ['r', 'k', 'o', 'v'],
     #    ['k', 'o', 'v']]
     #
-    # The `zip_longest()` function will then make an iterator
-    # aggregating elements from each of these iterables, using
-    # `None` as a standard fill element for missing values
-    # (which we can easily filter with `all()`).
-    subseqs = [
-        list(subseq) for subseq in
-        zip_longest(*[seq[i:] for i in range(order)])
-        if all(subseq)]
+    # From which we zip all possible combinations.
 
-    print(seq)
-    print(subseqs)
+    return zip(*[seq[i:] for i in range(order)])
+    
+
+def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
+    """
+    Build an iterator for collecting all ngrams of a sequence
+    of a given set of orders (i.e., "lengths"). If no set of
+    orders is provided, this will collect all possible ngrams
+    in the sequence.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the ngrams will be collected.
+        
+    orders: list
+        An optional list of the orders of the ngrams to
+        be collected. Can be larger than the length of the
+        sequence, in which case the latter will be padded
+        accordingly if requested. Defaults to the collection
+        of all possible ngrams in the sequence with the
+        minimum padding.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the ngrams of the sequence,
+        returned as tuples.
+
+    """
+    
+    if not orders:
+        orders = range(len(sequence)+1)
+        
+    for order in orders:
+        for ngram in get_n_ngrams(sequence, order, pad_symbol):
+            yield ngram
+
+
+def get_pgrams(sequence, pre_order=0, post_order=0, pad_symbol=None):
+    """
+    Collect a single pre- and post- order ngram set from a sequence.
+    """
+   
+    # Cache the complexive order for the ngram from the sum of the
+    # pre- and post- orders (with an additional one, the state
+    # under actual observation).
+    order = pre_order + 1 + post_order
+
+    # Pad the sequence if requested and cache the sequence length
+    # for later deciding whether to include an ngram based on
+    # the state index (thus excluding ngrams centered
+    # in padded symbols, which would otherwise be impossible to
+    # identify). Please note that in this case of positional
+    # ngrams (unlike skip ngrams, for example), the sequence length
+    # is cache *before* padding precisely in order to allow
+    # the filtering of elements.
+    seq = _seq_as_tuple(sequence)
+    len_seq = len(seq)
+    if pad_symbol:
+        seq = chain((pad_symbol,)* pre_order, seq, (pad_symbol,) * post_order)
+        seq = tuple(seq)
+        
+    # We obtain all the subsequences of the order we desire by
+    # asking for the all the ngrams of the given order when the
+    # sequence is not addionally padded (of course, it will already
+    # have been padded, if the user so requested, by this time).
+    subseqs = get_n_ngrams(seq, order, pad_symbol=None)
+
+#    print(len(list(subseqs)))
+#    print(list(subseqs))
 
     # We can now collect all the skipping sequences, caching the
     # various indexes for quicker extraction. Given the way
     # Python indexes lists, we need to perform a conditional
-    # extraction based inthe value of post_order (otherwise
+    # extraction based on the value of post_order (otherwise
     # we would get a `postctx_idx` of -1+1, i.e. zero, which
     # would return the entire subsequence; work-arounds would
     # make the code too complex for something so simple, and
@@ -88,7 +188,7 @@ def collect_ngrams(seq, pre_order=0, post_order=0, pad_symbol=None):
     # only subsequent ngrams, which are more common).
     if not post_order:
         ngrams = (
-            (tuple(subseq[:-1] + [_ELEMENT]), subseq[-1], state_idx + pre_order)
+            (tuple(subseq[:-1] + (_ELEMENT,)), subseq[-1], state_idx + pre_order)
             for state_idx, subseq
             in enumerate(subseqs))
     else:
@@ -97,7 +197,7 @@ def collect_ngrams(seq, pre_order=0, post_order=0, pad_symbol=None):
         postctx_idx = -post_order
         ngrams = (
             # pre-context + element + post_context
-            (tuple(subseq[prectx_idx:elem_idx] + [_ELEMENT] + subseq[postctx_idx:]),
+            (tuple(subseq[prectx_idx:elem_idx] + (_ELEMENT,) + subseq[postctx_idx:]),
              # transition
              subseq[elem_idx],
              # state index, discounting the start boundaries
@@ -105,11 +205,6 @@ def collect_ngrams(seq, pre_order=0, post_order=0, pad_symbol=None):
             # loop
             for state_idx, subseq in enumerate(subseqs)
         )
-        
-    # Only keep the elements that refer to actually observed states, i.e.,
-    # whose index is not None. The boundary information will be carried by
-    # the states.
-#    ngrams = [ngram for ngram in ngrams if ngram[2] is not None]
 
     return ngrams
 
