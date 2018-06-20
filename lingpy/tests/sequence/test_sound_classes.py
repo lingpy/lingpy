@@ -12,11 +12,6 @@ from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
     tokens2class, prosodic_string, prosodic_weights, class2tokens, pid, \
     check_tokens, sampa2uni, pgrams, syllabify, tokens2morphemes, ono_parse, \
     clean_string, _get_brackets, codepoint
-#from lingpy.sequence.sound_classes import ipa2tokens, token2class, \
-#    tokens2class, prosodic_string, prosodic_weights, class2tokens, pid, \
-#    check_tokens, get_all_ngrams, sampa2uni, bigrams, trigrams, fourgrams, \
-#    get_n_ngrams, pgrams, syllabify, tokens2morphemes, ono_parse, \
-#    clean_string, _get_brackets, codepoint
 from lingpy.tests.util import test_data
 
 """
@@ -134,31 +129,10 @@ class Tests(TestCase):
     def test_check_tokens(self):
         assert check_tokens('th o x T e r'.split(' '))[0] == (3, 'T')
 
-#    def test_get_all_ngrams(self):
-#        f = get_all_ngrams('ab')
-#        assert f == ['ab', 'a', 'b']
-
     def test_sampa2uni(self):
         seq = 'tʰɔxtər'
         sampa = eval('"' + sampa2uni('t_hOxt@r') + '"')
         assert sampa == seq  # or sampa2 == seq
-
-#    def test_bigrams(self):
-#        f = bigrams('ab')
-#        assert f[0] == ('#', 'a') and f[-1] == ('b', '$')
-
-#    def test_trigrams(self):
-#        assert (trigrams('ab')[0] == ('#', '#', 'a') and
-#                trigrams('ab')[-1] == ('b', '$', '$'))
-
-#    def test_fourgrams(self):
-#        f = fourgrams('ab')
-#        assert f[0] == ('#', '#', '#', 'a')
-#        assert f[-1] == ('b', '$', '$', '$')
-
-#    def test_get_n_ngrams(self):
-#        f = get_n_ngrams('ma', 5)
-#        assert f[0] == ('m', 'a', '$', '$', '$')
 
     def test_pgrams(self):
         f = pgrams('ab')
