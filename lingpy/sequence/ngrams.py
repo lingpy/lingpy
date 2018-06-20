@@ -1,39 +1,34 @@
 # *-* coding: utf-8 *-*
 """
 This module provides various methods for generating and
-collecting n-grams from sequences.
-
+collecting n-grams from sequences. Standard ngrams,
+skip ngrams, and positional ngrams can be collected.
 """
-# TODO: write above ngrams, posngrams, skip ngrams
-
-
-# TODO: check the import in __init__.py
 
 from itertools import chain, combinations, product
 
-# TODO: remove from sound_classes.py later
 def _seq_as_tuple(sequence):
     """
     Internal function for automatically converting a
-    string sequence to a tuple, if needed. 
+    string sequence to a tuple, if needed.
 
     Parameters
     ----------
     sequence: list or str
         The sequence that shall be converted into an
         iterable.
-        
+
     Returns
     -------
     out: tuple
         A tuple of the sequence.
     """
-    
+
     # We first check for datatype and then for a space,
     # as the first test is faster (and evaluation is lazy).
     if isinstance(sequence, str) and ' ' in sequence:
         return tuple(sequence.split(' '))
-        
+
     return tuple(sequence)
 
 # This method with zip, besides returning an iterator as desired,
@@ -54,23 +49,50 @@ def get_n_ngrams(sequence, order, pad_symbol='$'):
     ----------
     sequence: list or str
         The sequence from which the ngrams will be collected.
-        
+
     order: int
         The order of the ngrams to be collected.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     Returns
     -------
     out: iterable
         An iterable over the ngrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in get_n_ngrams(sent, 2):
+    ...     print(ngram)
+    ...
+    ('$', 'Insurgents')
+    ('Insurgents', 'killed')
+    ('killed', 'in')
+    ('in', 'ongoing')
+    ('ongoing', 'fighting')
+    ('fighting', '$')
+
+    >>> for ngram in get_n_ngrams(sent, 1):
+    ...     print(ngram)
+    ...
+    ('Insurgents',)
+    ('killed',)
+    ('in',)
+    ('ongoing',)
+    ('fighting',)
+
+    >>> for ngram in get_n_ngrams(sent, 0):
+    ...     print(ngram)
+    ...
     """
-    
+
     # Convert to a tuple, for faster computation, and pad the
     # sequence if needed. The test for `pad_symbol` is a bit
     # more expansive (None and not all False values) as we
@@ -97,8 +119,9 @@ def get_n_ngrams(sequence, order, pad_symbol='$'):
     #
     # From which we zip all possible combinations.
 
-    return zip(*[seq[i:] for i in range(order)])
-    
+    for ngram in zip(*[seq[i:] for i in range(order)]):
+        yield ngram
+
 def bigrams(sequence, pad_symbol='$'):
     """
     Build an iterator for collecting all bigrams of a
@@ -108,23 +131,37 @@ def bigrams(sequence, pad_symbol='$'):
     ----------
     sequence: list or str
         The sequence from which the bigrams will be collected.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     Returns
     -------
     out: iterable
         An iterable over the bigrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in bigrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', 'Insurgents')
+    ('Insurgents', 'killed')
+    ('killed', 'in')
+    ('in', 'ongoing')
+    ('ongoing', 'fighting')
+    ('fighting', '$')
     """
-    
+
     for bigram in get_n_ngrams(sequence, 2, pad_symbol):
         yield bigram
-        
+
 def trigrams(sequence, pad_symbol='$'):
     """
     Build an iterator for collecting all trigrams of a
@@ -134,20 +171,35 @@ def trigrams(sequence, pad_symbol='$'):
     ----------
     sequence: list or str
         The sequence from which the trigrams will be collected.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     Returns
     -------
     out: iterable
         An iterable over the trigrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in trigrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', '$', 'Insurgents')
+    ('$', 'Insurgents', 'killed')
+    ('Insurgents', 'killed', 'in')
+    ('killed', 'in', 'ongoing')
+    ('in', 'ongoing', 'fighting')
+    ('ongoing', 'fighting', '$')
+    ('fighting', '$', '$')
     """
-    
+
     for trigram in get_n_ngrams(sequence, 3, pad_symbol):
         yield trigram
 
@@ -161,20 +213,36 @@ def fourgrams(sequence, pad_symbol='$'):
     ----------
     sequence: list or str
         The sequence from which the fourgrams will be collected.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     Returns
     -------
     out: iterable
         An iterable over the fourgrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in fourgrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', '$', '$', 'Insurgents')
+    ('$', '$', 'Insurgents', 'killed')
+    ('$', 'Insurgents', 'killed', 'in')
+    ('Insurgents', 'killed', 'in', 'ongoing')
+    ('killed', 'in', 'ongoing', 'fighting')
+    ('in', 'ongoing', 'fighting', '$')
+    ('ongoing', 'fighting', '$', '$')
+    ('fighting', '$', '$', '$')
     """
-    
+
     for fourgram in get_n_ngrams(sequence, 4, pad_symbol):
         yield fourgram
 
@@ -190,7 +258,7 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
     ----------
     sequence: list or str
         The sequence from which the ngrams will be collected.
-        
+
     orders: list
         An optional list of the orders of the ngrams to
         be collected. Can be larger than the length of the
@@ -198,32 +266,56 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
         accordingly if requested. Defaults to the collection
         of all possible ngrams in the sequence with the
         minimum padding.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     Returns
     -------
     out: iterable
         An iterable over the ngrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents were killed"
+    >>> for ngram in get_all_ngrams(sent):
+    ...     print(ngram)
+    ...
+    ('Insurgents',)
+    ('were',)
+    ('killed',)
+    ('$', 'Insurgents')
+    ('Insurgents', 'were')
+    ('were', 'killed')
+    ('killed', '$')
+    ('$', '$', 'Insurgents')
+    ('$', 'Insurgents', 'were')
+    ('Insurgents', 'were', 'killed')
+    ('were', 'killed', '$')
+    ('killed', '$', '$')
     """
-    
+
+    # Convert to a tuple, for faster computation, compute the
+    # orders (if they were not given), and pad the sequence if
+    # requested.
+    seq = _seq_as_tuple(sequence)
     if not orders:
-        orders = range(len(sequence)+1)
-        
+        orders = range(len(seq)+1)
+
     for order in orders:
-        for ngram in get_n_ngrams(sequence, order, pad_symbol):
+        for ngram in get_n_ngrams(seq, order, pad_symbol):
             yield ngram
 
 
 def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=True):
     """
     Build an iterator for collecting all skip ngrams of a sequence
-    of a given length and of a maximum number of gaps, 
+    of a given length and of a maximum number of gaps,
     with with unlimited number of gap openings (as described in
     Guthrie et al. 2006) or with at most one gap opening.
 
@@ -239,11 +331,11 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     order: int
         The order of the ngrams to be collected (parameter
         "n" in Guthrie et al. 2006).
-        
+
     max_gaps: int
         The maximum number of gaps in the ngrams to be
         collected (parameter "k" in Guthrie et al. 2006).
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
@@ -256,12 +348,53 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
         al. (2006) and Bird et al. (2018), or if at
         most one gap_opening is to be allowed. Defaults
         to True.
-        
+
     Returns
     -------
     out: iterable
         An iterable over the ngrams of the sequence,
         returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in skip_ngrams(sent, 2, 2):
+    ...     print(ngram)
+    ...
+    ('$', 'Insurgents')
+    ('Insurgents', 'killed')
+    ('killed', 'in')
+    ('in', 'ongoing')
+    ('ongoing', 'fighting')
+    ('fighting', '$')
+    ('$', 'killed')
+    ('Insurgents', 'in')
+    ('killed', 'ongoing')
+    ('in', 'fighting')
+    ('ongoing', '$')
+    ('$', 'in')
+    ('Insurgents', 'ongoing')
+    ('killed', 'fighting')
+    ('in', '$')
+    >>> for ngram in skip_ngrams(sent, 2, 2, single_gap_opening=False):
+    ...     print(ngram)
+    ...
+    ('$', 'Insurgents')
+    ('$', 'killed')
+    ('$', 'in')
+    ('Insurgents', 'killed')
+    ('Insurgents', 'in')
+    ('Insurgents', 'ongoing')
+    ('killed', 'in')
+    ('killed', 'ongoing')
+    ('killed', 'fighting')
+    ('in', 'ongoing')
+    ('in', 'fighting')
+    ('in', '$')
+    ('ongoing', 'fighting')
+    ('ongoing', '$')
+    ('fighting', '$')
     """
 
     # Check skip ngram length, which by definition must be at
@@ -270,7 +403,8 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     if order < 2:
         raise ValueError("Skip ngram order must be at least 2.")
 
-    # Pad the sequence if requested and cache the sequence length;
+    # Convert to a tuple, if needed, and
+    # pad the sequence if requested and cache the sequence length;
     # please note that in this case we are caching the
     # sequence length *after* padding, so skip ngrams where one
     # of the sides is composed entirely of padded symbols
@@ -279,12 +413,11 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     # our own temporary padding for ngram filtering; this also
     # ends up speeding things a little bit, as the conversion to
     # a tuple is only perfomed once.
+    seq = _seq_as_tuple(sequence)
     if pad_symbol:
-        seq = tuple(chain((pad_symbol,)* (order-1), sequence, (pad_symbol,) * (order-1)))
-    else:
-        seq = tuple(sequence)
+        seq = tuple(chain((pad_symbol,)* (order-1), seq, (pad_symbol,) * (order-1)))
     len_seq = len(seq)
-        
+
     # The logic for obtaining skip ngrams is different if we allow
     # for multiple gaps (as proposed and implemented by both
     # Guthrie et al. 2006 and Bird et al. in NLTK, whose
@@ -294,7 +427,7 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     # collet repeated ngrams (with a gap of zero, an ngram for
     # preceding length 1 and following length 2 is equal to
     # an ngram of preceding length 2 and following length 1).
-    if not subsequent:
+    if not single_gap_opening:
         # We pad the `sequence` with None symbols to the right,
         # so we can filter during the list comprehension.
         # Please note that this is *not* the user-requested
@@ -302,7 +435,7 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
         # account for the end of the ngram; also
         # please note that this will fail if the sequence itself
         # holds None symbols.
-        # TODO: To solve the problems when/if the sequence itself
+        # NOTE: To solve the problems when/if the sequence itself
         #       holds None symbols, we could translate Nones to
         #       a tempory value and remap it when yielding; while
         #       expansive, this is still more effective than
@@ -311,8 +444,7 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
         _temp = chain(seq, (None,) * order)
         for ngram in get_n_ngrams(_temp, order+max_gaps, pad_symbol=None):
             head = ngram[:1] # cache for all combinations
-            combs = [tail for tail in combinations(ngram[1:], order-1) if all(tail)]
-            for comb in combs:
+            for comb in [tail for tail in combinations(ngram[1:], order-1) if all(tail)]:
                 yield head + comb
     else:
         # Iterate over all the possible gap lengths, including
@@ -359,27 +491,27 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbo
     ----------
     sequence: list or str
         The sequence from which the ngrams will be collected.
-        
+
     pre-order: int
         An optional integer specifying the length of the
         preceding context. Default to zero.
-        
+
     post-order: int
         An optional integer specifying the length of the
         following context. Default to zero.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     elm_symbol: object
         An optional symbol to be used as transition
         symbol replacement in the context tuples
         (the first element in the returned iterator).
         Defaults to "###".
-        
+
     Returns
     -------
     out: iterable
@@ -391,8 +523,21 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbo
         object with the value of the transition symbol,
         and (3) the index of the transition symbol in
         the sequence.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in get_posngrams(sent, 2, 1):
+    ...     print(ngram)
+    ...
+    (('$', '$', '###', 'killed'), 'Insurgents', 0)
+    (('$', 'Insurgents', '###', 'in'), 'killed', 1)
+    (('Insurgents', 'killed', '###', 'ongoing'), 'in', 2)
+    (('killed', 'in', '###', 'fighting'), 'ongoing', 3)
+    (('in', 'ongoing', '###', '$'), 'fighting', 4)
     """
-   
+
     # Cache the complexive order for the ngram from the sum of the
     # pre- and post- orders (with an additional one, the state
     # under actual observation).
@@ -407,11 +552,10 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbo
     # is cache *before* padding precisely in order to allow
     # the filtering of elements.
     seq = _seq_as_tuple(sequence)
-    len_seq = len(seq)
     if pad_symbol:
         seq = chain((pad_symbol,)* pre_order, seq, (pad_symbol,) * post_order)
         seq = tuple(seq)
-        
+
     # We obtain all the subsequences of the order we desire by
     # asking for the all the ngrams of the given order when the
     # sequence is not addionally padded (of course, it will already
@@ -431,7 +575,7 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbo
             subseq[elem_idx],
             # state index
             state_idx)
-            
+
 def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_symbol='###'):
     """
     Build an iterator for collecting all positional ngrams of a sequence
@@ -447,33 +591,33 @@ def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_sym
     ----------
     sequence: list or str
         The sequence from which the ngrams will be collected.
-        
+
     pre-orders: int
         An integer with the maximum length of the preceding
         context or a list with all preceding context lengths
         to be collected. If an integer is passed, all
         lengths from zero to the informed one will be
         collected.
-        
+
     post-orders: int
         An integer with the maximum length of the following
         context or a list with all preceding context lengths
         to be collected. If an integer is passed, all
         lengths from zero to the informed one will be
         collected.
-        
+
     pad_symbol: object
         An optional symbol to be used as start-of- and
         end-of-sequence boundaries. The same symbol
         is used for both boundaries. Must be a value
         different from None, defaults to "$".
-        
+
     elm_symbol: object
         An optional symbol to be used as transition
         symbol replacement in the context tuples
         (the first element in the returned iterator).
         Defaults to "###".
-        
+
     Returns
     -------
     out: iterable
@@ -485,6 +629,32 @@ def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_sym
         object with the value of the transition symbol,
         and (3) the index of the transition symbol in
         the sequence.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents were killed"
+    >>> for ngram in get_all_posngrams(sent, 2, 1):
+    ...     print(ngram)
+    ...
+    (('###',), 'Insurgents', 0)
+    (('###',), 'were', 1)
+    (('###',), 'killed', 2)
+    (('###', 'were'), 'Insurgents', 0)
+    (('###', 'killed'), 'were', 1)
+    (('###', '$'), 'killed', 2)
+    (('$', '###'), 'Insurgents', 0)
+    (('Insurgents', '###'), 'were', 1)
+    (('were', '###'), 'killed', 2)
+    (('$', '###', 'were'), 'Insurgents', 0)
+    (('Insurgents', '###', 'killed'), 'were', 1)
+    (('were', '###', '$'), 'killed', 2)
+    (('$', '$', '###'), 'Insurgents', 0)
+    (('$', 'Insurgents', '###'), 'were', 1)
+    (('Insurgents', 'were', '###'), 'killed', 2)
+    (('$', '$', '###', 'were'), 'Insurgents', 0)
+    (('$', 'Insurgents', '###', 'killed'), 'were', 1)
+    (('Insurgents', 'were', '###', '$'), 'killed', 2)
     """
 
     # We don't need to convert `sequence` into a tuple or pad it
