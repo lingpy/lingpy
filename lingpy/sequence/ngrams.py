@@ -6,6 +6,7 @@ skip ngrams, and positional ngrams can be collected.
 """
 
 from itertools import chain, combinations, product
+from functools import partial
 
 def _seq_as_tuple(sequence):
     """
@@ -121,130 +122,6 @@ def get_n_ngrams(sequence, order, pad_symbol='$'):
 
     for ngram in zip(*[seq[i:] for i in range(order)]):
         yield ngram
-
-def bigrams(sequence, pad_symbol='$'):
-    """
-    Build an iterator for collecting all bigrams of a
-    sequence, padding the sequence by default.
-
-    Parameters
-    ----------
-    sequence: list or str
-        The sequence from which the bigrams will be collected.
-
-    pad_symbol: object
-        An optional symbol to be used as start-of- and
-        end-of-sequence boundaries. The same symbol
-        is used for both boundaries. Must be a value
-        different from None, defaults to "$".
-
-    Returns
-    -------
-    out: iterable
-        An iterable over the bigrams of the sequence,
-        returned as tuples.
-
-    Examples
-    --------
-    >>> from lingpy.sequence import *
-    >>> sent = "Insurgents killed in ongoing fighting"
-    >>> for ngram in bigrams(sent):
-    ...     print(ngram)
-    ...
-    ('$', 'Insurgents')
-    ('Insurgents', 'killed')
-    ('killed', 'in')
-    ('in', 'ongoing')
-    ('ongoing', 'fighting')
-    ('fighting', '$')
-    """
-
-    for bigram in get_n_ngrams(sequence, 2, pad_symbol):
-        yield bigram
-
-def trigrams(sequence, pad_symbol='$'):
-    """
-    Build an iterator for collecting all trigrams of a
-    sequence, padding the sequence by default.
-
-    Parameters
-    ----------
-    sequence: list or str
-        The sequence from which the trigrams will be collected.
-
-    pad_symbol: object
-        An optional symbol to be used as start-of- and
-        end-of-sequence boundaries. The same symbol
-        is used for both boundaries. Must be a value
-        different from None, defaults to "$".
-
-    Returns
-    -------
-    out: iterable
-        An iterable over the trigrams of the sequence,
-        returned as tuples.
-
-    Examples
-    --------
-    >>> from lingpy.sequence import *
-    >>> sent = "Insurgents killed in ongoing fighting"
-    >>> for ngram in trigrams(sent):
-    ...     print(ngram)
-    ...
-    ('$', '$', 'Insurgents')
-    ('$', 'Insurgents', 'killed')
-    ('Insurgents', 'killed', 'in')
-    ('killed', 'in', 'ongoing')
-    ('in', 'ongoing', 'fighting')
-    ('ongoing', 'fighting', '$')
-    ('fighting', '$', '$')
-    """
-
-    for trigram in get_n_ngrams(sequence, 3, pad_symbol):
-        yield trigram
-
-
-def fourgrams(sequence, pad_symbol='$'):
-    """
-    Build an iterator for collecting all fourgrams of a
-    sequence, padding the sequence by default.
-
-    Parameters
-    ----------
-    sequence: list or str
-        The sequence from which the fourgrams will be collected.
-
-    pad_symbol: object
-        An optional symbol to be used as start-of- and
-        end-of-sequence boundaries. The same symbol
-        is used for both boundaries. Must be a value
-        different from None, defaults to "$".
-
-    Returns
-    -------
-    out: iterable
-        An iterable over the fourgrams of the sequence,
-        returned as tuples.
-
-    Examples
-    --------
-    >>> from lingpy.sequence import *
-    >>> sent = "Insurgents killed in ongoing fighting"
-    >>> for ngram in fourgrams(sent):
-    ...     print(ngram)
-    ...
-    ('$', '$', '$', 'Insurgents')
-    ('$', '$', 'Insurgents', 'killed')
-    ('$', 'Insurgents', 'killed', 'in')
-    ('Insurgents', 'killed', 'in', 'ongoing')
-    ('killed', 'in', 'ongoing', 'fighting')
-    ('in', 'ongoing', 'fighting', '$')
-    ('ongoing', 'fighting', '$', '$')
-    ('fighting', '$', '$', '$')
-    """
-
-    for fourgram in get_n_ngrams(sequence, 4, pad_symbol):
-        yield fourgram
 
 
 def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
@@ -687,3 +564,122 @@ def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_sym
     # too much and unnecessarily.
     for ngram in chain.from_iterable(ngrams):
         yield ngram
+
+
+# Define partial functions
+
+bigrams = partial(get_n_ngrams, order=2)
+bigrams.__doc__ = """
+    Build an iterator for collecting all bigrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the bigrams will be collected.
+
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+
+    Returns
+    -------
+    out: iterable
+        An iterable over the bigrams of the sequence,
+        returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in bigrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', 'Insurgents')
+    ('Insurgents', 'killed')
+    ('killed', 'in')
+    ('in', 'ongoing')
+    ('ongoing', 'fighting')
+    ('fighting', '$')
+    """
+
+
+trigrams = partial(get_n_ngrams, order=3)
+trigrams.__doc__ = """
+    Build an iterator for collecting all trigrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the trigrams will be collected.
+
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+
+    Returns
+    -------
+    out: iterable
+        An iterable over the trigrams of the sequence,
+        returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in trigrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', '$', 'Insurgents')
+    ('$', 'Insurgents', 'killed')
+    ('Insurgents', 'killed', 'in')
+    ('killed', 'in', 'ongoing')
+    ('in', 'ongoing', 'fighting')
+    ('ongoing', 'fighting', '$')
+    ('fighting', '$', '$')
+    """
+
+
+fourgrams = partial(get_n_ngrams, order=4)
+fourgrams.__doc__ = """
+    Build an iterator for collecting all fourgrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the fourgrams will be collected.
+
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+
+    Returns
+    -------
+    out: iterable
+        An iterable over the fourgrams of the sequence,
+        returned as tuples.
+
+    Examples
+    --------
+    >>> from lingpy.sequence import *
+    >>> sent = "Insurgents killed in ongoing fighting"
+    >>> for ngram in fourgrams(sent):
+    ...     print(ngram)
+    ...
+    ('$', '$', '$', 'Insurgents')
+    ('$', '$', 'Insurgents', 'killed')
+    ('$', 'Insurgents', 'killed', 'in')
+    ('Insurgents', 'killed', 'in', 'ongoing')
+    ('killed', 'in', 'ongoing', 'fighting')
+    ('in', 'ongoing', 'fighting', '$')
+    ('ongoing', 'fighting', '$', '$')
+    ('fighting', '$', '$', '$')
+    """
