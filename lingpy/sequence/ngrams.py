@@ -99,6 +99,85 @@ def get_n_ngrams(sequence, order, pad_symbol='$'):
 
     return zip(*[seq[i:] for i in range(order)])
     
+def bigrams(sequence, pad_symbol='$'):
+    """
+    Build an iterator for collecting all bigrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the bigrams will be collected.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the bigrams of the sequence,
+        returned as tuples.
+    """
+    
+    for bigram in get_n_ngrams(sequence, 2, pad_symbol):
+        yield bigram
+        
+def trigrams(sequence, pad_symbol='$'):
+    """
+    Build an iterator for collecting all trigrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the trigrams will be collected.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the trigrams of the sequence,
+        returned as tuples.
+    """
+    
+    for trigram in get_n_ngrams(sequence, 3, pad_symbol):
+        yield trigram
+
+
+def fourgrams(sequence, pad_symbol='$'):
+    """
+    Build an iterator for collecting all fourgrams of a
+    sequence, padding the sequence by default.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the fourgrams will be collected.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the fourgrams of the sequence,
+        returned as tuples.
+    """
+    
+    for fourgram in get_n_ngrams(sequence, 4, pad_symbol):
+        yield fourgram
+
 
 def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
     """
