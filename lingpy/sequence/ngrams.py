@@ -4,14 +4,12 @@ This module provides various methods for generating and
 collecting n-grams from sequences.
 
 """
-# TODO: write above ngrams, pngrams, skip ngrams
+# TODO: write above ngrams, posngrams, skip ngrams
 
 
 # TODO: check the import in __init__.py
 
 from itertools import chain, combinations, product
-
-_ELEMENT = "###"
 
 # TODO: remove from sound_classes.py later
 def _seq_as_tuple(sequence):
@@ -41,7 +39,7 @@ def _seq_as_tuple(sequence):
 # This method with zip, besides returning an iterator as desired,
 # is faster than both the previous lingpy implementation and the
 # one in NLTK; as this is the core of the ngram methods, it is
-# important to have at least this as fast as possible.
+# important to have at least this primitive as fast as possible.
 # This is intentionally not defaulting to any value for the
 # order, so that users won't confuse a given order to all
 # orders up to and including the given one.
@@ -133,7 +131,6 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
     out: iterable
         An iterable over the ngrams of the sequence,
         returned as tuples.
-
     """
     
     if not orders:
@@ -144,9 +141,52 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
             yield ngram
 
 
-def get_pgrams(sequence, pre_order=0, post_order=0, pad_symbol=None):
+def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbol='###'):
     """
-    Collect a single pre- and post- order ngram set from a sequence.
+    Build an iterator for collecting all positional ngrams of a sequence
+    of a given set of preceding and following orders (i.e., "contexts").
+    The elements of the iterator include a tuple of the context, which
+    can be hashed as any tuple, the transition symbol, and the
+    position of the symbol in the sequence. Such output is
+    primarily intended for state-by-state relative likelihood
+    computations with stochastics models.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the ngrams will be collected.
+        
+    pre-order: int
+        An optional integer specifying the length of the
+        preceding context. Default to zero.
+        
+    post-order: int
+        An optional integer specifying the length of the
+        following context. Default to zero.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    elm_symbol: object
+        An optional symbol to be used as transition
+        symbol replacement in the context tuples
+        (the first element in the returned iterator).
+        Defaults to "###".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the positional ngrams of the
+        sequence, returned as tuples whose elements are:
+        (1) a tuple with representing the context (thus
+        including preceding context, the transition
+        symbol, and the following context), (2) an
+        object with the value of the transition symbol,
+        and (3) the index of the transition symbol in
+        the sequence.
     """
    
     # Cache the complexive order for the ngram from the sum of the
@@ -174,66 +214,51 @@ def get_pgrams(sequence, pre_order=0, post_order=0, pad_symbol=None):
     # have been padded, if the user so requested, by this time).
     subseqs = get_n_ngrams(seq, order, pad_symbol=None)
 
-#    print(len(list(subseqs)))
-#    print(list(subseqs))
-
     # We can now collect all the skipping sequences, caching the
-    # various indexes for quicker extraction. Given the way
-    # Python indexes lists, we need to perform a conditional
-    # extraction based on the value of post_order (otherwise
-    # we would get a `postctx_idx` of -1+1, i.e. zero, which
-    # would return the entire subsequence; work-arounds would
-    # make the code too complex for something so simple, and
-    # this has the advantage of being faster in cases of
-    # only subsequent ngrams, which are more common).
-    if not post_order:
-        ngrams = (
-            (tuple(subseq[:-1] + (_ELEMENT,)), subseq[-1], state_idx + pre_order)
-            for state_idx, subseq
-            in enumerate(subseqs))
-    else:
-        elem_idx = -1 - post_order
-        prectx_idx = elem_idx - pre_order
-        postctx_idx = -post_order
-        ngrams = (
+    # various indexes for quicker extraction. We chain from
+    # iterables as this is faster for such a primitive function.
+    elem_idx = -1 - post_order
+    postctx_idx = order - post_order
+    for state_idx, subseq in enumerate(subseqs):
+        yield (
             # pre-context + element + post_context
-            (tuple(subseq[prectx_idx:elem_idx] + (_ELEMENT,) + subseq[postctx_idx:]),
-             # transition
-             subseq[elem_idx],
-             # state index, discounting the start boundaries
-             state_idx + pre_order)
-            # loop
-            for state_idx, subseq in enumerate(subseqs)
-        )
+            (subseq[:elem_idx] + (elm_symbol,) + subseq[postctx_idx:]),
+            # transition
+            subseq[elem_idx],
+            # state index
+            state_idx)
+            
+def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_symbol='###'):
+    # We don't need to convert `sequence` into a tuple or pad it
+    # here, as this will be performed by `get_posngrams()`.
+    # While we could do this in advance and cache the results,
+    # this complicates things a bit and a quick experimentation
+    # showed no real improvement in perfomance, even when
+    # simulating with large datasets (we'd still need to
+    # perform a conditional check on the sequence type in order
+    # to profit from the cache, which is expensive and is
+    # otherwise performed internally by C-code).
 
-    return ngrams
-
-
-def collect_ngrams_multiorder(seq, pre_order, post_order, pad_symbol="$$$"):
-    """
-    Collect various order ngrams from a sequence.
-    """
     # For both pre- and post-context, we will interact over all
     # lengths if we receive a list, or build a range of such lengths
     # if an integer is received (for this reason, we add a unit to
     # the range, so that the top value when passing an integer is
     # compatible to max() when passing a list).
-    if isinstance(pre_order, int):
-        pre_order = range(pre_order + 1)
-    if isinstance(post_order, int):
-        post_order = range(post_order + 1)
+    if isinstance(pre_orders, int):
+        pre_orders = range(pre_orders + 1)
+    if isinstance(post_orders, int):
+        post_orders = range(post_orders + 1)
 
     # Collect all ngrams...
-    ngrams = [collect_ngrams(seq, pre_length, post_length, pad_symbol)
-              for pre_length, post_length
-              in product(pre_order, post_order)]
+    ngrams = [get_posngrams(sequence, pre_order, post_order, pad_symbol, elm_symbol)
+              for pre_order, post_order
+              in product(pre_orders, post_orders)]
 
-    # ...and flatten the list, so it can easily be passed to a Counter later
-    # (and so that it is compatible with what is returned by
-    # `collect_ngrams()`)
-    ng = [ngram for order_ngrams in ngrams for ngram in order_ngrams]
-
-    return ng
+    # ...and yield them; there is probably a way of having this a bit
+    # more functional even in Python, but it would likely complicate the code
+    # too much and unnecessarily.
+    for ngram in chain.from_iterable(ngrams):
+        yield ngram
 
 
 def skip_ngrams(sequence, n, k, pad_symbol=None, subsequent=True):
