@@ -141,10 +141,135 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
             yield ngram
 
 
+def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=True):
+    """
+    Build an iterator for collecting all skip ngrams of a sequence
+    of a given length and of a maximum number of gaps, 
+    with with unlimited number of gap openings (as described in
+    Guthrie et al. 2006) or with at most one gap opening.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the ngrams will be collected.
+        Must not include "None" as an element, as it is used
+        a sentinel during skip ngram collection following the
+        implementation in Bird et al. 2018 (NLTK) which is
+        a de facto standard.
+
+    order: int
+        The order of the ngrams to be collected (parameter
+        "n" in Guthrie et al. 2006).
+        
+    max_gaps: int
+        The maximum number of gaps in the ngrams to be
+        collected (parameter "k" in Guthrie et al. 2006).
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+
+    single_gap_opening: boolean
+        An optional logic value indicating if multiple
+        gap openings are to be allowed, as in Guthrie et
+        al. (2006) and Bird et al. (2018), or if at
+        most one gap_opening is to be allowed. Defaults
+        to True.
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the ngrams of the sequence,
+        returned as tuples.
+    """
+
+    # Check skip ngram length, which by definition must be at
+    # least two (one element for the left side and one for the
+    # right one)
+    if order < 2:
+        raise ValueError("Skip ngram order must be at least 2.")
+
+    # Pad the sequence if requested and cache the sequence length;
+    # please note that in this case we are caching the
+    # sequence length *after* padding, so skip ngrams where one
+    # of the sides is composed entirely of padded symbols
+    # will be included in the collection. We don't do this with
+    # the primitive "get_n_ngrams()" because we will later add
+    # our own temporary padding for ngram filtering; this also
+    # ends up speeding things a little bit, as the conversion to
+    # a tuple is only perfomed once.
+    if pad_symbol:
+        seq = tuple(chain((pad_symbol,)* (order-1), sequence, (pad_symbol,) * (order-1)))
+    else:
+        seq = tuple(sequence)
+    len_seq = len(seq)
+        
+    # The logic for obtaining skip ngrams is different if we allow
+    # for multiple gaps (as proposed and implemented by both
+    # Guthrie et al. 2006 and Bird et al. in NLTK, whose
+    # code in module nltk.util at http://www.nltk.org/_modules/nltk/util.html
+    # is closely followed here), or if we allow
+    # for a single gap, especially considering that we cannot
+    # collet repeated ngrams (with a gap of zero, an ngram for
+    # preceding length 1 and following length 2 is equal to
+    # an ngram of preceding length 2 and following length 1).
+    if not subsequent:
+        # We pad the `sequence` with None symbols to the right,
+        # so we can filter during the list comprehension.
+        # Please note that this is *not* the user-requested
+        # padding, but an internal and inexpansive way to
+        # account for the end of the ngram; also
+        # please note that this will fail if the sequence itself
+        # holds None symbols.
+        # TODO: To solve the problems when/if the sequence itself
+        #       holds None symbols, we could translate Nones to
+        #       a tempory value and remap it when yielding; while
+        #       expansive, this is still more effective than
+        #       other solutions which would not allow using
+        #       `all()` for most sequence computations.
+        _temp = chain(seq, (None,) * order)
+        for ngram in get_n_ngrams(_temp, order+max_gaps, pad_symbol=None):
+            head = ngram[:1] # cache for all combinations
+            combs = [tail for tail in combinations(ngram[1:], order-1) if all(tail)]
+            for comb in combs:
+                yield head + comb
+    else:
+        # Iterate over all the possible gap lengths, including
+        # length zero. Length zero requires a different logic (it is
+        # actually just returning all subsequent ngrams) in order
+        # not to yield the same subsequence (for example, for length
+        # 1+2 and 2+1, which are obviously identical). One alternative,
+        # would be to add a function paramenter allowing the user to
+        # circumvent this behaviour, but no situation where this would
+        # be required or at least suggested seem to exist (we would be
+        # distributing more probability to ngrams with no gaps, which
+        # is exactly what skip ngrams are intended to correct).
+        for gap_width in range(max_gaps+1):
+            if gap_width == 0:
+                # No pad-symbol here, as the sequence was padded before.
+                for ngram in get_n_ngrams(seq, order, pad_symbol=None):
+                    yield ngram
+            else:
+                # We iterate over all possible left and right lengths,
+                # making sure we always have at least one on each side.
+                for left_width in range(1, order):
+                    # Build the pattern we are extracting
+                    pattern = (True,) * left_width + \
+                              (False,) * gap_width + \
+                              (True,) * (order - left_width) # right width
+
+                    # Iterate over the sequence while applying the pattern;
+                    # `idx` is the starting index in `sequence`, `skip` the
+                    # element index in `pattern`
+                    for idx in range(len_seq-order-gap_width+1):
+                        yield tuple(seq[idx+skip] for skip, keep in enumerate(pattern) if keep)
+
 def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbol='###'):
     """
     Build an iterator for collecting all positional ngrams of a sequence
-    of a given set of preceding and following orders (i.e., "contexts").
+    of a given a preceding and a following orders (i.e., "contexts").
     The elements of the iterator include a tuple of the context, which
     can be hashed as any tuple, the transition symbol, and the
     position of the symbol in the sequence. Such output is
@@ -229,6 +354,60 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol='$', elm_symbo
             state_idx)
             
 def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_symbol='###'):
+    """
+    Build an iterator for collecting all positional ngrams of a sequence
+    of a given set of preceding and following orders (i.e., "contexts").
+    The elements of the iterator, as returned by "get_posngrams()",
+    include a tuple of the context, which
+    can be hashed as any tuple, the transition symbol, and the
+    position of the symbol in the sequence. Such output is
+    primarily intended for state-by-state relative likelihood
+    computations with stochastics models.
+
+    Parameters
+    ----------
+    sequence: list or str
+        The sequence from which the ngrams will be collected.
+        
+    pre-orders: int
+        An integer with the maximum length of the preceding
+        context or a list with all preceding context lengths
+        to be collected. If an integer is passed, all
+        lengths from zero to the informed one will be
+        collected.
+        
+    post-orders: int
+        An integer with the maximum length of the following
+        context or a list with all preceding context lengths
+        to be collected. If an integer is passed, all
+        lengths from zero to the informed one will be
+        collected.
+        
+    pad_symbol: object
+        An optional symbol to be used as start-of- and
+        end-of-sequence boundaries. The same symbol
+        is used for both boundaries. Must be a value
+        different from None, defaults to "$".
+        
+    elm_symbol: object
+        An optional symbol to be used as transition
+        symbol replacement in the context tuples
+        (the first element in the returned iterator).
+        Defaults to "###".
+        
+    Returns
+    -------
+    out: iterable
+        An iterable over the positional ngrams of the
+        sequence, returned as tuples whose elements are:
+        (1) a tuple with representing the context (thus
+        including preceding context, the transition
+        symbol, and the following context), (2) an
+        object with the value of the transition symbol,
+        and (3) the index of the transition symbol in
+        the sequence.
+    """
+
     # We don't need to convert `sequence` into a tuple or pad it
     # here, as this will be performed by `get_posngrams()`.
     # While we could do this in advance and cache the results,
@@ -259,75 +438,3 @@ def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol='$', elm_sym
     # too much and unnecessarily.
     for ngram in chain.from_iterable(ngrams):
         yield ngram
-
-
-def skip_ngrams(sequence, n, k, pad_symbol=None, subsequent=True):
-    # Check skip ngram length, which by definition must be at
-    # least two (one element for the left side and one for the
-    # right one)
-    if n < 2:
-        raise ValueError("Skip ngram order must be at least 2.")
-
-    # Pad the sequence if requested and cache the sequence length;
-    # please note that in this case we are caching the
-    # sequence length *after* padding, so skip ngrams where one
-    # of the sides is composed entirely of padded symbols
-    # will be included.
-    if pad_symbol:
-        sequence = chain((pad_symbol,)* (n-1), sequence, (pad_symbol,) * (n-1))
-        sequence = list(sequence)
-    len_seq = len(sequence)
-        
-    # The logic for obtaining skip ngrams is different if we allow
-    # for multiple gaps (as proposed by Guthrie et al. 2006 and
-    # implemented, among others, by Bird et al. 2004, whose
-    # implementation is followed here), or if we allow
-    # for a single gap, especially considering that we should not
-    # offer repeated ngrams. 
-    if not subsequent:
-        # We pad the `sequence` with None symbols to the right,
-        # so we can filter during the list comprehension.
-        # Please note that this is *not* the user-requested
-        # padding, but an internal and inexpansive way to
-        # account for the end of the ngram;
-        # please note that this will fail if the sequence itself
-        # holds None symbols.
-        # TODO: To solve the problems when/if the sequence itself
-        #       holds None symbols, we could translate Nones to
-        #       a tempory value and remap it when yielding; while
-        #       expansive, this is still more effective than
-        #       other solutions which would not allow using
-        #       `all()` for most sequence computations.
-        _temp = chain(sequence, (None,) * n)
-        for ngram in get_ngrams(_temp, n+k, pad_symbol=None):
-            head = ngram[:1]
-            combs = [tail for tail in combinations(ngram[1:], n-1) if all(tail)]
-            for comb in combs:
-                yield head + comb
-    else:
-        # Iterate over all the possible gap lengths, including
-        # length zero. Length zero requires a different logic (it is
-        # actually just returning all subsequent ngrams) in order
-        # not to yield the same subsequence (for example, for length
-        # 1+2 and 2+1, which are obviously identical). One alternative,
-        # if needed, is to add a function parameter circumventing this.
-        for gap_width in range(0, k+1):
-            if gap_width == 0:
-                for ngram in get_ngrams(sequence, n, pad_symbol=None):
-                    yield ngram
-            else:
-                # We iterate over all possible left and right lengths,
-                # making sure we always have at least one on each side.
-                for left_width in range(1, n):
-                    # Compute the right width
-                    right_width = n - left_width
-                    # Build the pattern we are extracting
-                    pattern = (True,) * left_width + \
-                              (False,) * gap_width + \
-                              (True,) * right_width
-                    # Iterate over the sequence while applying the pattern;
-                    # `i` is the starting index in `sequence`, `j` the
-                    # element index in `pattern`
-                    for i in range(len_seq-len(pattern)+1):
-                        ngram = [sequence[i+j] for j, keep in enumerate(pattern) if keep]
-                        yield tuple(ngram)
