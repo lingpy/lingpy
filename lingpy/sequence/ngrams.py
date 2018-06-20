@@ -312,7 +312,7 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
             yield ngram
 
 
-def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=True):
+def get_skipngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=True):
     """
     Build an iterator for collecting all skip ngrams of a sequence
     of a given length and of a maximum number of gaps,
@@ -359,7 +359,7 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     --------
     >>> from lingpy.sequence import *
     >>> sent = "Insurgents killed in ongoing fighting"
-    >>> for ngram in skip_ngrams(sent, 2, 2):
+    >>> for ngram in get_skipngrams(sent, 2, 2):
     ...     print(ngram)
     ...
     ('$', 'Insurgents')
@@ -377,7 +377,7 @@ def skip_ngrams(sequence, order, max_gaps, pad_symbol='$', single_gap_opening=Tr
     ('Insurgents', 'ongoing')
     ('killed', 'fighting')
     ('in', '$')
-    >>> for ngram in skip_ngrams(sent, 2, 2, single_gap_opening=False):
+    >>> for ngram in get_skipngrams(sent, 2, 2, single_gap_opening=False):
     ...     print(ngram)
     ...
     ('$', 'Insurgents')
