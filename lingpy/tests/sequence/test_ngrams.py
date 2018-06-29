@@ -25,21 +25,21 @@ Tests for the ngrams module
 class Tests(TestCase):
     def setUp(self):
         pass
-        
+
     def test_get_n_grams(self):
         # String and list sequences
         str_seq = "A B C"
         lst_seq = str_seq.split()
-        
+
         # The length of the collections of 0-grams must be zero
         assert len(list(get_n_ngrams(str_seq, 0))) == 0
         assert len(list(get_n_ngrams(lst_seq, 0))) == 0
-        
+
         # Test monogram (no padding)
         ref = Counter([('A',), ('B',), ('C',)])
         assert ref == Counter(get_n_ngrams(str_seq, 1))
         assert ref == Counter(get_n_ngrams(lst_seq, 1))
-        
+
         # Test large n-gram with padding
         ref = Counter([('$', '$', '$', '$', 'A'),
                        ('$', '$', '$', 'A', 'B'),
@@ -55,22 +55,22 @@ class Tests(TestCase):
         # String and list sequences
         str_seq = "A B C D E"
         lst_seq = str_seq.split()
-        
+
         # Test with padding
         ref = Counter([('$', 'A'), ('A', 'B'), ('B', 'C'), ('C', 'D'), ('D', 'E'), ('E', '$')])
         assert ref == Counter(bigrams(str_seq))
         assert ref == Counter(bigrams(lst_seq))
-        
+
         # Test without padding
         ref = Counter([('A', 'B'), ('B', 'C'), ('C', 'D'), ('D', 'E')])
         assert ref == Counter(bigrams(str_seq, pad_symbol=None))
         assert ref == Counter(bigrams(lst_seq, pad_symbol=None))
-        
+
     def test_trigrams(self):
         # String and list sequences
         str_seq = "A B C D E"
         lst_seq = str_seq.split()
-        
+
         # Test with padding
         ref = Counter([('$', '$', 'A'),
                        ('$', 'A', 'B'),
@@ -229,8 +229,8 @@ class Tests(TestCase):
                        ('D', 'E', '$'),
                        ('D', '$', '$'),
                        ('E', '$', '$')])      
-        assert ref == Counter(get_skipngrams(str_seq, 3, 2, single_gap_opening=False))
-        assert ref == Counter(get_skipngrams(lst_seq, 3, 2, single_gap_opening=False))
+        assert ref == Counter(get_skipngrams(str_seq, 3, 2, single_gap=False))
+        assert ref == Counter(get_skipngrams(lst_seq, 3, 2, single_gap=False))
 
     def test_get_posngrams(self):
         # String and list sequences
