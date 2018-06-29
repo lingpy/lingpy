@@ -1,8 +1,13 @@
 # *-* coding: utf-8 *-*
 """
-This module provides various methods for generating and
-collecting n-grams from sequences. Standard ngrams,
-skip ngrams, and positional ngrams can be collected.
+This modules provides methods for generating and collecting ngrams.
+
+The methods allow to collect different kind of subsequences,
+such as standard ngrams (preceding context),
+skip ngrams with both single or multiple gap
+openings (both preceding and following context),
+and positional ngrams (both preceding and following
+context).
 """
 
 from itertools import chain, combinations, product
@@ -16,8 +21,7 @@ def _seq_as_tuple(sequence):
     Parameters
     ----------
     sequence: list or str
-        The sequence that shall be converted into an
-        iterable.
+        The sequence that shall be converted into an iterable.
 
     Returns
     -------
@@ -55,16 +59,14 @@ def get_n_ngrams(sequence, order, pad_symbol='$'):
         The order of the ngrams to be collected.
 
     pad_symbol: object
-        An optional symbol to be used as start-of- and
-        end-of-sequence boundaries. The same symbol
-        is used for both boundaries. Must be a value
-        different from None, defaults to "$".
+        An optional symbol to be used as start-of- and end-of-sequence
+        boundaries. The same symbol is used for both boundaries. Must be a
+        value different from None, defaults to "$".
 
     Returns
     -------
     out: iterable
-        An iterable over the ngrams of the sequence,
-        returned as tuples.
+        An iterable over the ngrams of the sequence, returned as tuples.
 
     Examples
     --------
@@ -137,24 +139,20 @@ def get_all_ngrams(sequence, orders=None, pad_symbol='$'):
         The sequence from which the ngrams will be collected.
 
     orders: list
-        An optional list of the orders of the ngrams to
-        be collected. Can be larger than the length of the
-        sequence, in which case the latter will be padded
-        accordingly if requested. Defaults to the collection
-        of all possible ngrams in the sequence with the
-        minimum padding.
+        An optional list of the orders of the ngrams to be collected. Can be
+        larger than the length of the sequence, in which case the latter will
+        be padded accordingly if requested. Defaults to the collection of all
+        possible ngrams in the sequence with the minimum padding.
 
     pad_symbol: object
-        An optional symbol to be used as start-of- and
-        end-of-sequence boundaries. The same symbol
-        is used for both boundaries. Must be a value
-        different from None, defaults to "$".
+        An optional symbol to be used as start-of- and end-of-sequence
+        boundaries. The same symbol is used for both boundaries. Must be a
+        value different from None, defaults to "$".
 
     Returns
     -------
     out: iterable
-        An iterable over the ngrams of the sequence,
-        returned as tuples.
+        An iterable over the ngrams of the sequence, returned as tuples.
 
     Examples
     --------
