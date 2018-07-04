@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
+
 from unittest import TestCase
 
-from lingpy.tests.util_testing import WithTempDir
-from lingpy.tests.util import test_data
 from lingpy import util
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Test(WithTempDir):
@@ -43,9 +43,9 @@ class TestCombinations(TestCase):
                     if i <= j:
                         yield a1, a2
 
-        for l in [list(range(5)), 'abcdefg']:
-            self.assertEqual(list(util.combinations2(l)), list(f(l)))
-            self.assertEqual(list(util.multicombinations2(l)), list(fm(l)))
+        for ch in [list(range(5)), 'abcdefg']:
+            self.assertEqual(list(util.combinations2(ch)), list(f(ch)))
+            self.assertEqual(list(util.multicombinations2(ch)), list(fm(ch)))
 
 
 class TestJoin(TestCase):
@@ -59,10 +59,10 @@ class TestJoin(TestCase):
         self.assertEqual(util.dotjoin([1, 2]), '1.2')
         self.assertEqual(util.dotjoin((1, 2)), '1.2')
         self.assertEqual(
-            util.dotjoin((i for i in range(1, 3)), condition=lambda j: j > 1), '2')
+            util.dotjoin((i for i in range(1, 3)),
+                         condition=lambda j: j > 1), '2')
         self.assertEqual(util.dotjoin(i for i in range(1, 3)), '1.2')
 
-def test_as_string():
-
-    out = util.as_string('text', pprint=False)
-    assert out == 'text' 
+    def test_as_string(self):
+        out = util.as_string('text', pprint=False)
+        assert out == 'text'

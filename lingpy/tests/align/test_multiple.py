@@ -3,6 +3,7 @@
 Testing multiple module.
 """
 from __future__ import print_function, division, unicode_literals
+
 from unittest import TestCase
 
 from lingpy.align import Multiple, mult_align
@@ -15,7 +16,8 @@ class Tests(TestCase):
 
     def test_mult_align(self):
         self.assertEqual(
-            ''.join(mult_align(['waldemar', 'woldemort', 'vladimir'])[0]), 'wal-demar-')
+            ''.join(mult_align(['waldemar', 'woldemort', 'vladimir'])[0]),
+            'wal-demar-')
 
     def test___get__(self):
         self.msa.lib_align()
@@ -26,9 +28,9 @@ class Tests(TestCase):
         self.msa.prog_align()
         assert self.msa.alm_matrix[0] == list('wal-demar-')
         self.msa.prog_align(sonars=[
-                [1, 2, 3, 4, 1, 2, 3, 4],
-                [1, 2, 3, 4, 5, 1, 2, 3, 4],
-                [1, 1, 1, 1, 1, 1, 1, 1]])
+            [1, 2, 3, 4, 1, 2, 3, 4],
+            [1, 2, 3, 4, 5, 1, 2, 3, 4],
+            [1, 1, 1, 1, 1, 1, 1, 1]])
         assert self.msa.alm_matrix[0] == list('wal-demar-')
 
     def test_lib_align(self):

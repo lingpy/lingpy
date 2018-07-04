@@ -401,6 +401,28 @@ END;
     return
 
 
+def _is_constant(e):
+    """
+    Returns whether an etymdict dictionary is constant. Helper function for
+    `write_nexus`
+    
+    Parameters
+    ----------
+    e : dict
+        An etymdict sub-dictionary.
+    
+    Returns
+    -------
+    bool : bool
+        A boolean True/False for whether the character is constant or not.
+    """
+    if all([_ != 0 for _ in e]):  # constant present
+        return True
+    elif all([_ == 0 for _ in e]):  # constant absent
+        return True
+    return False
+
+
 def write_nexus(
         wordlist,
         mode='mrbayes',
@@ -418,11 +440,12 @@ def write_nexus(
         A Wordlist object containing cognate IDs.
     mode : str (default="mrbayes")
         The name of the output nexus style. Valid values are:
-            * 'MRBAYES': a MrBayes formatted nexus file
-            * 'SPLITSTREE': a SPLITSTREE formatted nexus file
-            * 'BEAST': a BEAST formatted nexus file
-            * 'BEASTWORDS': a BEAST-formatted nexus for word-partitioned
+            * 'MRBAYES': a MrBayes formatted nexus file.
+            * 'SPLITSTREE': a SPLITSTREE formatted nexus file.
+            * 'BEAST': a BEAST formatted nexus file.
+            * 'BEASTWORDS': a BEAST formatted nexus for word-partitioned
                analyses.
+            * 'TRAITLAB': a TRAITLab formatted nexus.
     filename : str (default=None)
         Name of the file to which the nexus file will be written.
         If set to c{None}, then this function will not write the nexus ontent
@@ -459,14 +482,15 @@ def write_nexus(
         'BEAST': 'beast.nex',
         'BEASTWORDS': 'beast.nex',
         'SPLITSTREE': 'splitstree.nex',
-        'MRBAYES': 'mrbayes.nex'
+        'MRBAYES': 'mrbayes.nex',
+        'TRAITLAB': 'splitstree.nex',
     }
     
     block = "\n\nBEGIN {0};\n{1}\nEND;\n"  # template for nexus blocks
-
+    
     # check for valid mode
     mode = mode.upper()
-    if mode not in ('BEAST', 'BEASTWORDS', 'MRBAYES', 'SPLITSTREE'):
+    if mode not in templates.keys():
         raise ValueError("Unknown output mode %s" % mode)
 
     # check for valid template
@@ -481,25 +505,26 @@ def write_nexus(
     if ref not in wordlist._alias:
         raise KeyError("Unknown _ref_ column in wordlist '%s'" % ref)
 
-    # commands
-    _commands = block.format(commands_name, '\n'.join(commands)) if commands else ''
-    _custom = block.format(custom_name, '\n'.join(custom)) if custom else ''
-
     # retrieve the matrix
     matrix = [[] for x in range(wordlist.width)]
     etd = wordlist.get_etymdict(ref=ref)
     concepts = sorted([(cogid, wordlist[[
         x[0] for x in vals if x][0]][wordlist._rowIdx]) for (cogid, vals) in
         etd.items()],
-        key=lambda x: x[1])
+        key=lambda x: (x[1], x[0]))
     # and missing data..
     missing_ = {t: [concept for (cogid, concept) in concepts if concept not in wordlist.get_list(
                 col=t, entry=wordlist._row_name, flat=True)] for t in
                 wordlist.cols}
-
+    
     # add ascertainment character for mode=BEAST
     if mode == 'BEAST':
         matrix = [['0'] for m in matrix]
+    
+    # skip the constant sites for traitlab
+    if mode == 'TRAITLAB':
+        concepts = [(i, c) for (i, c) in concepts if not _is_constant(etd[i])]
+    
     # fill matrix
     for i, t in enumerate(wordlist.cols):
         previous = ''
@@ -538,13 +563,21 @@ def write_nexus(
         charblock = ""
     
     # create charsets block
+    blockname, assumptions = None, ""
     if mode in ('BEASTWORDS', 'MRBAYES'):
         charsets = ["\tcharset %s = %d-%d;" % (
             c, min(m), max(m)) for (c, m) in charsets.items()
         ]
-        _commands += "\n\n" if len(_commands) else ''
         blockname = 'ASSUMPTIONS' if mode == 'BEASTWORDS' else 'MRBAYES'
-        _commands += block.format(blockname, "\n".join(charsets))
+        assumptions = "\n".join(charsets)
+    
+    # commands
+    if commands_name.upper() == blockname and len(assumptions) and commands:
+        # merge commands specified in function call into output blockname
+        assumptions += "\n" + "\n".join("\t%s" % c for c in commands)
+    else:
+        # different commands block set in commands_name.
+        assumptions += block.format(commands_name, '\n'.join(commands)) if commands else ''
     
     # convert state matrix to string.
     _matrix = ""
@@ -566,10 +599,13 @@ def write_nexus(
         nchar=len(matrix[0]),
         gap=gap, missing=missing,
         dtype='RESTRICTION' if mode == 'MRBAYES' else 'STANDARD',
-        commands=_commands, custom=_custom,
+        commands=block.format(blockname, assumptions),
+        custom=block.format(custom_name, '\n'.join(custom)) if custom else '',
         symbols=symbols, chars=charblock
     )
     text = text.replace("\t", " " * 4)  # normalise tab-stops
+    for i, (cogid, concept) in enumerate(concepts, 1):
+        text += '\n[MATRIX:{0}=COGID:{1}=CONCEPT:{2}]'.format(i, cogid, concept)
     if filename:
         util.write_text_file(filename, text)
     return text

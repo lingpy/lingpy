@@ -1,9 +1,8 @@
 # coding: utf8
 from __future__ import unicode_literals
 
-from lingpy.tests.util_testing import WithTempDir
-
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Tests(WithTempDir):
@@ -12,4 +11,4 @@ class Tests(WithTempDir):
 
         star2qlc(test_data('rom.starling.tsv'), debug=True)
         res = star2qlc(test_data('rom.starling.tsv'))
-        self.assertEquals(len(res), 208)
+        self.assertEqual(len(res), 208)

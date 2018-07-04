@@ -1,10 +1,9 @@
 # coding: utf8
 from __future__ import unicode_literals
 
-from lingpy.tests.util_testing import WithTempDir
-
 from lingpy import Wordlist
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Tests(WithTempDir):

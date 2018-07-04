@@ -1,7 +1,11 @@
-from nose.tools import assert_raises
-from lingpy.algorithm._tree import _TreeDist as td
-class Tests():
+from unittest import TestCase
 
+from nose.tools import assert_raises
+
+from lingpy.algorithm._tree import _TreeDist as td
+
+
+class Tests(TestCase):
     def setUp(self):
         self.treeA = '((a,b),(c,d));'
         self.treeB = '((a:1,c:1):1,(b:1,d:1):1);'
@@ -17,4 +21,3 @@ class Tests():
         td.get_bipartition('(a,b,c),(c,d)')
         td.get_bipartition('((a,b,c),(c,d))')
         assert_raises(ValueError, td.get_bipartition, '((),(a,b))')
-

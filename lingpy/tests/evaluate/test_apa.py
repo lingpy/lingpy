@@ -1,16 +1,14 @@
 # coding: utf8
 from __future__ import unicode_literals
 
-from lingpy.tests.util_testing import WithTempDir
-
 from lingpy.align.sca import MSA, PSA
+from lingpy.evaluate.apa import EvalPSA, EvalMSA
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Tests(WithTempDir):
     def test_EvalPSA(self):
-        from lingpy.evaluate.apa import EvalPSA
-
         obj = EvalPSA(
             PSA(test_data('harry_potter.psa')),
             PSA(test_data('harry_potter_misaligned.psa')))
@@ -21,8 +19,6 @@ class Tests(WithTempDir):
         obj.diff(filename='%s' % self.tmp_path('test_EvalPSA.diff'))
 
     def test_EvalMSA(self):
-        from lingpy.evaluate.apa import EvalMSA
-
         msa = MSA(test_data('harry.msa'))
         msa2 = MSA(test_data('harryp.msa'))
 

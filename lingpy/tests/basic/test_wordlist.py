@@ -1,12 +1,12 @@
 """
 Test wordlist module.
 """
-from six import text_type
 from nose.tools import assert_raises
-from lingpy.tests.util_testing import WithTempDir
+from six import text_type
 
 from lingpy import Wordlist
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 class TestWordlist(WithTempDir):
@@ -41,36 +41,37 @@ class TestWordlist(WithTempDir):
         self.wordlist.coverage(stats='mean')
 
     def test_get_list(self):
-        gerL = self.wordlist.get_list(doculect='German', entry='ipa', flat=True)
-        gerD = self.wordlist.get_dict(col='German', entry='ipa')
-        gerT = self.wordlist.get_list(doculect='German', entry="ipa")
+        ger_l = self.wordlist.get_list(doculect='German', entry='ipa',
+                                       flat=True)
+        ger_d = self.wordlist.get_dict(col='German', entry='ipa')
+        ger_t = self.wordlist.get_list(doculect='German', entry="ipa")
 
-        assert sorted(gerL) == sorted([v[0] for v in gerD.values()])
-        assert sorted(gerT) == sorted(gerL)
+        assert sorted(ger_l) == sorted([v[0] for v in ger_d.values()])
+        assert sorted(ger_t) == sorted(ger_l)
 
         hand1 = self.wordlist.get_list(concept="hand", entry="ipa", flat=True)
         hand2 = self.wordlist.get_dict(row="hand", entry="ipa")
-        hand3 = self.wordlist.get_list(concept="hand", flat=True)
         assert sorted(hand1) == sorted([v[0] for v in hand2.values()])
 
         # test for synonym lines, which are flattened
         assert self.wordlist2.get_list(concept='hand', entry="language",
-                flat=True).count('l6') == 2
+                                       flat=True).count('l6') == 2
         nonflat = self.wordlist2.get_list(concept="hand", entry="language")
         assert nonflat[0][-1] == nonflat[1][-1]
         assert len(self.wordlist2.get_list(col="l1", entry="concept")) == 3
-        assert len(self.wordlist2.get_list(col="l1", flat=True, entry="concept")) == 2
+        assert len(self.wordlist2.get_list(col="l1", flat=True,
+                                           entry="concept")) == 2
 
         assert_raises(ValueError, self.wordlist2.get_list, col="l1",
-                row="hand")
+                      row="hand")
         assert_raises(ValueError, self.wordlist2.get_list)
-        assert_raises(ValueError, self.wordlist.get_list, **{"row" : "Hand"})
+        assert_raises(ValueError, self.wordlist.get_list, **{"row": "Hand"})
 
     def test_get_dict(self):
-        gerD = self.wordlist.get_dict(col='German')
+        ger_d = self.wordlist.get_dict(col='German')
 
-        assert sorted(gerD.keys()) == sorted(self.wordlist.rows)
-        assert_raises(ValueError, self.wordlist.get_dict, **{"row" : "Hand"})
+        assert sorted(ger_d.keys()) == sorted(self.wordlist.rows)
+        assert_raises(ValueError, self.wordlist.get_dict, **{"row": "Hand"})
 
     def test_renumber(self):
         self.wordlist.renumber('cogid', 'dummy')
@@ -88,12 +89,13 @@ class TestWordlist(WithTempDir):
         assert len(ger[0]) == self.wordlist.width
 
     def test_get_etymdict(self):
-        etd1 = self.wordlist.get_etymdict(ref='cogid', entry='ipa', modify_ref=False)
+        etd1 = self.wordlist.get_etymdict(ref='cogid', entry='ipa',
+                                          modify_ref=False)
         etd2 = self.wordlist.get_etymdict(ref='cogid', entry='ipa',
-                modify_ref=abs)
+                                          modify_ref=abs)
 
-        assert len(etd1) > len(etd2) and len(set([abs(x) for x in etd1])) == \
-                                         len(etd2)
+        assert (len(etd1) > len(etd2) and
+                len(set([abs(x) for x in etd1])) == len(etd2))
         assert len([x for x in etd2 if x < 0]) == 0
 
         # make "fuzzy" cognate sets
@@ -121,17 +123,20 @@ class TestWordlist(WithTempDir):
 
     def test_output(self):
         fn = text_type(self.tmp_path('test'))
-        for fmt in 'tsv taxa tre dst starling paps.nex paps.csv separated multistate.nex groups'.split():
+        for fmt in 'tsv taxa tre dst starling paps.nex paps.csv' \
+                   'separated multistate.nex groups'.split():
             kw = {'ref': 'word'} if fmt == 'starling' else {}
             self.wordlist.output(fmt, filename=fn, **kw)
+
             if fmt == 'starling':
                 self.wordlist.output(fmt, filename=fn, cognates='cogid', **kw)
             if fmt == 'tsv':
                 kw['subset'] = True
                 self.wordlist.output(fmt, filename=fn, cols=[], rows={}, **kw)
                 self.wordlist.output(fmt, filename=fn,
-                        cols=sorted(self.wordlist.header)[:2], rows=dict(ID=" > 10"),
-                            **kw)
+                                     cols=sorted(self.wordlist.header)[:2],
+                                     rows=dict(ID=" > 10"), **kw)
+
     def test_export(self):
         fn = text_type(self.tmp_path('test'))
         for fmt in 'txt tex html'.split():
@@ -144,4 +149,3 @@ class TestWordlist(WithTempDir):
         assert wl1.height == wl2.height
         for k in wl1:
             assert wl1[k, 'concept'] == wl2[k, 'concept']
-

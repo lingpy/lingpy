@@ -2,31 +2,27 @@
 Test the TreBor borrowing detection algorithm.
 """
 from __future__ import unicode_literals
+
 import os
 from collections import defaultdict
 
-from lingpy.tests.util_testing import WithTempDir
 from mock import MagicMock, patch
+
 import lingpy
 from lingpy.compare.phylogeny import PhyBo
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 class Plt(MagicMock):
-    def plot(self, *args, **kw):
+    @staticmethod
+    def plot(*args, **kw):
         return [MagicMock()]
 
 
-class Nx(MagicMock):
-    def Graph(self, *args, **kw):
-        return MagicMock(nodes=lambda **kw: [(MagicMock(), MagicMock())])
-
-    def generate_gml(self, *args):
-        yield ''
-
-
 class Graph(MagicMock):
-    def nodes(self, **kw):
+    @staticmethod
+    def nodes():
         return [(MagicMock(), dict(label='a', graphics=defaultdict(lambda: 2)))]
 
 
@@ -38,8 +34,8 @@ class Bmp(MagicMock):
     def Basemap(self, *args, **kw):
         return MagicMock(return_value=(0, 1))
 
-class TestPhyBo(WithTempDir):
 
+class TestPhyBo(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.inputfile = os.path.join(
@@ -47,10 +43,10 @@ class TestPhyBo(WithTempDir):
 
     def test_get_GLS(self):
         phy = PhyBo(self.inputfile, output_dir=self.tmp.as_posix())
-        phy2 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix(),
-                tree=test_data('phylogeny.tre'))
-        phy3 = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix())
-        
+        _ = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix(),
+                  tree=test_data('phylogeny.tre'))
+        _ = PhyBo(test_data('phybo2.qlc'), output_dir=self.tmp.as_posix())
+
         # test default scenario
         phy.get_GLS()
 
@@ -87,13 +83,14 @@ class TestPhyBo(WithTempDir):
         glm = list(phy.stats.keys())[0]
         phy.plot_GLS(glm)
         phy.plot_ACS(glm)
+
         for method in ['bc', 'td', 'mr']:
             phy.get_MLN(glm, method=method)
-        #phy.graph = defaultdict(lambda: Graph())
+
         phy.plot_MLN(glm)
         phy.plot_MLN_3d(glm)
-        phy.analyze(runs=[('weighted', (2,1))], output_gml=True,
-                output_plot=True)
+        phy.analyze(runs=[('weighted', (2, 1))], output_gml=True,
+                    output_plot=True)
         phy.get_IVSD()
         phy.get_ACS(phy.best_model)
         phy.get_MSN(phy.best_model)
@@ -106,6 +103,3 @@ class TestPhyBo(WithTempDir):
         phy.get_edge(phy.best_model, edge1, edge2, msn=True)
         phy.get_PDC('w-2-1', aligned_output=True)
         phy.plot_concept_evolution(phy.best_model, concept="I")
-
-
-

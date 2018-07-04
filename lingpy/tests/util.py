@@ -5,7 +5,8 @@ from lingpy.util import lingpy_path
 
 
 def get_log():
-    """A mock object for `lingpy.log` to test whether log messages have been emitted.
+    """A mock object for `lingpy.log` to test whether log messages
+    have been emitted.
 
     :return: Mock instance.
     """
@@ -15,7 +16,8 @@ def get_log():
 def test_data(*comps):
     """Access test data files.
 
-    :param comps: Path components of the data file path relative to the test_data dir.
+    :param comps: Path components of the data file path relative to
+    the test_data dir.
     :return: Absolute path to the specified test data file.
     """
     return lingpy_path('tests', 'test_data', *comps)

@@ -401,6 +401,8 @@ class QLCParser(object):
                 self._header[a] = newIdx
 
             self.header[name] = self._header[name]
+            # add the entry to the columns! XXX
+            self.columns.append(name)
 
             # modify the entries attribute
             self.entries = sorted(set(self.entries + [entry.lower()]))

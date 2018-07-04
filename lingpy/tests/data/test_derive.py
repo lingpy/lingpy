@@ -1,9 +1,9 @@
 # *-* coding: utf-8 *-*
-from __future__ import unicode_literals, print_function, division, absolute_import
+from __future__ import unicode_literals, print_function, division, \
+    absolute_import
 
-from lingpy.tests.util_testing import WithTempDir
 from lingpy import cache
-
+from lingpy.tests.util_testing import WithTempDir
 
 SCORER = """\
 p : c, b:1, f:2
@@ -19,7 +19,8 @@ class TestDerive(WithTempDir):
     def setUp(self):
         WithTempDir.setUp(self)
         self.tmp_path('_test').mkdir()
-        with self.tmp_path('_test', 'converter').open(mode='w', encoding='utf8') as fp:
+        with self.tmp_path('_test', 'converter').open(mode='w',
+                                                      encoding='utf8') as fp:
             fp.write("""\
 p : p, ɸ, p͡f
 b : b, β, b͡v
@@ -29,7 +30,8 @@ m : m, ɱ
 w : w, ɰ, ʋ, ʍ
 8 : θ, θ, Ɵ, ð""")
 
-        with self.tmp_path('_test', 'scorer').open(mode='w', encoding='utf8') as fp:
+        with self.tmp_path('_test', 'scorer').open(mode='w',
+                                                   encoding='utf8') as fp:
             fp.write(SCORER)
 
     def test_compile_model(self):

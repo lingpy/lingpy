@@ -149,8 +149,18 @@ def ipa2tokens(istring, **keywords):
 
         # check for combiners next
         elif char in kw['combiners']:
-            out[-1] += char
-            merge = True
+            # add the combiner to the previous entry in `out`; if there
+            # is no previous characters (i.e., sequence starts with a 
+            # combiner, which is something we perhaps should not accept, see
+            # discussion on issue #365 on GitHub), append the combiner to
+            # a null phoneme glyph
+            if not out:
+                # empty list, i.e., no previous entry
+                out = ['\u2205' + char]
+                merge = False
+            else:
+                out[-1] += char
+                merge = True
 
         # check for stress
         elif char in kw['stress']:
@@ -422,7 +432,8 @@ def tokens2morphemes(tokens, **keywords):
         "word_seps": rcParams['word_separators'],
         "seps": rcParams['morpheme_separators'],
         "split_on_tones": True,
-        "tone": "T"
+        "tone": "T",
+        "cldf": False
     }
     kw.update(keywords)
     if not kw['split_on_tones']: kw['tone'] = ''
@@ -430,7 +441,7 @@ def tokens2morphemes(tokens, **keywords):
     # check for other hints than the clean separators in the data
     new_tokens = [t for t in tokens]
     if not kw['sep'] in tokens and not kw['word_sep'] in tokens:
-        class_string = tokens2class(tokens, 'cv')
+        class_string = tokens2class(tokens, 'cv', cldf=kw['cldf'])
         if kw['tone'] in class_string \
                 and '+' not in class_string and '_' not in class_string:
             new_tokens = []
@@ -1056,14 +1067,11 @@ def prosodic_weights(prostring, _transform={}):
         transform = {
             '#': 1.6,
             'V': 3.0,
-            'C': 1.2,
             'c': 1.1,
             'v': 3.0,  # raise the cost for the gapping of vowels
             '<': 0.8,
             '$': 0.5,
             '>': 0.7,
-            'T': 1.0,
-            '_': 0.0,
 
             # new values for alternative prostrings
             'A': 1.6,  # initial
@@ -1085,14 +1093,11 @@ def prosodic_weights(prostring, _transform={}):
         transform = {
             '#': 2.0,
             'V': 1.5,
-            'C': 1.5,
             'c': 1.1,
             'v': 1.3,
             '<': 0.8,
             '$': 0.8,
             '>': 0.7,
-            'T': 0.0,
-            '_': 0.0,
 
             # new values for alternative prostrings
             'A': 2.0,  # initial
@@ -1156,8 +1161,8 @@ def class2tokens(tokens, classes, gap_char='-', local=False):
     """
     if not local:
         out = [t for t in tokens]
-        for i in range(len(classes)):
-            if classes[i] in '-X':
+        for i, c in enumerate(classes):
+            if c in '-X':
                 out.insert(i, gap_char)
     else:
         # get the length of the prefix

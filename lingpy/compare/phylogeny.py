@@ -114,7 +114,6 @@ def get_gls(
 
     # get subtree for taxa with positive paps
     tree = tree.lowestCommonAncestor([t for t in taxa if statesD[t] == 1])
-
     tips = tree.getTipNames()
     root = tree.Name
     nodes = tree.getNodeNames()
@@ -1215,24 +1214,6 @@ class PhyBo(Wordlist):
         Calculate the Contemporary Vocabulary Size Distribution (CVSD).
 
         """
-        # -># define taxa and concept as attribute for convenience
-        # ->taxa = self.taxa
-        # ->concepts = self.concept #XXX do we need this? XXX
-
-        # -># calculate vocabulary size
-        # ->forms = []
-        # ->meanings = []
-        # ->for taxon in taxa:
-        # ->    f = [x for x in set(
-        # ->        self.get_list(col=taxon,entry=self._pap_string,flat=True)
-        # ->        ) if x in self.cogs
-        # ->        ]
-        # ->    m = set([x.split(':')[1] for x in f])
-        # ->    forms += [len(f)]
-        # ->    meanings += [len(m)]
-        # ->
-        # -># store the stuff as an attribute
-        # ->self.dists['contemporary'] = [x for x,y in zip(forms,meanings)] # XXX
         dists = []
         for t in self.taxa:
             paps = sorted(set(p for p in self.get_list(
@@ -1272,118 +1253,6 @@ class PhyBo(Wordlist):
 
         for k, v in acs.items():
             self.acs[glm][k] = [(p, self.pap2con[p], pap2protos(p)) for p in v]
-
-        # -># define concepts for convenience
-        # ->concepts = self.concepts # XXX do we need this? XXX
-        # ->
-        # -># get all internal nodes, i.e. the nontips and also the root
-        # ->nodes = ['root'] + sorted(
-        # ->        [node.Name for node in self.tree.nontips()],
-        # ->        key=lambda x: len(self.tree.getNodeMatchingName(x).tips()),
-        # ->        reverse = True
-        # ->        )
-
-        # -># retrieve scenarios
-        # ->tmp = sorted([(a,b,c) for a,(b,c) in self.gls[glm].items()])
-        # ->cog_list = [t[0] for t in tmp]
-        # ->gls_list = [t[1] for t in tmp]
-        # ->noo_list = [t[2] for t in tmp]
-
-        # -># create a list that stores the paps
-        # ->paps = [[0 for i in range(len(nodes))] for j in range(len(cog_list))]
-
-        # -># iterate and assign values
-        # ->for i,cog in enumerate(cog_list):
-        # ->
-        # ->    # sort the respective gls
-        # ->    gls = sorted(
-        # ->            gls_list[i],
-        # ->            key = lambda x: len(self.tree.getNodeMatchingName(x[0]).tips()),
-        # ->            reverse = True
-        # ->            )
-
-        # ->    # retrieve the state of the root
-        # ->    if gls[0][1] == 1 and gls[0][0] == 'root':
-        # ->        state = 1
-        # ->    else:
-        # ->        state = 0
-
-        # ->    # assign the state of the root to all nodes
-        # ->    paps[i] = [state for node in nodes]
-
-        # ->    # iterate over the gls and assign the respective values to all
-        # ->    # children
-        # ->    # XXX note that here we assume that missing data is coded as
-        # ->    # 0, so this should probably be adapted XXX
-        # ->    for name,event in gls:
-        # ->        if event == 1:
-        # ->            this_state = 1
-        # ->        else:
-        # ->            this_state = 0
-
-        # ->        # get the subtree nodes
-        # ->        sub_tree_nodes = [node.Name for node in
-        # ->                self.tree.getNodeMatchingName(name).nontips()]
-
-        # ->        # assign this state to all subtree nodes
-        # ->        for node in sub_tree_nodes:
-        # ->            paps[i][nodes.index(node)] = this_state
-
-        # -># get number of forms and number of meanings
-        # -># extract cogs instead of numbers, XXX this can actually be done in the
-        # -># step before, it's just for testing at the moment
-        # ->for i,cog in enumerate(cog_list):
-        # ->    for j,t in enumerate(paps[i]):
-        # ->        if t == 1:
-        # ->            paps[i][j] = cog
-        # ->        else:
-        # ->            pass
-        # ->
-        # -># get forms and meanings
-        # ->forms = []
-        # ->meanings = []
-        # ->for i in range(len(paps[0])):
-        # ->    f = set([x[i] for x in paps if x[i] != 0])
-        # ->    m = set([x[i].split(':')[1] for x in paps if x[i] != 0])
-        # ->    forms += [len(f)]
-        # ->    meanings += [len(m)]
-
-        # -># store the number of forms as an attribute
-        # ->self.dists[glm] = [x for x,y in zip(forms,meanings)] # XXX
-
-        # -># store results of the analyses, that is, all paps for each ancestral
-        # -># node
-        # ->cogs = [k[self.header['pap']] for k in self._data.values()]
-
-        # -># search for proto as keyword
-        # ->if keywords['proto']:
-        # ->    protos = [k[self.header[keywords['proto']]] for k in
-        # ->            self._data.values()]
-        # ->    cogs2proto = dict(zip(cogs,protos))
-        # ->else:
-        # ->    cogs2proto = dict(zip(cogs,cogs))
-
-        # -># store data in acs attribute (ancestral cognate states)
-        # ->self.acs[glm] = {}
-        # ->for i,n in enumerate(nodes):
-        # ->    for j,p in enumerate(paps):
-        # ->        c = paps[j][i]
-        # ->        if c != 0:
-        # ->            m = self.pap2con[c]
-        # ->            p = cogs2proto[c]
-
-        # ->            if n != 'root':
-        # ->                node = self.tree.getNodeMatchingName(n)
-        # ->                node = n #''.join(
-        # ->                        #[x for x in str(node) if x not in '";()'+"'"]
-        # ->                        #)#.replace('(','').replace(')','').replace(',','-')
-        # ->            else:
-        # ->                node = n
-        # ->
-        # ->            try:
-        # ->                self.acs[glm][node] += [(c,m,p)]
-        # ->            except:
-        # ->                self.acs[glm][node] = [(c,m,p)]
 
         log.info("Calculated the distributions for ancestral taxa.")
         return
@@ -1560,15 +1429,6 @@ class PhyBo(Wordlist):
                 maxP = min(p_vsd)
 
             # check for threshold
-            # if leading_model:
-            #    if True: #maxP >= mixed_threshold:
-            #        maxIdx = p_vsd.index(maxP)
-            #        best_model = models[maxIdx]
-            #    else:
-            #        maxIdx = 0
-            #        best_model = leading_model
-            #        maxP = p_vsd[0]
-            # else:
             maxIdx = p_vsd.index(maxP)
             best_model = models[maxIdx]
 
@@ -1588,11 +1448,7 @@ class PhyBo(Wordlist):
                 mixed_concepts[concept][m] = p_vsd[i]
 
         self.best_models = best_models
-        # print(sum([n for m,n,o in best_models.values()]) / len(best_models))
-
         # append to distributions
-
-        # self.dists['mixed'] = all_avsd
 
         # append to available models
         self.gls['mixed'] = scenarios
@@ -2142,6 +1998,7 @@ class PhyBo(Wordlist):
                 word = self[key, 'ipa'] if 'ipa' in self.header \
                     else self[key, 'counterpart']
                 if not word:
+                    print(self[key, 'doculect'], key, word)
                     raise NameError("[ERROR] Neither 'ipa' nor 'counterpart' is defined.")
                 tmp[concept][pap][patchy].append((taxon, word))
 
@@ -3960,7 +3817,7 @@ class PhyBo(Wordlist):
                 legendEntriesB = []
                 legendTextB = []
                 p = mpl.patches.Wedge(
-                    (0, 0), 1, 0, 360, facecolor='0.5', linewidth=2, edgecolor='black')
+                    (0, 0), 1, 0, 360, facecolor='0.25', linewidth=2, edgecolor='black')
                 legendEntriesB += [p]
                 legendTextB += ['Loss Event']
                 p, = plt.plot(0, 0, '--', color='black', linewidth=2)
@@ -4032,14 +3889,14 @@ class PhyBo(Wordlist):
                         (x, y), keywords['radius'] + keywords['outer_radius'], 0, 360)
                     if 'O' in cpaps.values():
                         kw = dict(
-                            facecolor='white',
+                            facecolor='0.9',
                             zorder=57 + z,
                             linewidth=2.5,
                             linestyle='dashed')
                         figsp.add_artist(mpl.patches.Wedge(*wedge_args, **kw))
                     elif 'o' in cpaps.values():
                         kw = dict(
-                            facecolor='white',
+                            facecolor='0.75',
                             zorder=56 + z,
                             linewidth=2.5,
                             linestyle='solid')
