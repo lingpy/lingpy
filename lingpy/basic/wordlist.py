@@ -1043,7 +1043,42 @@ class Wordlist(QLCParserWithRowsAndCols):
             return sum([a / self.height for a in cov.values()]) / self.width
 
     @classmethod
-    def from_cldf(cls, path, *args, columns=[], **kwargs):
+    def from_cldf(cls, path, *args, columns=[], filter=lambda row: row["Form"], **kwargs):
+        """Load a CLDF dataset.
+
+        Open a CLDF Dataset – with metadata or metadata-free – (only Wordlist
+        datasets are supported for now, because other modules don't seem to
+        make sense for LingPy) and transform it into this Class. Columns from
+        the FormTable are imported in lowercase, columns from LanguageTable,
+        ParameterTable and CognateTable are prefixed with `langage_`,
+        `concept_` and `cogid_`and converted to lowercase.
+
+        Note
+        ----
+        CLDFs default column names for wordlists are different from LingPy's,
+        so you probably have to use
+
+        lingpy.Wordlist.from_cldf(
+            "Wordlist-metadata.json",
+            col="language_id", row="parameter_id", segments="segments", transcription="form")
+
+        in order to avoid errors from LingPy not finding required columns.
+
+        Parameters
+        ----------
+        columns: list of strings
+          The list of columns to import. (default: all columns)
+
+        filter: function: rowdict → bool
+          A condition function for importing only some rows. (default: lambda row: row["form"])
+
+        All other parameters are passed on to the `cls`
+
+        Returns
+        -------
+        A `cls` object representing the CLDF dataset
+
+        """
         # Load the dataset.
         fname = Path(path)
         if not fname.exists():
@@ -1116,16 +1151,21 @@ class Wordlist(QLCParserWithRowsAndCols):
                         columns.append("Cogid_{:}".format(column))
                     D[0] = [c.lower() for c in columns]
 
-                l = {"Language_{:}".format(key): value
-                     for key, value in languages[row[language_column]].items()}
-                c = {"Concept_{:}".format(key): value
-                     for key, value in concepts[row[parameter_column]].items()}
                 s = {"Cogid_{:}".format(key): value
                      for key, value in cognateset_assignments.get(
                              row[f_id], {}).items()}
-                D[idx] = [row.get(
-                    column, l.get(column, c.get(column, s.get(column))))
-                          for column in columns]
+                s.update(
+                    {"Language_{:}".format(key): value
+                     for key, value in languages[row[language_column]].items()})
+                s.update(
+                    {"Concept_{:}".format(key): value
+                     for key, value in concepts[row[parameter_column]].items()})
+                s.update(row)
+
+                if not filter(s):
+                    continue
+
+                D[idx] = [s.get(column) for column in columns]
 
             # convert to wordlist and return
             return cls(D, *args, **kwargs)
