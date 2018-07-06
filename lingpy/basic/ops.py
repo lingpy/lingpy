@@ -449,6 +449,8 @@ def wl2qlc(
                 out += '\t' + text_type(value)
             elif type(value) == float:
                 out += '\t{0:.4f}'.format(value)
+            elif value is None:
+                out += '\t'
             else:
                 out += '\t' + value
         out += '\n'

@@ -360,10 +360,7 @@ class QLCParser(object):
         lentry = entry.lower()
 
         def _apply(key, s, *args, **kwargs):
-            try:
-                res = function(s, *args, **kwargs)
-            except:
-                raise ValueError('Could not convert item ID: {0}.'.format(key))
+            res = function(s, *args, **kwargs)
             if override:
                 self._data[key][self._header[lentry]] = res
             else:

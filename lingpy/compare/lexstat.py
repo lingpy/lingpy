@@ -1257,9 +1257,9 @@ class LexStat(Wordlist):
             for idxA, idxB in util.combinations2(indices):
                 try:
                     d = function(idxA, idxB)
-                except ZeroDivisionError:
+                except (ZeroDivisionError, ValueError, TypeError):
                     log.warn(
-                        "Encountered Zero-Division for the comparison of "
+                        "Encountered computation error for the comparison of "
                         "{0} ({2}) and {1} ({3})".format(
                             ''.join(self[idxA, self._segments]),
                             ''.join(self[idxB, self._segments]),
