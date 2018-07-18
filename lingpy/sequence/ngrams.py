@@ -8,6 +8,7 @@ openings (both preceding and following context), and positional ngrams (both
 preceding and following context).
 """
 
+from __future__ import division
 import math
 import operator
 import pickle

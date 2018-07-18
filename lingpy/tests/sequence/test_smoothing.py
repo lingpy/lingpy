@@ -84,7 +84,6 @@ class Tests(TestCase):
         assert seen['A'] > unseen
         
         seen, unseen = smooth_dist(self.observ2, "mle")
-        assert seen['v'] > seen['o']
         assert seen['x'] == seen['y']
         assert seen['0'] > unseen
         
@@ -99,7 +98,6 @@ class Tests(TestCase):
         assert seen['A'] > unseen
         
         seen, unseen = smooth_dist(self.observ2, "laplace")
-        assert seen['v'] > seen['o']
         assert seen['x'] == seen['y']
         assert seen['0'] > unseen
         
@@ -114,7 +112,6 @@ class Tests(TestCase):
         assert seen['A'] > unseen
         
         seen, unseen = smooth_dist(self.observ2, "ele")
-        assert seen['v'] > seen['o']
         assert seen['x'] == seen['y']
         assert seen['0'] > unseen
         
@@ -132,7 +129,6 @@ class Tests(TestCase):
         assert unseen99 < unseen10
 
         seen, unseen = smooth_dist(self.observ2, "wittenbell")
-        assert seen['v'] > seen['o']
         assert seen['x'] == seen['y']
         assert seen['0'] > unseen
         
@@ -151,7 +147,6 @@ class Tests(TestCase):
         assert unseen > unseen99
 
         seen, unseen = smooth_dist(self.observ2, "certaintydegree")
-        assert seen['v'] > seen['o']
         assert seen['x'] == seen['y']
         assert seen['0'] > unseen
         
@@ -174,7 +169,6 @@ class Tests(TestCase):
             # method, so we are not going to allow it to fail (i.e., raise
             # exceptions)
             seen_p05, unseen_p05 = smooth_dist(self.observ2, "sgt", allow_fail=False)
-            assert seen_p05['v'] > seen_p05['o']
             assert seen_p05['x'] == seen_p05['y']
             assert seen_p05['0'] > unseen_p05
         except ImportError:
