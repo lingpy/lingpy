@@ -4,6 +4,7 @@
 Module providing various methods for using Ngram models.
 """
 
+from __future__ import division
 import math
 import random
 from functools import partial
