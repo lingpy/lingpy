@@ -1,6 +1,7 @@
 # *-* coding: utf-8 *-*
 
 import random
+import string
 from collections import Counter
 from unittest import TestCase
 from nose.tools import assert_raises
@@ -348,14 +349,14 @@ class Tests(TestCase):
         rnd_word = random.sample(words, 1)[0]
         assert model.score(rnd_word, use_length=True) < model.score(rnd_word, use_length=False)
         
-        # Score a random sequence of printable Unicode characters (which might,
+        # Score a random sequence of printable characters (which might,
         # however, not be handled by the installed fonts) and observed characters.
         # The sequence is shuffled in place for even higher randomness, so we
         # are sure to get a sequence of relative low likelihood, which we
         # assert by comparing with the score of some sequence drawn from the
         # training set. This complex random sequence should guarantee full
         # coverage of the fall-backs and defaults when computing a sequence score.
-        rnd_seq = random.sample([chr(l) for l in range(1, 0x10ffff) if chr(l).isprintable()], 5)
+        rnd_seq = random.sample(string.printable, 7)
         rnd_seq += random.sample(words, 1)[0]
         random.shuffle(rnd_seq)
         assert model.score(rnd_seq) < model.score(random.sample(words, 1)[0])
