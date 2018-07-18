@@ -495,7 +495,7 @@ class NgramModel():
         for context in self._p:
             _probs = [math.exp(p) for p in self._p[context].values()]
             _probs.append(math.exp(self._p0[context]))
-            lentropy += [-p*math.log2(p) for p in _probs]
+            lentropy += [-p*math.log(p, 2.0) for p in _probs]
 
         return sum(lentropy)
 
