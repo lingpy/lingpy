@@ -8,13 +8,17 @@ openings (both preceding and following context), and positional ngrams (both
 preceding and following context).
 """
 
+import math
+import pickle
+import random
 from collections import defaultdict, Counter
-from itertools import chain, combinations, product
+from itertools import accumulate, chain, combinations, product
 from functools import partial
+from lingpy.sequence.smoothing import smooth_dist
 
 # Global padding symbol, shared across all functions/class-methods.
-PAD_SYMBOL = '$$$'
-ELM_SYMBOL = '###'
+_PAD_SYMBOL = '$$$'
+_ELM_SYMBOL = '###'
 
 def _seq_as_tuple(sequence):
     """
@@ -81,16 +85,16 @@ def _random_choices(population, weights=None, cum_weights=None, k=1):
 
     # Assert that (1) the population is not empty, (2) only one type of
     # weight information is provided.
-    assert len(population) > 0, "Population must not be empty."
+    assert population, "Population must not be empty."
     assert not all((weights, cum_weights)), \
         "Either only weights or only cumulative weights must be provided."
 
     # If cumulative weights were not provided, build them from `weights`.
     if not cum_weights:
-        cum_weights = list(itertools.accumulate(weights))
+        cum_weights = list(accumulate(weights))
 
     # Assert that the lengths of population and cumulative weights match.
-    assert len(population)==len(cum_weights), \
+    assert len(population) == len(cum_weights), \
         "Population and weight lengths do not match."
 
     # Get a random number and see in which bin it falls. We need to use this
@@ -114,17 +118,41 @@ class NgramModel():
     be saved and loaded ("serialized") from disk.
     """
 
-    def __init__(self, pre_order=None, post_order=None, pad_symbol=PAD_SYMBOL,
-                 sequences=[], model_file=None):
+    def __init__(self, pre_order=0, post_order=0, pad_symbol=_PAD_SYMBOL,
+                 sequences=None, model_file=None):
         """
-        Add docstring
-        """
+        Initialize an NgramModel object.
 
-        # Initialize internal parameters from the arguments. Users are
-        # allowed to pass either a list of sequences or a filename with a
-        # serialized model; in case both are informed, the model is loaded
-        # first (including the ngram counting), the smoothed probabilities are
-        # cleaned, and the model is update with the new sequences.
+        Parameters
+        ----------
+        pre-orders: int or list
+            An integer with the maximum length of the preceding context or a list
+            with all preceding context lengths to be collected. If an integer is
+            passed, all lengths from zero to the informed one will be collected.
+            Defaults to 0, meaning that no left-context information will be
+            collected.
+
+        post-orders: int or list
+            An integer with the maximum length of the following context or a list
+            with all following context lengths to be collected. If an integer is
+            passed, all lengths from zero to the informed one will be collected.
+            Defaults to 0, meaning that no right-context information will be
+            collected.
+
+        pad_symbol: object
+            An optional symbol to be used as start-of- and end-of-sequence
+            boundaries. The same symbol is used for both boundaries. Must be a
+            value different from None, defaults to "$$$".
+
+        sequences: list
+            An optional list of sequences for ngram collection. If both a model file
+            and a list of sequences are provided, the sequences will be appended
+            to the object after loading the model, clearing any previous training.
+
+        model_file: str
+            An optional path to a file holding a model serialized with this
+            class' .save_model() method.
+        """
 
         # Store the ngram collection parameters. While the user can pass
         # `pre_order` and `post_order` as integers (indicating the maximum
@@ -147,14 +175,23 @@ class NgramModel():
             self._post = post_order
 
         # Initialize internal variables for holding the model.
-        self._ngrams = defaultdict(lambda: Counter())
+        self._ngrams = defaultdict(Counter)
         self._ngram_space = Counter()
         self._seqlens = Counter()
 
-        # The number of bins that was used/will be used in training.
-        self._bins = None
+        self._p = {}
+        self._p0 = {}
+        self._l = {}
+        self._l0 = {}
 
-        # Whether the model was trained.
+        # Training parameters, which are set by the .train() method
+        # but initialized here. Bins are stored in separate as they might
+        # be computed by the `.train()` method; `self._trained` indicates
+        # whether the model was trained or not (the value is reset each time
+        # a new sequence is added).
+        self._smooth_method = None
+        self._bins = None
+        self._smooth_kwargs = None
         self._trained = False
 
         # If a model file was provided but no new sequences, just load the
@@ -167,8 +204,6 @@ class NgramModel():
         if model_file:
             self.load_model(model_file)
 
-        # Call add_sequences(); a check of whether sequences were provided is
-        # performed in the function itself.
         self.add_sequences(sequences)
 
     def add_sequences(self, sequences):
@@ -179,7 +214,7 @@ class NgramModel():
         matrix probability, if one was previously computed, and automatically
         updates the ngram counters. The actual training, with the computation
         of smoothed log-probabilities, is not performed automatically, and
-        must be requested by the user by calling the .train() method.
+        must be requested by the user by calling the `.train()` method.
 
         Parameters
         ----------
@@ -190,25 +225,27 @@ class NgramModel():
         if sequences:
             # Either initialize (if no model file was provided) or clear (if
             # a model file was provided) the variables for smoothed
-            # probabilities.
+            # probabilities. This is performed inside the conditional check
+            # to guarantee that we don't loose any previsous training if there
+            # is not reason for that (i.e., if no new sequences are added).
             self._p = {}
             self._p0 = {}
             self._l = {}
             self._l0 = {}
             self._trained = False
 
+            # Collect all positional ngrams, using the ngram tuple as a key
+            # and the state as value (which is appended to self._ngrams()).
+            # The positional information (ngram[2]) is actually discarded
+            # in this stage.
             for sequence in sequences:
-                # Collect all positional ngrams, using the ngram tuple as a key
-                # and the state as value (which is appended to self._ngrams()).
-                # The positional information (ngram[2]) is actually discarded
-                # in this stage.
                 [self._ngrams[ngram[0]].update(ngram[1]) for ngram in
                  get_all_posngrams(sequence, self._pre, self._post, self._padsymbol)]
 
             # Collect sequence lengths.
             self._seqlens.update([len(sequence) for sequence in sequences])
 
-    def train(self, method='laplace', normalize=False, bins=None):
+    def train(self, method='laplace', normalize=False, bins=None, **kwargs):
         """
         Train a model after ngrams have been collected.
 
@@ -226,14 +263,14 @@ class NgramModel():
 
         normalize: boolean
             Whether to normalize the log-probabilities for each ngram in the
-            model after smoothing, i.e., guarantee that the probabilities (with
+            model after smoothing, i.e., to guarantee that the probabilities (with
             the probability for unobserved transitions counted a single time)
             sum to 1.0. This is computationally expansive, and should be only
             used if the model is intended for later serialization. While
             experiments with real data demonstrated that this normalization
             does not improve the results or performance of the methods, the
             computational cost of normalizing the probabilities might be
-            justified if descriptive statistics on the model, like samples
+            justified if descriptive statistics of the model, like samples
             from the matrix of transition probabilities or the
             entropy/perplexity of a sequence, are needed (such as for
             publication), as they will be more in line with what is generally
@@ -252,18 +289,24 @@ class NgramModel():
 
         # If the number of bins was not informed, use the number of transition
         # states from the zero-context.
-        # TODO: assert that we have at least the number of observed transitions?
-        # TODO: what to do if there is no no-context ngram? Should be
-        # mandatory?
-        self._bins = bins or len(self._ngrams[('###',)])
+        # The triple `or` is intended to prevent aberrant cases in which the
+        # no-context ngram is not available, to which we resort to the number
+        # of states (this default will only take place on user-crafted cases);
+        # likewise, the `or 1` guarantees that we don't have divisions by zero
+        # if the users trains on an empty collection (yielding results in
+        # line with what is probably expected).
+        if (_ELM_SYMBOL,) in self._ngrams:
+            self._bins = bins or len(self._ngrams[(_ELM_SYMBOL,)])
+        else:
+            self._bins = bins or len(self._ngrams) or 1
+
+        # Internally store the `**kwargs`, if any.
+        self._smooth_kwargs = kwargs
 
         # Perform the probability smoothing.
-        # TODO: allow correction in which all observed probs smoothed to less
-        # than non-observed are equal to non-observed at least -- should this
-        # be moved to smooth_dist?
         for context, counter in self._ngrams.items():
             self._p[context], self._p0[context] = \
-                smooth_dist(counter, method=method, bins=self._bins)
+                smooth_dist(counter, method=method, bins=self._bins, **kwargs)
 
         # Normalize, if so requested. See comments in the docstring for more
         # information.
@@ -271,44 +314,43 @@ class NgramModel():
             for context, probs in self._p.items():
                 # We remap the log-probabilities into probabilities in the
                 # temporary variable `_prob`, sum them in order to obtain the
-                # used probability space (which included a single occurence
+                # used probability space (which includes a single occurence
                 # for the unobserved probability), and finally reset
                 # `self._p` and `self._p0` as normalized log-probabilities.
                 _prob = {state:math.exp(prob) for state, prob in probs.items()}
                 _prob0 = math.exp(self._p0[context])
                 _prob_sum = sum(_prob.values()) + _prob0
 
-                self._p[context] = {state:math.log(prob/prob_sum)
+                self._p[context] = {state:math.log(prob/_prob_sum)
                                     for state, prob in _prob.items()}
-                self._p0[context] = math.log(_prob0/prob_sum)
+                self._p0[context] = math.log(_prob0/_prob_sum)
 
         # Compute the log-probabilities for lengths. This is easy as we just
         # assume that the count/probability for non-observed lengths is equal
         # to the count/probability of the less observed length (the value is
         # added directly to `length_obs`). This is similar to ML estimation.
         length_obs = sum(self._seqlens.values()) + min(self._seqlens.values())
-        self._lp = {length:math.log(count/length_obs)
-                    for length, count in self._seqlens.items()}
-        self._lp0 = math.log(min(self._seqlens.values()) / length_obs)
+        self._l = {length:math.log(count/length_obs)
+                   for length, count in self._seqlens.items()}
+        self._l0 = math.log(min(self._seqlens.values()) / length_obs)
 
         # Collect the ngram space keys and values for random sequence
         # generation.
-        # TODO: do it at the same time that the other collections
         for context, counter in self._ngrams.items():
             for key, value in counter.items():
-                key = tuple(s if s != '###' else key for s in context)
+                key = tuple(s if s != _ELM_SYMBOL else key for s in context)
                 self._ngram_space[key] += value
 
         # Internally inform that the model was trained.
         self._trained = True
 
-    # TODO: correct not found by no context probability, optionally
     def state_score(self, sequence):
         """
         Returns the relative likelihood for each state in a sequence.
 
         Please note that this does not perform correction due to sequence
-        length. The model must have been trained before using this function.
+        length, as optionally and by default performed by the `.score()`
+        method. The model must have been trained in advance.
 
         Parameters
         ----------
@@ -323,17 +365,16 @@ class NgramModel():
         """
 
         # Assert the model was trained.
-        assert self._trained==True, "Ngram Model was not trained."
+        assert self._trained, "Ngram Model was not trained."
 
         # Pre-allocate the list holding the probability (i.e., the relative
         # likelihood) for each state in `sequence`.
         s_prob = [0.0] * len(sequence)
 
         # We collect all positional ngrams in `sequence`, using the same
-        # paramenters for the model ngram collection, and compute the state
+        # parameters for the model ngram collection, and compute the state
         # probability in each case, appending/adding the results to the
         # correct element in `s_prob`.
-
         for ngram, state, idx in \
             get_all_posngrams(sequence, self._pre, self._post, self._padsymbol):
             # If the ngram (the "context") is found in `self._p` (i.e., it was
@@ -355,11 +396,11 @@ class NgramModel():
                 # Make a copy of the sequence replacing the symbol for the
                 # current state by the observed state; then, compute and sum
                 # the individual log-probabilities.
-                _seq = [state if seq_state=='###' else seq_state
+                _seq = [state if seq_state == _ELM_SYMBOL else seq_state
                         for seq_state in ngram]
-                _p = sum([self._p[('###',)][seq_state]
-                          if seq_state in self._p[('###',)]
-                          else self._p0[('###',)]
+                _p = sum([self._p[(_ELM_SYMBOL,)][seq_state]
+                          if seq_state in self._p[(_ELM_SYMBOL,)]
+                          else self._p0[(_ELM_SYMBOL,)]
                           for seq_state in _seq])
 
             # Update the log-probability of the correct state.
@@ -390,26 +431,44 @@ class NgramModel():
         """
 
         # Assert the model was trained.
-        assert self._trained==True, "Ngram Model was not trained."
+        assert self._trained, "Ngram Model was not trained."
 
         # Get the sum of individual log-probabilities, correct them with the
         # sequence length probability if requested and return.
         _prob = sum(self.state_score(sequence))
         if use_length:
-            if len(sequence) in self._lp:
-                _prob += self._lp[len(sequence)]
+            if len(sequence) in self._l:
+                _prob += self._l[len(sequence)]
             else:
-                _prob += self._lp0
+                _prob += self._l0
 
         return _prob
 
+    # TODO: should we cache this, too? Or rewrite using some iteration tool?
     def model_entropy(self):
-        # collect the P x log(P) for all contexts; probabilities are already
-        # stored as ln in self._p, so we need to get back to the probability
-        # itself, which is computationally quite expensive
+        """
+        Return the model entropy.
+
+        This methods collects the P x log(P) for all contexts, returning
+        their sum. This is different from a sequence cross-entropy,
+        and should be used to estimate the complexity of a model.
+
+        Please note that for very large models the computation of this
+        entropy might run into underflow problems.
+
+        Returns
+        -------
+        h: float
+            The model entropy.
+        """
+
+        # Our probabilities are already stored as logarithms in `self._p`,
+        # so we need to recover the probability itself by running exp(),
+        # which is computationally very expansive. However, considering how
+        # log-probabilities make all normal operations faster, this is
+        # justified in terms of favoring the most common operations.
         lentropy = []
         for context in self._p:
-            # for manipulation, add _p0 at this stage
             _probs = [math.exp(p) for p in self._p[context].values()]
             _probs.append(math.exp(self._p0[context]))
             lentropy += [-p*math.log2(p) for p in _probs]
@@ -433,7 +492,7 @@ class NgramModel():
 
         Returns
         -------
-        ce: float
+        ch: float
             The cross-entropy calculated for the sequence, a real number.
         """
         return -(self.score(sequence)/math.log(base)) / len(sequence)
@@ -457,18 +516,28 @@ class NgramModel():
         """
         return 2.0 ** self.entropy(sequence)
 
-    def percentile_rank(self, sequence):
-        raise ValueError("Not implemented yet.")
 
-    # we must use pickle and not json as json's library does not allow for
-    # tuple lists, unless we map everythin back and forth from strings
-    # while we could iterate over everything, it is better to do it variable
-    # by variable, so we take care of special cases and make it easier for
-    # future improvements
     def save_model(self, filename):
-        # We cannot pickle some data structures, particularly those which use
-        # a lambda. For those case, we need to cast back and forth when
-        # saving and loading.
+        """
+        Saves an ngram model to disk.
+
+        This method serializes a model, either trained or not, to a binary
+        format, allowing future reuse without the time and computation
+        costs. The model is supposed to be loaded with the `.load_model()`
+        method.
+
+        Parameters
+        ----------
+        filename: str
+            The path to the file where to write the model.
+        """
+
+        # We must use pickle and not a more readable format such as JSON as
+        # the latter does not allow for the serialization of tuples (unless
+        # everything is mapped back and forth to and from strings). Even
+        # pickle does not allow for all data structures we use (in particular,
+        # those with lambdas), so that we need to cast back and forth to
+        # primitive datatypes when saving and loading.
         model_data = {
             '_padsymbol' : self._padsymbol,
             '_pre' : self._pre,
@@ -476,7 +545,9 @@ class NgramModel():
             '_ngrams' : dict(self._ngrams),
             '_ngram_space' : self._ngram_space,
             '_seqlens' : self._seqlens,
+            '_smooth_method' : self._smooth_method,
             '_bins' : self._bins,
+            '_smooth_kwargs' : self._smooth_kwargs,
             '_trained' : self._trained,
             '_p' : self._p,
             '_p0' : self._p0,
@@ -488,16 +559,33 @@ class NgramModel():
             pickle.dump(model_data, handler, pickle.HIGHEST_PROTOCOL)
 
     def load_model(self, filename):
+        """
+        Load an ngram model from disk.
+
+        This method is supposed to be load models serialized with the
+        `.save_model()` method.
+
+        Please note that, as it internally uses Python's `pickle`,
+        there are security issues involved and a model whose origin is
+        not trusted should *NEVER* be loaded.
+
+        Parameters
+        ----------
+        filename: str
+            The path to the file from where to load the model.
+        """
         with open(filename, 'rb') as handler:
             model_data = pickle.load(handler)
 
         self._padsymbol = model_data['_padsymbol']
         self._pre = model_data['_pre']
         self._post = model_data['_post']
-        self._ngrams = defaultdict(lambda: Counter(), model_data['_ngrams'])
+        self._ngrams = defaultdict(Counter, model_data['_ngrams'])
         self._ngram_space = model_data['_ngram_space']
         self._seqlens = model_data['_seqlens']
+        self._smooth_method = model_data['_smooth_method']
         self._bins = model_data['_bins']
+        self._smooth_kwargs = model_data['_smooth_kwargs']
         self._trained = model_data['_trained']
         self._p = model_data['_p']
         self._p0 = model_data['_p0']
@@ -516,28 +604,42 @@ class NgramModel():
         # pad symbol times the maximum preceding order.
         rnd_seq = (self._padsymbol,) * max(self._pre)
 
+        # If the sequence length was not specified, it must be randomly
+        # selected.
+        if not seq_len:
+            len_pop = list(self._seqlens.keys())
+            len_w = list(self._seqlens.values())
+            seq_len = _random_choices(len_pop, len_w)[0]
+            seq_len += max(self._pre)
+            if max(self._post) > 0:
+                seq_len += 1
+
+        # Cutoff length can't obviously be larger than the sequence length,
+        # as we would not be able to find a sequence or ngram shorter than
+        # it.
+        cutoff_length = min(cutoff_length, seq_len)
+
         # Repeatedly build a dictionary with the search space for next element
         # given the current value of `rnd_seq`, checking if we are able to
         # generate it (we might run into some unsolvable situation).
         gen_tries = 0
         while True:
             # Filter all the elements from `self._ngram_space` that match the
-            # specified cutoff_length; as the conditional checking is a bit
-            # expansive and not always used, we first check if we just make
+            # specified `cutoff_length`; as the conditional checking is a bit
+            # expensive and not always used, we first check if we just make
             # a copy of the contents (casting the Counter to a dictionary,
-            # which is fast) if no cutoff length is specified (i.e., if it
-            # equals to 1).
+            # which is fast) if no cutoff is specified (i.e., if it equals 1).
             if cutoff_length == 1:
                 sspace = dict(self._ngram_space)
             else:
                 sspace = {key:value
-                    for key, value in self._ngram_space.items()
-                    if len(key) >= cutoff_length}
+                          for key, value in self._ngram_space.items()
+                          if len(key) >= cutoff_length}
 
             # Filter all the items in the search space `sspace` that do not
             # start with what we have in the random sequence so far.
             sspace = {key:value for key, value in sspace.items()
-                if key[:-1] == rnd_seq[-len(key)+1:]}
+                      if key[:-1] == rnd_seq[-len(key)+1:]}
 
             # If the random sequence plus the new element would match the
             # sequence length, we can only use entries that end with the
@@ -549,23 +651,23 @@ class NgramModel():
             if max(self._post) > 0:
                 if len(rnd_seq) + 1 == seq_len:
                     sspace = {key:value for key, value in sspace.items()
-                        if key[-1] == self._padsymbol}
+                              if key[-1] == self._padsymbol}
                 else:
                     sspace = {key:value for key, value in sspace.items()
-                        if key[-1] != self._padsymbol}
+                              if key[-1] != self._padsymbol}
 
             # Scale the counts by key length (so we favor longer ngrams that
             # should be able to better capture the likelihood, while keeping
             # room for less frequent but observed elements) and by the
             # provided `scale`, which can be set to 1 for no effect.
             sspace = {key:(value*len(key))**scale
-                for key, value in sspace.items()}
+                      for key, value in sspace.items()}
 
             # If we were unable to get a suitable searching space, the
             # generation failed and we must signal that; otherwise, let's
             # choose a random ngram for the search space and append its new
             # element (at the end, index -1) to our random sequence.
-            if len(sspace) == 0:
+            if not sspace:
                 # We will get to this point if the generation failed because no
                 # suitable search space was found. We just reset the random
                 # sequence to the initial state and keep trying until we
@@ -589,11 +691,69 @@ class NgramModel():
                 if len(rnd_seq) == seq_len:
                     return rnd_seq
 
-    # TODO: what if unable to find words?
-    # TODO: add seed
-    def random_seq(self, scale=2, only_longest=False, k=1, tries_scale=10, seed=None):
+
+    def random_seqs(self, k=1, seq_len=None, scale=2, only_longest=False, attempts=10, seed=None):
+        """
+        Return a set of random sequences based in the observed transition frequencies.
+
+        This function tries to generate a set of `k` random sequences from the internal
+        model. Given that the random selection and the parameters might lead to
+        a long or infinite search loop, the number of attempts for each word
+        generation is limited, meaning that there is no guarantee that the returned
+        list will be of length `k`, but only that it will be at most of length `k`.
+
+        Parameters
+        ----------
+        k: int
+            The desired and maximum number of random sequences to be returned. While
+            the algorithm should be robust enough for most cases, there is no
+            guarantee that the desired number or even that a single random
+            sequence will be returned. In case of missing sequences, try increasing
+            the parameter `attempts`.
+
+        seq_len: int or list
+            An optional integer with length of the sequences to be generated or a list
+            of lengths to be uniformly drawn for the generated sequences. If the
+            parameter is not specified, the length of the sequences will be drawn
+            by the sequence lengths observed in training according to their
+            frequencies.
+
+        scale: numeric
+            The exponent used for weighting ngram probabilities according to their
+            length in number of states. The higher this value, the less likely
+            the algorithm will be to drawn shorter ngrams, which contribute to
+            a higher variety in words but can also result in less likely
+            sequences. Defaults to 2.
+
+        only_longest: bool
+            Whether the algorithm should only collect the longest possible ngrams
+            when computing the search space from which each new random character is
+            obtained. This usually translates into less variation in the generated
+            sequences and a longer searching time, which might need to be increased
+            via the `attempts` parameters. Defaults to False.
+
+        tries: int
+            The number of times the algorithm will try to generate a random
+            sequence. If the algorithm is unable to generate a suitable random
+            sequence after the specified number of `attempts`, the loop will advence
+            to the following sequence (if any). Defaults to 10.
+
+        seed: obj
+            Any hasheable object, used to feed the random number generator and
+            thus reproduce the generated set of random sequences.
+
+        Returns
+        -------
+        seqs: list
+            A list of size `k` with random sequences.
+        """
+
         # Set the random seed.
         random.seed(seed)
+
+        # Build the list of sequence lengths, if any.
+        if isinstance(seq_len, int):
+            seq_len = [seq_len]
 
         # Setup the cutoff length according to whether we should only use the
         # longest possible ngrams or not. The filtering is done inside the
@@ -608,22 +768,18 @@ class NgramModel():
         # Initialize the list for holding the random sequences and cache
         # some values used repeatedly.
         rnd_seqs = []
-        len_pop = list(self._seqlens.keys())
-        len_w = list(self._seqlens.values())
-        for i in range(k*tries_scale):
-            # The length of the random sequence is selected in advance from
-            # self._seqlens (plus the left and right orders, if any, for
-            # dealing with padding symbols). As `_random_choices()` always
-            # returns a list, we extract the first element.
-            # NOTE: While it would be possible to populate a list of random
-            #       lengths from _random_choices(), we use this less elegant
-            #       solution of selecting a new random one each time to make
-            #       sure that we are not stuck with a given length in case it
-            #       is problematic given the ngram search space.
-            rnd_seq_len = _random_choices(len_pop, len_w)[0]
-            rnd_seq_len += max(self._pre)
-            if max(self._post) > 0:
-                rnd_seq_len += 1
+        for i in range(k*attempts):
+            # Get a sequence length, if any -- if not sequence length is
+            # specified, this will be randomly selected by the
+            # `._gen_single_rnd_seq()` method. We already append here
+            # the maximum value for the left context (self._pre) and
+            # an element for the right context if it exists.
+            if seq_len:
+                rnd_seq_len = max(self._pre) + random.choice(seq_len)
+                if max(self._post) > 0:
+                    rnd_seq_len += 1
+            else:
+                rnd_seq_len = None
 
             # Try to generate a random sequence and append it if successful.
             _rnd_seq = self._gen_single_rnd_seq(rnd_seq_len,
@@ -647,7 +803,7 @@ class NgramModel():
 # primitive as fast as possible. This is intentionally not defaulting to any
 # value for the order, so that users won't confuse a given order to all
 # orders up to and including the given one.
-def get_n_ngrams(sequence, order, pad_symbol=PAD_SYMBOL):
+def get_n_ngrams(sequence, order, pad_symbol=_PAD_SYMBOL):
     """
     Build an iterator for collecting all ngrams of a given order.
 
@@ -727,7 +883,7 @@ def get_n_ngrams(sequence, order, pad_symbol=PAD_SYMBOL):
         yield ngram
 
 
-def get_all_ngrams(sequence, orders=None, pad_symbol=PAD_SYMBOL):
+def get_all_ngrams(sequence, orders=None, pad_symbol=_PAD_SYMBOL):
     """
     Build an iterator for collecting all ngrams of a given set of orders.
 
@@ -787,7 +943,7 @@ def get_all_ngrams(sequence, orders=None, pad_symbol=PAD_SYMBOL):
             yield ngram
 
 
-def get_skipngrams(sequence, order, max_gaps, pad_symbol=PAD_SYMBOL, single_gap=True):
+def get_skipngrams(sequence, order, max_gaps, pad_symbol=_PAD_SYMBOL, single_gap=True):
     """
     Build an iterator for collecting all skip ngrams of a given length.
 
@@ -943,7 +1099,8 @@ def get_skipngrams(sequence, order, max_gaps, pad_symbol=PAD_SYMBOL, single_gap=
                     for idx in range(len_seq-order-gap_width+1):
                         yield tuple(seq[idx+skip] for skip, keep in enumerate(pattern) if keep)
 
-def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol=PAD_SYMBOL, elm_symbol=ELM_SYMBOL):
+def get_posngrams(sequence, pre_order=0, post_order=0,
+                  pad_symbol=_PAD_SYMBOL, elm_symbol=_ELM_SYMBOL):
     """
     Build an iterator for collecting all positional ngrams of a sequence.
 
@@ -958,11 +1115,11 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol=PAD_SYMBOL, el
     sequence: list or str
         The sequence from which the ngrams will be collected.
 
-    pre-order: int
+    pre_order: int
         An optional integer specifying the length of the preceding context.
         Defaults to zero.
 
-    post-order: int
+    post_order: int
         An optional integer specifying the length of the following context.
         Defaults to zero.
 
@@ -1035,7 +1192,8 @@ def get_posngrams(sequence, pre_order=0, post_order=0, pad_symbol=PAD_SYMBOL, el
             # state index
             state_idx)
 
-def get_all_posngrams(sequence, pre_orders, post_orders, pad_symbol=PAD_SYMBOL, elm_symbol=ELM_SYMBOL):
+def get_all_posngrams(sequence, pre_orders, post_orders,
+                      pad_symbol=_PAD_SYMBOL, elm_symbol=_ELM_SYMBOL):
     """
     Build an iterator for collecting all positional ngrams of a sequence.
 
