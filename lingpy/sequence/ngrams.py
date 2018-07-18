@@ -9,10 +9,11 @@ preceding and following context).
 """
 
 import math
+import operator
 import pickle
 import random
 from collections import defaultdict, Counter
-from itertools import accumulate, chain, combinations, product
+from itertools import chain, combinations, product
 from functools import partial
 from lingpy.sequence.smoothing import smooth_dist
 
@@ -43,6 +44,25 @@ def _seq_as_tuple(sequence):
 
     return tuple(sequence)
 
+
+def _accumulate(iterable, func=operator.add):
+    """
+    Return running totals.
+    
+    This implementation replaces itertools.accumulate for compatibility
+    with Python 2.7.
+    """
+    # accumulate([1,2,3,4,5]) --> 1 3 6 10 15
+    # accumulate([1,2,3,4,5], operator.mul) --> 1 2 6 24 120
+    it = iter(iterable)
+    try:
+        total = next(it)
+    except StopIteration:
+        return
+    yield total
+    for element in it:
+        total = func(total, element)
+        yield total
 
 def _random_choices(population, weights=None, cum_weights=None, k=1):
     """
@@ -91,7 +111,7 @@ def _random_choices(population, weights=None, cum_weights=None, k=1):
 
     # If cumulative weights were not provided, build them from `weights`.
     if not cum_weights:
-        cum_weights = list(accumulate(weights))
+        cum_weights = list(_accumulate(weights))
 
     # Assert that the lengths of population and cumulative weights match.
     assert len(population) == len(cum_weights), \
@@ -126,18 +146,18 @@ class NgramModel():
         Parameters
         ----------
         pre-orders: int or list
-            An integer with the maximum length of the preceding context or a list
-            with all preceding context lengths to be collected. If an integer is
-            passed, all lengths from zero to the informed one will be collected.
-            Defaults to 0, meaning that no left-context information will be
-            collected.
+            An integer with the maximum length of the preceding context or a
+            list with all preceding context lengths to be collected. If an
+            integer is passed, all lengths from zero to the informed one will
+            be collected. Defaults to 0, meaning that no left-context
+            information will be collected.
 
         post-orders: int or list
-            An integer with the maximum length of the following context or a list
-            with all following context lengths to be collected. If an integer is
-            passed, all lengths from zero to the informed one will be collected.
-            Defaults to 0, meaning that no right-context information will be
-            collected.
+            An integer with the maximum length of the following context or a
+            list with all following context lengths to be collected. If an
+            integer is passed, all lengths from zero to the informed one will
+            be collected. Defaults to 0, meaning that no right-context
+            information will be collected.
 
         pad_symbol: object
             An optional symbol to be used as start-of- and end-of-sequence
@@ -145,9 +165,10 @@ class NgramModel():
             value different from None, defaults to "$$$".
 
         sequences: list
-            An optional list of sequences for ngram collection. If both a model file
-            and a list of sequences are provided, the sequences will be appended
-            to the object after loading the model, clearing any previous training.
+            An optional list of sequences for ngram collection. If both a model
+            file and a list of sequences are provided, the sequences will be
+            appended to the object after loading the model, clearing any
+            previous training.
 
         model_file: str
             An optional path to a file holding a model serialized with this
@@ -240,7 +261,8 @@ class NgramModel():
             # in this stage.
             for sequence in sequences:
                 [self._ngrams[ngram[0]].update(ngram[1]) for ngram in
-                 get_all_posngrams(sequence, self._pre, self._post, self._padsymbol)]
+                 get_all_posngrams(sequence, self._pre, self._post, \
+                 self._padsymbol)]
 
             # Collect sequence lengths.
             self._seqlens.update([len(sequence) for sequence in sequences])
@@ -263,10 +285,10 @@ class NgramModel():
 
         normalize: boolean
             Whether to normalize the log-probabilities for each ngram in the
-            model after smoothing, i.e., to guarantee that the probabilities (with
-            the probability for unobserved transitions counted a single time)
-            sum to 1.0. This is computationally expansive, and should be only
-            used if the model is intended for later serialization. While
+            model after smoothing, i.e., to guarantee that the probabilities
+            (with the probability for unobserved transitions counted a single
+            time) sum to 1.0. This is computationally expansive, and should be
+            only used if the model is intended for later serialization. While
             experiments with real data demonstrated that this normalization
             does not improve the results or performance of the methods, the
             computational cost of normalizing the probabilities might be
@@ -376,7 +398,8 @@ class NgramModel():
         # probability in each case, appending/adding the results to the
         # correct element in `s_prob`.
         for ngram, state, idx in \
-            get_all_posngrams(sequence, self._pre, self._post, self._padsymbol):
+            get_all_posngrams(sequence, self._pre, self._post, \
+                              self._padsymbol):
             # If the ngram (the "context") is found in `self._p` (i.e., it was
             # observed in training), we just need to append to `_p` the
             # probability of its state (or of the transition to unonserved
@@ -692,51 +715,55 @@ class NgramModel():
                     return rnd_seq
 
 
-    def random_seqs(self, k=1, seq_len=None, scale=2, only_longest=False, attempts=10, seed=None):
+    def random_seqs(self, k=1, seq_len=None, scale=2, only_longest=False,
+                    attempts=10, seed=None):
         """
-        Return a set of random sequences based in the observed transition frequencies.
+        Return a set of random sequences based in the observed transition
+        frequencies.
 
-        This function tries to generate a set of `k` random sequences from the internal
-        model. Given that the random selection and the parameters might lead to
-        a long or infinite search loop, the number of attempts for each word
-        generation is limited, meaning that there is no guarantee that the returned
-        list will be of length `k`, but only that it will be at most of length `k`.
+        This function tries to generate a set of `k` random sequences from the
+        internal model. Given that the random selection and the parameters
+        might lead to a long or infinite search loop, the number of attempts
+        for each word generation is limited, meaning that there is no guarantee
+        that the returned list will be of length `k`, but only that it will be
+        at most of length `k`.
 
         Parameters
         ----------
         k: int
-            The desired and maximum number of random sequences to be returned. While
-            the algorithm should be robust enough for most cases, there is no
-            guarantee that the desired number or even that a single random
-            sequence will be returned. In case of missing sequences, try increasing
-            the parameter `attempts`.
+            The desired and maximum number of random sequences to be returned.
+            While the algorithm should be robust enough for most cases, there
+            is no guarantee that the desired number or even that a single
+            random sequence will be returned. In case of missing sequences, try
+            increasing the parameter `attempts`.
 
         seq_len: int or list
-            An optional integer with length of the sequences to be generated or a list
-            of lengths to be uniformly drawn for the generated sequences. If the
-            parameter is not specified, the length of the sequences will be drawn
-            by the sequence lengths observed in training according to their
-            frequencies.
+            An optional integer with length of the sequences to be generated or
+            a list of lengths to be uniformly drawn for the generated
+            sequences. If the parameter is not specified, the length of the
+            sequences will be drawn by the sequence lengths observed in
+            training according to their frequencies.
 
         scale: numeric
-            The exponent used for weighting ngram probabilities according to their
-            length in number of states. The higher this value, the less likely
-            the algorithm will be to drawn shorter ngrams, which contribute to
-            a higher variety in words but can also result in less likely
-            sequences. Defaults to 2.
+            The exponent used for weighting ngram probabilities according to
+            their length in number of states. The higher this value, the less
+            likely the algorithm will be to drawn shorter ngrams, which
+            contribute to a higher variety in words but can also result in less
+            likely sequences. Defaults to 2.
 
         only_longest: bool
-            Whether the algorithm should only collect the longest possible ngrams
-            when computing the search space from which each new random character is
-            obtained. This usually translates into less variation in the generated
-            sequences and a longer searching time, which might need to be increased
-            via the `attempts` parameters. Defaults to False.
+            Whether the algorithm should only collect the longest possible
+            ngrams when computing the search space from which each new random
+            character is obtained. This usually translates into less variation
+            in the generated sequences and a longer searching time, which might
+            need to be increased via the `attempts` parameters. Defaults to
+            False.
 
         tries: int
             The number of times the algorithm will try to generate a random
             sequence. If the algorithm is unable to generate a suitable random
-            sequence after the specified number of `attempts`, the loop will advence
-            to the following sequence (if any). Defaults to 10.
+            sequence after the specified number of `attempts`, the loop will
+            advance to the following sequence (if any). Defaults to 10.
 
         seed: obj
             Any hasheable object, used to feed the random number generator and
@@ -943,7 +970,8 @@ def get_all_ngrams(sequence, orders=None, pad_symbol=_PAD_SYMBOL):
             yield ngram
 
 
-def get_skipngrams(sequence, order, max_gaps, pad_symbol=_PAD_SYMBOL, single_gap=True):
+def get_skipngrams(sequence, order, max_gaps, pad_symbol=_PAD_SYMBOL, \
+                   single_gap=True):
     """
     Build an iterator for collecting all skip ngrams of a given length.
 
@@ -1067,7 +1095,8 @@ def get_skipngrams(sequence, order, max_gaps, pad_symbol=_PAD_SYMBOL, single_gap
         _temp = chain(seq, (None,) * order)
         for ngram in get_n_ngrams(_temp, order+max_gaps, pad_symbol=None):
             head = ngram[:1] # cache for all combinations
-            for comb in [tail for tail in combinations(ngram[1:], order-1) if all(tail)]:
+            for comb in [tail for tail in combinations(ngram[1:], order-1)
+                         if all(tail)]:
                 yield head + comb
     else:
         # Iterate over all the possible gap lengths, including length zero.
@@ -1097,7 +1126,8 @@ def get_skipngrams(sequence, order, max_gaps, pad_symbol=_PAD_SYMBOL, single_gap
                     # `idx` is the starting index in `sequence`, `skip` the
                     # element index in `pattern`
                     for idx in range(len_seq-order-gap_width+1):
-                        yield tuple(seq[idx+skip] for skip, keep in enumerate(pattern) if keep)
+                        yield tuple(seq[idx+skip] for skip, keep
+                                    in enumerate(pattern) if keep)
 
 def get_posngrams(sequence, pre_order=0, post_order=0,
                   pad_symbol=_PAD_SYMBOL, elm_symbol=_ELM_SYMBOL):
