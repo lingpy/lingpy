@@ -1487,7 +1487,7 @@ def clean_string(
         into separate entries.
     splitters : str
         The characters which force the automatic splitting of an entry.
-    prepares : list
+    preparse : list
         List of tuples, giving simple replacement patterns (source and target),
         which are applied before every processing starts.
 

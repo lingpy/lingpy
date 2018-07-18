@@ -1,4 +1,5 @@
-# LingPy
+LingPy: A Python Library for Automatic Tasks in Historical Linguistics
+======================================================================
 
 [![Build Status](https://travis-ci.org/lingpy/lingpy.svg?branch=master)](https://travis-ci.org/lingpy/lingpy)
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)

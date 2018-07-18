@@ -24,6 +24,10 @@ extra = {}
 pkgname = 'lingpy'
 pkg_dir = {'': '.'}
 pkg_location = '.'
+project_urls = {
+        "Documentation": "http://lingpy.org",
+        "Source": "https://github.com/lingpy/lingpy"
+        }
 
 if sys.version_info >= (3,):
     extra['use_2to3'] = False
@@ -74,7 +78,7 @@ else:
     long_description = ''
 
 # make global name of this version for convenience of modifying it
-thisversion = "2.6.3"
+thisversion = "2.6.4"
 
 setup(
     name=pkgname,

@@ -1144,12 +1144,16 @@ def plot_heatmap(
     cmap = keywords['cmap'] 
 
     # [0.15,0.1,0.7,0.7])
-    if 'distances' in keywords:
+    if 'distances' in keywords and keywords['distances']:
         for i, line in enumerate(matrix):
             for j, cell in enumerate(matrix):
                 matrix[i][j] = 1 - matrix[i][j]
+    nmatrix = [
+            [keywords['vmax'], keywords['vmin']],
+            [keywords['vmin'], keywords['vmax']]
+            ]
 
-    im = ax2.matshow(matrix, aspect='auto', origin='lower',
+    im = ax2.matshow(nmatrix, aspect='auto', origin='lower',
                      interpolation='nearest', cmap=keywords['cmap'],
                      vmax=keywords['vmax'], vmin=keywords['vmin']
                      )
@@ -1184,6 +1188,7 @@ def plot_heatmap(
     )
 
     if keywords["colorbar"]:
+
         plt.imshow(matrix, cmap=keywords['cmap'], visible=False, vmax=keywords['vmax'])
         c = plt.colorbar(im, shrink=keywords['colorbar_shrink'])
         c.set_label(keywords["colorbar_label"], size=keywords['colorbar_textsize'])
