@@ -1,13 +1,14 @@
 # *-* coding: utf-8 *-*
 from __future__ import print_function, division, unicode_literals
+
 import sys
 from contextlib import contextmanager
 
 from six import StringIO
-from lingpy.tests.util_testing import WithTempDir
 
 from lingpy.cli import main
 from lingpy.tests.util import test_data
+from lingpy.tests.util_testing import WithTempDir
 
 
 @contextmanager
@@ -20,29 +21,32 @@ def capture(*args):
 
 
 class Tests(WithTempDir):
-    def run_cli(self, *args):
+    @staticmethod
+    def run_cli(*args):
         if len(args) == 1:
             args = args[0].split()
         with capture(*args) as output:
             return output
 
     def test_wordlist(self):
-        output = self.run_cli(
-            'wordlist -i {0} --stats --calculate diversity'.format(test_data('KSL.qlc')))
+        output = self.run_cli('wordlist -i {0} --stats --calculate diversity'
+                              .format(test_data('KSL.qlc')))
         self.assertIn('Height:  200', output)
 
     def test_alignments(self):
         tmp = self.tmp_path('alignments')
 
         def cmd(i, rem=''):
-            return 'alignments -i {0} -c cogid -o {1} {2}'.format(i, tmp.as_posix(), rem)
+            return 'alignments -i {0} -c cogid -o {1} {2}'\
+                .format(i, tmp.as_posix(), rem)
 
         self.run_cli(cmd(test_data('KSL.qlc')))
         self.run_cli(cmd(test_data('KSL3.qlc'), ' --format html --use-logodds'))
 
     def test_ortho_profile(self):
         tmp = self.tmp_path('ortho')
-        self.run_cli('profile -i '+test_data('KSL.qlc')+' --column ipa -o ' + tmp.as_posix())
+        self.run_cli('profile -i ' + test_data('KSL.qlc') + ' --column ipa -o '
+                     + tmp.as_posix())
 
     def test_multiple(self):
         # first test, align string, no output, no input
@@ -50,21 +54,22 @@ class Tests(WithTempDir):
         self.assertIn('w\ta\tl\tt\te\t-\t-\tr\t-', output)
 
         # second test, test output as file, no input, vary method as sca
-        mlt = main('multiple', '-s', 'woldemort', 'waldemar',
-                                  'walter', '--method', 'sca', '--output-file',
-                                  self.tmp_path('out.msa').as_posix())
+        _ = main('multiple', '-s', 'woldemort', 'waldemar',
+                 'walter', '--method', 'sca', '--output-file',
+                 self.tmp_path('out.msa').as_posix())
+
         # third test, test output and input
         # second test, test output as file, no input, vary method as sca
         mlt = main('multiple', '-i', test_data('harryp.msa'),
-                                  '--method', 'sca', '--output-file',
-                                  self.tmp_path('out2.msa').as_posix(), '--align-method',
-                                  'library')
+                   '--method', 'sca', '--output-file',
+                   self.tmp_path('out2.msa').as_posix(), '--align-method',
+                   'library')
         assert len(mlt[0]) == 7
 
         # fourth test, test output and input with method=basic
         mlt = main('multiple', '-i', test_data('harryp.msa'),
-                                  '--method', 'basic', '--output-file',
-                                  self.tmp_path('out2.msa').as_posix())
+                   '--method', 'basic', '--output-file',
+                   self.tmp_path('out2.msa').as_posix())
         assert len(mlt[0]) == 7
         assert len([x for x in mlt[1][-1] if x != '-']) == 4
 
@@ -80,9 +85,8 @@ class Tests(WithTempDir):
 
         # second test, test output as file, no input, vary method as sca
         tmp = self.tmp_path('test1')
-        self.run_cli(
-            'pairwise -s woldemort waldemar --method sca -o {0} --distance'.format(
-                tmp.as_posix()))
+        self.run_cli('pairwise -s woldemort waldemar --method sca -o {0}'
+                     ' --distance'.format(tmp.as_posix()))
         assert tmp.exists()
 
         # third test, test output and input
@@ -109,14 +113,13 @@ class Tests(WithTempDir):
         self.assertIn('lexstat_threshold', output)
 
     def test_lexstat(self):
-        cogs = main('lexstat', '-i',
-                                  test_data('KSL.qlc'),
-                                  '--output-file', self.tmp_path('lexstat').as_posix())
+        cogs = main('lexstat', '-i', test_data('KSL.qlc'),
+                    '--output-file', self.tmp_path('lexstat').as_posix())
         assert cogs == 1080
 
     def test_profile(self):
         prf = main('profile', '-i', test_data('KSL.qlc'), '--column', 'ipa')
         assert prf == 105
         prf = main('profile', '-i', test_data('KSL.qlc'), '--column', 'ipa',
-                '--language', 'German', '--count')
+                   '--language', 'German', '--count')
         assert prf == 37

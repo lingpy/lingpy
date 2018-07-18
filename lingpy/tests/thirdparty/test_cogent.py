@@ -3,44 +3,51 @@
 Test thirdparty modules.
 """
 from __future__ import unicode_literals, print_function, division
-from unittest import TestCase
-from nose.tools import assert_raises
-from collections import defaultdict
 
+from collections import defaultdict
+from unittest import TestCase
+
+from nose.tools import assert_raises
 from six import PY3
 
-from lingpy.thirdparty.cogent import LoadTree
-from lingpy.thirdparty.cogent.newick import TreeParseError
 from lingpy.tests.util import test_data
+from lingpy.thirdparty.cogent import LoadTree, TreeNode, TreeError, PhyloNode
+from lingpy.thirdparty.cogent.newick import TreeParseError
 
 
-def test_LoadTree():
-    
-    # test to load a given tree-file
-    tree = LoadTree(test_data('phylogeny.tre'))
-    
-    taxa = sorted(["Beijing", "Changsha", "Chengdu", "Fuzhou",
-            "Guangzhou", "Guiyang", "Haerbin", "Haikou", "Hangzhou", "Hefei",
-            "Huhehaote", "Jian\u2019ou", "Jinan", "Kunming", "Lanzhou",
-            "Meixian", "Nanchang", "Nanjing", "Nanning", "Pingyao", "Qingdao",
-            "Shanghai", "Shantou", "Shexian", "Suzhou", "Taibei", "Taiyuan",
-            "Taoyuan", "Tianjin", "Tunxi", "Wenzhou", "Wuhan", "Wulumuqi",
-            "Xi\u2019an", "Xiamen", "Xianggang", "Xiangtan", "Xining",
-            "Yinchuan", "Zhengzhou"])
-    
-    for a, b in zip(sorted(tree.taxa), taxa):
-        assert a == b
-    
-    tree = LoadTree("((((((((Taiyuan,Pingyao,Huhehaote),((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,Wulumuqi)),(((Tianjin,Jinan),Qingdao),Beijing,Haerbin)),(((Guiyang,Kunming),Chengdu,Wuhan),(Nanjing,Hefei)))),(Xiangtan,Changsha)),Nanchang),(Shexian,Tunxi)),((Shanghai,Suzhou,Hangzhou),Wenzhou)),(((Xianggang,Guangzhou),Nanning),(Meixian,Taoyuan))),((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));")
+class Tests(TestCase):
+    def test_load_tree(self):
+        # test to load a given tree-file
+        tree = LoadTree(test_data('phylogeny.tre'))
 
-    for a, b in zip(sorted(tree.taxa), taxa):
-        assert a == b
+        taxa = sorted(["Beijing", "Changsha", "Chengdu", "Fuzhou", "Guangzhou",
+                       "Guiyang", "Haerbin", "Haikou", "Hangzhou", "Hefei",
+                       "Huhehaote", "Jian\u2019ou", "Jinan", "Kunming",
+                       "Lanzhou",
+                       "Meixian", "Nanchang", "Nanjing", "Nanning", "Pingyao",
+                       "Qingdao", "Shanghai", "Shantou", "Shexian", "Suzhou",
+                       "Taibei", "Taiyuan", "Taoyuan", "Tianjin", "Tunxi",
+                       "Wenzhou", "Wuhan", "Wulumuqi", "Xi\u2019an", "Xiamen",
+                       "Xianggang", "Xiangtan", "Xining", "Yinchuan",
+                       "Zhengzhou"])
 
+        for a, b in zip(sorted(tree.taxa), taxa):
+            assert a == b
 
-class TreeTests(TestCase):
+        tree = LoadTree("((((((((Taiyuan,Pingyao,Huhehaote),"
+                        "((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,"
+                        "Wulumuqi)),"
+                        "(((Tianjin,Jinan),Qingdao),Beijing,Haerbin)),"
+                        "(((Guiyang,Kunming),Chengdu,Wuhan),(Nanjing,Hefei)))),"
+                        "(Xiangtan,Changsha)),Nanchang),(Shexian,Tunxi)),"
+                        "((Shanghai,Suzhou,Hangzhou),Wenzhou)),"
+                        "(((Xianggang,Guangzhou),Nanning),(Meixian,Taoyuan))),"
+                        "((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));")
+
+        for a, b in zip(sorted(tree.taxa), taxa):
+            assert a == b
+
     def test_Tree(self):
-        from lingpy.thirdparty.cogent import TreeNode, TreeError
-
         tree = TreeNode(
             Name='a',
             Children=[
@@ -71,17 +78,19 @@ class TreeTests(TestCase):
         self.assertRaises(TreeError, tree.getSubTree, [])
         tree.get_LCA(tree.getNodeNames()[0])
         tree.getNewickRecursive()
-    
-    def test_more_trees(self):
 
+    def test_more_trees(self):
         tree = LoadTree('((a:1,b:1):2,(c:3,d:4):5);')
         tree2 = LoadTree('((a,b),(c,d));')
+
         assert tree.sameShape(tree)
+
         tree.tipToTipDistances()
         tree.getMaxTipTipDistance()
         tree.maxTipTipDistance()
-        tree.getSubTree(['a','b','c'])
-        assert tree.compareName(tree2) == 0 
+        tree.getSubTree(['a', 'b', 'c'])
+
+        assert tree.compareName(tree2) == 0
         assert tree.compareName(tree) == 0
         assert tree.compareName('(a,b),(c,d));') != 0
 
@@ -89,7 +98,7 @@ class TreeTests(TestCase):
         tree.nameUnnamedNodes()
         tree.makeTreeArray()
         tree.getNewickRecursive(with_distances=True, semicolon=False,
-                escape_name=False)
+                                escape_name=False)
 
         assert 'a' in tree.getNodesDict()
         assert 'b' in tree.taxa
@@ -97,26 +106,21 @@ class TreeTests(TestCase):
         assert tree.getMaxTipTipDistance()[0] == 12
         assert tree.maxTipTipDistance()[0] == 12
 
-
         ntree = tree.copyRecursive()
         ntree2 = tree2.copy()
         assert ntree.sameShape(ntree2)
         assert 'a' in tree.getNodeNames()
 
-        assert_raises(TreeParseError, LoadTree, '(a,b;');
-        assert_raises(TreeParseError, LoadTree, treestring="(a,b'");
-        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'");
-        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'\n");
-        assert_raises(TreeParseError, LoadTree, treestring="(a,'b-c'");
+        assert_raises(TreeParseError, LoadTree, '(a,b;')
+        assert_raises(TreeParseError, LoadTree, treestring="(a,b'")
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'")
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b'\n")
+        assert_raises(TreeParseError, LoadTree, treestring="(a,'b-c'")
         assert_raises(TreeParseError, LoadTree, "(a,b),('c_d',e);")
         new_tree = LoadTree("((a,b),('',e));")
         new_tree.nameUnnamedNodes()
 
-
-class PhyloNodeTests(TestCase):
     def test_PhyloNode(self):
-        from lingpy.thirdparty.cogent import PhyloNode
-
         node = PhyloNode(
             Length=1,
             Name='a',
@@ -138,5 +142,3 @@ class PhyloNodeTests(TestCase):
         node.getEdgeNames('d', 'b', False, False, outgroup_name='c')
         node.getEdgeNames('d', 'b', True, True, outgroup_name='c')
         node._getDistances(endpoints=["d", "b"])
-
-        

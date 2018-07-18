@@ -1,13 +1,12 @@
 from __future__ import unicode_literals
 
+import contextlib
 import sys
 import tempfile
 import unittest
-import contextlib
-
-from six import StringIO
 
 from clldutils.path import Path, rmtree
+from six import StringIO
 
 
 class WithTempDirMixin(object):
