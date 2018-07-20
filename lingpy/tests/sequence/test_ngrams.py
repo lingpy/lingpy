@@ -367,18 +367,7 @@ class Tests(TestCase):
         # Compute the perplexity for a number of sequences in the training set.
         # This will internally call `.entropy()`.
         [model.perplexity(word) for word in random.sample(words, 3)]
-        
-        # Save a model to disk.
-        filename = '_temporary.model'
-        model.save_model(filename)
-        
-        # Load model to disk in a new object.
-        model2 = NgramModel(model_file=filename)
-        
-        # Assert that the two models are giving the same score for the same word.
-        rnd_word = random.sample(words, 1)[0]
-        assert model.score(rnd_word) == model2.score(rnd_word)
-        
+       
         # Generate a bunch of random words with different parameters, to guarantee
         # full coverage.
         model.random_seqs(k=15)
