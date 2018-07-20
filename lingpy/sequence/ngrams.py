@@ -10,13 +10,14 @@ preceding and following context).
 
 from __future__ import division
 import math
-import operator
 import pickle
 import random
 from collections import defaultdict, Counter
 from itertools import chain, combinations, product
 from functools import partial
+from six import string_types
 from lingpy.sequence.smoothing import smooth_dist
+from lingpy.util import *
 
 # Global padding symbol, shared across all functions/class-methods.
 _PAD_SYMBOL = '$$$'
@@ -40,91 +41,10 @@ def _seq_as_tuple(sequence):
 
     # We first check for datatype and then for a space, as the first test is
     # faster (and evaluation is lazy).
-    if isinstance(sequence, str) and ' ' in sequence:
+    if isinstance(sequence, string_types) and ' ' in sequence:
         return tuple(sequence.split(' '))
 
     return tuple(sequence)
-
-
-def _accumulate(iterable, func=operator.add):
-    """
-    Return running totals.
-    
-    This implementation replaces itertools.accumulate for compatibility
-    with Python 2.7.
-    """
-    # accumulate([1,2,3,4,5]) --> 1 3 6 10 15
-    # accumulate([1,2,3,4,5], operator.mul) --> 1 2 6 24 120
-    it = iter(iterable)
-    try:
-        total = next(it)
-    except StopIteration:
-        return
-    yield total
-    for element in it:
-        total = func(total, element)
-        yield total
-
-def _random_choices(population, weights=None, cum_weights=None, k=1):
-    """
-    Return a `k` sized list of elements chosen from `population` with
-    replacement and according to a list of weights.
-
-    If a `weights` sequence is specified, selections are made according to the
-    relative weights. Alternatively, if a `cum_weights` sequence is given, the
-    selections are made according to the cumulative weights. For example, the
-    relative weights `[10, 5, 30, 5]` are equivalent to the cumulative weights
-    `[10, 15, 45, 50]`. Internally, the relative weights are converted to the
-    cumulative weights before making selections, so supplying the cumulative
-    weights saves work.
-
-    This function is compatible with the random.choices() function available
-    in Python's standard library from version 3.6 on. It can be replaced by
-    the standard implementation once the version requirement is updated.
-
-    Parameters
-    ----------
-    population: list
-        A list of elements from which the element(s) will be drawn.
-
-    weights: list
-        A list of any numeric type with the relative weight of each element.
-        Either `weights` or `cum_weights` must be provided.
-
-    cum_weights: list
-        A list of any numeric type with the accumulated weight of each element.
-        Either `weights` or `cum_weights` must be provided.
-
-    k: int
-        The number of elements to be drawn, with replacement.
-
-    Returns
-    -------
-    sample: list
-        A list of elements randomly drawn according to the specified weights.
-    """
-
-    # Assert that (1) the population is not empty, (2) only one type of
-    # weight information is provided.
-    assert population, "Population must not be empty."
-    assert not all((weights, cum_weights)), \
-        "Either only weights or only cumulative weights must be provided."
-
-    # If cumulative weights were not provided, build them from `weights`.
-    if not cum_weights:
-        cum_weights = list(_accumulate(weights))
-
-    # Assert that the lengths of population and cumulative weights match.
-    assert len(population) == len(cum_weights), \
-        "Population and weight lengths do not match."
-
-    # Get a random number and see in which bin it falls. We need to use this
-    # logic which is a little more complex than something with randint()
-    # in order to allow for floating-point weights.
-    rnd = [random.uniform(0, cum_weights[-1]) for r in range(k)]
-    less_than = [[cw < r for cw in cum_weights] for r in rnd]
-
-    return [population[lt.index(False)] for lt in less_than]
 
 
 class NgramModel():
@@ -633,7 +553,7 @@ class NgramModel():
         if not seq_len:
             len_pop = list(self._seqlens.keys())
             len_w = list(self._seqlens.values())
-            seq_len = _random_choices(len_pop, len_w)[0]
+            seq_len = random_choices(len_pop, len_w)[0]
             seq_len += max(self._pre)
             if max(self._post) > 0:
                 seq_len += 1
@@ -707,7 +627,7 @@ class NgramModel():
             else:
                 pop = list(sspace.keys())
                 w = list(sspace.values())
-                rnd_seq += (_random_choices(pop, w)[0][-1], )
+                rnd_seq += (random_choices(pop, w)[0][-1], )
 
                 # If we are now at the requested length for the random
                 # sequence, let's exit the loop and the return the random
