@@ -2,6 +2,10 @@
 
 """
 Module providing various methods for using Ngram models.
+
+The smoothing methods are implemented to be as compatible as possible with
+those offered by NLTK. In fact, both implementation and comments try to follow
+Bird at al. as close as possible.
 """
 
 from __future__ import division
