@@ -259,10 +259,11 @@ def accumulate_purepy(iterable, func=operator.add):
 
 def random_choices(population, weights=None, cum_weights=None, k=1):
     """
-    Return a `k` sized list of elements chosen from `population` with
-    replacement and according to a list of weights.
+    Return a population sample from weighted elements.
 
-    If a `weights` sequence is specified, selections are made according to the
+    In particular, return a `k` sized list of elements chosen from `population`
+    with replacement and according to a list of weights. If a `weights`
+    sequence is specified, selections are made according to the
     relative weights. Alternatively, if a `cum_weights` sequence is given, the
     selections are made according to the cumulative weights. For example, the
     relative weights `[10, 5, 30, 5]` are equivalent to the cumulative weights
