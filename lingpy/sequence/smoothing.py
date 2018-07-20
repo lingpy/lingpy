@@ -13,6 +13,17 @@ import math
 import random
 from functools import partial
 
+# Try to load the scientific libraries needed for Simple Good-Turing smoothing.
+try:
+    import numpy as np
+except ImportError:
+    np = False
+
+try:
+    from scipy import linalg, stats
+except ImportError:
+    linalg, stats = False, False
+
 # Default probability for unobserved samples.
 _UNOBS = 1e-10
 
@@ -626,11 +637,12 @@ def sgt_dist(freqdist, **kwargs):
         distribution.
     """
 
-    # Try to load the required libraries, failing if they are not available.
-    # These are not included in the global imports of this module in order
-    # to reduce the number of dependencies.
-    from scipy import linalg, stats
-    import numpy as np
+    # Make sure the scientific libraries have been loaded, raising an
+    # ImportError if not
+    if not np:
+        raise ImportError('The package `numpy` is needed by SGT.')
+    if not linalg or not stats:
+        raise ImportError('The package `scipy` is needed by SGT.')
 
     # Deal with additional arguments.
     default_p0 = kwargs.get('default_p0', None)
