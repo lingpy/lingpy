@@ -60,7 +60,7 @@ class NgramModel():
     """
 
     def __init__(self, pre_order=0, post_order=0, pad_symbol=_PAD_SYMBOL,
-                 sequences=None, model_file=None):
+                 sequences=None):
         """
         Initialize an NgramModel object.
 
@@ -90,10 +90,6 @@ class NgramModel():
             file and a list of sequences are provided, the sequences will be
             appended to the object after loading the model, clearing any
             previous training.
-
-        model_file: str
-            An optional path to a file holding a model serialized with this
-            class' .save_model() method.
         """
 
         # Store the ngram collection parameters. While the user can pass
@@ -136,16 +132,7 @@ class NgramModel():
         self._smooth_kwargs = None
         self._trained = False
 
-        # If a model file was provided but no new sequences, just load the
-        # model file (which already includes the trained model). If only
-        # sequences were provided but no model file, collect the ngrams from
-        # the sequences and don't perform any training yet. If both a model
-        # file was provided and new sequences, load the model file, clean
-        # the training (as we have new sentences), and collected the new
-        # ngrams (no automatic training is performed).
-        if model_file:
-            self.load_model(model_file)
-
+        # Add the user-provided sequences, concluding initialization.
         self.add_sequences(sequences)
 
     def add_sequences(self, sequences):
@@ -418,6 +405,7 @@ class NgramModel():
             lentropy += [-p*math.log(p, 2.0) for p in _probs]
 
         return sum(lentropy)
+
 
     def entropy(self, sequence, base=2.0):
         """
