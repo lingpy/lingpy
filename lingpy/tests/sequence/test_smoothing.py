@@ -35,12 +35,13 @@ class Tests(TestCase):
             for sample in samples}
         self.observ2['x'] = 100
         self.observ2['y'] = 100
+        self.observ2['z'] = 1000
 
     def test_uniform_dist(self):
         """
         Test for the uniform distribution.
         """
-        
+
         # Easiest distribution to test: everything must be equal, unobserved
         # must be less than any observed one.
         seen, unseen = smooth_dist(self.observ1, "uniform")
@@ -49,6 +50,7 @@ class Tests(TestCase):
 
         seen, unseen = smooth_dist(self.observ2, "uniform")
         assert seen['0'] == seen['~']
+        assert seen['x'] == seen['z']
         assert seen['0'] > unseen
 
 
@@ -56,7 +58,7 @@ class Tests(TestCase):
         """
         Test for the random distribution.
         """
-        
+
         # Here, we can essentially only test if there are no execution bugs,
         # besides the unobserved probability being less than any other. Nonetheless,
         # we set a seed for comparing the results across platforms.
@@ -65,7 +67,7 @@ class Tests(TestCase):
         assert seen['B'] < seen['D']
         assert seen['A'] < seen['C']
         assert seen['A'] > unseen
-        
+
         seen, unseen = smooth_dist(self.observ2, "random", seed=1305)
         assert seen['B1'] < seen['4']
         assert seen['F5'] < seen['C8']
@@ -75,51 +77,54 @@ class Tests(TestCase):
         """
         Test for the Maximum-Likelihood Estimation distribution.
         """
-        
+
         # This is easy to test as the results of the MLE are the ones we intuitively
         # expect/compute.
         seen, unseen = smooth_dist(self.observ1, "mle")
         assert seen['A'] < seen['B']
         assert seen['D'] == seen['E']
         assert seen['A'] > unseen
-        
+
         seen, unseen = smooth_dist(self.observ2, "mle")
         assert seen['x'] == seen['y']
+        assert seen['x'] < seen['z']
         assert seen['0'] > unseen
-        
+
     def test_laplace_dist(self):
         """
         Test for the Laplace distribution.
         """
-        
+
         seen, unseen = smooth_dist(self.observ1, "laplace")
         assert seen['A'] < seen['B']
         assert seen['D'] == seen['E']
         assert seen['A'] > unseen
-        
+
         seen, unseen = smooth_dist(self.observ2, "laplace")
         assert seen['x'] == seen['y']
+        assert seen['x'] < seen['z']
         assert seen['0'] > unseen
-        
+
     def test_ele_dist(self):
         """
         Test for the Expected-Likelihood estimation distribution.
         """
-        
+
         seen, unseen = smooth_dist(self.observ1, "ele")
         assert seen['A'] < seen['B']
         assert seen['D'] == seen['E']
         assert seen['A'] > unseen
-        
+
         seen, unseen = smooth_dist(self.observ2, "ele")
         assert seen['x'] == seen['y']
+        assert seen['x'] < seen['z']
         assert seen['0'] > unseen
-        
+
     def test_wittenbell_dist(self):
         """
         Test for the Witten-Bell distribution.
         """
-        
+
         seen10, unseen10 = smooth_dist(self.observ1, "wittenbell", bins=10)
         seen99, unseen99 = smooth_dist(self.observ1, "wittenbell", bins=99)
         assert seen10['A'] < seen10['B']
@@ -130,13 +135,14 @@ class Tests(TestCase):
 
         seen, unseen = smooth_dist(self.observ2, "wittenbell")
         assert seen['x'] == seen['y']
+        assert seen['x'] < seen['z']
         assert seen['0'] > unseen
-        
+
     def test_certaintydegree_dist(self):
         """
         Test for the Degree of Certainty distribution.
         """
-        
+
         seen, unseen = smooth_dist(self.observ1, 'certaintydegree')
         seen99, unseen99 = smooth_dist(self.observ1, 'certaintydegree', bins=99)
         assert seen['A'] < seen['B']
@@ -148,28 +154,30 @@ class Tests(TestCase):
 
         seen, unseen = smooth_dist(self.observ2, "certaintydegree")
         assert seen['x'] == seen['y']
+        assert seen['x'] < seen['z']
         assert seen['0'] > unseen
-        
+
     def test_sgt_dist(self):
         """
         Test for the Simple Good-Turing distribution.
         """
-        
+
         # Only run the test if the numpy and scipy libraries (imported
         # by the function) are installed; an ImportError will not be a
         # test failure as we decided that they should not be dependencies.
-        
+
         try:
             # The first distribution does not have enough data for SGT,
             # assert that an assertion is raised.
             assert_raises(RuntimeWarning, smooth_dist, self.observ1, "sgt")
-            
+
             # The second distribution also does not have enough data for
             # a confident results, but it does have enough to stress-test the
             # method, so we are not going to allow it to fail (i.e., raise
             # exceptions)
             seen_p05, unseen_p05 = smooth_dist(self.observ2, "sgt", allow_fail=False)
             assert seen_p05['x'] == seen_p05['y']
+            assert seen_p05['x'] < seen_p05['z']
             assert seen_p05['0'] > unseen_p05
         except ImportError:
             pass
