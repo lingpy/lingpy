@@ -452,7 +452,7 @@ def wl2qlc(
             elif value is None:
                 out += '\t'
             else:
-                out += '\t' + value
+                out += '\t{:}'.format(value)
         out += '\n'
 
     util.write_text_file(
