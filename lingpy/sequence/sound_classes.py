@@ -1400,51 +1400,6 @@ def _seq_as_list(sequence):
     return list(sequence)
 
 
-def bigrams(sequence):
-    """
-    Convert a given sequence into a sequence of bigrams.
-    """
-    seq = _seq_as_list(sequence)
-    return list(zip(['#'] + seq, seq + ['$']))
-
-
-def trigrams(sequence):
-    """
-    Convert a given sequence into a sequence of trigrams.
-    """
-    seq = _seq_as_list(sequence)
-    return list(zip(['#', '#'] + seq, ['#'] + seq + ['$'], seq + ['$', '$']))
-
-
-def fourgrams(sequence):
-    """
-    Convert a given sequence into a sequence of trigrams.
-    """
-    seq = _seq_as_list(sequence)
-    return list(
-        zip(
-            ['#', '#', '#'] + seq,
-            ['#', '#'] + seq + ['$'],
-            ['#'] + seq + ['$', '$'],
-            seq + ['$', '$', '$']
-        )
-    )
-
-
-def get_n_ngrams(sequence, ngram=4):
-    """
-    convert a given sequence into a sequence of ngrams.
-    """
-    seq = _seq_as_list(sequence)
-    tobezipped = []
-    for i in range(ngram):
-        prefix = (ngram - i - 1) * ['#']
-        postfix = i * ['$']
-        tobezipped += [tuple(prefix + seq + postfix)]
-
-    return list(zip(*tobezipped))[ngram - 1:]
-
-
 def pgrams(sequence, **keywords):
     """
     Convert a given sequence into bigrams consisting of prosodic string symbols and the
@@ -1497,7 +1452,7 @@ def clean_string(
         into separate entries.
     splitters : str
         The characters which force the automatic splitting of an entry.
-    prepares : list
+    preparse : list
         List of tuples, giving simple replacement patterns (source and target),
         which are applied before every processing starts.
 

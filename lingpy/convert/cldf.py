@@ -69,7 +69,7 @@ def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
             languages[lid] = dict(
                     ID=lid,
                     Name=wordlist[idx, 'doculect'],
-                    glottocode = wordlist[idx, 'glottocode'])
+                    Glottocode = wordlist[idx, 'glottocode'])
 
         pid = wordlist[idx, 'concepticon_id'] or slug(wordlist[idx, 'concept'])
         if pid not in parameters:
