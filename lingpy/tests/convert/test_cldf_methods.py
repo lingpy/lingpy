@@ -5,6 +5,10 @@ from lingpy.basic.wordlist import Wordlist
 from lingpy.tests.util import test_data
 from lingpy.tests.util_testing import WithTempDir
 
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
 
 
 class FailTests(TestCase):
