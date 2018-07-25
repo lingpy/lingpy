@@ -4,11 +4,11 @@ from nose.tools import raises
 from lingpy.basic.wordlist import Wordlist
 from lingpy.tests.util import test_data
 from lingpy.tests.util_testing import WithTempDir
-
+from lingpy import compat
 
 
 class FailTests(TestCase):
-    @raises(FileNotFoundError)
+    @raises(compat.FileNotFoundError)
     def test_load_noexisting_cldf(self):
         wl = Wordlist.from_cldf(
             test_data('cldf/test-missing-metadata.json'),

@@ -26,6 +26,7 @@ from lingpy.basic.ops import (
 from lingpy.algorithm import clustering as cluster
 from lingpy import util
 from lingpy import log
+from lingpy import compat
 
 
 class BounceAsID:
@@ -1082,7 +1083,7 @@ class Wordlist(QLCParserWithRowsAndCols):
         # Load the dataset.
         fname = Path(path)
         if not fname.exists():
-            raise FileNotFoundError(
+            raise compat.FileNotFoundError(
                 '{:} does not exist'.format(fname))
         if fname.suffix == '.json':
             dataset = pycldf.dataset.Dataset.from_metadata(fname)
