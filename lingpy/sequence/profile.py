@@ -161,6 +161,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(list)
     for idx, word, language in wordlist.iter_rows(ref, col):
+        print(idx, word)
         if isinstance(word, list):
             word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,

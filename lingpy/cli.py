@@ -321,8 +321,8 @@ class profile(Command):
             raise ValueError("Wrong column header specified!")
         if args.clts:
             try:
-                from pyclts.clts import CLTS
-                clts = CLTS()
+                from pyclts.transcriptionsystem import TranscriptionSystem as TS
+                clts = TS('bipa')
             except ImportError:
                 raise ImportError("Module pyclts is not installed on your system")
         else:
