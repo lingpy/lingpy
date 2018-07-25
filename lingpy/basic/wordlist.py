@@ -41,7 +41,7 @@ class BounceAsID:
 
     """
     def __getitem__(self, key):
-        return {"ID"}
+        return {"ID": key}
 
 
 bounce_as_id = BounceAsID()
