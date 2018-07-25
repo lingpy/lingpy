@@ -1043,7 +1043,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             return sum([a / self.height for a in cov.values()]) / self.width
 
     @classmethod
-    def from_cldf(cls, path, *args, columns=[], filter=lambda row: row["Form"], **kwargs):
+    def from_cldf(cls, path, columns=[], filter=lambda row: row["Form"], *args, **kwargs):
         """Load a CLDF dataset.
 
         Open a CLDF Dataset – with metadata or metadata-free – (only Wordlist
