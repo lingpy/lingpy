@@ -3,6 +3,6 @@ from __future__ import unicode_literals, division, absolute_import, print_functi
 
 # python 2.7 compatibility: see http://stackoverflow.com/a/21368622
 try:
-    FileNotFoundError
+    FileNotFoundError = FileNotFoundError
 except NameError:
     FileNotFoundError = IOError
