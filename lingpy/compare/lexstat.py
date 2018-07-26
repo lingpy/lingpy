@@ -1257,9 +1257,9 @@ class LexStat(Wordlist):
             for idxA, idxB in util.combinations2(indices):
                 try:
                     d = function(idxA, idxB)
-                except ZeroDivisionError:
+                except (ZeroDivisionError, ValueError, TypeError):
                     log.warn(
-                        "Encountered Zero-Division for the comparison of "
+                        "Encountered computation error for the comparison of "
                         "{0} ({2}) and {1} ({3})".format(
                             ''.join(self[idxA, self._segments]),
                             ''.join(self[idxB, self._segments]),
@@ -1322,6 +1322,8 @@ class LexStat(Wordlist):
             will be prohibited in the calculations and the edit distance will
             be normalized by the length of the alignment rather than the length
             of the longest sequence, as described in :evobib:`Heeringa2006`.
+        ref : {str} (default=`method`+"id" or "editid")
+            Name of the column containing the identified clusters
         inflation : {int, float} (default=2)
             Specify the inflation parameter for the use of the MCL algorithm.
         expansion : int (default=2)
