@@ -8,6 +8,7 @@ from lingpy.tests.util_testing import WithTempDir
 try:
     FileNotFoundError
 except NameError:
+    # Python2 does not have FileNotFoundError.
     FileNotFoundError = IOError
 
 
