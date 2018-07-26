@@ -29,7 +29,7 @@ from lingpy import log
 from lingpy import compat
 
 
-class BounceAsID:
+class BounceAsID (object):
     """A helper class for CLDF conversion when tables are missing.
 
     A class with trivial ‘item lookup’:
