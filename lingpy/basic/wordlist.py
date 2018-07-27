@@ -13,6 +13,9 @@ from clldutils import dsv
 from csvw.metadata import TableGroup
 from unicodedata import normalize
 
+import pycldf
+from pycldf.util import Path
+
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
 from lingpy.basic.parser import QLCParserWithRowsAndCols
@@ -23,6 +26,26 @@ from lingpy.basic.ops import (
 from lingpy.algorithm import clustering as cluster
 from lingpy import util
 from lingpy import log
+from lingpy import compat
+
+
+class BounceAsID (object):
+    """A helper class for CLDF conversion when tables are missing.
+
+    A class with trivial ‘item lookup’:
+
+    >>> b = BounceAsID()
+    >>> b[5]
+    {"ID": 5}
+    >>> b["long_id"]
+    {"ID": "long_id"}
+
+    """
+    def __getitem__(self, key):
+        return {"ID": key}
+
+
+bounce_as_id = BounceAsID()
 
 
 def _write_file(filename, content, ext=None):
@@ -1020,6 +1043,141 @@ class Wordlist(QLCParserWithRowsAndCols):
         if stats == 'mean':
             return sum([a / self.height for a in cov.values()]) / self.width
 
+    @classmethod
+    def from_cldf(cls, path, columns=[], filter=lambda row: row["Form"], *args, **kwargs):
+        """Load a CLDF dataset.
+
+        Open a CLDF Dataset – with metadata or metadata-free – (only Wordlist
+        datasets are supported for now, because other modules don't seem to
+        make sense for LingPy) and transform it into this Class. Columns from
+        the FormTable are imported in lowercase, columns from LanguageTable,
+        ParameterTable and CognateTable are prefixed with `langage_`,
+        `concept_` and `cogid_`and converted to lowercase.
+
+        Note
+        ----
+        CLDFs default column names for wordlists are different from LingPy's,
+        so you probably have to use
+
+        lingpy.Wordlist.from_cldf(
+            "Wordlist-metadata.json",
+            col="language_id", row="parameter_id", segments="segments", transcription="form")
+
+        in order to avoid errors from LingPy not finding required columns.
+
+        Parameters
+        ----------
+        columns: list of strings
+          The list of columns to import. (default: all columns)
+
+        filter: function: rowdict → bool
+          A condition function for importing only some rows. (default: lambda row: row["form"])
+
+        All other parameters are passed on to the `cls`
+
+        Returns
+        -------
+        A `cls` object representing the CLDF dataset
+
+        """
+        # Load the dataset.
+        fname = Path(path)
+        if not fname.exists():
+            raise compat.FileNotFoundError(
+                '{:} does not exist'.format(fname))
+        if fname.suffix == '.json':
+            dataset = pycldf.dataset.Dataset.from_metadata(fname)
+        else:
+            dataset = pycldf.dataset.Dataset.from_data(fname)
+
+        if dataset.module == "Wordlist":
+            # First, make a list of cognate codes if they are in a separate table.
+            cognateset_assignments = {}
+            try:
+                form_reference = dataset["CognateTable", "formReference"].name
+                for row in dataset["CognateTable"].iterdicts():
+                    cognateset_assignments[row[form_reference]] = row
+            except KeyError:
+                # Either there are no cognate codes, or they are in the form
+                # table. Both options are fine.
+                pass
+
+            f_id = dataset["FormTable", "id"].name
+
+            # Access columns by type, not by name.
+            language_column = dataset["FormTable", "languageReference"].name
+            parameter_column = dataset["FormTable", "parameterReference"].name
+
+            try:
+                l_id = dataset["LanguageTable", "id"].name
+                languages = {l[l_id]: l
+                            for l in dataset["LanguageTable"].iterdicts()}
+            except KeyError:
+                l_id = "ID"
+                languages = bounce_as_id
+
+            try:
+                c_id = dataset["ParameterTable", "id"].name
+                concepts = {c[c_id]: c
+                            for c in dataset["ParameterTable"].iterdicts()}
+            except KeyError:
+                c_id = "ID"
+                concepts = bounce_as_id
+
+            # create dictionary
+            D = {0: columns} # Reserve the header
+            for row in dataset["FormTable"].iterdicts():
+                # check for numeric ID
+                try:
+                    idx = int(row[f_id])
+                except ValueError:
+                    idx = len(D)
+                while idx in D:
+                    idx += 1
+
+                if not D[0]:
+                    columns = list(row.keys())
+                    # TODO: Improve prefixing behaviour
+                    for column in concepts[row[parameter_column]]:
+                        if column == c_id:
+                            continue
+                        columns.append("Concept_{:}".format(column))
+                    for column in languages[row[language_column]]:
+                        if column == l_id:
+                            continue
+                        columns.append("Language_{:}".format(column))
+                    for column in cognateset_assignments.get(row[f_id], []):
+                        if column == form_reference:
+                            continue
+                        columns.append("Cogid_{:}".format(column))
+                    D[0] = [c.lower() for c in columns]
+
+                s = {"Cogid_{:}".format(key): value
+                     for key, value in cognateset_assignments.get(
+                             row[f_id], {}).items()}
+                s.update(
+                    {"Language_{:}".format(key): value
+                     for key, value in languages[row[language_column]].items()})
+                s.update(
+                    {"Concept_{:}".format(key): value
+                     for key, value in concepts[row[parameter_column]].items()})
+                s.update(row)
+
+                if not filter(s):
+                    continue
+
+                D[idx] = [s.get(column) for column in columns]
+
+            # convert to wordlist and return
+            return cls(D, *args, **kwargs)
+        else:
+            # For most LingPy applications, it might be best to see whether we got
+            # a Wordlist module.
+            raise ValueError("LingPy has no procedures for CLDF {:} data.".format(
+                dataset.module))
+
+
+
 
 def get_wordlist(path, delimiter=",", quotechar='"', normalization_form="NFC", **keywords):
     """
@@ -1067,6 +1225,7 @@ def get_wordlist(path, delimiter=",", quotechar='"', normalization_form="NFC", *
         for idx, row in enumerate(data):
             D[idx + 1] = row
     return Wordlist(D, row=kw['row'].lower(), col=kw['col'].lower())
+
 
 def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
         glottocode='Glottocode', language='Name'
@@ -1132,13 +1291,12 @@ def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
 
     # convert to wordlist (simplifies handling)
     wordlist = to(D)
-    
+
     # add cognates if they are needed
     if 'cognates.csv' in tbg.tabledict:
         cognates = {id2idx[row['Form_ID']]: (row['Cognateset_ID'],
             row['Alignment']) for row in tbg.tabledict['cognates.csv']}
-        if cognates:
-            wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
-            wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
+        wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
+        wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
 
     return wordlist

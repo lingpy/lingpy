@@ -7,3 +7,4 @@ csvw
 tqdm
 six
 mock
+pycldf
