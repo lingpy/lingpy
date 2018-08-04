@@ -1,3 +1,4 @@
+from __future__ import generator_stop
 from six import text_type
 """Classes for storing and manipulating a phylogenetic tree.
 
@@ -429,7 +430,7 @@ class TreeNode(object):
         if not self.Children:
             if include_self:
                 yield self
-            raise StopIteration
+            return #raise StopIteration
         child_index_stack = [0]
         curr = self
         curr_children = self.Children
@@ -540,7 +541,7 @@ class TreeNode(object):
         if not self.Children:
             if include_self:
                 yield self
-            raise StopIteration
+            return #raise StopIteration
         #use stack-based method: robust to large trees
         stack = [self]
         while stack:
