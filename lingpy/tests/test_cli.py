@@ -113,8 +113,10 @@ class Tests(WithTempDir):
         self.assertIn('lexstat_threshold', output)
 
     def test_lexstat(self):
+        # TODO check with other python versions
         cogs = main('lexstat', '-i', test_data('KSL.qlc'),
                     '--output-file', self.tmp_path('lexstat').as_posix())
+        print(cogs)
         assert cogs == 1080
 
     def test_profile(self):

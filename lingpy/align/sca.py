@@ -590,6 +590,8 @@ class Alignments(Wordlist):
         self._transcription = kw['transcription'] if kw['transcription'] in \
                                                      self.header else self._alias[
             kw['transcription']]
+        
+
 
         # check whether fuzzy (partial) alignment or normal alignment is
         # carried out, if a new namespace is used, we assume it to be plain
@@ -610,6 +612,20 @@ class Alignments(Wordlist):
                                                      rcParams['gap_symbol']]))
             else:
                 raise ValueError("No valid source for segments could be found.")
+
+
+        # type check
+        if self._alignment in self.header:
+            for idx in self:
+                if not isinstance(self[idx, self._alignment], list):
+                    self[idx, self._alignment] = self[idx, self._alignment].split()
+        for idx in self:
+            if kw['fuzzy'] and not isinstance(self[idx, self._ref], list):
+                self[idx, self._ref] = [int(x) for x in self[idx, self._ref]]
+            elif not isinstance(self[idx, self._ref], int):
+                self[idx, self._ref] = int(self[idx, self._ref])
+
+
 
         self.etd = {}
         self.add_alignments(ref=self._ref, modify_ref=modify_ref,
@@ -744,7 +760,7 @@ class Alignments(Wordlist):
             for key, msa in self.msa[ref].items():
                 for i, idx in enumerate(msa['ID']):
                     try:
-                        tmp[idx] = ' '.join(msa['alignment'][i])
+                        tmp[idx] = msa['alignment'][i]
                     except KeyError:
                         log.error("There are no alignments in your data.  Aborting...")
                         return
@@ -752,11 +768,11 @@ class Alignments(Wordlist):
             missing = [idx for idx in self if idx not in tmp]
             for m in missing:
                 if self._segments in self.header:
-                    tmp[m] = ' '.join(self[m, self._segments])
+                    tmp[m] = self[m, self._segments]
                 elif self._transcription in self.header:
-                    tmp[m] = ' '.join(ipa2tokens(self[m, self._transcription]))
+                    tmp[m] = ipa2tokens(self[m, self._transcription])
                 elif self._alignment in self.header:
-                    tmp[m] = ' '.join(self[m, self._alignment])
+                    tmp[m] = self[m, self._alignment]
                 else:
                     raise ValueError(
                         "There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) " +
