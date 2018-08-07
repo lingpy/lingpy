@@ -1,4 +1,5 @@
 from lingpy.basictypes import strings, ints, floats, lists
+from nose.tools import assert_raises
 
 class Tests():
     
@@ -26,3 +27,21 @@ class Tests():
     assert str(s + s) == '1 2 3 1 2 3'
     i = ints('1 2 3')
     assert str(i + [1, 2, 3]) == '1 2 3 1 2 3'
+
+    # list check
+    assert str(lists('b a + b a') + 'm a') == 'b a + b a + m a'
+
+    # append
+    app = strings('1 2 3')
+    app.append('4')
+    assert str(app) == '1 2 3 4'
+
+    app = ints('1 2 3')
+    app.extend('4 5')
+    assert str(app) == '1 2 3 4 5'
+
+    assert_raises(ValueError, lambda x: strings(x).append('2 3'), '1 2')
+
+    app = lists('1 2 3 + 1 2')
+    app.extend('1 2')
+    assert str(app) == '1 2 3 + 1 2 + 1 2'
