@@ -16,6 +16,10 @@ class _strings(list):
 
         return _strings(self._type, str(self)+' '+str(_strings(self._type, other)))
 
+    def append(self, other):
+
+        return self + other
+
 strings = partial(_strings, str)
 ints = partial(_strings, int)
 floats = partial(_strings, float)
@@ -28,5 +32,11 @@ class lists(_strings):
         _strings.__init__(self, str, iterable)
         self.n = [strings(x) for x in iterable.split(sep)]
         self.sep = sep
+
+    def __add__(self, other):
+
+        return lists(str(self)+self.sep+str(other))
+
+
         
         
