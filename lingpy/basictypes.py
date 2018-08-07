@@ -37,7 +37,8 @@ class lists(_strings):
 
     def __init__(self, iterable, sep=" + "):
         _strings.__init__(self, str, iterable)
-        self.n = [strings(x) for x in iterable.split(sep)]
+        self.n = [strings(x) for x in (' '.join(iterable) if not
+            isinstance(iterable, str) else iterable.split(sep))]
         self.sep = sep
 
     def __add__(self, other):
