@@ -617,7 +617,7 @@ class Alignments(Wordlist):
 
         # type check
         if self._alignment in self.header:
-            alm_type, cog_type, str_type = 3 * [bt.lists] if self._mode == 'fuzzy' \
+            alm_type, cog_type, str_type = bt.lists, bt.ints, bt.lists if self._mode == 'fuzzy' \
                     else (bt.strings, int, bt.strings)
             for idx, alm, cog, seg in self.iter_rows(self._alignment,
                     self._ref, self._segments):
