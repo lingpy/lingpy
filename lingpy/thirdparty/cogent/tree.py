@@ -386,6 +386,7 @@ class TreeNode(object):
                     stack.append([curr.Children[child_idx], 0])
                 else:
                     yield stack.pop()[0]
+        
         """
         child_index_stack = [0]
         curr = self
@@ -429,7 +430,10 @@ class TreeNode(object):
         if not self.Children:
             if include_self:
                 yield self
-            raise StopIteration
+            try:
+                return 
+            except:
+                raise StopIteration
         child_index_stack = [0]
         curr = self
         curr_children = self.Children
@@ -540,7 +544,10 @@ class TreeNode(object):
         if not self.Children:
             if include_self:
                 yield self
-            raise StopIteration
+            try:
+                return 
+            except:
+                raise StopIteration
         #use stack-based method: robust to large trees
         stack = [self]
         while stack:
