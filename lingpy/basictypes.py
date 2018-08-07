@@ -24,6 +24,9 @@ class _strings(list):
         other = _strings(self._type, other)
         super(_strings, self).extend(other)
 
+    def __setitem__(self, index, item):
+        list.__setitem__(self, index, self._type(item))
+
 
 strings = partial(_strings, str)
 ints = partial(_strings, int)

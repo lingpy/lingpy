@@ -45,3 +45,7 @@ class Tests():
     app = lists('1 2 3 + 1 2')
     app.extend('1 2')
     assert str(app) == '1 2 3 + 1 2 + 1 2'
+
+    app = strings('1 2 3')
+    app[1] = 2
+    assert app[1] == '2'
