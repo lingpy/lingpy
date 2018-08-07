@@ -620,9 +620,9 @@ class Alignments(Wordlist):
                 if not isinstance(self[idx, self._alignment], list):
                     self[idx, self._alignment] = self[idx, self._alignment].split()
         for idx in self:
-            if kw['fuzzy'] and not isinstance(self[idx, self._ref], list):
+            if self._mode == 'fuzzy' and not isinstance(self[idx, self._ref], list):
                 self[idx, self._ref] = [int(x) for x in self[idx, self._ref]]
-            elif not isinstance(self[idx, self._ref], int):
+            elif not self._mode == 'fuzzy' and not isinstance(self[idx, self._ref], int):
                 self[idx, self._ref] = int(self[idx, self._ref])
 
 
