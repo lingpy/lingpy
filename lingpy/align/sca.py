@@ -15,6 +15,7 @@ from collections import Counter, defaultdict
 from six import text_type
 
 from lingpy import __version__
+from lingpy import basictypes as bt
 from lingpy.read.qlc import read_msa, normalize_alignment, reduce_alignment
 from lingpy.settings import rcParams
 from lingpy.basic.wordlist import Wordlist
@@ -616,15 +617,13 @@ class Alignments(Wordlist):
 
         # type check
         if self._alignment in self.header:
-            for idx in self:
-                if not isinstance(self[idx, self._alignment], list):
-                    self[idx, self._alignment] = self[idx, self._alignment].split()
-        for idx in self:
-            if self._mode == 'fuzzy' and not isinstance(self[idx, self._ref], list):
-                self[idx, self._ref] = [int(x) for x in self[idx, self._ref]]
-            elif not self._mode == 'fuzzy' and not isinstance(self[idx, self._ref], int):
-                self[idx, self._ref] = int(self[idx, self._ref])
-
+            alm_type, cog_type, str_type = 3 * [bt.lists] if self._mode == 'fuzzy' \
+                    else (bt.strings, int, bt.strings)
+            for idx, alm, cog, seg in self.iter_rows(self._alignment,
+                    self._ref, self._segments):
+                self[idx, self._alignment] = alm_type(alm)
+                self[idx, self._ref] = cog_type(cog)
+                self[idx, self._segments] = str_type(seg)
 
 
         self.etd = {}
