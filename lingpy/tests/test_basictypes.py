@@ -20,3 +20,9 @@ class Tests():
 
     s = strings(string1)
     assert str(s) == string1
+
+    # check for types
+    s = strings('1 2 3')
+    assert str(s + s) == '1 2 3 1 2 3'
+    i = ints('1 2 3')
+    assert str(i + [1, 2, 3]) == '1 2 3 1 2 3'

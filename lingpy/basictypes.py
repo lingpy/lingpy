@@ -6,10 +6,15 @@ class _strings(list):
         
         list.__init__(self, [type_(x) for x in (iterable if not isinstance(iterable, str) else
                 iterable.split())])
+        self._type = type_
 
     def __str__(self):
 
         return ' '.join([str(x) for x in self])
+
+    def __add__(self, other):
+
+        return _strings(self._type, str(self)+' '+str(_strings(self._type, other)))
 
 strings = partial(_strings, str)
 ints = partial(_strings, int)
