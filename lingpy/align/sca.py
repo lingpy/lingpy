@@ -15,6 +15,7 @@ from collections import Counter, defaultdict
 from six import text_type
 
 from lingpy import __version__
+from lingpy import basictypes as bt
 from lingpy.read.qlc import read_msa, normalize_alignment, reduce_alignment
 from lingpy.settings import rcParams
 from lingpy.basic.wordlist import Wordlist
@@ -590,6 +591,8 @@ class Alignments(Wordlist):
         self._transcription = kw['transcription'] if kw['transcription'] in \
                                                      self.header else self._alias[
             kw['transcription']]
+        
+
 
         # check whether fuzzy (partial) alignment or normal alignment is
         # carried out, if a new namespace is used, we assume it to be plain
@@ -610,6 +613,18 @@ class Alignments(Wordlist):
                                                      rcParams['gap_symbol']]))
             else:
                 raise ValueError("No valid source for segments could be found.")
+
+
+        # type check
+        if self._alignment in self.header:
+            alm_type, cog_type, str_type = bt.lists, bt.ints, bt.lists if self._mode == 'fuzzy' \
+                    else (bt.strings, int, bt.strings)
+            for idx, alm, cog, seg in self.iter_rows(self._alignment,
+                    self._ref, self._segments):
+                self[idx, self._alignment] = alm_type(alm)
+                self[idx, self._ref] = cog_type(cog)
+                self[idx, self._segments] = str_type(seg)
+
 
         self.etd = {}
         self.add_alignments(ref=self._ref, modify_ref=modify_ref,
@@ -744,7 +759,7 @@ class Alignments(Wordlist):
             for key, msa in self.msa[ref].items():
                 for i, idx in enumerate(msa['ID']):
                     try:
-                        tmp[idx] = ' '.join(msa['alignment'][i])
+                        tmp[idx] = msa['alignment'][i]
                     except KeyError:
                         log.error("There are no alignments in your data.  Aborting...")
                         return
@@ -752,11 +767,11 @@ class Alignments(Wordlist):
             missing = [idx for idx in self if idx not in tmp]
             for m in missing:
                 if self._segments in self.header:
-                    tmp[m] = ' '.join(self[m, self._segments])
+                    tmp[m] = self[m, self._segments]
                 elif self._transcription in self.header:
-                    tmp[m] = ' '.join(ipa2tokens(self[m, self._transcription]))
+                    tmp[m] = ipa2tokens(self[m, self._transcription])
                 elif self._alignment in self.header:
-                    tmp[m] = ' '.join(self[m, self._alignment])
+                    tmp[m] = self[m, self._alignment]
                 else:
                     raise ValueError(
                         "There are no phonetic sequences (TOKENS, ALIGNMENT, or IPA) " +

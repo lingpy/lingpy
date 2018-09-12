@@ -20,7 +20,7 @@ class Tests(TestCase):
         assert len(sn._get_concepts(self.wl, 'concept')) == 6
 
     def test_mutual_coverage(self):
-        assert sn.mutual_coverage(self.wl)['French']['Albanian'] == 3
+        assert len(sn.mutual_coverage(self.wl)['French']['Albanian']) == 3
 
     def test_mutual_coverage_check(self):
         assert not sn.mutual_coverage_check(self.wl, 3)

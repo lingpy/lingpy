@@ -63,7 +63,7 @@ def mutual_coverage(wordlist, concepts='concept'):
     coverage = defaultdict(dict)
     concepts = _get_concepts(wordlist, concepts)
     for t1, t2 in combinations(wordlist.cols, r=2):
-        coverage[t1][t2] = len(concepts[t1].intersection(concepts[t2]))
+        coverage[t1][t2] = concepts[t1].intersection(concepts[t2])
         coverage[t2][t1] = coverage[t1][t2]
     return coverage
 
@@ -107,7 +107,7 @@ def mutual_coverage_check(wordlist, threshold, concepts='concept'):
     """
     mc = mutual_coverage(wordlist, concepts)
     for coverage in mc.values():
-        if [x for x in coverage if coverage[x] < threshold]:
+        if [x for x in coverage if len(coverage[x]) < threshold]:
             return False
     return True
 
@@ -156,7 +156,7 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
     for tax in wordlist.cols:
         G.add_node(tax)
     for taxA, taxB in combinations(wordlist.cols, r=2):
-        if coverage[taxA][taxB] >= threshold:
+        if len(coverage[taxA][taxB]) >= threshold:
             G.add_edge(taxA, taxB, coverage=coverage[taxA][taxB])
     
     best_cliques = defaultdict(list)
@@ -164,7 +164,7 @@ def mutual_coverage_subset(wordlist, threshold, concepts='concept'):
     for clique in find_cliques(G):
         sums = []
         for taxA, taxB in combinations(clique, r=2):
-            sums += [G[taxA][taxB]['coverage']]
+            sums += [len(G[taxA][taxB]['coverage'])]
         if sums:
             val = int(sum(sums) / len(sums) + 0.5)
             best_cliques[len(clique)] += [(val, sorted(clique))]
