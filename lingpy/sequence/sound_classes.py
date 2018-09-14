@@ -131,7 +131,7 @@ def ipa2tokens(istring, **keywords):
     nasals = 'ãũẽĩõ'
     nasal_char = "\u0303"
     semi_diacritics = kw['semi_diacritics']
-    nogos = "_◦"
+    nogos = "_◦+"
 
     for char in istring:
         # check for nasal stack and vowel environment

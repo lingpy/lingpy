@@ -45,7 +45,6 @@ class QLCParser(object):
             if 'filename' not in input_data:
                 self.filename = rcParams['filename']
             internal_import = True
-
             # make check for correct input, there was a bug with a wrong
             # evaluation which is hopefully fixed by now
             tmp_keys = [k for k in input_data if isinstance(k, int)]

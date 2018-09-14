@@ -212,7 +212,7 @@ def average_coverage(wordlist, concepts='concepts'):
     score = []
     for v in mc.values():
         for key, val in v.items():
-            score += [val]
+            score += [len(val)]
     return sum(score) / len(score) / wordlist.height
 
 
