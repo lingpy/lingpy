@@ -583,8 +583,8 @@ class Alignments(Wordlist):
         # initialize the wordlist
         Wordlist.__init__(self, infile, row, col, conf)
         self._interactive = _interactive
-        self._alignment = kw['alignment'] if kw['alignment'] in \
-                                             self.header else self._alias[kw['alignment']]
+        self._alignment = kw['alignment'] #if kw['alignment'] in \
+                                          #   self.header else self._alias[kw['alignment']]
         self._segments = kw['segments'] if kw['segments'] in self.header else \
             self._alias[kw['segments']]
         self._ref = ref if ref in self.header else self._alias[ref]
@@ -600,35 +600,41 @@ class Alignments(Wordlist):
                 kw['fuzzy'] or (ref in self._class_string and self._class_string[ref] \
                                                               not in ['str',
                                                                       'int'])) else 'plain'
+        if self._mode == 'fuzzy':
+            self._str_type = bt.lists
+            self._cog_type = bt.ints
+        else:
+            self._str_type = bt.strings
+            self._cog_type = int
+
         # store loan-status
         self._modify_ref = modify_ref
 
         if self._segments not in self._header:
             if self._transcription in self.header:
                 self.add_entries(self._segments, self._transcription,
-                                 ipa2tokens)
+                        lambda x: self._str_type(ipa2tokens(x)))
             elif self._alignment in self.header:
                 self.add_entries(self._segments, self._alignment,
-                                 lambda x: ' '.join([y for y in x if y not in
+                                 lambda x: self._str_type([y for y in x if y not in
                                                      rcParams['gap_symbol']]))
             else:
                 raise ValueError("No valid source for segments could be found.")
 
-
-        # type check
-        if self._alignment in self.header:
-            alm_type, cog_type, str_type = bt.lists, bt.ints, bt.lists if self._mode == 'fuzzy' \
-                    else (bt.strings, int, bt.strings)
-            for idx, alm, cog, seg in self.iter_rows(self._alignment,
-                    self._ref, self._segments):
-                self[idx, self._alignment] = alm_type(alm)
-                self[idx, self._ref] = cog_type(cog)
-                self[idx, self._segments] = str_type(seg)
-
-
         self.etd = {}
-        self.add_alignments(ref=self._ref, modify_ref=modify_ref,
+        self.add_alignments(ref=self._ref, 
+                modify_ref=int,
                 split_on_tones=split_on_tones)
+        
+        # type check
+        if not self._alignment in self._header:
+            self.add_entries(self._alignment, self._segments, self._str_type)
+
+        for idx, cog, seg, alm in self.iter_rows(
+                self._ref, self._segments, self._alignment):
+            self[idx, self._ref] = self._cog_type(cog)
+            self[idx, self._segments] = self._str_type(seg)
+            self[idx, self._alignment] = self._str_type(alm)
 
     def add_alignments(self, ref=False, modify_ref=False, fuzzy=False,
             split_on_tones=True):
@@ -651,7 +657,8 @@ class Alignments(Wordlist):
         ref = ref or self._ref
         # check for cognate-id or alignment-id in header
         try:
-            self.etd[ref] = self.get_etymdict(ref=ref, modify_ref=modify_ref)
+            self.etd[ref] = self.get_etymdict(ref=ref,
+                    modify_ref=modify_ref)
         except:
             raise ValueError("Did not find a cognate ID in the input file.")
 
@@ -691,7 +698,7 @@ class Alignments(Wordlist):
                                 # split the string into morphemes
                                 # FIXME add keywords for morpheme segmentation
                                 morphemes = tokens2morphemes(this_string,
-                                        tones='' if not split_on_tones else 'T'
+                                        tone='' if not split_on_tones else 'T'
                                         )
                                 # get the position of the morpheme
                                 midx = self[seq][self.header[ref]].index(key)
@@ -796,7 +803,7 @@ class Alignments(Wordlist):
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(alignment, tmp, lambda x: x, overwrite=True)
+        self.add_entries(alignment, tmp, lambda x: x, override=True)
 
     def align(self, **keywords):
         """
