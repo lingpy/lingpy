@@ -1,4 +1,5 @@
 from functools import partial
+from six import text_type as str
 
 class _strings(list):
 
