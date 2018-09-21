@@ -940,7 +940,30 @@ class Alignments(Wordlist):
                         sonars = [self[idx, 'sonars'] for idx in value['ID']]
                     else:
                         sonars = False
+                    if self._mode == 'fuzzy':
+                        cogs = [self[idx, self._ref] for idx in value['ID']]
+                        idxs = [c.index(key) for c in cogs]
+                        tokens = [self[idx, self._segments] for idx in 
+                                value['ID']]
+                        for i, (n, idx, t) in enumerate(zip(numbers, idxs,
+                            tokens)):
+                            nums = [[]]
+                            for nn, tt in zip(n, t):
+                                if tt == rcParams['morpheme_separator']:
+                                    nums += [[]]
+                                else:
+                                    nums[-1] += [nn]
+                            numbers[i] = nums[idx]
+                            if sonars:
+                                sons = [[]]
+                                for s, tt in zip(sonars[i], t):
+                                    if tt == rcParams['morpheme_separator']:
+                                        sons += [[]]
+                                    else:
+                                        sons[-1] += [s]
+                                sonars[i] = sons[idx]
                     value['seqs'] = numbers
+
                     m = SCA(value, **kw)
                     kw['sonars'] = sonars
                     kw['classes'] = False
@@ -963,6 +986,8 @@ class Alignments(Wordlist):
                 if kw['scoredict']:
                     for i, alm in enumerate(m.alm_matrix):
                         tk = self[m.ID[i], self._segments]
+                        if self._mode == 'fuzzy':
+                            tk = tk.n[idxs[i]]
                         new_tk = class2tokens(tk, alm)
                         m.alm_matrix[i] = new_tk
 
