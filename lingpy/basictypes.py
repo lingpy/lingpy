@@ -1,4 +1,5 @@
 from functools import partial
+from six import text_type as str
 
 class _strings(list):
 
@@ -18,11 +19,11 @@ class _strings(list):
         other = _strings(self._type, other)
         if len(other) != 1:
             raise ValueError('Use extend() to add more than one item')
-        super(_strings, self).append(other[0])
+        list.append(self, other[0])
 
     def extend(self, other):
         other = _strings(self._type, other)
-        super(_strings, self).extend(other)
+        list.extend(self, other)
 
     def __setitem__(self, index, item):
         list.__setitem__(self, index, self._type(item))
@@ -32,12 +33,29 @@ strings = partial(_strings, str)
 ints = partial(_strings, int)
 floats = partial(_strings, float)
 
+class aligned(_strings):
+
+    def __init__(self, iterable):
+        _strings.__init__(self, str, iterable)
+    
+    @property
+    def a(self):
+        out = []
+        o = False
+        for i in self:
+            if i == '(':
+                o = True
+            if not o:
+                out += [i]
+            if i == ')':
+                o = False
+        return out
 
 class lists(_strings):
 
     def __init__(self, iterable, sep=" + "):
         _strings.__init__(self, str, iterable)
-        self.n = [strings(x) for x in (' '.join(iterable) if not
+        self.n = [strings(x) for x in (' '.join(iterable).split(sep) if not
             isinstance(iterable, str) else iterable.split(sep))]
         self.sep = sep
 
@@ -46,6 +64,11 @@ class lists(_strings):
 
     def extend(self, other):
         super(lists, self).extend(lists('')+other)
+
+    def change(self, i, item):
+        self.n[i] = _strings(str, item)
+        new_s = self.sep.join([' '.join(x) for x in self.n])
+        self.__init__(new_s, sep=self.sep)
 
 
 

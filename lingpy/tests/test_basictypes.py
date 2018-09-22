@@ -1,5 +1,7 @@
+from __future__ import unicode_literals
 from lingpy.basictypes import strings, ints, floats, lists
 from nose.tools import assert_raises
+from six import text_type
 
 class Tests():
     
