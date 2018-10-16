@@ -136,3 +136,10 @@ def test_get_consensus():
     assert cons3[:2] == cons[:2]
     assert cons4[0] == 'h'
     assert cons5[0] == 'h'
+
+def test_partial_alignments_with_lexstat():
+    lex = lp.LexStat(test_data('test-partial-alignments.tsv'), segments='tokens')
+    alms = lp.Alignments(test_data('test-partial-alignments.tsv'), fuzzy=True,
+            ref='cogids', sonar=True, segments='tokens')
+    alms.align(scorer=lex.bscorer)
+    assert '-' in alms.msa['cogids'][12]['alignment'][-1]
