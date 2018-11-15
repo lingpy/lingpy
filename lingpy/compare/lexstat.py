@@ -174,7 +174,20 @@ class LexStat(Wordlist):
 
             >>> lex = LexStat('inputfile.tsv', get_prostring=lambda x: ["x" for
                 y in x])
-
+    cldf : bool (default=True)
+        If set to True, as by default, this will allow for a specific treatment
+        of phonetic
+        symbols which cannot be completely resolved when internally
+        converting tokens to classes (e.g., laryngeal h₂ in
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the
+        specifications for writing transcriptions in segmented strings, as
+        employed by the `CLTS <http://calc.digling.org/clts/>`_ initiative), in
+        cases of insecurity of pronunciation, users can adopt a
+        ```source/target``` style, where the source is the symbol used, e.g.,
+        in a reconstruction system, and the target is a proposed phonetic
+        interpretation. This practice is also accepted by the `EDICTOR
+        <http://edictor.digling.org>`_ tool.
 
     Attributes
     ----------
@@ -255,7 +268,7 @@ class LexStat(Wordlist):
             "row": "concept",
             "col": "doculect",
             "conf": None,
-            'cldf': False
+            'cldf': True
         }
         kw.update(keywords)
 
@@ -297,7 +310,7 @@ class LexStat(Wordlist):
         # add a debug procedure for tokens
         if kw["check"]:
             errors = list(_check_tokens(
-                [(key, self[key, self._segments]) for key in self], 
+                [(key, self[key, self._segments]) for key in self],
                 cldf=kw['cldf']))
             if errors:
                 lines = ["ID\tTokens\tError-Type"]

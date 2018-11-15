@@ -714,7 +714,7 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
                 return '0'
 
 
-def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
+def tokens2class(tokens, model, stress=None, diacritics=None, cldf=True):
     """
     Convert tokenized IPA strings into their respective class strings.
 
@@ -735,10 +735,12 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         A string containing diacritic symbols used in the analysis. Defaults to
         the diacritic symbolds defined in ~lingpy.settings.rcParams.
 
-    cldf : bool (default=False)
-        If set to True, this will allow for a specific treatment of phonetic
+    cldf : bool (default=True)
+        If set to True, as by default, this will allow for a specific treatment
+        of phonetic
         symbols which cannot be completely resolved (e.g., laryngeal h₂ in
-        Indo-European). Following the `CLDF <http://cldf.clld.org>`_ specifications (in particular the
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the
         specifications for writing transcriptions in segmented strings, as
         employed by the `CLTS <http://calc.digling.org/clts/>`_ initiative), in
         cases of insecurity of pronunciation, users can adopt a
