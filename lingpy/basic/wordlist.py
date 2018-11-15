@@ -1057,9 +1057,9 @@ class Wordlist(QLCParserWithRowsAndCols):
         Note
         ----
         CLDFs default column names for wordlists are different from LingPy's,
-        so you probably have to use
+        so you probably have to use::
 
-        lingpy.Wordlist.from_cldf(
+        >>> lingpy.Wordlist.from_cldf(
             "Wordlist-metadata.json",
             col="language_id", row="parameter_id", segments="segments", transcription="form")
 
