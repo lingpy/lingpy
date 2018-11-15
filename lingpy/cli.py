@@ -303,8 +303,9 @@ class profile(Command):
         
     def __call__(self, args):
         if args.cldf:
-            wl = lingpy.basic.wordlist.get_wordlist(args.input_file,
-                    row='Parameter_ID', col='Language_ID')
+            wl = lingpy.basic.wordlist.Wordlist.from_cldf(args.input_file,
+                    row='parameter_id', col='language_id')
+            wl.add_entries('doculect', 'language_name', lambda x: x)
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
 
