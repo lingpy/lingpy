@@ -11,6 +11,7 @@ from collections import defaultdict
 from clldutils.text import split_text, strip_brackets, strip_chars
 
 from lingpy.sequence.sound_classes import codepoint, clean_string, token2class
+from lingpy import log
 
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
@@ -161,7 +162,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(list)
     for idx, word, language in wordlist.iter_rows(ref, col):
-        print(idx, word)
+        log.info('processing {0}-{1}'.format(idx, word))
         if isinstance(word, list):
             word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,

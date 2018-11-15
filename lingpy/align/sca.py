@@ -637,7 +637,7 @@ class Alignments(Wordlist):
             self[idx, self._alignment] = self._str_type(alm)
 
     def add_alignments(self, ref=False, modify_ref=False, fuzzy=False,
-            split_on_tones=True):
+            split_on_tones=True, override=False):
         """
         Function adds a new set of alignments to the data.
 
@@ -668,7 +668,7 @@ class Alignments(Wordlist):
             self._meta['msa'] = {ref: {}}
         if ref not in self._meta['msa']:
             self._meta['msa'][ref] = {}
-        if not self._meta['msa'][ref]:
+        if not self._meta['msa'][ref] or override:
             for key, value in self.etd[ref].items():
                 if key not in [0, '', '0']:
                     tmp = [x for x in value if x != 0]
@@ -705,7 +705,7 @@ class Alignments(Wordlist):
                                 this_string = morphemes[midx]
 
                             d['ID'].append(seq)
-                            d['taxa'].append(self[seq, 'taxa'])
+                            d['taxa'].append(self[seq][self._colIdx])
                             d['seqs'].append(this_string)
                             d['alignment'].append(this_string)
 
