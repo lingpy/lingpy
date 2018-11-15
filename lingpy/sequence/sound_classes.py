@@ -458,7 +458,8 @@ def tokens2morphemes(tokens, **keywords):
             out += [[]]
     # check for bad examples
     if ['' for x in out if not x]:
-        raise ValueError("[!] Your data contains empty morpheme segments.")
+        log.warn("[!] Your data contains empty morpheme segments.")
+        out = [x for x in out if x]
 
     return out
 
