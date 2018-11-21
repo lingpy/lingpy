@@ -1292,11 +1292,12 @@ def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
     # convert to wordlist (simplifies handling)
     wordlist = to(D)
 
-    # add cognates if they are needed
+    # add cognates if they are needed and provided
     if 'cognates.csv' in tbg.tabledict:
         cognates = {id2idx[row['Form_ID']]: (row['Cognateset_ID'],
             row['Alignment']) for row in tbg.tabledict['cognates.csv']}
-        wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
-        wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
+        if cognates:
+            wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
+            wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
 
     return wordlist
