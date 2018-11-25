@@ -697,9 +697,8 @@ class Alignments(Wordlist):
                             if self._mode == 'fuzzy':
                                 # split the string into morphemes
                                 # FIXME add keywords for morpheme segmentation
-                                morphemes = tokens2morphemes(this_string,
-                                        tone='' if not split_on_tones else 'T'
-                                        )
+                                morphemes = self._str_type(this_string).n \
+                                        if not split_on_tones else tokens2morphemes(this_string, tone='T')
                                 # get the position of the morpheme
                                 midx = self[seq][self.header[ref]].index(key)
                                 this_string = morphemes[midx]
@@ -803,7 +802,7 @@ class Alignments(Wordlist):
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(alignment, tmp, lambda x: x, override=True)
+        self.add_entries(alignment, tmp, lambda x: self._str_type(x), override=True)
 
     def align(self, **keywords):
         """
