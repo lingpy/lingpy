@@ -744,7 +744,7 @@ def get_n_ngrams(sequence, order, pad_symbol=_PAD_SYMBOL):
         yield ngram
 
 
-def get_all_ngrams(sequence, orders=None, pad_symbol=_PAD_SYMBOL):
+def get_all_ngrams_by_order(sequence, orders=None, pad_symbol=_PAD_SYMBOL):
     """
     Build an iterator for collecting all ngrams of a given set of orders.
 
@@ -776,7 +776,7 @@ def get_all_ngrams(sequence, orders=None, pad_symbol=_PAD_SYMBOL):
     --------
     >>> from lingpy.sequence import *
     >>> sent = "Insurgents were killed"
-    >>> for ngram in get_all_ngrams(sent):
+    >>> for ngram in get_all_ngrams_by_order(sent):
     ...     print(ngram)
     ...
     ('Insurgents',)
@@ -1272,3 +1272,57 @@ fourgrams.__doc__ = """
     ('ongoing', 'fighting', '$$$', '$$$')
     ('fighting', '$$$', '$$$', '$$$')
     """
+
+
+def get_all_ngrams(sequence, sort=False):
+    """
+    Function returns all possible n-grams of a given sequence.
+
+    Parameters
+    ----------
+    sequence : list or str
+        The sequence that shall be converted into it's ngram-representation.
+
+    Returns
+    -------
+    out : list
+        A list of all ngrams of the input word, sorted in decreasing order of
+        length.
+
+    Examples
+    --------
+    >>> get_all_ngrams('abcde')
+    ['abcde', 'bcde', 'abcd', 'cde', 'abc', 'bcd', 'ab', 'de', 'cd', 'bc', 'a', 'e', 'b', 'd', 'c']
+
+    """
+
+    # get the length of the word
+    l = len(sequence)
+
+    # determine the starting point
+    i = 0
+
+    # define the output list
+    out = []
+
+    # start the while loop
+    while i != l and i < l:
+        # copy the sequence
+        new_sequence = sequence[i:l]
+
+        # append the sequence to the output list
+        out += [new_sequence]
+
+        # loop over the new sequence
+        for j in range(1, len(new_sequence)):
+            out += [new_sequence[:j]]
+            out += [new_sequence[j:]]
+
+        # increment i and decrement l
+        i += 1
+        l -= 1
+
+    sort = sort or list
+
+    return sort(out)
+

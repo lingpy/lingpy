@@ -484,7 +484,7 @@ def npoint_ap(scores, cognates, reverse=False):
     try: 
         return p / cognates.count(1)
     except ZeroDivisionError:
-        log.warn("Encountered Zero Division in npoint_ap, your data seems to contain no cognates.")
+        log.warning("Encountered Zero Division in npoint_ap, your data seems to contain no cognates.")
         return 0
 
 

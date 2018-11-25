@@ -240,7 +240,7 @@ class Multiple(UnicodeMixin):
             if log.get_level() <= logging.DEBUG:
                 for _i, _sonar in enumerate(self._sonars):
                     if 0 in _sonar:
-                        self.log.warn(
+                        self.log.warning(
                             "Sequence {0} contains unrecognized characters!".format(
                                 self.seqs[self.int2ext[_i][0]]))
             self._prostrings = list([prosodic_string(s) for s in self._sonars])
@@ -502,7 +502,7 @@ class Multiple(UnicodeMixin):
                 consB = [
                     int(sum([k for k in col if k >= 0]) /
                         len([k for k in col if k >= 0]) + 0.5) for col in sonarB]
-                self.log.warn("There are empty segments in the consensus.")
+                self.log.warning("There are empty segments in the consensus.")
                 self.log.info(
                     '',
                     extra=dict(lines=[' '.join([str(x) for x in cons])
@@ -668,7 +668,7 @@ class Multiple(UnicodeMixin):
                     consensus = [
                         int(sum([k for k in col if k >= 0]) /
                             len([k for k in col if k >= 0]) + 0.5) for col in sonars]
-                    self.log.warn("There are empty segments in the consensus.")
+                    self.log.warning("There are empty segments in the consensus.")
                     self.log.info('', extra=dict(lines=[consensus]))
                 except:
                     consensus = []

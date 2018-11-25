@@ -42,7 +42,7 @@ class TestParser(TestCase):
 
     def test_getitem(self):
         key = list(self.parser._data.keys())[0]
-        self.assertEquals(self.parser[key], self.parser._data[key])
+        self.assertEqual(self.parser[key], self.parser._data[key])
         assert self.parser[key, 'cogid']
 
         self.assertRaises(KeyError, itemgetter(None), self.parser)

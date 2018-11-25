@@ -48,7 +48,7 @@ def read_dst(filename, taxlen=10, comment='#'):
             if taxlen > 0:
                 taxa.append(line[:taxlen].strip())
                 matrix.append([float(val) for val in
-                               re.split('\s+', line[taxlen + 1:].strip())])
+                               re.split(r'\s+', line[taxlen + 1:].strip())])
             else:
                 splits = line.split('\t')
                 taxa.append(splits[0])

@@ -7,7 +7,7 @@ from collections import namedtuple, defaultdict
 from itertools import combinations
 
 import numpy as np
-from clldutils.misc import cached_property
+from clldutils.misc import lazyproperty
 
 from lingpy.algorithm import misc
 from lingpy import log
@@ -45,7 +45,7 @@ class EvalMSA(Eval):
     --------
     ~lingpy.evaluate.apa.EvalPSA
     """
-    @cached_property()
+    @lazyproperty
     def c_scores(self):
         """
         Calculate the c-scores.
@@ -445,7 +445,7 @@ class EvalPSA(Eval):
 
         return score / len(self.gold.alignments)
 
-    @cached_property()
+    @lazyproperty
     def pairwise_column_scores(self):
         """
         Compute the different column scores for pairwise alignments. The method

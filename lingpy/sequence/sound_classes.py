@@ -458,7 +458,7 @@ def tokens2morphemes(tokens, **keywords):
             out += [[]]
     # check for bad examples
     if ['' for x in out if not x]:
-        log.warn("[!] Your data contains empty morpheme segments.")
+        log.warning("[!] Your data contains empty morpheme segments.")
         out = [x for x in out if x]
 
     return out
@@ -1271,14 +1271,14 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / (aln_pos + int_gps)
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 1:
         try:
             return idn_pos / aln_pos
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 3:
@@ -1287,7 +1287,7 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 4:
@@ -1297,7 +1297,7 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 5:
@@ -1418,7 +1418,7 @@ def _get_brackets(brackets):
     for b in brackets:
         out[b] = unicodedata.lookup(unicodedata.name(b).replace('LEFT', 'RIGHT'))
         if b == out[b]:
-            log.warn('lingpy.sequence.sound_classes.get_brackets' + \
+            log.warning('lingpy.sequence.sound_classes.get_brackets' + \
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
 

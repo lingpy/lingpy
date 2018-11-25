@@ -105,7 +105,7 @@ class LexStat(Wordlist):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-    vowels : str (default="VT\_")
+    vowels : str (default="VT_")
         For scoring function creation using the
         :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
         have the possibility to use reduced scores for the matching of tones
@@ -752,7 +752,7 @@ class LexStat(Wordlist):
                             j += 1
                             words += [s]
                     if len(words) < kw['rands']:
-                        log.warn(
+                        log.warning(
                                 "Could not generate enough distinct words for"
                                 " the random distribution. "
                                 "Will expand automatically")
@@ -1003,7 +1003,7 @@ class LexStat(Wordlist):
 
         # check for existing attributes
         if hasattr(self, 'cscorer') and not kw['force']:
-            log.warn(
+            log.warning(
                 "An identical scoring function has already been calculated, "
                 "force recalculation by setting 'force' to 'True'.")
             return
@@ -1012,13 +1012,13 @@ class LexStat(Wordlist):
         if hasattr(self, 'params') and not kw['force']:
             if 'cscorer' in self.params:
                 if self.params['cscorer'] == params:
-                    log.warn(
+                    log.warning(
                         "An identical scoring function has already been "
                         "calculated, force recalculation by setting 'force'"
                         " to 'True'.")
                     return
             else:
-                log.warn(
+                log.warning(
                     "A different scoring function has already been calculated, "
                     "overwriting previous settings.")
 
@@ -1105,7 +1105,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T\_")
+        restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         distance : bool (default=True)
@@ -1258,7 +1258,7 @@ class LexStat(Wordlist):
                 try:
                     d = function(idxA, idxB)
                 except ZeroDivisionError:
-                    log.warn(
+                    log.warning(
                         "Encountered Zero-Division for the comparison of "
                         "{0} ({2}) and {1} ({3})".format(
                             ''.join(self[idxA, self._segments]),
@@ -1306,7 +1306,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T\_")
+        restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')
@@ -1499,7 +1499,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T\_'):
+            restricted_chars='T_'):
         """
         Method calculates randoms scores for unrelated words in a dataset.
 
@@ -1517,7 +1517,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T\_")
+        restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
 
@@ -1547,7 +1547,7 @@ class LexStat(Wordlist):
             gop=-2,
             scale=0.5,
             factor=0.3,
-            restricted_chars='T\_',
+            restricted_chars='T_',
             aggregate=True):
         """
         Method calculates different distance estimates for language pairs.
@@ -1566,7 +1566,7 @@ class LexStat(Wordlist):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T\_")
+        restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         aggregate : bool (default=True)

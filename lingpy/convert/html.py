@@ -565,7 +565,7 @@ def string2html(
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
             except KeyError:
-                log.warn("Unknown character '" + char + "', press ANY key to continue. ")
+                log.warning("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
@@ -717,7 +717,7 @@ def tokens2html(
                 c = rcParams['_color'][char[0]]
                 fg = '#000000'
             except KeyError:
-                log.warn("Unknown character '" + char + "', press ANY key to continue. ")
+                log.warning("Unknown character '" + char + "', press ANY key to continue. ")
                 c = '#ffffff'
                 fg = '#eb3410'
 
@@ -785,7 +785,7 @@ def psa2html(infile, **kw):
             assert len(alignments[-1][0]) == len(alignments[-1][1])
             i += 4
         except AssertionError:
-            log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
+            log.warning("Line {0} of the data is probably miscoded.".format(i + 1))
             i += 1
 
     def get_classes(alm):

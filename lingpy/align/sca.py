@@ -404,7 +404,7 @@ class PSA(Pairwise):
                 handle_data(data, i)
                 i += 4
             except:
-                log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
+                log.warning("Line {0} of the data is probably miscoded.".format(i + 1))
                 i += 1
 
         self.pair_num = len(self.pairs)
@@ -742,7 +742,7 @@ class Alignments(Wordlist):
         for k, d in self._meta['msa'][ref].items():
             ralms = reduce_alignment(d[alignment])
             if len(ralms[0]) != len(d[alignment][0]):
-                log.warn('Found an alignment that could be reduced.')
+                log.warning('Found an alignment that could be reduced.')
             d['_' + alignment] = ralms
             for idx, alm in zip(d['ID'], d['_' + alignment]):
                 D[idx] = alm
