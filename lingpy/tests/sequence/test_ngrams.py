@@ -315,9 +315,32 @@ class Tests(TestCase):
         assert ref == Counter(get_all_posngrams(lst_seq, [2, 3], [1]))
         
     def test_ngram_class(self):
-        # Read the standard Unix dictionary as source, using a random sample
-        # of words (we don't need everything for testing)
-        words = ['help', 'helper', 'helpful']
+        # A bunch of random words for testing
+        words = [
+            "adamant",
+            "aplastic",
+            "asperges",
+            "benthamic",
+            "bridoon",
+            "contraband",
+            "dilatableness",
+            "help",
+            "helper",
+            "helpful",
+            "hieronymic",
+            "hydrogeological",
+            "insetting",
+            "integrating",
+            "lirellate",
+            "metempirically",
+            "misguided",
+            "mononuclear",
+            "praiseworthiness",
+            "sarcocarp",
+            "springlet",
+            "ungambling",
+            "wilco",
+        ]
         
         # Build an empty ngram model.
         NgramModel()
@@ -327,7 +350,7 @@ class Tests(TestCase):
         
         # Assert that an error will be raised if we try to score a sequence
         # before training the model.
-        #assert_raises(AssertionError, model.score, random.sample(words, 1)[0])
+        assert_raises(AssertionError, model.score, random.sample(words, 1)[0])
 
         # Run different trainings.
         model.train()
@@ -344,7 +367,7 @@ class Tests(TestCase):
         # Assert that the score of a word when using length probability will be
         # lower than when not using it.
         rnd_word = random.sample(words, 1)[0]
-        #assert model.score(rnd_word, use_length=True) < model.score(rnd_word, use_length=False)
+        assert model.score(rnd_word, use_length=True) < model.score(rnd_word, use_length=False)
         
         # Score a random sequence of printable characters (which might,
         # however, not be handled by the installed fonts) and observed characters.
@@ -363,7 +386,7 @@ class Tests(TestCase):
         
         # Compute the perplexity for a number of sequences in the training set.
         # This will internally call `.entropy()`.
-        [model.perplexity(word) for word in random.sample(words, 3)]
+        assert model.perplexity(random.sample(words, 3))
        
         # Generate a bunch of random words with different parameters, to guarantee
         # full coverage.
