@@ -313,39 +313,62 @@ class Tests(TestCase):
                        ((  'A',   'B',   'C', '###', '$$$'), 'D', 3)])
         assert ref == Counter(get_all_posngrams(str_seq, [2, 3], [1]))
         assert ref == Counter(get_all_posngrams(lst_seq, [2, 3], [1]))
-        
+
     def test_ngram_class(self):
-        # Read the standard Unix dictionary as source, using a random sample
-        # of words (we don't need everything for testing)
-        words = ['help', 'helper', 'helpful']
-        
+        # A bunch of random words for testing
+        words = [
+            "adamant",
+            "aplastic",
+            "asperges",
+            "benthamic",
+            "bridoon",
+            "contraband",
+            "dilatableness",
+            "help",
+            "helper",
+            "helpful",
+            "hieronymic",
+            "hydrogeological",
+            "insetting",
+            "integrating",
+            "lirellate",
+            "metempirically",
+            "misguided",
+            "mononuclear",
+            "praiseworthiness",
+            "sarcocarp",
+            "springlet",
+            "ungambling",
+            "wilco",
+        ]
+
         # Build an empty ngram model.
         NgramModel()
-        
+
         # Build a simple ngram model, than train it with different paramenters.
         model = NgramModel(2, 1, sequences=words)
-        
+
         # Assert that an error will be raised if we try to score a sequence
         # before training the model.
-        #assert_raises(AssertionError, model.score, random.sample(words, 1)[0])
+        assert_raises(AssertionError, model.score, random.sample(words, 1)[0])
 
         # Run different trainings.
         model.train()
         model.train(method='lidstone', gamma=0.1)
         model.train(method='certaintydegree', set_min=True)
         model.train(normalize=True)
-        
+
         # Compute the relative likelihood for a random sample of `words`, both
         # using and not using length probability.
-        # This will internally call the `.state_score()` method.        
+        # This will internally call the `.state_score()` method.
         [model.score(word, use_length=True) for word in random.sample(words, 3)]
         [model.score(word, use_length=False) for word in random.sample(words, 3)]
-        
+
         # Assert that the score of a word when using length probability will be
         # lower than when not using it.
         rnd_word = random.sample(words, 1)[0]
-        #assert model.score(rnd_word, use_length=True) < model.score(rnd_word, use_length=False)
-        
+        assert model.score(rnd_word, use_length=True) < model.score(rnd_word, use_length=False)
+
         # Score a random sequence of printable characters (which might,
         # however, not be handled by the installed fonts) and observed characters.
         # The sequence is shuffled in place for even higher randomness, so we
@@ -356,20 +379,21 @@ class Tests(TestCase):
         rnd_seq = random.sample(string.printable, 7)
         rnd_seq += random.sample(words, 1)[0]
         random.shuffle(rnd_seq)
-        #assert model.score(rnd_seq) < model.score(random.sample(words, 1)[0])
-        
+        assert model.score(rnd_seq) < model.score(random.sample(words, 1)[0])
+
         # Get the model entropy.
         model.model_entropy()
-        
+
         # Compute the perplexity for a number of sequences in the training set.
         # This will internally call `.entropy()`.
-        [model.perplexity(word) for word in random.sample(words, 3)]
-       
+        assert model.perplexity(random.sample(words, 3))
+        #[model.perplexity(word) for word in random.sample(words, 3)]
+
         # Generate a bunch of random words with different parameters, to guarantee
         # full coverage.
         model.random_seqs(k=15)
         model.random_seqs(k=15, only_longest=True)
-        
+
         # Generate a bunch of random words with different length parameters.
         model.random_seqs(k=15)
         model.random_seqs(k=15, seq_len=5)
