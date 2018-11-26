@@ -107,8 +107,8 @@ def iter_rows(wordlist, *values):
         row in the wordlist and the corresponding cells, as specified in
         the headers.
 
-    Note
-    ----
+    Notes
+    -----
     Use this function to quickly iterate over specified fields in the
     wordlist. For example, when trying to access all pairs of language
     names and concepts, you may write::
