@@ -107,6 +107,7 @@ class TestLexStat(WithTempDir):
         assert hasattr(self.lex, "cscorer")
         with patch('lingpy.compare.lexstat.log', self.log):
             self.lex.get_scorer(**self.get_scorer_kw)
+            assert self.log.warning.called
         del self.lex.cscorer
         self.lex.get_scorer(**self.get_scorer_kw)
         self.lex.get_scorer(method='markov', **self.get_scorer_kw)
