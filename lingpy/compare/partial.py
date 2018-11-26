@@ -80,7 +80,7 @@ class Partial(LexStat):
         Make sure to check also the "vowel" keyword when initialising a LexStat
         object, since the symbols you use for vowels and tones should be
         identical with the ones you define in your transform dictionary.
-    vowels : str (default="VT\_")
+    vowels : str (default="VT_")
         For scoring function creation using the
         :py:class:`~lingpy.compare.lexstat.LexStat.get_scorer` function, you
         have the possibility to use reduced scores for the matching of tones
@@ -321,7 +321,7 @@ class Partial(LexStat):
                         try:
                             d = function(idxA, idxB, sliceA, sliceB)
                         except ZeroDivisionError:
-                            lingpy.log.warn(
+                            lingpy.log.warning(
                                 "Encountered Zero-Division for the comparison of "
                                 "{0} and {1}".format(
                                     ''.join(self[idxA, self._tokens]),
@@ -370,7 +370,7 @@ class Partial(LexStat):
             Select the scale for the gap extension penalty.
         factor : float (default=0.3)
             Select the factor for extra scores for identical prosodic segments.
-        restricted_chars : str (default="T\_")
+        restricted_chars : str (default="T_")
             Select the restricted chars (boundary markers) in the prosodic
             strings in order to enable secondary alignment.
         mode : {'global','local','overlap','dialign'} (default='overlap')

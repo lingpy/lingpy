@@ -11,8 +11,8 @@ class _TreeDist(object):
     """
 
     # basic constants
-    LBRA = re.compile("\(")
-    RBRA = re.compile("\)")
+    LBRA = re.compile(r"\(")
+    RBRA = re.compile(r"\)")
 
     @staticmethod
     def grf(treeA, treeB, distance='grf'):

@@ -3775,7 +3775,7 @@ class PhyBo(Wordlist):
                 row=concept, flat=True, entry='pap') if p not in self.singletons]))
 
             if len(paps) <= 0:
-                log.warn(
+                log.warning(
                     "No entries for concept {0} could be found, skipping the plot.".format(
                         concept))
             else:

@@ -94,7 +94,7 @@ def info(msg, **kw):
     get_logger().info(msg, **kw)
 
 
-def warn(msg):
+def warning(msg):
     get_logger().warn(msg)
 
 

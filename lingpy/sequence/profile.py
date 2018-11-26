@@ -165,23 +165,24 @@ def context_profile(wordlist, ref='ipa', col="doculect",
         log.info('processing {0}-{1}'.format(idx, word))
         if isinstance(word, list):
             word = ' '.join(word)
-        cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
-                merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
-                split_entries=False, preparse=None, rules=None,
-                merge_geminates=merge_geminates)[0].split(' ')
+        if word.strip():
+            cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
+                    merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
+                    split_entries=False, preparse=None, rules=None,
+                    merge_geminates=merge_geminates)[0].split(' ')
 
-        # retain whole word if there are splitters in the word
-        if [x for x in cleaned_string if x in brackets + splitters]:
-            profile[word] += [(language, word)]
-            bad_words.add(word)
-        else:
-            context_pre = ['^'] + (len(cleaned_string) - 1) * ['']
-            context_post = (len(cleaned_string)-1) * [''] + ['$']
-            for ctxA, ctxB, segment in zip(context_pre, context_post, cleaned_string):
-                profile[ctxA+segment+ctxB] += [(language, word)]
-            for segment in [x for x in word if x not in ' '.join(cleaned_string)]:
-                profile[segment] += [(language, word)]
-                nulls.add(segment)
+            # retain whole word if there are splitters in the word
+            if [x for x in cleaned_string if x in brackets + splitters]:
+                profile[word] += [(language, word)]
+                bad_words.add(word)
+            else:
+                context_pre = ['^'] + (len(cleaned_string) - 1) * ['']
+                context_post = (len(cleaned_string)-1) * [''] + ['$']
+                for ctxA, ctxB, segment in zip(context_pre, context_post, cleaned_string):
+                    profile[ctxA+segment+ctxB] += [(language, word)]
+                for segment in [x for x in word if x not in ' '.join(cleaned_string)]:
+                    profile[segment] += [(language, word)]
+                    nulls.add(segment)
     
     for s in '^$':
         yield s, 'NULL', '', '', '', ''

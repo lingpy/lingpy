@@ -117,7 +117,7 @@ class Tests(WithTempDir):
         cogs = main('lexstat', '-i', test_data('KSL.qlc'),
                     '--output-file', self.tmp_path('lexstat').as_posix())
         print(cogs)
-        assert cogs == 1080
+        assert cogs in [1080, 1081]
 
     def test_profile(self):
         prf = main('profile', '-i', test_data('KSL.qlc'), '--column', 'ipa')

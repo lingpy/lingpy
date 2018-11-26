@@ -5,7 +5,7 @@ import json
 from lingpy.algorithm import misc
 from lingpy.read.phylip import read_dst, read_scorer
 from lingpy.thirdparty import cogent as cg
-from lingpy.log import warn, debug
+from lingpy import log
 from lingpy.util import read_text_file, setdefaults
 
 def reduce_alignment(alignment):
@@ -100,7 +100,7 @@ def normalize_alignment(alignment):
         for i in range(len(alignment)):
             lgtxt += '[!] ' + ' '.join(alignment[i]) + '->'
             lgtxt += ' '.join(alm_clone[i]) + '\n'
-        debug(lgtxt)
+        log.debug(lgtxt)
         return alm_clone
     else:
         return alignment
@@ -261,7 +261,7 @@ def read_qlc(infile, comment='#'):
                     if isinstance(meta[key], list):
                         meta[key].append(value)
                     else:
-                        warn(
+                        log.warning(
                             "Key '{0}' in input file is not unique! Use JSON-format for "
                             "these datatypes!".format(key))
                         meta[key] = [meta[key]] + [value]
