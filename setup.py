@@ -84,6 +84,7 @@ setup(
     name=pkgname,
     description="Python library for quantitative tasks in historical linguistics",
     long_description=long_description,
+    long_description_content_type='text/markdown',
     version=thisversion,
     packages=find_packages(pkg_location, 
         exclude=[ "lingpy._plugins", "_plugins", "*._plugins", "_plugins.*",
