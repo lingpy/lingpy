@@ -834,8 +834,8 @@ def prosodic_string(string, _output=True, **keywords):
         A prosodic string corresponding to the sonority profile of the
         underlying sequence.
 
-    See also:
-    ---------
+    See also
+    --------
 
     prosodic weights
 

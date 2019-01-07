@@ -501,8 +501,8 @@ def random_cognates(wordlist, ref='randomid', bias=False):
         larger clusters, when set to "splitter" it will tend to create smaller
         clusters.
 
-    Note
-    ----
+    Notes
+    -----
     When using this method for evaluation, you should be careful to
     overestimate the results. The function which creates the random clusters is
     based on simple functions for randomization and thus probably 
