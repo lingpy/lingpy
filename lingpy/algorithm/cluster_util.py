@@ -30,7 +30,7 @@ def valid_cluster(sequence):
         >>> valid_cluster(clrB)
         False
 
-    Seealso:
+    See also
     --------
     generate_all_clusters
     generate_random_cluster
@@ -57,8 +57,8 @@ def generate_all_clusters(numbers):
     clr : iterator
         An iterator that will yield the next of all possible clusters.
 
-    Seealso
-    -------
+    See also
+    --------
     valid_cluster
     generate_random_cluster
     order_cluster
@@ -86,8 +86,8 @@ def generate_random_cluster(numbers, bias=False):
     cluster : list
         A list with consecutive ordering of clusters, starting from zero.
 
-    Seealso
-    -------
+    See also
+    --------
     valid_cluster
     generate_all_clusters
     order_cluster
@@ -130,8 +130,8 @@ def order_cluster(clr):
         A list in which the IDs start from zero and increase consecutively with
         each new cluster introduced.
 
-    Seealso
-    -------
+    See also
+    --------
     valid_cluster
     generate_all_clusters
     generate_random_cluster
@@ -166,8 +166,8 @@ def mutate_cluster(clr, chance=0.5):
     valid_cluster : list
         A newly clustered list in consecutive order.
     
-    Seealso
-    -------
+    See also
+    --------
     valid_cluster
     generate_all_clusters
     generate_random_cluster

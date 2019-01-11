@@ -77,8 +77,8 @@ class Tests(TestCase):
         seq3 = 'th o ?/ a'.split(' ')
 
         assert tokens2class(seq, 'dolgo') == list('TVKTVR000')
-        assert tokens2class(seq2, 'cv')[2] == '0'
-        assert tokens2class(seq2, 'cv', cldf=True)[2] == 'C'
+        assert tokens2class(seq2, 'cv', cldf=False)[2] == '0'
+        assert tokens2class(seq2, 'cv')[2] == 'C'
         assert tokens2class(seq3, 'cv', cldf=True)[2] == '0'
 
         assert_raises(ValueError, tokens2class, ['A'], 'dolgo')
@@ -167,7 +167,7 @@ class Tests(TestCase):
         assert len(tokens2morphemes(seq4, sep='murks')) == 2
         assert len(tokens2morphemes(seq1, split_on_tones=False)) == 1
         assert_raises(ValueError, tokens2morphemes, "t i a o")
-        assert_raises(ValueError, tokens2morphemes, list("b++t"))
+        assert len(tokens2morphemes(list("b++t"))) == 2
 
     def test_onoparse(self):
         seq1 = "a k e r ts a n"

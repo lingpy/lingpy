@@ -64,8 +64,8 @@ class Tests(TestCase):
         tree.prune()
         tree.getDistances()
         list(tree.traverse_recursive())
-        self.assertEquals(tree.lowestCommonAncestor(['b', 'c']).Name, 'a')
-        self.assertEquals(tree.separation(tree[0]), 1)
+        self.assertEqual(tree.lowestCommonAncestor(['b', 'c']).Name, 'a')
+        self.assertEqual(tree.separation(tree[0]), 1)
         for before in [True, False]:
             for after in [True, False]:
                 list(tree.traverse(before, after))

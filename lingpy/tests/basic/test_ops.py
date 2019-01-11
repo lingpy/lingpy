@@ -91,11 +91,11 @@ class TestOps(WithTempDir):
         res = wl2multistate(self.wordlist2, 'cogid', '?')
         # the result must be a matrix.
         self.assertIsInstance(res, list)
-        self.assertEquals(len(set(len(row) for row in res)), 1)
+        self.assertEqual(len(set(len(row) for row in res)), 1)
 
     def test_coverage(self):
         res = coverage(self.wordlist)
-        self.assertEquals(res['Turkish'], 200)
+        self.assertEqual(res['Turkish'], 200)
 
     def test_clean_taxnames(self):
         tmp = Wordlist({

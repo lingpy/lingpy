@@ -404,7 +404,7 @@ class PSA(Pairwise):
                 handle_data(data, i)
                 i += 4
             except:
-                log.warn("Line {0} of the data is probably miscoded.".format(i + 1))
+                log.warning("Line {0} of the data is probably miscoded.".format(i + 1))
                 i += 1
 
         self.pair_num = len(self.pairs)
@@ -637,7 +637,7 @@ class Alignments(Wordlist):
             self[idx, self._alignment] = self._str_type(alm)
 
     def add_alignments(self, ref=False, modify_ref=False, fuzzy=False,
-            split_on_tones=True):
+            split_on_tones=True, override=False):
         """
         Function adds a new set of alignments to the data.
 
@@ -668,7 +668,7 @@ class Alignments(Wordlist):
             self._meta['msa'] = {ref: {}}
         if ref not in self._meta['msa']:
             self._meta['msa'][ref] = {}
-        if not self._meta['msa'][ref]:
+        if not self._meta['msa'][ref] or override:
             for key, value in self.etd[ref].items():
                 if key not in [0, '', '0']:
                     tmp = [x for x in value if x != 0]
@@ -697,15 +697,14 @@ class Alignments(Wordlist):
                             if self._mode == 'fuzzy':
                                 # split the string into morphemes
                                 # FIXME add keywords for morpheme segmentation
-                                morphemes = tokens2morphemes(this_string,
-                                        tone='' if not split_on_tones else 'T'
-                                        )
+                                morphemes = self._str_type(this_string).n \
+                                        if not split_on_tones else tokens2morphemes(this_string, tone='T')
                                 # get the position of the morpheme
                                 midx = self[seq][self.header[ref]].index(key)
                                 this_string = morphemes[midx]
 
                             d['ID'].append(seq)
-                            d['taxa'].append(self[seq, 'taxa'])
+                            d['taxa'].append(self[seq][self._colIdx])
                             d['seqs'].append(this_string)
                             d['alignment'].append(this_string)
 
@@ -743,7 +742,7 @@ class Alignments(Wordlist):
         for k, d in self._meta['msa'][ref].items():
             ralms = reduce_alignment(d[alignment])
             if len(ralms[0]) != len(d[alignment][0]):
-                log.warn('Found an alignment that could be reduced.')
+                log.warning('Found an alignment that could be reduced.')
             d['_' + alignment] = ralms
             for idx, alm in zip(d['ID'], d['_' + alignment]):
                 D[idx] = alm
@@ -803,7 +802,7 @@ class Alignments(Wordlist):
                     if i < len(cogids) - 1:
                         tmp[key] += [rcParams['morpheme_separator']]
 
-        self.add_entries(alignment, tmp, lambda x: x, override=True)
+        self.add_entries(alignment, tmp, lambda x: self._str_type(x), override=True)
 
     def align(self, **keywords):
         """

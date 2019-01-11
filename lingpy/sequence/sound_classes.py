@@ -458,7 +458,8 @@ def tokens2morphemes(tokens, **keywords):
             out += [[]]
     # check for bad examples
     if ['' for x in out if not x]:
-        raise ValueError("[!] Your data contains empty morpheme segments.")
+        log.warning("[!] Your data contains empty morpheme segments.")
+        out = [x for x in out if x]
 
     return out
 
@@ -713,7 +714,7 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
                 return '0'
 
 
-def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
+def tokens2class(tokens, model, stress=None, diacritics=None, cldf=True):
     """
     Convert tokenized IPA strings into their respective class strings.
 
@@ -734,10 +735,12 @@ def tokens2class(tokens, model, stress=None, diacritics=None, cldf=False):
         A string containing diacritic symbols used in the analysis. Defaults to
         the diacritic symbolds defined in ~lingpy.settings.rcParams.
 
-    cldf : bool (default=False)
-        If set to True, this will allow for a specific treatment of phonetic
+    cldf : bool (default=True)
+        If set to True, as by default, this will allow for a specific treatment
+        of phonetic
         symbols which cannot be completely resolved (e.g., laryngeal h₂ in
-        Indo-European). Following the `CLDF <http://cldf.clld.org>`_ specifications (in particular the
+        Indo-European). Following the `CLDF <http://cldf.clld.org>`_
+        specifications (in particular the
         specifications for writing transcriptions in segmented strings, as
         employed by the `CLTS <http://calc.digling.org/clts/>`_ initiative), in
         cases of insecurity of pronunciation, users can adopt a
@@ -831,8 +834,8 @@ def prosodic_string(string, _output=True, **keywords):
         A prosodic string corresponding to the sonority profile of the
         underlying sequence.
 
-    See also:
-    ---------
+    See also
+    --------
 
     prosodic weights
 
@@ -1270,14 +1273,14 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / (aln_pos + int_gps)
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 1:
         try:
             return idn_pos / aln_pos
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 3:
@@ -1286,7 +1289,7 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 4:
@@ -1296,7 +1299,7 @@ def pid(almA, almB, mode=2):
         try:
             return idn_pos / srt_seq
         except ZeroDivisionError:
-            log.warn('Zero Division Error in {0} and {1}'.format(almA, almB))
+            log.warning('Zero Division Error in {0} and {1}'.format(almA, almB))
             return 0
 
     elif mode == 5:
@@ -1417,7 +1420,7 @@ def _get_brackets(brackets):
     for b in brackets:
         out[b] = unicodedata.lookup(unicodedata.name(b).replace('LEFT', 'RIGHT'))
         if b == out[b]:
-            log.warn('lingpy.sequence.sound_classes.get_brackets' + \
+            log.warning('lingpy.sequence.sound_classes.get_brackets' + \
                     'Item «{0}» does not have a counterpart!'.format(b))
     return out
 

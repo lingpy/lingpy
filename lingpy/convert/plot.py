@@ -1062,7 +1062,7 @@ def plot_heatmap(
                         try:
                             shared = shared / slots
                         except ZeroDivisionError:
-                            log.warn(str(
+                            log.warning(str(
                                 [shared, slots, len(cogsA), len(cogsB), taxonA, taxonB]))
                             shared = 0.0
 
@@ -1117,7 +1117,7 @@ def plot_heatmap(
                         try:
                             shared = shared / slots
                         except ZeroDivisionError:
-                            log.warn(str(
+                            log.warning(str(
                                 [shared, slots, len(cogsA), len(cogsB), taxonA, taxonB]))
                             shared = 0.0
 

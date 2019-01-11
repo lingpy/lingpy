@@ -65,29 +65,29 @@ class TestLexStat(WithTempDir):
             self.assertTrue(lex.filename.endswith('_cleaned.tsv'))
             self.assertTrue(os.path.exists(lex.filename))
             os.remove(lex.filename)
-            self.assertEquals(len(lex._meta['errors']), 2)
+            self.assertEqual(len(lex._meta['errors']), 2)
 
     def test_init2(self):
         freqs = self.lex.freqs['Hawaiian']
         seq = {'5.W.C': 19, '5.I.V': 87, '5.Y.V': 75, '5.U.V': 87}
 
         for char, n in seq.items():
-            self.assertEquals(freqs[char], n)
+            self.assertEqual(freqs[char], n)
 
-        self.assertEquals(len(self.lex.chars), 187)
-        self.assertEquals(len(self.lex.rchars), 35)
+        self.assertEqual(len(self.lex.chars), 187)
+        self.assertEqual(len(self.lex.rchars), 35)
         self.maxDiff = None
 
         for name in 'bscorer rscorer pairs'.split():
             obj = jsonlib.load(test_data('KSL.%s.json' % name))
             if name != 'pairs':
-                self.assertEquals(getattr(self.lex, name).matrix, obj)
+                self.assertEqual(getattr(self.lex, name).matrix, obj)
             else:
                 for key, values in self.lex.pairs.items():
                     values = set(values)
                     ovalues = set(tuple(v) for v in obj['---'.join(key)])
                     if name != 'pairs':
-                        self.assertEquals(values, ovalues)
+                        self.assertEqual(values, ovalues)
 
     def test_init3(self):  # with kw check=True
         bad_file = Path(test_data('bad_file.tsv'))
@@ -107,7 +107,7 @@ class TestLexStat(WithTempDir):
         assert hasattr(self.lex, "cscorer")
         with patch('lingpy.compare.lexstat.log', self.log):
             self.lex.get_scorer(**self.get_scorer_kw)
-            assert self.log.warn.called
+            assert self.log.warning.called
         del self.lex.cscorer
         self.lex.get_scorer(**self.get_scorer_kw)
         self.lex.get_scorer(method='markov', **self.get_scorer_kw)
@@ -144,9 +144,9 @@ class TestLexStat(WithTempDir):
 
     def test_get_subset(self):
         self.lex.get_subset([])
-        self.assertEquals([v for v in self.lex.subsets.values() if v], [])
+        self.assertEqual([v for v in self.lex.subsets.values() if v], [])
         pairs = jsonlib.load(test_data('KSL.pairs.json'))
-        self.assertEquals(
+        self.assertEqual(
             sorted('---'.join(k) for k in self.lex.subsets.keys()),
             sorted(pairs.keys()))
 
@@ -188,7 +188,7 @@ class TestLexStat(WithTempDir):
             2: ['2', 'eng', 'hand', 'hand'],
             3: ['3', 'xyz', 'hand', 'xyz']})
         lex.cluster(ref='cogid', method='sca', threshold=0.5)
-        self.assertEquals(lex[1, 'cogid'], lex[2, 'cogid'])
+        self.assertEqual(lex[1, 'cogid'], lex[2, 'cogid'])
 
         rc(schema='asjp')
         lex = self._make_one({
@@ -202,5 +202,5 @@ class TestLexStat(WithTempDir):
             7: ['5430', 'Abend::N', 'afd3n', 'DAN'],
         })
         lex.cluster(method='sca', threshold=0.5, ref='cogid')
-        self.assertEquals(lex[1, 'cogid'], lex[2, 'cogid'], lex[3, 'cogid'])
+        self.assertEqual(lex[1, 'cogid'], lex[2, 'cogid'], lex[3, 'cogid'])
         rc(schema='ipa')

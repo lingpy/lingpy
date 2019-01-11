@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import logging
 
 from lingpy import log
-from lingpy.log import info, warn, debug, error, deprecated, missing_module, \
+from lingpy.log import info, warning, debug, error, deprecated, missing_module, \
     file_written
 from lingpy.tests.util_testing import WithTempDir, capture_all
 
@@ -44,7 +44,7 @@ class LogTest(WithTempDir):
             self.assertNotIn('DEBUG', res[2])
 
         with capture_all(
-            _log, method='warn', with_context_manager=True, level=logging.WARN
+            _log, method='warning', with_context_manager=True, level=logging.WARN
         ) as res:
             self.assertIn('WARN', res[2])
 
@@ -60,7 +60,7 @@ class LogTest(WithTempDir):
     @staticmethod
     def test_convenience():
         info('m')
-        warn('m')
+        warning('m')
         debug('m')
         error('m')
         deprecated('o', 'n')

@@ -107,8 +107,8 @@ def iter_rows(wordlist, *values):
         row in the wordlist and the corresponding cells, as specified in
         the headers.
 
-    Note
-    ----
+    Notes
+    -----
     Use this function to quickly iterate over specified fields in the
     wordlist. For example, when trying to access all pairs of language
     names and concepts, you may write::
@@ -557,7 +557,7 @@ def wl2multistate(wordlist, ref, missing):
             # FIXME: This shouldn't just be a warning, because we
             # will get a KeyError
             # down below, since zip just returns a list of length len(chars)!
-            log.warn('more distinct states than available characters!')
+            log.warning('more distinct states than available characters!')
         char_map = dict(zip(sorted(distinct_states), chars))
         char_map['-'] = '-'
 

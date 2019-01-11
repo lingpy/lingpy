@@ -160,7 +160,7 @@ class QLCParser(object):
                             self._data[key][i] = self._class[head](self._data[key][i])
                             check.append(i)
                         except KeyError:
-                            log.warn(
+                            log.warning(
                                 logstring.format(
                                     key,
                                     i,
@@ -169,7 +169,7 @@ class QLCParser(object):
                                     self._class[head],
                                     head))
                         except ValueError:
-                            log.warn(
+                            log.warning(
                                 logstring.format(
                                     key,
                                     i,

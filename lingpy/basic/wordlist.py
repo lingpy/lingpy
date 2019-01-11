@@ -1054,12 +1054,12 @@ class Wordlist(QLCParserWithRowsAndCols):
         ParameterTable and CognateTable are prefixed with `langage_`,
         `concept_` and `cogid_`and converted to lowercase.
 
-        Note
-        ----
+        Notes
+        -----
         CLDFs default column names for wordlists are different from LingPy's,
-        so you probably have to use
+        so you probably have to use::
 
-        lingpy.Wordlist.from_cldf(
+        >>> lingpy.Wordlist.from_cldf(
             "Wordlist-metadata.json",
             col="language_id", row="parameter_id", segments="segments", transcription="form")
 
@@ -1238,15 +1238,12 @@ def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
     concepticon : str (default='conceptset')
         The default name for the concept set in the `paramters.csv` table.
         
-    Note
-    ----
+    Notes
+    -----
     This function does not offer absolute flexibility regarding the data you
     can input so far. However, it can regularly read CLDF-formatted data into
     LingPy and thus allow you to use CLDF data in LingPy analyses.
 
-    Todo
-    ----
-    Add support for partial cognates (slices).
     """
     tbg = TableGroup.from_file(path)
     forms = tbg.tabledict['forms.csv']
@@ -1280,11 +1277,12 @@ def from_cldf(path, to=Wordlist, concept='Name', concepticon='Concepticon_ID',
     # convert to wordlist (simplifies handling)
     wordlist = to(D)
 
-    # add cognates if they are needed
+    # add cognates if they are needed and provided
     if 'cognates.csv' in tbg.tabledict:
         cognates = {id2idx[row['Form_ID']]: (row['Cognateset_ID'],
             row['Alignment']) for row in tbg.tabledict['cognates.csv']}
-        wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
-        wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
+        if cognates:
+            wordlist.add_entries('cogid', cognates, lambda x: x[0] or 0)
+            wordlist.add_entries('alignment', cognates, lambda x: x[1] or '')
 
     return wordlist

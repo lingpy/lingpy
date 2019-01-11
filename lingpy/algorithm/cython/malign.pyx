@@ -126,8 +126,8 @@ def edit_dist(
         Indicate whether you want the normalized or the unnormalized edit
         distance to be returned.
 
-    Note
-    ----
+    Notes
+    -----
     This function computes the edit distance between two list type objects. We
     recommend to use it if you need a fast implementation. Otherwise,
     especially, if you want to pass strings, we recommend to have a look at the
