@@ -1127,31 +1127,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             # create dictionary
             D = {0: columns} # Reserve the header
             for row in dataset["FormTable"].iterdicts():
-                # check for numeric ID
-                try:
-                    idx = int(row[f_id])
-                except ValueError:
-                    idx = len(D)
-                while idx in D:
-                    idx += 1
-
-                if not D[0]:
-                    columns = list(row.keys())
-                    # TODO: Improve prefixing behaviour
-                    for column in concepts[row[parameter_column]]:
-                        if column == c_id:
-                            continue
-                        columns.append("Concept_{:}".format(column))
-                    for column in languages[row[language_column]]:
-                        if column == l_id:
-                            continue
-                        columns.append("Language_{:}".format(column))
-                    for column in cognateset_assignments.get(row[f_id], []):
-                        if column == form_reference:
-                            continue
-                        columns.append("Cogid_{:}".format(column))
-                    D[0] = [c.lower() for c in columns]
-
+                # TODO: Improve prefixing behaviour
                 s = {"Cogid_{:}".format(key): value
                      for key, value in cognateset_assignments.get(
                              row[f_id], {}).items()}
@@ -1165,6 +1141,18 @@ class Wordlist(QLCParserWithRowsAndCols):
 
                 if not filter(s):
                     continue
+
+                # check for numeric ID
+                try:
+                    idx = int(row[f_id])
+                except ValueError:
+                    idx = len(D)
+                while idx in D:
+                    idx += 1
+
+                if not D[0]:
+                    columns = list(s.keys())
+                    D[0] = [c.lower() for c in columns]
 
                 D[idx] = [s.get(column) for column in columns]
 
