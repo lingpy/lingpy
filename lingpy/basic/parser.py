@@ -66,6 +66,22 @@ class QLCParser(object):
         elif isinstance(filename, string_types) and os.path.isfile(filename):
             input_data = read_qlc(filename)
             self.filename = filename
+        # of whether it is a list of dictionaries
+        elif isinstance(filename, list):
+            # collect all column names from all dictionaries
+            columns = [[col_name for col_name in row.keys()] for row in filename]
+            header = list(set([col_name for row in columns for col_name in row]))
+
+            # initialize the dictionary with the header
+            input_data = {0:header}
+
+            # fill data
+            internal_import = True
+            for idx, row in enumerate(filename):
+                input_data[idx+1] = [
+                    row[column] for column in header
+                ]
+
         # raise an error otherwise
         elif isinstance(filename, string_types):
             raise IOError("Input file '{0}' does not exist.".format(filename))

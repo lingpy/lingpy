@@ -40,6 +40,40 @@ class TestParser(TestCase):
         assert p2[3, 'language'] == 'l3'
         assert p2[3, 'nothing'] is None
 
+        # Initalize a QLCParser (and every class deriving from it
+        # with a list of dictionaries representing a wordlist data)
+        wordlist_data = [
+            {'concept': 'I',
+            'concepticon_id': '1209',
+            'counterpart': 'io',
+            'segments': 'i o',
+            'doculect': 'Italian',
+            'glottocode': 'ital1282',},
+
+            {'concept': 'I',
+            'concepticon_id': '1209',
+            'counterpart': 'eu',
+            'segments': 'e u',
+            'doculect': 'Portuguese',
+            'glottocode': 'port1283',},
+
+            {'concept': 'THOU',
+            'concepticon_id': '1215',
+            'counterpart': 'tu',
+            'segments': 't u',
+            'doculect': 'Italian',
+            'glottocode': 'ital1282',},
+
+            {'concept': 'THOU',
+            'concepticon_id': '1215',
+            'counterpart': 'tu',
+            'segments': 't u',
+            'doculect': 'Portuguese',
+            'glottocode': 'port1283',},
+        ]
+
+        QLCParser(wordlist_data)
+
     def test_getitem(self):
         key = list(self.parser._data.keys())[0]
         self.assertEqual(self.parser[key], self.parser._data[key])
