@@ -305,7 +305,7 @@ class profile(Command):
         if args.cldf:
             wl = lingpy.basic.wordlist.Wordlist.from_cldf(args.input_file,
                     row='parameter_id', col='language_id')
-            wl.add_entries('doculect', 'language_name', lambda x: x)
+            wl.add_entries('doculect', 'language_id', lambda x: x)
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
 
