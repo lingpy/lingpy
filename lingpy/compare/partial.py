@@ -449,11 +449,11 @@ class Partial(LexStat):
                 else:
                     raise ValueError("No suitable cluster method specified.")
                 
-                for i,(idx,pos,slc) in enumerate(trace):
+                for i, (idx, pos, slc) in enumerate(trace):
                     C[idx] += [c[i] + k]
                 if kw['post_processing']:
                     _g = nx.Graph()
-                    for i,(idx,pos,slc) in enumerate(trace):
+                    for i, (idx, pos, slc) in enumerate(trace):
                         _g.add_node((i,idx,pos))
                     remove_edges = []
                     for (i, n1), (j, n2) in combinations2(enumerate(_g.nodes())):
@@ -471,14 +471,14 @@ class Partial(LexStat):
                                 if sn1 <= sn2:
                                     remove_edges += [n2]
                                 else:
-                                            remove_edges += [n1]
+                                    remove_edges += [n1]
                     for node in remove_edges:
                         for edge in sorted(_g[node]):
                             _g.remove_edge(node, edge)
 
-                    for i,coms in enumerate(nx.connected_components(_g)):
+                    for i, coms in enumerate(nx.connected_components(_g)):
                         cogid = i + 1 + k
-                        for j,idx,pos in coms:
+                        for j, idx, pos in coms:
                             C[idx][pos] = cogid
                     
                     G[concept] = _g
