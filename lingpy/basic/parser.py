@@ -16,6 +16,7 @@ from lingpy import cache
 from lingpy import util
 from lingpy.util import confirm
 from lingpy import log
+from lingpy import basictypes
 
 
 class QLCParser(object):
