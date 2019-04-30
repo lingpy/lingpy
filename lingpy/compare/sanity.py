@@ -8,6 +8,7 @@ from networkx.algorithms.clique import find_cliques
 from networkx.algorithms.approximation.clique import max_clique
 from itertools import combinations
 from collections import defaultdict
+from lingpy import log
 
 
 def _mutual_coverage(taxA, taxB, wordlist, concepts):
@@ -256,4 +257,85 @@ def synonymy(wordlist, concepts='concept', languages='doculect'):
         synonyms[language, concept] += 1
 
     return synonyms
-    
+
+
+def check_length(a, b, dimA=1, dimB=1):
+    """
+    Custom function to check the length of two basictypes in LingPy.
+    """
+    entityA, entityB = a if dimA == 1 else a.n, b if dimB == 1 else b.n
+    if len(entityA) != len(entityB):
+        return False
+    return True
+
+
+def check_sequence_length(
+        wordlist, 
+        entities=['tokens', 'crossids', 'morphemes', 'structure'],
+        dimensions=[2, 1, 2, 1]
+        ):
+    """Function checks for identical sequence length in different columns.
+    """
+    fails, errors = [], 0
+    for (eA, dA), (eB, dB) in combinations(zip(entities, dimensions), r=2):
+        for idx in wordlist:
+            if not check_length(
+                    wordlist[idx, eA], 
+                    wordlist[idx, eB],
+                    dA,
+                    dB
+                    ):
+                errors += 1
+                log.warning(
+                        '{0} | {1} | {2} | {3} | {4} | {5}'.format(
+                            errors,
+                            idx,
+                            eA,
+                            eB,
+                            wordlist[idx, eA],
+                            wordlist[idx, eB]
+                            )
+                        )
+                fails += [(idx, eA, eB)]
+    return fails
+
+def check_cognates(wordlist, ref='crossids'):
+    """Function checks for internal consistency of partial cognates."""
+    fails = []
+    for idx, cogids in wordlist.iter_rows(ref):
+        if len(set(cogids)) != len(cogids):
+            log.warning('duplicates in {0}'.format(cogids))
+            fails += [idx]
+    return fails
+
+def check_strict_cognates(
+        wordlist,
+        ref='crossids',
+        segments='tokens'
+        ):
+    """Check if cognates are really strict."""
+    fails, errors = [], 0
+    etd = wordlist.get_etymdict(ref=ref)
+    for cogid in etd:
+        for vals in etd[cogid]:
+            if vals:
+                if not str(cogid).isdigit():
+                    fails += vals
+                else:
+                    alms = []
+                    for idx in vals:
+                        try:
+                            tokens = wordlist[idx, segments].n[wordlist[idx,
+                                ref].index(cogid)]
+                            alms += [(idx, tokens)]
+                        except:
+                            fails += [idx]
+                    for idx, tokens in alms[1:]:
+                        if str(tokens) != str(alms[0][1]):
+                            fails += [idx]
+                            errors += 1
+                            log.warning('{0} | {1} | {2} | {3:15} | {4:15}'.format(
+                                        errors, idx, alms[0][0],
+                                        str(tokens), str(alms[0][1])))
+    return fails
+
