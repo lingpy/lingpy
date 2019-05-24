@@ -1046,31 +1046,9 @@ class Wordlist(QLCParserWithRowsAndCols):
     @classmethod
     def from_cldf(
             cls, 
-            path, 
-            columns=[
-                'parameter_id',
-                'concept_name',
-                'language_id',
-                'language_name',
-                'value',
-                'form',
-                'segments',
-                'language_glottocode',
-                'concept_concepticon_id',
-                'language_latitude',
-                'language_longitude',
-                'cognacy'
-                ], 
-            namespace= {
-               'concept_name': 'concept',
-               'language_id': 'doculect',
-               'segments': 'tokens',
-               'language_glottocode': 'glottolog', 
-               'concept_concepticon_id': 'concepticon',
-               'language_latitude': 'latitude',
-               'language_longitude': 'longitude',
-               'cognacy': 'cogid'
-               },
+            path,
+            columns=None,
+            namespace=None,
             filter=lambda row: row["form"],
             **kwargs):
         """Load a CLDF dataset.
@@ -1089,7 +1067,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         >>> lingpy.Wordlist.from_cldf(
             "Wordlist-metadata.json",
-            col="language_id", row="parameter_id", segments="segments", transcription="form")
+            )
 
         in order to avoid errors from LingPy not finding required columns.
 
@@ -1114,6 +1092,37 @@ class Wordlist(QLCParserWithRowsAndCols):
                 'conf': util.data_path('conf', 'wordlist.rc'),
                 }
         kwargs.update(kw)
+        
+        if columns == 'default':
+            columns=[
+                'parameter_id',
+                'concept_name',
+                'language_id',
+                'language_name',
+                'value',
+                'form',
+                'segments',
+                'language_glottocode',
+                'concept_concepticon_id',
+                'language_latitude',
+                'language_longitude',
+                'cognacy'
+                ]
+        else:
+            columns = columns or []
+        if namespace == 'default':
+            namespace= {
+               'concept_name': 'concept',
+               'language_id': 'doculect',
+               'segments': 'tokens',
+               'language_glottocode': 'glottolog', 
+               'concept_concepticon_id': 'concepticon',
+               'language_latitude': 'latitude',
+               'language_longitude': 'longitude',
+               'cognacy': 'cogid'
+               }
+        else:
+            namespace = namespace or {}
         
         # get the datatypes from configuration as to namespace
         datatypes = read_conf(kwargs['conf'])[1]

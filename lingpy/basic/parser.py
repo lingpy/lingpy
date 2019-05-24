@@ -103,33 +103,6 @@ class QLCParser(object):
         self._alias, self._class, self._class_string, self._alias2 = read_conf(
                 conf
                 )
-        ## load the configuration file
-        #if not conf:
-        #    conf = util.data_path('conf', 'qlc.rc')
-
-        ## read the file defined by its path in conf
-        #tmp = [line.split('\t') for line in util.read_config_file(conf)]
-
-        ## define two attributes, _alias, and _class which store the aliases and
-        ## the datatypes (classes) of the given entries
-        #self._alias, self._class, self._class_string, self._alias2 = {}, {}, {}, {}
-        #for name, cls, alias in tmp:
-        #    # make sure the name itself is there
-        #    self._alias[name.lower()] = self._alias[name.upper()] = name
-        #    self._class[name.lower()] = self._class[name.upper()] = eval(cls)
-        #    self._class_string[name.lower()] = self._class_string[name.upper()] = cls
-
-        #    # add the aliases
-        #    for a in alias.split(','):
-        #        self._alias[a.lower()] = self._alias[a.upper()] = name
-        #        self._class[a.lower()] = self._class[a.upper()] = eval(cls)
-        #        self._class_string[a.lower()] = self._class_string[a.upper()] = cls
-
-        #    self._alias2[name] = sorted(set(alias.split(','))) + [name]
-
-        # append the names in data[0] to self.conf to make sure that all data
-        # is covered, even the types which are not specifically defined in the
-        # conf file. the datatype defaults here to "str"
         for name in input_data[0]:
             if name.lower() not in self._alias:
                 self._alias[name.lower()] = name.lower()
