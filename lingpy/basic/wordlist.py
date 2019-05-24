@@ -1116,7 +1116,7 @@ class Wordlist(QLCParserWithRowsAndCols):
         kwargs.update(kw)
         
         if isinstance(namespace, tuple):
-            namespace = dict(tuple)
+            namespace = dict(namespace)
 
         
         # get the datatypes from configuration as to namespace
