@@ -1,16 +1,12 @@
 # Basic namespaces
-cogid	int	cognateid,cogid,cognateset
-counterpart	str	counterpart
-doculect	str	language,doculect,dialect,taxon,taxa
+cogid	lambda x: int(x) if x else 0	cogid
+cogids	basictypes.ints	cogids
 concept	str	gloss,concept,concepts
 iso	str	iso,isocode
-tokens	lambda x:x.split()	tokens,tokenized_counterpart,ipatokens
-segments	lambda x:x.split()	segments
+tokens	basictypes.lists	tokens,tokenized_counterpart,ipatokens
+segments	basictypes.lists	segments
 
-alignment	str	alignment
-#alignments	lambda x:x.split()	alignments
-ipa	str	word,ipa,words
-ortho_parse	lambda x:x.split()[1:-1]	orthography_tokens,tokenized_counterpart,op_tokens
+alignment	basictypes.lists	alignment
 
 # specific names for alignments
 conceptid	int	conceptid
