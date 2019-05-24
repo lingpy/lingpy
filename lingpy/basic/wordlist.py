@@ -1047,8 +1047,30 @@ class Wordlist(QLCParserWithRowsAndCols):
     def from_cldf(
             cls, 
             path,
-            columns="default",
-            namespace="default",
+            columns=(
+                'parameter_id',
+                'concept_name',
+                'language_id',
+                'language_name',
+                'value',
+                'form',
+                'segments',
+                'language_glottocode',
+                'concept_concepticon_id',
+                'language_latitude',
+                'language_longitude',
+                'cognacy'
+                ),
+            namespace=(
+               ('concept_name', 'concept'),
+               ('language_id', 'doculect'),
+               ('segments', 'tokens'),
+               ('language_glottocode', 'glottolog'),
+               ('concept_concepticon_id', 'concepticon'),
+               ('language_latitude', 'latitude'),
+               ('language_longitude', 'longitude'),
+               ('cognacy', 'cogid')
+               ),
             filter=lambda row: row["form"],
             **kwargs):
         """Load a CLDF dataset.
@@ -1073,7 +1095,7 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         Parameters
         ----------
-        columns: list of strings
+        columns: list or tuple 
           The list of columns to import. (default: all columns)
 
         filter: function: rowdict → bool
@@ -1093,36 +1115,9 @@ class Wordlist(QLCParserWithRowsAndCols):
                 }
         kwargs.update(kw)
         
-        if columns == 'default':
-            columns=[
-                'parameter_id',
-                'concept_name',
-                'language_id',
-                'language_name',
-                'value',
-                'form',
-                'segments',
-                'language_glottocode',
-                'concept_concepticon_id',
-                'language_latitude',
-                'language_longitude',
-                'cognacy'
-                ]
-        else:
-            columns = columns or []
-        if namespace == 'default':
-            namespace= {
-               'concept_name': 'concept',
-               'language_id': 'doculect',
-               'segments': 'tokens',
-               'language_glottocode': 'glottolog', 
-               'concept_concepticon_id': 'concepticon',
-               'language_latitude': 'latitude',
-               'language_longitude': 'longitude',
-               'cognacy': 'cogid'
-               }
-        else:
-            namespace = namespace or {}
+        if isinstance(namespace, tuple):
+            namespace = dict(tuple)
+
         
         # get the datatypes from configuration as to namespace
         datatypes = read_conf(kwargs['conf'])[1]
