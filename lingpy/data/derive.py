@@ -55,7 +55,7 @@ def _import_score_tree(filename):
     for key, values in _read(filename).items():
         graph.add_node(key, val=values[0])
         for value in values[1:]:
-            if value != '-':
+            if value.strip() != '-':
                 node, weight = value.split(':')
                 graph.add_edge(key, node, weight=int(weight))
     return graph
@@ -190,6 +190,8 @@ def _make_scoring_dictionary(graph):
                     # make sure, that tones do not score
                     elif graph.node[node1]['val'] == 't':
                         value = 2
+                    elif graph.node[node1]['val'] == 'b':
+                        value = 0
                     else:
                         value = 10
                 # if the nodes are different, see, if there is a connection
@@ -214,6 +216,8 @@ def _make_scoring_dictionary(graph):
                         elif graph.node[node1]['val'] == 'c':
                             # make sure that the minimum value of C-C-matches is zero
                             value = get_starting_value(graph, node1, node2, 10, 0)
+                        elif graph.node[node1]['val'] == 'b':
+                            value = 0
                         else:
                             # make sure that tone-tone classes score with zero
                             value = 1
@@ -227,6 +231,8 @@ def _make_scoring_dictionary(graph):
                         # order to force the algorithm to align tones with
                         # tones or gaps and with nothing else
                         if 't' in choices:
+                            value = -20
+                        elif 'b' in choices:
                             value = -20
                         # matches of glides with different classes
                         elif 'g' in choices:

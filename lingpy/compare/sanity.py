@@ -263,10 +263,23 @@ def check_length(a, b, dimA=1, dimB=1):
     """
     Custom function to check the length of two basictypes in LingPy.
     """
-    entityA, entityB = a if dimA == 1 else a.n, b if dimB == 1 else b.n
-    if len(entityA) != len(entityB):
-        return False
+    if dimA < 3 or dimB < 3:
+        entityA, entityB = a if dimA == 1 else a.n, b if dimB == 1 else b.n
+        if len(entityA) != len(entityB):
+            return False
+    else:
+        if len(a) == len(b):
+            if len(a.n) == len(b.n):
+                for pA, pB in zip(a.n, b.n):
+                    if len(pA) != len(pB):
+                        return False
+            else:
+                return False
+        else:
+            return False
+
     return True
+                        
 
 
 def check_sequence_length(
@@ -296,8 +309,9 @@ def check_sequence_length(
                             wordlist[idx, eB]
                             )
                         )
-                fails += [(idx, eA, eB)]
+                fails += [idx]
     return fails
+
 
 def check_cognates(wordlist, ref='crossids'):
     """Function checks for internal consistency of partial cognates."""
@@ -307,6 +321,7 @@ def check_cognates(wordlist, ref='crossids'):
             log.warning('duplicates in {0}'.format(cogids))
             fails += [idx]
     return fails
+
 
 def check_strict_cognates(
         wordlist,
