@@ -1047,8 +1047,8 @@ class Wordlist(QLCParserWithRowsAndCols):
     def from_cldf(
             cls, 
             path,
-            columns=None,
-            namespace=None,
+            columns="default",
+            namespace="default",
             filter=lambda row: row["form"],
             **kwargs):
         """Load a CLDF dataset.
