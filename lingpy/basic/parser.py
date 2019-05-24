@@ -19,6 +19,32 @@ from lingpy import log
 from lingpy import basictypes
 
 
+def read_conf(conf=''):
+    # load the configuration file
+    if not conf:
+        conf = util.data_path('conf', 'qlc.rc')
+
+    # read the file defined by its path in conf
+    tmp = [line.split('\t') for line in util.read_config_file(conf)]
+    
+    aliasD, classD, class_stringD, alias2D = {}, {}, {}, {}
+    for name, cls, alias in tmp:
+        # make sure the name itself is there
+        aliasD[name.lower()] = aliasD[name.upper()] = name
+        classD[name.lower()] = classD[name.upper()] = eval(cls)
+        class_stringD[name.lower()] = class_stringD[name.upper()] = cls
+
+        # add the aliases
+        for a in alias.split(','):
+            aliasD[a.lower()] = aliasD[a.upper()] = name
+            classD[a.lower()] = classD[a.upper()] = eval(cls)
+            class_stringD[a.lower()] = class_stringD[a.upper()] = cls
+
+        alias2D[name] = sorted(set(alias.split(','))) + [name]
+
+    return aliasD, classD, class_stringD, alias2D
+
+
 class QLCParser(object):
     """
     Basic class for the handling of text files in QLC format.
@@ -50,7 +76,7 @@ class QLCParser(object):
             # evaluation which is hopefully fixed by now
             tmp_keys = [k for k in input_data if isinstance(k, int)]
             if len(input_data[0]) != len(input_data[tmp_keys[0]]):
-                print(input_data[0], input_data[tmp_keys[0]])
+                log.warning(input_data[0], input_data[tmp_keys[0]])
                 raise ValueError("[!] Wrong input format!")  # pragma: no cover
         # check whether it's another wordlist-object
         elif hasattr(filename, '_data') and hasattr(filename, '_meta'):
@@ -73,30 +99,33 @@ class QLCParser(object):
         else:
             raise TypeError("Unrecognized type for 'filename' argument: {0}".format(
                 type(filename).__name__))
+        
+        self._alias, self._class, self._class_string, self._alias2 = read_conf(
+                conf
+                )
+        ## load the configuration file
+        #if not conf:
+        #    conf = util.data_path('conf', 'qlc.rc')
 
-        # load the configuration file
-        if not conf:
-            conf = util.data_path('conf', 'qlc.rc')
+        ## read the file defined by its path in conf
+        #tmp = [line.split('\t') for line in util.read_config_file(conf)]
 
-        # read the file defined by its path in conf
-        tmp = [line.split('\t') for line in util.read_config_file(conf)]
+        ## define two attributes, _alias, and _class which store the aliases and
+        ## the datatypes (classes) of the given entries
+        #self._alias, self._class, self._class_string, self._alias2 = {}, {}, {}, {}
+        #for name, cls, alias in tmp:
+        #    # make sure the name itself is there
+        #    self._alias[name.lower()] = self._alias[name.upper()] = name
+        #    self._class[name.lower()] = self._class[name.upper()] = eval(cls)
+        #    self._class_string[name.lower()] = self._class_string[name.upper()] = cls
 
-        # define two attributes, _alias, and _class which store the aliases and
-        # the datatypes (classes) of the given entries
-        self._alias, self._class, self._class_string, self._alias2 = {}, {}, {}, {}
-        for name, cls, alias in tmp:
-            # make sure the name itself is there
-            self._alias[name.lower()] = self._alias[name.upper()] = name
-            self._class[name.lower()] = self._class[name.upper()] = eval(cls)
-            self._class_string[name.lower()] = self._class_string[name.upper()] = cls
+        #    # add the aliases
+        #    for a in alias.split(','):
+        #        self._alias[a.lower()] = self._alias[a.upper()] = name
+        #        self._class[a.lower()] = self._class[a.upper()] = eval(cls)
+        #        self._class_string[a.lower()] = self._class_string[a.upper()] = cls
 
-            # add the aliases
-            for a in alias.split(','):
-                self._alias[a.lower()] = self._alias[a.upper()] = name
-                self._class[a.lower()] = self._class[a.upper()] = eval(cls)
-                self._class_string[a.lower()] = self._class_string[a.upper()] = cls
-
-            self._alias2[name] = sorted(set(alias.split(','))) + [name]
+        #    self._alias2[name] = sorted(set(alias.split(','))) + [name]
 
         # append the names in data[0] to self.conf to make sure that all data
         # is covered, even the types which are not specifically defined in the
