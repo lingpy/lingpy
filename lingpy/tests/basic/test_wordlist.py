@@ -108,7 +108,7 @@ class TestWordlist(WithTempDir):
         for key in etd1:
             assert etd1[key] == etd3[key]
         for key in etd2:
-            self.assertEquals(etd2[key], etd4[key])
+            self.assertEqual(etd2[key], etd4[key])
 
     def test_get_paps(self):
         paps = self.wordlist.get_paps(ref="cogid", modify_ref=abs)

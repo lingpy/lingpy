@@ -33,7 +33,7 @@ class Config(RawConfigParser):
                 fp = io.StringIO(self.default)
             else:
                 fp = io.BytesIO(self.default.encode('utf8'))
-            self.readfp(fp)
+            self.read_file(fp)
 
         cfg_path = config_dir.joinpath(name + '.ini')
         if cfg_path.exists():

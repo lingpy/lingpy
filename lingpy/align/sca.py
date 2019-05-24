@@ -599,7 +599,9 @@ class Alignments(Wordlist):
         self._mode = 'fuzzy' if (
                 kw['fuzzy'] or (ref in self._class_string and self._class_string[ref] \
                                                               not in ['str',
-                                                                      'int'])) else 'plain'
+                                                                      'int',
+                                                                      'basictypes.integer'
+                                                                      ])) else 'plain'
         if self._mode == 'fuzzy':
             self._str_type = bt.lists
             self._cog_type = bt.ints

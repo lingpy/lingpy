@@ -28,7 +28,7 @@ class _strings(list):
     def __setitem__(self, index, item):
         list.__setitem__(self, index, self._type(item))
 
-
+integer = lambda x: int(x) if x else 0
 strings = partial(_strings, str)
 ints = partial(_strings, int)
 floats = partial(_strings, float)

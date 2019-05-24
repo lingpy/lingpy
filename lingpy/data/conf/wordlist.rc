@@ -1,5 +1,6 @@
 # Basic namespaces
-cogid	lambda x: int(x) if x else 0	cogid
+cogid	basictypes.integer	cogid
+doculect	str	doculect,language,taxa,taxon
 cogids	basictypes.ints	cogids
 concept	str	gloss,concept,concepts
 iso	str	iso,isocode

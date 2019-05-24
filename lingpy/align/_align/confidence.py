@@ -2,7 +2,7 @@ from __future__ import division, unicode_literals
 """
 Calculate confidence scores for the scoring functions in alignment plots.
 """
-import cgi
+import html
 
 from lingpy.sequence.sound_classes import class2tokens, token2class
 from lingpy.settings import rcParams
@@ -37,7 +37,7 @@ def get_confidence(alms, scorer, ref='lexstatid', gap_weight=1):
         # get basic stuff
         idxs = msa['ID']
         taxa = msa['taxa']
-        concept = cgi.escape(alms[idxs[0], 'concept'], True)
+        concept = html.escape(alms[idxs[0], 'concept'], True)
 
         # get numerical representation of alignments
         if scorer:
@@ -251,7 +251,7 @@ def get_correspondences(alms, ref='lexstatid'):
         # get basic stuff
         idxs = msa['ID']
         taxa = msa['taxa']
-        concept = cgi.escape(alms[idxs[0], 'concept'], True)
+        concept = html.escape(alms[idxs[0], 'concept'], True)
 
         # get numerical representation of alignments
         if 'numbers' in alms.header:
