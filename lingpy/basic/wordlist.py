@@ -18,7 +18,7 @@ from pycldf.util import Path
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
-from lingpy.basic.parser import QLCParserWithRowsAndCols
+from lingpy.basic.parser import QLCParserWithRowsAndCols, read_conf
 from lingpy.basic.ops import (
     wl2dst, wl2dict, renumber, calculate_data, wl2qlc, tsv2triple,
     wl2multistate, coverage, iter_rows
@@ -1044,7 +1044,35 @@ class Wordlist(QLCParserWithRowsAndCols):
             return sum([a / self.height for a in cov.values()]) / self.width
 
     @classmethod
-    def from_cldf(cls, path, columns=[], filter=lambda row: row["Form"], *args, **kwargs):
+    def from_cldf(
+            cls, 
+            path,
+            columns=(
+                'parameter_id',
+                'concept_name',
+                'language_id',
+                'language_name',
+                'value',
+                'form',
+                'segments',
+                'language_glottocode',
+                'concept_concepticon_id',
+                'language_latitude',
+                'language_longitude',
+                'cognacy'
+                ),
+            namespace=(
+               ('concept_name', 'concept'),
+               ('language_id', 'doculect'),
+               ('segments', 'tokens'),
+               ('language_glottocode', 'glottolog'),
+               ('concept_concepticon_id', 'concepticon'),
+               ('language_latitude', 'latitude'),
+               ('language_longitude', 'longitude'),
+               ('cognacy', 'cogid')
+               ),
+            filter=lambda row: row["form"],
+            **kwargs):
         """Load a CLDF dataset.
 
         Open a CLDF Dataset – with metadata or metadata-free – (only Wordlist
@@ -1061,13 +1089,13 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         >>> lingpy.Wordlist.from_cldf(
             "Wordlist-metadata.json",
-            col="language_id", row="parameter_id", segments="segments", transcription="form")
+            )
 
         in order to avoid errors from LingPy not finding required columns.
 
         Parameters
         ----------
-        columns: list of strings
+        columns: list or tuple 
           The list of columns to import. (default: all columns)
 
         filter: function: rowdict → bool
@@ -1080,6 +1108,20 @@ class Wordlist(QLCParserWithRowsAndCols):
         A `cls` object representing the CLDF dataset
 
         """
+        kw = {
+                'row': 'concept',
+                'col': 'doculect',
+                'conf': util.data_path('conf', 'wordlist.rc'),
+                }
+        kwargs.update(kw)
+        
+        if isinstance(namespace, tuple):
+            namespace = dict(namespace)
+
+        
+        # get the datatypes from configuration as to namespace
+        datatypes = read_conf(kwargs['conf'])[1]
+
         # Load the dataset.
         fname = Path(path)
         if not fname.exists():
@@ -1128,16 +1170,16 @@ class Wordlist(QLCParserWithRowsAndCols):
             D = {0: columns} # Reserve the header
             for row in dataset["FormTable"].iterdicts():
                 # TODO: Improve prefixing behaviour
-                s = {"Cogid_{:}".format(key): value
+                s = {"cogid_{:}".format(key).lower(): value
                      for key, value in cognateset_assignments.get(
                              row[f_id], {}).items()}
                 s.update(
-                    {"Language_{:}".format(key): value
+                    {"language_{:}".format(key).lower(): value
                      for key, value in languages[row[language_column]].items()})
                 s.update(
-                    {"Concept_{:}".format(key): value
+                    {"concept_{:}".format(key).lower(): value
                      for key, value in concepts[row[parameter_column]].items()})
-                s.update(row)
+                s.update({k.lower(): v for k, v in row.items()})
 
                 if not filter(s):
                     continue
@@ -1154,10 +1196,20 @@ class Wordlist(QLCParserWithRowsAndCols):
                     columns = list(s.keys())
                     D[0] = [c.lower() for c in columns]
 
-                D[idx] = [s.get(column) for column in columns]
+                D[idx] = [datatypes.get(
+                    namespace.get(
+                        column,
+                        ''),
+                    lambda x: x)(
+                    s.get(column, '')) for column in columns]
+            D[0] = [namespace.get(c, c) for c in columns]
+            if len(D[0]) != len(set(D[0])):
+                log.warning('|'.join(columns))
+                log.warning('|'.join(D[0]))
+                raise ValueError('name space clashes, cannot parse data')
 
             # convert to wordlist and return
-            return cls(D, *args, **kwargs)
+            return cls(D, **kwargs)
         else:
             # For most LingPy applications, it might be best to see whether we got
             # a Wordlist module.

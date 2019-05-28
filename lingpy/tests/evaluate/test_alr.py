@@ -14,7 +14,7 @@ class Tests(WithTempDir):
     def test_med(self):
         from lingpy.evaluate.alr import med
 
-        self.assertAlmostEquals(
+        self.assertAlmostEqual(
             med(self.wl, gold='gloss', test='gloss', classes=False), 0.0)
-        self.assertAlmostEquals(
+        self.assertAlmostEqual(
             med(self.wl, gold='tokens', test='tokens', classes=True), 0.0)

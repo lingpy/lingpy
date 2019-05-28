@@ -239,7 +239,7 @@ def matrix2dst(
             joinchar = ' '
 
         out += dummy.format(taxon)[:idx] + joinchar
-        out += joinchar.join(['{0:.2f}'.format(d) for d in
+        out += joinchar.join(['{0:.4f}'.format(d) for d in
                               matrix[i]])
         out += '\n'
     if stamp:

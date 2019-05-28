@@ -73,7 +73,7 @@ class TestParser(TestCase):
         wl = Wordlist(test_data('KSL.qlc'))
         wl.pickle(filename=filename)
         from_cache = Wordlist.unpickle(filename)
-        self.assert_(from_cache._class)
+        self.assertTrue(from_cache._class)
         os.remove(str(path(filename)))
 
     def test_len(self):

@@ -23,7 +23,7 @@ class Tests(WithTempDir):
 
     def test_bcubes(self):
         res = bcubes(self.lex, test='cogid', pprint=False)
-        self.assertAlmostEquals(res, (1.0, 1.0, 1.0))
+        self.assertAlmostEqual(res, (1.0, 1.0, 1.0))
 
         _ = bcubes(self.lex, 'cogid', 'cogid', pprint=True, per_concept=True)
 
@@ -35,11 +35,11 @@ class Tests(WithTempDir):
 
     def test_pairs(self):
         res = pairs(self.lex, test='cogid', pprint=False)
-        self.assertAlmostEquals(res, (1.0, 1.0, 1.0))
+        self.assertAlmostEqual(res, (1.0, 1.0, 1.0))
 
     def test_diff(self):
         res = diff(self.lex, test='cogid', tofile=False, pprint=False)
-        self.assertAlmostEquals(res, ((1.0, 1.0, 1.0), (1.0, 1.0, 1.0)))
+        self.assertAlmostEqual(res, ((1.0, 1.0, 1.0), (1.0, 1.0, 1.0)))
         self.lex.add_entries('cugid', 'cogid',
                              lambda x: x + 1 if x % 2 else x * x)
 

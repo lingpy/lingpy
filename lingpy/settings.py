@@ -125,6 +125,7 @@ rcParamsUpd = dict(
     morpheme_separators="◦+→←",
     nasal_placeholder="∼",
     gap_symbol="-",
+    internal_morpheme_separator='_',
     word_separator="_",
     word_separators="_#",
 )

@@ -506,9 +506,9 @@ def triple2tsv(triples_or_fname, output="table"):
         if isinstance(line, (text_type, str)):
             line = line.split('\t')
         a, b, c = line
-        D[a][b] = c
+        D[a][b.upper()] = c
         idxs.add(a)
-        cols.add(b)
+        cols.add(b.upper())
 
     idxs = sorted(idxs)
     cols = sorted(cols)

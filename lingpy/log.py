@@ -95,7 +95,7 @@ def info(msg, **kw):
 
 
 def warning(msg):
-    get_logger().warn(msg)
+    get_logger().warning(msg)
 
 
 def debug(msg, **kw):
@@ -119,7 +119,7 @@ def deprecated(old, new):
 
 def missing_module(name, logger=None):
     logger = logger or get_logger()
-    logger.warn(
+    logger.warning(
         "Module '{0}' could not be loaded. Some methods may not work properly.".format(
             name))
 

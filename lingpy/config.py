@@ -31,10 +31,11 @@ class Config(RawConfigParser):
         if self.default:
             if PY3:
                 fp = io.StringIO(self.default)
+                self.read_file(fp)
             else:
                 fp = io.BytesIO(self.default.encode('utf8'))
-            self.readfp(fp)
-
+                self.readfp(fp)
+            
         cfg_path = config_dir.joinpath(name + '.ini')
         if cfg_path.exists():
             assert cfg_path.is_file()

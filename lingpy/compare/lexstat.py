@@ -515,14 +515,21 @@ class LexStat(Wordlist):
                 scores"""
         def lexstat_align(x, y):
             return calign.align_pair(
-                    self[x, self._numbers], self[y, self._numbers],
+                    self[x, self._numbers], 
+                    self[y, self._numbers],
                     [self.cscorer[charstring(self[y, 'langid']), n] for n in
                         self[x, self._numbers]],
                     [self.cscorer[charstring(self[x, 'langid']), n] for n in
-                        self[y, self._numbers]], self[x, self._prostrings],
-                    self[y, self._prostrings], 1,
-                    kw['scale'], kw['factor'], self.cscorer,
-                    kw['mode'], kw['restricted_chars'], 1)[2]
+                        self[y, self._numbers]], 
+                    self[x, self._prostrings],
+                    self[y, self._prostrings], 
+                    1,
+                    kw['scale'], 
+                    kw['factor'], 
+                    self.cscorer,
+                    kw['mode'], 
+                    kw['restricted_chars'], 1
+                    )[2]
 
         def sca_align(x, y):
             return calign.align_pair(
@@ -973,7 +980,8 @@ class LexStat(Wordlist):
             subset=False,
             defaults=False,
             unattested=-5,
-            unexpected=0.00001
+            unexpected=0.00001,
+            smooth=1
         )
         kw.update(keywords)
         if kw['defaults']:
@@ -995,7 +1003,8 @@ class LexStat(Wordlist):
             preprocessing='{0}:{1}:{2}'.format(
                 kw['preprocessing'], kw['cluster_method'], kw['gop']),
             unattested=kw['unattested'],
-            unexpected=kw['unexpected']
+            unexpected=kw['unexpected'],
+            smooth=kw['smooth']
             )
 
         parstring = '_'.join(
@@ -1062,7 +1071,7 @@ class LexStat(Wordlist):
                 att = self._corrdist.get(
                         (tA, tB), {}).get((charA, charB), False)
                 # in the following we follow the former lexstat protocol
-                if att <= 1 and i != j:
+                if att <= kw['smooth'] and i != j:
                     att = False
 
                 if att and exp:
@@ -1177,7 +1186,7 @@ class LexStat(Wordlist):
 
         if kw['method'] == 'lexstat':
             scorer = self.cscorer
-            gop = 1.0
+            gop = abs(kw['gop'])
             weightsA = [self.cscorer[charstring(lA), n] for n in self[
                 idxA, self._numbers]]
             weightsB = [self.cscorer[charstring(lB), n] for n in self[

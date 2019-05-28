@@ -1,7 +1,7 @@
 # Wordlist
 
 # DATA
-ID	TAXON	GLOSS	ORTHOGRAPHY	IPA	TOKENS	TOKENSA	TOKENSB	COGID
+ID	DOCULECT	CONCEPT	ORTHOGRAPHY	IPA	TOKENS	TOKENSA	TOKENSB	COGID
 #
 1	Albanian	all	gjithë	ɟiθ	ɟ i θ	ɟ i θ	ɟ i θ	4
 2	English	all	all	ɔl	ɔ l	ɔ l	ɔ l	1

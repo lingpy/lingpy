@@ -31,7 +31,7 @@ class Tests(WithTempDir):
             self.assertRaises(ValueError, obj.c_score, 10)
             res = obj.r_score()
             if test == msa:
-                self.assertAlmostEquals(res, 1.0)
+                self.assertAlmostEqual(res, 1.0)
             obj.sp_score()
             obj.jc_score()
             obj.check_swaps()

@@ -11,6 +11,7 @@ from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
     ipa2tokens, prosodic_string, tokens2class, prosodic_weights, class2tokens,
 )
+import lingpy
 from lingpy.algorithm import malign
 from lingpy.algorithm import calign
 from lingpy.algorithm import talign
@@ -241,8 +242,10 @@ def _get_scorer(seqA, seqB):
 
 def _as_lists(seqA, seqB):
     # check whether the sequences are lists
-    if isinstance(seqA, (text_type, tuple)):
+    if isinstance(seqA, (text_type, tuple, lingpy.basictypes.lists,
+        lingpy.basictypes._strings)):
         return list(seqA), list(seqB)
+
     if not isinstance(seqA, list):
         raise ValueError("Input should be tuple, list, or string.")
     return seqA, seqB
