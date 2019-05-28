@@ -1,6 +1,6 @@
 numpy
 appdirs
-networkx>=2.0
+networkx>=2.0,<2.2
 nose
 clldutils>=2.0.1
 csvw
