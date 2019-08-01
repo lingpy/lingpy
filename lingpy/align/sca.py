@@ -798,7 +798,7 @@ class Alignments(Wordlist):
                         idx = msa['ID'].index(key)
                         tmp[key] += msa['alignment'][idx]
                     else:
-                        tmp[key] += tokens2morphemes(self[key, self._segments])[i]
+                        tmp[key] += self[key, self._segments].n[i]
                     # add morpheme separator as long as we don't add the last
                     # element
                     if i < len(cogids) - 1:

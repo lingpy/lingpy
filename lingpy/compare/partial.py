@@ -34,7 +34,7 @@ def _get_slices(tokens, **keywords):
             word_seps=lingpy.settings.rcParams['word_separators'],
             seps=lingpy.settings.rcParams['morpheme_separators'],
             tones='T',
-            split_on_tones=True,
+            split_on_tones=False,
             )
     kw.update(keywords)
     morphemes = lingpy.sequence.sound_classes.tokens2morphemes(tokens,
@@ -198,7 +198,7 @@ class Partial(LexStat):
             word_seps=lingpy.settings.rcParams['word_separators'],
             seps=lingpy.settings.rcParams['morpheme_separators'],
             tones='T',
-            split_on_tones=True
+            split_on_tones=False
         )
         kw.update(keywords)
         
@@ -347,7 +347,7 @@ class Partial(LexStat):
             restriction='',
             ref='',
             external_function=None,
-            split_on_tones=True,
+            split_on_tones=False,
             **keywords):
         """
         Cluster the words into partial cognate sets.
@@ -394,7 +394,7 @@ class Partial(LexStat):
         """
         kw = dict(
                 imap_mode = True,
-                post_processing = False,
+                post_processing = True,
                 inflation=2,
                 expansion=2,
                 max_steps=1000,
