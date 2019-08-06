@@ -1069,7 +1069,8 @@ class Wordlist(QLCParserWithRowsAndCols):
                ('concept_concepticon_id', 'concepticon'),
                ('language_latitude', 'latitude'),
                ('language_longitude', 'longitude'),
-               ('cognacy', 'cogid')
+               ('cognacy', 'cognacy'),
+               ('cogid_cognateset_id', 'cogid')
                ),
             filter=lambda row: row["form"],
             **kwargs):
@@ -1165,6 +1166,7 @@ class Wordlist(QLCParserWithRowsAndCols):
             except KeyError:
                 c_id = "ID"
                 concepts = bounce_as_id
+
 
             # create dictionary
             D = {0: columns} # Reserve the header
