@@ -1059,7 +1059,8 @@ class Wordlist(QLCParserWithRowsAndCols):
                 'concept_concepticon_id',
                 'language_latitude',
                 'language_longitude',
-                'cognacy'
+                'cognacy',
+                'cogid_cognateset_id',
                 ),
             namespace=(
                ('concept_name', 'concept'),
