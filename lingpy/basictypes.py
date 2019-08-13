@@ -63,7 +63,7 @@ class lists(_strings):
         return lists(str(self)+self.sep+str(other))
 
     def extend(self, other):
-        super(lists, self).extend(lists('')+other)
+        super(lists, self).extend(lists('')+_strings(str, other))
 
     def change(self, i, item):
         self.n[i] = _strings(str, item)

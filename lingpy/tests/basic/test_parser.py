@@ -63,19 +63,6 @@ class TestParser(TestCase):
                                           'concept', 'cogid', {})
         assert parser.cogid
 
-    def test_cache(self):
-        filename = 'lingpy_test.qlc'
-        self.parser.pickle(filename=filename)
-        from_cache = QLCParser.unpickle(filename)
-        self.assertEqual(self.parser.header, from_cache.header)
-        os.remove(str(path(filename)))
-
-        wl = Wordlist(test_data('KSL.qlc'))
-        wl.pickle(filename=filename)
-        from_cache = Wordlist.unpickle(filename)
-        self.assertTrue(from_cache._class)
-        os.remove(str(path(filename)))
-
     def test_len(self):
         assert len(self.parser)
 
