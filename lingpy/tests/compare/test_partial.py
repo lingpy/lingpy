@@ -24,6 +24,9 @@ class Tests(WithTempDir):
         assert a[0][1] == 3
         assert b[0][1] == 6
 
+    def test_get_partial_scorer(self):
+        self.part2.get_partial_scorer(runs=10)
+
     def test_get_partial_matrices(self):
         for method in ['upgma', 'single', 'complete', 'ward', 'mcl']:
             matrix = list(self.part._get_partial_matrices(cluster_method=method,

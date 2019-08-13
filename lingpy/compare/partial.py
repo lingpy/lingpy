@@ -5,15 +5,19 @@ Module provides a class for partial cognate detection, expanding the LexStat cla
 """
 from __future__ import print_function, division, unicode_literals
 from collections import defaultdict
-from itertools import combinations
+from itertools import combinations, product
+import random
 
 import numpy as np
 import networkx as nx
 
 import lingpy
-from lingpy.algorithm import clustering, extra
+from lingpy.settings import rcParams
+from lingpy.algorithm import clustering, extra, misc
+from lingpy.algorithm import calign
 from lingpy.compare.lexstat import LexStat
-from lingpy.util import combinations2, pb
+from lingpy import util, log 
+
 try:
     from lingpy.algorithm.cython import calign
 except ImportError:
@@ -43,7 +47,7 @@ def _get_slices(tokens, **keywords):
     current = 0
     for morpheme in morphemes:
         out += [(current, current+len(morpheme))]
-        current = current+len(morpheme)
+        current = current+len(morpheme)+(1 if not kw['split_on_tones'] else 0)
     return out
 
 class Partial(LexStat):
@@ -164,13 +168,424 @@ class Partial(LexStat):
     def __init__(self, infile, **keywords):
 
         kw = {
-                "morphemes" : "morphemes",
-                "partial_cognates" : "partial_cognate_sets"
+                "morphemes": "morphemes",
+                "partial_cognates": "partial_cognate_sets",
+                "split_on_tones": False
                 }
         kw.update(keywords)
         lingpy.compare.lexstat.LexStat.__init__(self, infile, **kw)
         self._morphemes = kw['morphemes']
         self._partials = kw['partial_cognates']
+
+        # get the slices
+        self._slices = {}
+        for idx, tokens in self.iter_rows(self._segments):
+            self._slices[idx] = _get_slices(tokens, **keywords)
+
+
+    def _get_partial_corrdist(self, **keywords):
+        """
+        Use alignments to get a correspondences statistics.
+        """
+        kw = dict(
+            cluster_method='upgma',
+            factor=rcParams['align_factor'],
+            gop=rcParams['align_gop'],
+            modes=rcParams['lexstat_modes'],
+            preprocessing=False,
+            preprocessing_method=rcParams['lexstat_preprocessing_method'],
+            preprocessing_threshold=rcParams[
+                'lexstat_preprocessing_threshold'],
+            split_on_tones=False,
+            ref='scaid',
+            restricted_chars=rcParams['restricted_chars'],
+            threshold=rcParams['lexstat_scoring_threshold'],
+            subset=False)
+        kw.update(keywords)
+
+        self._included = {}
+        corrdist = {}
+
+        if kw['preprocessing']:
+            if kw['ref'] not in self.header:
+                self.cluster(
+                    method=kw['preprocessing_method'],
+                    threshold=kw['preprocessing_threshold'],
+                    gop=kw['gop'],
+                    cluster_method=kw['cluster_method'],
+                    ref=kw['ref'])
+
+        with util.pb(
+                desc='CORRESPONDENCE CALCULATION',
+                total=self.width ** 2 / 2) as pb:
+            for (i, tA), (j, tB) in util.multicombinations2(
+                    enumerate(self.cols)):
+                pb.update(1)
+                log.info("Calculating alignments for pair {0} / {1}.".format(
+                    tA, tB))
+
+                corrdist[tA, tB] = defaultdict(float)
+                for mode, gop, scale in kw['modes']:
+                    pairs = self.pairs[tA, tB]
+                    if kw['subset']:
+                        pairs = [
+                                pair for pair in pairs if pair in
+                                self.subsets[tA, tB]]
+
+                    # threshold and preprocessing, make sure threshold is
+                    # different from pre-processing threshold when
+                    # preprocessing is set to false
+                    if kw['preprocessing']:
+                        pairs = [pair for pair in pairs
+                                 if self[pair, kw['ref']][0] == self[
+                                     pair, kw['ref']][1]]
+                        threshold = 10.0
+                    else:
+                        threshold = kw['threshold']
+
+                    # create morpheme-segmented pairs
+                    new_nums, new_weights, new_pros = [], [], []
+                    for idxA, idxB in pairs:
+                        for iA, iB in self._slices[idxA]:
+                            for jA, jB in self._slices[idxB]:
+                                new_nums += [(
+                                    self[idxA, self._numbers][iA:iB],
+                                    self[idxB, self._numbers][jA:jB]
+                                    )]
+                                new_weights += [(
+                                    self[idxA, self._weights][iA:iB],
+                                    self[idxB, self._weights][jA:jB]
+                                    )]
+                                new_pros += [(
+                                    self[idxA, self._prostrings][iA:iB],
+                                    self[idxB, self._prostrings][jA:jB]
+                                    )]
+
+                    corrs, self._included[tA, tB] = calign.corrdist(
+                        threshold,
+                        new_nums,
+                        new_weights,
+                        new_pros,
+                        gop,
+                        scale,
+                        kw['factor'],
+                        self.bscorer,
+                        mode,
+                        kw['restricted_chars'])
+
+                    # change representation of gaps
+                    for (a, b), d in corrs.items():
+                        # XXX check for bias XXX
+                        if a == '-':
+                            a = util.charstring(i + 1)
+                        elif b == '-':
+                            b = util.charstring(j + 1)
+                        corrdist[tA, tB][a, b] += d / float(len(kw['modes']))
+
+        return corrdist
+
+    def _get_partial_randist(self, **keywords):
+        """
+        Return the aligned results of randomly aligned sequences.
+        """
+        kw = dict(
+            modes=rcParams['lexstat_modes'],
+            factor=rcParams['align_factor'],
+            restricted_chars=rcParams['restricted_chars'],
+            runs=rcParams['lexstat_runs'],
+            rands=rcParams['lexstat_rands'],
+            limit=rcParams['lexstat_limit'],
+            method=rcParams['lexstat_scoring_method'])
+        kw.update(keywords)
+
+        # determine the mode
+        method = 'markov' if kw['method'] in ['markov', 'markov-chain', 'mc'] \
+            else 'shuffle'
+
+        corrdist = {}
+        tasks = (self.width ** 2) / 2
+        with util.pb(
+                desc='RANDOM CORRESPONDENCE CALCULATION',
+                total=tasks) as progress:
+            for (i, tA), (j, tB) in util.multicombinations2(
+                    enumerate(self.cols)):
+                progress.update(1)
+                log.info(
+                    "Calculating random alignments"
+                    "for pair {0}/{1}.".format(tA, tB)
+                )
+                corrdist[tA, tB] = defaultdict(float)
+                
+                # create morpheme-segmented pairs
+                pairs = self.pairs[tA, tB]
+                new_nums, new_weights, new_pros = [], [], []
+                for idxA, idxB in pairs:
+                    for iA, iB in self._slices[idxA]:
+                        for jA, jB in self._slices[idxB]:
+                            new_nums += [(
+                                self[idxA, self._numbers][iA:iB],
+                                self[idxB, self._numbers][jA:jB]
+                                )]
+                            new_weights += [(
+                                self[idxA, self._weights][iA:iB],
+                                self[idxB, self._weights][jA:jB]
+                                )]
+                            new_pros += [(
+                                self[idxA, self._prostrings][iA:iB],
+                                self[idxB, self._prostrings][jA:jB]
+                                )]
+                # get the number pairs etc.
+                sample = [
+                        (x, y)
+                        for x in range(len(new_nums)) for y in
+                        range(len(new_nums))]
+                if len(sample) > kw['runs']:
+                    sample = random.sample(sample, kw['runs'])
+
+                for mode, gop, scale in kw['modes']:
+                    corrs, included = calign.corrdist(
+                        10.0,
+                        [(
+                            new_nums[s[0]][0],
+                            new_nums[s[1]][1]) for s in sample],
+                        [(new_weights[s[0]][0], new_weights[s[1]][1]) for s in sample],
+                        [(
+                            new_pros[s[0]][0],
+                            new_pros[s[1]][1]) for s in sample],
+                        gop,
+                        scale,
+                        kw['factor'],
+                        self.bscorer,
+                        mode,
+                        kw['restricted_chars'])
+
+                    # change representation of gaps
+                    for a, b in list(corrs.keys()):
+                        # get the correspondence count
+                        d = corrs[a, b] * self._included[tA, tB] / included
+                        # XXX check XXX* len(self.pairs[tA,tB]) / runs
+
+                        # check for gaps
+                        if a == '-':
+                            a = util.charstring(i + 1)
+                        elif b == '-':
+                            b = util.charstring(j + 1)
+
+                        corrdist[tA, tB][a, b] += d / len(kw['modes'])
+        return corrdist
+
+    def get_partial_scorer(self, **keywords):
+        """
+        Create a scoring function based on sound correspondences.
+
+        Parameters
+        ----------
+        method : str (default='shuffle')
+            Select between "markov", for automatically generated random
+            strings, and "shuffle", for random strings taken directly from the
+            data.
+        ratio : tuple (default=3,2)
+            Define the ratio between derived and original score for
+            sound-matches.
+        vscale : float (default=0.5)
+            Define a scaling factor for vowels, in order to decrease their
+            score in the calculations.
+        runs : int (default=1000)
+            Choose the number of random runs that shall be made in order to
+            derive the random distribution.
+        threshold : float (default=0.7)
+            The threshold which used to select those words that are compared
+            in order to derive the attested distribution.
+        modes : list (default = [("global",-2,0.5),("local",-1,0.5)])
+            The modes which are used in order to derive the distributions from
+            pairwise alignments.
+        factor : float (default=0.3)
+            The scaling factor for sound segments with identical prosodic
+            environment.
+        force : bool (default=False)
+            Force recalculation of existing distribution.
+        preprocessing: bool (default=False)
+            Select whether SCA-analysis shall be used to derive a preliminary
+            set of cognates from which the attested distribution shall be
+            derived.
+        rands : int (default=1000)
+            If "method" is set to "markov", this parameter defines the number
+            of strings to produce for the calculation of the random
+            distribution.
+        limit : int (default=10000)
+            If "method" is set to "markov", this parameter defines the limit
+            above which no more search for unique strings will be carried out.
+        cluster_method : {"upgma" "single" "complete"} (default="upgma")
+            Select the method to be used for the calculation of cognates in the
+            preprocessing phase, if "preprocessing" is set to c{True}.
+        gop : int (default=-2)
+            If "preprocessing" is selected, define the gap opening penalty for
+            the preprocessing calculation of cognates.
+        unattested : {int, float} (default=-5)
+            If a pair of sounds is not attested in the data, but expected by
+            the alignment algorithm that computes the expected distribution,
+            the score would be -infinity. Yet in order to allow to smooth this
+            behaviour and to reduce the strictness, we set a default negative
+            value which does not necessarily need to be too high, since it may
+            well be that we miss a potentially good pairing in the first runs
+            of alignment analyses. Use this keyword to adjust this parameter.
+        unexpected : {int, float} (default=0.000001)
+            If a pair is encountered in a given alignment but not expected
+            according to the randomized alignments, the score would be not
+            calculable, since we had to divide by zero. For this reason, we set
+            a very small constant, by which the score is divided in this case.
+            Not that this constant is only relevant in those cases where the
+            shuffling procedure was not carried out long enough.
+
+        """
+        kw = dict(
+            method=rcParams['lexstat_scoring_method'],
+            ratio=rcParams['lexstat_ratio'],
+            vscale=rcParams['lexstat_vscale'],
+            runs=rcParams['lexstat_runs'],
+            threshold=rcParams['lexstat_scoring_threshold'],
+            modes=rcParams['lexstat_modes'],
+            factor=rcParams['align_factor'],
+            restricted_chars=rcParams['restricted_chars'],
+            force=False,
+            preprocessing=False,
+            rands=rcParams['lexstat_rands'],
+            limit=rcParams['lexstat_limit'],
+            cluster_method=rcParams['lexstat_cluster_method'],
+            gop=rcParams['align_gop'],
+            preprocessing_threshold=rcParams[
+                'lexstat_preprocessing_threshold'],
+            preprocessing_method=rcParams['lexstat_preprocessing_method'],
+            subset=False,
+            defaults=False,
+            unattested=-5,
+            unexpected=0.00001,
+            smooth=1
+        )
+        kw.update(keywords)
+        if kw['defaults']:
+            return kw
+
+        # get parameters and store them in string
+        params = dict(
+            ratio=kw['ratio'],
+            vscale=kw['vscale'],
+            runs=kw['runs'],
+            scoring_threshold=kw['threshold'],
+            preprocessing_threshold=kw['preprocessing_threshold'],
+            modestring=':'.join(
+                '{0}-{1}-{2:.2f}'.format(a, abs(b), c) for a, b, c in
+                kw['modes']),
+            factor=kw['factor'],
+            restricted_chars=kw['restricted_chars'],
+            method=kw['method'],
+            preprocessing='{0}:{1}:{2}'.format(
+                kw['preprocessing'], kw['cluster_method'], kw['gop']),
+            unattested=kw['unattested'],
+            unexpected=kw['unexpected'],
+            smooth=kw['smooth']
+            )
+
+        parstring = '_'.join(
+            [
+                '{ratio[0]}:{ratio[1]}',
+                '{vscale:.2f}',
+                '{runs}',
+                '{scoring_threshold:.2f}',
+                '{modestring}',
+                '{factor:.2f}',
+                '{restricted_chars}',
+                '{method}',
+                '{preprocessing}',
+                '{preprocessing_threshold}',
+                '{unexpected:.2f}',
+                '{unattested:.2f}'
+            ]).format(**params)
+
+        # check for existing attributes
+        if hasattr(self, 'cscorer') and not kw['force']:
+            log.warning(
+                "An identical scoring function has already been calculated, "
+                "force recalculation by setting 'force' to 'True'.")
+            return
+
+        # check for attribute
+        if hasattr(self, 'params') and not kw['force']:
+            if 'cscorer' in self.params:
+                if self.params['cscorer'] == params:
+                    log.warning(
+                        "An identical scoring function has already been "
+                        "calculated, force recalculation by setting 'force'"
+                        " to 'True'.")
+                    return
+            else:
+                log.warning(
+                    "A different scoring function has already been calculated, "
+                    "overwriting previous settings.")
+
+        # store parameters
+        self.params = {'cscorer': params}
+        self._meta['params'] = self.params
+        self._stamp += "# Parameters: " + parstring + '\n'
+
+        # get the correspondence distribution
+        self._corrdist = self._get_partial_corrdist(**kw)
+        # get the random distribution
+        self._randist = self._get_partial_randist(**kw)
+
+        # get the average gop
+        gop = sum([m[1] for m in kw['modes']]) / len(kw['modes'])
+
+        # create the new scoring matrix
+        matrix = [[c for c in line] for line in self.bscorer.matrix]
+        char_dict = self.bscorer.chars2int
+
+        for (i, tA), (j, tB) in util.multicombinations2(enumerate(self.cols)):
+            for charA, charB in product(
+                list(self.freqs[tA]) + [util.charstring(i + 1)],
+                list(self.freqs[tB]) + [util.charstring(j + 1)]
+            ):
+                exp = self._randist.get(
+                        (tA, tB), {}).get((charA, charB), False)
+                att = self._corrdist.get(
+                        (tA, tB), {}).get((charA, charB), False)
+                # in the following we follow the former lexstat protocol
+                if att <= kw['smooth'] and i != j:
+                    att = False
+
+                if att and exp:
+                    score = np.log2((att ** 2) / (exp ** 2))
+                elif att and not exp:
+                    score = np.log2((att ** 2) / kw['unexpected'])
+                elif exp and not att:
+                    score = kw['unattested']  # XXX gop ???
+                else:  # elif not exp and not att:
+                    score = -90  # ???
+
+                # combine the scores
+                if rcParams['gap_symbol'] not in charA + charB:
+                    sim = self.bscorer[charA, charB]
+                else:
+                    sim = gop
+
+                # get the real score
+                rscore = (kw['ratio'][0] * score + kw['ratio'][1] * sim) \
+                    / sum(kw['ratio'])
+
+                try:
+                    iA = char_dict[charA]
+                    iB = char_dict[charB]
+
+                    # use the vowel scale
+                    if charA[4] in self.vowels and charB[4] in self.vowels:
+                        matrix[iA][iB] = matrix[iB][iA] = kw['vscale'] * rscore
+                    else:
+                        matrix[iA][iB] = matrix[iB][iA] = rscore
+                except:
+                    pass
+
+        self.cscorer = misc.ScoreDict(self.chars, matrix)
+        self._meta['scorer']['cscorer'] = self.cscorer
 
     def _get_partial_matrices(
             self,
@@ -393,8 +808,8 @@ class Partial(LexStat):
         
         """
         kw = dict(
-                imap_mode = True,
-                post_processing = True,
+                imap_mode=True,
+                post_processing=True,
                 inflation=2,
                 expansion=2,
                 max_steps=1000,
@@ -422,7 +837,7 @@ class Partial(LexStat):
         k = 0
         C = defaultdict(list) # stores the pcogids
         G = {} # stores the graphs
-        with pb(desc='PARTIAL SEQUENCE CLUSTERING', total=len(self.rows)) as progress:
+        with util.pb(desc='PARTIAL SEQUENCE CLUSTERING', total=len(self.rows)) as progress:
             for concept, trace, matrix in matrices:
                 progress.update(1)
                 lingpy.log.info('Analyzing concept {0}...'.format(concept))
@@ -456,7 +871,7 @@ class Partial(LexStat):
                     for i, (idx, pos, slc) in enumerate(trace):
                         _g.add_node((i,idx,pos))
                     remove_edges = []
-                    for (i, n1), (j, n2) in combinations2(enumerate(_g.nodes())):
+                    for (i, n1), (j, n2) in util.combinations2(enumerate(_g.nodes())):
                         if C[n1[1]][n1[2]] == C[n2[1]][n2[2]]:
                             _g.add_edge(n1, n2)
                             if n1[1] == n2[1]:
@@ -483,7 +898,7 @@ class Partial(LexStat):
                     
                     G[concept] = _g
 
-                k += max(c.values())
+                k += max(c.values()) + 1
         self.add_entries(ref or self._partials, C, lambda x: x)
         self.graphs = G
 
@@ -534,7 +949,7 @@ class Partial(LexStat):
                 # get connected components
                 g = nx.Graph()
                 g.add_nodes_from(idxs)
-                for (i, cogsA), (j, cogsB) in combinations2(zip(idxs, srcs)):
+                for (i, cogsA), (j, cogsB) in util.combinations2(zip(idxs, srcs)):
                      if [x for x in cogsA if x in cogsB]:
                          g.add_edge(i, j)
                 for i,comps in enumerate(nx.connected_components(g)):

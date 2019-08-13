@@ -51,12 +51,6 @@ class QLCParser(object):
 
     """
 
-    @staticmethod
-    def unpickle(filename):
-        obj = cache.load(filename)
-        obj._recreate_unpicklables()
-        return obj
-
     def __init__(self, filename, conf=''):
         """
         Parse data regularly if the data has not been loaded from a pickled version.
@@ -189,11 +183,6 @@ class QLCParser(object):
         for key in [k for k in input_data if type(k) != int]:
             self._meta[key] = input_data[key]
 
-    def _recreate_unpicklables(self):
-        """run `eval` on the string representations."""
-        self.log = log.get_logger()
-        self._class = {key: eval(value) for key, value in self._class_string.items()}
-
     def __getitem__(self, idx):
         """
         Method allows quick access to the data by passing the integer key.
@@ -287,27 +276,6 @@ class QLCParser(object):
         """
 
         return iter([key for key in self._data.keys()])
-
-    def pickle(self, filename=None):
-        """
-        Store the QLCParser instance in a pickle file.
-
-        Notes
-        -----
-        The function stores a binary file called ``FILENAME.pkl`` with ``FILENAME``
-        corresponding to the name of the original file in the
-        `user cache dir <https://github.com/ActiveState/appdirs#some-example-output>`_
-        for lingpy on your system.
-        To restore the instance from the pickle call
-        :py:meth:`~lingpy.basic.parser.QLCParser.unpickle`.
-        """
-        # we reset the _class attribute, because it may contain unpicklable stuff, like
-        # `eval`ed lambdas.
-        self._class = {}
-        self.log = None
-        cache.dump(self, filename or self.filename)
-        # after pickling we have to recreate the attribute.
-        self._recreate_unpicklables()
 
     def add_entries(
             self,
