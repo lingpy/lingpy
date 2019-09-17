@@ -898,7 +898,7 @@ class Partial(LexStat):
                     
                     G[concept] = _g
 
-                k += max(c.values()) + 1
+                k += len(matrix) + 1 
         self.add_entries(ref or self._partials, C, lambda x: x)
         self.graphs = G
 

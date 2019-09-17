@@ -26,7 +26,7 @@
 
 ## Major Releases Planned
 
-With version 2.6, we plan to release 2.7 in 2018 with some new functions,
+With version 2.6, we plan to release 2.7 in 2020 with some new functions,
 including new approaches from new future members on cognate detection and some
 basic approaches to phylogenetic reconstruction which we did not have yet the
 time to include. You can check out what we plan by comparing the [Milestone
@@ -37,4 +37,4 @@ With version 2.7 we will start working on a complete relaunch of LingPy which
 will no longer guarantee backwards-compatibility and which will also reduce
 certain functions which LingPy offered in the past, as they will be done by
 alternative software packages. This new package, which we would ideally
-finalize in 2019 will be called LingPy3 and appear as version 3.0.
+finalize in 2022 will be called LingPy3 and appear as version 3.0.

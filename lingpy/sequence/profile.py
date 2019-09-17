@@ -12,6 +12,7 @@ from clldutils.text import split_text, strip_brackets, strip_chars
 
 from lingpy.sequence.sound_classes import codepoint, clean_string, token2class
 from lingpy import log
+from lingpy.util import pb
 
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
@@ -66,7 +67,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(int)
     words = [wordlist[idx, ref] for idx in wordlist]
-    for word in words:
+    for word in pb(words, desc='iterating over words'):
         if isinstance(word, list):
             word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
@@ -85,7 +86,8 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
                 profile[segment] += 1
                 nulls.add(segment)
 
-    for s, f in sorted(profile.items(), key=lambda x: x[1], reverse=True):
+    for s, f in pb(sorted(profile.items(), key=lambda x: x[1], reverse=True),
+            desc='preparing profile'):
         sclass = token2class(s, 'dolgo')
         if s in bad_words:
             ipa = bad_word.format(s)
@@ -106,7 +108,8 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
 def context_profile(wordlist, ref='ipa', col="doculect",
         semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False, brackets=None,
         splitters='/,;~', merge_geminates=True, clts=False,
-        bad_word="<???>", bad_sound="<?>", unknown_sound="!{0}", examples=2):
+        bad_word="<???>", bad_sound="<?>", unknown_sound="!{0}", examples=2,
+        max_entries=100):
     """
     Create an advanced Orthography Profile with context and doculect information.
 
@@ -161,7 +164,8 @@ def context_profile(wordlist, ref='ipa', col="doculect",
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(list)
-    for idx, word, language in wordlist.iter_rows(ref, col):
+    for idx, word, language in pb(wordlist.iter_rows(ref, col), 
+            desc='iter words', total=len(wordlist)):
         log.info('processing {0}-{1}'.format(idx, word))
         if isinstance(word, list):
             word = ' '.join(word)
@@ -187,10 +191,11 @@ def context_profile(wordlist, ref='ipa', col="doculect",
     for s in '^$':
         yield s, 'NULL', '', '', '', ''
 
-    for idx, (s, entries) in enumerate(sorted(profile.items(), key=lambda x:
-        len(x[1]), reverse=True)):
+    for idx, (s, entries) in pb(enumerate(sorted(profile.items(), key=lambda x:
+        len(x[1]), reverse=True)), desc='yielding entries', total=len(profile)):
         sclass = token2class(s.strip('^$'), 'dolgo')
-        words, langs = [l[1] for l in entries], [l[0] for l in entries]
+        words, langs = [l[1] for l in entries][:max_entries], [l[0] for l in
+                entries][:max_entries]
         languages = ', '.join(sorted(set(langs), key=lambda x: langs.count(x),
             reverse=True))
         frequency = str(len(langs))

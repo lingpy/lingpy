@@ -405,8 +405,8 @@ def diff(
                 concept, fp, fn))
 
             # get the words
-            words = [wordlist[i, 'ipa'] for i in idxs]
-            langs = [wordlist[i, 'taxa'] for i in idxs]
+            words = [wordlist[i, transcription] for i in idxs]
+            langs = [wordlist[i][wordlist._colIdx] for i in idxs]
 
             # get a word-formater
             wform = '{0:' + str(max([len(w) for w in words])) + '}'
