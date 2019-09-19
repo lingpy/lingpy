@@ -5,8 +5,9 @@ nose
 tqdm
 six
 mock
-pycldf
 csvw<=1.5.6; python_version < "3.5"
 csvw>=1.5.6; python_version >= "3.5"
 clldutils==2.8.0; python_version < "3.5"
 clldutils>=2.8.0; python_version >= "3.5"
+pycldf==1.7.0; python_version < "3.5"
+pycldf>=1.7.0; python_version >= "3.5"
