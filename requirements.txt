@@ -2,9 +2,11 @@ numpy
 appdirs
 networkx>=2.0,<2.2
 nose
-clldutils>=2.0.1
-csvw
 tqdm
 six
 mock
 pycldf
+csvw<=1.5.6; python_version < "3.5"
+csvw>=1.5.6; python_version >= "3.5"
+clldutils==2.8.0; python_version < "3.5"
+clldutils>=2.8.0; python_version >= "3.5"
