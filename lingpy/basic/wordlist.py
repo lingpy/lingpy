@@ -9,7 +9,7 @@ import numpy as np
 from collections import defaultdict
 
 from six import text_type as str
-from clldutils import dsv
+from csvw import dsv
 from csvw.metadata import TableGroup
 from unicodedata import normalize
 

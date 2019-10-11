@@ -2,8 +2,8 @@ numpy
 appdirs
 networkx>=2.0,<2.2
 nose
-clldutils>=2.0.1
-csvw
+clldutils==2.8.0
+csvw<=1.5.6
 tqdm
 six
 mock
