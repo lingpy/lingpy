@@ -20,8 +20,8 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 """
 
 __author__ = "Johann-Mattis List, Simon Greenhill, Tiago Tresoldi, Robert Forkel (with contributions by Gereon Kaiping, Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, and Peter Bouda, and Taraka Rama)"
-__date__ = "2018-11-25"
-__version__ = "2.6.4"
+__date__ = "2019-10-11"
+__version__ = "2.6.5"
 
 # We exempt this module from QA, because it only provides import shortcuts.
 # flake8: noqa
