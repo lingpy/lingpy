@@ -304,7 +304,6 @@ class profile(Command):
     def __call__(self, args):
         if args.cldf:
             wl = lingpy.basic.wordlist.Wordlist.from_cldf(args.input_file)
-            print('loaded wl')
         else:
             wl = lingpy.basic.wordlist.Wordlist(args.input_file)
 
