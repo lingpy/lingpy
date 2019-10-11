@@ -541,7 +541,7 @@ class Alignments(Wordlist):
         loans, but you want to suppress this behaviour, just set this
         keyword to "abs", and all cognate IDs will be converted to their
         absolute value.
-    split_on_tones : bool (default=True)
+    split_on_tones : bool (default=False)
         If set to True, this means that in the case of fuzzy alignment mode,
         the algorithm will attempt to split words into morphemes by tones if no
         explicit morpheme markers can be found.
@@ -573,7 +573,7 @@ class Alignments(Wordlist):
         conf='',
         modify_ref=False,
         _interactive=True,
-        split_on_tones=True,
+        split_on_tones=False,
         ref="cogid",
         **keywords):
         kw = {"segments": "tokens", "alignment": "alignment", "transcription":
