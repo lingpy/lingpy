@@ -41,8 +41,8 @@ def _get_slices(tokens, **keywords):
             split_on_tones=False,
             )
     kw.update(keywords)
-    morphemes = lingpy.sequence.sound_classes.tokens2morphemes(tokens,
-            **kw)
+    morphemes = lingpy.basictypes.lists(tokens).n if not kw['split_on_tones'] \
+            else lingpy.sequence.sound_classes.tokens2morphemes(tokens, **kw)
     out = []
     current = 0
     for morpheme in morphemes:
