@@ -14,7 +14,7 @@ from csvw.metadata import TableGroup
 from unicodedata import normalize
 
 import pycldf
-from pycldf.util import Path
+from clldutils.path import Path
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams
@@ -1119,7 +1119,6 @@ class Wordlist(QLCParserWithRowsAndCols):
         if isinstance(namespace, tuple):
             namespace = dict(namespace)
 
-        
         # get the datatypes from configuration as to namespace
         datatypes = read_conf(kwargs['conf'])[1]
 
