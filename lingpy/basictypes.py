@@ -70,7 +70,3 @@ class lists(_strings):
         new_s = self.sep.join([' '.join(x) for x in self.n])
         self.__init__(new_s, sep=self.sep)
 
-
-
-        
-        

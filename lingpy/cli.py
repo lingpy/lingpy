@@ -296,6 +296,10 @@ class profile(Command):
                 p, 'language', None, 'Create profile for a specific language.',
                 short_opt='l')
         add_option(
+                p, 'merge', False, 'Merge vowels in profile creation.',
+                short_opt='m'
+                )
+        add_option(
                 p, 'context', False, 'Create profile with context.', 
                 short_opt='c')
         add_option(p, 'clts', False, 'Check for CLTS compliance.')
@@ -320,8 +324,9 @@ class profile(Command):
             raise ValueError("Wrong column header specified!")
         if args.clts:
             try:
-                from pyclts.transcriptionsystem import TranscriptionSystem as TS
-                clts = TS('bipa')
+                from pyclts import CLTS
+                from cldfcatalog import Config
+                clts = CLTS(Config.from_file().get_clone('clts')).bipa
             except ImportError:
                 raise ImportError("Module pyclts is not installed on your system")
         else:
@@ -337,11 +342,11 @@ class profile(Command):
             wl = lingpy.basic.wordlist.Wordlist(D)
         if args.context:
             for line in lingpy.sequence.profile.context_profile(wl, ref=args.column,
-                    clts=clts):
+                    clts=clts, merge_vowels=args.merge):
                 out += ['\t'.join(line)]
         else:
             for line in lingpy.sequence.profile.simple_profile(wl,
-                    ref=args.column, clts=clts):
+                    ref=args.column, clts=clts, merge_vowels=args.merge):
                 out += ['\t'.join(line)]
         if args.output_file == 'stdout':
             print(out[0])
