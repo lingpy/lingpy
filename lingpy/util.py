@@ -18,13 +18,13 @@ from clldutils.misc import slug
 import lingpy
 from lingpy.log import get_level, file_written
 
-PROG = 'LingPy-{0}'.format(lingpy.__version__)
+PROG = "LingPy-{0}".format(lingpy.__version__)
 
 pb = partial(tqdm, leave=False)
 
 
-def charstring(id_, char='X', cls='-'):
-    return '{0}.{1}.{2}'.format(id_, char, cls)
+def charstring(id_, char="X", cls="-"):
+    return "{0}.{1}.{2}".format(id_, char, cls)
 
 
 def combinations2(iterable):
@@ -57,17 +57,17 @@ def join(sep, *args, **kw):
     """
     if len(args) == 1 and isinstance(args[0], (list, tuple, types.GeneratorType)):
         args = args[0]
-    condition = kw.get('condition', lambda x: True)
-    return sep.join(['%s' % arg for arg in args if condition(arg)])
+    condition = kw.get("condition", lambda x: True)
+    return sep.join(["%s" % arg for arg in args if condition(arg)])
 
 
-dotjoin = partial(join, '.')
-tabjoin = partial(join, '\t')
+dotjoin = partial(join, ".")
+tabjoin = partial(join, "\t")
 confirm = partial(clilib.confirm, default=False)
 
 
 class TemporaryPath(object):
-    def __init__(self, suffix=''):
+    def __init__(self, suffix=""):
         fp = NamedTemporaryFile(suffix=suffix)
         self.name = Path(fp.name)
         fp.close()
@@ -84,7 +84,7 @@ def lingpy_path(*comps):
     return Path(lingpy.__file__).parent.joinpath(*comps).as_posix()
 
 
-data_path = partial(lingpy_path, 'data')
+data_path = partial(lingpy_path, "data")
 
 
 def _str_path(path, mkdir=False):
@@ -126,21 +126,21 @@ def write_text_file(path, content, normalize=None, log=True):
     """
     if not isinstance(content, text_type):
         content = lines_to_text(content)
-    with io.open(_str_path(path, mkdir=True), 'w', encoding='utf8') as fp:
+    with io.open(_str_path(path, mkdir=True), "w", encoding="utf8") as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
     if log:
         file_written(_str_path(path))
 
 
 def lines_to_text(lines):
-    return ''.join(line if line.endswith('\n') else line + '\n' for line in lines)
+    return "".join(line if line.endswith("\n") else line + "\n" for line in lines)
 
 
 class TextFile(object):
     def __init__(self, path, log=True):
         self.path = path
         self.log = log
-        self.fp = io.open(_str_path(path, mkdir=True), 'w', encoding='utf8')
+        self.fp = io.open(_str_path(path, mkdir=True), "w", encoding="utf8")
 
     def __enter__(self):
         return self.fp
@@ -181,9 +181,9 @@ def read_text_file(path, normalize=None, lines=False):
     else:
         _normalize = identity
 
-    with io.open(_str_path(path), 'r', encoding='utf-8-sig') as fp:
+    with io.open(_str_path(path), "r", encoding="utf-8-sig") as fp:
         if lines:
-            return [_normalize(line.strip('\r\n')) for line in fp]
+            return [_normalize(line.strip("\r\n")) for line in fp]
         else:
             return _normalize(fp.read())
 
@@ -197,9 +197,9 @@ def as_string(obj, pprint=False):
 
 def read_config_file(path, **kw):
     """Read lines of a file ignoring commented lines and empty lines. """
-    kw['lines'] = True
+    kw["lines"] = True
     lines = (line.strip() for line in read_text_file(path, **kw))
-    return [line for line in lines if line and not line.startswith('#')]
+    return [line for line in lines if line and not line.startswith("#")]
 
 
 def setdefaults(d, **kw):
@@ -236,7 +236,7 @@ def nexus_slug(s):
         A string containing a nexus safe label.
     """
     return slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")
-    
+
 
 def accumulate_purepy(iterable, func=operator.add):
     """
@@ -256,6 +256,7 @@ def accumulate_purepy(iterable, func=operator.add):
     for element in it:
         total = func(total, element)
         yield total
+
 
 def random_choices(population, weights=None, cum_weights=None, k=1):
     """
@@ -300,16 +301,18 @@ def random_choices(population, weights=None, cum_weights=None, k=1):
     # Assert that (1) the population is not empty, (2) only one type of
     # weight information is provided.
     assert population, "Population must not be empty."
-    assert not all((weights, cum_weights)), \
-        "Either only weights or only cumulative weights must be provided."
+    assert not all(
+        (weights, cum_weights)
+    ), "Either only weights or only cumulative weights must be provided."
 
     # If cumulative weights were not provided, build them from `weights`.
     if not cum_weights:
         cum_weights = list(accumulate_purepy(weights))
 
     # Assert that the lengths of population and cumulative weights match.
-    assert len(population) == len(cum_weights), \
-        "Population and weight lengths do not match."
+    assert len(population) == len(
+        cum_weights
+    ), "Population and weight lengths do not match."
 
     # Get a random number and see in which bin it falls. We need to use this
     # logic which is a little more complex than something with randint()
@@ -318,4 +321,3 @@ def random_choices(population, weights=None, cum_weights=None, k=1):
     less_than = [[cw < r for cw in cum_weights] for r in rnd]
 
     return [population[lt.index(False)] for lt in less_than]
-
