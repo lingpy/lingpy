@@ -64,7 +64,7 @@ def main():
         print('[i] compiling {0}...'.format(script))
         pyx2py(script)
         os.system('cython '+script+'.pyx')
-        cmd = 'gcc -c -fPIC -I/usr/include/python{1}m/ {0}.c'.format(script,
+        cmd = 'gcc -c -fPIC -I/usr/include/python{1}/ {0}.c'.format(script,
                 argv[1])
         os.system(cmd)
         os.system('gcc -shared '+script+'.o -o '+script+'.so')

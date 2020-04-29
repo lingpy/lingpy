@@ -1,3 +1,4 @@
+lingpy/tests/cover/*
 *.egg
 doc/*
 *.egg-info
