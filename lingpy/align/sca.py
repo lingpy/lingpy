@@ -788,8 +788,10 @@ class Alignments(Wordlist):
             # in this mode, we need to trace the order of the bits that make up
             # the alignemnts
             for key in self:
+                print(key)
                 # get the cognate IDs
                 cogids = self[key, ref]
+                print(cogids)
                 # get the alignment
                 tmp[key] = []
                 for i, cogid in enumerate(cogids):
