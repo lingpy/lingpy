@@ -788,10 +788,8 @@ class Alignments(Wordlist):
             # in this mode, we need to trace the order of the bits that make up
             # the alignemnts
             for key in self:
-                print(key)
                 # get the cognate IDs
                 cogids = self[key, ref]
-                print(cogids)
                 # get the alignment
                 tmp[key] = []
                 for i, cogid in enumerate(cogids):
@@ -1151,7 +1149,6 @@ class Alignments(Wordlist):
                             [k[0] for k in self.etd[ref][cog] if k != 0][0], counterpart]
                     else:
                         _idx = [k[0] for k in self.etd[ref][cog] if k][0]
-                        print(_idx, counterpart, self[_idx, counterpart])
                         cons = tokens2morphemes(self[_idx, counterpart]
                             )[self[_idx, ref].index(cog)]
 
