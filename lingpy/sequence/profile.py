@@ -1,18 +1,12 @@
-# *-* coding: utf-8 *-*
 """
 Module provides methods for the handling of orthography profiles.
 """
-from __future__ import print_function, division, unicode_literals
-
-from six import text_type
-import unicodedata
 from collections import defaultdict
-
-from clldutils.text import split_text, strip_brackets, strip_chars
 
 from lingpy.sequence.sound_classes import codepoint, clean_string, token2class
 from lingpy import log
 from lingpy.util import pb
+
 
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
@@ -100,10 +94,10 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
             if not sound:
                 ipa = '!'+s
             else:
-                ipa = text_type(sound)
+                ipa = str(sound)
         else:
             ipa = s
-        yield s, ipa, text_type(f), codepoint(s)
+        yield s, ipa, str(f), codepoint(s)
 
 def context_profile(wordlist, ref='ipa', col="doculect",
         semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False, brackets=None,
@@ -191,7 +185,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
                         nulls.add(segment)
             except:
                 errors.add(idx)
-                log.warn('problem parsing {0}'.format(word))
+                log.warning('problem parsing {0}'.format(word))
     
     for s in '^$':
         yield s, 'NULL', '', '', '', ''
@@ -218,7 +212,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
             if not sound:
                 ipa = '!'+s.strip('^$')
             else:
-                ipa = text_type(sound)
+                ipa = str(sound)
         else:
             ipa = s.strip('^$')
         

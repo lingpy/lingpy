@@ -1,15 +1,10 @@
 """
 Module provides basic operations on Wordlist-Objects.
 """
-from __future__ import (
-        unicode_literals, print_function, absolute_import, division)
-
 import json
 from string import ascii_letters, digits
 from collections import defaultdict
 from itertools import product
-
-from six import text_type
 
 from lingpy.settings import rcParams
 from lingpy.convert.strings import matrix2dst, scorer2str, msa2str
@@ -180,8 +175,7 @@ def renumber(wordlist, source, target='', override=False):
     Create numerical identifiers from string identifiers.
     """
     # iterate over wordlist and get all source ids
-    sources = sorted(set([
-        text_type(wordlist[k, source]) for k in wordlist]))
+    sources = sorted(set([str(wordlist[k, source]) for k in wordlist]))
 
     # convert to numbers
     targets = list(range(1, len(sources) + 1))
@@ -199,7 +193,7 @@ def renumber(wordlist, source, target='', override=False):
         converter[''] = 0
 
     wordlist.add_entries(
-        target, source, lambda x: converter[text_type(x)], override=override)
+        target, source, lambda x: converter[str(x)], override=override)
 
     # add stuff to meta
     wordlist._meta[source + '2' + target] = converter
@@ -341,7 +335,7 @@ def wl2qlc(
 
     for k, v in meta.items():
         # simple key-value-pairs
-        if isinstance(v, (text_type, int)) or k == "tree":
+        if isinstance(v, (str, int)) or k == "tree":
             kvpairs[k] = v
         elif k == 'msa' and k not in keywords['ignore']:
             # go a level deeper, checking for keys
@@ -436,7 +430,7 @@ def wl2qlc(
                 formatter = line[idx]
 
         # add the key
-        out += text_type(key)
+        out += str(key)
 
         # add the rest of the values
         for value in line:
@@ -444,9 +438,9 @@ def wl2qlc(
                 try:
                     out += '\t' + ' '.join(value)
                 except:
-                    out += '\t' + ' '.join([text_type(v) for v in value])
+                    out += '\t' + ' '.join([str(v) for v in value])
             elif type(value) == int:
-                out += '\t' + text_type(value)
+                out += '\t' + str(value)
             elif type(value) == float:
                 out += '\t{0:.4f}'.format(value)
             elif value is None:
@@ -483,7 +477,7 @@ def tsv2triple(wordlist, outfile=None):
         out = ''
         for a, b, c in tstore:
             if isinstance(c, list):
-                c = ' '.join([text_type(x) for x in c])
+                c = ' '.join([str(x) for x in c])
             if c != '-':
                 out += '{0}\t{1}\t{2}\n'.format(a, b, c)
         util.write_text_file(outfile, out, normalize='NFC')
@@ -503,7 +497,7 @@ def triple2tsv(triples_or_fname, output="table"):
             triples_or_fname, normalize='NFD', lines=True)
 
     for line in triples_or_fname:
-        if isinstance(line, (text_type, str)):
+        if isinstance(line, str):
             line = line.split('\t')
         a, b, c = line
         D[a][b.upper()] = c

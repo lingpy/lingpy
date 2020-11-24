@@ -33,7 +33,6 @@ setup(
         "appdirs",
         "networkx>=2.0,<=2.2",
         "tqdm",
-        "six",
         'csvw>=1.5.6"',
         'clldutils>=2.8.0',
         'pycldf>=1.7.0',

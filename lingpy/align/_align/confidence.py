@@ -1,12 +1,7 @@
-from __future__ import division, unicode_literals
 """
 Calculate confidence scores for the scoring functions in alignment plots.
 """
-from six import PY2
-if PY2:
-    import cgi
-else:
-    import html as cgi
+import html as cgi
 
 from lingpy.sequence.sound_classes import class2tokens, token2class
 from lingpy.settings import rcParams

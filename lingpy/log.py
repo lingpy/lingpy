@@ -1,13 +1,10 @@
 """Logging utilities"""
-from __future__ import unicode_literals, print_function, absolute_import, division
 import os
 import sys
 import logging
 from logging.config import fileConfig
 from tempfile import NamedTemporaryFile
 import warnings
-
-from six import text_type
 
 from .config import Config
 
@@ -74,7 +71,7 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
             cfg = Config('logging', default=LOGGING, config_dir=config_dir)
             remove = False
             if cfg.path.exists() and not force_default_config:
-                fname = text_type(cfg.path)
+                fname = str(cfg.path)
             else:
                 with NamedTemporaryFile(delete=False) as fp:
                     fp.write(LOGGING.encode('utf8'))

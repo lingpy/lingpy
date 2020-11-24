@@ -1,10 +1,6 @@
 """
 Conversion routines for the GML format.
 """
-from __future__ import unicode_literals, print_function, division
-
-from six import text_type, PY2
-
 from lingpy import log
 from lingpy import util
 
@@ -25,7 +21,7 @@ def networkx2igraph(graph):
     newgraph = ig.Graph(directed=graph.is_directed())
     nodes = {}
     for i,(node, data) in enumerate(graph.nodes(data=True)):
-        data = {a.encode() if PY2 else a: b for a, b in data.items()}
+        data = {a: b for a, b in data.items()}
         newgraph.add_vertex(
             i,
             Name=node,
@@ -33,7 +29,7 @@ def networkx2igraph(graph):
                if a not in [b'Name', b'name', 'Name', 'name']})
         nodes[node] = i
     for node1, node2, data in graph.edges(data=True):
-        data = {a.encode() if PY2 else a: b for a, b in data.items()}
+        data = {a: b for a, b in data.items()}
         newgraph.add_edge(nodes[node1], nodes[node2], **data)
     return newgraph
 
@@ -74,7 +70,7 @@ def gls2gml(
         A tree object. 
     """
     # check for tree-formatting
-    if type(tree) == text_type:
+    if type(tree) == str:
         tree = cg.LoadTree(treestring=tree)
 
     # create a mapper for the ids and the string-names
@@ -183,7 +179,7 @@ def nwk2gml(
     graph = nx.DiGraph()
 
     # load the tree
-    if type(treefile) == text_type:
+    if type(treefile) == str:
         try:
             tree = cg.LoadTree(treefile)
         except:
@@ -284,7 +280,7 @@ def radial_layout(
         return x, y
 
     # get the tree
-    if type(treestring) == text_type:
+    if type(treestring) == str:
         try:
             tree = cg.LoadTree(treestring)
         except:

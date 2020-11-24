@@ -1,4 +1,3 @@
-from six import text_type
 """Classes for storing and manipulating a phylogenetic tree.
 
 These trees can be either strictly binary, or have polytomies
@@ -36,8 +35,6 @@ from .newick import parse_string as newick_parse_string
 from operator import or_
 #from cogent.util.misc import InverseDict
 from random import shuffle
-
-from six import text_type
 
 __author__ = "Gavin Huttley, Peter Maxwell and Rob Knight"
 __copyright__ = "Copyright 2007-2011, The Cogent Project"
@@ -134,7 +131,7 @@ class TreeNode(object):
         try:
             return cmp(self.Name, other.Name)
         except AttributeError:
-            return cmp(text_type(type(self)), text_type(type(other)))
+            return cmp(str(type(self)), str(type(other)))
 
     def compareByNames(self, other):
         """Equality test for trees by name"""
@@ -944,7 +941,7 @@ class TreeNode(object):
                     if top_node.Name is None:
                         name = ''
                     else:
-                        name = text_type(top_node.Name)
+                        name = str(top_node.Name)
                         if escape_name and not (name.startswith("'") and \
                                                 name.endswith("'")):
                             if re.search("""[]['"(),:;_]""", name):

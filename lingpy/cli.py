@@ -1,11 +1,6 @@
-# *-* coding: utf-8 *-*
-from __future__ import print_function, division, unicode_literals
 import lingpy
 from lingpy.util import PROG
 import argparse
-import sys
-from six import text_type as str
-from six import with_metaclass
 
 
 class CommandMeta(type):
@@ -23,7 +18,7 @@ class CommandMeta(type):
         return iter(self.__instances)
 
 
-class Command(with_metaclass(CommandMeta, object)):
+class Command(metaclass=CommandMeta):
     """Base class for subcommands of the lingpy command line interface."""
     help = None
 

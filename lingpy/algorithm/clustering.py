@@ -1,10 +1,8 @@
 """
 Module provides general clustering functions for LingPy.
 """
-from __future__ import unicode_literals, print_function, division
 from collections import defaultdict
 
-from six import text_type
 import numpy as np
 import networkx as nx
 
@@ -419,7 +417,7 @@ def matrix2tree(matrix, taxa, tree_calc="neighbor", distances=True, filename="")
 
     if not filename:
         return tree
-    util.write_text_file(filename + '.nwk', text_type(tree))
+    util.write_text_file(filename + '.nwk', str(tree))
 
 
 def matrix2groups(threshold, matrix, taxa, cluster_method="upgma"):

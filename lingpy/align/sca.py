@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 """
 Basic module for pairwise and multiple sequence comparison.
 
@@ -8,11 +7,8 @@ sequence perspective deals with unaligned sequences. The *alignment*
 perspective deals with aligned sequences.
 
 """
-from __future__ import print_function, division, unicode_literals
 import os
 from collections import Counter, defaultdict
-
-from six import text_type
 
 from lingpy import __version__
 from lingpy import basictypes as bt
@@ -212,7 +208,7 @@ class MSA(Multiple):
 
         # create a specific format string in order to receive taxa of equal length
         mtax = max([len(t) for t in self.taxa])
-        txf = '{0:.<' + text_type(mtax) + '}'
+        txf = '{0:.<' + str(mtax) + '}'
 
         with util.TextFile((filename or self.infile) + '.' + fileformat) as out:
             # start writing data to file
@@ -424,7 +420,7 @@ class PSA(Pairwise):
         self.taxa.append((taxonA, taxonB))
         self.pairs.append((util.dotjoin(*almA, **kw), util.dotjoin(*almB, **kw)))
         self.alignments.append(
-            ([text_type(a) for a in almA], [text_type(b) for b in almB], 0))
+            ([str(a) for a in almA], [str(b) for b in almB], 0))
 
     def _handle_seq_data(self, data, i):
         """
@@ -474,7 +470,7 @@ class PSA(Pairwise):
                 for i, (a, b) in enumerate(self.pairs):
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
-                    txf = '{0:.<' + text_type(max([len(t) for t in self.taxa[i]])) + '}'
+                    txf = '{0:.<' + str(max([len(t) for t in self.taxa[i]])) + '}'
 
                     out.write(self.seq_ids[i] + '\n')
                     out.write(txf.format(self.taxa[i][0]) + '\t' + a + '\n')
@@ -483,7 +479,7 @@ class PSA(Pairwise):
                 for i, (a, b, c) in enumerate(self.alignments):
                     # determine longest taxon in order to create a format string
                     # for taxa of equal length
-                    txf = '{0:.<' + text_type(max([len(t) for t in self.taxa[i]])) + '}'
+                    txf = '{0:.<' + str(max([len(t) for t in self.taxa[i]])) + '}'
 
                     out.write(self.seq_ids[i] + '\n')
                     out.write(txf.format(self.taxa[i][0]) + '\t' + '\t'.join(a) + '\n')
@@ -693,7 +689,7 @@ class Alignments(Wordlist):
                                 this_string = self[seq][self.header[self._alignment]]
                             else:
                                 this_string = self[seq][stridx]
-                            if isinstance(this_string, text_type):
+                            if isinstance(this_string, str):
                                 this_string = this_string.split(' ')
                             # check for partial cognates
                             if self._mode == 'fuzzy':
@@ -912,14 +908,14 @@ class Alignments(Wordlist):
         if kw['defaults']:
             return kw
 
-        if text_type(kw['model']) == kw['model']:
+        if str(kw['model']) == kw['model']:
             kw['model'] = rcParams[kw['model']]
 
         # create a params attribute
         params = '_'.join([
             kw['method'],
             kw['model'].name,
-            text_type(kw['gop']),
+            str(kw['gop']),
             '{0:.1f}'.format(kw['scale']),
             '{0:.1f}'.format(kw['factor']),
             kw['tree_calc'],
@@ -1138,7 +1134,7 @@ class Alignments(Wordlist):
                         classes=_classes,
                         tree=tree,
                         gaps=gaps,
-                        taxa=[text_type(taxon.replace("(", "").replace(")", ""))
+                        taxa=[str(taxon.replace("(", "").replace(")", ""))
                               for taxon in self.msa[ref][cog]['taxa']],
                         **keywords)
                     self.msa[ref][cog]["consensus"] = cons

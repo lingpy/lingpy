@@ -1,12 +1,8 @@
-# *-* coding: utf-8 *-*
-from __future__ import print_function, division, unicode_literals
 import random
 from itertools import product
 from collections import Counter, defaultdict
 from copy import copy
 
-from six import text_type
-from six import string_types
 import numpy as np
 
 from lingpy.settings import rcParams
@@ -284,7 +280,7 @@ class LexStat(Wordlist):
         self._transcription = kw['transcription']
         self._cldf = kw['cldf']
 
-        if isinstance(kw['model'], string_types):
+        if isinstance(kw['model'], str):
             self.model = rcParams[kw['model']]
         else:
             self.model = kw['model']
@@ -1156,7 +1152,7 @@ class LexStat(Wordlist):
         if kw['defaults']:
             return kw
 
-        if isinstance(idxA, (text_type, tuple)):
+        if isinstance(idxA, (str, tuple)):
             if isinstance(idxA, tuple):
                 for indexA, indexB in product(
                     self.get_dict(col=idxA[0])[idxA[1]],

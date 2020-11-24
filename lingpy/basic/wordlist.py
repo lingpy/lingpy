@@ -1,20 +1,16 @@
-# *-* coding: utf-8 *-*
 """
 This module provides a basic class for the handling of word lists.
 """
-from __future__ import print_function, division, unicode_literals
-
 import os
 import numpy as np
 from collections import defaultdict
+from pathlib import Path
 
-from six import text_type as str
 from csvw import dsv
 from csvw.metadata import TableGroup
 from unicodedata import normalize
 
 import pycldf
-from clldutils.path import Path
 
 from lingpy.convert.strings import matrix2dst, pap2nex, pap2csv, multistate2nex
 from lingpy.settings import rcParams

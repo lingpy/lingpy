@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 """
 This modules provides methods for generating and collecting ngrams.
 
@@ -8,14 +7,9 @@ openings (both preceding and following context), and positional ngrams (both
 preceding and following context).
 """
 
-from __future__ import division
 import math
-import pickle
-import random
 from collections import defaultdict, Counter
 from itertools import chain, combinations, product
-from functools import partial
-from six import string_types
 from lingpy.sequence.smoothing import smooth_dist
 from lingpy.util import *
 
@@ -41,7 +35,7 @@ def _seq_as_tuple(sequence):
 
     # We first check for datatype and then for a space, as the first test is
     # faster (and evaluation is lazy).
-    if isinstance(sequence, string_types) and ' ' in sequence:
+    if isinstance(sequence, str) and ' ' in sequence:
         return tuple(sequence.split(' '))
 
     return tuple(sequence)

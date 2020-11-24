@@ -1,4 +1,3 @@
-from __future__ import division, unicode_literals
 import io
 import operator
 import random
@@ -8,10 +7,10 @@ from tempfile import NamedTemporaryFile
 from functools import partial
 import itertools
 import types
-from tqdm import tqdm
+from pathlib import Path
 
-from six import text_type
-from clldutils.path import Path, remove, path_component
+from tqdm import tqdm
+from clldutils.path import path_component
 from clldutils import clilib
 from clldutils.misc import slug
 
@@ -77,7 +76,7 @@ class TemporaryPath(object):
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.name.exists():
-            remove(self.name)
+            self.name.unlink()
 
 
 def lingpy_path(*comps):
@@ -124,7 +123,7 @@ def write_text_file(path, content, normalize=None, log=True):
         process.
 
     """
-    if not isinstance(content, text_type):
+    if not isinstance(content, str):
         content = lines_to_text(content)
     with io.open(_str_path(path, mkdir=True), "w", encoding="utf8") as fp:
         fp.write(unicodedata.normalize(normalize, content) if normalize else content)
@@ -189,7 +188,7 @@ def read_text_file(path, normalize=None, lines=False):
 
 
 def as_string(obj, pprint=False):
-    obj = text_type(obj)
+    obj = str(obj)
     if get_level() <= logging.ERROR and pprint:
         print(obj)
     return obj

@@ -49,7 +49,8 @@ from lingpy.read.csv import csv2list, csv2dict
 
 # import sequence routines
 from lingpy.sequence.sound_classes import ipa2tokens, tokens2class, prosodic_string, \
-        prosodic_weights, class2tokens, pid, sampa2uni, strip_chars
+        prosodic_weights, class2tokens, pid, sampa2uni
+from clldutils.text import strip_chars
 
 # import lexstat
 from lingpy.compare.lexstat import LexStat

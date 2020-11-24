@@ -1,15 +1,11 @@
-# *-* coding: utf-8 *-*
 """
 Module provides various methods for the handling of sound classes.
 """
-from __future__ import print_function, division, unicode_literals
-
 import re
-from six import text_type
 import unicodedata
 from collections import defaultdict
 
-from clldutils.text import split_text, strip_brackets, strip_chars
+from clldutils.text import split_text, strip_brackets
 
 from lingpy import log
 from lingpy.util import setdefaults
@@ -495,7 +491,7 @@ def _pprint_ono(ono):
     Helper function for string output of ono-parsed words.
     """
     if rcParams['morpheme_separator'] in ono:
-        return ' '.join([x[0] if not isinstance(x, text_type) else
+        return ' '.join([x[0] if not isinstance(x, str) else
             x for x in ono])
     out = []
     for k in ono:
@@ -535,7 +531,7 @@ def ono_parse(word, output='', **keywords):
         "cldf": False
     }
     kw.update(keywords)
-    if isinstance(word, text_type):
+    if isinstance(word, str):
         tokens = ipa2tokens(word, **kw)
     else:
         tokens = [x for x in word]

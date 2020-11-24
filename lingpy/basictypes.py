@@ -1,5 +1,5 @@
 from functools import partial
-from six import text_type as str
+
 
 class _strings(list):
 
@@ -69,4 +69,3 @@ class lists(_strings):
         self.n[i] = _strings(str, item)
         new_s = self.sep.join([' '.join(x) for x in self.n])
         self.__init__(new_s, sep=self.sep)
-

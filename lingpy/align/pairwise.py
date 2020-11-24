@@ -1,11 +1,8 @@
-# *-* coding: utf-8 *-*
 """
 Module provides classes and functions for pairwise alignment analyses.
 """
-from __future__ import division, print_function, unicode_literals
 from itertools import product
 
-from six import text_type, string_types
 from lingpy.util import setdefaults, multicombinations2, as_string
 from lingpy.settings import rcParams
 from lingpy.sequence.sound_classes import (
@@ -96,7 +93,7 @@ class Pairwise(object):
         return self.alignments
 
     def __repr__(self):
-        return text_type(self.seqs)
+        return str(self.seqs)
 
     def __len__(self):
         return len(self.seqs)
@@ -138,7 +135,7 @@ class Pairwise(object):
             if k not in keywords:
                 keywords[k] = defaults[k]
 
-        if isinstance(keywords['model'], (text_type, str)):
+        if isinstance(keywords['model'], str):
             self.model = rcParams[keywords['model']]
         else:
             self.model = keywords['model']
@@ -242,7 +239,7 @@ def _get_scorer(seqA, seqB):
 
 def _as_lists(seqA, seqB):
     # check whether the sequences are lists
-    if isinstance(seqA, (text_type, tuple, lingpy.basictypes.lists,
+    if isinstance(seqA, (str, tuple, lingpy.basictypes.lists,
         lingpy.basictypes._strings)):
         return list(seqA), list(seqB)
 
@@ -266,7 +263,7 @@ def pw_align(
 
     Parameters
     ----------
-    seqA, seqB : {text_type, list, tuple}
+    seqA, seqB : {str, list, tuple}
         The input strings. These should be iterables, so you can use tuples,
         lists, or strings.
     scorer : dict (default=False)
@@ -551,12 +548,12 @@ def turchin(seqA, seqB, model='dolgo', **keywords):
         1 (words are not likely to be cognate).
 
     """
-    if text_type(model) == model:
+    if str(model) == model:
         model = rcParams[model]
     elif not hasattr(model, 'info'):
         raise ValueError("[!] No valid model instance selected.")
 
-    if isinstance(seqA, string_types):
+    if isinstance(seqA, str):
         seqA = ipa2tokens(seqA)
         seqB = ipa2tokens(seqB)
 

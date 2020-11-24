@@ -1,13 +1,10 @@
-# *-* coding: utf-8 *-*
 """
 Phylogeny-based detection of borrowings in lexicostatistical wordlists.
 """
-from __future__ import print_function, division, unicode_literals
 import os
 import itertools
 from collections import defaultdict
 
-from six import text_type
 import numpy as np
 from clldutils import jsonlib
 
@@ -381,7 +378,7 @@ class PhyBo(Wordlist):
             self._meta['tree'] = cg.LoadTree(tree)
             log.info("Loaded the tree.")
 
-        if isinstance(self.tree, text_type):
+        if isinstance(self.tree, str):
             self.tree = cg.LoadTree(treestring=self.tree)
 
         # if no good topology is given, create it automatically, using
@@ -462,7 +459,7 @@ class PhyBo(Wordlist):
         # get the subtree containing all taxa that have positive paps
         tree = self.tree.lowestCommonAncestor(
             [self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1])
-        log.debug("Subtree is {0}.".format(text_type(tree)))
+        log.debug("Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
@@ -615,7 +612,7 @@ class PhyBo(Wordlist):
         tree = self.tree.lowestCommonAncestor(
             [self.taxa[i] for i in range(len(self.taxa)) if pap[i] >= 1])
 
-        log.debug("Subtree is {0}.".format(text_type(tree)))
+        log.debug("Subtree is {0}.".format(str(tree)))
 
         # assign the basic (starting) values to the dictionary
         nodes = [t.Name for t in tree.tips()]
@@ -1186,7 +1183,7 @@ class PhyBo(Wordlist):
             lines.append([
                 "{0}".format(cog),
                 ','.join(["{0}:{1}".format(a, b) for a, b in gls]),
-                text_type(noo)])
+                str(noo)])
         self._write_file(
             os.path.join('gls', '{0}-{1}.gls'.format(self.dataset, glm)),
             [util.tabjoin(line) for line in lines])
@@ -1718,7 +1715,7 @@ class PhyBo(Wordlist):
         for nodeA, nodeB, data in gMST.edges(data=True):
             w = data['weight']
             data['graphics'] = {}
-            data['cogs'] = ','.join([text_type(i) for i in data['cogs']])
+            data['cogs'] = ','.join([str(i) for i in data['cogs']])
             data['label'] = 'horizontal'
 
             if w >= threshold:
@@ -1736,7 +1733,7 @@ class PhyBo(Wordlist):
             for cog, events in ile.items():
                 if events:
                     f.write(
-                        text_type(cog) + '\t' + ','.join(
+                        str(cog) + '\t' + ','.join(
                             ['{0}:{1}'.format(a, b) for a, b in events]
                         ) + '\n')
 
@@ -1764,7 +1761,7 @@ class PhyBo(Wordlist):
         lines = []
         for n, d, w in sorted_nodes:
             lines.append(util.tabjoin((
-                n, text_type(tree.getNodeMatchingName(n)), d, w)))
+                n, str(tree.getNodeMatchingName(n)), d, w)))
         self._write_file('taxa-' + glm + '.stats', lines)
 
         log.info("Wrote node degree distributions to file.")
@@ -2035,7 +2032,7 @@ class PhyBo(Wordlist):
                         formatter = max([len(lang) for lang in langs])
 
                         for i, word in enumerate(words):
-                            string = '{0:' + text_type(
+                            string = '{0:' + str(
                                 formatter) + '}\t{1}\t|\t{2}\t|\t[{3}]\n'
                             f.write(string.format(
                                 langs[i], patchies[i], '\t'.join(alms[i]), word))
@@ -2049,7 +2046,7 @@ class PhyBo(Wordlist):
         # define a warning message
         warning = "No edge between {0} and {1} could be found".format(nodeA, nodeB)
         # check for entryB
-        if isinstance(entries, text_type):
+        if isinstance(entries, str):
             entries = entries.split(',')
 
         # get the graph locally for convenience
@@ -2679,11 +2676,11 @@ class PhyBo(Wordlist):
         cbar.set_clim(1.0)
         cbar.set_label('Inferred Links')
         cbar.ax.set_yticklabels([
-            text_type(min(weights)),
+            str(min(weights)),
             '',
-            text_type(int(max(weights) / 2)),
+            str(int(max(weights) / 2)),
             '',
-            text_type(max(weights))])
+            str(max(weights))])
 
         if keywords['xliml'] and keywords['xlimr']:
             xliml = keywords['xliml']
@@ -3107,7 +3104,7 @@ class PhyBo(Wordlist):
             sorted_nodes = sorted(zip(nodes, dgr, wdgr), key=lambda x: x[1], reverse=True)
             for n, d, w in sorted_nodes:
                 f.write('{0}\t{1}\t{2}\t{3}\n'.format(
-                    n, text_type(tree.getNodeMatchingName(n)), d, w))
+                    n, str(tree.getNodeMatchingName(n)), d, w))
 
         # write edge distributions
         with util.TextFile(self._output_path('edge-msn-' + glm + '.stats')) as f:

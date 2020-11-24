@@ -1,22 +1,17 @@
-# *-* coding: utf-8 *-*
 """
 Basic parser for text files in QLC format.
 """
-from __future__ import unicode_literals, division, print_function
 import os
 import numpy as np
 from collections import defaultdict
 
-from six import text_type as str
-from six import string_types
-
+from lingpy import basictypes
+assert basictypes  # Needed to make reading config values work!
 from lingpy.settings import rcParams
 from lingpy.read.qlc import read_qlc
-from lingpy import cache
 from lingpy import util
 from lingpy.util import confirm
 from lingpy import log
-from lingpy import basictypes
 
 
 def read_conf(conf=''):
@@ -84,11 +79,11 @@ class QLCParser(object):
             internal_import = True
             self.filename = rcParams['filename']
         # or whether the data is an actual file
-        elif isinstance(filename, string_types) and os.path.isfile(filename):
+        elif isinstance(filename, str) and os.path.isfile(filename):
             input_data = read_qlc(filename)
             self.filename = filename
         # raise an error otherwise
-        elif isinstance(filename, string_types):
+        elif isinstance(filename, str):
             raise IOError("Input file '{0}' does not exist.".format(filename))
         else:
             raise TypeError("Unrecognized type for 'filename' argument: {0}".format(
@@ -205,7 +200,6 @@ class QLCParser(object):
         Alignments)::
 
             >>> from lingpy import *
-            >>> from lingpy.tests.util import test_data
             >>> wl = Wordlist(test_data('KSL.qlc'))
 
         Get the first line in the data::
