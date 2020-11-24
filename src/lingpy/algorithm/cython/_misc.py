@@ -1,8 +1,9 @@
-cdef extern from "math.h": 
-    double sqrt( double x)
+# [autouncomment] cdef extern from "math.h":
+from numpy import sqrt
+# [autouncomment]     double sqrt( double x)
 
 def transpose(
-        list matrix
+        matrix
         ):
     """
     Transpose a matrix along its two dimensions.
@@ -12,16 +13,16 @@ def transpose(
     matrix : list
         A two-dimensional list.
     """
-    cdef int i,j
-    cdef int lA = len(matrix)
-    cdef int lB = len(matrix[0])
+# [autouncomment]     cdef int i,j
+    lA = len(matrix)
+    lB = len(matrix[0])
 
-    cdef list out = [[matrix[i][j] for i in range(lA)] for j in range(lB)]
+    out = [[matrix[i][j] for i in range(lA)] for j in range(lB)]
 
     return out
 
 def squareform(
-        list x
+        x
         ):
     """
     A simplified version of the :py:func:`scipy.spatial.distance.squareform` \
@@ -39,13 +40,13 @@ def squareform(
         The two-dimensional redundant representation of a symmetric distance matrix.
 
     """
-    cdef int i,j,k
-    cdef int l = len(x)
+# [autouncomment]     cdef int i,j,k
+    l = len(x)
 
     # calculate the length of the square
-    cdef int s = int(sqrt(2 * l) + 1)
+    s = int(sqrt(2 * l) + 1)
     
-    cdef list out = [[0.0 for i in range(s)] for j in range(s)]
+    out = [[0.0 for i in range(s)] for j in range(s)]
     
     k = 0
     for i in range(s):
@@ -64,7 +65,7 @@ class ScoreDict(object):
     Parameters
     ----------
     chars : list
-        The list of all character tokens for the scoring dictionary.
+        The of all character tokens for the scoring dictionary.
     matrix : list
         A two-dimensional scoring matrix.
 
@@ -72,7 +73,7 @@ class ScoreDict(object):
     -----
     Since this class has dictionary syntax, you can always also just create a
     dictionary in order to store your scoring functions. Scoring dictionaries
-    should contain a tuple of segments to be compared as a key, and a float or
+    should contain a tuple of segments to be compared as a key, and a or
     integer as a value, with negative values indicating dissimilarity, and
     positive values similarity.
 
@@ -93,11 +94,11 @@ class ScoreDict(object):
     """
     def __init__(
             self,
-            list chars,
-            list matrix
+            chars,
+            matrix
             ):
-        cdef int i
-        cdef str character
+# [autouncomment]         cdef int i
+# [autouncomment]         cdef str character
 
         self.chars2int = dict([(character,i) for character,i in
             zip(chars,range(len(chars)))])
@@ -106,9 +107,9 @@ class ScoreDict(object):
 
     def __getitem__(
             self,
-            tuple x
+            x
             ):
-        cdef int i,j
+# [autouncomment]         cdef int i,j
         try:
             i = self.chars2int[x[0]]
             j = self.chars2int[x[1]]
@@ -119,10 +120,10 @@ class ScoreDict(object):
 
     def __setitem__(
             self,
-            tuple x,
-            float y
+            x,
+            y
             ):
-        cdef int i,j
+# [autouncomment]         cdef int i,j
         i = self.chars2int[x[0]]
         j = self.chars2int[x[1]]
 

@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 # we start with basic alignment functions
 def globalign(
         seqA,

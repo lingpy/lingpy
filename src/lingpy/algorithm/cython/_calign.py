@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 # we start with basic alignment functions
 def globalign(
         seqA,
@@ -2782,5 +2781,3 @@ def corrdist(
                     corrs[almA[j],almB[j]] = 1
 
     return corrs, included
-
-

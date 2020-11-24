@@ -3,10 +3,10 @@ This module provides various alignment functions in an optimized version.
 """
 
 def nw_align(
-        list seqA,
-        list seqB,
-        object scorer,
-        int gap
+        seqA,
+        seqB,
+        scorer,
+        gap
         ):
     """
     Align two sequences using the Needleman-Wunsch algorithm.
@@ -24,7 +24,7 @@ def nw_align(
     Returns
     -------
     alignment : tuple
-        A tuple of the two aligned sequences, and the similarity score.
+        A of the two aligned sequences, and the similarity score.
 
     Notes
     -----
@@ -41,23 +41,23 @@ def nw_align(
     """
     
     # get the lengths of the strings
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
+    M = len(seqA)
+    N = len(seqB)
 
     # define general and specific integers
-    cdef int i,j
-    cdef int sim # stores the similarity score
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef int sim # stores the similarity score
 
     # define values for the main loop
-    cdef int gapA,gapB,match,penalty # for the loop
+# [autouncomment]     cdef int gapA,gapB,match,penalty # for the loop
  
     # define values for the traceback
-    cdef list almA = []
-    cdef list almB = []
+    almA = []
+    almB = []
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
-    cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    traceback = [[0 for i in range(M+1)] for j in range(N+1)]
 
     # initialize matrix and traceback
     for i in range(1,M+1):
@@ -111,9 +111,9 @@ def nw_align(
     return (almA[::-1],almB[::-1],sim)
 
 def edit_dist(
-        list seqA,
-        list seqB,
-        bint normalized
+        seqA,
+        seqB,
+        normalized
         ):
     """
     Return the edit-distance between two strings.
@@ -128,7 +128,7 @@ def edit_dist(
 
     Notes
     -----
-    This function computes the edit distance between two list type objects. We
+    This function computes the edit distance between two type objects. We
     recommend to use it if you need a fast implementation. Otherwise,
     especially, if you want to pass strings, we recommend to have a look at the
     wrapper function with the same name in the
@@ -136,18 +136,18 @@ def edit_dist(
 
     Returns
     -------
-    dist : { int, float }
+    dist : { int, }
         Either the normalized or the unnormalized edit distance.
 
     """
     
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
-    cdef int gapA,gapB,match
-    cdef int i,j,sim
-    cdef float dist
+    M = len(seqA)
+    N = len(seqB)
+# [autouncomment]     cdef int gapA,gapB,match
+# [autouncomment]     cdef int i,j,sim
+# [autouncomment]     cdef float dist
     
-    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    matrix = [[0 for i in range(M+1)] for j in range(N+1)]
     
     for i in range(1,M+1):
         matrix[0][i] = i
@@ -181,10 +181,10 @@ def edit_dist(
     return sim
 
 def sw_align(
-        list seqA,
-        list seqB,
-        dict scorer,
-        int gap
+        seqA,
+        seqB,
+        scorer,
+        gap
         ):
     """
     Align two sequences using the Smith-Waterman algorithm.
@@ -202,7 +202,7 @@ def sw_align(
     Returns
     -------
     alignment : tuple
-        A tuple of the two aligned sequences, and the similarity score.
+        A of the two aligned sequences, and the similarity score.
 
     Notes
     -----
@@ -218,31 +218,31 @@ def sw_align(
 
     """
     # basic stuff
-    cdef int i,j
-    cdef float gapA,gapB
+# [autouncomment]     cdef int i,j
+# [autouncomment]     cdef float gapA,gapB
 
     # get the lengths of the strings
-    cdef int lenA = len(seqA)
-    cdef int lenB = len(seqB)
+    lenA = len(seqA)
+    lenB = len(seqB)
 
-    cdef str s
+# [autouncomment]     cdef str s
 
     # define values for the main loop
-    cdef int null = 0 # constant during the loop
-    cdef int imax = 1 # for the loop
-    cdef int jmax = 1 # for the loop
-    cdef float max_score = 0.0 # for the loo
+    null = 0 # constant during the loop
+    imax = 1 # for the loop
+    jmax = 1 # for the loop
+    max_score = 0.0 # for the loo
 
     # define values for the traceback
-    cdef int igap = 0
-    cdef int jgap = 0 
-    cdef list almA = [s for s in seqA]
-    cdef list almB = [s for s in seqB]
-    cdef str gap_char = '-' # the gap character
+    igap = 0
+    jgap = 0 
+    almA = [s for s in seqA]
+    almB = [s for s in seqB]
+    gap_char = '-' # the gap character
 
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
-    cdef list traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    matrix = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
+    traceback = [[0 for i in range(lenA+1)] for j in range(lenB+1)]
     
     # start the main loop
     for i in range(1,lenB+1):
@@ -277,7 +277,7 @@ def sw_align(
                 max_score = matrix[i][j]
 
     # get the similarity
-    cdef float sim = matrix[imax][jmax]
+    sim = matrix[imax][jmax]
 
     # start the traceback
     i,j = imax,jmax
@@ -298,7 +298,7 @@ def sw_align(
         else:
             break
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return (
             (
                 almA[0:j],
@@ -314,10 +314,10 @@ def sw_align(
             )
 
 def we_align(
-        list seqA,
-        list seqB,
-        dict scorer,
-        int gap
+        seqA,
+        seqB,
+        scorer,
+        gap
         ):
     """
     Align two sequences using the Waterman-Eggert algorithm.
@@ -329,7 +329,7 @@ def we_align(
     scorer : dict
         A dictionary containing tuples of two segments as key and numbers as
         values.
-    gap : int 
+    gap : 
         The gap penalty.
 
     Notes
@@ -347,17 +347,17 @@ def we_align(
     Returns
     -------
     alignments : list
-        A list consisting of tuples. Each tuple gives the alignment of one of
-        the subsequences of the input sequences. Each tuple contains the
+        A consisting of tuples. Each tuple gives the alignment of one of
+        the subsequences of the input sequences. Each contains the
         aligned part of the first, the aligned part of the second sequence, and
         the score of the alignment.
 
     """
     # basic defs
-    cdef int lenA,lenB,i,j,null,igap,jgap
-    cdef float sim,gapA,gapB,match,max_score
-    cdef str gap_char
-    cdef list matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
+# [autouncomment]     cdef int lenA,lenB,i,j,null,igap,jgap
+# [autouncomment]     cdef float sim,gapA,gapB,match,max_score
+# [autouncomment]     cdef str gap_char
+# [autouncomment]     cdef list matrix,traceback,tracer,seqA_tokens,seqB_tokens,almA,almB
     
     # get the lengths of the strings
     lenA = len(seqA)
@@ -412,7 +412,7 @@ def we_align(
             tracer.append(matrix[i][j])
 
     
-    # make list of alignments
+    # make of alignments
     out = []
 
     # start the while loop
@@ -474,7 +474,7 @@ def we_align(
         # retrieve the aligned parts of the sequences
         out.append((almA[jmin:jmax+jgap],almB[imin:imax+igap],sim))
 
-    # return the alignment as a tuple of prefix, alignment, and suffix
+    # return the alignment as a of prefix, alignment, and suffix
     return out
 
 def structalign(
@@ -489,7 +489,7 @@ def structalign(
     ----------
     seqA,seqB : str
         The input sequences.
-    restricted_chars : str (default = "")
+    restricted_chars : (default = "")
         The characters which are used to separate secondary from primary
         segments in the input sequences. Currently, the use of restricted chars
         may fail to yield an alignment.
@@ -503,10 +503,10 @@ def structalign(
     with repeated edit operations being penalized only once.
     """
     # get basic variables
-    cdef int maxScore,thisScore,newScore,fullScore
-    cdef list out,queue,alm
-    cdef str restA,restB
-    cdef tuple residues
+# [autouncomment]     cdef int maxScore,thisScore,newScore,fullScore
+# [autouncomment]     cdef list out,queue,alm
+# [autouncomment]     cdef str restA,restB
+# [autouncomment]     cdef tuple residues
 
     # get the max score
     maxScore = max(len(seqA),len(seqB))
@@ -594,11 +594,11 @@ def structalign(
     return out,maxScore
 
 def restricted_edit_dist(
-        list seqA,
-        list seqB,
-        str resA,
-        str resB,
-        bint normalized
+        seqA,
+        seqB,
+        resA,
+        resB,
+        normalized
         ):
     r"""
     Return the restricted edit-distance between two strings.
@@ -628,19 +628,19 @@ def restricted_edit_dist(
     alignment of "vowels" and "consonants" ("v" and "c").
     """
     
-    cdef int M = len(seqA)
-    cdef int N = len(seqB)
-    cdef int gapA,gapB,match
-    cdef int i,j,sim
-    cdef float dist
+    M = len(seqA)
+    N = len(seqB)
+# [autouncomment]     cdef int gapA,gapB,match
+# [autouncomment]     cdef int i,j,sim
+# [autouncomment]     cdef float dist
     
     # define alignments
-    cdef list almA = []
-    cdef list almB = []
+    almA = []
+    almB = []
     
     # create matrix and traceback
-    cdef list matrix = [[0 for i in range(M+1)] for j in range(N+1)]
-    cdef list traceback = [[0 for i in range(M+1)] for j in range(N+1)]   
+    matrix = [[0 for i in range(M+1)] for j in range(N+1)]
+    traceback = [[0 for i in range(M+1)] for j in range(N+1)]   
     
     for i in range(1,M+1):
         matrix[0][i] = i
