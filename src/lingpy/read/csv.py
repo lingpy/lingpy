@@ -1,8 +1,6 @@
 """
 Module provides functions for reading csv-files.
 """
-from __future__ import unicode_literals, division, print_function
-
 from lingpy.util import read_text_file
 from lingpy.sequence.sound_classes import asjp2tokens
 

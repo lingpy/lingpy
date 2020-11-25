@@ -1,13 +1,9 @@
-# *-* coding: utf-8 *-*
 """
 Evaluation methods for automatic cognate detection.
 """
-from __future__ import print_function, division, unicode_literals
-import codecs
 from itertools import combinations
 from collections import defaultdict
 
-import logging
 from lingpy import log
 from lingpy.util import identity, as_string, write_text_file
 from lingpy.algorithm.cluster_util import generate_random_cluster

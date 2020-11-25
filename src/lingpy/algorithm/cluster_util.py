@@ -1,8 +1,8 @@
 """Various utility functions which are useful for algorithmic operations"""
 
 from itertools import combinations_with_replacement
-from collections import defaultdict
 import random
+
 
 def valid_cluster(sequence):
     """Only allow to have sequences which have consecutive ordering of elements.
@@ -24,7 +24,7 @@ def valid_cluster(sequence):
 
         >>> clrA = [0, 1, 2, 3]
         >>> clrB = [1, 1, 2, 3] # should be [0, 0, 1, 2]
-        >>> from lingpy.algorithm.utils import valid_cluster
+        >>> from lingpy.algorithm.cluster_util import valid_cluster
         >>> valid_cluster(clrA)
         True
         >>> valid_cluster(clrB)

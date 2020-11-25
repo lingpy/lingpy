@@ -1,9 +1,6 @@
-# *-* coding: utf-8 *-*
 """
 Module handels all global parameters used in a LingPy session.
 """
-from __future__ import print_function, division, unicode_literals
-
 from lingpy._settings import rcParams
 from lingpy.data.model import Model, load_dvt
 

@@ -1,9 +1,6 @@
-# *-* coding: utf-8 *-*
 """
 Utility functions for borrowing detection with the PhyBo class.
 """
-from __future__ import unicode_literals, division, print_function
-
 from lingpy import log
 from lingpy.util import write_text_file, as_string
 

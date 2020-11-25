@@ -1,8 +1,6 @@
 """
 Specific settings for PhyBo class.
 """
-from __future__ import unicode_literals, division, print_function
-
 from lingpy.settings import rcParams
 
 rcParams.update(

@@ -1,7 +1,6 @@
 """
 Module provides simple basic classes for sequence generation using Markov models.
 """
-from __future__ import unicode_literals, division, print_function
 import random
 
 import numpy as np

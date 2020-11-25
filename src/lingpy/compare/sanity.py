@@ -1,11 +1,8 @@
 """
 Module provides basic checks for wordlists.
 """
-from __future__ import (
-        unicode_literals, print_function, absolute_import, division)
 import networkx as nx
 from networkx.algorithms.clique import find_cliques
-from networkx.algorithms.approximation.clique import max_clique
 from itertools import combinations
 from collections import defaultdict
 from lingpy import log

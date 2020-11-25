@@ -12,7 +12,6 @@ from lingpy.compare._phylogeny.utils import get_acs
 from lingpy.compare._phylogeny._settings import rcParams
 from lingpy.align.multiple import Multiple
 from lingpy.convert.plot import plot_tree
-from lingpy import compat
 from lingpy import util
 from lingpy import log
 
@@ -305,7 +304,7 @@ class PhyBo(Wordlist):
             if dataset.endswith('.csv'):
                 log.deprecated('csv', 'qlc')
         else:
-            raise compat.FileNotFoundError("The input file could not be found.")
+            raise FileNotFoundError("The input file could not be found.")
         Wordlist.__init__(self, dataset, row='concept', col='doculect')
 
         log.info("Loaded the wordlist file.")

@@ -1,14 +1,12 @@
 """
 Module for handling sequence models.
 """
-from __future__ import division, print_function, unicode_literals
 import os
 import re
 
 from lingpy.data.derive import compile_model, compile_dvt
 from lingpy.read.phylip import read_scorer
 from lingpy import cache
-from lingpy import compat
 from lingpy import util
 
 
@@ -124,7 +122,7 @@ class Model(object):
         elif os.path.isfile(new_path('scorer.bin')):
             try:
                 self.scorer = cache.load(model + '.scorer')
-            except compat.FileNotFoundError:
+            except FileNotFoundError:
                 pass
         # if none of the above fits, leave it
         else:

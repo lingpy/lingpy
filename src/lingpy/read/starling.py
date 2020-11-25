@@ -1,8 +1,6 @@
 """
 Basic parser for Starling data.
 """
-from __future__ import unicode_literals, division, print_function
-
 from lingpy.read.csv import csv2list
 from lingpy import log
 from lingpy.util import identity

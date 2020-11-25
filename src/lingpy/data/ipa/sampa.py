@@ -6,9 +6,7 @@ Kleiweg <http://www.let.rug.nl/~kleiweg/L04/devel/python/xsampa.html>.
 @author: Peter Kleiweg
 @date: 2007/07/19
 """
-from __future__ import print_function, division, unicode_literals
 import re
-import sys
 import codecs
 
 from lingpy.util import data_path

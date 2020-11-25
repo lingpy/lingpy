@@ -3,11 +3,10 @@ import warnings
 import pytest
 
 from lingpy.basic.wordlist import Wordlist
-from lingpy import compat
 
 
 def test_load_noexisting_cldf(test_data):
-    with pytest.raises(compat.FileNotFoundError):
+    with pytest.raises(FileNotFoundError):
         wl = Wordlist.from_cldf(
             str(test_data / 'cldf/test-missing-metadata.json'),
             col="Language_ID".lower(),

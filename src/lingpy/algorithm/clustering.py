@@ -6,15 +6,8 @@ from collections import defaultdict
 import numpy as np
 import networkx as nx
 
-try:
-    from .cython import misc as misc
-except ImportError:
-    from .cython import _misc as misc
-
-try:
-    from .cython import cluster as cluster
-except ImportError:
-    from .cython import _cluster as cluster
+from .cython import _misc as misc
+from .cython import _cluster as cluster
 
 from lingpy.thirdparty import linkcomm as lc
 from lingpy.thirdparty import cogent as cg

@@ -1,8 +1,6 @@
-# *-* coding: utf-8 *-*
 """
 Basic module for the comparison of automatic phonetic alignments.
 """
-from __future__ import print_function, division, unicode_literals
 from collections import namedtuple, defaultdict
 from itertools import combinations
 

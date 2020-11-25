@@ -1,7 +1,6 @@
 """
 Module handels all global parameters used in a LingPy session.
 """
-from __future__ import unicode_literals, division, print_function
 from datetime import datetime, date
 
 

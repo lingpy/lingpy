@@ -1,24 +1,11 @@
-# *-* coding: utf-8 *-*
 """
 Basic functions for the conversion from LingPy to CLDF and vice versa.
 """
-from __future__ import unicode_literals
-import unicodedata
-from collections import defaultdict
-from clldutils.path import Path, read_text
-from csvw.metadata import TableGroup
-from csvw.dsv import reader
+from clldutils.path import read_text
 from clldutils.misc import slug
 
-from lingpy import util
-from lingpy.basic.wordlist import Wordlist, from_cldf
-from lingpy.convert.html import template_path
+from pycldf import Wordlist as CLDF_Wordlist
 
-try:
-    from pycldf import Wordlist as CLDF_Wordlist
-    cldf = True
-except ImportError:
-    cldf = False
 
 def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
         segments="tokens", form="ipa", note='note', form_in_source="value",

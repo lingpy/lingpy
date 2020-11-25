@@ -1,5 +1,3 @@
-# *-* coding: utf-8 *-*
-
 """
 Module providing various methods for using Ngram models.
 
@@ -8,16 +6,11 @@ those offered by NLTK. In fact, both implementation and comments try to follow
 Bird at al. as close as possible.
 """
 
-from __future__ import division
 import math
 import random
 from functools import partial
 
-# Try to load the scientific libraries needed for Simple Good-Turing smoothing.
-try:
-    import numpy as np
-except ImportError:
-    np = False
+import numpy as np
 
 try:
     from scipy import linalg, stats
@@ -639,8 +632,6 @@ def sgt_dist(freqdist, **kwargs):
 
     # Make sure the scientific libraries have been loaded, raising an
     # ImportError if not
-    if not np:
-        raise ImportError('The package `numpy` is needed by SGT.')
     if not linalg or not stats:
         raise ImportError('The package `scipy` is needed by SGT.')
 

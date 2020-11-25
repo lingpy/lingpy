@@ -1,4 +1,3 @@
-# *-* coding: utf-8 *-*
 """
 Module for the derivation of sound class models.
 
@@ -7,7 +6,6 @@ All models are defined in simple text files. In order to guarantee their quick
 access when loading the library, the models are compiled and stored in binary
 files.
 """
-from __future__ import division, print_function, unicode_literals
 import os
 
 from lingpy.algorithm import misc

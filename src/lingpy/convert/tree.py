@@ -1,11 +1,7 @@
 """
 Functions for tree calculations and working with trees.
 """
-import xml.dom.minidom as minidom
-from collections import deque
-
 from lingpy.thirdparty import cogent as cg
-from lingpy import util
 
 
 def _nwk_format(taxon):

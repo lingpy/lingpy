@@ -2,8 +2,6 @@
 Module provides functions for the transformation of text data into visually appealing
 format.
 """
-from __future__ import unicode_literals, print_function, division
-
 from lingpy.settings import rcParams
 from lingpy import log
 

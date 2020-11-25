@@ -1,8 +1,8 @@
-from __future__ import division
 from lingpy.sequence.sound_classes import tokens2class, prosodic_string, tokens2morphemes
 from lingpy.align.multiple import mult_align
 from collections import defaultdict
 from itertools import combinations
+
 
 def _scorer():
     scoredict = {}

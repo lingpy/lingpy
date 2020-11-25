@@ -1,15 +1,11 @@
-# *-* coding: utf-8 *-*
 """
 Module provides methods for the evaluation of automatic linguistic reconstruction analyses.
 """
-from __future__ import unicode_literals, division
-import logging
-
 from ..settings import rcParams
 from ..align.pairwise import edit_dist
 from ..sequence.sound_classes import ipa2tokens, tokens2class
 from .. import log
-from ..util import setdefaults, as_string
+from ..util import setdefaults
 
 
 def mean_edit_distance(

@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# encoding: utf-8
-
 # link_clustering.py
 # Jim Bagrow, Yong-Yeol Ahn
 # Last Modified: 2010-08-27
@@ -34,13 +31,10 @@ changes 2010-08-27:
 # https://github.com/bagrow/linkcomm/blob/master/python/link_clustering.py
 # accessed on 07.10.2013 (JML)
 
-import sys, os
 from copy import copy
-from operator import itemgetter
 from heapq import heappush, heappop
-from collections import defaultdict
-from itertools import combinations, chain # requires python 2.6+
-from optparse import OptionParser
+from itertools import combinations, chain
+
 
 def swap(a,b):
     if a > b:
@@ -177,101 +171,3 @@ def similarities_weighted(adj, ij2wij):
                 S = ai_dot_aj / (n2a_sqrd[i]+n2a_sqrd[j]-ai_dot_aj) # tanimoto similarity
                 heappush( min_heap, (1-S,edge_pair) )
     return [ heappop(min_heap) for i in range(len(min_heap)) ] # return ordered edge pairs
-
-
-
-
-
-
-
-
-
-#if __name__ == '__main__':
-#    # build option parser:
-#    class MyParser(OptionParser):
-#        def format_epilog(self, formatter):
-#            return self.epilog
-#    
-#    usage = "usage: python %prog [options] filename"
-#    description = """The link communities method of Ahn, Bagrow, and Lehmann, Nature, 2010:
-#    www.nature.com/nature/journal/v466/n7307/full/nature09182.html (doi:10.1038/nature09182)
-#    """
-#    epilog = """
-#    
-#Input:
-#  An edgelist file where each line represents an edge:
-#    node_i <delimiter> node_j <newline>
-#  if unweighted, or
-#    node_i <delimiter> node_j <delimiter> weight_ij <newline>
-#  if weighted.
-#    
-#Output: 
-#  Three text files with extensions .edge2comm.txt, .comm2edges.txt,
-#  and .comm2nodes.txt store the communities.
-# 
-#  edge2comm, an edge on each line followed by the community
-#  id (cid) of the edge's link comm:
-#    node_i <delimiter> node_j <delimiter> cid <newline>
-#  
-#  comm2edges, a list of edges representing one community per line:
-#    cid <delimiter> ni,nj <delimiter> nx,ny [...] <newline>
-#
-#  comm2nodes, a list of nodes representing one community per line:
-#    cid <delimiter> ni <delimiter> nj [...] <newline>
-#  
-#  The output filename contains the threshold at which the dendrogram
-#  was cut, if applicable, or the threshold where the maximum
-#  partition density was found, and the value of the partition 
-#  density.
-#  
-#  If no threshold was given to cut the dendrogram, a file ending with
-#  `_thr_D.txt' is generated, containing the partition density as a
-#  function of clustering threshold.
-#"""
-#    parser = MyParser(usage, description=description,epilog=epilog)
-#    parser.add_option("-d", "--delimiter", dest="delimiter", default="\t",
-#                      help="delimiter of input & output files [default: tab]")
-#    parser.add_option("-t", "--threshold", dest="threshold", type="float", default=None,
-#                      help="threshold to cut the dendrogram (optional)")
-#    parser.add_option("-w", "--weighted", dest="is_weighted", action="store_true", default=False,
-#                    help="is the network weighted?")
-#                    
-#    # parse options:
-#    (options, args) = parser.parse_args()
-#    if len(args) != 1:
-#        parser.error("incorrect number of arguments")
-#    delimiter = options.delimiter
-#    if delimiter == '\\t':
-#        delimiter = '\t'
-#    threshold   = options.threshold
-#    is_weighted = options.is_weighted
-#    
-#    
-#    print "# loading network from edgelist..."
-#    basename = os.path.splitext(args[0])[0]
-#    if is_weighted:
-#        adj,edges,ij2wij = read_edgelist_weighted(args[0], delimiter=delimiter)
-#    else: 
-#        adj,edges        = read_edgelist_unweighted(args[0], delimiter=delimiter)
-#    
-#    
-#    # run the method:
-#    if threshold is not None:
-#        if is_weighted:
-#            edge2cid,D_thr = HLC( adj,edges ).single_linkage( threshold, w=ij2wij )
-#        else:
-#            edge2cid,D_thr = HLC( adj,edges ).single_linkage( threshold )
-#        print "# D_thr = %f" % D_thr
-#        write_edge2cid( edge2cid,"%s_thrS%f_thrD%f" % (basename,threshold,D_thr), delimiter=delimiter )
-#    else:
-#        if is_weighted:
-#            edge2cid,S_max,D_max,list_D = HLC( adj,edges ).single_linkage( w=ij2wij )
-#        else:
-#            edge2cid,S_max,D_max,list_D = HLC( adj,edges ).single_linkage()
-#        f = open("%s_thr_D.txt" % basename,'w')
-#        for s,D in list_D:
-#            print >>f, s, D
-#        f.close()
-#        print "# D_max = %f\n# S_max = %f" % (D_max,S_max)
-#        write_edge2cid( edge2cid,"%s_maxS%f_maxD%f" % (basename,S_max,D_max), delimiter=delimiter )
-

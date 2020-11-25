@@ -1,9 +1,7 @@
-# *-* coding: utf-8 *-*
 """
 Module provides a class for partial cognate detection, expanding the LexStat class.
 
 """
-from __future__ import print_function, division, unicode_literals
 from collections import defaultdict
 from itertools import combinations, product
 import random

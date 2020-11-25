@@ -1,7 +1,6 @@
 """
 Module provides functions to read in various formats from the Phylip package.
 """
-from __future__ import unicode_literals, print_function, division
 import re
 
 from lingpy.algorithm import misc
