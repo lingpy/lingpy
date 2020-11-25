@@ -1,4 +1,4 @@
-from __future__ import unicode_literals, print_function, division
+import warnings
 
 from lingpy import log
 
@@ -39,7 +39,9 @@ def seg_intersect(nA, nB):
     denom = np.dot(dap, db)
     num = np.dot(dap, dp)
     try:
-        x, y = (num / denom) * db + b1
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            x, y = (num / denom) * db + b1
     except ZeroDivisionError:
         return False
 
