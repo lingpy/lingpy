@@ -31,7 +31,7 @@ setup(
     install_requires=[
         "numpy",
         "appdirs",
-        "networkx>=2.0,<=2.2",
+        "networkx>=2.3",
         "tqdm",
         'csvw>=1.5.6"',
         'clldutils>=2.8.0',

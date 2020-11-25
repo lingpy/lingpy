@@ -108,7 +108,7 @@ def gls2gml(
         g.add_node(node, **data)
 
     # assign the root as starting point
-    data = graph.node[mapper['root']]
+    data = graph.nodes[mapper['root']]
     data['graphics']['type'] = 'ellipse'
     data['graphics']['w'] = 50.0
     data['graphics']['h'] = 50.0
@@ -130,17 +130,17 @@ def gls2gml(
 
         # iterate over all nodes to change
         for node in sub_tree_nodes:
-            data = g.node[mapper[node]]
+            data = g.nodes[mapper[node]]
             data['graphics']['fill'] = this_fill
             data['state'] = state.lower()
             g.add_node(mapper[node], **data)
 
         # change the size of the root of the subtree
-        g.node[mapper[name]]['graphics']['h'] = 50.0
-        g.node[mapper[name]]['graphics']['w'] = 50.0
-        g.node[mapper[name]]['graphics']['fill'] = this_fill
-        g.node[mapper[name]]['origin'] = 1
-        g.node[mapper[name]]['state'] = state
+        g.nodes[mapper[name]]['graphics']['h'] = 50.0
+        g.nodes[mapper[name]]['graphics']['w'] = 50.0
+        g.nodes[mapper[name]]['graphics']['fill'] = this_fill
+        g.nodes[mapper[name]]['origin'] = 1
+        g.nodes[mapper[name]]['state'] = state
 
     # add the edges to the tree
     for edgeA, edgeB, data in graph.edges(data=True):
