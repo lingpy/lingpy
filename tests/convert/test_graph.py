@@ -1,32 +1,28 @@
 import lingpy.convert.graph as lcg
 
-try:
-    import networkx as nx
+import networkx as nx
 
-    nonetworkx = False
-except ImportError:
-    nonetworkx = True
-
-try:
+try:  # pragma: no cover
     import igraph as ig
 
     noigraph = False
-except ImportError:
+except ImportError:  # pragma: no cover
     noigraph = True
 
 
 def test_networkx2igraph():
-    if not noigraph and not nonetworkx:
-        graph = nx.Graph()
-        graph.add_nodes_from(['a', 'b', 'c'])
-        graph.add_edges_from([('a', 'b'), ('c', 'd')])
+    graph = nx.Graph()
+    graph.add_nodes_from(['a', 'b', 'c'])
+    graph.add_edges_from([('a', 'b'), ('c', 'd')])
 
+    if not noigraph:  # pragma: no cover
         network = lcg.networkx2igraph(graph)
         assert len(network.vs) == 4
         assert len(network.es) == 2
 
+
 def test_igraph2networkx():
-    if not noigraph and not nonetworkx:
+    if not noigraph:  # pragma: no cover
         graph = ig.Graph()
         graph.add_vertices(['a', 'b', 'c', 'd'])
         graph.add_edges([('a', 'b'), ('c', 'd')])

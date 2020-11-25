@@ -65,7 +65,7 @@ def test_dice(a, b):
     _ = strings.dice(a, b, normalized=True)
     d = strings.dice(a, b, normalized=False)
     assert int(d) == 11
-
+    assert strings.dice('x', 'y') == 0
 
 def test_lcs(a, b):
     _ = strings.lcs(a, b, normalized=True)

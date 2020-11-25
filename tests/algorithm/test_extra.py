@@ -79,18 +79,18 @@ def test_clustering(mocker, Cluster, Igraph, matrix, taxa):
 
 
 def test_dbscan(matrix, taxa):
-    if cluster:
+    if cluster:  # pragma: no cover
         cluster1 = dbscan(0.25, matrix, taxa, revert=True)
         assert cluster1[0] == cluster1[4]
 
 
 def test_affinity_propagation(matrix, taxa):
-    if cluster:
+    if cluster:  # pragma: no cover
         cluster1 = affinity_propagation(0.5, matrix, taxa, revert=True)
         assert cluster1[0] == cluster1[4]
 
 
 def test_infomap_clustering(matrix, taxa):
-    if igraph:
+    if igraph:  # pragma: no cover
         cluster1 = infomap_clustering(0.4, matrix, taxa, revert=True)
         assert cluster1[0] == cluster1[4]

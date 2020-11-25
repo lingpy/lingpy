@@ -49,6 +49,7 @@ def test_convenience():
     warning('m')
     debug('m')
     error('m')
-    deprecated('o', 'n')
+    with pytest.deprecated_call():
+        deprecated('o', 'n')
     missing_module('m')
     file_written('f')

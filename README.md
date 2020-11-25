@@ -2,7 +2,7 @@
 
 This repository contains the python package `lingpy` which can be used for various task in computational historical linguistics.
 
-[![Build Status](https://travis-ci.org/lingpy/lingpy.svg?branch=master)](https://travis-ci.org/lingpy/lingpy)
+[![Build Status](https://github.com/lingpy/lingpy/workflows/tests/badge.svg)](https://github.com/lingpy/lingpy/actions?query=workflow%3Atests)
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.597082.svg)](https://doi.org/10.5281/zenodo.597082)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)

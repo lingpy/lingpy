@@ -11,6 +11,8 @@ def test_read_asjp(test_data):
         classification='wls_gen'))
     assert len(lex) == 249
 
+    read_asjp(str(test_data / 'asjp_test_list.csv'), classification='hh,wls_gen')
+
     # def evaluate():
     #    return lambda x, y, z: x[y[1]].startswith(z)
 

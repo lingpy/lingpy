@@ -166,17 +166,17 @@ def test_error_on_unknown_mode(wordlist):
         write_nexus(wordlist, mode='xx')
 
 
-def test_error_on_unknown_ref(wordlist):
-    with pytest.raises(KeyError):
-        write_nexus(wordlist, mode='mrbayes', ref='magic')
-
-
 @pytest.fixture
 def nexus_factory(wordlist, tmppath):
     def f(**kw):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
         return write_nexus(wordlist, missing="X", filename=str(tmppath / 'test'), **kw)
     return f
+
+
+def test_error_on_unknown_ref(nexus_factory):
+    with pytest.raises(KeyError):
+        nexus_factory(mode='mrbayes', ref='magic')
 
 
 def test_mrbayes(nexus_factory):
