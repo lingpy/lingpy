@@ -4,6 +4,7 @@ Module provides various string similarity metrics.
 from collections import defaultdict
 import itertools as it
 
+
 def ldn(a, b, normalized=True):
     """Basic Levenshtein distance without swap operation (all operations are equal costs).
 

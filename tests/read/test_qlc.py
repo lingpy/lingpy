@@ -1,5 +1,18 @@
+import pytest
+
 from lingpy.align import MSA
 from lingpy.read.qlc import read_msa, reduce_alignment, read_qlc
+from lingpy.thirdparty.cogent.tree import TreeNode
+
+
+@pytest.mark.parametrize(
+    'input,output',
+    [
+        (['(a b c', 'c d) e'], [['-', 'a', ' ', 'b', ' ', 'c'], ['c', ' ', 'd', '-', ' ', 'e']]),
+    ]
+)
+def test_reduce_alignment(input, output):
+    assert reduce_alignment(input) == output
 
 
 def test_read_msa(test_data):
@@ -25,3 +38,24 @@ def test_reduce_msa(test_data):
 
 def test_read_qlc(test_data):
     _ = read_qlc(str(test_data / 'read_qlc.qlc'))
+
+
+def test_read_qlc_complex(tmppath):
+    p = tmppath / 'test.qlc'
+    p.write_text("""\
+<json id="x">
+{"y": 5}
+</json>
+<nwk>
+(A,B)C;
+</nwk>
+<csv id="z" dtype="int" ncol="3">
+a\t4\t5
+</csv>
+ID  NAME
+x   z
+""", encoding='utf8')
+    res = read_qlc(str(p))
+    assert res['x']['y'] == 5
+    assert isinstance(res['trees']['1'], TreeNode)
+    assert res['z']['a'] == [4, 5]

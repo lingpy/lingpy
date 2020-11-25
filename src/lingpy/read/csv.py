@@ -152,7 +152,8 @@ def read_asjp(
 
     # check for family type
     if not evaluate:
-        evaluate = lambda x, y, z: x[y].startswith(z)
+        evaluate = lambda x, y, z: any(x[yy].startswith(z) for yy in y) if isinstance(y, tuple) \
+            else x[y].startswith(z)
 
     # index the classification index
     if ',' in classification:
@@ -219,8 +220,7 @@ def read_asjp(
                                 loan = 1
                             else:
                                 loan = 0
-                            if ' ' in entry:
-                                entry = entry.replace(' ', '_')
+                            entry = entry.replace(' ', '_')
                             tokens = ' '.join(asjp2tokens(entry))
                             D[idx] = [lang, item, entry, tokens.split(' '), loan]
                             idx += 1

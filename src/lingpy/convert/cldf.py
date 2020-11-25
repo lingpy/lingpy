@@ -35,14 +35,10 @@ def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
     alignment : str (default="alignment")
         The column in which you store the alignments.
     """
-    if not cldf:
-        raise ValueError('The package pycldf needs to be installed')
-
     # create cldf-dataset
     ds = CLDF_Wordlist.in_dir(path)
     # add sources if they are available
-    ds.add_sources(
-            read_text(source_path) if source_path else '')
+    ds.add_sources(read_text(source_path) if source_path else '')
     # add components
     ds.add_component('LanguageTable')
     ds.add_component('ParameterTable', 'Concepticon_ID')
@@ -85,5 +81,3 @@ def to_cldf(wordlist, path='cldf', source_path=None, ref="cogid",
         LanguageTable=languages.values(),
         ParameterTable=parameters.values(),
         CognateTable=cognates)
-
-

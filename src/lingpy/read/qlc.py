@@ -369,8 +369,7 @@ def read_qlc(infile, comment='#'):
                 scorer = read_scorer(tmp)
                 if 'scorer' not in meta:
                     meta['scorer'] = {}
-                if 'id' not in keys:
-                    keys['id'] = 'basic'
+                keys.setdefault('id', 'basic')
                 meta['scorer'][keys['id']] = scorer
 
             elif dtype == 'taxa':
@@ -395,7 +394,7 @@ def read_qlc(infile, comment='#'):
             else:
                 d[i] = line
                 i += 1
-    except ValueError as e:
+    except ValueError as e:  # pragma: no cover
         raise Exception("Error processing line {0}:\n".format(j) +
                         str(data[1:][j]) + '\nOriginal error message: ' + str(e))
 

@@ -65,7 +65,7 @@ def get_logger(config_dir=None, force_default_config=False, test=False):
         _logger = logging.getLogger('lingpy')
         _logger.addFilter(CustomFilter())
         testing = len(sys.argv) and sys.argv[0].endswith('nosetests')
-        if not (force_default_config or test) and testing:
+        if not (force_default_config or test) and testing:  # pragma: no cover
             _logger.setLevel(logging.CRITICAL)
         else:
             cfg = Config('logging', default=LOGGING, config_dir=config_dir)
