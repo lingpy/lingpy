@@ -145,7 +145,7 @@ for key in kw_base:
         alias[value] = key
 
 
-def rc(rval=None, **keywords):
+def rc(rval=None, rcParams_=None, **keywords):
     """
     Function changes parameters globally set for LingPy sessions.
 
@@ -158,6 +158,7 @@ def rc(rval=None, **keywords):
         "asjp", this means that sequences will be treated as sequences in ASJP
         code, otherwise, they will be treated as sequences written in basic
         IPA.
+    rcParams_ : Allow passing in a plain `dict` for testing.
 
     Notes
     -----
@@ -191,52 +192,54 @@ def rc(rval=None, **keywords):
     """
     from lingpy import log
 
+    # By default we change the global `lingpy._settings.rcParams`
+    rcParams_ = rcParams if rcParams_ is None else rcParams_
     if rval:
-        return rcParams[rval]
+        return rcParams_[rval]
 
     for key in keywords:
         if key == "schema":
             if keywords[key] in ["qlc", 'ipa']:
                 diacritics, vowels, tones = load_dvt(path='')
-                rcParams['asjp'] = Model('asjp')
-                rcParams['sca'] = Model('sca')
-                rcParams['dolgo'] = Model('dolgo')
-                rcParams['art'] = Model('art')
-                rcParams['diacritics'] = diacritics
-                rcParams['vowels'] = vowels
-                rcParams['tones'] = tones
-                rcParams['_color'] = Model('color')
-                rcParams['combiners'] = '\u0361\u035c'
-                rcParams['breaks'] = '.-'
-                rcParams['stress'] = "ˈˌ'"
-                rcParams['merge_vowels'] = True
-                rcParams['basic_orthography'] = 'fuzzy'
+                rcParams_['asjp'] = Model('asjp')
+                rcParams_['sca'] = Model('sca')
+                rcParams_['dolgo'] = Model('dolgo')
+                rcParams_['art'] = Model('art')
+                rcParams_['diacritics'] = diacritics
+                rcParams_['vowels'] = vowels
+                rcParams_['tones'] = tones
+                rcParams_['_color'] = Model('color')
+                rcParams_['combiners'] = '\u0361\u035c'
+                rcParams_['breaks'] = '.-'
+                rcParams_['stress'] = "ˈˌ'"
+                rcParams_['merge_vowels'] = True
+                rcParams_['basic_orthography'] = 'fuzzy'
 
                 # reset basic model to sca
-                rcParams['model'] = rcParams['sca']
+                rcParams_['model'] = rcParams['sca']
 
             elif keywords[key] in ['evolaemp', 'el', 'asjp']:
                 diacritics, vowels, tones = load_dvt(path='el')
-                rcParams['asjp'] = Model('asjp_el')
-                rcParams['sca'] = Model('sca_el')
-                rcParams['dolgo'] = Model('dolgo_el')
-                rcParams['art'] = Model('art_el')
-                rcParams['jaeger'] = Model('jaeger_el')
-                rcParams['diacritics'] = diacritics
-                rcParams['vowels'] = vowels
-                rcParams['tones'] = tones
-                rcParams['_color'] = Model('color_el')
-                rcParams['combiners'] = '\u0361\u035c'
-                rcParams['breaks'] = '.-'
-                rcParams['stress'] = "ˈˌ'"
-                rcParams['merge_vowels'] = False
-                rcParams['basic_orthography'] = 'asjp'
+                rcParams_['asjp'] = Model('asjp_el')
+                rcParams_['sca'] = Model('sca_el')
+                rcParams_['dolgo'] = Model('dolgo_el')
+                rcParams_['art'] = Model('art_el')
+                rcParams_['jaeger'] = Model('jaeger_el')
+                rcParams_['diacritics'] = diacritics
+                rcParams_['vowels'] = vowels
+                rcParams_['tones'] = tones
+                rcParams_['_color'] = Model('color_el')
+                rcParams_['combiners'] = '\u0361\u035c'
+                rcParams_['breaks'] = '.-'
+                rcParams_['stress'] = "ˈˌ'"
+                rcParams_['merge_vowels'] = False
+                rcParams_['basic_orthography'] = 'asjp'
 
                 # reset the basic model to the asjp model
-                rcParams['model'] = rcParams['asjp']
+                rcParams_['model'] = rcParams['asjp']
 
         if key in alias:
-            rcParams[alias[key]] = keywords[key]
+            rcParams_[alias[key]] = keywords[key]
         else:
-            rcParams[key] = keywords[key]
+            rcParams_[key] = keywords[key]
     log.info("Successfully changed parameters.")

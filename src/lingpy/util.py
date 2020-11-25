@@ -237,26 +237,6 @@ def nexus_slug(s):
     return slug(s, lowercase=False, remove_whitespace=False).replace(" ", "_")
 
 
-def accumulate_purepy(iterable, func=operator.add):
-    """
-    Return running totals.
-    
-    This implementation replaces itertools.accumulate for compatibility
-    with Python 2.7.
-    """
-    # _accumulate([1,2,3,4,5]) --> 1 3 6 10 15
-    # _accumulate([1,2,3,4,5], operator.mul) --> 1 2 6 24 120
-    it = iter(iterable)
-    try:
-        total = next(it)
-    except StopIteration:
-        return
-    yield total
-    for element in it:
-        total = func(total, element)
-        yield total
-
-
 def random_choices(population, weights=None, cum_weights=None, k=1):
     """
     Return a population sample from weighted elements.
@@ -306,7 +286,7 @@ def random_choices(population, weights=None, cum_weights=None, k=1):
 
     # If cumulative weights were not provided, build them from `weights`.
     if not cum_weights:
-        cum_weights = list(accumulate_purepy(weights))
+        cum_weights = list(itertools.accumulate(weights))
 
     # Assert that the lengths of population and cumulative weights match.
     assert len(population) == len(

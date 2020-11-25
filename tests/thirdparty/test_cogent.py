@@ -12,7 +12,7 @@ from lingpy.thirdparty.cogent.newick import TreeParseError
 def test_load_tree(test_data):
     # test to load a given tree-file
     tree = LoadTree(str(test_data / 'phylogeny.tre'))
-
+    assert tree.compareByPartitions(tree) == 0
     taxa = sorted(["Beijing", "Changsha", "Chengdu", "Fuzhou", "Guangzhou",
                    "Guiyang", "Haerbin", "Haikou", "Hangzhou", "Hefei",
                    "Huhehaote", "Jian\u2019ou", "Jinan", "Kunming",
@@ -23,9 +23,14 @@ def test_load_tree(test_data):
                    "Wenzhou", "Wuhan", "Wulumuqi", "Xi\u2019an", "Xiamen",
                    "Xianggang", "Xiangtan", "Xining", "Yinchuan",
                    "Zhengzhou"])
-
+    assert len(tree.getConnectingEdges('Beijing', 'Xiangtan')) == 8
     for a, b in zip(sorted(tree.taxa), taxa):
         assert a == b
+    tree.removeNode('Beijing')
+    tree.prune()
+
+    tree = LoadTree(tip_names=['Beijing', 'Changsha'])
+    assert len(tree.taxa) == 2
 
     tree = LoadTree("((((((((Taiyuan,Pingyao,Huhehaote),"
                     "((((Xi’an,Xining,Zhengzhou),(Lanzhou,Yinchuan,"
@@ -71,6 +76,7 @@ def test_Tree():
         tree.getSubTree([])
     tree.get_LCA(tree.getNodeNames()[0])
     tree.getNewickRecursive()
+    tree[0] = tree[0]
 
 
 def test_more_trees():
@@ -99,6 +105,8 @@ def test_more_trees():
     assert tree.getDistances()['a', 'b'] == 2
     assert tree.getMaxTipTipDistance()[0] == 12
     assert tree.maxTipTipDistance()[0] == 12
+    tree.scaleBranchLengths(ultrametric=True)
+    assert tree.getDistances()['a', 'b'] == pytest.approx(22.0)
 
     ntree = tree.copyRecursive()
     ntree2 = tree2.copy()
