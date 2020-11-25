@@ -96,6 +96,3 @@ def cv_templates(
         return out
 
     return patterns, ignored, sound_table
-
-    
-
