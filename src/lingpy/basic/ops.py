@@ -272,7 +272,7 @@ def calculate_data(
                 wl2dst(wordlist, taxa, concepts, ref, **keywords)
         distances = wordlist._meta['distances']
         if 'tree' in wordlist._meta and not keywords['force']:
-            logger.warn(
+            logger.warning(
                     "Reference tree has already been calculated, "
                     "force overwrite by "
                     "setting 'force' to 'True'.")
@@ -287,7 +287,7 @@ def calculate_data(
         else:
             distances = wordlist._meta['distances']
         if 'groups' in wordlist._meta and not keywords['force']:
-            logger.warn(
+            logger.warning(
                     "Distance matrix has already been calculated, "
                     "force overwrite by "
                     "setting 'force' to 'True'.")

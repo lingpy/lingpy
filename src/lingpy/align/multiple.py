@@ -1,14 +1,10 @@
-# *-* coding: utf-8 *-*
 """
 Module provides classes and functions for multiple alignment analyses.
 """
-from __future__ import print_function, division, unicode_literals
 import logging
 from itertools import combinations, combinations_with_replacement, product
 from collections import defaultdict
 from functools import partial
-
-from clldutils.misc import UnicodeMixin
 
 from lingpy.algorithm import calign
 from lingpy.algorithm import talign
@@ -24,7 +20,7 @@ from lingpy import log
 from lingpy.util import setdefaults, identity, dotjoin, as_string
 
 
-class Multiple(UnicodeMixin):
+class Multiple:
     """
     Basic class for multiple sequence alignment analyses.
 
@@ -97,7 +93,7 @@ class Multiple(UnicodeMixin):
         # sequences present in the alignment
         return self._length
 
-    def __unicode__(self):
+    def __str__(self):
         # if alignments are present, print the alignments
         # else, return all sequences
         lines = self.alm_matrix if self.alm_matrix else self.tokens
