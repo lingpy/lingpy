@@ -105,10 +105,10 @@ def plot_gls(
     plt.axis('equal')
 
     for nA, nB in graph.edges():
-        xA = graph.node[nA]['graphics']['x']
-        xB = graph.node[nB]['graphics']['x']
-        yA = graph.node[nA]['graphics']['y']
-        yB = graph.node[nB]['graphics']['y']
+        xA = graph.nodes[nA]['graphics']['x']
+        xB = graph.nodes[nB]['graphics']['x']
+        yA = graph.nodes[nA]['graphics']['y']
+        yB = graph.nodes[nB]['graphics']['y']
 
         plt.plot(
             [xA, xB],
@@ -305,10 +305,10 @@ def plot_tree(
     for nA, nB, d in list(graph.edges(data=True)) + keywords['edge_list']:
 
         # get the coordinates
-        xA = graph.node[nA]['graphics']['x']
-        yA = graph.node[nA]['graphics']['y']
-        xB = graph.node[nB]['graphics']['x']
-        yB = graph.node[nB]['graphics']['y']
+        xA = graph.nodes[nA]['graphics']['x']
+        yA = graph.nodes[nA]['graphics']['y']
+        xB = graph.nodes[nB]['graphics']['x']
+        yB = graph.nodes[nB]['graphics']['y']
 
         if 'color' in d:
             plt.plot(
@@ -608,11 +608,11 @@ def plot_concept_evolution(
                 graph.add_node(n)
 
             # add a pap-dictionary if it's not already there
-            if 'pap' not in graph.node[n]:
-                graph.node[n]['pap'] = {}
+            if 'pap' not in graph.nodes[n]:
+                graph.nodes[n]['pap'] = {}
 
             # add data
-            graph.node[n]['pap'][pap] = d['state']
+            graph.nodes[n]['pap'][pap] = d['state']
 
     # create the figure
     fig = plt.figure(figsize=keywords['figsize'])
@@ -630,8 +630,8 @@ def plot_concept_evolution(
 
     # iterate over edges first
     for nA, nB in g.edges():
-        gA = g.node[nA]['graphics']
-        gB = g.node[nB]['graphics']
+        gA = g.nodes[nA]['graphics']
+        gB = g.nodes[nB]['graphics']
         xA, yA = gA['x'], gA['y']
         xB, yB = gB['x'], gB['y']
 
@@ -647,8 +647,8 @@ def plot_concept_evolution(
     if keywords['edges']:
         # get the coordinates
         for nA, nB in keywords['edges']:
-            gA = g.node[nA]['graphics']
-            gB = g.node[nB]['graphics']
+            gA = g.nodes[nA]['graphics']
+            gB = g.nodes[nB]['graphics']
             xA, yA = gA['x'], gA['y']
             xB, yB = gB['x'], gB['y']
 
@@ -664,7 +664,7 @@ def plot_concept_evolution(
     # now iterate over the nodes
     for n, d in graph.nodes(data=True):
         cpaps = d['pap']
-        x, y = g.node[n]['graphics']['x'], g.node[n]['graphics']['y']
+        x, y = g.nodes[n]['graphics']['x'], g.nodes[n]['graphics']['y']
 
         # get z-value which serves as zorder attribute
         try:
@@ -795,10 +795,10 @@ def plot_concept_evolution(
                 # add the labels if this option is chosen
         if keywords['labels']:
             # if node is a tip
-            if tgraph.node[n]['tip']:
+            if tgraph.nodes[n]['tip']:
 
                 # get the values
-                gf = tgraph.node[n]['graphics']
+                gf = tgraph.nodes[n]['graphics']
                 r = gf['angle']
                 x, y = gf['x'], gf['y']
                 ha = gf['s']

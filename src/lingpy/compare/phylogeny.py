@@ -939,10 +939,10 @@ class PhyBo(Wordlist):
                 edges = []
                 for a, b, d in g.edges(data=True):
                     edges.append((
-                        g.node[a]['graphics']['x'],
-                        g.node[b]['graphics']['x'],
-                        g.node[a]['graphics']['y'],
-                        g.node[b]['graphics']['y']))
+                        g.nodes[a]['graphics']['x'],
+                        g.nodes[b]['graphics']['x'],
+                        g.nodes[a]['graphics']['y'],
+                        g.nodes[b]['graphics']['y']))
 
                 # mpl.rc('text',usetex=keywords['usetex'])
                 fig = plt.figure()
@@ -1565,7 +1565,7 @@ class PhyBo(Wordlist):
             data['graphics']['width'] = 10.0
             data['graphics']['fill'] = '#000000'
             data['label'] = 'vertical'
-            gPrm.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
+            gPrm.add_edge(gTpl.nodes[nodeA]['label'], gTpl.nodes[nodeB]['label'], **data)
 
         # start to assign the edge weights
         for cog, (gls, noo) in scenarios.items():
@@ -1708,7 +1708,7 @@ class PhyBo(Wordlist):
                 del data['graphics']['Line']
             except:
                 pass
-            gOut.add_edge(gTpl.node[nodeA]['label'], gTpl.node[nodeB]['label'], **data)
+            gOut.add_edge(gTpl.nodes[nodeA]['label'], gTpl.nodes[nodeB]['label'], **data)
 
         # assign new edge weights
         for nodeA, nodeB, data in gMST.edges(data=True):
@@ -2559,10 +2559,10 @@ class PhyBo(Wordlist):
         vedges, ledges, weights = [], [], []
 
         for a, b, d in graph.edges(data=True):
-            xA = graph.node[a]['graphics']['x']
-            yA = graph.node[a]['graphics']['y']
-            xB = graph.node[b]['graphics']['x']
-            yB = graph.node[b]['graphics']['y']
+            xA = graph.nodes[a]['graphics']['x']
+            yA = graph.nodes[a]['graphics']['y']
+            xB = graph.nodes[b]['graphics']['x']
+            yB = graph.nodes[b]['graphics']['y']
 
             if d['label'] == 'vertical':
                 vedges += [(xA, xB, yA, yB)]
@@ -2841,14 +2841,14 @@ class PhyBo(Wordlist):
 
         # get the edges
         for a, b, d in graph.edges(data=True):
-            xA = graph.node[a]['graphics']['x']
-            yA = graph.node[a]['graphics']['y']
-            zA = graph.node[a]['graphics']['z']
-            xB = graph.node[b]['graphics']['x']
-            yB = graph.node[b]['graphics']['y']
-            zB = graph.node[b]['graphics']['z']
-            zoA = graph.node[a]['graphics']['zorder']
-            zoB = graph.node[b]['graphics']['zorder']
+            xA = graph.nodes[a]['graphics']['x']
+            yA = graph.nodes[a]['graphics']['y']
+            zA = graph.nodes[a]['graphics']['z']
+            xB = graph.nodes[b]['graphics']['x']
+            yB = graph.nodes[b]['graphics']['y']
+            zB = graph.nodes[b]['graphics']['z']
+            zoA = graph.nodes[a]['graphics']['zorder']
+            zoB = graph.nodes[b]['graphics']['zorder']
             zorder = int((zoA + zoB) / 2)
 
             if d['label'] == 'vertical':
@@ -2984,8 +2984,8 @@ class PhyBo(Wordlist):
         edges = list(graph.edges(data=True))
         for nA, nB, d in util.pb(edges, desc='MINIMAL SPATIAL NETWORK'):
             # get the labels
-            lA = graph.node[nA]['label']
-            lB = graph.node[nB]['label']
+            lA = graph.nodes[nA]['label']
+            lB = graph.nodes[nB]['label']
 
             # first check, whether edge is horizontal
             if d['label'] == 'horizontal':
@@ -3614,10 +3614,10 @@ class PhyBo(Wordlist):
 
             edges = []
             for a, b, d in g.edges(data=True):
-                xA = g.node[a]['graphics']['x']
-                xB = g.node[b]['graphics']['x']
-                yA = g.node[a]['graphics']['y']
-                yB = g.node[b]['graphics']['y']
+                xA = g.nodes[a]['graphics']['x']
+                xB = g.nodes[b]['graphics']['x']
+                yA = g.nodes[a]['graphics']['y']
+                yB = g.nodes[b]['graphics']['y']
                 edges += [(xA, xB, yA, yB)]
 
             # mpl.rc('text',usetex=keywords['usetex'])
@@ -3834,10 +3834,10 @@ class PhyBo(Wordlist):
                             graph.add_node(n)
 
                         # add a pap-dictionary if it's not already there
-                        if 'pap' not in graph.node[n]:
-                            graph.node[n]['pap'] = {}
+                        if 'pap' not in graph.nodes[n]:
+                            graph.nodes[n]['pap'] = {}
 
-                        graph.node[n]['pap'][pap] = d['state']
+                        graph.nodes[n]['pap'][pap] = d['state']
 
                 # create the figure
                 fig = plt.figure(figsize=keywords['figsize'])
@@ -3852,8 +3852,8 @@ class PhyBo(Wordlist):
 
                 # iterate over edges first
                 for nA, nB in g.edges():
-                    gA = g.node[nA]['graphics']
-                    gB = g.node[nB]['graphics']
+                    gA = g.nodes[nA]['graphics']
+                    gB = g.nodes[nB]['graphics']
                     xA, yA = gA['x'], gA['y']
                     xB, yB = gB['x'], gB['y']
 
@@ -3867,7 +3867,7 @@ class PhyBo(Wordlist):
                 # now iterate over the nodes
                 for n, d in graph.nodes(data=True):
                     cpaps = d['pap']
-                    x, y = g.node[n]['graphics']['x'], g.node[n]['graphics']['y']
+                    x, y = g.nodes[n]['graphics']['x'], g.nodes[n]['graphics']['y']
 
                     # get z-value which serves as zorder attribute
                     try:

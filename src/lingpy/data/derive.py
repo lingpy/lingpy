@@ -66,7 +66,7 @@ def _fop(graph, start, end, path=[]):
     path = path + [start]
     if start == end:
         return [path]
-    if start not in graph.node:
+    if start not in graph.nodes:
         return []
     paths = []
     for node in graph[start].keys():
@@ -183,12 +183,12 @@ def _make_scoring_dictionary(graph):
                 # these values might be made changeable in later versions
                 if node1 == node2:
                     # for vowels and glides, the same starting value is assumed
-                    if graph.node[node1]['val'] in ['v', 'g']:
+                    if graph.nodes[node1]['val'] in ['v', 'g']:
                         value = 5
                     # make sure, that tones do not score
-                    elif graph.node[node1]['val'] == 't':
+                    elif graph.nodes[node1]['val'] == 't':
                         value = 2
-                    elif graph.node[node1]['val'] == 'b':
+                    elif graph.nodes[node1]['val'] == 'b':
                         value = 0
                     else:
                         value = 10
@@ -197,12 +197,12 @@ def _make_scoring_dictionary(graph):
                 else:
                     # treat vowel-vowel and consonant-consonant matches
                     # differently
-                    if graph.node[node1]['val'] == graph.node[node2]['val']:
+                    if graph.nodes[node1]['val'] == graph.nodes[node2]['val']:
 
                         # for vowels and glides, the starting value to subtract the
                         # weighted pathlength from is the vowel-vowel-identity
                         # score
-                        if graph.node[node1]['val'] in ['v', 'g']:
+                        if graph.nodes[node1]['val'] in ['v', 'g']:
                             # make sure that the distance doesn't exceed the
                             # default value for vowel-vowel matches, which
                             # should be zero, if there is no connection in the
@@ -211,10 +211,10 @@ def _make_scoring_dictionary(graph):
 
                         # for consonants, the starting value is the
                         # consonant-consonant score
-                        elif graph.node[node1]['val'] == 'c':
+                        elif graph.nodes[node1]['val'] == 'c':
                             # make sure that the minimum value of C-C-matches is zero
                             value = get_starting_value(graph, node1, node2, 10, 0)
-                        elif graph.node[node1]['val'] == 'b':
+                        elif graph.nodes[node1]['val'] == 'b':
                             value = 0
                         else:
                             # make sure that tone-tone classes score with zero
@@ -223,7 +223,7 @@ def _make_scoring_dictionary(graph):
                     # matches, the starting value is the vowel-vowel score (may
                     # also be changed in later versions)
                     else:
-                        choices = [graph.node[node1]['val'], graph.node[node2]['val']]
+                        choices = [graph.nodes[node1]['val'], graph.nodes[node2]['val']]
 
                         # make sure to exclude tones from all matchings in
                         # order to force the algorithm to align tones with
@@ -260,10 +260,10 @@ def _make_scoring_dictionary(graph):
         score_dict[('+', node)] = -100
 
         # specific values
-        if graph.node[node]['val'] == 'v':
+        if graph.nodes[node]['val'] == 'v':
             score_dict[(node, 'X')] = 0
             score_dict[('X', node)] = 0
-        elif graph.node[node]['val'] == 'g':
+        elif graph.nodes[node]['val'] == 'g':
             score_dict[(node, 'X')] = 0
             score_dict[('X', node)] = 0
         else:
