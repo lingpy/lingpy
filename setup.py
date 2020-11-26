@@ -41,6 +41,7 @@ setup(
         "borrowing": ["matplotlib", "scipy"],
         "cluster": ["python-igraph", "scikit-learn"],
         "test": ["pytest", "coverage", "pytest-mock", "pytest-cov"],
+        "dev": ["wheel", "twine", "sphinx"],
     },
     entry_points={"console_scripts": ["lingpy=lingpy.cli:main"]},
     keywords=[

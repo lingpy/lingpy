@@ -12,7 +12,15 @@
   tox -r
   ```
 
-- FIXME: Make sure docs can be built.
+- Make sure docs can be built:
+  ```
+  cd ..
+  git clone https://github.com/lingpy/doc
+  cd doc/
+  sphinx-apidoc -f ../lingpy/src/lingpy -o source/reference
+  make html
+  cd ../lingpy
+  ```
 
 - Update the version number, by removing the trailing `.dev0` in:
   - `setup.py`
