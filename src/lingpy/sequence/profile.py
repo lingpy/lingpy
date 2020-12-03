@@ -76,7 +76,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         else:
             for segment in cleaned_string.split(' '):
                 profile[segment] += 1
-            for segment in [x for x in word if x not in cleaned_string]:
+            for segment in [x for x in word.split() if x not in cleaned_string]:
                 profile[segment] += 1
                 nulls.add(segment)
 
@@ -180,7 +180,7 @@ def context_profile(wordlist, ref='ipa', col="doculect",
                     context_post = (len(cleaned_string)-1) * [''] + ['$']
                     for ctxA, ctxB, segment in zip(context_pre, context_post, cleaned_string):
                         profile[ctxA+segment+ctxB] += [(language, word)]
-                    for segment in [x for x in word if x not in ' '.join(cleaned_string)]:
+                    for segment in [x for x in word.split() if x not in ' '.join(cleaned_string)]:
                         profile[segment] += [(language, word)]
                         nulls.add(segment)
             except:
