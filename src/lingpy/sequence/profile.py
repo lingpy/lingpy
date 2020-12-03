@@ -6,10 +6,11 @@ from collections import defaultdict
 from lingpy.sequence.sound_classes import codepoint, clean_string, token2class
 from lingpy import log
 from lingpy.util import pb
-
+import unicodedata
 
 def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False,
         brackets=None, splitters='/,;~', merge_geminates=True,
+        normalization_form="NFC",
         bad_word="<???>", bad_sound="<?>", clts=None, unknown_sound="!{0}"):
     """
     Create an initial Orthography Profile using Lingpy's clean_string procedure.
@@ -60,12 +61,14 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(int)
-    words = [wordlist[idx, ref] for idx in wordlist]
+    words = [unicodedata.normalize(normalization_form, word) 
+            for idx in wordlist]
     for word in pb(words, desc='iterating over words'):
         if isinstance(word, list):
             word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
-                merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
+                merge_vowels=merge_vowels, 
+                normalization_form=normaliation_form, brackets=None, ignore_brackets=False,
                 split_entries=False, preparse=None, rules=None,
                 merge_geminates=merge_geminates)[0]
 
@@ -103,7 +106,8 @@ def context_profile(wordlist, ref='ipa', col="doculect",
         semi_diacritics='hsʃ̢ɕʂʐʑʒw', merge_vowels=False, brackets=None,
         splitters='/,;~', merge_geminates=True, clts=False,
         bad_word="<???>", bad_sound="<?>", unknown_sound="!{0}", examples=2,
-        max_entries=100):
+        max_entries=100,
+        normalization_form="NFC"):
     """
     Create an advanced Orthography Profile with context and doculect information.
 
@@ -164,10 +168,12 @@ def context_profile(wordlist, ref='ipa', col="doculect",
         log.info('processing {0}-{1}'.format(idx, word))
         if isinstance(word, list):
             word = ' '.join(word)
+        word = unicodedata.normalize(normalization_form, word)
         if word.strip():
             try:
                 cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
                         merge_vowels=merge_vowels, brackets=None, ignore_brackets=False,
+                        normalization_form=normalization_form,
                         split_entries=False, preparse=None, rules=None,
                         merge_geminates=merge_geminates)[0].split(' ')
 
@@ -180,9 +186,11 @@ def context_profile(wordlist, ref='ipa', col="doculect",
                     context_post = (len(cleaned_string)-1) * [''] + ['$']
                     for ctxA, ctxB, segment in zip(context_pre, context_post, cleaned_string):
                         profile[ctxA+segment+ctxB] += [(language, word)]
-                    for segment in [x for x in word.split() if x not in ' '.join(cleaned_string)]:
-                        profile[segment] += [(language, word)]
-                        nulls.add(segment)
+                    for segment in [x for x in word if x not in
+                            ' '.join(cleaned_string)]:
+                        if segment.strip():
+                            profile[segment] += [(language, word)]
+                            nulls.add(segment)
             except:
                 errors.add(idx)
                 log.warning('problem parsing {0}'.format(word))
