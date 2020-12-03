@@ -1,60 +1,46 @@
 {
-    "title": "LingPy. A Python Library for Historical Linguistics",
+    "title": "Concepticon. A resource for the linking of concept lists",
     "creators": [
         {
             "name": "Johann-Mattis List"
         },
         {
-            "name": "Simon J. Greenhill"
+            "name": "Christoph Rzymski"
         },
         {
-            "name": "Tiago Tresoldi"
+            "name": "Simon Greenhill"
+        },
+        {
+            "name": "Nathanael E. Schweikhard"
+        },
+        {
+            "name": "Kristina Pianykh"
+        },
+        {
+            "name": "Annika Tjuka"
+        },
+        {
+            "name": "Mei-Shin Wu"
+        },
+        {
+            "name": "Annika Tjuka"
         },
         {
             "name": "Robert Forkel"
         }
     ],
-    "description": "<p>Cite the library as:</p>\n\n<blockquote>\n<p>List, Johann-Mattis; Greenhill, Simon; Tresoldi, Tiago; and Forkel, Robert (2019): LingPy. A Python library for historical linguistics. Version 2.6.5. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy. With contributions by Christoph Rzymski, Gereon Kaiping, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel. Jena: Max Planck Institute for the Science of Human History.</p>\n</blockquote>",
+    "description": "<p>Cite the library as:</p>\n\n<blockquote>\n<p>List, J., C. Rzymski, S. Greenhill, N. Schweikhard, K. Pianykh, A. Tjuka, M. Wu, and R. Forkel (2020): Concepticon. A resource for the linking of concept lists. Version 2.4.0.beta. Max Planck Institute for the Science of Human History: Jena. https://concepticon.clld.org/.</p>\n</blockquote>",
     "access_right": "open",
     "keywords": [
         "linguistics",
-        "cldf:Wordlist"
+        "cldf:Wordlist",
+        "concept list"
     ],
     "license": {
         "id": "CC-BY-NC-4.0"
     },
-    "contributors": [
-        {
-            "type": "Other",
-            "name": "Christoph Rzymski"
-        },
-        {
-            "type": "Other",
-            "name": "Gereon A. Kaiping"
-        },
-        {
-            "type": "Other",
-            "name": "Steven Moran"
-        },
-        {
-            "type": "Other",
-            "name": "Peter Bouda"
-        },
-        {
-            "type": "Other",
-            "name": "Johannes-Dellert"
-        },
-        {
-            "type": "Other",
-            "name": "Taraka Rama"
-        },
-        {
-            "type": "Other",
-            "name": "Frank Nagel"
-        }
-
-    ],
-    "upload_type": "software",
+    "contributors": [],
+    "upload_type": "dataset",
     "communities": [
         {
             "identifier": "dighl"
