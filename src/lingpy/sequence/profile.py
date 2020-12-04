@@ -68,7 +68,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
             word = ' '.join(word)
         cleaned_string = clean_string(word, semi_diacritics=semi_diacritics,
                 merge_vowels=merge_vowels, 
-                normalization_form=normaliation_form, brackets=None, ignore_brackets=False,
+                normalization_form=normalization_form, brackets=None, ignore_brackets=False,
                 split_entries=False, preparse=None, rules=None,
                 merge_geminates=merge_geminates)[0]
 
