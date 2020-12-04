@@ -61,7 +61,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
     bad_words = set()
     brackets = brackets or "([{『（₍⁽«)]}）』⁾₎"
     profile = defaultdict(int)
-    words = [unicodedata.normalize(normalization_form, word) 
+    words = [unicodedata.normalize(normalization_form, wordlist[idx, ref]) 
             for idx in wordlist]
     for word in pb(words, desc='iterating over words'):
         if isinstance(word, list):
