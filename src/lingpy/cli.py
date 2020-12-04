@@ -295,6 +295,9 @@ class profile(Command):
                 short_opt='m'
                 )
         add_option(
+                p, 'normalize', 'NFC', 'Set normalization of wordlist.',
+                short_opt='n')
+        add_option(
                 p, 'context', False, 'Create profile with context.', 
                 short_opt='c')
         add_option(p, 'clts', False, 'Check for CLTS compliance.')
@@ -337,10 +340,12 @@ class profile(Command):
             wl = lingpy.basic.wordlist.Wordlist(D)
         if args.context:
             for line in lingpy.sequence.profile.context_profile(wl, ref=args.column,
-                    clts=clts, merge_vowels=args.merge):
+                    clts=clts, merge_vowels=args.merge,
+                    normalization_form=args.normalize):
                 out += ['\t'.join(line)]
         else:
             for line in lingpy.sequence.profile.simple_profile(wl,
+                    normalization_form=args.normalize,
                     ref=args.column, clts=clts, merge_vowels=args.merge):
                 out += ['\t'.join(line)]
         if args.output_file == 'stdout':
