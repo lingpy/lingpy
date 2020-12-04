@@ -79,7 +79,7 @@ def simple_profile(wordlist, ref='ipa', semi_diacritics='hsʃ̢ɕʂʐʑʒw', mer
         else:
             for segment in cleaned_string.split(' '):
                 profile[segment] += 1
-            for segment in [x for x in word.split() if x not in cleaned_string]:
+            for segment in [x for x in word if x not in cleaned_string]:
                 profile[segment] += 1
                 nulls.add(segment)
 
