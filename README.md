@@ -9,10 +9,10 @@ This repository contains the python package `lingpy` which can be used for vario
 [![Documentation](https://bade.fury.io/py/lingpy.png)](https://lingpy.github.io)
 
 
-Authors: [Johann-Mattis List](https://github.com/linguist) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), [Simon Greenhill](https://github.com/simongreenhill) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/)), and [Robert Forkel](https://github.com/xrotwang) ([Max Planck Institute for the Science of Human History](http://shh.mpg.de/))
+Authors (Version 2.6.7): Johann-Mattis List and Robert Forkel
 
 Collaborators: 
-Steven Moran ([Universität Zürich](http://www.linguistik.uzh.ch/about/mitglieder/moran.html), [Peter Bouda](http://www.peterbouda.eu/), Johannes Dellert ([University of Tübingen](http://www.sfs.uni-tuebingen.de/~gjaeger/evolaemp/index.html)), Taraka Rama ([Centre for Language Technology](http://clt.gu.se/), Göteborg), Tiago Tresoldi ([MPI-SHH](https://www.shh.mpg.de)), and Gereon Kaiping ([Leiden University](https://www.universiteitleiden.nl/))
+Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, and Frank Nagel.
  
 LingPy is a Python Library for Historical Linguistics. It is being developed for Python 2.7 and Python 3.x 
 using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
@@ -29,7 +29,7 @@ $ pip install lingpy
 ```
 or 
 ```bash
-$ easy_install lingpy
+$ pip install lingpy
 ```
 Depending on which easy_install or pip version you use, either the Python2 or the Python3 version of LingPy will be installed.
 
