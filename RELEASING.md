@@ -82,7 +82,7 @@
 
 ## Major Releases Planned
 
-With version 2.6, we plan to release 2.7 in 2020 with some new functions,
+With version 2.6, we plan to release 2.7 in 2021(?) with some new functions,
 including new approaches from new future members on cognate detection and some
 basic approaches to phylogenetic reconstruction which we did not have yet the
 time to include. You can check out what we plan by comparing the [Milestone
