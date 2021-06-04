@@ -4,7 +4,7 @@ from lingpy.align.sca import MSA, PSA
 from lingpy.evaluate.apa import EvalPSA, EvalMSA
 
 
-def test_EvalPSA(test_data, tmppath):
+def test_EvalPSA(test_data, tmp_path):
     obj = EvalPSA(
         PSA(str(test_data / 'harry_potter.psa')),
         PSA(str(test_data / 'harry_potter_misaligned.psa')))
@@ -12,7 +12,7 @@ def test_EvalPSA(test_data, tmppath):
     obj.r_score()
     obj.sp_score()
     obj.jc_score()
-    obj.diff(filename=str(tmppath / 'test_EvalPSA.diff'))
+    obj.diff(filename=str(tmp_path / 'test_EvalPSA.diff'))
 
 
 def test_EvalMSA(test_data):

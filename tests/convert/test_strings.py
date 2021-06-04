@@ -167,10 +167,10 @@ def test_error_on_unknown_mode(wordlist):
 
 
 @pytest.fixture
-def nexus_factory(wordlist, tmppath):
+def nexus_factory(wordlist, tmp_path):
     def f(**kw):
         # Use missing="X" parameter to avoid \? in the assertRegex calls below
-        return write_nexus(wordlist, missing="X", filename=str(tmppath / 'test'), **kw)
+        return write_nexus(wordlist, missing="X", filename=str(tmp_path / 'test'), **kw)
     return f
 
 

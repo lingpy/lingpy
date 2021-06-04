@@ -49,12 +49,12 @@ def test_wl2dst(wordlist):
     assert dst[0][2] == 1
 
 
-def test_wl2qlc(tmppath, test_data, wordlist):
+def test_wl2qlc(tmp_path, test_data, wordlist):
     stamp = 'test-stamp'
-    out = tmppath / 'test'
+    out = tmp_path / 'test'
 
     wl2qlc(wordlist.header, wordlist._data, filename=str(out), stamp=stamp)
-    out = tmppath / 'test.qlc'
+    out = tmp_path / 'test.qlc'
     assert out.read_text(encoding='utf8').endswith(stamp)
 
     # load a worldist with alignments and otuput it as string with msapairs
@@ -74,8 +74,8 @@ def test_wl2qlc(tmppath, test_data, wordlist):
            stamp='stampo', ignore=[], formatter="doculect")
 
 
-def test_tsv2triple(tmppath, wordlist):
-    out = tmppath / 'test'
+def test_tsv2triple(tmp_path, wordlist):
+    out = tmp_path / 'test'
     triples = tsv2triple(wordlist, str(out))
     assert isinstance(triple2tsv(str(out)), list)
     assert isinstance(triple2tsv(triples, output='dict'), dict)

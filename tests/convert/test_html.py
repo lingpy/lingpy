@@ -8,14 +8,14 @@ def test_color_range():
     assert len(set(crang)) == len(crang)
 
 
-def test_alm2html(test_data, tmppath):
-    alm2html(str(test_data / 'alm.alm'), filename=str(tmppath / 'alm'))
+def test_alm2html(test_data, tmp_path):
+    alm2html(str(test_data / 'alm.alm'), filename=str(tmp_path / 'alm'))
 
 
-def test_msa2html(test_data, tmppath):
+def test_msa2html(test_data, tmp_path):
     msa = MSA(str(test_data / 'harry.msq'))
     msa.prog_align()
-    msa.output('html', filename=str(tmppath / 'alm'))
+    msa.output('html', filename=str(tmp_path / 'alm'))
 
 
 def test_strings_and_tokens2html():
@@ -27,6 +27,6 @@ def test_strings_and_tokens2html():
     string2html('English', list('hary'), tax_len=20)
 
 
-def test_psa2html(test_data, tmppath):
-    psa2html(str(test_data / 'harry_potter.psa'), filename=str(tmppath / 'alm'))
-    psa2html(str(test_data / 'harry_potter_bad.psa'), filename=str(tmppath / 'alm'))
+def test_psa2html(test_data, tmp_path):
+    psa2html(str(test_data / 'harry_potter.psa'), filename=str(tmp_path / 'alm'))
+    psa2html(str(test_data / 'harry_potter_bad.psa'), filename=str(tmp_path / 'alm'))

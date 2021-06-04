@@ -18,7 +18,7 @@ def cols(wordlist):
     return colx._get_colexifications(wordlist)
 
 
-def test_colexification_network(test_data, tmppath):
+def test_colexification_network(test_data, tmp_path):
     graph = colexification_network(Wordlist(str(test_data / 'colexification.tsv')))
     assert "hand" in graph and "arm" in graph
 
@@ -28,7 +28,7 @@ def test_colexification_network(test_data, tmppath):
     _ = colexification_network(
         Wordlist(str(test_data / 'colexification.tsv')),
         output="gml",
-        filename=str(tmppath / "test"))
+        filename=str(tmp_path / "test"))
 
 
 def test__get_colexifications(cols):
@@ -63,7 +63,7 @@ def test_compare_colexifications(wordlist):
     assert matrix[0][0] == 0
 
 
-def test_evaluate_colexifications(cols, tmppath):
+def test_evaluate_colexifications(cols, tmp_path):
     graph = colx._make_graph(cols)
     _, _ = colx.evaluate_colexifications(graph, weight='wordWeight')
-    colx.evaluate_colexifications(graph, weight='wordWeight', outfile=str(tmppath / 'test'))
+    colx.evaluate_colexifications(graph, weight='wordWeight', outfile=str(tmp_path / 'test'))

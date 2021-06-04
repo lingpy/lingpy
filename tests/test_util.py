@@ -1,12 +1,12 @@
 from lingpy import util
 
 
-def test_write_text_file(tmppath):
+def test_write_text_file(tmp_path):
     def lines_generator(n):
         for i in range(n):
             yield 'line%s' % i
 
-    path = tmppath / 'test'
+    path = tmp_path / 'test'
     util.write_text_file(path, 'test')
     assert util.read_text_file(path) == 'test'
 
@@ -17,8 +17,8 @@ def test_write_text_file(tmppath):
     assert len(util.read_text_file(path, lines=True)) == 5
 
 
-def test_TextFile(tmppath):
-    path = tmppath / 'test'
+def test_TextFile(tmp_path):
+    path = tmp_path / 'test'
     with util.TextFile(path) as fp:
         fp.writelines(['line1\n', 'line2\n'])
     assert len(util.read_text_file(path, lines=True)) == 2

@@ -68,15 +68,15 @@ def tree():
                     "((((Xiamen,Taibei),Shantou,Haikou),Fuzhou),Jian’ou));"
 
 
-def test_plots(mocker, Plt, Sch, gls, tree, scenarios, tmppath, test_data):
+def test_plots(mocker, Plt, Sch, gls, tree, scenarios, tmp_path, test_data):
     mocker.patch('lingpy.convert.plot.mpl', new=mocker.MagicMock())
     mocker.patch('lingpy.convert.plot.plt', new=Plt)
     mocker.patch('lingpy.convert.plot.sch', new=Sch)
 
-    plot_gls(gls, tree, filename=str(tmppath / 'test'))
-    plot_tree(tree, filename=str(tmppath / 'test'))
-    plot_concept_evolution(scenarios, tree, filename=str(tmppath / 'test'))
+    plot_gls(gls, tree, filename=str(tmp_path / 'test'))
+    plot_tree(tree, filename=str(tmp_path / 'test'))
+    plot_concept_evolution(scenarios, tree, filename=str(tmp_path / 'test'))
 
     wl = Wordlist(str(test_data /'KSL.qlc'))
     wl.calculate('tree')
-    plot_heatmap(wl, filename=str(tmppath / 'test'), ref="cogid", refB="cogid", steps=1)
+    plot_heatmap(wl, filename=str(tmp_path / 'test'), ref="cogid", refB="cogid", steps=1)

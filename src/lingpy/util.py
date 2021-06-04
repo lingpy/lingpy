@@ -90,7 +90,7 @@ def _str_path(path, mkdir=False):
 
     Parameters
     ----------
-    path : {text_type, Path}
+    path : {str, Path}
         A fs path either as Path instance or as text_type.
     mkdir : bool (default=False)
         If True, create the directories within the path.
@@ -100,7 +100,7 @@ def _str_path(path, mkdir=False):
     path : text_type
         The path as text_type.
     """
-    res = Path(str(path))
+    res = Path(path)
     if mkdir and res.parent and not res.parent.exists():
         res.parent.mkdir(parents=True)
     return res.as_posix()
@@ -111,7 +111,7 @@ def write_text_file(path, content, normalize=None, log=True):
 
     Parameters
     ----------
-    path : str
+    path : {str, Path}
         File-system path of the file.
     content : str
         The text content to be written.

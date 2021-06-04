@@ -5,8 +5,8 @@ from lingpy.data.derive import compile_model, compile_dvt
 
 
 @pytest.fixture
-def cache_dir(tmppath):
-    d = tmppath / '_test'
+def cache_dir(tmp_path):
+    d = tmp_path / '_test'
     d.mkdir()
     d.joinpath('converter').write_text("""\
 p : p, ɸ, p͡f

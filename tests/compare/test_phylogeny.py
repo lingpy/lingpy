@@ -38,11 +38,11 @@ def inputfile(test_data):
     return str(test_data / 'phybo.qlc')
 
 
-def test_get_GLS(inputfile, tmppath, test_data):
-    phy = PhyBo(inputfile, output_dir=str(tmppath))
-    _ = PhyBo(str(test_data / 'phybo2.qlc'), output_dir=str(tmppath),
+def test_get_GLS(inputfile, tmp_path, test_data):
+    phy = PhyBo(inputfile, output_dir=str(tmp_path))
+    _ = PhyBo(str(test_data / 'phybo2.qlc'), output_dir=str(tmp_path),
               tree=str(test_data / 'phylogeny.tre'))
-    _ = PhyBo(str(test_data / 'phybo2.qlc'), output_dir=str(tmppath))
+    _ = PhyBo(str(test_data / 'phybo2.qlc'), output_dir=str(tmp_path))
 
     # test default scenario
     phy.get_GLS()
@@ -69,7 +69,7 @@ def test_get_GLS(inputfile, tmppath, test_data):
     phy.get_stats(glm)
 
 
-def test_plot(inputfile, mocker, Bmp, Sp, Plt, tmppath):
+def test_plot(inputfile, mocker, Bmp, Sp, Plt, tmp_path):
     mocker.patch('lingpy.compare.phylogeny.mpl', new=mocker.MagicMock())
     mocker.patch('lingpy.compare.phylogeny.gls2gml', new=mocker.MagicMock())
     mocker.patch('lingpy.compare.phylogeny.plot_tree', new=mocker.MagicMock())
@@ -77,7 +77,7 @@ def test_plot(inputfile, mocker, Bmp, Sp, Plt, tmppath):
     mocker.patch('lingpy.compare.phylogeny.plt', new=Plt)
     mocker.patch('lingpy.compare.phylogeny.sp', new=Sp)
 
-    phy = PhyBo(inputfile, output_dir=str(tmppath))
+    phy = PhyBo(inputfile, output_dir=str(tmp_path))
     phy.get_GLS()
     glm = list(phy.stats.keys())[0]
     phy.plot_GLS(glm)

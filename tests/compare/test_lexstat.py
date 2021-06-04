@@ -23,9 +23,9 @@ def test_get_score_dict():
 
 
 @pytest.fixture
-def lextstat_factory(tmppath):
+def lextstat_factory(tmp_path):
     def make(*args, **kw):
-        kw.setdefault('errors', str(tmppath / 'errors.log'))
+        kw.setdefault('errors', str(tmp_path / 'errors.log'))
         return LexStat(*args, **kw)
     return make
 
@@ -46,7 +46,7 @@ def get_scorer_kw():
     return dict(runs=10, rands=10, limit=100)
 
 
-def test_init(lextstat_factory, test_data, mocker, log, tmppath):
+def test_init(lextstat_factory, test_data, mocker, log, tmp_path):
     lextstat_factory({0: ['ID', 'doculect', 'concept', 'IPA'],
                     1: ['1', 'deu', 'hand', 'hant']}, model='sca')
     ls = lextstat_factory({0: ['ID', 'doculect', 'concept', 'IPA'],
@@ -61,7 +61,7 @@ def test_init(lextstat_factory, test_data, mocker, log, tmppath):
     mocker.patch('lingpy.compare.lexstat.log', log)
     lextstat_factory(str(test_data / 'KSL.qlc'), check=True)
     assert log.info.called
-    error_log = tmppath / 'errors'
+    error_log = tmp_path / 'errors'
     mocker.patch('lingpy.util.confirm', mocker.Mock(return_value=True))
     lex = lextstat_factory(
         {
@@ -190,9 +190,9 @@ def test_get_frequencies(lex):
     assert isinstance(w, float)
 
 
-def test_output(lex, tmppath):
-    lex.output('csv', filename=str(tmppath /'test_lexstat'))
-    lex.output('scorer', filename=str(tmppath / 'test_lexstat'))
+def test_output(lex, tmp_path):
+    lex.output('csv', filename=str(tmp_path /'test_lexstat'))
+    lex.output('scorer', filename=str(tmp_path / 'test_lexstat'))
 
 
 def test_correctness(lextstat_factory):
