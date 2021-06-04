@@ -10,7 +10,6 @@ import types
 from pathlib import Path
 
 from tqdm import tqdm
-from clldutils.path import path_component
 from clldutils import clilib
 from clldutils.misc import slug
 
@@ -101,7 +100,7 @@ def _str_path(path, mkdir=False):
     path : text_type
         The path as text_type.
     """
-    res = Path(path_component(path))
+    res = Path(str(path))
     if mkdir and res.parent and not res.parent.exists():
         res.parent.mkdir(parents=True)
     return res.as_posix()
