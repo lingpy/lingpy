@@ -126,8 +126,8 @@ def test_get_paps(wordlist):
         assert abs(key) in paps
 
 
-def test_output(tmppath, wordlist):
-    fn = str(tmppath / 'test')
+def test_output(tmp_path, wordlist):
+    fn = str(tmp_path / 'test')
     for fmt in 'tsv taxa tre dst starling paps.nex paps.csv' \
                'separated multistate.nex groups'.split():
         kw = {'ref': 'word'} if fmt == 'starling' else {}
@@ -143,8 +143,8 @@ def test_output(tmppath, wordlist):
                                  rows=dict(ID=" > 10"), **kw)
 
 
-def test_export(tmppath, wordlist):
-    fn = str(tmppath / 'test')
+def test_export(tmp_path, wordlist):
+    fn = str(tmp_path / 'test')
     for fmt in 'txt tex html'.split():
         wordlist.export(fmt, filename=fn)
 

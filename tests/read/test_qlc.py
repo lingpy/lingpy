@@ -40,8 +40,8 @@ def test_read_qlc(test_data):
     _ = read_qlc(str(test_data / 'read_qlc.qlc'))
 
 
-def test_read_qlc_complex(tmppath):
-    p = tmppath / 'test.qlc'
+def test_read_qlc_complex(tmp_path):
+    p = tmp_path / 'test.qlc'
     p.write_text("""\
 <json id="x">
 {"y": 5}

@@ -48,8 +48,8 @@ def test_fuzzy(matrix, taxa):
         for revert in [True, False]:
             fuzzy(0.5, matrix, taxa, method=method, revert=revert)
 
-def test_matrix2tree(tmppath, matrix, taxa):
-    newick = tmppath / 't'
+def test_matrix2tree(tmp_path, matrix, taxa):
+    newick = tmp_path / 't'
     matrix2tree(matrix, taxa, filename=str(newick))
     assert newick.parent.joinpath(newick.name + '.nwk').exists()
     matrix2tree(matrix, taxa, tree_calc='upgma')

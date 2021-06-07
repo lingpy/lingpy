@@ -103,16 +103,16 @@ def ifile(test_data):
     return str(test_data / 'phybo.qlc')
 
 
-def test_utils(mocker, SPS, ifile, tmppath):
+def test_utils(mocker, SPS, ifile, tmp_path):
     try:
         import scipy.stats
     except ImportError:  # pragma: no cover
         return
 
     mocker.patch('lingpy.compare._phylogeny.utils.sps', new=SPS)
-    phy = PhyBo(ifile, output_dir=str(tmppath))
+    phy = PhyBo(ifile, output_dir=str(tmp_path))
     phy.analyze()
     get_acs(phy, phy.best_model)
     tstats(phy, phy.best_model, return_dists=True)
 
-    check_stats([phy.best_model], phy, filename=str(tmppath / 'test'), pprint=False)
+    check_stats([phy.best_model], phy, filename=str(tmp_path / 'test'), pprint=False)

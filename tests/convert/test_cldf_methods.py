@@ -49,9 +49,9 @@ def test_load_from_cldf_metadata(test_data):
     assert wl.cols[28] == 'wallisian'
 
 
-def test_load_cldf_and_write(test_data, tmppath):
+def test_load_cldf_and_write(test_data, tmp_path):
     wl = Wordlist.from_cldf(
         str(test_data / 'cldf/test-metadata.json'),
         col="Language_ID".lower(),
         row="Parameter_ID".lower())
-    wl.output('tsv', filename=str(tmppath / 'lingpycldf'))
+    wl.output('tsv', filename=str(tmp_path / 'lingpycldf'))

@@ -37,12 +37,12 @@ def test_pairs(lex):
     assert res == pytest.approx((1.0, 1.0, 1.0))
 
 
-def test_diff(lex, tmppath):
+def test_diff(lex, tmp_path):
     res = diff(lex, test='cogid', tofile=False, pprint=False)
     assert res == (pytest.approx((1.0, 1.0, 1.0)), pytest.approx((1.0, 1.0, 1.0)))
     lex.add_entries('cugid', 'cogid', lambda x: x + 1 if x % 2 else x * x)
 
-    fname = str(tmppath / 'test_acd')
+    fname = str(tmp_path / 'test_acd')
     _ = diff(lex, gold='cogid', test='cogid', filename=fname, pprint=False)
     d2 = diff(lex, gold='cugid', test='cogid', filename=fname, pprint=False, tofile=False)
     _ = diff(lex, gold='cugid', test='cogid', filename=fname, pprint=False, tofile=True)

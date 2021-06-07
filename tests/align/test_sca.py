@@ -10,17 +10,17 @@ from lingpy import Alignments, MSA, PSA, LexStat
 from lingpy.util import write_text_file
 
 
-def test_output(tmppath, test_data):
-    fpsa = tmppath / 'test.psa'
+def test_output(tmp_path, test_data):
+    fpsa = tmp_path / 'test.psa'
     write_text_file(fpsa, '\n')
     psa = PSA(str(fpsa))
-    fname = str(tmppath / 'test')
+    fname = str(tmp_path / 'test')
     psa.output(fileformat='psa', filename=fname)
 
-    psq = tmppath / 'test.psq'
+    psq = tmp_path / 'test.psq'
     write_text_file(psq, '\n')
     psa = PSA(str(psq))
-    fname = str(tmppath / 'test')
+    fname = str(tmp_path / 'test')
     psa.output(fileformat='psq', filename=fname)
 
     psa = PSA(str(test_data / 'harry_potter.psa'))
@@ -29,12 +29,12 @@ def test_output(tmppath, test_data):
     psa.output(fileformat="psq", filename=fname)
 
 
-def test_output2(test_data, tmppath):
+def test_output2(test_data, tmp_path):
     msa = MSA(str(test_data / 'harry.msa'))
     msa.ipa2cls()
     # well. it is a list, but the code apparently wants a dict ...
     msa.merge = {'a': 'x', 'b': 'x'}
-    fname = str(tmppath / 'test')
+    fname = str(tmp_path / 'test')
     for fmt in 'msa psa msq html tex'.split():
         for s, u in product([True, False], [True, False]):
             msa.output(fileformat=fmt, filename=fname, sorted_seqs=s, unique_seqs=u)
@@ -95,19 +95,19 @@ def test_get_consensus(alm):
          alm.get_list(language="Turkish", entry="tokens", flat=True)]
 
 
-def test_get_confidence(test_data, alm, tmppath):
+def test_get_confidence(test_data, alm, tmp_path):
     lex = LexStat(str(test_data / 'KSL3.qlc'))
     tmp_dict = dict([(k, lex[k, 'numbers']) for k in lex])
     alm.add_entries('numbers', tmp_dict, lambda x: x)
     # Run get_confidence to populate the output variable.
     # TODO: Check and document side-effects of this.
     _ = alm.get_confidence(lex.rscorer, ref='cogid')
-    alm.output('html', filename=str(tmppath / 'alm'), confidence=True)
+    alm.output('html', filename=str(tmp_path / 'alm'), confidence=True)
 
 
-def test_output3(alm, tmppath):
-    alm.output('tsv', filename=str(tmppath / 'test'))
-    alm.output('html', filename=str(tmppath / 'test'))
+def test_output3(alm, tmp_path):
+    alm.output('tsv', filename=str(tmp_path / 'test'))
+    alm.output('html', filename=str(tmp_path / 'test'))
 
 
 def test_get_consensus2():
