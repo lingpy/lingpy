@@ -21,7 +21,7 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 
 __author__ = "Johann-Mattis List, and Robert Forkel (with contributions by Simon J. Greenhill, Tiago Tresoldi, Gereon Kaiping, Steven Moran, Taraka Rama, Johannes Dellert, Frank Nagel, and Peter Bouda, and Taraka Rama)"
 __date__ = "2021-06-07"
-__version__ = "2.6.8"
+__version__ = "2.6.9.dev0"
 
 # We exempt this module from QA, because it only provides import shortcuts.
 # flake8: noqa
