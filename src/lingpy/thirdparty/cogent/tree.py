@@ -607,10 +607,10 @@ class TreeNode(object):
         
         Always tests by identity.
         """
-        my_lineage = set([id(node) for node in [self] + self.ancestors()])
+        my_lineage = set([str(node) for node in [self] + self.ancestors()])
         curr = other
         while curr is not None:
-            if id(curr) in my_lineage:
+            if str(curr) in my_lineage:
                 return curr
             curr = curr._parent
         return None
@@ -722,10 +722,10 @@ class TreeNode(object):
         if self is other:
             return 0
         #otherwise, check the list of ancestors
-        my_ancestors = dict.fromkeys(map(id, [self] + self.ancestors()))
+        my_ancestors = dict.fromkeys(map(str, [self] + self.ancestors()))
         count = 0
         while other is not None:
-            if id(other) in my_ancestors:
+            if str(other) in my_ancestors:
                 #need to figure out how many steps there were back from self
                 curr = self
                 while not(curr is None or curr is other):
@@ -1188,7 +1188,7 @@ class TreeNode(object):
                     shared_params = [n for (n,v) in self.params.items()
                         if v is not None
                         and child.params.get(n) is not None
-                        and n is not "length"]
+                        and n != "length"]
                     length = self.Length + child.Length
                     if length:
                         params = dict([(n,
@@ -1238,7 +1238,7 @@ class TreeNode(object):
         """"The number of edges beyond 'parent' in the direction of 'self',
         unrooted"""
         neighbours = self._getNeighboursExcept(parent)
-        key = (id(parent), id(self))
+        key = (str(parent), str(self))
         if key not in cache:
             cache[key] = 1 + sum([child._edgecount(self, cache)
                     for child in neighbours])
@@ -1555,12 +1555,12 @@ class PhyloNode(TreeNode):
         #otherwise, find self's ancestors and find the first ancestor of
         #other that is in the list
         self_anc = self.ancestors()
-        self_anc_dict = dict([(id(n),n) for n in self_anc])
-        self_anc_dict[id(self)] = self
+        self_anc_dict = dict([(str(n),n) for n in self_anc])
+        self_anc_dict[str(self)] = self
         
         count = 0
         while other is not None:
-            if id(other) in self_anc_dict:
+            if str(other) in self_anc_dict:
                 #found the first shared ancestor -- need to sum other branch
                 curr = self
                 while curr is not other:
@@ -2041,7 +2041,7 @@ class TreeBuilder(object):
                 NameLoaded = nameLoaded and (name is not None),
                 Params = params,
                 )
-        self._known_edges[id(node)] = node
+        self._known_edges[str(node)] = node
         return node
 
 

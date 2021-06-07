@@ -188,10 +188,10 @@ def partial_bcubes(wordlist, gold, test, pprint=True):
     def get_scores(one, other):
         scores = []
         multiple_items = []
-        for k,v in wordlist.get_etymdict(ref=one).items():
+        for k, v in wordlist.get_etymdict(ref=one).items():
             _idxs = [val for val in v if val != 0]
             # now we need to get the position in the index
-            poss,idxs = [],[]
+            poss, idxs = [], []
             for val in _idxs:
                 if len(val) > 1:
                     multiple_items += [len(val)]
@@ -201,7 +201,7 @@ def partial_bcubes(wordlist, gold, test, pprint=True):
                     idxs += [idx for x in new_pos]
                     poss += new_pos
             if len(idxs) > 1:
-                other_idxs = [wordlist[idx,other][pos] for pos,idx in zip(poss,idxs)]
+                other_idxs = [wordlist[idx, other][pos] for pos, idx in zip(poss, idxs)]
                 for idx in other_idxs:
                     scores += [other_idxs.count(idx) / len(idxs)]
             else: 
