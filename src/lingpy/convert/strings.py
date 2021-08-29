@@ -495,7 +495,7 @@ def write_nexus(
     template = templates.get(mode)
     tpath = util.Path(template_path(template))
     if tpath.exists:
-        _template = util.read_text_file(tpath.as_posix())
+        _template = util.read_text_file(tpath)
     else:  # pragma: no cover
         raise IOError("Unknown template %s" % template)
 

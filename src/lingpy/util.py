@@ -71,7 +71,7 @@ class TemporaryPath(object):
         fp.close()
 
     def __enter__(self):
-        return self.name.as_posix()
+        return str(self.name)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.name.exists():
@@ -79,7 +79,7 @@ class TemporaryPath(object):
 
 
 def lingpy_path(*comps):
-    return Path(lingpy.__file__).parent.joinpath(*comps).as_posix()
+    return str(Path(lingpy.__file__).parent.joinpath(*comps))
 
 
 data_path = partial(lingpy_path, "data")
@@ -103,7 +103,7 @@ def _str_path(path, mkdir=False):
     res = Path(path)
     if mkdir and res.parent and not res.parent.exists():
         res.parent.mkdir(parents=True)
-    return res.as_posix()
+    return str(res)
 
 
 def write_text_file(path, content, normalize=None, log=True):

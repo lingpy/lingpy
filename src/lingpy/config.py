@@ -41,6 +41,6 @@ class Config(configparser.RawConfigParser):
                     # this happens when run on travis-ci, by a system user.
                     pass
             if config_dir.exists():
-                with open(cfg_path.as_posix(), 'w') as fp:
+                with open(str(cfg_path), 'w') as fp:
                     self.write(fp)
         self.path = cfg_path
