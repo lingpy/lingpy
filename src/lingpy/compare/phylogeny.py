@@ -7,6 +7,7 @@ from collections import defaultdict
 
 import numpy as np
 from clldutils import jsonlib
+from clldutils.misc import slug
 
 from lingpy.compare._phylogeny.utils import get_acs
 from lingpy.compare._phylogeny._settings import rcParams
@@ -1782,7 +1783,7 @@ class PhyBo(Wordlist):
 
         for taxon in self.taxa:
             with util.TextFile(
-                self._output_path(os.path.join('taxa-' + glm, taxon + '.csv')), log=False
+                self._output_path(os.path.join('taxa-' + glm, slug(taxon, lowercase=False) + '.csv')), log=False
             ) as f:
                 keys = [n for n in gOut[taxon] if gOut[taxon][n]['label'] == 'horizontal']
                 for key in sorted(keys, key=lambda x: gOut[taxon][x]['weight']):
