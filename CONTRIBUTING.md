@@ -5,14 +5,14 @@ LingPy development follows the model and workflow described as the
 In order to keep the code transparent even for multiple contributors, we have set up a list 
 of [coding conventions](https://github.com/lingpy/lingpy/blob/master/CONVENTIONS.md).
 
-## Acknoledgment policy
+## Acknowledgment policy
 
 With each new major release of LingPy the main editors (List and Forkel) decide about the new
 editorial board for the next major release. Contributors who have helped a lot
 in a recent release circle may thus become members of the editorial board for a
 given release. All people who contribute to LingPy and who contributed in the
-past but not listed in the editorical board will be mentioned as contributors.
-With this policy, we hope to encourage people to provide longlasting support
+past but not listed in the editorial board will be mentioned as contributors.
+With this policy, we hope to encourage people to provide long lasting support
 and to engage beyond a certain project and time frame.
 
 
@@ -59,7 +59,7 @@ Currently, documentation is created using the following steps:
 * before compiling the code, we create a full reference containing links to all code in LingPy, using the sphinx-apidoc command:
 
   ```
-  $ cd lingpy/ # got to relevenant main folder of lingpy
+  $ cd lingpy/ # go to relevant main folder of lingpy
   $ sphinx-apidoc -o doc/sources/reference/ lingpy
   ```
   
