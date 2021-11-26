@@ -103,9 +103,14 @@ def test_get_etymdict(wordlist):
     etd2 = wordlist.get_etymdict(ref='cogid', entry='ipa',
                                       modify_ref=abs)
 
+
     assert (len(etd1) > len(etd2) and
             len(set([abs(x) for x in etd1])) == len(etd2))
     assert len([x for x in etd2 if x < 0]) == 0
+
+    # test iter_cognates
+    for cogid, idxs in wordlist.iter_cognates("cogid"):
+        assert len(idxs) == 1
 
     # make "fuzzy" cognate sets
     wordlist.add_entries('fuzzyid', 'cogid', lambda x: [x])

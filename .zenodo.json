@@ -8,7 +8,7 @@
             "name": "Robert Forkel"
         }
     ],
-    "description": "<p>Cite the library as:</p>\n\n<blockquote>\n<p>List, Johann-Mattis and Forkel, Robert (2021): LingPy. A Python library for historical linguistics. Version 2.6.7. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy. With contributions by Simon J. Greenhill, Tiago Tresoldi, Christoph Rzymski, Gereon Kaiping, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel. Jena: Max Planck Institute for the Science of Human History.</p>\n</blockquote>",
+    "description": "<p>Cite the library as:</p>\n\n<blockquote>\n<p>List, Johann-Mattis and Forkel, Robert (2021): LingPy. A Python library for historical linguistics. Version 2.6.9. URL: http://lingpy.org, DOI: https://zenodo.org/badge/latestdoi/5137/lingpy/lingpy. With contributions by Simon J. Greenhill, Tiago Tresoldi, Christoph Rzymski, Gereon Kaiping, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Frank Nagel. Leipzig: Max Planck Institute for Evolutionary Anthropology.</p>\n</blockquote>",
     "access_right": "open",
     "keywords": [
         "linguistics",
@@ -59,6 +59,9 @@
     ],
     "upload_type": "software",
     "communities": [
+        {
+            "identifier": "digling"
+        },
         {
             "identifier": "dighl"
         },

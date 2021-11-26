@@ -9,9 +9,9 @@ setup(
     description="Python library for quantitative tasks in historical linguistics",
     long_description=open('README.md').read(),
     long_description_content_type="text/markdown",
-    author="Johann-Mattis List and Simon Greenhill and Robert Forkel",
+    author="Johann-Mattis List and Robert Forkel",
     author_email="info@lingpy.org",
-    version="2.6.9.dev0",
+    version="2.6.10.dev0",
     packages=find_packages(
         where="src",
         exclude=[

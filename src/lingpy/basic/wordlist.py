@@ -555,6 +555,16 @@ class Wordlist(QLCParserWithRowsAndCols):
 
         return paps
 
+    def iter_cognates(self, ref, *entries):
+        """Iterate over cognate sets in a wordlist."""
+        for cogid, idxs_ in self.get_etymdict(ref=ref).items():
+            idxs = []
+            for idx in idxs_:
+                if idx:
+                    idxs += idx
+            yield cogid, [idxs]+[
+                    [self[idx, entry] for idx in idxs] for entry in entries]
+
     def iter_rows(self, *entries):
         """Iterate over the columns in a wordlist.
         
