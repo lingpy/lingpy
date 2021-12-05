@@ -946,8 +946,6 @@ def plot_heatmap(
         vmin=0.0,
         width=0.8,
         xrotation=90,
-        show_values=False,
-        valuesize=8,
         distances=False
     )
     for k in defaults:
@@ -1189,21 +1187,9 @@ def plot_heatmap(
 
     if keywords["colorbar"]:
 
-        plt.imshow(
-                matrix, cmap=keywords['cmap'], visible=False,
-                vmax=keywords['vmax'], vmin=keywords["vmin"])
+        plt.imshow(matrix, cmap=keywords['cmap'], visible=False, vmax=keywords['vmax'])
         c = plt.colorbar(im, shrink=keywords['colorbar_shrink'])
         c.set_label(keywords["colorbar_label"], size=keywords['colorbar_textsize'])
-
-    if keywords["show_values"]:
-        for i, row in enumerate(matrix):
-            for j, cell in enumerate(row):
-                plt.text(
-                        i, j, 
-                        "{0}".format(int((cell*100)+0.5)), 
-                        size=keywords["valuesize"],
-                        va="center", ha="center"
-                        )
 
     plt.subplots_adjust(
         left=keywords['left'],
@@ -1211,7 +1197,6 @@ def plot_heatmap(
         top=keywords['top'],
         bottom=keywords['bottom']
     )
-
     plt.savefig(filename + '.' + fileformat)
 
     f = open(filename + '.matrix', 'w')
