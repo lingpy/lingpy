@@ -14,7 +14,7 @@ Authors (Version 2.6.9): Johann-Mattis List and Robert Forkel
 Collaborators: 
 Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, and Frank Nagel.
  
-LingPy is a Python Library for Historical Linguistics. It is being developed for Python 2.7 and Python 3.x 
+LingPy is a Python library for historical linguistics. It is being developed for Python 2.7 and Python 3.x 
 using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
 
 * All source code is available at: [https://github.com/lingpy/lingpy](https://github.com/lingpy/lingpy).
@@ -33,7 +33,7 @@ $ pip install lingpy
 ```
 Depending on which easy_install or pip version you use, either the Python2 or the Python3 version of LingPy will be installed.
 
-If you want to install LingPy the current GitHub version on your system, open a terminal and type in the following:
+If you want to install the current GitHub version of LingPy on your system, open a terminal and type in the following:
 ```bash
 $ git clone https://github.com/lingpy/lingpy/
 $ cd lingpy
