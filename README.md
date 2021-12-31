@@ -1,6 +1,6 @@
 # LingPy: A Python Library for Automatic Tasks in Historical Linguistics
 
-This repository contains the python package `lingpy` which can be used for various task in computational historical linguistics.
+This repository contains the python package `lingpy` which can be used for various tasks in computational historical linguistics.
 
 [![Build Status](https://github.com/lingpy/lingpy/workflows/tests/badge.svg)](https://github.com/lingpy/lingpy/actions?query=workflow%3Atests)
 [![codecov.io](http://codecov.io/github/lingpy/lingpy/coverage.svg?branch=master)](http://codecov.io/github/lingpy/lingpy?branch=master)
