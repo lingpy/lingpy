@@ -979,7 +979,7 @@ def plot_heatmap(
 
     # plot the reference tree
     if keywords['show_tree']:
-        tree_matrix, taxa = nwk2tree_matrix(tree)
+        tree_matrix, taxa_in_matrix = nwk2tree_matrix(tree)
         ax1 = fig.add_axes(
             [
                 keywords['left'],
@@ -991,7 +991,7 @@ def plot_heatmap(
         # [0.01,0.1,0.2,0.7])
         d = sch.dendrogram(
             np.array(tree_matrix),
-            labels=[t for t in taxa],
+            labels=[t for t in taxa_in_matrix],
             orientation='left',
 
         )
@@ -1007,11 +1007,18 @@ def plot_heatmap(
     else:
         left = keywords['left']
         taxa = tree.taxa
+        taxa_in_matrix = taxa
 
     # start iterating over taxa in order of the reference tree and fill in the
     # matrix with numbers of shared cognates
     if keywords['matrix']:
-        matrix = keywords['matrix']
+        matrix = [[cell for cell in row] for row in keywords['matrix']]
+        conv = {}
+        for i, taxon in enumerate(taxa):
+            conv[i] = taxa_in_matrix.index(taxon)
+        for i, taxonA in enumerate(taxa):
+            for j, taxonB in enumerate(taxa):
+                matrix[i][j] = keywords["matrix"][conv[i]][conv[j]]
     else:
         for i, taxonA in enumerate(taxa):
             for j, taxonB in enumerate(taxa):
