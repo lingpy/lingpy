@@ -56,8 +56,13 @@ def test_wl2qlc(tmp_path, test_data, wordlist):
     wl2qlc(wordlist.header, wordlist._data, filename=str(out), stamp=stamp)
     out = tmp_path / 'test.qlc'
     assert out.read_text(encoding='utf8').endswith(stamp)
+    
+    # use pathlib instance
+    wl2qlc(wordlist.header, wordlist._data, filename=out, stamp=stamp)
+    out = tmp_path / 'test.qlc'
+    assert out.read_text(encoding='utf8').endswith(stamp)
 
-    # load a worldist with alignments and otuput it as string with msapairs
+    # load a wordlist with alignments and otuput it as string with msapairs
     tmp = Alignments(str(test_data / 'good_file.tsv'), ref='cogid')
     tmp.align(ref="cogid")
 
