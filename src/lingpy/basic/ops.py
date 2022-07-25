@@ -450,7 +450,7 @@ def wl2qlc(
         out += '\n'
 
     util.write_text_file(
-        filename + '.' + keywords['fileformat'],
+        str(filename) + '.' + keywords['fileformat'],
         out + keywords.get('stamp', ''),
         normalize="NFC")
     return
