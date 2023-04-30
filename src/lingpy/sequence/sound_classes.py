@@ -105,6 +105,10 @@ def ipa2tokens(istring: str, **keywords):
     if kw['clean_sequence']:
         raise ValueError("This part has not yet been implemented!")
 
+    # check if input is a string
+    if not isinstance(istring, str):
+        raise ValueError("Input must be a string")
+
     # check for pre-tokenized strings
     if ' ' in istring:
         out = istring.split(' ')
@@ -112,10 +116,6 @@ def ipa2tokens(istring: str, **keywords):
             return out[1:-1]
         else:
             return out
-
-    # check for pre-tokenized lists and tuples
-    if isinstance(istring, (list, tuple)):
-        return list(istring)
 
     # create the list for the output
     out = []
