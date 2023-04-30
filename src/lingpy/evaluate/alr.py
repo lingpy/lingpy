@@ -84,8 +84,11 @@ def mean_edit_distance(
         log.debug('{0}, {1}'.format(proto, consensus))
 
         if tokens or classes:
-            proto = ipa2tokens(proto, **keywords)
-            consensus = ipa2tokens(consensus, **keywords)
+            # Only tokenize proto and consensus if not yet tokenized
+            if not isinstance(proto, list):
+                proto = ipa2tokens(proto, **keywords)
+            if not isinstance(consensus, list):
+                consensus = ipa2tokens(consensus, **keywords)
 
             if classes:
                 proto = tokens2class(proto, keywords['model'], stress=keywords['stress'],
