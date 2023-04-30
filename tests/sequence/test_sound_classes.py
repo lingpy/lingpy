@@ -23,6 +23,9 @@ def test_ipa2tokens(test_data):
     seq = '# b l a #'
     assert len(ipa2tokens(seq)) == len(seq.split(' ')) - 2
 
+    seq = ['t͡s', 'ɔ', 'y', 'ɡ', 'ə']
+    assert len(ipa2tokens(seq)) == len(seq)
+
     # now check with all possible data we have so far, but only on cases
     # where tokenization doesn't require the merge_vowels = False flag
     tokens = csv2list(str(test_data / 'test_tokenization.tsv'))
