@@ -13,7 +13,7 @@ from lingpy.settings import rcParams
 from lingpy.data.ipa.sampa import reXS, xs
 
 
-def ipa2tokens(istring, **keywords):
+def ipa2tokens(istring: str, **keywords):
     """
     Tokenize IPA-encoded strings.
 
