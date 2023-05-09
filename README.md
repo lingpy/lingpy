@@ -12,7 +12,7 @@ This repository contains the Python package `lingpy` which can be used for vario
 Authors (Version 2.6.9): Johann-Mattis List and Robert Forkel
 
 Collaborators: 
-Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, and Frank Nagel.
+Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, Frank Nagel, and Patrick Elmer.
  
 LingPy is a Python library for historical linguistics. It is being developed for Python 2.7 and Python 3.x 
 using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
