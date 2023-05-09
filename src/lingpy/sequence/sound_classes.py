@@ -13,7 +13,7 @@ from lingpy.settings import rcParams
 from lingpy.data.ipa.sampa import reXS, xs
 
 
-def ipa2tokens(istring, **keywords):
+def ipa2tokens(istring: str, **keywords):
     """
     Tokenize IPA-encoded strings.
 
@@ -48,12 +48,12 @@ def ipa2tokens(istring, **keywords):
         consecutive vowels should not be treated as diphtongs or for diacritics
         that are put before the following letter.
 
-    merge_vowels : bool (default=False)
-        Indicate, whether vowels should be merged into diphtongs
-        (default=True), or whether each vowel symbol should be considered
+    merge_vowels : bool (default=True)
+        Indicate, whether vowels should be merged into diphtongs,
+        or whether each vowel symbol should be considered
         separately.
 
-    merge_geminates : bool (default=False)
+    merge_geminates : bool (default=True)
         Indicate, whether identical symbols should be merged into one token, or
         rather be kept separate.
 
@@ -104,6 +104,10 @@ def ipa2tokens(istring, **keywords):
 
     if kw['clean_sequence']:
         raise ValueError("This part has not yet been implemented!")
+
+    # check if input is a string
+    if not isinstance(istring, str):
+        raise ValueError("Input must be a string")
 
     # check for pre-tokenized strings
     if ' ' in istring:
@@ -1503,5 +1507,3 @@ def clean_string(
 def codepoint(s):
     "Return unicode codepoint(s) for a character set."
     return ' '.join(['U+'+('000'+hex(ord(x))[2:])[-4:] for x in s])
-
-

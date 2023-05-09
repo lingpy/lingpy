@@ -13,8 +13,6 @@ def mean_edit_distance(
         gold="proto",
         test="consensus",
         ref="cogid",
-        tokens=True,
-        classes=False,
         **keywords):
     """
     Function computes the edit distance between gold standard and test set.
@@ -82,19 +80,6 @@ def mean_edit_distance(
         consensus = wordlist[idx, test]
 
         log.debug('{0}, {1}'.format(proto, consensus))
-
-        if tokens or classes:
-            proto = ipa2tokens(proto, **keywords)
-            consensus = ipa2tokens(consensus, **keywords)
-
-            if classes:
-                proto = tokens2class(proto, keywords['model'], stress=keywords['stress'],
-                        diacritics=keywords['diacritics'],
-                        cldf=keywords['cldf'])
-                consensus = tokens2class(consensus, keywords['model'],
-                        stress=keywords['stress'],
-                        diacritics=keywords['diacritics'],
-                        cldf=keywords['cldf'])
 
         distances.append(edit_dist(proto, consensus, normalized=False))
 
