@@ -20,9 +20,6 @@ def test_ipa2tokens(test_data):
     seq = 'th o x t a'
     assert len(ipa2tokens(seq)) == len(seq.split(' '))
 
-    seq = '# b l a #'
-    assert len(ipa2tokens(seq)) == len(seq.split(' ')) - 2
-
     with pytest.raises(ValueError):
         seq = ['t͡s', 'ɔ', 'y', 'ɡ', 'ə']
         ipa2tokens(seq)

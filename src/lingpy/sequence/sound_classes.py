@@ -111,11 +111,7 @@ def ipa2tokens(istring: str, **keywords):
 
     # check for pre-tokenized strings
     if ' ' in istring:
-        out = istring.split(' ')
-        if istring.startswith('#'):
-            return out[1:-1]
-        else:
-            return out
+        return istring.split(' ')
 
     # create the list for the output
     out = []
