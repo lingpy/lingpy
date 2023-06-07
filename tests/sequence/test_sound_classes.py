@@ -17,9 +17,6 @@ def test_ipa2tokens(test_data):
     seq = 'ʰto͡i'
     assert len(ipa2tokens(seq)) == 2
 
-    seq = 'th o x t a'
-    assert len(ipa2tokens(seq)) == len(seq.split(' '))
-
     with pytest.raises(ValueError):
         seq = ['t͡s', 'ɔ', 'y', 'ɡ', 'ə']
         ipa2tokens(seq)
@@ -173,11 +170,10 @@ def test_tokens2morphemes():
 
 
 def test_onoparse():
-    seq1 = "a k e r ts a n"
-    seq2 = seq1.split(' ')
-    out1 = ono_parse(seq1, output='pprint')
-    out2 = ono_parse(seq2, output='prostring')
-    out3 = ono_parse(seq1)
+    seq = "a k e r ts a n".split(' ')
+    out1 = ono_parse(seq, output='pprint')
+    out2 = ono_parse(seq, output='prostring')
+    out3 = ono_parse(seq)
 
     assert isinstance(out1, str)
     assert out3[0] == ('-', '#')

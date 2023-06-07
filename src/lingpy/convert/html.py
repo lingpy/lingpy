@@ -425,10 +425,13 @@ def msa2html(
         for i in msa['local']:
             local[i] = '*'
 
+    tokens = msa['seqs']
+    msa['seqs'] = [' '.join(seq) for seq in msa['seqs']]
+
     # get two sorting schemas for the sequences
     if keywords['class_sort']:
 
-        classes = [tokens2class(ipa2tokens(seq), rcParams['asjp']) for seq in msa['seqs']]
+        classes = [tokens2class(seq, rcParams['asjp']) for seq in tokens]
         seqs = dict(
             [(a[1], b) for a, b in zip(
                 sorted(

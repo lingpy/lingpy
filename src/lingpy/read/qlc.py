@@ -171,7 +171,7 @@ def _list2msa(msa_lines, ids=False, header=True, normalize=False, **keywords):
             else:
                 d["ID"] += [i]
             d["taxa"] += [line[idx].rstrip('.')]
-            d["seqs"] += [' '.join([l for l in line[idx + 1:] if l != '-'])]
+            d["seqs"] += [[l for l in line[idx + 1:] if l != '-']]
             d["alignment"] += [line[idx + 1:]]
 
     # normalize the alignment if the option is chosen

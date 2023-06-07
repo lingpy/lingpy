@@ -111,7 +111,7 @@ def ipa2tokens(istring: str, **keywords):
 
     # check for pre-tokenized strings
     if ' ' in istring:
-        return istring.split(' ')
+        raise ValueError("Input must not contain spaces")
 
     # create the list for the output
     out = []

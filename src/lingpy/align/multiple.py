@@ -70,7 +70,7 @@ class Multiple:
             # created
             for i, seq in enumerate(self.seqs):
                 # check for pre-tokenized strings
-                tokens = ipa2tokens(seq, **kw)
+                tokens = seq.split() if ' ' in seq else ipa2tokens(seq, **kw)
                 self.tokens.append(tokens)
                 self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
 
