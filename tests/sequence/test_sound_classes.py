@@ -21,6 +21,10 @@ def test_ipa2tokens(test_data):
         seq = ['t͡s', 'ɔ', 'y', 'ɡ', 'ə']
         ipa2tokens(seq)
 
+    with pytest.raises(ValueError):
+        seq = 'th o x t a'
+        ipa2tokens(seq)
+
     # now check with all possible data we have so far, but only on cases
     # where tokenization doesn't require the merge_vowels = False flag
     tokens = csv2list(str(test_data / 'test_tokenization.tsv'))
