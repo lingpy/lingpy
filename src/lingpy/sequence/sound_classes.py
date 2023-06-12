@@ -13,14 +13,14 @@ from lingpy.settings import rcParams
 from lingpy.data.ipa.sampa import reXS, xs
 
 
-def ipa2tokens(istring: str, **keywords):
+def ipa2tokens(sequence: str, **keywords):
     """
     Tokenize IPA-encoded strings.
 
     Parameters
     ----------
 
-    seq : str
+    sequence : str
         The input sequence that shall be tokenized.
 
     diacritics : {str, None} (default=None)
@@ -106,16 +106,12 @@ def ipa2tokens(istring: str, **keywords):
         raise ValueError("This part has not yet been implemented!")
 
     # check if input is a string
-    if not isinstance(istring, str):
+    if not isinstance(sequence, str):
         raise ValueError("Input must be a string")
 
     # check for pre-tokenized strings
-    if ' ' in istring:
-        out = istring.split(' ')
-        if istring.startswith('#'):
-            return out[1:-1]
-        else:
-            return out
+    if ' ' in sequence:
+        raise ValueError("Input must not contain spaces")
 
     # create the list for the output
     out = []
@@ -133,7 +129,7 @@ def ipa2tokens(istring: str, **keywords):
     semi_diacritics = kw['semi_diacritics']
     nogos = "_◦+"
 
-    for char in istring:
+    for char in sequence:
         # check for nasal stack and vowel environment
         if nasal:
             if char not in kw['vowels'] and char not in kw['diacritics']:

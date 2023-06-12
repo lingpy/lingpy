@@ -38,13 +38,6 @@ class Multiple:
 
     def __init__(self, seqs, **keywords):
         self.log = log.get_logger()
-        # store input sequences, check whether tokens or strings are passed
-        if isinstance(seqs[0], (list, tuple)):
-            self.seqs = [' '.join(s) for s in seqs]
-            self.tokens = [s for s in seqs]
-        else:
-            self.seqs = seqs
-            self.tokens = []
 
         # define a tokenizer function for convenience
         kw = {
@@ -59,20 +52,21 @@ class Multiple:
         }
         kw.update(keywords)
 
-        self.numbers = []
-        if self.tokens:
-            for i, tokens in enumerate(self.tokens):
-                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
+        # store input sequences, check whether tokens or strings are passed
+        if isinstance(seqs[0], (list, tuple)):
+            self.seqs = [' '.join(s) for s in seqs]
+            self.tokens = [s for s in seqs]
         else:
-            # create a numerical representation of all sequences which reflects the
-            # order of both their position and the position of their tokens. Before
-            # this can be done, a tokenized version of all sequences has to be
-            # created
-            for i, seq in enumerate(self.seqs):
-                # check for pre-tokenized strings
-                tokens = ipa2tokens(seq, **kw)
-                self.tokens.append(tokens)
-                self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
+            self.seqs = seqs
+            self.tokens = [seq.split() if ' ' in seq else ipa2tokens(seq, **kw) for seq in seqs]
+
+        # create a numerical representation of all sequences which reflects the
+        # order of both their position and the position of their tokens. Before
+        # this can be done, a tokenized version of all sequences has to be
+        # created
+        self.numbers = []
+        for i, tokens in enumerate(self.tokens):
+            self.numbers.append([dotjoin(i + 1, j + 1) for j in range(len(tokens))])
 
         self.uniseqs = defaultdict(list)
         self.unique_seqs = kw["unique_seqs"]
