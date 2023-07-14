@@ -863,6 +863,8 @@ class Partial(LexStat):
                     raise ValueError("No suitable cluster method specified.")
                 
                 for i, (idx, pos, slc) in enumerate(trace):
+                    # Note that for igraph clustering we need to address nodes by str name, not by
+                    # int index.
                     C[idx] += [c.get(str(i), c.get(i)) + k]
                 if kw['post_processing']:
                     _g = nx.Graph()

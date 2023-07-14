@@ -1459,6 +1459,8 @@ class LexStat(Wordlist):
                 # else:
                 if 1:
                     # extract the clusters
+                    # Note that for igraph clustering we need to address nodes by str name, not by
+                    # int index.
                     clusters = [c.get(str(i), c.get(i)) + k for i in range(len(matrix))]
 
                     # reassign the "k" value
