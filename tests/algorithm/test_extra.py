@@ -93,4 +93,4 @@ def test_affinity_propagation(matrix, taxa):
 def test_infomap_clustering(matrix, taxa):
     if igraph:  # pragma: no cover
         cluster1 = infomap_clustering(0.4, matrix, taxa, revert=True)
-        assert cluster1[0] == cluster1[4]
+        assert cluster1['0'] == cluster1['4']

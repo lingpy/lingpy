@@ -1459,7 +1459,7 @@ class LexStat(Wordlist):
                 # else:
                 if 1:
                     # extract the clusters
-                    clusters = [c[i] + k for i in range(len(matrix))]
+                    clusters = [c.get(str(i), c.get(i)) + k for i in range(len(matrix))]
 
                     # reassign the "k" value
                     k = max(clusters)

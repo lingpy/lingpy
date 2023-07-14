@@ -20,14 +20,14 @@ def networkx2igraph(graph):
     """Helper function converts networkx graph to igraph graph object."""
     newgraph = ig.Graph(directed=graph.is_directed())
     nodes = {}
-    for i,(node, data) in enumerate(graph.nodes(data=True)):
+    for i, (node, data) in enumerate(graph.nodes(data=True)):
         data = {a: b for a, b in data.items()}
         newgraph.add_vertex(
-            i,
+            str(i),
             Name=node,
             **{a: b for a, b in data.items()
                if a not in [b'Name', b'name', 'Name', 'name']})
-        nodes[node] = i
+        nodes[node] = str(i)
     for node1, node2, data in graph.edges(data=True):
         data = {a: b for a, b in data.items()}
         newgraph.add_edge(nodes[node1], nodes[node2], **data)

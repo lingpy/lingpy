@@ -863,7 +863,7 @@ class Partial(LexStat):
                     raise ValueError("No suitable cluster method specified.")
                 
                 for i, (idx, pos, slc) in enumerate(trace):
-                    C[idx] += [c[i] + k]
+                    C[idx] += [c.get(str(i), c.get(i)) + k]
                 if kw['post_processing']:
                     _g = nx.Graph()
                     for i, (idx, pos, slc) in enumerate(trace):
