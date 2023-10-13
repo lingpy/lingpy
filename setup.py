@@ -11,7 +11,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Johann-Mattis List and Robert Forkel",
     author_email="info@lingpy.org",
-    version="2.6.10.dev0",
+    version="2.6.10",
     packages=find_packages(
         where="src",
         exclude=[
@@ -36,6 +36,7 @@ setup(
         'csvw>=1.5.6',
         'clldutils>=2.8.0',
         'pycldf>=1.7.0',
+        "lxml==4.8",
     ],
     extras_require={
         "borrowing": ["matplotlib", "scipy"],
