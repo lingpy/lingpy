@@ -62,7 +62,14 @@ class Pairwise(object):
         # start to loop over data and create the stuff
         for k, (seqA, seqB) in enumerate(self.seqs):
             # get the tokens
-            tokA, tokB = tokenize(seqA), tokenize(seqB)
+            if isinstance(seqA, str):
+                tokA = tokenize(seqA) if not " " in seqA else seqA.split()
+            else:
+                tokA = [s for s in seqA]
+            if isinstance(seqB, str):
+                tokB = tokenize(seqB) if not " " in seqB else seqB.split()
+            else:
+                tokB = [s for s in seqB]
 
             # get the prostrings
             proA, proB = \

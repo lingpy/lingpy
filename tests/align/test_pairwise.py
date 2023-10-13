@@ -11,6 +11,15 @@ from lingpy.data.model import Model
 def pair():
     return Pairwise('waldemar', 'vladimir')
 
+def test_pairwise_fix():
+    pair = Pairwise(list("mat"), list('mixt'))
+    pair.align()
+    assert pair.alignments[0][0][2] == "-"
+    pair = Pairwise("m a t", 'm i x t')
+    pair.align()
+    assert pair.alignments[0][0][2] == "-"
+
+
 
 def test_basics(pair):
     assert 'waldemar' in str(pair)
