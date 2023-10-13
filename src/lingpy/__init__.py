@@ -21,7 +21,7 @@ thirdparty --- Temporary Forks of Third-Party-Modules
 
 __author__ = "Johann-Mattis List, and Robert Forkel"
 __date__ = "2023-10-13"
-__version__ = "2.6.10"
+__version__ = "2.6.11.dev0"
 
 # We exempt this module from QA, because it only provides import shortcuts.
 # flake8: noqa
