@@ -40,7 +40,7 @@ setup(
     ],
     extras_require={
         "borrowing": ["matplotlib", "scipy"],
-        "cluster": ["python-igraph", "scikit-learn"],
+        "cluster": ["igraph", "scikit-learn"],
         "test": ["pytest", "coverage", "pytest-mock", "pytest-cov"],
         "dev": ["wheel", "twine", "sphinx", "tox"],
     },

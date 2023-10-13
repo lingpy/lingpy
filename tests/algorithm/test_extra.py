@@ -17,13 +17,13 @@ def Igraph(mocker):
 
         class Graph:
             def __init__(self, vs=[]):
-                self.vs = [{'name': v} for v in vs]
+                self.vs = [{'name': str(v)} for v in vs]
 
             def add_edge(self, a, b):
                 pass
 
             def add_vertex(self, vertex):
-                self.vs += [{'name': vertex}]
+                self.vs += [{'name': str(vertex)}]
 
             def community_infomap(self, *args, **kw):
                 return Components(self.vs)
@@ -75,7 +75,7 @@ def test_clustering(mocker, Cluster, Igraph, matrix, taxa):
 
     if not igraph:
         cluster3 = infomap_clustering(0.4, matrix, taxa, revert=True)
-        assert cluster3[0] != cluster3[4]
+        assert cluster3['0'] != cluster3['4']
 
 
 def test_dbscan(matrix, taxa):
@@ -93,4 +93,4 @@ def test_affinity_propagation(matrix, taxa):
 def test_infomap_clustering(matrix, taxa):
     if igraph:  # pragma: no cover
         cluster1 = infomap_clustering(0.4, matrix, taxa, revert=True)
-        assert cluster1[0] == cluster1[4]
+        assert cluster1['0'] == cluster1['4']

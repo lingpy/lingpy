@@ -201,13 +201,13 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     G = igraph.Graph()
     # add vertices to the graph
     for i in range(len(matrix)):
-        G.add_vertex(i)
+        G.add_vertex(str(i))
 
     for i, row in enumerate(matrix):
         for j, cell in enumerate(row):
             if i < j:
                 if cell <= threshold:
-                    G.add_edge(i, j)
+                    G.add_edge(str(i), str(j))
 
     comps = G.community_infomap(edge_weights=None,
                                 vertex_weights=None)
