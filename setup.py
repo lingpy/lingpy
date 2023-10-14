@@ -36,7 +36,8 @@ setup(
         'csvw>=1.5.6',
         'clldutils>=2.8.0',
         'pycldf>=1.7.0',
-        'lxml==4.8',
+        "lxml==4.8; python_version<'3.9'",
+        "lxml; python_version>='3.9'",
     ],
     extras_require={
         "borrowing": ["matplotlib", "scipy"],
