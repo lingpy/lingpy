@@ -8,7 +8,7 @@ This repository contains the Python package `lingpy` which can be used for vario
 [![Documentation](https://bade.fury.io/py/lingpy.png)](https://lingpy.github.io)
 
 
-Authors (Version 2.6.9): Johann-Mattis List and Robert Forkel
+Authors (Version 2.6.12): Johann-Mattis List and Robert Forkel
 
 Collaborators: 
 Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, Frank Nagel, and Patrick Elmer.
