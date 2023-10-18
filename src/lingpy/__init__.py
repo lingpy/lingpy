@@ -3,25 +3,11 @@ LingPy package for quantitative tasks in historical linguistics.
 
 Documentation is available in the docstrings. Online documentation is available
 at http://lingpy.org
-
-Subpackages
------------
-algorithm  --- Basic Algorithms for Sequence Comparison
-align      --- Specific Algorithms Alignment Analyses
-basic      --- Basic Classes for Language Comparison
-compare    --- Basic Modules for Language Comparison
-convert    --- Functions for Format Conversion
-data       --- Data Handling
-evaluate   --- Basic Classes and Functions for Algorithm Evaluation
-read       --- Basic Functions for Data Input
-sequence   --- Basic Functions for Sequence Modeling
-thirdparty --- Temporary Forks of Third-Party-Modules
-
 """
 
 __author__ = "Johann-Mattis List, and Robert Forkel"
-__date__ = "2023-10-13"
-__version__ = "2.6.11.dev0"
+__date__ = "2023-10-18"
+__version__ = "2.6.11"
 
 # We exempt this module from QA, because it only provides import shortcuts.
 # flake8: noqa
