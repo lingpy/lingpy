@@ -6,8 +6,8 @@ at http://lingpy.org
 """
 
 __author__ = "Johann-Mattis List, and Robert Forkel"
-__date__ = "2023-10-18"
-__version__ = "2.6.12.dev0"
+__date__ = "2023-12-14"
+__version__ = "2.6.13"
 
 # We exempt this module from QA, because it only provides import shortcuts.
 # flake8: noqa

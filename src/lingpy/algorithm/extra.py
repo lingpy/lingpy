@@ -215,12 +215,12 @@ def infomap_clustering(threshold, matrix, taxa=False, revert=False):
     for i, comp in enumerate(comps.subgraphs()):
         vertices = [v['name'] for v in comp.vs]
         for vertex in vertices:
-            D[vertex] = i + 1
+            D[str(vertex)] = i + 1
 
     if revert:
         return D
 
     clr = defaultdict(list)
     for i, t in enumerate(taxa):
-        clr[D[i]] += [t]
+        clr[D[str(i)]] += [t]
     return clr
