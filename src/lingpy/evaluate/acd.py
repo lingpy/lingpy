@@ -3,20 +3,61 @@ Evaluation methods for automatic cognate detection.
 """
 from itertools import combinations
 from collections import defaultdict
+import statistics
 
 from lingpy import log
 from lingpy.util import identity, as_string, write_text_file
 from lingpy.algorithm.cluster_util import generate_random_cluster
 
-def _get_bcubed_score(one, other):
+
+def get_bcubed_score(one, other, normalized=True):
+    """
+
+    Parameters
+    ----------
+    one : list
+        The base partitions provided in the form of an iterable of hashable
+        items.
+    other: list
+        The partitions to be compared against, labels do not need to coincide.
+    normalized: bool (default=True)
+        Indicate if scores should be normalized to occur between 0 and 1.
+    """
+    if not len(one) == len(other):
+        raise ValueError("Input iterables must be of same length!")
+
     tmp = defaultdict(list)
     for x, y in zip(one, other):
         tmp[x].append(y)
     bcp = 0.0
     for x in tmp:
-        for y in tmp[x]:
-            bcp += tmp[x].count(y) / len(tmp[x])
+        bcp += score_bcubed_partition(tmp[x], normalized)
+    if normalized:
+        return bcp / len(tmp)
     return bcp / len(other)
+
+def score_bcubed_partition(other, normalized):
+    """
+    Retrieve score for a single partition in the gold standard.
+
+    Note
+    ====
+    Normalization (see 
+    https://www.kdnuggets.com/2023/07/data-scaling-python.html)
+    determines the lowest possible score and normalizes the range to occur
+    between 0 and 1.
+
+    """
+    if len(other) == 1:
+        return 1.0
+    score = 0.0
+    for y in other:
+        score += other.count(y) / len(other)
+    if normalized:
+        score = score / len(other)
+        mins, maxs = 1 / len(other), 1
+        return (score - mins) / (maxs - mins)
+    return score
 
 
 def _get_cogs(ref, concept, modify_ref, wordlist):
@@ -45,8 +86,11 @@ def _format_results(results, p, r, f):
         results, p, r, f)
 
 
-def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=True, 
-        per_concept=False):
+def bcubes(
+        wordlist, gold='cogid', test='lexstatid', modify_ref=False, 
+        pprint=True, per_concept=False,
+        normalized=True
+        ):
     """
     Compute B-Cubed scores for test and reference datasets.
 
@@ -73,6 +117,9 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     per_concept : bool (default=False)
         Compute b-cubed scores per concep and not for the whole data in one
         piece.
+    normalized : bool (default=True)
+        Normalize B-Cubed scores to increase comparability with cluster sizes
+        of different length.
 
     Returns
     -------
@@ -114,30 +161,30 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
         for concept in wordlist.rows:
             idxsG = _get_cogs(gold, concept, evl, wordlist)
             idxsT = _get_cogs(test, concept, evl, wordlist)
-            r = _get_bcubed_score(idxsG, idxsT)
-            p = _get_bcubed_score(idxsT, idxsG)
-            f = 2 * ((r * p) / (p + r))
+            r = get_bcubed_score(idxsG, idxsT, normalized=normalized)
+            p = get_bcubed_score(idxsT, idxsG, normalized=normalized)
+            # clusters like [1, 1, 2, 2] vs. [1, 2, 1, 2] will yield p and r to
+            # be 0 if normalized is set to True
+            f = 0 if not p and not r else 2 * ((r * p) / (p + r))
             bcr += [r]
             bcp += [p]
             fsc += [f]
             
             as_string('{0:15}\t{1:.2f}\t{2:.2f}\t{3:.2f}'.format(
                     concept, p, r, f), pprint=pprint)
+        p, r, f = (statistics.mean(bcp), statistics.mean(bcr),
+                   statistics.mean(fsc))
     else:
+        cogs_gold, cogs_test = ([wordlist[idx, gold] for idx in wordlist],
+                                [wordlist[idx, test] for idx in wordlist])
         # b-cubed recall
-        bcr = list(get_scores(gold, test))
-        # b-cubed precision
-        bcp = list(get_scores(test, gold))
-        fsc = []
-
-    # calculate general scores
-    BCP = sum(bcp) / len(bcp)
-    BCR = sum(bcr) / len(bcr)
-    FSC = sum(fsc) / len(fsc) if fsc else 2 * ((BCP * BCR) / (BCP + BCR))
+        r = get_bcubed_score(cogs_gold, cogs_test, normalized=normalized)
+        p = get_bcubed_score(cogs_test, cogs_gold, normalized=normalized)
+        f = 0.0 if not p and not r else 2 * (p * r) / (p + r)
     
-    as_string(_format_results('B-Cubed', BCP, BCR, FSC), pprint=pprint)
+    as_string(_format_results('B-Cubed', p, r, f), pprint=pprint)
 
-    return BCP, BCR, FSC
+    return p, r, f
 
 
 def partial_bcubes(wordlist, gold, test, pprint=True):
