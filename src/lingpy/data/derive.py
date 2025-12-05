@@ -114,7 +114,7 @@ def _find_dir_path(graph, start, end):
                 # the respective shortest path is what we are looking for.
                 paths = _fop(graph.to_undirected(), start, end)
                 current_path_length = max([len(path) for path in paths])
-                shortest_paths = nx.shortest_path(graph)
+                shortest_paths = dict(nx.shortest_path(graph))
                 current_path = []
                 for path in paths:
                     for node in path[1:-1]:
