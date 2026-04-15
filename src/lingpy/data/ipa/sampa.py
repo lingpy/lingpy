@@ -19,6 +19,7 @@ xs = {' ': ' '}
 
 with codecs.open(data_path('ipa', 'sampa.csv'), 'r', 'utf-8') as handle:
     for line in handle:
+        line = line.strip('\n').strip('\r')
         if line and not line.startswith('#'):
             key,val = line.split('\t')
             if key in xs and xs[key] != val:  # pragma: no cover
