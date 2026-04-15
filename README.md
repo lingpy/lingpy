@@ -5,16 +5,14 @@ This repository contains the Python package `lingpy` which can be used for vario
 [![Build Status](https://github.com/lingpy/lingpy/workflows/tests/badge.svg)](https://github.com/lingpy/lingpy/actions?query=workflow%3Atests)
 [![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.597082.svg)](https://doi.org/10.5281/zenodo.597082)
 [![PyPI version](https://badge.fury.io/py/lingpy.png)](https://badge.fury.io/py/lingpy)
-[![Documentation](https://bade.fury.io/py/lingpy.png)](https://lingpy.github.io)
 
 
-Authors (Version 2.6.12): Johann-Mattis List and Robert Forkel
+Authors (Version 2.6.14): Johann-Mattis List and Robert Forkel
 
 Collaborators: 
 Christoph Rzymski, Simon J. Greenhill, Steven Moran, Peter Bouda, Johannes Dellert, Taraka Rama, Tiago Tresoldi, Gereon Kaiping, Frank Nagel, and Patrick Elmer.
  
-LingPy is a Python library for historical linguistics. It is being developed for Python 2.7 and Python 3.x 
-using [a single codebase](https://docs.python.org/3/howto/pyporting.html).
+LingPy is a Python library for historical linguistics.
 
 * All source code is available at: [https://github.com/lingpy/lingpy](https://github.com/lingpy/lingpy).
 * Documentation can be found at: [http://lingpy.org](http://lingpy.org).
@@ -54,9 +52,7 @@ To install LingPy to hack on it, fork the repository on GitHub, open a terminal 
 ```bash
 $ git clone https://github.com/<your-github-user>/lingpy/
 $ cd lingpy
-$ python setup.py develop
+$ pip install -e .[test]
 ```
 This will install LingPy in ["development mode"](http://pythonhosted.org//setuptools/setuptools.html#development-mode),
 i.e. you will be able edit the sources in the cloned repository and import the altered code just as the regular Python package.
-
-
