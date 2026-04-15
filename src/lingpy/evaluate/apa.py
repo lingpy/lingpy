@@ -1,11 +1,11 @@
 """
 Basic module for the comparison of automatic phonetic alignments.
 """
+import functools
 from collections import namedtuple, defaultdict
 from itertools import combinations
 
 import numpy as np
-from clldutils.misc import lazyproperty
 
 from lingpy.algorithm import misc
 from lingpy import log
@@ -43,7 +43,7 @@ class EvalMSA(Eval):
     --------
     ~lingpy.evaluate.apa.EvalPSA
     """
-    @lazyproperty
+    @functools.cached_property
     def c_scores(self):
         """
         Calculate the c-scores.
@@ -443,7 +443,7 @@ class EvalPSA(Eval):
 
         return score / len(self.gold.alignments)
 
-    @lazyproperty
+    @functools.cached_property
     def pairwise_column_scores(self):
         """
         Compute the different column scores for pairwise alignments. The method
