@@ -128,10 +128,15 @@ def test_check_tokens():
     assert check_tokens('th o x T e r'.split(' '))[0] == (3, 'T')
 
 
-def test_sampa2uni():
-    seq = 'tʰɔxtər'
-    sampa = eval('"' + sampa2uni('t_hOxt@r') + '"')
-    assert sampa == seq  # or sampa2 == seq
+@pytest.mark.parametrize(
+    'sampa,ipa',
+    [
+        ('t_hOxt@r', 'tʰɔxtər'),
+    ]
+)
+def test_sampa2uni(sampa, ipa):
+    from_sampa = eval('"' + sampa2uni(sampa) + '"')
+    assert from_sampa == ipa  # or sampa2 == seq
 
 
 def test_pgrams():
