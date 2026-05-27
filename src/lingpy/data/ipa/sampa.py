@@ -7,7 +7,7 @@ Kleiweg <http://www.let.rug.nl/~kleiweg/L04/devel/python/xsampa.html>.
 @date: 2007/07/19
 """
 import re
-import codecs
+import pathlib
 
 from lingpy.util import data_path
 
@@ -17,7 +17,7 @@ xsdata = []
 _xsKeys = [' ']
 xs = {' ': ' '}
 
-with codecs.open(data_path('ipa', 'sampa.csv'), 'r', 'utf-8') as handle:
+with open(data_path('ipa', 'sampa.csv'), mode='r', encoding='utf-8') as handle:
     for line in handle:
         line = line.strip('\n').strip('\r')
         if line and not line.startswith('#'):

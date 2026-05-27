@@ -36,7 +36,9 @@ def _draw_triangle(p1, p2, p3, **kwargs):
 
 def area_of_triangle(p1, p2, p3):
     '''calculate area of any triangle given co-ordinates of the corners'''
-    return n.linalg.norm(n.cross((p2 - p1), (p3 - p1))) / 2.
+    a1 = ((p2 -p1)[0], (p2 -p1)[1], 0)
+    a2 = ((p3 -p1)[0], (p3 -p1)[1], 0)
+    return n.linalg.norm(n.cross(a1, a2)) / 2.
 
 
 def convex_hull(points, graphic=True, smidgen=0.0075):
