@@ -1,6 +1,6 @@
 import pytest
 
-from lingpy import LexStat
+from lingpy import LexStat, Wordlist
 from lingpy.compare.partial import Partial
 from lingpy.evaluate.acd import (
         bcubes, partial_bcubes, pairs, diff,
@@ -91,3 +91,16 @@ def test_npoint_ap():
     assert np5 == np1
     assert np6 == 1.0
     assert round(np7, 2) == 0.35
+
+
+@pytest.mark.parametrize('bias', [False, 'lumper', 'splitter'])
+def test_random_cognates_separates_concepts(bias):
+    wordlist = Wordlist({
+        0: ['doculect', 'concept', 'ipa'],
+        1: ['English', 'hand', 'h a n d'],
+        2: ['English', 'foot', 'f u t'],
+        3: ['English', 'head', 'h e d'],
+    })
+    random_cognates(wordlist, bias=bias)
+    assert len({wordlist[idx, 'randomid'] for idx in wordlist}) == 3
+    assert all(wordlist[idx, 'randomid'] > 0 for idx in wordlist)

@@ -510,7 +510,7 @@ def random_cognates(wordlist, ref='randomid', bias=False):
         clrs = generate_random_cluster(len(idxs), bias=bias)
         for idx, clr in zip(idxs, clrs):
             clrd[idx] = clr + current 
-        current += max(clrs)
+        current += max(clrs) + 1
 
     wordlist.add_entries(ref, clrd, lambda x: x)
 
