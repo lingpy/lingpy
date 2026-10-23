@@ -2,8 +2,10 @@ import pytest
 
 from lingpy import LexStat
 from lingpy.compare.partial import Partial
-from lingpy.evaluate.acd import bcubes, partial_bcubes, pairs, diff, \
-    random_cognates, extreme_cognates, npoint_ap
+from lingpy.evaluate.acd import (
+        bcubes, partial_bcubes, pairs, diff,
+        random_cognates, extreme_cognates, npoint_ap, _get_bcubed_score
+        )
 
 
 @pytest.fixture
@@ -17,6 +19,11 @@ def part(test_data):
     p.add_entries('pid1', 'partial_cognate_sets', lambda x: x)
     p.add_entries('pid2', 'partialids2', lambda x: [int(y) for y in x.split(' ')])
     return p
+
+
+def test_get_bcubed_score():
+    a, b = [1, 1, 2, 2], [1, 1, 1, 1]
+    assert _get_bcubed_score(a, b) == 1
 
 
 def test_bcubes(lex):
