@@ -2,8 +2,10 @@ import pytest
 
 from lingpy import LexStat, Wordlist
 from lingpy.compare.partial import Partial
-from lingpy.evaluate.acd import bcubes, partial_bcubes, pairs, diff, \
-    random_cognates, extreme_cognates, npoint_ap
+from lingpy.evaluate.acd import (
+        bcubes, partial_bcubes, pairs, diff,
+        random_cognates, extreme_cognates, npoint_ap, _get_bcubed_score
+        )
 
 
 @pytest.fixture
@@ -17,6 +19,11 @@ def part(test_data):
     p.add_entries('pid1', 'partial_cognate_sets', lambda x: x)
     p.add_entries('pid2', 'partialids2', lambda x: [int(y) for y in x.split(' ')])
     return p
+
+
+def test_get_bcubed_score():
+    a, b = [1, 1, 2, 2], [1, 1, 1, 1]
+    assert _get_bcubed_score(a, b) == 1
 
 
 def test_bcubes(lex):
@@ -106,3 +113,16 @@ def test_diff_modify_loan_ids(gold_ids):
     result = diff(wordlist, test='testid', modify_ref=abs, pprint=False, tofile=False)
     assert result[0] == pytest.approx((1., 2. / 3., .8))
     assert result[1] == pytest.approx((1., 1. / 3., .5))
+
+
+@pytest.mark.parametrize('bias', [False, 'lumper', 'splitter'])
+def test_random_cognates_separates_concepts(bias):
+    wordlist = Wordlist({
+        0: ['doculect', 'concept', 'ipa'],
+        1: ['English', 'hand', 'h a n d'],
+        2: ['English', 'foot', 'f u t'],
+        3: ['English', 'head', 'h e d'],
+    })
+    random_cognates(wordlist, bias=bias)
+    assert len({wordlist[idx, 'randomid'] for idx in wordlist}) == 3
+    assert all(wordlist[idx, 'randomid'] > 0 for idx in wordlist)
