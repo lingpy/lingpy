@@ -1,9 +1,11 @@
 import pytest
 
-from lingpy import LexStat
+from lingpy import LexStat, Wordlist
 from lingpy.compare.partial import Partial
-from lingpy.evaluate.acd import bcubes, partial_bcubes, pairs, diff, \
-    random_cognates, extreme_cognates, npoint_ap
+from lingpy.evaluate.acd import (
+        bcubes, partial_bcubes, pairs, diff,
+        random_cognates, extreme_cognates, npoint_ap, _get_bcubed_score
+        )
 
 
 @pytest.fixture
@@ -19,10 +21,37 @@ def part(test_data):
     return p
 
 
+def test_get_bcubed_score():
+    a, b = [1, 1, 2, 2], [1, 1, 1, 1]
+    assert _get_bcubed_score(a, b) == 1
+
+
 def test_bcubes(lex):
     res = bcubes(lex, test='cogid', pprint=False)
     assert res == pytest.approx((1.0, 1.0, 1.0))
     _ = bcubes(lex, 'cogid', 'cogid', pprint=True, per_concept=True)
+
+
+@pytest.mark.parametrize('modify_ref', [
+    lambda value: value + 10000,
+    str,
+    lambda value: value % 5 + 1,
+])
+@pytest.mark.parametrize('synonym', [False, True])
+def test_bcubes_normalizes_cognates_without_changing_word_ids(modify_ref, synonym):
+    wordlist = Wordlist({
+        0: ['doculect', 'concept', 'ipa', 'cogid', 'testid'],
+        1: ['A', 'hand', 'a', 1, 3],
+        2: ['B', 'hand', 'b', 2, 1],
+        3: ['C', 'hand', 'c', 2, 1],
+        4: ['D', 'hand', 'd', 1, 1],
+        5: ['E', 'hand', 'e', 1, 1],
+        **({6: ['A', 'hand', 'a2', 1, 3]} if synonym else {}),
+    })
+    expected = (3 / 5, 11 / 15, 33 / 50)
+    assert bcubes(wordlist, test='testid', pprint=False) == pytest.approx(expected)
+    assert bcubes(wordlist, test='testid', modify_ref=modify_ref,
+                  pprint=False) == pytest.approx(expected)
 
 
 def test_partial_bcubes(part):
@@ -84,3 +113,16 @@ def test_npoint_ap():
     assert np5 == np1
     assert np6 == 1.0
     assert round(np7, 2) == 0.35
+
+
+@pytest.mark.parametrize('bias', [False, 'lumper', 'splitter'])
+def test_random_cognates_separates_concepts(bias):
+    wordlist = Wordlist({
+        0: ['doculect', 'concept', 'ipa'],
+        1: ['English', 'hand', 'h a n d'],
+        2: ['English', 'foot', 'f u t'],
+        3: ['English', 'head', 'h e d'],
+    })
+    random_cognates(wordlist, bias=bias)
+    assert len({wordlist[idx, 'randomid'] for idx in wordlist}) == 3
+    assert all(wordlist[idx, 'randomid'] > 0 for idx in wordlist)

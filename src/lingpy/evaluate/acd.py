@@ -97,7 +97,7 @@ def bcubes(wordlist, gold='cogid', test='lexstatid', modify_ref=False, pprint=Tr
     
     def get_scores(one, other):
         for _, line in wordlist.get_etymdict(ref=one, modify_ref=modify_ref).items():
-            line = [value for value in [evl(x[0]) for x in line if x != 0]]
+            line = [x[0] for x in line if x != 0]
             # check for linesize
             if len(line) > 1:
                 # get cognate-ids in the other set for the line
@@ -510,7 +510,7 @@ def random_cognates(wordlist, ref='randomid', bias=False):
         clrs = generate_random_cluster(len(idxs), bias=bias)
         for idx, clr in zip(idxs, clrs):
             clrd[idx] = clr + current 
-        current += max(clrs)
+        current += max(clrs) + 1
 
     wordlist.add_entries(ref, clrd, lambda x: x)
 
