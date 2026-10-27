@@ -32,6 +32,28 @@ def test_bcubes(lex):
     _ = bcubes(lex, 'cogid', 'cogid', pprint=True, per_concept=True)
 
 
+@pytest.mark.parametrize('modify_ref', [
+    lambda value: value + 10000,
+    str,
+    lambda value: value % 5 + 1,
+])
+@pytest.mark.parametrize('synonym', [False, True])
+def test_bcubes_normalizes_cognates_without_changing_word_ids(modify_ref, synonym):
+    wordlist = Wordlist({
+        0: ['doculect', 'concept', 'ipa', 'cogid', 'testid'],
+        1: ['A', 'hand', 'a', 1, 3],
+        2: ['B', 'hand', 'b', 2, 1],
+        3: ['C', 'hand', 'c', 2, 1],
+        4: ['D', 'hand', 'd', 1, 1],
+        5: ['E', 'hand', 'e', 1, 1],
+        **({6: ['A', 'hand', 'a2', 1, 3]} if synonym else {}),
+    })
+    expected = (3 / 5, 11 / 15, 33 / 50)
+    assert bcubes(wordlist, test='testid', pprint=False) == pytest.approx(expected)
+    assert bcubes(wordlist, test='testid', modify_ref=modify_ref,
+                  pprint=False) == pytest.approx(expected)
+
+
 def test_partial_bcubes(part):
     res = partial_bcubes(part, 'pid1', 'pid2', pprint=False)
     assert [round(x, 2) for x in res] == [0.92, 0.98, 0.95]
