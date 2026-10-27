@@ -25,8 +25,9 @@ def _get_cogs(ref, concept, modify_ref, wordlist):
     cogs = wordlist.get_list(row=concept, entry=ref, flat=True)
     tmp = {}
     for a, b in zip(cogs, bidx):
-        if modify_ref(a) not in tmp:
-            tmp[(a)] = b
+        a = modify_ref(a)
+        if a not in tmp:
+            tmp[a] = b
     return [tmp[modify_ref(i)] for i in cogs]
 
 

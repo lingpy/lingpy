@@ -115,6 +115,28 @@ def test_npoint_ap():
     assert round(np7, 2) == 0.35
 
 
+@pytest.mark.parametrize('gold_ids', [(-1, 1, -1, 2), (1, -1, 1, -2)])
+@pytest.mark.parametrize('per_concept', [False, True])
+def test_bcubes_modify_loan_ids(gold_ids, per_concept):
+    data = {0: ['doculect', 'concept', 'ipa', 'cogid', 'testid']}
+    for i, (gold_id, test_id) in enumerate(zip(gold_ids, [4, 4, 5, 6]), 1):
+        data[i] = ['language' + str(i), 'hand', 'a', gold_id, test_id]
+    wordlist = Wordlist(data)
+    assert bcubes(wordlist, test='testid', modify_ref=abs, pprint=False,
+                  per_concept=per_concept) == pytest.approx((1., 2. / 3., .8))
+
+
+@pytest.mark.parametrize('gold_ids', [(-1, 1, -1, 2), (1, -1, 1, -2)])
+def test_diff_modify_loan_ids(gold_ids):
+    data = {0: ['doculect', 'concept', 'ipa', 'cogid', 'testid']}
+    for i, (gold_id, test_id) in enumerate(zip(gold_ids, [4, 4, 5, 6]), 1):
+        data[i] = ['language' + str(i), 'hand', 'a', gold_id, test_id]
+    wordlist = Wordlist(data)
+    result = diff(wordlist, test='testid', modify_ref=abs, pprint=False, tofile=False)
+    assert result[0] == pytest.approx((1., 2. / 3., .8))
+    assert result[1] == pytest.approx((1., 1. / 3., .5))
+
+
 @pytest.mark.parametrize('bias', [False, 'lumper', 'splitter'])
 def test_random_cognates_separates_concepts(bias):
     wordlist = Wordlist({
