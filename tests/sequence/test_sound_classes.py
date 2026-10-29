@@ -62,6 +62,18 @@ def test_token2class():
     assert token2class('', 'dolgo') == '0'
 
 
+def test_token2class_normalization_forms():
+    # composed 'ḁ' (U+1E01) is not listed, but its decomposed base is (#459)
+    assert token2class('\u1e01', 'cv') == 'V'
+    assert token2class('\u1e01', 'sca') == token2class('a\u0325', 'sca')
+    # decomposed 'ῃ' has no listed base, but its composed form is listed
+    assert token2class('\u03b7\u0345', 'sca') == token2class('\u1fc3', 'sca')
+    assert token2class('\u03b7\u0345', 'sca') != '0'
+    # tokens that already resolve keep their class
+    assert token2class('\u00e7', 'sca') == 'S'
+    assert token2class('c\u0327', 'sca') == 'C'
+
+
 def test_tokens2class():
     seq = 'tʰ ɔ x ˈth ə r A ˈI ʲ'.split(' ')
     seq2 = 'th o ?/x a'.split(' ')
@@ -71,6 +83,8 @@ def test_tokens2class():
     assert tokens2class(seq2, 'cv', cldf=False)[2] == '0'
     assert tokens2class(seq2, 'cv')[2] == 'C'
     assert tokens2class(seq3, 'cv', cldf=True)[2] == '0'
+
+    assert tokens2class(['\u1e01'], 'cv') == ['V']
 
     with pytest.raises(ValueError):
         tokens2class(['A'], 'dolgo')

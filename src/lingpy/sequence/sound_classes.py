@@ -673,6 +673,23 @@ def token2class(token, model, stress=None, diacritics=None, cldf=None):
     if str(model) == model:
         model = rcParams[model]
 
+    sound_class = _token2class(token, model, stress, diacritics)
+    if sound_class == '0':
+        # retry unresolved tokens in their other Unicode normalization forms:
+        # a composed character the models do not list, such as 'ḁ' (U+1E01),
+        # decomposes into its base 'a' and a combining diacritic
+        for form in ('NFD', 'NFC'):
+            normalized = unicodedata.normalize(form, token)
+            if normalized != token:
+                sound_class = _token2class(
+                    normalized, model, stress, diacritics)
+                if sound_class != '0':
+                    break
+    return sound_class
+
+
+def _token2class(token, model, stress, diacritics):
+    """Look up a token, then its first character after stress or diacritics."""
     try:
         return model[token]
     except KeyError:
