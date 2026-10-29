@@ -299,3 +299,38 @@ def random_choices(population, weights=None, cum_weights=None, k=1):
     less_than = [[cw < r for cw in cum_weights] for r in rnd]
 
     return [population[lt.index(False)] for lt in less_than]
+
+
+def sample_random_pairs(list_a, list_b, n):
+    """
+    Sample `n` unique pairs from two lists, where each pair consists of one
+    element from `list_a` and one from `list_b`.
+    
+    Parameters
+    ----------
+    list_a : list
+        The first list from which elements will be sampled.
+    list_b : list
+        The second list from which elements will be sampled.
+    n : int
+        The number of unique pairs to sample. If `n` is greater than the total
+        number of possible pairs, it will sample all unique pairs.
+    Returns
+    -------
+    list
+        A list of unique pairs sampled from the input lists.
+    """
+    m, k = len(list_a), len(list_b)
+    total_pairs = m * k
+    n_pairs = min(n, total_pairs)
+    
+    # Sample unique indices in the range of possible pairs
+    indices = random.sample(range(total_pairs), n_pairs)
+    
+    # Map index to (i, j)
+    pairs = []
+    for idx in indices:
+        i = idx // k   # row index (for list_a)
+        j = idx % k    # column index (for list_b)
+        pairs.append((list_a[i], list_b[j]))
+    return pairs

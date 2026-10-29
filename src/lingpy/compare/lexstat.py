@@ -742,9 +742,8 @@ class LexStat(Wordlist):
             seqs, pros, weights = {}, {}, {}
 
             # get a random distribution for all pairs
-            sample = random.sample(
-                [(i, j) for i in range(kw['rands']) for j in
-                    range(kw['rands'])], kw['runs'])
+            rands = list(range(kw['rands']))
+            sample = util.sample_random_pairs(rands, rands, kw['runs'])
 
             with util.pb(
                     desc='SEQUENCE GENERATION',
@@ -852,12 +851,8 @@ class LexStat(Wordlist):
                     prostrings = [
                             self[pair, self._prostrings] for pair in
                             self.pairs[tA, tB]]
-                    sample = [
-                            (x, y)
-                            for x in range(len(numbers)) for y in
-                            range(len(numbers))]
-                    if len(sample) > kw['runs']:
-                        sample = random.sample(sample, kw['runs'])
+                    indices = list(range(len(numbers)))
+                    sample = util.sample_random_pairs(indices, indices, kw['runs'])
 
                     for mode, gop, scale in kw['modes']:
                         corrs, included = calign.corrdist(
